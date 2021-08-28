@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{D['title']}}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width:device-width, initial-scale=1">
+  <link rel="stylesheet" href="/sys/mycss/mycss_dark.css">
+  <link rel="stylesheet" href="/sys/jyh/yhutils.css">
+  <link rel="stylesheet" href="/sys/fontawesome/css/font-awesome.css">
+    
+  <script src="/sys/jyh/jquery-yh-2107.js"></script>
+  <script src="/sys/mycss/mycss_dark.js"></script>
+  <script src="/sys/jyh/yhutils.js"></script>
+  <style>
+      .field-edit-on {background-color: rgb(0, 8, 3); color:yellow; font-weight:bold}
+      .text-content {background-color:midnightblue;cursor:pointer}
+   </style>  
+ </head>
+<body>
+<!-- ========================================================================================== -->
+<div class="navbar navbar-fixed-top" >
+    <div class="navbar-inner" style="width:100%;">
+        <li class="brand" href="#" >{{D['title']}}</li>
+        <ul class="nav">
+            <li>
+                <div class='select' style='margin-top:7px;margin-right:10px'>
+                    <input placeholder="DB선택" name="current_db" type="text" style="width:100px" value="{{D['current_db']}}" />
+                    <div class='btn-group'>
+                        <button class="btn btn-select dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                        <ul class='dropdown-menu'>
+                            <li><a> DB선택 </a></li>
+                            {% for val in D['db_list'] -%}
+                            <li><a href="{{D['_bse']}}dbadmin/index/mydb={{val}}"> {{val}}</a></li>
+                            {% endfor -%}
+                        </ul>
+                    </div>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" style="cursor:pointer">테이블 선택 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    {% for tbls in D['db_tables'] %}
+                        <li><a href="{{D['_bse']}}dbadmin/list/{{tbls}}">{{tbls}}</a></li>
+                    {% endfor %}
+                    </ul>
+            </li>
+        </ul>
+        
+        <li class="brand" href="#" style="margin-left:10px;color:rgb(247, 247, 174)">{{D['nowtbl']}}</li>
+        
+        <ul class="nav pull-right">
+            <li><a href="{{D['_bse']}}dbadmin/index"><i class='fa fa-home fa-lg'></i></a></li>
+            <li><a href="#"><i class='fa fa-th-list fa-lg' id="tbl-structure"></i></a></li>
+            <li><a href="{{D['_bse']}}dbadmin/create_tbl"><i class='fa fa-plus text-white fa-lg'></i></a></li> 
+        </ul>
+    </div>
+ </div>

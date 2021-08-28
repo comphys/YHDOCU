@@ -1,0 +1,38 @@
+@charset "utf-8";
+/****************************************************************************************************************************************************
+* H_dialog :: BASIC CSS
+*****************************************************************************************************************************************************/
+.h_dialog_overlay { position:fixed; width:100%; height:100%; left:0; top:0; background: #575757; opacity:0.1;z-index:1021;display:none;}
+.h_dialog_overlay i { margin: 0px auto; position: absolute; top: 50%; left: 50%; }
+.h_dialog_overlay #progress_index { margin: 0px auto; position: absolute; top: 30%; left: 30%; color:black;font-size:100px;font-weight:bold}
+/* BASIC IN : h_dialog_basic **********************************************/
+.h_dialog_basic { min-width:200px; border: 3px solid #373a3e; border-radius: 6px; box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);}
+.h_dialog_basic_header { font-size: 16px; font-weight: bold; color: #F6F5F5; text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);  background: #434343;  padding: 5px 15px; cursor:move; }
+.h_dialog_basic_close_btn  { background:url(btn_close.gif); float:right;width:22px;height:22px;margin-top:-4px;margin-right:-12px; cursor:pointer;border:2px solid #434343;}
+.h_dialog_basic_close_btn:hover { border:2px solid black; }
+.h_dialog_basic_content { background: #E7EDEF; padding: 10px 15px; color:#000; overflow-y:auto; }
+.h_dialog_basic_footer {  border-top: 1px outset black; padding: 5px 15px; background: #E7EDEF; text-align:center;}
+.h_dialog_basic_btn1, .h_dialog_basic_btn2, .h_dialog_basic_btn3
+{ white-space: nowrap; text-align: center; text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);  padding: 2px 10px; border-radius: 4px;
+	font-weight: bold; color:white;
+	cursor:pointer;
+    background-color: #006DCC;
+    background-image: linear-gradient(to bottom, #0088CC, #0044CC);
+    background-repeat: repeat-x;
+    border-color: #0044CC #0044CC #002A80;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+.h_dialog_basic_prompt { border:1px solid gray; border-radius:4px; height:30px; width:200px; padding:5px; text-align:center; background-color:white; color:black;}
+.h_dialog_basic_btn1:hover, .h_dialog_basic_btn2:hover, .h_dialog_basic_btn3:hover { background: #224467;  color: #FFF}
+/****************************************************************************************************************************************************
+* H_dialog :: IMAGE CSS
+*****************************************************************************************************************************************************/
+.h_dialog_image_content {  background: #000000; border:3px solid #13252F; border-radius:4px; padding:0; margin:0}
+/****************************************************************************************************************************************************
+* H_dialog :: NOTICE CSS
+*****************************************************************************************************************************************************/
+.h_dialog_notice { min-width:200px; }
+.h_dialog_notice_content { background-color: #e74c3c; opacity:0.9; 	border: 1px solid rgb(88, 88, 88); border-radius: 6px; box-shadow: 5px 5px 5px rgba(0, 0, 0, 1); 
+    padding: 10px 15px; color:white; font-weight:bold;}
+/*.h_dialog_notice { min-width:200px; border-radius:6px; border:1px solid white;}
+.h_dialog_notice_content { background: url("black-0.8.png") repeat scroll 0% 0% transparent !important; padding:10px 15px; color:#989b9e; }*/

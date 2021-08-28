@@ -1,0 +1,48 @@
+<script src="/sys/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="/sys/codemirror/mode/xml.js"></script>
+<script src="/sys/codemirror/mode/javascript.js"></script>
+<script src="/sys/codemirror/mode/css.js"></script>
+<script src="/sys/codemirror/mode/htmlmixed.js"></script>
+<div style="width:900px;height:300px;">
+<textarea id='codeHtml'> 
+	JYH CODE 
+</textarea> 
+</div>
+<button onclick="editorHtml_ApplyNewHtml()" class="btn btn-blue-s1" style="color:black;border-radius:0;width:225px;margin:0"> HTML 적용 </button>
+<button onclick="editorHtml_ApplyYouTube()" class="btn btn-red-s1" style="color:black;border-radius:0;width:225px;margin:0"> YOU TUBE </button>
+<button onclick="h_dialog.close('editor_html')" class="btn btn-blue-s1" style="color:black;border-radius:0;width:100%;margin:0"> HTML 편집기 닫기 </button>
+
+
+<script type="text/javascript">
+
+	$(document).ready(function(){myInit();});
+
+	var editorHtml = null;
+
+	function myInit() {
+		var content = $(docuSelected).html(); content = html_pretty(content);
+		$("#codeHtml").val(content);
+		editorHtml = CodeMirror.fromTextArea(document.getElementById("codeHtml"), {
+			lineNumbers: true, 	matchBrackets: true, mode: 'htmlmixed',theme:'editplus',lineWrapping:true}
+		);
+	}
+
+	function editorHtml_refresh() {
+		var content = $(docuSelected).html(); content = html_pretty(content);
+		editorHtml.setValue(content);
+		JYHEDITOR.selectedMark();
+	}
+	function editorHtml_ApplyNewHtml() {
+		var source = editorHtml.getValue();
+		$(docuSelected).html( source );
+		JYHEDITOR.selectedMark();
+	}
+
+	function editorHtml_ApplyYouTube() {
+		var source = editorHtml.getValue();
+		source = source.replace(/width="\d+"/,"width=\"720\"").replace(/height="\d+"/,"height=\"405\"").replace(/allow=".*?"/,"");
+		editorHtml.setValue(source);
+		$(docuSelected).html( source );
+		JYHEDITOR.selectedMark();
+	}
+</script>

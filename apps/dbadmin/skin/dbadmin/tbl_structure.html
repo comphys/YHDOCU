@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{D['title']}}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width:device-width, initial-scale=1">
+  <link rel="stylesheet" href="/sys/bootstrap/boot4-darkly.css">
+</head>
+<body>
+<div style="padding:10px;background-color:#2f4f4f">
+    <div style="font-size:25px;font-weight:bold;color:white;">{{D['parm'][0]}}</div>
+    <table class="table table-hover table-bordered table-sm table-striped" style="margin-bottom:0;background-color:#33363b;">
+        <thead>
+        <tr>
+            <th>CID</th><th>Name</th><th>Type</th>
+            <th>Not Null</th><th>Default</th><th>PK</th><th>UNQ</th><th>IDX</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for xx in D['tbl_structure'] %}
+            <tr>
+                {%- for x in xx -%}
+                <td>{{x}}</td>
+                {%- endfor -%}
+            </tr>
+            {%- endfor -%}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

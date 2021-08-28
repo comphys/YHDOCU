@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{D['title']}}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width:device-width, initial-scale=1">
+  <link rel="stylesheet" href="/sys/bootstrap/boot4-darkly.css">
+  <link rel="stylesheet" href="/sys/bootstrap/boot4-jyh-add.css">
+  <link rel="stylesheet" href="/sys/jyh/yhutils.css">
+  
+  <script src="/sys/jyh/jquery-yh-2107.js"></script>
+  <script src="/sys/jyh/yhutils.js"></script>
+</head>
+<body>
+<div>
+    <form id="dbinputForm" action="{{D['_bse']}}dbadmin/tbl_dbinput/{{D['parm'][0]}}" method="post">
+    <table class="mytable mytable-bordered mytable-striped mytable-hover mytable-sm">
+        <thead>
+        <tr class="bg-primary">
+            <th>필드명</th>
+            <th>형식</th>
+            <th>입력값</th>
+        </tr>
+        </thead>
+        <tbody>
+        {%- for rows in D['tbl_rows_str'] -%}
+            <tr>
+            {%- for col in rows -%}
+                <td class="pl-2">{{col|safe}}</td>
+            {%- endfor -%}
+            </tr>
+            {% endfor -%}
+        </tbody>
+    </table>
+    <input type="submit" value="데이타전송" class="btn btn-sm w-100">
+    </form>
+</div>
+<script type="text/javascript">
+
+$(document).ready(function() {
+	$("#dbinputForm").ajaxForm({
+		dataType : 'json',
+		success	 : function(data) {
+            var err = ''
+            if(data.rst == 'error') {
+               for (var prop in data.err) { err += data.err[prop] + '<br>' }
+               h_dialog.alert(err,{over_opacity:0.1});
+            }
+            else { opener.location.reload(); } 
+        }
+	});	
+});
+</script>
+</body>
+</html>

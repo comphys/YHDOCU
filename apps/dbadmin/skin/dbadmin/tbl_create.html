@@ -1,0 +1,123 @@
+{% include D['_skn'] + 'dbadmin/main_head.html' %}
+<style>
+    .row {display:inline-block}
+    .min-150 {min-width:150px; border-right: 1px solid black;}
+    .min-100 {min-width:100px; border-right: 1px solid black;}
+    .t-title {background-color: black; color:yellow}
+    .d-none { display: none !important;}
+    .pointer {cursor:pointer}
+    .my-sel  {line-height: 16px; background-color:black ;}
+    .f-name  {background-color: black; color:palegreen; font-weight:400; border-bottom:1px solid #393939}
+    .each-qry  {color:palegreen; font-weight:400;}
+    .f-row   {width:100%; border-bottom:1px solid black}
+    
+</style>
+
+<div style="width:100%;border:2px solid black;margin-top:42px;margin-bottom:10px">
+    <div class="t-title notsort">
+        <div class="row min-150">필드명</div>
+        <div class="row min-150">타입</div>
+        <div class="row min-150">Null 허용</div>
+        <div class="row min-150">기본값</div>
+        <div class="row min-150">옵션</div>
+        <div class="row min-100">삭제/이동</div>
+        <div class="row"> 쿼리보기</div>
+    </div>
+    <div style="background-color: teal;color:white;width:100%">
+        <div class="row min-150"> no</div>
+        <div class="row min-150"> INTEGER</div>
+        <div class="row min-150">&nbsp; </div>
+        <div class="row min-150">&nbsp; </div>
+        <div class="row min-150">PRIMARY KEY</div>
+        <div class="row min-100"> &nbsp; </div>
+        <div class="row each-qry">no INTEGER PRIMARY KEY AUTOINCREMENT</div>
+    </div>
+    <div id="create-tbl-div">
+    {% if D['tbl_structure'] %}
+    {% for ts in D['tbl_structure'] %}
+    <div class="f-row">
+        <div class="row min-150 f-name notsort" contenteditable>{{ts[0]}}</div>
+        <div class="row min-150 notsort" ondblclick="type_select(this)">{{ts[1]}}</div>
+        <div class="row min-150 notsort" ondblclick="null_select(this)">{{ 'NOT NULL' if ts[2] else 'NULL'}}</div>
+        <div class="row min-150 notsort" contenteditable>{{ ts[3] if ts[3] else 'Default' }}</div>
+        {% if ts[4] %}
+        <div class="row min-150 notsort" ondblclick="option_select(this)">UNIQUE</div>
+        {% elif ts[5] %}
+        <div class="row min-150 notsort" ondblclick="option_select(this)">INDEX</div>
+        {% else %}
+        <div class="row min-150 notsort" ondblclick="option_select(this)">Option</div>
+        {% endif %}
+        <div class="row min-100 pointer">
+            <i class='fa fa-minus fa-lg pointer' onclick="$(this).parent().parent().remove()"></i>
+        </div>
+        <div class="row notsort each-qry"></div>
+    </div>
+    {% endfor %}
+    {% endif %}    
+    </div>
+</div>
+
+<div>
+    <div class="row" style="vertical-align:top">
+        <form action="{{D['_bse']}}dbadmin/create_tbl" method="post">
+        <select name="copy_tbl" class="row" onchange="this.form.submit()">
+            <option value=''>카피보드 선택</option>
+            {%- for tbl in D['db_tables'] -%}
+            <option value='{{tbl}}' {{ 'selected' if tbl == D['copy_tbl'] else ''  }}>{{tbl}}</option>
+            {% endfor %}
+        </select>
+        </form>
+    </div>
+    <div class="row">
+        <input type="text" value="" class="row" placeholder="테이블네임" id="tbl-name">
+        <button class="btn" onclick="insert_new_field()">필드 추가</button>
+        <button class="btn" onclick="make_create_qry()">쿼리 생성</button>
+        <button class="btn" onclick="send_create_qry()">테이블 생성</button>
+    </div>
+</div>
+
+<!--  display:none -->
+<div id="insert-type-select" class="row d-none">
+    <select class=" my-sel" onchange="$(this).parent().html($(this).val())">
+        <option value="">필드타입</option>
+        <option value="TEXT">문자</option>
+        <option value="INTEGER">정수</option>
+        <option value="REAL">실수</option>
+    </select>
+</div>
+
+<div id="insert-null-select" class="row d-none">
+    <select class=" my-sel" onchange="$(this).parent().html($(this).val())">
+        <option value="">Null 허용</option>
+        <option value="NULL">NULL</option>
+        <option value="NOT NULL">NOT NULL</option>
+    </select>
+</div>
+
+<div id="insert-option-select" class="row d-none">
+    <select class=" my-sel" onchange="$(this).parent().html($(this).val())">
+        <option value="">기타옵션</option>
+        <option value="Option">No Option</option>
+        <option value="UNIQUE">유니크</option>
+        <option value="INDEX">인덱스</option>
+    </select>
+</div>
+
+<div id="insert-field-row" class="row d-none" >
+    <div class="f-row">
+        <div class="row min-150 f-name notsort" contenteditable></div>
+        <div class="row min-150 notsort" ondblclick="type_select(this)">TEXT</div>
+        <div class="row min-150 notsort" ondblclick="null_select(this)">NULL</div>
+        <div class="row min-150 notsort" contenteditable>Default</div>
+        <div class="row min-150 notsort" ondblclick="option_select(this)">Option</div>
+        <div class="row min-100 pointer">
+            <i class='fa fa-minus fa-lg pointer' onclick="$(this).parent().parent().remove()"></i>
+        </div>
+        <div class="row notsort each-qry"></div>
+    </div>
+</div>
+<script type="text/javascript">
+{% include D['_skn'] + 'dbadmin/dbadmin_tbl_create.js' %}
+</script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" >
+<meta name="viewport" content="width=1200">
+<title> 파일관리자 </title>
+<link href="/sys/bootstrap/bootstrap.css"  rel="stylesheet" >
+<link href="/sys/fontawesome/css/font-awesome.css"  rel="stylesheet" >
+<link href="/skn/docu/filemanager/filemanager.css"  rel="stylesheet" >
+<link href="/sys/jyh/yhutils.css" rel="stylesheet">
+<script src="/sys/jyh/jquery-yh-2107.js"></script>
+<script src="/sys/jyh/yhutils.js"></script>
+<script src="/skn/docu/filemanager/filemanager.js"></script>
+</head>
+<body>
+<div id="exp_title" style="border-bottom:1px solid grey;color:black;font-weight:bold;background-color:yellow;position:fixed;left:0;top:0;padding:5px;width:100%">
+	<div style="float:left">
+	<span onclick="OpenFolderInWindow()"><i class='fa fa-folder-open fa-lg' style="color:#d0d000;cursor:pointer"></i></span>
+	{% for key, val in D['DIR_SLICED'].items() %} 
+	&nbsp;<a href="{{D['_bse']}}filemanager/set/{{key}}">{{val}}</a> /
+	{% endfor %}
+	&nbsp;&nbsp;
+	</div>
+	<div style="float:right">
+		<span id="temporary_folder" style="color:#828200;cursor:pointer" onclick="bottom_menu('moveToTemporary')">&nbsp;</span>&nbsp;	
+		<span onclick="bottom_menu('saveToTemporary')" style="cursor:pointer"><i class='fa fa-user fa-plus'></i></span>&nbsp;
+	    <span onclick="Clear_temporary('folder')" style="cursor:pointer"><i class='fa fa-user fa-minus'></i></span>&nbsp;
+		<a href="{{D['_bse']}}filemanager-login/out"><i class='fa fa-user fa-lg'></i></a>&nbsp;	
+ 	</div>
+</div>
+
+<table id="file_list" class='table table-condensed table-bordered table-hover' style='width:100%;margin-top:31px;margin-bottom:10px'>
+	<tbody style='background-color:white'>
+		<tr><th style='text-align:center' colspan='2'>파일명</th>
+			<th style='text-align:center' width='100'>파일크기</th>
+			<th style='text-align:center;cursor:pointer' width='200'>날자</th>
+			<th style='text-align:center' width='80'>파일작업</th>
+		</tr>
+
+	{% if D['DIR_LIST'] %}
+	{% for val in D['DIR_LIST'] %} 
+		<tr>
+			<td width='25' onclick="OpenFolderInWindow('{{val}}')"> <img src='/skn/docu/image/file_type/folder.png'> </td>
+			<td style="font-weight:bold"> <a href="{{D['_bse']}}filemanager/ndir/{{val}}"> {{val}} </a> </td>
+			<td style="text-align:center"> &nbsp; </td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+	{% endfor %}
+	{% endif %}
+
+	{% if D['FILE_LIST'] %} 
+	{% for f in D['FILE_LIST'] %}
+		<tr {{f['f_found']|safe}}> 
+			<td width='25'> <img src="/skn/docu/image/file_type/{{f['icon']}}" class='file-icon'> </td>
+			<td class="list-file-edit">{{f['name']}}</td>
+			<td style='text-align:right;padding-right:5px;width:80px'> {{f['size']}} </td>
+			<td style='text-align:center'> {{f['ctime']}} </td>
+			<td style='text-align:center'>
+				<i class='fa fa-trash-o  file-delete' style='cursor:pointer'>&nbsp;</i>
+				<a href="/download/{{f['name']}}"><i class='fa fa-download file-down'>&nbsp;</i></a>
+				<i class='fa fa-cog file-tool' style='cursor:pointer'>&nbsp;</i>
+			</td>
+		</tr>
+	{% endfor %} 
+	{% endif %}
+	</tbody>
+</table>
+
+<div style='min-height:32px;margin-top:5px'>&nbsp;</div>
+
+<div id="bottom-tool-bar">
+	<div style="float:left">
+		<span id="temporary_file" style="color:#828200" onclick="Clear_temporary('file')">&nbsp;</span>
+	</div>
+	<div style="float:right">&nbsp;JYH</div>
+</div>
+
+<!-- 마우스 우측 메뉴 -->
+	<div id='contextMenu' class="rightClickMenu" style='display:none'>
+		<li onclick="add_file('folder')"> 새폴더생성 </li>
+		<li onclick="del_folder()"> 현재폴더삭제 </li>
+		<li onclick="rename_folder()"> 폴더이름변경 </li>
+		<li class='divider'></li>
+		<li onclick="add_file('file')"> 새파일생성 </li>
+		<li onclick="copy_paste_file('copy')"> 파일복사하기 </li>
+		<li onclick="copy_paste_file('move')"> 파일옮겨넣기 </li>
+	</div>
+
+<!-- 마우스 우측 메뉴2 -->
+	<div id='contextMenu2' class="rightClickMenu" style='display:none;bottom:10px;'>
+		<li onclick="location.href='<?=LINKURL?>filemanager/new_files/docu'"> 변경문서 보기 </li>
+		<li onclick="location.href='<?=LINKURL?>filemanager/new_files/code'"> 변경코드 보기 </li>
+		<li onclick="location.href='<?=LINKURL?>filemanager/new_files/system'"> 변경코어 보기 </li>
+		<li class='divider'></li>
+		<li onclick="save_zip('docu')"> 변경문서 압축 </li>
+		<li onclick="save_zip('code')"> 변경코드 압축 </li>
+		<li onclick="save_zip('system')"> 변경코어 압축 </li>
+		<li class='divider'></li>
+		<li onclick="save_now_time()"> 현재시각 설정 </li>
+	</div>
+
+<script type='text/javascript'>
+var CUR_PATH = "{{D['JS_CUR_PATH']}}";
+var ROOT     = "{{D['ROOT']}}";
+var F_PATH   = "{{D['JS_F_PATH']}}";
+
+function save_zip(option) {
+	var posturl = uri('linkurl') + 'filemanager/new_files_zip/' + option;		
+	$.post(posturl).done(function(data){ if(!data) data='변경된 파일을 압축 저장하였습니다'; h_dialog.alert(data);});
+}
+
+</script>
+</body>
+</html>

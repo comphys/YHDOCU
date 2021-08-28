@@ -1,0 +1,55 @@
+{% include D['_skn'] + 'dbadmin/main_head.html' %}
+
+{% if D['nowtbl'] is defined %}
+<div style="margin-top:42px">
+    <div>
+        &nbsp;<b>{{D['total_cnt']}} 개의 데이타가 있습니다</b>
+    </div>
+    <div class="">
+        <table  class="table table-bordered table-striped" style="white-space: nowrap;border-radius:0">
+            <thead style="text-align:left;background-color: darkslategrey;">
+                <tr>
+                {%- for col in D['tbl_col_names'] -%}
+                    <th>{{col}}</th>
+                {%- endfor -%} 
+                </tr>
+            </thead>
+            <tbody>
+                {%- for rows in D['tbl_rows'] -%}
+                <tr class="disable-select">
+                {%- for col in rows -%}
+                    {%- if loop.index0 == 0 -%}
+                    <td class='text-center text-info' data-no='{{col}}'>{{col}}</td>
+                    {%- elif D['content_index'] and D['content_index'] == loop.index0 -%}
+                    <td class='text-center text-content'>Content
+                        <div style="display:none">{{col}}</div>
+                    </td>
+                    {%- else -%}
+                    <td class='liveEdit' data-fid="{{D['tbl_col_names'][loop.index0]}}">{{col|safe}}</td>
+                    {% endif %}
+                {%- endfor -%}
+                </tr>
+                {% endfor -%}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top:10px">
+        <div class="pull-left">
+            <button id="dbInput" class="btn btn-blue">입력하기</button>
+        </div>
+        
+        <div class="pull-left" style="margin-left:20px">
+            <div class="pagination">
+                <ul>{{D['pagenation']|safe}}</ul>
+            </div>
+          </div>
+    </div>
+
+</div>
+{% endif %}
+<script type="text/javascript">
+{% include D['_skn'] + 'dbadmin/dbadmin.js' %}
+</script>
+</body>
+</html>

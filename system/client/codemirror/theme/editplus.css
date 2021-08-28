@@ -1,0 +1,39 @@
+/* EDITPLUS THEME */
+.CodeMirror { font-family: Consolas; border: 1px solid black; font-size:14px; font-weight:bold; line-height:18px; height:100% }
+.CodeMirror pre {  padding: 0 10px; }
+.CodeMirror div.CodeMirror-cursor {  border-left: 2px solid black;}
+/* GUTTER :: 좌측 라인 숫자 */
+
+.cm-s-editplus .cm-keyword {font-weight:bold; color: blue;}									/* CHECKED */
+.cm-s-editplus .cm-atom {font-weight:bold; color: blue;}									/* true, false, null... */
+.cm-s-editplus .cm-number {color: #800080;}													/* CHECKED   숫자     */
+.cm-s-editplus .cm-def {color: #00f;}
+.cm-s-editplus .cm-variable {color: #800000;}												/* CHECKED   $d->{ } */
+.cm-s-editplus .cm-variable-2 {font-weight:bold; color: #008080;}							/* CHECKED   ${}     */
+.cm-s-editplus .cm-variable-3 {color: #085;}
+.cm-s-editplus .cm-property {color: black;}
+.cm-s-editplus .cm-operator {color: #800000;}												/* CHECKED   ==, ->, ++     */
+.cm-s-editplus .cm-comment {color: #008000;}												/* CHECKED   주석     */
+.cm-s-editplus .cm-string {font-weight:bold; color: #ff00ff;}								/* CHECKED   문자열     */
+.cm-s-editplus .cm-string-2 {color: #f50;}
+.cm-s-editplus .cm-meta {color: #800000;}													/* CHECKED   <?, ?>     */
+.cm-s-editplus .cm-error {color: #f00;}
+.cm-s-editplus .cm-qualifier {color: #555;}
+.cm-s-editplus .cm-builtin {font-weight:bold; color: red; }									/* CHECKED   내장함수     */
+.cm-s-editplus .cm-bracket {color: #997;}
+.cm-s-editplus .cm-tag {color: #170;}
+.cm-s-editplus .cm-attribute {color: #00c;}
+.cm-s-editplus .cm-header {color: blue;}
+.cm-s-editplus .cm-quote {color: #090;}
+.cm-s-editplus .cm-hr {color: #999;}
+.cm-s-editplus .cm-link {color: #00c;}
+
+.cm-negative {color: #d44;}
+.cm-positive {color: #292;}
+.cm-header, .cm-strong {font-weight: bold;}
+.cm-em {font-style: italic;}
+.cm-link {text-decoration: underline;}
+.cm-invalidchar {color: #f00;}
+
+div.CodeMirror span.CodeMirror-matchingbracket {font-weight:bold;color: black; background-color:#dfdfdf;}			/* 괄호 매치 */
+div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}

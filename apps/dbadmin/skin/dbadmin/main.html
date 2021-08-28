@@ -1,0 +1,57 @@
+{% include D['_skn'] + 'dbadmin/main_head.html' %}
+ <div style="margin-top:52px;padding:10px">
+
+    <div class="row-row">
+        <textarea id="qry-text" style="width:100%" rows="5"></textarea>
+    </div>
+    
+    <div class="row-row">
+        <div style="display:inline-block;">
+            <select id="work_tbl1" style="height:25px;font-size:12px">
+                <option value=''>테이블선택 1</option>
+                {%- for tbl in D['db_tables'] -%}
+                <option value='{{tbl}}'>{{tbl}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    
+        <button class="btn btn-red btn-small" onclick="delete_table(1)">테이블삭제</button>
+        <button class="btn btn-blue btn-small" onclick="select_table(1)">테이블조회</button>
+        <button class="btn btn-blue   btn-small" onclick="struct_table(1)">테이블구조</button>
+        <button class="btn btn-blue btn-small" onclick="index_table()">인덱스조회</button>
+        <button class="btn btn-blue btn-small" onclick="clear_work()">작업창정리</button>
+        <button class="btn btn-blue btn-small" onclick="get_file_name()">파일이름창</button>
+    </div>
+    
+    <div class="row-row">
+        <button class="btn btn-success btn-sm" style="width:50%" onclick="send_qry_execute(1)">데이타베이스 쿼리 실행문 전송 - ASSOC</button>
+        <button class="btn btn-success btn-sm" style="width:49%" onclick="send_qry_execute(0)">데이타베이스 쿼리 실행문 전송 - LIST</button>
+    </div>
+    
+    <div class="row-row">
+        <div style="display:inline-block;">
+            <select id="work_tbl2" style="height:25px;font-size:12px">
+                <option value=''>테이블선택 2</option>
+                {%- for tbl in D['db_tables'] -%}
+                <option value='{{tbl}}'>{{tbl}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <button class="btn btn-red btn-small" onclick="delete_table(2)">테이블삭제</button>
+        <button class="btn   btn-small" onclick="select_table(2)">테이블조회</button>
+        <button class="btn   btn-small" onclick="struct_table(2)">테이블구조</button>
+        <button class="btn   btn-small" onclick="delete_index(2)">인덱스삭제</button>
+        <button class="btn   btn-small" onclick="rename_table(2)">테이블이름</button>
+        <button class="btn   btn-small" onclick="copy_dbtable( )">테이블복사</button>
+    </div>
+
+    <div class="row-row">
+            <textarea id="qry-result" style="width:100%;" rows="15" readonly></textarea>
+    </div>
+</div>
+<script type="text/javascript">
+{% include D['_skn'] + 'dbadmin/dbadmin.js' %}
+</script>
+</body>
+</html>

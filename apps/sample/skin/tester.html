@@ -1,0 +1,128 @@
+{% include D['_skn'] + 'main_head.html' %}
+
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner" style="width:815px">
+    <div style="margin-top:5px;font-weight:bold;font-size:18px">매개변수 전달 테스트 : Config, GET, POST, AJAX </div>
+	</div>
+</div>	
+
+<div class="row-body">
+  <div class="row-row" style="margin-bottom:20px">
+  
+    {% if D['_cfg'] %}
+    <div class="card">
+      <div class="card-header">Config</div>
+      <div class="card-body">
+        {% for item in D['_cfg']['tester'] %}
+        <p>
+          <button class="btn2" style="width:150px;color:rgb(229, 236, 164)"> {{ item }} </button> 
+          <button class="btn2" style="min-width:100px"> {{ D['_cfg']['tester'][item] }} </button>  
+        </p>  
+        {% endfor %}   
+      </div>
+    </div>
+    {% endif %}
+  
+  
+    {% if D['parm'] %}
+    <div class="card">
+      <div class="card-header">Parameter</div>
+      <div class="card-body">
+        {% for item in D['parm'] %}
+        <p>
+          <button class="btn2" style="width:150px;color:aqua"> D['parm']['{{ loop.index0 }}'] </button> 
+          <button class="btn2" style="min-width:100px"> {{ item }} </button>  
+        </p>  
+        {% endfor %}   
+      </div>
+    </div>
+    {% endif %}
+
+    {% if D['gets'] %}
+      <div class="card"> 
+        <div class="card-header">Variables</div>
+        <div class="card-body">
+        {% for key, val in D['gets'].items() %}
+        <p>
+          <button class="btn2" style="min-width:150px;color:gold">D['gets']['{{ key }}'] </button> 
+          <button class="btn2" style="min-width:100px">{{ val }} </button> 
+        </p> 
+        {% endfor %}
+        </div>  
+      </div>
+    {% endif %}
+
+    {% if D['post'] %}
+      <div class="card"> 
+        <div class="card-header">Post Variables</div>
+        <div class="card-body">  
+        {% for key, val in D['post'].items() %}
+        <p>
+         <button class="btn2"   style="min-width:150px;color:bisque">D['post']['{{ key }}'] </button> 
+         <button class="btn2"   style="min-width:100px">{{ val }} </button> 
+        </p> 
+        {% endfor %}
+       </div>  
+      </div>
+    {% endif %}
+  </div> <!--for row-row-->
+
+
+<div class="row-row" style="margin-top:20px">
+  <div class="card">
+    <div class="card-header">Transfer variables via POST method</div>
+    <div class="card-body">
+    <form action="{{D['_bse']}}tester/index" method="POST">
+      <div class="form-group-row">
+        <div style="width:50px">Name</div>
+        <div><input type="text" name="Name" placehoder="Text input"></div>
+        <div style="width:50px;margin-left:10px">Email</div>
+        <div style="margin-right:10px"><input type="text" name="Email" placehoder="Input your Email"></div>
+        <button type="submit" class="btn">Submit</button>
+      </div> 
+    </form>
+    </div>
+  </div>  
+</div>
+
+<div class="row-row" style="margin-top:20px">
+  <div class="card">
+    <div class="card-header">Ajax Tester</div>
+    <div class="card-body">
+      <div class="form-group-row">
+        <button id="ajax_2" class="btn btn-blue-s1">AJAX TEST</button>
+        <button id="ajax_3" class="btn btn-blue-s2">Clear</button>
+        <button id="ajax_4" class="btn btn-blue-s3">Json</button>
+        <input  id="txt_1" type="text" value="" style="width:210px;" readonly />
+        <button id="file_open" class="btn btn-blue-s4">FileOpen</button>
+      </div>
+    </div>
+  </div>  
+</div>
+
+
+</div> <!--for row-body -->
+{% include D['_skn'] + 'main_tail.html' %}
+
+<script>
+
+var _bse = "{{D['_bse']}}";
+
+$("#ajax_2").click(function(){
+  var url = _bse + 'tester/ajax';
+  $.post(url, {'ajax1':'name', 'ajax2':'email'}).done(function(data){$("#txt_1").val(data);}); 
+});
+$("#ajax_3").click(function(){$("#txt_1").val('');});
+
+$("#ajax_4").click(function(){
+  var url = _bse + 'tester/ajax_json';
+  $.post(url, {'Name':'JYH', 'height':183}).done(function(data){
+    var aa = JSON.parse(data);
+    h_dialog.notice(aa.Name); h_dialog.notice(aa.height);
+  }); 
+});
+
+$("#file_open").click(function(){var url = _bse + 'tester/f_open'; $.post(url).done(function(data){h_dialog.notice(data);});});
+
+
+</script>
