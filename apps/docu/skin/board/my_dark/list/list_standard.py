@@ -85,7 +85,10 @@ class LIST_SKIN(SKIN) :
                         elif txt_format == 'mobile' : clas= f"class='list-mobile'" 
                         else : clas=f"class='list-{key}'"
                         
-                        if (self.D['EXFTYPE'][key] == 'int') or (txt_format == 'number') or (txt_format == 'n_edit'): txt = f"{int(txt):,}"
+                    #   if (self.D['EXFTYPE'][key] == 'int') or (txt_format == 'number') or (txt_format == 'n_edit'): txt = f"{int(txt):,}"
+
+                        if (self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
+                        if (self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,}"
 
                         tx[key] = f"<td style='{style}' {clas}>{txt}</td>"
 

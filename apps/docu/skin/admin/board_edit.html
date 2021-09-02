@@ -238,6 +238,7 @@
 										<option value=''>유형선택</option>
 										<option value='text' {{ 'selected' if D['extype'][key] == 'text' else '' }} >문자</option>
 										<option value='int'  {{ 'selected' if D['extype'][key] == 'int'  else '' }} >정수</option>
+										<option value='float' {{ 'selected' if D['extype'][key] == 'float'  else '' }} >실수</option>
 									</select>
 								</td>
 								<td>
@@ -292,6 +293,7 @@
 										<select name='addFieldType' style='width:100px'>
 											<option value='text'>문자</option>
 											<option value='int'>정수</option>
+											<option value='float'>실수</option>
 										</select>
 									</td>
 									<td>
