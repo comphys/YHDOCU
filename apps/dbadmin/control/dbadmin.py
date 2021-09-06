@@ -21,7 +21,6 @@ class Dbadmin(Control) :
         D = {'title':'DB ADMIN','skin':'dbadmin/main.html'}
         M1 = self.model('dbadmin')
         D['db_tables'] = M1.get_tables()
-
         return self.echo(D)
 
     def list(self) :
