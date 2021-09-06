@@ -5,6 +5,8 @@ class Page(Control) :
 
 
     def _auto(self) :
+        self.DB = self.db('docu')
+
         if 'N_NO' in session :
             self.D['USER'] = self.DB.exe(f"SELECT * FROM h_user_list WHERE no={session['N_NO']}",many=1,assoc=True)
             self.D['bid']     = self.parm[0] 

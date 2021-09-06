@@ -8,6 +8,8 @@ class Board(Control) :
 
 
     def _auto(self) :
+
+        self.DB = self.db('docu')
         
         if 'N_NO' in session :
 
@@ -78,7 +80,7 @@ class Board(Control) :
         return self.echo(D)
 
     def login(self) :
-        D = {'title':'로그인', 'skin':'board/login.html'}
+        D = {'title':'로그인', 'skin':'board/login.html', 'back':'board/login'}
         
         if self.D['post'] :
             qry = f"SELECT no FROM h_user_list WHERE uid='{self.D['post']['userid']}' and upass='{self.D['post']['userpass']}'"

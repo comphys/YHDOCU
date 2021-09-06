@@ -54,14 +54,8 @@ class Control :
 
         try :    self.C = self.CFG['general']
         except : self.C = None
-                
-        try :      
-            mydb = self.C['mydb']
-            self.mydb = os.path.join(V['_pth'],'mydb', mydb + '.sqlite')
-            self.DB  = self.load_lib('db')
-        except :
-            self.DB = None
-
+        self.DB = None
+        
         self.__parm()
         self.skin_dir = os.path.join(V['_pth'],'apps',V['_app'],'skin')
         self._auto()
@@ -129,6 +123,11 @@ class Control :
         
         mod = __import__('%s' %(module), fromlist=[classn])
         return getattr( mod, classn )(self)
+
+    def db(self,dbname) :
+        tmp =  self.load_lib('db')
+        tmp.con(dbname)
+        return tmp
 
     def load_app_lib(self,module_name):
         module = f"apps.{self.V['_app']}.lib.{module_name}"

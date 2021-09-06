@@ -6,13 +6,14 @@ from system.hand import myfile
 class Dbadmin(Control) :
 
     def _auto(self) :
-        mydb = session.get('mydb','docu.sqlite')
+        mydb = session.get('mydb','docu')
         if newdb := self.gets.get('mydb',None) : mydb = session['mydb'] = newdb
 
-        self.mydb = "mydb/" + mydb
-        
         self.DB  = self.load_app_lib('appdb')
+        self.DB.con(mydb)
+        
         self.D['db_list'] = myfile.get_files("mydb")
+        self.D['db_list'] = [x.replace('.sqlite','') for x in self.D['db_list']]
         self.D['current_db'] = mydb
 
     def index(self) :

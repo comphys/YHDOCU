@@ -7,8 +7,7 @@ class SCRAP :
     def __init__(self,SYS) :    
         self.SYS = SYS
         self.info = SYS.info
-        self.DB = SYS.DB
-        self.DB.change_db('scrap')
+        self.DB2 = SYS.db('scrap')
         self.select = None
         self.html_text = None
         self.table = 'page_scrap'
@@ -21,16 +20,16 @@ class SCRAP :
         if not self.id : return "조회 ID가 누락되었습니다"
         qry = f"SELECT mdate FROM {self.table} WHERE id='{self.id}'"
 
-        cnt = self.DB.cnt(qry)
+        cnt = self.DB2.cnt(qry)
  
         if cnt == 0 : self.db_put('in')
         else : 
-            rst = self.DB.line(qry)
+            rst = self.DB2.line(qry)
             itv = int(datetime.datetime.now().timestamp()) - rst['mdate']
             if itv > self.interval : self.db_put('up')
 
         qry = f"SELECT content FROM {self.table} WHERE id='{self.id}'"
-        html_soup = self.DB.one(qry)
+        html_soup = self.DB2.one(qry)
         txt =  self.SYS.html_decode(html_soup)
         return BeautifulSoup(txt,'lxml')
 
@@ -59,13 +58,13 @@ class SCRAP :
             db_in['content'] = html_dbin
             db_in['wdate'] = int(datetime.datetime.now().timestamp())
             db_in['mdate'] = db_in['wdate']
-            qry = self.DB.qry_insert(self.table,db_in)
-            self.DB.exe(qry)
+            qry = self.DB2.qry_insert(self.table,db_in)
+            self.DB2.exe(qry)
         
         else :
             db_up = {}
             db_up['content'] = html_dbin
             db_up['mdate'] = int(datetime.datetime.now().timestamp())
             con = f"id='{self.id}'"
-            qry = self.DB.qry_update(self.table,db_up,con)
-            self.DB.exe(qry)
+            qry = self.DB2.qry_update(self.table,db_up,con)
+            self.DB2.exe(qry)

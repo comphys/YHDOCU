@@ -1,11 +1,8 @@
-import sqlite3, re
+import sqlite3 
 
 class DB :
     def __init__(self,SYS) :
-        mydb = SYS.mydb
         self.info = SYS.info
-        self.con = sqlite3.connect(mydb, check_same_thread=True)
-        self.cur = self.con.cursor()
         self.SYS = SYS
 
         self.wre = ''
@@ -15,6 +12,11 @@ class DB :
         self.num = 0
         self.tbl = ''
         self.err = ''
+
+    def con(self,dbname) :
+        mydb = 'mydb/' + dbname + '.sqlite'
+        self.con = sqlite3.connect(mydb, check_same_thread=True)
+        self.cur = self.con.cursor() 
 
     def change_db(self,db) :
         mydb = 'mydb/' + db + '.sqlite'
