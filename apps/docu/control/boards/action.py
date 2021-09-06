@@ -4,6 +4,7 @@ import system.core.my_utils as ut
 class Action(Control) : 
 
     def _auto(self) :
+        self.DB = self.db('docu')
         self.bid   = self.parm[0]
         self.board = 'h_'+self.bid+'_board'
         self.page  = self.gets.get('page','1') 

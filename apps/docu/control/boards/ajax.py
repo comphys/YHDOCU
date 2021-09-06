@@ -5,7 +5,9 @@ from PIL import Image
 
 
 class Ajax(Control) :
-
+    def _auto(self) :
+        self.DB = self.db('docu')
+        
     def reply_save(self) :
 
         qry     = f"SELECT uid, uname FROM h_user_list WHERE no={session['N_NO']}"
