@@ -1,0 +1,28 @@
+{% extends D['_skn'] + 'page/my_dark/main_layout.html' %}
+
+{% block contents_page  %}
+<div class="clearfix">
+<div style="float:left;border:2px solid black;padding:10px;margin:10px 0">
+    <p style="color:yellow">실시간 전력수급현황</p>
+    <p>{{D['EX']['date']}}</p>
+    <img src="{{ D['EX']['img'] }}" />
+    <p>현재부하 : {{D['EX']['current']}}</p>
+    <p>예비전력 : {{D['EX']['creserve']}}</p>
+    <p>예비비율 : {{D['EX']['preserve']}}</p>
+</div>
+
+<div style="float:left;border:2px solid black;padding:10px;margin:10px 0">
+    <p style="color:orange">SMP : 거래일 : {{D['EX']['smp_date']}}</p>
+    <p>SMP : 최고가 : {{D['EX']['smp_max']}}</p>
+    <p>SMP : 최저가 : {{D['EX']['smp_min']}}</p>
+    <p>SMP : 평균가 : {{D['EX']['smp_mean']}}</p>
+</div>
+
+<div style="float:left;border:2px solid black;padding:10px;margin:10px 0">
+    <p style="color:lightgreen">REC : 거래일 : {{D['EX']['rec_date']}}</p>
+    <p>REC : 최고가 : {{D['EX']['rec_max']}}</p>
+    <p>REC : 최저가 : {{D['EX']['rec_min']}}</p>
+    <p>REC : 평균가 : {{D['EX']['rec_mean']}}</p>
+</div>
+</div>
+{% endblock %}

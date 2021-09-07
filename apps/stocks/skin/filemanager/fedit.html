@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" >
+<title> {{D['f_name']}} </title>
+<link href="/sys/jyh/yhutils.css"  rel="stylesheet" >
+<link href="/sys/fontawesome/css/font-awesome.css"  rel="stylesheet" >
+<link href="/sys/codemirror/lib/codemirror.css"  rel="stylesheet" >
+<link href="/sys/codemirror/theme/editplus.css"  rel="stylesheet" >
+<script src="/sys/jyh/jquery-yh-2107.js"></script>
+<script src="/sys/codemirror/lib/codemirror.js"></script>
+<script src="/sys/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="/sys/jyh/yhutils.js"></script>
+{% if D['f_ext'] == 'php' %}
+{% set mode = 'application/x-httpd-php' %}
+<script src="/sys/codemirror/mode/htmlmixed.js"></script>
+<script src="/sys/codemirror/mode/xml.js"></script>
+<script src="/sys/codemirror/mode/javascript.js"></script>
+<script src="/sys/codemirror/mode/css.js"></script>
+<script src="/sys/codemirror/mode/clike.js"></script>
+<script src="/sys/codemirror/mode/php.js"></script>
+{% elif  D['f_ext'] == 'js' %}
+{% set mode = 'text/javascript' %}
+<script src="/sys/codemirror/mode/javascript.js"></script>
+{% elif  D['f_ext'] == 'css' %}
+{% set mode = 'text/css' %}
+<script src="/sys/codemirror/mode/css.js"></script>
+{% elif  D['f_ext'] == 'py' %}
+{% set mode = 'text/x-python' %}
+<script src="/sys/codemirror/mode/python.js"></script>
+{% elif  D['f_ext'] == 'sql' %}
+{% set mode = 'text/css' %}
+<script src="/sys/codemirror/mode/sql.js"></script>
+{% elif  D['f_ext'] == 'txt' %}
+{% set mode = 'text/html' %}
+<script src="/sys/codemirror/mode/xml.js"></script>
+<script src="/sys/codemirror/mode/javascript.js"></script>
+<script src="/sys/codemirror/mode/css.js"></script>
+<script src="/sys/client/codemirror/mode/htmlmixed.js"></script>
+{% endif %}
+<style type="text/css">
+	body { font-family:Fixedsys; font-size:14px; margin:0; padding:0;background-color:#ebeced;}
+	#top_toolbar {
+		position:fixed;top:0px;left:1px;width:100%;z-index:10;background-color:#ebeced;
+		line-height:30px;color:black; border-bottom:1px solid black;
+		padding:0 20px 0 20px;font-family:Tahoma;
+	}
+	#top_toolbar i { cursor:pointer; margin-right:2px; color:#6e6e6e; }
+	#top_toolbar i:hover { color: #005b5b; font-weight:bold; }
+</style>
+</head>
+<body>
+<div id="top_toolbar">
+	<b style="color:#005b5b">{{D['f_name']}}&nbsp;</b>
+	<i class="fa fa-align-justify fa-lg" onclick="lineWrappingToggle()" title="자동줄바꿈" ></i>
+	<i class="fa fa-save fa-lg" title="파일저장" onclick="JYH_EDITOR_SUBMIT()"></i>
+	<i class="fa fa-play-circle fa-lg" title="파일실행" onclick="run_this('<?=$run_file?>')"></i>
+	<i class="fa fa-font fa-lg" title="다른이름으로저장" onclick="JYH_EDITOR_RESAVE()"></i>
+	<i class="fa fa-eraser fa-lg" title="내용삭제" onclick="editor.doc.setValue('')"></i>
+	<i class="fa fa-refresh fa-lg" title="다시읽기" onclick="location.reload()"></i>
+	<i class="fa fa-times-circle fa-lg" title="파일닫기" onclick="window.close()"></i>
+</div>
+
+<form id='JYH_EDITOR' method='post' action="{{D['_bse']}}filemanagers-fedit/save" style='margin-top:30px'>
+	<textarea id='code' name='save_text'>{{D['contents']}}</textarea> 
+	<input type='hidden' name='save_name' value="{{D['f_name']}}" >
+	<input type='hidden' name='save_path' value="{{D['f_path']}}" >
+</form>
+
+<script type="text/javascript">
+{% if D['opener_refresh'] %}
+	  opener.location.reload();
+{%  endif %}
+	function JYH_EDITOR_SUBMIT() { $("#JYH_EDITOR").submit(); }
+	function JYH_EDITOR_RESAVE() { exp_rename(); $("#JYH_EDITOR").submit(); } 
+	function exp_rename(){
+		var new_name = prompt("새로운 파일이름을 입력하세요"); 
+		if(new_name) {
+			$("input[name='save_name']").val(new_name); 
+			$("#f_name").text(new_name); 
+            $("#JYH_EDITOR").submit();
+		}
+	}
+	function run_this(url) {
+		var a = {};
+		a = {x:10, y:50, width:800, height:500, h_title: url, close_btn:true, over_close:true};
+		h_dialog.iframe(url,a); 
+	}
+	var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+		lineNumbers: true, 	matchBrackets: true, mode: '{{mode}}',theme:'editplus'}
+    );
+
+	function lineWrappingToggle() {	var toggle = ! editor.getOption('lineWrapping');	editor.setOption('lineWrapping', toggle); }
+</script>
+</body>
+</html>

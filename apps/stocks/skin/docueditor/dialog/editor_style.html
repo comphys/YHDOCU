@@ -1,0 +1,36 @@
+<div class="white-div" style="width:400px;height:214px;padding:5px;overflow:auto;">
+<textarea id='codeStyle'>JYH CODE</textarea> 
+</div>
+<button onclick="apply_new_style()" class="btn btn-black" style="width:100%;border-radius:0;"> 새로운 스타일 적용 </button>
+
+<script type='text/javascript'>
+
+var styleText = '';
+
+function apply_new_style() {
+	styleText = editorStyle.getValue();
+	styleText = styleText.replace(/;/gi,'').replace(/\n/gi,';');
+	$(docuSelected).attr('style',styleText);
+	JYHEDITOR.selectedMark();
+	//h_dialog.close('editor_style');
+}
+
+function editorStyle_refresh() {
+	styleText = $(docuSelected).attr('style'); 
+	if(styleText) {
+		var styleA = styleText.split(';').map(function(str){ return str.trim();});
+		styleText = styleA.join(';\n');
+		editorStyle.setValue(styleText);
+	} else { editorStyle.setValue('');}
+}
+
+styleText = $(docuSelected).attr('style'); 
+if(styleText) {
+	var styleA = styleText.split(';').map(function(str){ return str.trim();});
+	styleText = styleA.join(';\n');
+	$("#codeStyle").val( styleText );
+} else {$("#codeStyle").val('');}
+
+var editorStyle = CodeMirror.fromTextArea(document.getElementById("codeStyle"), {lineNumbers: true,mode:null,theme:'editplus',lineWrapping:true});
+
+</script>
