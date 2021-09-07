@@ -5,8 +5,8 @@
 <link href="/sys/mycss/mycss_dark.css"  rel="stylesheet" >
 <link href="/sys/fontawesome/css/font-awesome.css" rel="stylesheet">
 <link href="/sys/jyh/yhutils.css" rel="stylesheet">
-<link href="/skn/docu/board/my_dark/myskin.css"  rel="stylesheet" >
-<link href="/skn/docu/board/my_dark/body/bodyCss.css"  rel="stylesheet" >
+<link href="/skn/stocks/board/my_dark/myskin.css"  rel="stylesheet" >
+<link href="/skn/stocks/board/my_dark/body/bodyCss.css"  rel="stylesheet" >
 <link href="/sys/codemirror/lib/codemirror.css"  rel="stylesheet" >
 <link href="/sys/codemirror/theme/editplus.css"  rel="stylesheet" >
 <link href="/sys/zebra_datepicker/zebra_datepicker.css"  rel="stylesheet" >
@@ -14,7 +14,7 @@
 <script src="/sys/jyh/jquery-yh-2107.js"></script>
 <script src="/sys/mycss/mycss_dark.js"></script>
 <script src="/sys/jyh/yhutils.js"></script>
-<script src="/skn/docu/board/my_dark/skin.js"></script>
+<script src="/skn/stocks/board/my_dark/skin.js"></script>
 <script src="/sys/codemirror/lib/codemirror.js"></script>
 </head>
 <body>
@@ -33,7 +33,7 @@
 				{% endif %}
 				<ul class='dropdown-menu'>
 				{% for val in D[menu[0]] %}
-					<li><a href="/docu/{{ val['bid'] }}">{{ val['title'] }}</a></li> 
+					<li><a href="/stocks/{{ val['bid'] }}">{{ val['title'] }}</a></li> 
 				{% endfor %}
 				</ul>
 			</li>

@@ -6,7 +6,7 @@ from PIL import Image
 
 class Ajax(Control) :
     def _auto(self) :
-        self.DB = self.db('docu')
+        self.DB = self.db('stocks')
         
     def reply_save(self) :
 

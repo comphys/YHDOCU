@@ -3,7 +3,7 @@ from system.core.load import Control
 class Ajax(Control) :
 
     def _auto(self) :
-        self.DB = self.db('docu')
+        self.DB = self.db('stocks')
         
     def board_list(self) :
         section = self.D['post']['section']

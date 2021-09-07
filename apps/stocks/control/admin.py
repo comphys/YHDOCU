@@ -7,7 +7,7 @@ class Admin(Control) :
         return self.echo("Hellow Jung Yong Hoon")
 
     def _auto(self) :
-        self.DB = self.db('docu')
+        self.DB = self.db('stocks')
         if not 'N_NO' in session : return self.moveto('docu/board/login',short=False)
         self.D['user_cnt']   = self.DB.one("SELECT count(no) FROM h_user_list")
         self.D['board_cnt']  = self.DB.one("SELECT count(no) FROM h_board_config")

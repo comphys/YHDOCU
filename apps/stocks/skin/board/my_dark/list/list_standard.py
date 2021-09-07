@@ -1,5 +1,6 @@
 import system.hand.string as s
 from system.core.load import SKIN
+
 class LIST_SKIN(SKIN) :
 
     def _auto(self) :
@@ -27,6 +28,7 @@ class LIST_SKIN(SKIN) :
                 item['add0']  = item['add0'][0:self.D['BCONFIG']['subject_len']]
  
     def list(self) :
+
         self.head()
         self.data_preprocess()
 

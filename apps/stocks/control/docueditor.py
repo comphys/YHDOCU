@@ -5,7 +5,7 @@ class Docueditor(Control) :
 
     def docuopen(self) :
         
-        self.DB = self.db('docu')
+        self.DB = self.db('stocks')
         if not 'N_NO' in session : return self.moveto('board/login')
         self.D['f_path'] = self.gets.get('p').replace('-','/')
         self.D['Docu_name'] = self.gets.get('f') 

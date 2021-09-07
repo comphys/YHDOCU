@@ -3,7 +3,7 @@ from system.core.load import Control
 class Action(Control) :
 
     def _auto(self) :
-        self.DB = self.db('docu')
+        self.DB = self.db('stocks')
 
     def set_message(self,msg,typ='alert') :
         self.DB.exe(f"UPDATE act_message SET type='{typ}', message='{msg}' WHERE no=1")
@@ -15,7 +15,6 @@ class Action(Control) :
         return self.moveto('admin/board')
 
     def board_delete(self) :
-        self.log.info(self.D['post'])
         bid     = self.D['post']['d_bid']
         empty   = self.D['post'].get('empty',None)
 

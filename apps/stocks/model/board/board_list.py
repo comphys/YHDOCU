@@ -98,7 +98,7 @@ class M_board_list(Model) :
 
    
     def page_maker(self,page_total,this_page,page_start,page_end) :
-        pagelist = '/docu/board/list/'+self.D['bid']
+        pagelist = '/stocks/board/list/'+self.D['bid']
         if self.D['Sort']  : pagelist += '/sort=' + self.D["Sort"]
         if self.D['Sort1'] : pagelist += '/sort1=' + self.D["Sort1"]
 

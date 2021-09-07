@@ -41,7 +41,7 @@ class M_board(Model) :
         self.D['use_key']  = []
         self.D['not_key']  = []
 
-        for i in range(16) :
+        for i in range(21) :
             add_index = 'add' + str(i)
             if self.D['bconfig'][add_index] :
                 exConf = self.D['bconfig'][add_index].split('/')
@@ -64,13 +64,11 @@ class M_board(Model) :
 
     def board_add(self) :
         SAVE = self.D['post']
-        if not SAVE['folder'] : SAVE['folder'] = SAVE['title']
   
         # 무결성 확인
         tbl = 'h_board_config'
         bid = SAVE['bid']
         if self.DB.cnt(f"SELECT bid FROM {tbl} WHERE bid='{bid}'") : return "보드 아이디가 중복됩니다."
-        if self.DB.cnt(f"SELECT folder FROM {tbl} WHERE folder='{SAVE['folder']}'") : return "저장 폴더 이름이 중복됩니다."
 
         self.DB.insert_from_post(tbl) 
 
@@ -87,7 +85,8 @@ class M_board(Model) :
             sql+=   "hit        INTEGER NOT NULL default 0, "
             sql+=   "wdate      INTEGER NOT NULL default 0, "
             sql+=   "mdate      INTEGER NOT NULL default 0, "
-            sql+=   "add1       TEXT,add2 TEXT, add3 TEXT, add4 TEXT, add5 TEXT, add6 TEXT, add7 TEXT, add8 TEXT, add9 TEXT, add10 TEXT, add11 TEXT, add12 TEXT, add13 TEXT, add14 TEXT, add15 TEXT)"
+            sql+=   "add1       TEXT,add2 TEXT, add3 TEXT, add4 TEXT, add5 TEXT, add6 TEXT, add7 TEXT, add8 TEXT, add9 TEXT, add10 TEXT, "
+            sql+=   "add11 TEXT, add12 TEXT, add13 TEXT, add14 TEXT, add15 TEXT, add16 TEXT, add17 TEXT, add18 TEXT, add19 TEXT, add20 TEXT )"
             self.DB.exe(sql)
 
         if SAVE['type'] in ("yhboard","yhalbum") :

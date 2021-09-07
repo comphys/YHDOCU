@@ -5,7 +5,7 @@ class Editor(Control) :
 
   
     def _auto(self) :
-        self.DB = self.db('docu')
+        self.DB = self.db('stocks')
         self.D['bid'] = self.gets['bid']
         self.dialog_skin = 'board/'+self.DB.one(f"SELECT skin FROM h_board_config WHERE bid = '{self.D['bid']}'")+'/dialog/'
 

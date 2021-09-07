@@ -6,7 +6,7 @@ import system.core.my_utils as my
 class Filemanager(Control) : 
 
     def _auto(self) :
-        self.DB = self.db('docu')
+        self.DB = self.db('stocks')
         self.epl = self.load_app_lib('epl')
         self.D['ROOT'] = self.epl.ROOT
         self.F ={}
