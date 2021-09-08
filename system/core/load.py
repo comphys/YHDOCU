@@ -27,7 +27,8 @@ def load_control(module_name,myapp):
     else : 
         module += module_name
         classn =  module_name    
-
+    
+    classn = classn.capitalize()
     return getattr( __import__('%s' %(module), fromlist=[classn]), classn )
 
 
@@ -138,6 +139,7 @@ class Control :
     def load_skin(self,opt='list') :
         module = f"apps.{self.V['_app']}.skin.board.{self.D['BCONFIG']['skin']}.{opt}."
         chk_f  = os.path.join(self.skin_dir,self.skin,opt)
+
         module += opt+'_'+self.D['bid'] if os.path.isfile(f"{chk_f}/{opt}_{self.D['bid']}.py") else  opt+'_standard'
         classn = opt.upper() + '_SKIN'
 

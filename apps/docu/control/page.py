@@ -1,7 +1,7 @@
 from system.core.load import Control
 from flask import session
 
-class page(Control) : 
+class Page(Control) : 
 
 
     def _auto(self) :

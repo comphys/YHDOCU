@@ -1,6 +1,6 @@
 from system.core.load import Control
 
-class winopen(Control) :
+class Winopen(Control) :
     def search(self) :
         
         SearchCata = self.D['post'].get('search_cata','all')

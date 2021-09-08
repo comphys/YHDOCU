@@ -3,7 +3,7 @@ from flask import session
 import FinanceDataReader as fdr
 import system.core.my_utils as ut
 
-class stock_update(Control) : 
+class Stock_update(Control) : 
 
     def _auto(self) :
         self.DB = self.db('stocks')

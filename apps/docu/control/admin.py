@@ -2,7 +2,7 @@ from system.core.load import Control
 from flask import session
 import system.hand.myfile as hf
 
-class admin(Control) :
+class Admin(Control) :
     def index(self) :
         return self.echo("Hellow Jung Yong Hoon")
 
