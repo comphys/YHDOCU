@@ -26,6 +26,7 @@
 			{% endfor -%}
 			<input type="hidden" name="list_filter" value="{{D['list_filter']}}" >
 		</form>
+		<a href="javascript:winopen('winopen/chart',820,450,'stock_chart')" style='color:white'><i class='fa fa-line-chart fa-lg' title=""></i></a>
 	</div>
 {% endif -%}
 	<div class='pull-right'>
@@ -95,27 +96,29 @@
 <div class="row-row clearfix">
 	<div class='pull-left'>
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
-		<a href="{{D['_bse']}}boards-stockUpdate/update/{{D['bid']}}"><button class='btn btn-small btn-red'>업데이트</button></a>&nbsp;
+		<a href="{{D['_bse']}}boards-stockUpdate/update/{{D['code']}}"><button class='btn btn-small btn-red'>업데이트</button></a>&nbsp;
+		<input  name="add_new_stock" type='text' style='height:24px;vertical-align:baseline;width:100px' />
+		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="add_newstock()">종목추가</button>
 	</div>
 	<div class='pagination pull-right'><ul>
 		{{D['Pagination']|safe}}
 	</ul></div>
 </div>
 
-{% if D['BCONFIG']['row_flt']=='on' %}
 <script>
-$(document).ready(function(){ 
-	if("{{D['list_filter']}}") $("#list-filter").show();
-	$(document).on('keydown',null,'f1',function(){ $("#list-filter").toggle(); return false; })
-	$("#filter-qry").on('keydown',function(e){if(e.which==13){var txt = $("#filter-qry").text(); $("input[name='list_filter']").val(txt);document.category_search.submit();}});
-	$("#filter-reset").click(function(){$("#filter-qry").text('');});
-	$("#list-filter-submit").click(function(){var txt = $("#filter-qry").text(); $("input[name='list_filter']").val(txt);document.category_search.submit();});
-});
+function add_newstock() { 
+	var new_stock = $("input[name='add_new_stock']").val();
+	if(! new_stock ) return;
+	var url = uri('linkurl') + 'boards-stockUpdate/update/' + new_stock ;
+	location.href = url; 
+}
 </script>
-{% endif %}
-<div style="position:fixed;left:750px;top:100px;width:800px;height:500px;border:1px solid black">
+
+<!--
+<div style="position:fixed;left:750px;top:100px;width:800px;">
 <iframe frameborder="0" scrolling="no" width="800" height="420" 
 src="https://api.stockdio.com/visualization/financial/charts/v1/HistoricalPrices?app-key=92DC8890E1874E1D97EE34387D72F152&symbol=TQQQ&splits=false&showUserMenu=false&motif=Face&palette=Aurora&showLogo=Title&backgroundColor=000&axesLinesColor=000">
 </iframe>
 </div>
+-->
 {% endblock %}

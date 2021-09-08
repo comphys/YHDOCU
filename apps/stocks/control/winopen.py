@@ -36,3 +36,6 @@ class Winopen(Control) :
         self.D['cata_s'][SearchCata] = 'selected'
 
         return self.html("winopen/search.html")
+
+    def chart(self) :
+        return self.html("winopen/stock_chart.html") 

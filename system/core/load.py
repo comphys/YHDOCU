@@ -140,13 +140,12 @@ class Control :
         module = f"apps.{self.V['_app']}.skin.board.{self.D['BCONFIG']['skin']}.{opt}."
         chk_f  = os.path.join(self.skin_dir,self.skin,opt)
         module += opt+'_'+self.D['bid'] if os.path.isfile(f"{chk_f}/{opt}_{self.D['bid']}.py") else  opt+'_standard'
-        self.info(module)
         classn = opt.upper() + '_SKIN'
 
         mod = __import__('%s' %(module), fromlist=[classn])
         return getattr( mod, classn )(self)
 
-    def set_message(self,msg,typ='alert') :
+    def set_message(self,msg,typ='notice') :
         self.DB.exe(f"UPDATE act_message SET type='{typ}', message='{msg}' WHERE no=1")    
 
     def get_message(self) :

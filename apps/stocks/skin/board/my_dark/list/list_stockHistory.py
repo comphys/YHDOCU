@@ -1,11 +1,11 @@
 import system.hand.string as s
+from flask import session
 from system.core.load import SKIN
 
 class LIST_SKIN(SKIN) :
 
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)
-        self.Type = self.D['BCONFIG']['type']
 
     def head(self) : 
         TH_title = {'no':'번호','uname':'작성자','wdate':'작성일','mdate':'수정일','hit':'조회','uid':'아이디'}
@@ -31,6 +31,9 @@ class LIST_SKIN(SKIN) :
 
         self.head()
         self.data_preprocess()
+        try :     self.D['code'] = session['CSH']['csh_add1']
+        except :  self.D['code'] = 'NONE'
+        if self.D['code'] =='' : self.D['code'] = 'NONE'
 
         TR = [] ; tx = {}
 
