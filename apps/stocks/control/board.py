@@ -2,7 +2,7 @@ from system.core.load import Control
 from flask import session
 import os
 
-class Board(Control) : 
+class board(Control) : 
 
     def index(self) :
         return self.moveto('board/list')

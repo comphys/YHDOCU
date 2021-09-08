@@ -1,7 +1,7 @@
 from system.core.load import Control
 from flask import session
 
-class Docueditor(Control) :
+class docueditor(Control) :
 
     def docuopen(self) :
         

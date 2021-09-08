@@ -3,7 +3,7 @@ from system.core.load import Control
 from flask import session
 import system.core.my_utils as my
 
-class Filemanager(Control) : 
+class filemanager(Control) : 
 
     def _auto(self) :
         self.DB = self.db('docu')
