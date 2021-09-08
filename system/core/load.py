@@ -137,7 +137,9 @@ class Control :
         return getattr( mod, classn )(self)
 
     def load_skin(self,opt='list') :
-        module = f"apps.docu.skin.board.{self.D['BCONFIG']['skin']}.{opt}.{opt}_standard"
+        module = f"apps.docu.skin.board.{self.D['BCONFIG']['skin']}.{opt}."
+        chk_f  = os.path.join(self.V['_pth'],'apps',self.V['_app'],'skin',self.skin,'list',self.D['bid'])
+        module += self.D['bid'] if os.path.isfile(chk_f+'.py') else  opt+'_standard'
         classn = opt.upper() + '_SKIN'
 
         mod = __import__('%s' %(module), fromlist=[classn])

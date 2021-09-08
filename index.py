@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, redirect, send_from_directory
 from flask import session
 import config, os, configparser
-from system.core.load import load_control, my_log
+from system.core.load import load_control
 # ----------------------------------------------------------------------------------------------------------
 app = Flask(__name__)
 #app.config.from_object(config.ProductionConfig)
