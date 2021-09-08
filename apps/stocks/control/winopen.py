@@ -1,4 +1,5 @@
 from system.core.load import Control
+from flask import session
 
 class Winopen(Control) :
     def search(self) :
@@ -38,4 +39,5 @@ class Winopen(Control) :
         return self.html("winopen/search.html")
 
     def chart(self) :
+        self.D['code'] = session['CSH']['csh_add1']
         return self.html("winopen/stock_chart.html") 
