@@ -19,7 +19,7 @@ def my_log(logger_name) :
 
 
 def load_control(module_name,myapp):
-
+    mylog  = my_log('my_logger')
     module = 'apps.'+ myapp +'.control.'
     if '-' in module_name : 
         folder, classn = module_name.split("-")
@@ -27,7 +27,8 @@ def load_control(module_name,myapp):
     else : 
         module += module_name
         classn =  module_name    
-    
+    mylog.info(module)
+    mylog.info(classn)
     classn = classn.capitalize()
     return getattr( __import__('%s' %(module), fromlist=[classn]), classn )
 
