@@ -8,7 +8,7 @@
 .list-reply { display:inline-block; line-height:10px; padding:2px 4px 2px 4px; font-size:10px; font-weight:bold;background-color:#3A87AD;border:1px solid black; border-radius:4px;}
 .list-brother { display:inline-block; line-height:10px; padding:2px 4px 2px 4px; font-size:10px; font-weight:bold;background-color:#B94A48;border:1px solid black; border-radius:4px;}
 .list-edit-on { color:white; background-color:#0058b0; font-weight:bold; outline:none;}
-.list-subject { color:#8DD1FF;cursor:pointer }
+.list-subject { cursor:pointer }
 .list-current-no {text-align:center; width:60px}
 .list-no {text-align:center; width:60px}
 .list-current-tr {background-color:#464646;}

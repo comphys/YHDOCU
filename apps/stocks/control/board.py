@@ -32,6 +32,7 @@ class Board(Control) :
         M.list_head()
         M.list_main()
         D={'skin': self.skin + '/list/' + self.D['BCONFIG']['sub_list'] }
+        self.get_message()
         return self.echo(D)
 
     def body(self) :

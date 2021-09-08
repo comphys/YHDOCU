@@ -137,14 +137,26 @@ class Control :
         return getattr( mod, classn )(self)
 
     def load_skin(self,opt='list') :
-        module = f"apps.docu.skin.board.{self.D['BCONFIG']['skin']}.{opt}."
-        chk_f  = os.path.join(self.V['_pth'],'apps',self.V['_app'],'skin',self.skin,'list',self.D['bid'])
-        module += self.D['bid'] if os.path.isfile(chk_f+'.py') else  opt+'_standard'
+        module = f"apps.{self.V['_app']}.skin.board.{self.D['BCONFIG']['skin']}.{opt}."
+        chk_f  = os.path.join(self.skin_dir,self.skin,opt)
+        module += opt+'_'+self.D['bid'] if os.path.isfile(f"{chk_f}/{opt}_{self.D['bid']}.py") else  opt+'_standard'
+        self.info(module)
         classn = opt.upper() + '_SKIN'
 
         mod = __import__('%s' %(module), fromlist=[classn])
         return getattr( mod, classn )(self)
-    
+
+    def set_message(self,msg,typ='alert') :
+        self.DB.exe(f"UPDATE act_message SET type='{typ}', message='{msg}' WHERE no=1")    
+
+    def get_message(self) :
+        msg = self.DB.exe("SELECT * FROM act_message WHERE no=1", many=1, assoc=True)
+        if msg['message'] :
+            self.D['act_msg'] = f"<script>h_dialog.{msg['type']}('{msg['message']}')</script>"
+            self.DB.exe("UPDATE act_message SET type='', message=''")
+        else :
+            self.D['act_msg'] = ''
+
     def html_decode(self,html_str) :
         return html.unescape(html_str)
         
