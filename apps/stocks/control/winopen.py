@@ -39,5 +39,8 @@ class Winopen(Control) :
         return self.html("winopen/search.html")
 
     def chart(self) :
-        self.D['code'] = session['CSH']['csh_add1']
+
+        try : self.D['code'] = session['CSH']['csh_add1']
+        except : self.D['code'] = ''
+        
         return self.html("winopen/stock_chart.html") 

@@ -11,8 +11,12 @@
 </head>
 <body style="background-color:black;">
 <div>
-<iframe frameborder="0" scrolling="no" width="800" height="420" 
-src="https://api.stockdio.com/visualization/financial/charts/v1/HistoricalPrices?app-key=92DC8890E1874E1D97EE34387D72F152&symbol={{D['code']}}&splits=false&showUserMenu=false&motif=Face&palette=Aurora&showLogo=Title&backgroundColor=000&axesLinesColor=000">
+{% if D['code'] %}
+<iframe frameBorder='0' scrolling='no' width='800' height='420' 
+src='https://api.stockdio.com/visualization/financial/charts/v1/HistoricalPrices?app-key=92DC8890E1874E1D97EE34387D72F152&symbol={{D['code']}}&displayPrices=Area&motif=Face&palette=High-Contrast&showBorderAndTitle=false&showLogo=No&axesLinesColor=000000'></iframe>
+{% else %}
+<div style="font-size:14px;padding:20px;color:yellow">Please, Select Stock Code...</div>
+{% endif %}
 </iframe>
 </div>
 </body>
