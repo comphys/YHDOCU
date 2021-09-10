@@ -23,8 +23,6 @@ class Action(Control) :
 
         SAVE = self.D['post']
 
-        self.info(SAVE)
-
         if SAVE['mode'] == 'add_body' :
             no = int(self.gets.get('no',0))
             origin = int(SAVE['brother']) if int(SAVE['brother']) > 0 else no
