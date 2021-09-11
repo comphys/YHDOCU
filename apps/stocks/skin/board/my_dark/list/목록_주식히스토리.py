@@ -24,7 +24,7 @@ class 목록_주식히스토리(SKIN) :
         if self.TrCnt :
             for item in self.D['LIST'] :
                 item['wdate'] = s.timestamp_to_date(item['wdate'],"%Y/%m/%d")
-                item['mdate'] = s.timestamp_to_date(item['mdate'],"%Y/%m/%d %H:%M:%S")
+                item['mdate'] = s.timestamp_to_date(item['mdate'],"%m/%d %H:%M")
                 item['add0']  = item['add0'][0:self.D['BCONFIG']['subject_len']]
  
     def list(self) :
@@ -101,18 +101,3 @@ class 목록_주식히스토리(SKIN) :
                 tx={}
 
             self.D['TR'] = TR
-
-
-            if self.D['BCONFIG']['row_sum'] == 'on' :
-                list_order_cnt = len(self.D['list_order'])
-                td2 =['<td>&nbsp;</td>' for x in range(list_order_cnt)]
-                
-                for k in self.D['EXFORMA'].keys() : 
-                    if self.D['RS'][k] : td2[self.D['list_order'].index(k)] = f"<td>{self.D['RS'][k]:,}</td>" 
-
-                td2[0] = "<td class='list-no'>합 계</td>"
-                self.D['row_sum'] = ''.join(td2)
-
-
-            if self.D['BCONFIG']['row_flt'] == 'on' :
-                self.D['row_flt'] = f"<td id='filter-reset'>필 터</td><td id='filter-qry' contenteditable colspan='{list_order_cnt-2}'>{self.D['list_filter']}</td><td id='list-filter-submit'>전송</td>"

@@ -1,4 +1,5 @@
-import os, datetime, re
+import os, re, time
+from datetime import datetime
 
 # 파일조작 관련 함수 
 def file_split(filename) :
@@ -66,13 +67,13 @@ def dequote(s):
 
 # time & date
 def now_timestamp() :
-    return int(datetime.datetime.now().timestamp())
+    return int(datetime.now().timestamp())
 
 def timestamp_to_date(ts='now',opt=1) :
     '''
     timestamp는 1970-01-01 00:00:00 를 기준으로 경과한 시간(한국은 +9시간)
     '''
-    if ts=='now' : ts = int(datetime.datetime.now().timestamp())
+    if ts=='now' : ts = int(datetime.now().timestamp())
 
     if    opt == 1 : t_format = "%Y-%m-%d %H:%M:%S"
     elif  opt == 2 : t_format = "%Y/%m/%d %H:%M:%S"
@@ -82,7 +83,7 @@ def timestamp_to_date(ts='now',opt=1) :
     elif  opt == 6 : t_format = "%y/%m/%d %H:%M:%S" 
     else  : t_format = opt 
 
-    return datetime.datetime.fromtimestamp(ts).strftime(t_format)
+    return datetime.fromtimestamp(ts).strftime(t_format)
 
 def rg_ex(op,txt) :
     if op is 'mobile' : see = re.compile('010-\d{3,4}-\d{4}') 
