@@ -1,7 +1,7 @@
 import system.hand.string as s
 from system.core.load import SKIN
 
-class LIST_SKIN(SKIN) :
+class 목록_표준(SKIN) :
 
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)

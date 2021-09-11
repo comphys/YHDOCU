@@ -44,7 +44,7 @@ class DB :
 
         fld = ','.join(fld) if type(fld) is list else fld
 
-        if self.wre : wre = "WHERE " + self.wre
+        wre = "WHERE " + self.wre if self.wre else ''
         qry = f"SELECT {fld} FROM {self.tbl} {wre} {self.lmt} {self.odr}"
         self.qry = qry.strip()
 

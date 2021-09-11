@@ -1,5 +1,6 @@
 from system.core.load import SKIN
-class WRITE_SKIN(SKIN) :
+
+class 쓰기_표준(SKIN) :
 
     def write(self) :
         OBODY = self.D.get('OBODY',None)

@@ -137,12 +137,8 @@ class Control :
         return getattr( mod, classn )(self)
 
     def load_skin(self,opt='list') :
-        module = f"apps.{self.V['_app']}.skin.board.{self.D['BCONFIG']['skin']}.{opt}."
-        chk_f  = os.path.join(self.skin_dir,self.skin,opt)
-
-        module += opt+'_'+self.D['bid'] if os.path.isfile(f"{chk_f}/{opt}_{self.D['bid']}.py") else  opt+'_standard'
-        classn = opt.upper() + '_SKIN'
-
+        classn = os.path.splitext(self.D['BCONFIG']['sub_'+ opt ])[0]
+        module = f"apps.{self.V['_app']}.skin.board.{self.D['BCONFIG']['skin']}.{opt}.{classn}"
         mod = __import__('%s' %(module), fromlist=[classn])
         return getattr( mod, classn )(self)
 

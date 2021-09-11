@@ -1,10 +1,11 @@
 import system.hand.string as s
+from flask import session
 from system.core.load import SKIN
-class LIST_SKIN(SKIN) :
+
+class 목록_주식히스토리(SKIN) :
 
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)
-        self.Type = self.D['BCONFIG']['type']
 
     def head(self) : 
         TH_title = {'no':'번호','uname':'작성자','wdate':'작성일','mdate':'수정일','hit':'조회','uid':'아이디'}
@@ -27,8 +28,12 @@ class LIST_SKIN(SKIN) :
                 item['add0']  = item['add0'][0:self.D['BCONFIG']['subject_len']]
  
     def list(self) :
+
         self.head()
         self.data_preprocess()
+        try :     self.D['code'] = session['CSH']['csh_add1']
+        except :  self.D['code'] = 'NONE'
+        if self.D['code'] =='' : self.D['code'] = 'NONE'
 
         TR = [] ; tx = {}
 
@@ -53,27 +58,29 @@ class LIST_SKIN(SKIN) :
                     elif key == 'mdate' : tx[key] = f"<td class='list-mdate'>{txt}</td>"                    
                     elif key == 'hit'   : tx[key] = f"<td class='list-hit'>{txt}</td>" 
                     elif key == 'uname' : tx[key] = f"<td class='list-name'>{txt}</td>"
+                    elif key == 'add8'  : 
+                        txt_val = float(txt)*100
+                        clr = "#F6CECE;" if txt_val > 0 else "#CED8F6"
+                        txt = f"{txt_val:.2f}"
+                        tx[key] = f"<td style='text-align:right;color:{clr}'>{txt}</td>"
                     
                     elif key == 'add0'  : 
-                        if self.D['EXCOLOR']['add0'] : style = f"style='color:{self.D['EXCOLOR']['add0']}'"
-                        if item['tle_color'] : style = f"style='color:{item['tle_color']};font-weight:bold'"
+                        if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
+                        if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
+                        if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
                         
-                        tmp = "<td class='text-left'>"
+                        tmp = f"<td style='{style}'>"
                         
-                        if cno : tmp += f"<span {style}>{txt}</span>"
+                        if cno : tmp += f"<span>{txt}</span>"
                         else :
                             href  = f"{self.D['_bse']}board/body/{self.D['bid']}/no={item['no']}"
-                            if item['brother'] : href += f"/brother={item['brother']}"
-                            tmp += f"<span class='list-subject' data-href='{href}' {style}>{txt}</span>"
-
-                        if item['reply']   and item['reply']   > 0 :   tmp += f"&nbsp;<span class='list-reply'>{item['reply']}</span>"
-                        if item['brother'] and item['brother'] < 0 :   tmp += f"&nbsp;<span class='list-brother'>{abs(item['brother'])}</span>"    
+                            tmp += f"<span class='list-subject' data-href='{href}' >{txt}</span>"
 
                         tmp += '</td>'
                         tx[key] = tmp
 
                     else : 
-                        if self.D['EXALIGN'][key]  : style   = f"text-align:{self.D['EXALIGN'][key]};"
+                        if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
                         
@@ -85,10 +92,8 @@ class LIST_SKIN(SKIN) :
                         elif txt_format == 'mobile' : clas= f"class='list-mobile'" 
                         else : clas=f"class='list-{key}'"
                         
-                    #   if (self.D['EXFTYPE'][key] == 'int') or (txt_format == 'number') or (txt_format == 'n_edit'): txt = f"{int(txt):,}"
-
                         if (self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
-                        if (self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,}"
+                        if (self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,.2f}"
 
                         tx[key] = f"<td style='{style}' {clas}>{txt}</td>"
 
