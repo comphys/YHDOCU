@@ -1,4 +1,4 @@
-import system.hand.string as s
+import system.core.my_utils as ut
 from flask import session
 from system.core.load import SKIN
 
@@ -23,12 +23,12 @@ class 목록_주식히스토리(SKIN) :
     def data_preprocess(self) :
         if self.TrCnt :
             for item in self.D['LIST'] :
-                item['wdate'] = s.timestamp_to_date(item['wdate'],"%Y/%m/%d")
-                item['mdate'] = s.timestamp_to_date(item['mdate'],"%m/%d %H:%M")
+                item['wdate'] = ut.timestamp_to_date(item['wdate'],"%Y/%m/%d")
+                item['mdate'] = ut.timestamp_to_date(item['mdate'],"%m/%d %H:%M")
                 item['add0']  = item['add0'][0:self.D['BCONFIG']['subject_len']]
  
     def list(self) :
-        self.D['TimeNow'] = s.timestamp_to_date(ts='now')
+        self.D['TimeNow'] = ut.timestamp_to_date(ts='now')
         self.head()
         self.data_preprocess()
         try :     self.D['code'] = session['CSH']['csh_add1']
