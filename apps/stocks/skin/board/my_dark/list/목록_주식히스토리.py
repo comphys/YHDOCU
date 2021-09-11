@@ -24,11 +24,11 @@ class 목록_주식히스토리(SKIN) :
         if self.TrCnt :
             for item in self.D['LIST'] :
                 item['wdate'] = s.timestamp_to_date(item['wdate'],"%Y/%m/%d")
-                item['mdate'] = s.timestamp_to_date(item['mdate'],"%Y/%m/%d")
+                item['mdate'] = s.timestamp_to_date(item['mdate'],"%Y/%m/%d %H:%M:%S")
                 item['add0']  = item['add0'][0:self.D['BCONFIG']['subject_len']]
  
     def list(self) :
-
+        self.D['TimeNow'] = s.timestamp_to_date(ts='now')
         self.head()
         self.data_preprocess()
         try :     self.D['code'] = session['CSH']['csh_add1']
