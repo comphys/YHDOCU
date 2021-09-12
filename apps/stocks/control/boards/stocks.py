@@ -76,7 +76,7 @@ class Stocks(Control) :
             매매전략 = preDATA['add2']
 
             # 체결단가 계산하기
-            if 체결수량 == '' and 매수금액 == '' :
+            if  체결수량 == '' and 매수금액 == '' :
                 체결수량 = 체결수량1 = 체결수량2 =0; 매수금액 = 0.0
                 self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{preDATA['add2']}'")
                 STRAGY = self.DB.get_line("add1,add2,add3,add4,add5")
@@ -104,7 +104,6 @@ class Stocks(Control) :
 
             # 자동 계산2
             가용잔액 = float(preDATA['add14'])
- 
             보유수량 = int(preDATA['add7']) + 체결수량
             총매수금 = float(preDATA['add9']) + 매수금액
             평균단가 = 총매수금 / 보유수량
