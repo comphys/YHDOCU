@@ -1,0 +1,117 @@
+{% extends D['_skn'] + 'board/my_dark/main_layout.html' %}
+
+{% block contents_list %}
+<!-- 리스트 상부 카테고리 시작 -->
+<div class="clearfix" style='margin:10px 0px 5px 0px'>
+{% if D['Cat_use'] %}
+	<div class="pull-left">
+		<form method='post' name='category_search' action="{{D['_bse']}}board/list/{{D['bid']}}" style='display:inline;'>
+			{%- for cats in D['CAT_LIST'] %}
+			<div class='myselect' style='margin-right:5px;'>
+				{%- if cats['chked'] %}
+				<input placeholder="{{cats['title']}}" name="csh_{{cats['fkey']}}" id="{{cats['id']}}" type="text" style="color:black;width:100px;background-color:#b5daff" value="{{cats['value']}}" />
+				{%- else %}
+				<input placeholder="{{cats['title']}}" name="csh_{{cats['fkey']}}" id="{{cats['id']}}" type="text" style="width:100px" value="{{cats['value']}}" />
+				{%- endif %}
+				<div class='btn-group'>
+					<button class="btn btn-select dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+					<ul class='dropdown-menu'>
+						<li><a> {{cats['title']}} </a></li>
+						{%- for li in cats['lists'] %}
+						<li><a href="#"> {{li[0]}} </a></li>
+						{% endfor -%}
+					</ul>
+				</div>
+			</div>
+			{% endfor -%}
+			<input type="hidden" name="list_filter" value="{{D['list_filter']}}" >
+		</form>
+	</div>
+{% endif -%}
+	<div class='pull-right'>
+		<div class='select' style='margin-right:5px;'>
+			<span id="cell-sum"></span>
+			<input placeholder="검색항목" name="search_field" type="text" style="width:100px" value="{{D['search_f']}}" />
+			<div class='btn-group'>
+				<button class="btn btn-select dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+				<ul class='dropdown-menu'>
+					<li><a> 검색항목 </a></li>
+					{% for key, val in D['EXTITLE'].items() -%}
+					<li><a href="#"> {{val}}</a></li>
+                    {% endfor -%}
+					<li><a href="#"> 본 문 </a></li>
+				</ul>
+			</div>
+		</div>
+
+		<input  id="search_input2" type='text' name='search_value' value="{{D['search']}}" style='height:24px;vertical-align:baseline' />
+		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="list_search2()">검색</button>
+		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="location.href='{{D['_bse']}}board/list/{{D['bid']}}/csh=on'" >취소</button>
+	</div>
+</div>
+<!-- 리스트 상부 카테고리 종료 -->
+
+<!-- 리스트 메인 테이블 시작 -->
+
+{% if D['TR'] %}
+<div class="row-row clearfix"> 
+	<table class='table table-bordered table-striped table-hover'>
+		<thead>
+			<tr>
+				{% for key,val in D['head_td'].items() %}
+				{{val|safe}}
+				{% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+			{% if D['BCONFIG']['row_flt'] == 'on' %}
+			<tr id="list-filter" {{ "" if D['list_filter'] else "style='display:none'"|safe }}>{{D['row_flt']|safe}}</tr>
+			{% endif %}
+			{% if D['BCONFIG']['row_sum'] == 'on' %}
+			<tr id="list-sum">{{D['row_sum']|safe}}</tr>
+			{% endif %}
+			{%- for TR in D['TR'] -%}
+			{% if loop.index0 == D['cno'] %}
+			<tr class="list-current-tr">
+			{% else %}
+			<tr> 
+			{% endif %}
+			{% for key,val in TR.items() %}
+			{{val|safe}}
+			{% endfor %}
+			</tr>
+			{%- endfor %}
+		</tbody>
+	</table>
+</div>
+{% else %}
+<div class="row-row clearfix"> 
+	<div class='well'><strong>안내사항 :</strong> 현재 작성된 글이 없거나 검색결과에 일치하는 데이타가 없습니다.  </div> 
+</div>
+{% endif %}
+<!-- 리스트 메인 테이블 종료 -->
+
+<!-- 하단 버튼 [ 목록 쓰기] [페이지네이션]-->
+<div class="row-row clearfix">
+	<div class='pull-left'>
+		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
+		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>쓰 기</button></a>&nbsp;
+	</div>
+	<div class='pagination pull-right'><ul>
+		{{D['Pagination']|safe}}
+	</ul></div>
+</div>
+
+{% if D['BCONFIG']['row_flt']=='on' %}
+<script>
+$(document).ready(function(){ 
+	if("{{D['list_filter']}}") $("#list-filter").show();
+	$(document).on('keydown',null,'f1',function(){ $("#list-filter").toggle(); return false; })
+	$("#filter-qry").on('keydown',function(e){if(e.which==13){var txt = $("#filter-qry").text(); $("input[name='list_filter']").val(txt);document.category_search.submit();}});
+	$("#filter-reset").click(function(){$("#filter-qry").text('');});
+	$("#list-filter-submit").click(function(){var txt = $("#filter-qry").text(); $("input[name='list_filter']").val(txt);document.category_search.submit();});
+});
+</script>
+{% endif %}
+
+{% endblock %}

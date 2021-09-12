@@ -22,6 +22,7 @@ class Stocks(Control) :
         self.DB.tbl = 'h_daily_trading_board'
         self.DB.wre = f"add1='{종목코드}'" 
         preChk = self.DB.get_one("max(no)")
+        oldChk = self.DB.get_one("min(no)")
 
         if preChk is None and ( 체결단가 == '' or 체결수량 == '' or 매매전략 == '' or 가용잔액 == ''): 
             update['msg'] = "먼저 기록된 데이타가 없습니다. 추가 정보를 입력하여 주시기 바랍니다"
@@ -31,7 +32,13 @@ class Stocks(Control) :
         
         # 당일종가 구하기
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add0='{기록일자}' and add1='{종목코드}'")
-        당일종가 = float(self.DB.get("add3",many=1,assoc=False))
+        당일종가 = self.DB.get_one("add3")
+        if  당일종가 is None : 
+            update['msg'] = "기록일에 해당하는 '당일종가'가 존재하지 않습니다. 주가정보를 업데이트 하시기 바랍니다"
+            update['replyCode'] = 'NOTICE'
+            return self.echo(json.dumps(update))
+        else : 
+            당일종가 = float(당일종가)
 
         if preChk is None :
             if preChk is None :
@@ -49,12 +56,18 @@ class Stocks(Control) :
                 진행상황 = '정상진행'
 
         else :
+            # 시작 이전 데이타 입력 방지하기 
+            self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"no='{oldChk}' and add1='{종목코드}'")
+            if self.DB.get_one('add0') > 기록일자 :
+                update['msg'] = "최초의 기록보다 예전 날자를 선택하였습니다"
+                update['replyCode'] = 'NOTICE'
+                return self.echo(json.dumps(update))                
+ 
             # 데이타 중복 방지하기
             self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"add0='{기록일자}' and add1='{종목코드}'")
-            
             if self.DB.get_one('add0') : 
                 update['msg'] = "같은 날자에 입력된 데이타가 존재합니다"
-                update['replyCode'] = 'DPLCT'
+                update['replyCode'] = 'NOTICE'
                 return self.echo(json.dumps(update))
 
             # 전일데이타 가져오기
@@ -75,12 +88,9 @@ class Stocks(Control) :
                 평단가매수 = 전일평단가 * (1+float(STRAGY['add4']))
                 큰단가매수 = 전일평단가 * (1+float(STRAGY['add5']))
 
-
                 if 당일종가 <= 평단가매수 :  체결수량1 = math.ceil(매수금액1 / 평단가매수)
-                self.info(체결수량1)
                 
                 if 당일종가 <= 큰단가매수 :  체결수량2 = math.ceil(매수금액2 / 큰단가매수)
-                self.info(체결수량2)
                 
                 체결수량 = 체결수량1 + 체결수량2
                 체결단가 = 당일종가
