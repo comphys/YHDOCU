@@ -57,21 +57,22 @@ class 목록_매매일지(SKIN) :
                     elif key == 'mdate' : tx[key] = f"<td class='list-mdate'>{txt}</td>"                    
                     elif key == 'hit'   : tx[key] = f"<td class='list-hit'>{txt}</td>" 
                     elif key == 'uname' : tx[key] = f"<td class='list-name'>{txt}</td>"
+
+                    elif key == 'add1' :
+                        if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
+                        if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
+                        if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
+                        tx[key] = f"<td style='{style}' data-no='{item['no']}' class='todo_today'>{txt}</td>" 
                     
                     elif key == 'add0'  : 
                         if self.D['EXCOLOR']['add0'] : style = f"style='color:{self.D['EXCOLOR']['add0']}'"
-                        if item['tle_color'] : style = f"style='color:{item['tle_color']};font-weight:bold'"
                         
                         tmp = "<td class='text-left'>"
                         
                         if cno : tmp += f"<span {style}>{txt}</span>"
                         else :
                             href  = f"{self.D['_bse']}board/body/{self.D['bid']}/no={item['no']}"
-                            if item['brother'] : href += f"/brother={item['brother']}"
                             tmp += f"<span class='list-subject' data-href='{href}' {style}>{txt}</span>"
-
-                        if item['reply']   and item['reply']   > 0 :   tmp += f"&nbsp;<span class='list-reply'>{item['reply']}</span>"
-                        if item['brother'] and item['brother'] < 0 :   tmp += f"&nbsp;<span class='list-brother'>{abs(item['brother'])}</span>"    
 
                         tmp += '</td>'
                         tx[key] = tmp
@@ -83,7 +84,7 @@ class 목록_매매일지(SKIN) :
                         tx[key] = f"<td style='text-align:right;color:{clr}'>{txt}</td>"
 
                     else : 
-                        if self.D['EXALIGN'][key]  : style   = f"text-align:{self.D['EXALIGN'][key]};"
+                        if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
                         

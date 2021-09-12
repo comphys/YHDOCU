@@ -64,12 +64,6 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% if D['BCONFIG']['row_flt'] == 'on' %}
-			<tr id="list-filter" {{ "" if D['list_filter'] else "style='display:none'"|safe }}>{{D['row_flt']|safe}}</tr>
-			{% endif %}
-			{% if D['BCONFIG']['row_sum'] == 'on' %}
-			<tr id="list-sum">{{D['row_sum']|safe}}</tr>
-			{% endif %}
 			{%- for TR in D['TR'] -%}
 			{% if loop.index0 == D['cno'] %}
 			<tr class="list-current-tr">
@@ -102,16 +96,11 @@
 	</ul></div>
 </div>
 
-{% if D['BCONFIG']['row_flt']=='on' %}
 <script>
 $(document).ready(function(){ 
-	if("{{D['list_filter']}}") $("#list-filter").show();
-	$(document).on('keydown',null,'f1',function(){ $("#list-filter").toggle(); return false; })
-	$("#filter-qry").on('keydown',function(e){if(e.which==13){var txt = $("#filter-qry").text(); $("input[name='list_filter']").val(txt);document.category_search.submit();}});
-	$("#filter-reset").click(function(){$("#filter-qry").text('');});
-	$("#list-filter-submit").click(function(){var txt = $("#filter-qry").text(); $("input[name='list_filter']").val(txt);document.category_search.submit();});
+	$(".todo_today").click(function(){h_dialog.alert('hhhhh',{x:20,y:mouse_Y+15,header:false,width:'800px'});});
 });
 </script>
-{% endif %}
+
 
 {% endblock %}

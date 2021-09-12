@@ -184,41 +184,16 @@ function auto_datainput() {
 			h_dialog.notice(ans.msg);
 		}
 		else {
-			$("input[name='add15']" ).val(ans['add15'])         
-			$("input[name='add16']" ).val(ans['add16'])
-			$("input[name='add2']"  ).val(ans['add2'])
-			$("input[name='add3']"  ).val(ans['add3'])
-			$("input[name='add4']"  ).val(ans['add4'])
-			$("input[name='add5']"  ).val(ans['add5'])
-			$("input[name='add6']"  ).val(ans['add6'])
-			$("input[name='add10']" ).val(ans['add10'])
-			$("input[name='add7']"  ).val(ans['add7'])
-			$("input[name='add9']"  ).val(ans['add9'])
-			$("input[name='add8']"  ).val(ans['add8'])
-			$("input[name='add11']" ).val(ans['add11'])
-			$("input[name='add12']" ).val(ans['add12'])
-			$("input[name='add14']" ).val(ans['add14'])
-			$("input[name='add17']" ).val(ans['add17'])
+			var update_key = ['add15','add16','add2','add3','add4','add5','add6','add10','add7','add9','add8','add11','add12','add14','add17']
+				update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
 		}
 	});
 }
 function auto_dataclean() {
-		$("input[name='add15']" ).val('')         
-		$("input[name='add16']" ).val('')
-		$("input[name='add2']"  ).val('')
-		$("input[name='add3']"  ).val('')
-		$("input[name='add4']"  ).val('')
-		$("input[name='add5']"  ).val('')
-		$("input[name='add6']"  ).val('')
-		$("input[name='add10']" ).val('')
-		$("input[name='add7']"  ).val('')
-		$("input[name='add9']"  ).val('')
-		$("input[name='add8']"  ).val('')
-		$("input[name='add11']" ).val('')
-		$("input[name='add12']" ).val('')
-		$("input[name='add14']" ).val('')
-		$("input[name='add17']" ).val('')
+		var update_key = ['add15','add16','add2','add3','add4','add5','add6','add10','add7','add9','add8','add11','add12','add14','add17']
+			update_key.forEach(function(i){$("input[name='"+i+"']" ).val('')})
 }
+
 function form_basic(opt) {
 	var html;
 	$('#contextMenu').hide()
