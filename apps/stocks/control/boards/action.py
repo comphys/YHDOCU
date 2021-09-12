@@ -39,7 +39,7 @@ class Action(Control) :
         qry = self.DB.qry_insert(self.board,SAVE)
         self.DB.exe(qry)
 
-        return self.moveto('board/list/'+self.bid+'/page='+self.page)
+        return self.moveto('board/list/'+self.bid+'/page='+self.page+'/csh=on')
 
     def delete(self) :
         no      = self.gets['no']

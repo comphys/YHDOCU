@@ -7,7 +7,7 @@ class 쓰기_매매일지(SKIN) :
         self.D['BODY'] = OBODY
         self.D['TR_add'] = []
         self.D['TR_cat'] = []
-        w_width = 700
+        w_width = 710
         self.D['w_width1'] = str(w_width + 80)+'px'
         self.D['w_width2'] = str(w_width) + 'px'
 
@@ -49,12 +49,12 @@ class 쓰기_매매일지(SKIN) :
 
     def user_add1(self,OBODY) :
         value =''
-        if OBODY : value = OBODY.get('add0','')
+        if OBODY : value = OBODY.get('add1','')
 
         qry = f"SELECT distinct add1 FROM h_stockHistory_board ORDER BY add1"
         ITM = self.DB.exe(qry)
 
-        tmp  = "<div class='myselect' style='margin-right:10px;vertical-align:bottom'>"
+        tmp  = "<div class='select' style='margin-right:10px;vertical-align:bottom'>"
         tmp += f"<input placeholder='종목코드' name='add1' type='text' value='{value}' style='width:120px;background-color:#363636;border-color:#24272D'>"
         tmp += f"<div class='btn-group'>"
         tmp += f"<button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>"
@@ -75,7 +75,7 @@ class 쓰기_매매일지(SKIN) :
         qry = f"SELECT add0 FROM h_stock_strategy_board ORDER BY add0"
         ITM = self.DB.exe(qry)
 
-        tmp  = "<div class='myselect' style='margin-right:10px;vertical-align:bottom'>"
+        tmp  = "<div class='select' style='margin-right:10px;vertical-align:bottom'>"
         tmp += f"<input placeholder='매매전략' name='add2' type='text' value='{value}' style='width:120px;background-color:#363636;border-color:#24272D'>"
         tmp += f"<div class='btn-group'>"
         tmp += f"<button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>"

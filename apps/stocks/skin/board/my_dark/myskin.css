@@ -113,7 +113,9 @@
 
 .i-number, .i-text {width:150px; }
 .i-input-div {display:inline-block; border: 1px solid #4a505e; margin:1px 10px 1px 0px}
-
+.i-input-div-must {display:inline-block; border: 1px solid yellow; margin:1px 10px 1px 0px}
+.i-input-div-choice {display:inline-block; border: 1px solid lightgreen; margin:1px 10px 1px 0px}
+.i-input-div-must-2 {border: 1px solid yellow;}
 /* ////////////////////////////////////////////////////////////////////////////////////////////////
 // EDITOR PART
 //////////////////////////////////////////////////////////////////////////////////////////////// */

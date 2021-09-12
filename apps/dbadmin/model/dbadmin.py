@@ -1,5 +1,5 @@
 from system.core.load import Model
-from system.hand.string import dequote
+from system.core.my_utils import dequote
 import copy
 
 class M_dbadmin(Model) :

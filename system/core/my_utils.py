@@ -10,12 +10,10 @@ def file_split(filename) :
     return (os.path.dirname(filename),os.path.basename(filename),os.path.splitext(filename)[1][1:])
 
 def file_ctime(filename,opt=1) : #파일 생성시각
-    ctime = os.path.getctime(filename)
-    return timestamp_to_date(ctime,opt=1)
+    ctime = os.path.getctime(filename) ; return timestamp_to_date(ctime,opt=1)
 
 def file_mtime(filename,opt=1) : #파일 수정시각
-    mtime = os.path.getmtime(filename)
-    return timestamp_to_date(mtime,opt=1)
+    mtime = os.path.getmtime(filename) ; return timestamp_to_date(mtime,opt=1)
 
 def file_size(filename) :
     return os.path.getsize(filename)

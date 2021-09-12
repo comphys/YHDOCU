@@ -21,7 +21,7 @@ class M_board_main(Model) :
 
         USE_KEY = []
         NOT_KEY = []
-        for i in range(16) :
+        for i in range(21) :
             key = f'add{i}' 
             if self.D['BCONFIG'][key] :  USE_KEY.append(key)
             else : NOT_KEY.append(key)

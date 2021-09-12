@@ -1,4 +1,4 @@
-import system.hand.string as s
+import system.core.my_utils as ut
 from system.core.load import SKIN
 
 class 목록_표준(SKIN) :
@@ -23,8 +23,8 @@ class 목록_표준(SKIN) :
     def data_preprocess(self) :
         if self.TrCnt :
             for item in self.D['LIST'] :
-                item['wdate'] = s.timestamp_to_date(item['wdate'],"%Y/%m/%d")
-                item['mdate'] = s.timestamp_to_date(item['mdate'],"%Y/%m/%d")
+                item['wdate'] = ut.timestamp_to_date(item['wdate'],"%Y/%m/%d")
+                item['mdate'] = ut.timestamp_to_date(item['mdate'],"%Y/%m/%d")
                 item['add0']  = item['add0'][0:self.D['BCONFIG']['subject_len']]
  
     def list(self) :

@@ -30,14 +30,17 @@
 		<td class='write-td-left'>로테이션</td>	
 		<td class='write-td-right'>	
 			<div class='i-input-div'>
-				<div class='write-input-left'>시즌</div>
-				<input type='text' name='add14' class="i-text" style="width:30px;text-align:center" value="{{D['BODY']['add14']}}">
+				<div class='write-input-left'>진행시즌</div>
+				<input type='text' name='add15' class="i-text" style="width:30px;text-align:center" value="{{D['BODY']['add15']}}">
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left'>로테이션</div>
-				<input type='text' name='add15' class="i-text" style="width:30px;text-align:center" value="{{D['BODY']['add15']}}">
+				<input type='text' name='add16' class="i-text" style="width:30px;text-align:center" value="{{D['BODY']['add16']}}">
 			</div>
 			{{D['user_add2']|safe}}
+
+			<button class="btn btn-blue" onclick="auto_dataclean();return false">리셋하기</button>
+
 		</td>
 	</tr>
 	<tr>
@@ -47,18 +50,18 @@
 		<td class='write-td-left'>자동입력</td>	
 		<td class='write-td-right' style="padding-top:10px;padding-bottom:10px">	
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">현재종가</div>
+				<div class='write-input-left' style="background-color:#333F4F;">당일종가</div>
 				<input type='text' name='add3' class="i-number" style="width:80px;text-align:center" value="{{D['BODY']['add3']}}">
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">체결단가</div>
 				<input type='text' name='add4' class="i-number" style="width:80px;text-align:center" value="{{D['BODY']['add4']}}">
 			</div>
-			<div class='i-input-div'>
+			<div class='i-input-div-choice'>
 				<div class='write-input-left' style="background-color:#333F4F;">체결수량</div>
 				<input type='text' name='add5' class="i-number" style="width:80px;text-align:center" value="{{D['BODY']['add5']}}">
 			</div>
-			<div class='i-input-div'>
+			<div class='i-input-div-choice'>
 				<div class='write-input-left' style="background-color:#333F4F;">매수금액</div>
 				<input type='text' name='add6' class="i-number" style="width:80px;text-align:center" value="{{D['BODY']['add6']}}">
 			</div>
@@ -79,7 +82,7 @@
 				<input type='text' name='add8' class="i-number" style="width:80px;text-align:center" value="{{D['BODY']['add8']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">손익계산</div>
+				<div class='write-input-left' style="background-color:#333F4F;">수익현황</div>
 				<input type='text' name='add11' class="i-number" style="width:80px;text-align:center" value="{{D['BODY']['add11']}}">
 			</div>
 			<div class='i-input-div'>
@@ -88,7 +91,11 @@
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">가용잔액</div>
-				<input type='text' name='add13' class="i-number" style="width:80px;text-align:center" value="{{D['BODY']['add13']}}">
+				<input type='text' name='add14' class="i-number" style="width:80px;text-align:center" value="{{D['BODY']['add14']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">진행상황</div>
+				<input type='text' name='add17' class="i-text" style="width:80px;text-align:center" value="{{D['BODY']['add17']}}">
 			</div>
 		</td>
 	</tr>
@@ -149,19 +156,69 @@ function open_style_edit() {
 function auto_datainput() {
 	
 	if(! $("input[name='add0']").val() ) { h_dialog.notice("날자 입력은 필수입니다"); return false; }
+	if(! $("input[name='add1']").val() ) { h_dialog.notice("종목 코드는 필수입니다"); return false; }
 
 	var posturl = uri('linkurl')+"boards-stocks/autoinput"
-	$.post( posturl, { bid : 'bid' }).done(function(data) {
+	var postData = {}
+
+	postData['add0']  = $("input[name='add0']").val()  // 날자
+	postData['add1']  = $("input[name='add1']").val()  // 종목
+	postData['add2']  = $("input[name='add2']").val()  // 매매전략
+	postData['add4']  = $("input[name='add4']").val()  // 체결단가
+	postData['add5']  = $("input[name='add5']").val()  // 체결수량
+	postData['add6']  = $("input[name='add6']").val()  // 매수금액	
+	postData['add14'] = $("input[name='add14']").val() // 가용잔액	
+
+
+	$.post( posturl, postData).done(function(data) {
 		var ans = JSON.parse(data)
-		h_dialog.notice(ans.msg);
-		h_dialog.notice(ans.aaa);
-		h_dialog.notice(ans.bbb);
-		h_dialog.notice(ans.ccc);
-		h_dialog.notice(ans.ddd);
-		h_dialog.notice(ans.eee);		
+		
+		if(ans.replyCode == 'NMDATA') {
+			$("input[name='add4']" ).parent().removeClass("i-input-div").addClass("i-input-div-must");
+			$("input[name='add2']" ).parent().addClass("i-input-div-must-2");
+			$("input[name='add5']" ).parent().removeClass("i-input-div").addClass("i-input-div-must");
+			$("input[name='add14']").parent().removeClass("i-input-div").addClass("i-input-div-must");
+			h_dialog.notice(ans.msg);
+		} 
+		else if(ans.replyCode == 'DPLCT') {
+			h_dialog.notice(ans.msg);
+		}
+		else {
+			$("input[name='add15']" ).val(ans['add15'])         
+			$("input[name='add16']" ).val(ans['add16'])
+			$("input[name='add2']"  ).val(ans['add2'])
+			$("input[name='add3']"  ).val(ans['add3'])
+			$("input[name='add4']"  ).val(ans['add4'])
+			$("input[name='add5']"  ).val(ans['add5'])
+			$("input[name='add6']"  ).val(ans['add6'])
+			$("input[name='add10']" ).val(ans['add10'])
+			$("input[name='add7']"  ).val(ans['add7'])
+			$("input[name='add9']"  ).val(ans['add9'])
+			$("input[name='add8']"  ).val(ans['add8'])
+			$("input[name='add11']" ).val(ans['add11'])
+			$("input[name='add12']" ).val(ans['add12'])
+			$("input[name='add14']" ).val(ans['add14'])
+			$("input[name='add17']" ).val(ans['add17'])
+		}
 	});
 }
-
+function auto_dataclean() {
+		$("input[name='add15']" ).val('')         
+		$("input[name='add16']" ).val('')
+		$("input[name='add2']"  ).val('')
+		$("input[name='add3']"  ).val('')
+		$("input[name='add4']"  ).val('')
+		$("input[name='add5']"  ).val('')
+		$("input[name='add6']"  ).val('')
+		$("input[name='add10']" ).val('')
+		$("input[name='add7']"  ).val('')
+		$("input[name='add9']"  ).val('')
+		$("input[name='add8']"  ).val('')
+		$("input[name='add11']" ).val('')
+		$("input[name='add12']" ).val('')
+		$("input[name='add14']" ).val('')
+		$("input[name='add17']" ).val('')
+}
 function form_basic(opt) {
 	var html;
 	$('#contextMenu').hide()

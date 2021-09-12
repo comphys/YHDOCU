@@ -34,6 +34,12 @@ class DB :
         self.rst = self.cur.execute(qry)
         return self.rst.fetchone()[0]
 
+    def get_one(self,fld) :
+        return self.get(fld,many=1,assoc=False)
+
+    def get_line(self,fld) :
+        return self.get(fld,many=1,assoc=True)    
+
     def get(self,fld,many=0,assoc=True) :
         if not self.tbl : 
             self.err = "No table name is specified"
@@ -56,7 +62,7 @@ class DB :
 
         rst = self.rst.fetchall() if not many else  self.rst.fetchmany(many)
         self.num = len(rst)
-
+        if self.num == 0 : return None 
         if assoc : 
             temp_list = []
             col = [x[0] for x in self.rst.description]
@@ -65,7 +71,7 @@ class DB :
             return temp_list[0] if many == 1 else temp_list  
 
         else :
-            if fld.find(',') == -1 : 
+            if fld.find(',') == -1 : # 필드가 하나일 경우 
                 rst = [x[0] for x in rst]
                 if many == 1 : rst = rst[0]
             return rst
