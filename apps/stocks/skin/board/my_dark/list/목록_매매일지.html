@@ -97,10 +97,16 @@
 </div>
 
 <script>
+
 $(document).ready(function(){ 
-	$(".todo_today").click(function(){h_dialog.alert('hhhhh',{x:20,y:mouse_Y+15,header:false,width:'800px'});});
+	$(".todo_today").click(function(){
+		var old_one = $id("ST_TIPS") ;
+		if(old_one) {h_dialog.close("ST_TIPS"); return;} 
+		var url = uri('linkurl') + 'boards-stock_today_tips/hellow/no='+$(this).attr('data-no');
+		var o = {id:'ST_TIPS', width:'1195px', x:20, y:mouse_Y+15,header:false,footer:false,drag:false}
+		h_dialog.load(url,o);
+	});
 });
 </script>
-
 
 {% endblock %}
