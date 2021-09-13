@@ -10,7 +10,7 @@ class Stock_today_tips(Control) :
         no = self.gets['no']       
         # 기본데이타 갖고 오기
         self.DB.tbl, self.DB.wre = ('h_daily_trading_board', f"no={no}")
-        preDATA = self.DB.get_line("add2,add7,add9,add10,add14")
+        preDATA = self.DB.get_line("add1,add2,add7,add9,add10,add14")
 
         # 주문전략 갖고 오기
         self.DB.tbl, self.DB.wre = ("h_stock_strategy_board",f"add0='{preDATA['add2']}'")
@@ -45,10 +45,11 @@ class Stock_today_tips(Control) :
 
         # 출력시작
         style1 ="<span style='font-weight:bold;color:#A9F5BC;font-size:16px'>"
-        style2 ="<span style='font-weight:bold;color:#F6CECE;font-size:16px'>" 
+        style2 ="<span style='font-weight:bold;color:#F6CECE;font-size:16px'>"
+        style3 ="<span style='font-weight:bold;color:yellow;font-size:16px'>"
 
-        output  = "<div id='stock_tips' style='padding:10px;background-color:#424242;color:#F2F2F2' >"
-        output += f"금일 매수 조건 : (평단가) {style1}${평단가매수:,.2f} * {평단가주문}</span>주&nbsp;&nbsp;"
+        output  = "<div id='stock_tips' style='padding:10px;background-color:#424242;color:#F2F2F2;' >"
+        output += f"{style3}{preDATA['add1']}</span>&nbsp;&nbsp;&nbsp; 금일 매수 조건 : (평단가) {style1}${평단가매수:,.2f} * {평단가주문}</span>주&nbsp;&nbsp;"
         output += f"(큰단가) <span {style1}${큰단가매수:,.2f} * {큰단가주문}</span>주&nbsp;&nbsp;&nbsp;"
         if 매도분할 : 
             output += f"금일 매도 조건 : (주문단가1) {style2}${매도가격1:,.2f} * {매도수량1}</span>주 / (주문단가2) {style2}${매도가격2:,.2f} * {매도수량2}</span>주 "
