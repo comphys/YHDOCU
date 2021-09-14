@@ -20,7 +20,7 @@ class Stocks(Control) :
         가용잔액 = self.D['post']['add14'].replace(',','')
 
         self.DB.tbl = 'h_daily_trading_board'
-        self.DB.wre = f"add1='{종목코드}'" 
+        self.DB.wre = f"add0  < '{기록일자}' and add1='{종목코드}'" 
         preChk = self.DB.get_one("max(no)")
         oldChk = self.DB.get_one("min(no)")
 
@@ -65,7 +65,7 @@ class Stocks(Control) :
  
             # 데이타 중복 방지하기
             self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"add0='{기록일자}' and add1='{종목코드}'")
-            if self.DB.get_one('add0') : 
+            if self.DB.get_one('add0') and self.parm[0] != 'modify': 
                 update['msg'] = "같은 날자에 입력된 데이타가 존재합니다"
                 update['replyCode'] = 'NOTICE'
                 return self.echo(json.dumps(update))
@@ -125,13 +125,13 @@ class Stocks(Control) :
         update['add4']   = f"{round(체결단가,4):,.3f}"
         update['add5']   = f"{int(체결수량):,}"
         update['add6']   = f"{round(매수금액,4):,.3f}"
-        update['add10']  = f"{round(평균단가,4):,.3f}"
+        update['add10']  = f"{round(평균단가,4):,.4f}"
         update['add7']   = f"{int(보유수량):,}"
         update['add9']   = f"{round(총매수금,4):,.3f}"
-        update['add8']   = f"{round(평가금액,4):,.3f}"
-        update['add11']  = f"{round(수익현황,4):,.3f}"
+        update['add8']   = f"{round(평가금액,4):,.2f}"
+        update['add11']  = f"{round(수익현황,4):,.4f}"
         update['add12']  = f"{round(현수익률,4):,.2f}"
-        update['add14']  = f"{round(가용잔액,2):,.3f}"
+        update['add14']  = f"{round(가용잔액,2):,.2f}"
         update['add17']  = 진행상황
 
         return self.echo(json.dumps(update))

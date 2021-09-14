@@ -7,18 +7,13 @@ class 쓰기_매매일지(SKIN) :
         self.D['BODY'] = OBODY
         self.D['TR_add'] = []
         self.D['TR_cat'] = []
-        w_width = 710
+        self.D['method'] = self.SYS.V['_mtd']
+        w_width = 750
         self.D['w_width1'] = str(w_width + 80)+'px'
         self.D['w_width2'] = str(w_width) + 'px'
 
         self.D['ChkField'] = ','.join(self.D['MustCheck'])
 
-        if  self.D['Mode'] == 'write' :
-            self.D['w_title']='' ; self.D['w_tleClr']=''
-
-        elif self.D['Mode'] == 'modify' :
-            self.D['w_title'] = OBODY['add0'] ; self.D['w_tleClr']= OBODY['tle_color']
-        
         # -------------------
         self.D['user_add1'] = self.user_add1(OBODY)
         self.D['user_add2'] = self.user_add2(OBODY)
