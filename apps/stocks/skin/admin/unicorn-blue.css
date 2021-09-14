@@ -72,6 +72,8 @@ body {
 	background-color: #141528;
 }
 
+.range-value {display:inline-block;text-align:right;font-weight:bold;width:30px;color:blue}
+
 .dropdown-menu li a:hover, .dropdown-menu .active a, .dropdown-menu .active a:hover {
 	background-color: #272541;
     background-image: -webkit-gradient(linear, 0 0%, 0 100%, from(#292C3E), to(#13152A));
@@ -99,3 +101,4 @@ body {
 		border-right: 6px solid #13152A;
     }
 }
+

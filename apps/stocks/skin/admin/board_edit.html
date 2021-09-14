@@ -186,30 +186,33 @@
 				<div id="adminBoardB_editTab1" class="tab-pane {{D['active_tab'][1]}}">
 					<form id='adminBoardB_edit02' action="{{D['_bse']}}admins-action/board_edit_access" method="post" class="form-horizontal" >
 						<div class='control-group'>
-							<label class='control-label'> 글목록 권한 : </label>
+							<label class='control-label'> 글목록 요구권한 : </label>
 							<div class='controls'>
-								<input type='text' name='acc_list' value="{{D['bconfig']['acc_list']}}" style='width:164px' />
-								<span class='control-right-label'>: 글목록에 대한 접근 권한입니다 </span>
+								<input type='range' min='0' max='100' step='1' name='acc_list' style='width:200px' value="{{D['bconfig']['acc_list']}}" />
+								<span class='range-value'>{{D['bconfig']['acc_list']}}</span>
+								<span class='control-right-label'>: 글목록에 대한 접근 권한입니다(100일 경우 본인만 접근 가능) </span>
 								<input type='hidden' name='bid' value="{{D['bconfig']['bid']}}" />
 								<input type='hidden' name='sec' value="{{D['bconfig']['section']}}" />
 							</div>
 						</div>
 						<div class='control-group'>
-							<label class='control-label'> 글본문 권한 : </label>
+							<label class='control-label'> 글본문 요구권한 : </label>
 							<div class='controls'>
-								<input type='text' name='acc_body' value="{{D['bconfig']['acc_body']}}" style='width:164px' />
+								<input type='range' min='0' max='100' step='1' name='acc_body' value="{{D['bconfig']['acc_body']}}" style='width:200px' />
+								<span class='range-value'>{{D['bconfig']['acc_body']}}</span>
 								<span class='control-right-label'>: 글본문에 대한 접근 권한입니다 </span>
 							</div>
 						</div>
 						<div class='control-group'>
-							<label class='control-label'> 글쓰기 권한 : </label>
+							<label class='control-label'> 글쓰기 요구권한 : </label>
 							<div class='controls'>
-								<input type='text' name='acc_write' value="{{D['bconfig']['acc_write']}}" style='width:164px' />
+								<input type='range' min='0' max='100' step='1' name='acc_write' value="{{D['bconfig']['acc_write']}}" style='width:200px' />
+								<span class='range-value'>{{D['bconfig']['acc_write']}}</span>
 								<span class='control-right-label'>: 글쓰기에 대한 접근 권한입니다 </span>
 							</div>
 						</div>
 						<div class="form-actions" style='margin:0;padding:0px 170px;'>
-							<button type="submit" class="btn btn-primary" style='width:165px;'><i class='fa fa-check'></i>&nbsp;EDIT THIS BOARD</button>
+							<button type="submit" class="btn btn-primary" style='width:210px;'><i class='fa fa-check'></i>&nbsp;EDIT THIS BOARD</button>
 						</div>
 					</form>	  
 				</div><!-- end of tab2 -->
@@ -424,6 +427,13 @@
 	</div><!-- container -->
 
 <script type='text/javascript'>
+
+	$("input[type='range']").on('input',function(){
+		var num = $(this).val();
+		var target = $(this).next(); 
+		$(target).html(num)
+	});
+
 	function delete_extField(f,sel)
 	{
 		var fid  = f ;

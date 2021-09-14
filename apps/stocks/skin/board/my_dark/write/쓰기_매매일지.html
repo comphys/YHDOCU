@@ -24,7 +24,7 @@
 				{% endif %}
 			</div>			
 			{% if D['Mode'] == 'modify' %}
-			<input type='text' name='add1' disabled style="width:130px;margin-right:15px;text-align:center" value="{{D['BODY']['add1']}}">
+			<input type='text' name='add1' disabled style="width:132px;margin-right:15px;text-align:center" value="{{D['BODY']['add1']}}">
 			{% else %}
 			{{D['user_add1']|safe}}
 			{% endif %}
@@ -183,7 +183,8 @@ function auto_datainput() {
 		if(ans.replyCode == 'NMDATA') {
 			$("input[name='add4']" ).parent().removeClass("i-input-div").addClass("i-input-div-must");
 			$("input[name='add2']" ).parent().addClass("i-input-div-must-2");
-			$("input[name='add5']" ).parent().removeClass("i-input-div").addClass("i-input-div-must");
+			$("input[name='add5']" ).parent().removeClass("i-input-div-choice").addClass("i-input-div-must");
+			$("input[name='add6']" ).parent().removeClass("i-input-div-choice").addClass("i-input-div");
 			$("input[name='add14']").parent().removeClass("i-input-div").addClass("i-input-div-must");
 			h_dialog.notice(ans.msg);
 		} 
