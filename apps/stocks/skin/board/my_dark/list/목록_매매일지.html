@@ -29,22 +29,8 @@
 	</div>
 {% endif -%}
 	<div class='pull-right'>
-		<div class='select' style='margin-right:5px;'>
-			<span id="cell-sum"></span>
-			<input placeholder="검색항목" name="search_field" type="text" style="width:100px" value="{{D['search_f']}}" />
-			<div class='btn-group'>
-				<button class="btn btn-select dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-				<ul class='dropdown-menu'>
-					<li><a> 검색항목 </a></li>
-					{% for key, val in D['EXTITLE'].items() -%}
-					<li><a href="#"> {{val}}</a></li>
-                    {% endfor -%}
-					<li><a href="#"> 본 문 </a></li>
-				</ul>
-			</div>
-		</div>
-
-		<input  id="search_input2" type='text' name='search_value' value="{{D['search']}}" style='height:24px;vertical-align:baseline' />
+		<input  type="hidden" name="search_field" value="기록일자" />
+		<input  id="search_input2" type='text' name='search_value' value="{{D['search']}}" style='height:24px;vertical-align:baseline;width:120px;text-align:center' />
 		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="list_search2()">검색</button>
 		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="location.href='{{D['_bse']}}board/list/{{D['bid']}}/csh=on'" >취소</button>
 	</div>
@@ -55,7 +41,13 @@
 
 {% if D['TR'] %}
 <div class="row-row clearfix"> 
-	<table class='table table-bordered table-striped table-hover'>
+	<table class='table table-striped table-hover' style="border:2px solid black">
+		<colgroup>
+			<col><col><col><col><col style="background-color:#24272d;border:2px solid black;">
+			<col><col><col><col style="background-color:#24272d;border:2px solid black;"><col>
+			<col><col><col><col><col>
+			<col>			
+		</colgroup>
 		<thead>
 			<tr>
 				{% for key,val in D['head_td'].items() %}
@@ -97,11 +89,10 @@
 </div>
 
 <script>
-
 var selected_tr = null
 $(document).ready(function(){ 
+	$("#search_input2").Zebra_DatePicker({format:'Y-m-d', offset:[-150,280], first_day_of_week : 0});
 	$(".todo_today").click(function(){
-		
 		if( selected_tr ) {
 			$(selected_tr).css("backgroundColor",'')
 			h_dialog.close("ST_TIPS"); 

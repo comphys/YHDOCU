@@ -1,6 +1,8 @@
 import system.core.my_utils as ut
 from system.core.load import SKIN
 
+
+
 class 목록_매매일지(SKIN) :
 
     def _auto(self) :
@@ -98,7 +100,10 @@ class 목록_매매일지(SKIN) :
                         
 
                         if (self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
-                        if (self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,}"
+                        if (self.D['EXFTYPE'][key] == 'float' ) : 
+                            if key in ['add10'] :
+                                txt = f"{float(txt):,.4f}"
+                            else : txt = f"{float(txt):,.2f}"
 
                         tx[key] = f"<td style='{style}' {clas}>{txt}</td>"
 
