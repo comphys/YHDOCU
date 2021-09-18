@@ -5,9 +5,6 @@
 <input type='hidden' name='mode'	value="{{D['Mode']}}" >
 <input type='hidden' name='uid'		value="{{D['USER']['uid']}}" >
 <input type='hidden' name='uname'	value="{{D['USER']['uname']}}" >
-{%- if D['BCONFIG']['type'] == 'yhboard' %}
-<input type='hidden' name='brother'	value="{{D['Brother']}}" >
-{% endif -%}
 <textarea  name='content' style="display:none"></textarea>
 <table class='table' style="border:2px solid black;border-radius:4px;width:{{D['w_width2']}}">
 	<tbody>

@@ -44,3 +44,9 @@ class Winopen(Control) :
         except : self.D['code'] = ''
         
         return self.html("winopen/stock_chart.html") 
+
+    def chart2(self) :
+
+        self.D['code'] = self.parm[0]
+        
+        return self.html("winopen/stock_chart.html") 

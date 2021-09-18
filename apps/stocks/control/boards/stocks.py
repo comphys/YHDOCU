@@ -51,11 +51,12 @@ class Stocks(Control) :
                 평가금액 = 당일종가 * 보유수량
                 수익현황 = 평가금액 - 총매수금
                 현수익률 = (수익현황 / 총매수금) * 100
-                진행시즌 = 1 ; 로테이션 = 1
+                진행시즌 = 1 ; 로테이션 = 1.0
                 가용잔액 = 가용잔액 - 총매수금
                 진행상황 = '정상진행'
 
         else :
+            로테이션 = 0.0
             # 시작 이전 데이타 입력 방지하기 
             self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"no='{oldChk}' and add1='{종목코드}'")
             if self.DB.get_one('add0') > 기록일자 :
@@ -88,10 +89,13 @@ class Stocks(Control) :
                 평단가매수 = 전일평단가 * (1+float(STRAGY['add4']))
                 큰단가매수 = 전일평단가 * (1+float(STRAGY['add5']))
 
-                if 당일종가 <= 평단가매수 :  체결수량1 = math.ceil(매수금액1 / 평단가매수)
+                if 당일종가 <= 평단가매수 :  
+                    체결수량1 = math.ceil(매수금액1 / 평단가매수)
+                    로테이션 += 0.5
                 
-                if 당일종가 <= 큰단가매수 :  체결수량2 = math.ceil(매수금액2 / 큰단가매수)
-                
+                if 당일종가 <= 큰단가매수 :  
+                    체결수량2 = math.ceil(매수금액2 / 큰단가매수)
+                    로테이션 += 0.5
                 체결수량 = 체결수량1 + 체결수량2
                 체결단가 = 당일종가
                 매수금액 = 체결수량 * 당일종가
@@ -111,7 +115,7 @@ class Stocks(Control) :
             수익현황 = 평가금액 - 총매수금
             현수익률 = (수익현황 / 총매수금) * 100
             진행시즌 = 1 
-            로테이션 = int(preDATA['add16']) + 1
+            로테이션 = preDATA['add16'] + 로테이션
             가용잔액 = 가용잔액 - 매수금액
             진행상황 = '정상진행'
 
@@ -119,7 +123,7 @@ class Stocks(Control) :
         update['msg']       = "데이타를 자동으로 계산하였습니다. 확인해 보시고 저장하시기 바랍니다"
         update['replyCode'] = "SUCCESS"
         update['add15']  = f"{int(진행시즌):,}"
-        update['add16']  = f"{int(로테이션):,}"
+        update['add16']  = 로테이션
         update['add2']   = 매매전략
         update['add3']   = f"{round(당일종가,4):,.3f}"
         update['add4']   = f"{round(체결단가,4):,.3f}"

@@ -29,6 +29,7 @@
 	</div>
 {% endif -%}
 	<div class='pull-right'>
+		<span id="cell-sum"></span>
 		<input  type="hidden" name="search_field" value="기록일자" />
 		<input  id="search_input2" type='text' name='search_value' value="{{D['search']}}" style='height:24px;vertical-align:baseline;width:120px;text-align:center' />
 		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="list_search2()">검색</button>
@@ -56,6 +57,9 @@
 			</tr>
 		</thead>
 		<tbody>
+			{% if D['BCONFIG']['row_sum'] == 'on' and D['search'] %}
+			<tr id="list-sum">{{D['row_sum']|safe}}</tr>
+			{% endif %}
 			{%- for TR in D['TR'] -%}
 			{% if loop.index0 == D['cno'] %}
 			<tr class="list-current-tr">
@@ -89,9 +93,15 @@
 </div>
 
 <script>
+
+function open_stock_chart(stock) {
+	winopen('winopen/chart2/'+stock,820,450,'stock_chart'+stock)
+}
+
 var selected_tr = null
 $(document).ready(function(){ 
 	$("#search_input2").Zebra_DatePicker({format:'Y-m-d', offset:[-150,280], first_day_of_week : 0});
+
 	$(".todo_today").click(function(){
 		if( selected_tr ) {
 			$(selected_tr).css("backgroundColor",'')

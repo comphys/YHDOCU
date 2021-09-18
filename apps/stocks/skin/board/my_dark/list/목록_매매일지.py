@@ -64,6 +64,12 @@ class 목록_매매일지(SKIN) :
                         if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
+                        tx[key] = f"<td style='{style}' onclick=\"open_stock_chart('{txt}')\">{txt}</td>" 
+
+                    elif key == 'add17' :
+                        if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
+                        if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
+                        if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
                         tx[key] = f"<td style='{style}' data-no='{item['no']}' class='todo_today'>{txt}</td>" 
                     
                     elif key == 'add0'  : 
@@ -111,3 +117,13 @@ class 목록_매매일지(SKIN) :
                 tx={}
 
             self.D['TR'] = TR
+
+            if self.D['BCONFIG']['row_sum'] == 'on' :
+                list_order_cnt = len(self.D['list_order'])
+                td2 =['<td>&nbsp;</td>' for x in range(list_order_cnt)]
+                
+                for k in self.D['EXFORMA'].keys() : 
+                    if self.D['RS'][k] : td2[self.D['list_order'].index(k)] = f"<td>{self.D['RS'][k]:,.2f}</td>" 
+
+                td2[0] = "<td class='list-no'>합 계</td>"
+                self.D['row_sum'] = ''.join(td2)
