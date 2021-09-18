@@ -65,6 +65,12 @@ class 목록_매매일지(SKIN) :
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
                         tx[key] = f"<td style='{style}' onclick=\"open_stock_chart('{txt}')\">{txt}</td>" 
+                    
+                    elif key == 'add16' :
+                        if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
+                        if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
+                        if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
+                        tx[key] = f"<td style='{style}'>{float(txt):.1f}</td>"
 
                     elif key == 'add17' :
                         if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"

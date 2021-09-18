@@ -29,7 +29,6 @@
 	</div>
 {% endif -%}
 	<div class='pull-right'>
-		<span id="cell-sum"></span>
 		<input  type="hidden" name="search_field" value="기록일자" />
 		<input  id="search_input2" type='text' name='search_value' value="{{D['search']}}" style='height:24px;vertical-align:baseline;width:120px;text-align:center' />
 		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="list_search2()">검색</button>
@@ -50,7 +49,7 @@
 			<col>			
 		</colgroup>
 		<thead>
-			<tr>
+			<tr style="background-color:#393f4a;border-bottom:1px solid black">
 				{% for key,val in D['head_td'].items() %}
 				{{val|safe}}
 				{% endfor %}
