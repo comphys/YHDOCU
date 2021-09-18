@@ -33,6 +33,7 @@ class Stocks(Control) :
         # 당일종가 구하기
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add0='{기록일자}' and add1='{종목코드}'")
         당일종가 = self.DB.get_one("add3")
+
         if  당일종가 is None : 
             update['msg'] = "기록일에 해당하는 '당일종가'가 존재하지 않습니다. 주가정보를 업데이트 하시기 바랍니다"
             update['replyCode'] = 'NOTICE'
@@ -80,14 +81,14 @@ class Stocks(Control) :
             if  체결수량 == '' and 매수금액 == '' :
                 체결수량 = 체결수량1 = 체결수량2 =0; 매수금액 = 0.0
                 self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{preDATA['add2']}'")
-                STRAGY = self.DB.get_line("add1,add2,add3,add4,add5")
-                
+                STRAGY = self.DB.get_line("add1,add2,add3,add4,add5,add10")
+
                 일매수금   = (float(preDATA['add9']) + float(preDATA['add14'])) / float(STRAGY['add1'])
-                매수금액1  = 일매수금 * float(STRAGY['add2'])
+                매수금액1  = 일매수금 * float(STRAGY['add2'])/100
                 매수금액2  = 일매수금 - 매수금액1
                 전일평단가 = float(preDATA['add10'])
-                평단가매수 = 전일평단가 * (1+float(STRAGY['add4']))
-                큰단가매수 = 전일평단가 * (1+float(STRAGY['add5']))
+                평단가매수 = 전일평단가 * (1+float(STRAGY['add4'])/100)
+                큰단가매수 = 전일평단가 * (1+float(STRAGY['add5'])/100)
 
                 if 당일종가 <= 평단가매수 :  
                     체결수량1 = math.ceil(매수금액1 / 평단가매수)
@@ -106,7 +107,7 @@ class Stocks(Control) :
                 매수금액 = float(매수금액)
                 체결단가 = 매수금액 / 체결수량
 
-            # 자동 계산2
+
             가용잔액 = float(preDATA['add14'])
             보유수량 = int(preDATA['add7']) + 체결수량
             총매수금 = float(preDATA['add9']) + 매수금액
@@ -115,7 +116,7 @@ class Stocks(Control) :
             수익현황 = 평가금액 - 총매수금
             현수익률 = (수익현황 / 총매수금) * 100
             진행시즌 = 1 
-            로테이션 = preDATA['add16'] + 로테이션
+            로테이션 = float(preDATA['add16']) + 로테이션
             가용잔액 = 가용잔액 - 매수금액
             진행상황 = '정상진행'
 
@@ -123,7 +124,7 @@ class Stocks(Control) :
         update['msg']       = "데이타를 자동으로 계산하였습니다. 확인해 보시고 저장하시기 바랍니다"
         update['replyCode'] = "SUCCESS"
         update['add15']  = f"{int(진행시즌):,}"
-        update['add16']  = 로테이션
+        update['add16']  = f"{로테이션:.1f}"
         update['add2']   = 매매전략
         update['add3']   = f"{round(당일종가,4):,.3f}"
         update['add4']   = f"{round(체결단가,4):,.3f}"
