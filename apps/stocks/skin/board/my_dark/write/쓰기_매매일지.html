@@ -13,11 +13,11 @@
 		<td class='write-td-left'>필수입력</td>
 		<td>
 			<div class='i-input-div'>
-				<div class='write-input-left'>날자</div>
+				<div class='write-input-left' style="width:80px;">날자</div>
 				{% if D['Mode'] == 'modify' %}
-				<input type='text' name='add0' disabled style="width:182px;text-align:center" value="{{D['BODY']['add0']}}">
+				<input type='text' name='add0' disabled style="width:202px;text-align:center" value="{{D['BODY']['add0']}}">
 				{% else %}
-				<input type='text' name='add0' class="i-date" style="width:182px;text-align:center" value="{{D['BODY']['add0']}}">
+				<input type='text' name='add0' class="i-date" style="width:202px;text-align:center" value="{{D['BODY']['add0']}}">
 				{% endif %}
 			</div>			
 			{% if D['Mode'] == 'modify' %}
@@ -33,12 +33,12 @@
 		<td class='write-td-left'>로테이션</td>	
 		<td class='write-td-right'>	
 			<div class='i-input-div'>
-				<div class='write-input-left'>진행시즌</div>
-				<input type='text' name='add15' class="i-text" style="width:30px;text-align:center" value="{{D['BODY']['add15']}}">
+				<div class='write-input-left' style="width:80px;">진행시즌</div>
+				<input type='text' name='add15' class="i-text" style="width:50px;text-align:center" value="{{D['BODY']['add15']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left'>로테이션</div>
-				<input type='text' name='add16' class="i-text" style="width:30px;text-align:center" value="{{D['BODY']['add16']}}">
+				<div class='write-input-left' style="width:80px;">로테이션</div>
+				<input type='text' name='add16' class="i-text" style="width:50px;text-align:center" value="{{D['BODY']['add16']}}">
 			</div>
 			{{D['user_add2']|safe}}
 
