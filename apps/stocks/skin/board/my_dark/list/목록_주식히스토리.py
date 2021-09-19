@@ -25,7 +25,6 @@ class 목록_주식히스토리(SKIN) :
             for item in self.D['LIST'] :
                 item['wdate'] = ut.timestamp_to_date(item['wdate'],"%Y/%m/%d")
                 item['mdate'] = ut.timestamp_to_date(item['mdate'],"%m/%d %H:%M")
-                item['add0']  = item['add0'][0:self.D['BCONFIG']['subject_len']]
  
     def list(self) :
         self.D['TimeNow'] = ut.timestamp_to_date(ts='now')

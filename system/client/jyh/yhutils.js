@@ -110,7 +110,7 @@ var h_dialog = {
 				
 				var dialog_css	= 'h_dialog_' + option.css ;
 	
-				$("<div>", { id  :  idx, class : dialog_css, css : {position:'fixed', display:'none', zIndex : '2000' }}).appendTo("body");
+				$("<div>", { id  :  idx, class : dialog_css, css : {position:'absolute', display:'none', zIndex : '2000' }}).appendTo("body");
 				this.dialog		= $id(idx);
 	
 				if(option.overlay && ! $id('overlay_idx')) {

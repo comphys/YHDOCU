@@ -38,7 +38,7 @@ function send_sms_auto() {
 
 	var sms_tel  = $("#sms_tel").text();
 	var posturl  = uri('linkurl') + 'boards-sms/send_sms';
-
+	
 	$.post(posturl, {sms_tel : sms_tel, sms_txt: strValue}).done(function(data){
 		$(sms_selected).css("backgroundColor",'').css("fontWeight",''); sms_selected = false;
 		h_dialog.notice(data); h_dialog.close('send_sms');

@@ -13,7 +13,7 @@ class Sms(Control) :
         sms_tel = '+82'+ sms_tel[1:]
 
         account_sid = 'AC56e01be4bf1525b2df6133884275ffe6'
-        auth_token = '7f1b1ff1e378ef69b642a788ee80ca18'
+        auth_token = '77cece226818a0ead0070d8aa1242be0'
         client = Client(account_sid, auth_token) 
 
         message = client.messages.create(
@@ -29,7 +29,7 @@ class Sms(Control) :
         text = self.D['post']['text']
         channel = self.D['post']['channel']
         if not channel : channel = "잡담"
-        myToken = "xoxb-2274214573489-2281355211458-Iiom8vGm8agfr2j0RSa2BRKp"
+        myToken = "xoxb-2274214573489-2281355211458-hX79WZbQWcsOYrq9KFKnvPNj"
         response= requests.post("https://slack.com/api/chat.postMessage",headers={"Authorization": "Bearer " + myToken},data={"channel": channel, "text": text})
         return "메세지가 전송 되었습니다"
 
@@ -46,7 +46,7 @@ class Sms(Control) :
         
         payload={ "filename":up_file_name, "channels":channel}
 
-        myToken = "xoxb-2274214573489-2281355211458-Iiom8vGm8agfr2j0RSa2BRKp"
+        myToken = "xoxb-2274214573489-2281355211458-hX79WZbQWcsOYrq9KFKnvPNj"
         response= requests.post("https://slack.com/api/files.upload",headers={"Authorization": "Bearer " + myToken},params=payload, files=my_file)
 
         data=response.json()

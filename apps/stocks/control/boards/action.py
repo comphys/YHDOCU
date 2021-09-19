@@ -93,7 +93,7 @@ class Action(Control) :
 
         self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f'no={no}')
         code, season = self.DB.get('add1,add15',many=1,assoc=False)
-        file_name = f"{self.C['DOCU_ROOT']}/stocks/chart/stock_chart_{code}_{season}.png"
+        file_name = f"{self.C['DOCU_ROOT']}/개인자료/주식투자/주식챠트/stock_chart_{code}_{season}.png"
 
         self.DB.wre = f"add1='{code}' and add15={season}"
         c_price = self.DB.get('add3',assoc=False)

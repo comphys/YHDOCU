@@ -1,5 +1,6 @@
 from system.core.load import Control
 from flask import session
+from datetime import datetime
 import FinanceDataReader as fdr
 import system.core.my_utils as ut
 
@@ -15,7 +16,9 @@ class Stock_update(Control) :
 
         code = self.parm[0]
         if code == 'NONE' : 
-            self.DB.tbl, self.DB.wre = ("h_stockHistory_board",None)
+            now = int(datetime.now().timestamp())
+            old = str(now - 3600*24*7)
+            self.DB.tbl, self.DB.wre = ("h_stockHistory_board",f"wdate > '{old}'")
             codes = self.DB.get("distinct add1",assoc=False)
 
             for cdx in codes :
@@ -44,20 +47,20 @@ class Stock_update(Control) :
         data_db_in  = list(zip(data_index, df['Close'], df['Open'], df['High'], df['Low'], df['Volume'], df['Change']))
         
         db_keys = "add0,add3,add4,add5,add6,add7,add8,add1,add2,uid,uname,wdate,mdate"
+        time_now = ut.now_timestamp()
+        
         for row in data_db_in :
             row2 = list(row)
             row2.append(cdx)
             row2.append(cdx)
             row2.append(USER['uid'])
             row2.append(USER['uname'])
-            row2.append(ut.now_timestamp())
-            row2.append(ut.now_timestamp())
+            row2.append(time_now)
+            row2.append(time_now)
 
             values = str(row2)[1:-1]
 
             sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
             self.DB.exe(sql)
         
-
-
         #  df = fdr.DataReader(code,start=None, end='2010-02-26')
