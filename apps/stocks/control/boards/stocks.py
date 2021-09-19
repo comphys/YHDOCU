@@ -1,5 +1,5 @@
 from system.core.load import Control
-import math,json
+import math
 
 class Stocks(Control) : 
 
@@ -27,7 +27,7 @@ class Stocks(Control) :
         if preChk is None and ( 체결단가 == '' or 체결수량 == '' or 매매전략 == '' or 가용잔액 == ''): 
             update['msg'] = "먼저 기록된 데이타가 없습니다. 추가 정보를 입력하여 주시기 바랍니다"
             update['replyCode'] = 'NMDATA'
-            return self.echo(json.dumps(update))
+            return self.json(update)
         
         
         # 당일종가 구하기
@@ -37,7 +37,7 @@ class Stocks(Control) :
         if  당일종가 is None : 
             update['msg'] = "기록일에 해당하는 '당일종가'가 존재하지 않습니다. 주가정보를 업데이트 하시기 바랍니다"
             update['replyCode'] = 'NOTICE'
-            return self.echo(json.dumps(update))
+            return self.json(update)
         else : 
             당일종가 = float(당일종가)
 
@@ -63,14 +63,14 @@ class Stocks(Control) :
             if self.DB.get_one('add0') > 기록일자 :
                 update['msg'] = "최초의 기록보다 예전 날자를 선택하였습니다"
                 update['replyCode'] = 'NOTICE'
-                return self.echo(json.dumps(update))                
+                return self.json(update)                
  
             # 데이타 중복 방지하기
             self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"add0='{기록일자}' and add1='{종목코드}'")
             if self.DB.get_one('add0') and self.parm[0] != 'modify': 
                 update['msg'] = "같은 날자에 입력된 데이타가 존재합니다"
                 update['replyCode'] = 'NOTICE'
-                return self.echo(json.dumps(update))
+                return self.json(update)
 
             # 전일데이타 가져오기
             self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"no={preChk}")
@@ -139,4 +139,4 @@ class Stocks(Control) :
         update['add14']  = f"{round(가용잔액,2):,.2f}"
         update['add17']  = 진행상황
 
-        return self.echo(json.dumps(update))
+        return self.json(update)

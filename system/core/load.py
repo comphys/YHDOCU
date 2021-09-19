@@ -1,4 +1,4 @@
-import os,re,pprint,logging,html 
+import os,re,pprint,logging,html,json
 from werkzeug.datastructures import ImmutableMultiDict
 
 def my_log(logger_name) :
@@ -84,6 +84,9 @@ class Control :
             return self.D  
         return False
 
+    def json(self,D) :
+        return json.dumps(D) 
+
     def html(self,template) :
         if self.DB : self.DB.close()
         D={'parm':self.parm,'gets':self.gets,'skin':template}
@@ -102,7 +105,6 @@ class Control :
     def moveto(self,path,short=True) :
         self.D['_redirect'] = '/' + self.V['_app'] + '/' + path if short else '/' + path
         return self.D
-
 
     def model(self,module_name):
         if '-' in module_name : 

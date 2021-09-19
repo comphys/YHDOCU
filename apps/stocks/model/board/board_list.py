@@ -18,6 +18,7 @@ class M_board_list(Model) :
             if not self.D['No'] and not self.D['search'] and not self.D['csh'] and not self.D['Page'] : session['CSH'].clear()
 
             if self.D['post'] :
+                # key : csh_add1, csh_add2 ... 
                 for key, val in self.D['post'].items() : session['CSH'][key] = val 
             
             session.modified = True # for mutable variable in session

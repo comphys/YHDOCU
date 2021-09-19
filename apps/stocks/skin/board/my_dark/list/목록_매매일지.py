@@ -1,12 +1,17 @@
 import system.core.my_utils as ut
 from system.core.load import SKIN
-
-
+from flask import session
 
 class 목록_매매일지(SKIN) :
 
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)
+        try : 
+            self.D['chart_code']   = session['CSH']['csh_add1']
+            self.D['chart_season'] = session['CSH']['csh_add15']
+        except : 
+            self.D['chart_code']   = None 
+            self.D['chart_season'] = None
 
     def head(self) : 
         TH_title = {'no':'번호','uname':'작성자','wdate':'작성일','mdate':'수정일','hit':'조회','uid':'아이디'}

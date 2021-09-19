@@ -39,7 +39,7 @@ class DB :
 
     def get_line(self,fld) :
         return self.get(fld,many=1,assoc=True)    
-
+    
     def get(self,fld,many=0,assoc=True) :
         if not self.tbl : 
             self.err = "No table name is specified"
@@ -73,8 +73,7 @@ class DB :
         else :
             if fld.find(',') == -1 : # 필드가 하나일 경우 
                 rst = [x[0] for x in rst]
-                if many == 1 : rst = rst[0]
-            return rst
+            return rst[0] if many == 1 else rst
 
 
     def fetch_assoc(self, many=0) :

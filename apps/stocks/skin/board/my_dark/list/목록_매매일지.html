@@ -90,9 +90,13 @@
 		{{D['Pagination']|safe}}
 	</ul></div>
 </div>
+{% if D['chart_code'] and D['chart_season'] %}
+<div style="width:1200px;height:300px;border:1px solid black">
+	<img src="/DOCU_ROOT/개인자료/주식투자/주식챠트/stock_chart_{{D['chart_code']}}_{{D['chart_season']}}.png">
+</div>
+{% endif %}
 
 <script>
-
 function open_stock_chart(stock) {
 	winopen('winopen/chart2/'+stock,820,450,'stock_chart'+stock)
 }
