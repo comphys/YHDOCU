@@ -1,9 +1,12 @@
 // /////////////////////////////////////////////////////////////////////////////////////////////////
 // YH PLUGIN
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// JYH JQUERY PLUGIN :: comma { init : put comma and bind keyup event, put_comma, clear : remove ',' }
+(function($){ var YH_comma={ init:function(){ return this.each(function(){$(this).comma('put_comma'); $(this).on("keyup", YH_comma.put_comma );});}, put_comma:function(){ var $this = $(this); var tmp=$this.val().split('.'); var minus=false; var str=new Array(); if(tmp[0].indexOf('-') >= 0){ minus=true;tmp[0]=tmp[0].substring(1, tmp[0].length);} var v=tmp[0].replace(/,/gi,''); for(var i=0;i<=v.length;i++){ str[str.length]=v.charAt(v.length-i); if(i%3==0 && i!=0 && i!=v.length){ str[str.length]='.';}} str=str.reverse().join('').replace(/\./gi,',');if(minus) str ='-'+str; tmp=(tmp.length==2)? str+'.'+tmp[1]:str; var chx = tmp.replace(/,/gi,''); if ((isNaN(chx) && chx !='-') || chx ==' ' ) {$this.val(''); return;}	$this.val(tmp);},clear:function(){ var tmp=$(this).val(); tmp=tmp.replace(/,/gi,''); $(this).val(tmp);}};$.fn.comma =function(method) {if(YH_comma[method]) { return YH_comma[method].apply(this,Array.prototype.slice.call(arguments,1));}else if(typeof method === 'object' || ! method){ return YH_comma.init.apply( this,arguments);}else{ $.error( 'Method ' +method+' does not exist on jQuery.comma');}};})(jQuery);
 
 $(document).ready(function(){ 
-
+	$(".i-date").Zebra_DatePicker({format:'Y-m-d', offset:[-150,280], first_day_of_week : 0}); 
+	$(".i-number").comma('init');
 }); // END OF DOCUMENT READY
 //
 

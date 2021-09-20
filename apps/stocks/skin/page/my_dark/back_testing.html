@@ -1,0 +1,118 @@
+{% extends D['_skn'] + 'page/my_dark/main_layout.html' %}
+
+{% block contents_page  %}
+<div class="row-row">
+<div class="well clearfix">
+    <form method='post' name='stock_back_testing' action="{{D['_bse']}}page/backtest/{{D['bid']}}" onsubmit='return check_thisForm()'>
+    <div class="pull-left">
+    <div class='select' style='margin-right:10px;vertical-align:bottom'>
+        <input placeholder='종목코드' name='code' type='text' value="{{D['code']}}">
+            <div class='btn-group'>
+                <button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>
+                    <ul class='dropdown-menu'>
+                        <li><a>종목코드</a></li>
+                        {% for cdx in D['sel_codes'] %}
+                        <li><a href='#'>{{cdx}}</a></li>
+                        {% endfor %}
+                    </ul>
+            </div>
+    </div>
+    <div class='select' style='margin-right:10px;vertical-align:bottom'>
+        <input placeholder='매매전략' name='strategy' type='text' value="{{D['strategy']}}">
+            <div class='btn-group'>
+                <button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>
+                    <ul class='dropdown-menu'>
+                        <li><a>매매전략</a></li>
+                        {% for stg in D['sel_strategy'] %}
+                        <li><a href='#'>{{stg}}</a></li>
+                        {% endfor %}
+                    </ul>
+            </div>
+    </div>
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 초기 자본금</div>
+        <input type='text' name='capital' class="i-number" style="width:90px;text-align:center;" value="{{D['capital']}}">
+    </div>
+    </div> <!--pull left-->
+    <div class="pull-right">
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 시작일자</div>
+        <input type='text' name='start_date' class="i-date" value="{{D['start_date']}}" style="width:120px;text-align:center;">
+    </div>
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 종료일자</div>
+        <input type='text' name='end_date' class="i-date" value="{{D['end_date']}}" style="width:120px;text-align:center;">
+    </div>
+    <button class="btn btn-red-s3" style="vertical-align:middle;">테스팅</button>
+    </div> <!--pull right-->
+    </form>
+</div> <!--well-->
+</div> <!--rowrow clearfix-->
+
+
+<div class="row-row clearfix"> 
+	<table class='table table-striped table-hover' style="border:2px solid black">
+		<colgroup>
+			<col><col><col><col><col style="background-color:#24272d;border:2px solid black;">
+			<col><col><col><col style="background-color:#24272d;border:2px solid black;"><col>
+			<col><col><col><col><col>
+			<col>			
+		</colgroup>
+		<thead>
+			<tr style="background-color:#393f4a;border-bottom:1px solid black">
+				<th style='text-align:left'>코드</th>
+				<th style='text-align:center'>시즌</th>
+				<th style='text-align:right'>회차</th>
+				<th style='text-align:center'>기록일자</th>
+				<th style='text-align:right'>당일종가</th>
+				<th style='text-align:right'>체결단가</th>
+				<th style='text-align:right'>체결수량</th>
+				<th style='text-align:right'>매수금액</th>
+				<th style='text-align:right'>평균단가</th>
+				<th style='text-align:right'>보유수량</th>
+				<th style='text-align:right'>평가금액</th>
+				<th style='text-align:right'>총매수금</th>
+				<th style='text-align:right'>수익현황</th>
+				<th style='text-align:right'>수익률%</th>
+				<th style='text-align:right'>가용잔액</th>
+				<th style='text-align:center'>진행상황</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr> 
+			<td style='text-align:left;'>SOXL</td>
+			<td style='text-align:center;' class='list-add15'>1</td>
+			<td style='text-align:right;color:#BDBDBD;'>7.0</td>
+			<td class='text-left'><span class='list-subject' style='color:#CEF6F5'>2021-09-17</span></td>
+			<td style='text-align:right;' class='list-add'>46.75</td>
+			<td style='text-align:right;' class='list-add'>46.75</td>
+			<td style='text-align:right;' class='list-add'>11</td>
+			<td style='text-align:right;' class='list-add'>514.25</td>
+			<td style='text-align:right;color:#F5F6CE;' class='list-add'>46.6941</td>
+			<td style='text-align:right;color:#E6F8E0;' class='list-add'>157</td>
+			<td style='text-align:right;color:#F8E6E0;' class='list-add'>7,339.75</td>
+			<td style='text-align:right;color:#E0F8F7;' class='list-add'>7,330.97</td>
+			<td style='text-align:right;' class='list-add'>8.78</td>
+			<td style='text-align:right;color:#F6CECE;'>0.12</td>
+			<td style='text-align:right;color:#CEF6CE;' class='list-add'>36,189.03</td>
+			<td style='text-align:center;' data-no='50' class='todo_today'>정상진행</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<script>
+function check_thisForm() {
+    if(! $("input[name='code']").val() ) { h_dialog.notice("코드 입력은 필수입니다"); return false; }
+	if(! $("input[name='strategy']").val() ) { h_dialog.notice("전략 입력은 필수입니다"); return false; }
+    if(! $("input[name='capital']").val() ) { h_dialog.notice("초기자본을 입력해 주세요"); return false; }  
+    if(! $("input[name='start_date']").val() ) { h_dialog.notice("시작 일자가 입력되지않았습니다"); return false; }  
+    if(! $("input[name='end_date']").val() ) { h_dialog.notice("종료 일자가 입력되지않았습니다"); return false; }  
+    if($("input[name='start_date']").val() > $("input[name='end_date']").val() ) { h_dialog.notice("시작 일자는 종료일보다 커야 합니다"); return false; }
+}
+
+</script>
+
+
+
+{% endblock %}

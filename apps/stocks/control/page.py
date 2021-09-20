@@ -29,9 +29,19 @@ class Page(Control) :
 
     def view(self) :
         if not 'N_NO' in session : return self.moveto('board/login')
-        bid = self.parm[0]
-        M = self.model('page-'+bid)
+        M = self.model('page-'+self.D['bid'])
         M.view()
-        D={'skin':f"{self.skin}/{bid}.html"}
+        D={'skin':f"{self.skin}/{self.D['bid']}.html"}
         
+        return self.echo(D)
+
+    def backtest(self) :
+        D={'skin':f"{self.skin}/{self.D['bid']}.html"}
+        D['code']       = self.D['post']['code']
+        D['strategy']   = self.D['post']['strategy']
+        D['capital']    = self.D['post']['capital']
+        D['start_date'] = self.D['post']['start_date']
+        D['end_date']   = self.D['post']['end_date']
+        M = self.model('page-'+self.D['bid'])
+        M.view()
         return self.echo(D)

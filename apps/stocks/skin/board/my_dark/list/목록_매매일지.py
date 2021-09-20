@@ -113,7 +113,7 @@ class 목록_매매일지(SKIN) :
                         elif txt_format == 'edit'   : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
                         elif txt_format == 'n_edit' : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
                         elif txt_format == 'mobile' : clas= f"class='list-mobile'" 
-                        else : clas=f"class='list-{key}'"
+                        else : clas=f"class='list-add'"
                         
 
                         if (self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"

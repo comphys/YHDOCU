@@ -4,3 +4,6 @@
 #send-to-mobile-select {display:inline-block;outline:none;margin-right:10px;}
 #send-to-mobile-text {display:inline-block;color:cyan;outline:none;width:600px;white-space:pre-wrap;}
 #send-to-mobile-send {display:inline-block;color:yellow;width:80px;text-align:right;}
+
+.i-input-div {display:inline-block; border: 1px solid #4a505e; margin:1px 10px 1px 0px}
+.write-input-left  {width:100px; display:inline-block;border:2px solid #000;background-color:#004200;vertical-align:middle;padding:1px 5px 2px 5px;}

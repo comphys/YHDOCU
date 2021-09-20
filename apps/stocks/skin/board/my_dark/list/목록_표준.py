@@ -85,7 +85,7 @@ class 목록_표준(SKIN) :
                         elif txt_format == 'edit'   : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
                         elif txt_format == 'n_edit' : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
                         elif txt_format == 'mobile' : clas= f"class='list-mobile'" 
-                        else : clas=f"class='list-{key}'"
+                        else : clas=f"class='list-add'"
                         
                     #   if (self.D['EXFTYPE'][key] == 'int') or (txt_format == 'number') or (txt_format == 'n_edit'): txt = f"{int(txt):,}"
 
