@@ -31,7 +31,7 @@
 	<div class='pull-right'>
 		<input  type="hidden" name="search_field" value="기록일자" />
 		<input  id="search_input2" type='text' name='search_value' value="{{D['search']}}" style='height:24px;vertical-align:baseline;width:120px;text-align:center' />
-		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="list_search2()">검색</button>
+		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="list_ontheday()">검색</button>
 		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="location.href='{{D['_bse']}}board/list/{{D['bid']}}/csh=on'" >취소</button>
 	</div>
 </div>
@@ -99,6 +99,12 @@
 <script>
 function open_stock_chart(stock) {
 	winopen('winopen/chart2/'+stock,820,450,'stock_chart'+stock)
+}
+
+function list_ontheday() { 
+	var search = $("input[name='search_value']").val(); if(! search ) return;
+	var url = uri('linkurl') + 'board/list/daily_trading/search=' + search + '/search_f=기록일자' ;
+	location.href = url; 
 }
 
 var selected_tr = null

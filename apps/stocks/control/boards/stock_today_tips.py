@@ -51,11 +51,11 @@ class Stock_today_tips(Control) :
         style4 ="<span style='font-weight:bold;color:#e8f6cd;font-size:14px'>"
 
         output  = "<div id='stock_tips' style='padding:10px;background-color:#424242;color:#F2F2F2;' >"
-        output += f"{style3}{preDATA['add1']} </span>&nbsp;{style4}(매매전략 : {매매전략})</span>&nbsp;&nbsp; 금일 매수 조건 : (평단가) {style1}${평단가매수:,.2f} * {평단가주문}</span> 주&nbsp;&nbsp;"
-        output += f"(큰단가) <span {style1}${큰단가매수:,.2f} * {큰단가주문}</span> 주&nbsp;&nbsp;&nbsp;"
+        output += f"{style3}{preDATA['add1']} </span>&nbsp;{style4}(매매전략 : {매매전략})</span>&nbsp;&nbsp; 금일 매수 조건 : (평단가) {style1}{평단가주문} * ${평단가매수:,.2f} </span> &nbsp;&nbsp;"
+        output += f"(큰단가) <span {style1}{큰단가주문} * ${큰단가매수:,.2f}</span> &nbsp;&nbsp;&nbsp;"
         if 매도분할 : 
-            output += f"금일 매도 조건 : (주문단가1) {style2}${매도가격1:,.2f} * {매도수량1}</span> 주 / (주문단가2) {style2}${매도가격2:,.2f} * {매도수량2}</span> 주 "
+            output += f"금일 매도 조건 : (주문단가1) {style2}{매도수량1} * ${매도가격1:,.2f}</span>  / (주문단가2) {style2}{매도수량2} * ${매도가격2:,.2f} * </span>"
         else : 
-            output += f"금일 매도 조건 : (주문단가) {style2}${매도가격:,.2f} * {매도수량}</span> 주"
+            output += f"금일 매도 조건 : (주문단가) {style2}{매도수량} * ${매도가격:,.2f}</span>"
         output += "</div>"
         return self.echo(output)
