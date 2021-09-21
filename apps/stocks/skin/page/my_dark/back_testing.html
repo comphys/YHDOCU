@@ -79,24 +79,26 @@
 			</tr>
 		</thead>
 		<tbody>
+			{%- for TR in D['TR'] -%}
 			<tr> 
-			<td style='text-align:left;'>SOXL</td>
-			<td style='text-align:center;' class='list-add15'>1</td>
-			<td style='text-align:right;color:#BDBDBD;'>7.0</td>
-			<td class='text-left'><span class='list-subject' style='color:#CEF6F5'>2021-09-17</span></td>
-			<td style='text-align:right;' class='list-add'>46.75</td>
-			<td style='text-align:right;' class='list-add'>46.75</td>
-			<td style='text-align:right;' class='list-add'>11</td>
-			<td style='text-align:right;' class='list-add'>514.25</td>
-			<td style='text-align:right;color:#F5F6CE;' class='list-add'>46.6941</td>
-			<td style='text-align:right;color:#E6F8E0;' class='list-add'>157</td>
-			<td style='text-align:right;color:#F8E6E0;' class='list-add'>7,339.75</td>
-			<td style='text-align:right;color:#E0F8F7;' class='list-add'>7,330.97</td>
-			<td style='text-align:right;' class='list-add'>8.78</td>
-			<td style='text-align:right;color:#F6CECE;'>0.12</td>
-			<td style='text-align:right;color:#CEF6CE;' class='list-add'>36,189.03</td>
-			<td style='text-align:center;' data-no='50' class='todo_today'>정상진행</td>
+				<td style='text-align:left'>{{TR['코드']}}</td>
+				<td style='text-align:center'>{{TR['시즌']}}</td>
+				<td style='text-align:right;color:#BDBDBD;'>{{TR['회차']}}</td>
+				<td style='text-align:center;color:#CEF6F5'>{{TR['기록일자']}}</td>
+				<td style='text-align:right'>{{TR['당일종가']}}</td>
+				<td style='text-align:right'>{{TR['체결단가']}}</td>
+				<td style='text-align:right'>{{TR['체결수량']}}</td>
+				<td style='text-align:right'>{{TR['매수금액']}}</td>
+				<td style='text-align:right;color:#F5F6CE'>{{TR['평균단가']}}</td>
+				<td style='text-align:right;color:#E6F8E0'>{{TR['보유수량']}}</td>
+				<td style='text-align:right;color:#F8E6E0'>{{TR['평가금액']}}</td>
+				<td style='text-align:right;color:#E0F8F7'>{{TR['총매수금']}}</td>
+				<td style='text-align:right'>{{TR['수익현황']}}</td>
+				<td style='text-align:right;font-weight:bold'>{{TR['수익률']|safe}}</td>
+				<td style='text-align:right;color:#CEF6CE'>{{TR['가용잔액']}}</td>
+				<td style='text-align:center'>{{TR['진행상황']}}</td>
 			</tr>
+			{%- endfor %}
 		</tbody>
 	</table>
 </div>
