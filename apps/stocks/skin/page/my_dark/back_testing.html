@@ -49,7 +49,7 @@
 </div> <!--well-->
 </div> <!--rowrow clearfix-->
 
-
+{% if D['TR'] %}
 <div class="row-row clearfix">
 	<div class="pull-right" style="padding:10px;color:lightgray">
 	{{D['output']}}
@@ -111,7 +111,7 @@
 		</tbody>
 	</table>
 </div>
-
+{% endif %}
 <script>
 function check_thisForm() {
     if(! $("input[name='code']").val() ) { h_dialog.notice("코드 입력은 필수입니다"); return false; }
