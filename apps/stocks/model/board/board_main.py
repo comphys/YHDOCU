@@ -1,5 +1,4 @@
 from system.core.load import Model
-import copy
 
 class M_board_main(Model) :
 

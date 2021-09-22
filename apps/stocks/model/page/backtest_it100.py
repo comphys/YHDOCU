@@ -1,42 +1,10 @@
 from system.core.load import Model
 from datetime import datetime,date
 import math
-class M_back_testing(Model) :
 
-    def view(self) :
-        
-        now = int(datetime.now().timestamp())
-        old = str(now - 3600*24*7)
-        self.DB.tbl, self.DB.wre = ("h_stockHistory_board",f"wdate > '{old}'")
-        self.D['sel_codes'] = self.DB.get("distinct add1",assoc=False)
+class M_backtest_it100(Model) :
 
-        self.DB.tbl, self.DB.wre = ("h_stock_strategy_board",None)
-        self.D['sel_strategy'] = self.DB.get("add0",assoc=False)
-
-    def get_start(self) :
-        self.M = {}
-
-        # 매매전략 가져오기
-        self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.D['strategy']}'")
-        self.S = self.DB.get_line('add1,add2,add3,add4,add5,add6,add7,add8,add9,add10')
-
-        # 종가 및 최고가 가져오기
-        self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['code']}' AND add0 BETWEEN '{self.D['start_date']}' AND '{self.D['end_date']}'",'add0')
-        self.B = self.DB.get('add0,add3,add5')
-
-        # 기간 계산하기
-        self.D['s_day'] = s_day = self.B[0]['add0']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
-        self.D['e_day'] = e_day = self.B[-1]['add0'] ; d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
-        delta = d1-d0
-        self.D['days_span'] = delta.days
-
-        self.M['capital'] = int(self.D['capital'].replace(',',''))
-
-        if   self.S['add10'] == 'IT_V1'  :    self.test_IT_V1()
-        elif self.S['add10'] == 'IT_V2'  :    self.test_IT_V1()
-        elif self.S['add10'] == 'TLP_V1' :    self.test_TLP_V1()
-
-    def test_IT_V1(self) :
+    def test_it(self) :
         분할횟수 = int(self.S['add1'])
         가용잔액 = int(self.M['capital'])
         일매수금 = 가용잔액 / 분할횟수
@@ -140,13 +108,34 @@ class M_back_testing(Model) :
             TR.append(tx)
             tx = {}
 
-        self.D['TR'] = TR
+        self.D['TR'] = TR    
 
+    def view(self) :
+        
+        now = int(datetime.now().timestamp())
+        old = str(now - 3600*24*7)
+        self.DB.tbl, self.DB.wre = ("h_stockHistory_board",f"wdate > '{old}'")
+        self.D['sel_codes'] = self.DB.get("distinct add1",assoc=False)
 
+        self.DB.tbl, self.DB.wre = ("h_stock_strategy_board",None)
+        self.D['sel_strategy'] = self.DB.get("add0",assoc=False)
 
-    def test_IT_V2(self) :
-        pass
+    def get_start(self) :
+        self.M = {}
 
-    def test_TLP_V1(self) :
-        pass
+        # 매매전략 가져오기
+        self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.D['strategy']}'")
+        self.S = self.DB.get_line('add1,add2,add3,add4,add5,add6,add7,add8,add9,add10')
 
+        # 종가 및 최고가 가져오기
+        self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['code']}' AND add0 BETWEEN '{self.D['start_date']}' AND '{self.D['end_date']}'",'add0')
+        self.B = self.DB.get('add0,add3,add5')
+
+        # 기간 계산하기
+        self.D['s_day'] = s_day = self.B[0]['add0']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
+        self.D['e_day'] = e_day = self.B[-1]['add0'] ; d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
+        delta = d1-d0
+        self.D['days_span'] = delta.days
+
+        self.M['capital'] = int(self.D['capital'].replace(',',''))
+        self.test_it()

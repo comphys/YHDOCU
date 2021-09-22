@@ -43,7 +43,11 @@ class Page(Control) :
         self.D['capital']    = self.D['post']['capital']
         self.D['start_date'] = self.D['post']['start_date']
         self.D['end_date']   = self.D['post']['end_date']
-        M = self.model('page-'+self.D['bid'])
+
+        self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.D['strategy']}'")
+        s_code = self.DB.get_one('add10')
+
+        M = self.model('page-backtest_'+s_code.lower())
         M.get_start()
         M.view()
         D={'skin':f"{self.skin}/{self.D['bid']}.html"}
