@@ -51,6 +51,7 @@
 
 
 <div class="row-row clearfix"> 
+	{{D['output']}}
 	<table class='table table-striped table-hover' style="border:2px solid black">
 		<colgroup>
 			<col><col><col><col><col style="background-color:#24272d;border:2px solid black;">
@@ -61,10 +62,10 @@
 		<thead>
 			<tr style="background-color:#393f4a;border-bottom:1px solid black">
 				<th style='text-align:left'>코드</th>
-				<th style='text-align:center'>시즌</th>
+				<th style='text-align:center'>진행일</th>
 				<th style='text-align:right'>회차</th>
 				<th style='text-align:center'>기록일자</th>
-				<th style='text-align:right'>당일종가</th>
+				<!-- <th style='text-align:right'>당일종가</th> -->
 				<th style='text-align:right'>체결단가</th>
 				<th style='text-align:right'>체결수량</th>
 				<th style='text-align:right'>매수금액</th>
@@ -74,18 +75,23 @@
 				<th style='text-align:right'>총매수금</th>
 				<th style='text-align:right'>수익현황</th>
 				<th style='text-align:right'>수익률%</th>
+				<th style='text-align:right'>매도금액</th>
 				<th style='text-align:right'>가용잔액</th>
 				<th style='text-align:center'>진행상황</th>
 			</tr>
 		</thead>
 		<tbody>
 			{%- for TR in D['TR'] -%}
-			<tr> 
-				<td style='text-align:left'>{{TR['코드']}}</td>
+			{% if TR['진행상황'] == '매도체결' %}
+			<tr style="border-bottom:2px solid yellow;background-color:black;"> 
+			{% else %}
+			<tr>
+			{% endif %}
+			<td style='text-align:left'>{{TR['코드']}}</td>
 				<td style='text-align:center'>{{TR['시즌']}}</td>
 				<td style='text-align:right;color:#BDBDBD;'>{{TR['회차']}}</td>
 				<td style='text-align:center;color:#CEF6F5'>{{TR['기록일자']}}</td>
-				<td style='text-align:right'>{{TR['당일종가']}}</td>
+				<!-- <td style='text-align:right'>{{TR['당일종가']}}</td> -->
 				<td style='text-align:right'>{{TR['체결단가']}}</td>
 				<td style='text-align:right'>{{TR['체결수량']}}</td>
 				<td style='text-align:right'>{{TR['매수금액']}}</td>
@@ -95,6 +101,7 @@
 				<td style='text-align:right;color:#E0F8F7'>{{TR['총매수금']}}</td>
 				<td style='text-align:right'>{{TR['수익현황']}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['수익률']|safe}}</td>
+				<td style='text-align:right;color:#F6CECE'>{{TR['매도금액']}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['가용잔액']}}</td>
 				<td style='text-align:center'>{{TR['진행상황']}}</td>
 			</tr>

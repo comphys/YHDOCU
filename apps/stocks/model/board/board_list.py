@@ -15,7 +15,7 @@ class M_board_list(Model) :
         if self.D['Cat_use'] :
             self.D['list_filter']=''
 
-            if not self.D['No'] and not self.D['search'] and not self.D['csh'] and not self.D['Page'] : session['CSH'].clear()
+            if (not self.D['No'] and not self.D['search'] and not self.D['csh'] and not self.D['Page']) or self.D['csh'] == 'off' : session['CSH'].clear()
 
             if self.D['post'] :
                 # key : csh_add1, csh_add2 ... 
