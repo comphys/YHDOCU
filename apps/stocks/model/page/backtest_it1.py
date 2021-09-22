@@ -2,7 +2,7 @@ from system.core.load import Model
 from datetime import datetime,date
 import math
 
-class M_backtest_it100(Model) :
+class M_backtest_it1(Model) :
 
     def test_it(self) :
         분할횟수 = int(self.S['add1'])
