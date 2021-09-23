@@ -56,10 +56,22 @@
 	</div>
 	<table class='table table-striped table-hover' style="border:2px solid black">
 		<colgroup>
-			<col><col><col><col><col style="background-color:#24272d;border:2px solid black;">
-			<col><col><col><col style="background-color:#24272d;border:2px solid black;">
-			<col><col><col><col><col><col>
-			<col><col><col>	
+			<col> <!-- 코드 -->
+			<col> <!-- 진행일 -->
+			<col> <!-- 회차 -->
+			<col> <!-- 기록일자 -->
+			<col style="background-color:#24272d;border:2px solid black;"> <!-- 당일종가 -->
+			<col> <!-- 체결수량 -->
+			<col> <!-- 매수금액 -->
+			<col style="background-color:#24272d;border:2px solid black;"> <!-- 평균단가 -->
+			<col> <!-- 보유수량 -->
+			<col> <!-- 평가금액 -->
+			<col> <!-- 총매수금 -->
+			<col> <!-- 수익현황 -->
+			<col> <!-- 수익률 -->
+			<col> <!-- 매도금액 -->
+			<col> <!-- 가용잔액 -->
+			<col> <!-- 진행상황 -->	
 		</colgroup>
 		<thead>
 			<tr style="background-color:#393f4a;border-bottom:1px solid black">
@@ -68,7 +80,7 @@
 				<th style='text-align:right'>회차</th>
 				<th style='text-align:center'>기록일자</th>
 				<th style='text-align:right'>당일종가</th>
-				<th style='text-align:right'>체결단가</th>
+				<!-- <th style='text-align:right'>체결단가</th> -->
 				<th style='text-align:right'>체결수량</th>
 				<th style='text-align:right'>매수금액</th>
 				<th style='text-align:right'>평균단가</th>
@@ -80,7 +92,7 @@
 				<th style='text-align:right'>매도금액</th>
 				<th style='text-align:right'>가용잔액</th>
 				<th style='text-align:center'>진행상황</th>
-				<th style='text-align:center'>일매수금</th>
+				<!-- <th style='text-align:center'>일매수금</th> -->
 			</tr>
 		</thead>
 		<tbody>
@@ -97,7 +109,7 @@
 				<td style='text-align:right;color:#BDBDBD;'>{{TR['회차']}}</td>
 				<td style='text-align:center;color:#CEF6F5'>{{TR['기록일자']}}</td>
 				<td style='text-align:right'>{{TR['당일종가']}}</td>
-				<td style='text-align:right'>{{TR['체결단가']}}</td>
+				<!-- <td style='text-align:right'>{{TR['체결단가']}}</td> -->
 				<td style='text-align:right'>{{TR['체결수량']}}</td>
 				<td style='text-align:right'>{{TR['매수금액']}}</td>
 				<td style='text-align:right;color:#F5F6CE'>{{TR['평균단가']}}</td>
@@ -109,7 +121,7 @@
 				<td style='text-align:right;color:#F6CECE'>{{TR['매도금액']}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['가용잔액']}}</td>
 				<td style='text-align:center'>{{TR['진행상황']}}</td>
-				<td style='text-align:center'>{{TR['일매수금']}}</td>
+				<!-- <td style='text-align:center'>{{TR['일매수금']}}</td> -->
 			</tr>
 			{%- endfor %}
 		</tbody>
