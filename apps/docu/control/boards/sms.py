@@ -13,7 +13,7 @@ class Sms(Control) :
         sms_tel = '+82'+ sms_tel[1:]
 
         account_sid = 'AC56e01be4bf1525b2df6133884275ffe6'
-        auth_token = '77cece226818a0ead0070d8aa1242be0'
+        auth_token = 'f6fc0a123cfd2cca026fbbff28809d86'
         client = Client(account_sid, auth_token) 
 
         message = client.messages.create(
