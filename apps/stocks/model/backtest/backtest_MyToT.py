@@ -122,7 +122,7 @@ class M_backtest_MyToT(Model) :
         if 매도수량 : 
             ratio = 매도수량 / self.M['보유수량']
             self.M['매도수익']  = self.M['매도금액'] - self.M['총매수금'] * ratio  
-            self.M['매수익률']  = self.M['매도수익'] / (self.M['총매수금'] * ratio)
+            self.M['매수익률']  = self.M['매도수익'] / (self.M['총매수금'] * ratio) * 100
             self.M['보유수량'] -= 매도수량  
             self.M['가용잔액'] += self.M['매도금액']
             self.M['총매수금']  =  self.M['보유수량'] * self.M['평균단가']
