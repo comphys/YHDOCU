@@ -21,7 +21,7 @@ class M_backtest_MyToT(Model) :
         tx['회차'] = self.M['회차']
         tx['기록일자'] = 기록일자
         tx['당일종가'] = f"{round(self.M['당일종가'],4):,.2f}"
-        tx['체결단가'] = f"{round(self.M['체결단가'],4):,.2f}"
+        tx['체결단가'] = tx['당일종가']
         tx['체결수량'] = self.M['체결수량']
         tx['매수금액'] = f"{round(self.M['매수금액'],4):,.3f}"
         tx['평균단가'] = f"{round(self.M['평균단가'],4):,.4f}"
@@ -39,12 +39,13 @@ class M_backtest_MyToT(Model) :
 
     def calculate(self)  :
 
+        self.M['과거이력'] = self.M['과거이력'] + 1 if  self.M['당일종가'] <= self.M['전일종가'] else 0 
         self.M['매수금액']  = self.M['체결수량'] * self.M['당일종가']
         self.M['가용잔액'] -= self.M['매수금액']
         self.M['보유수량'] += self.M['체결수량']
         self.M['총매수금'] += self.M['매수금액']
         self.M['평가금액']  = self.M['당일종가'] * self.M['보유수량']
-        self.M['평균단가'] =  self.M['총매수금']/self.M['보유수량'] if self.M['보유수량'] != 0 else 0
+        self.M['평균단가'] =  self.M['총매수금'] / self.M['보유수량'] if self.M['보유수량'] != 0 else 0
         self.M['수익현황'] =  self.M['평가금액'] - self.M['총매수금']
         self.M['수익률']   = (self.M['수익현황'] / self.M['총매수금']) * 100 if self.M['총매수금'] else 0
         
@@ -67,6 +68,7 @@ class M_backtest_MyToT(Model) :
         self.M['매도비중']  = float(self.S['add7'])/100
         self.M['첫매가치']  = 1 + float(self.S['add8'])/100
         self.M['둘매가치']  = 1 + float(self.S['add9'])/100
+        self.M['채결단가']  = 0.0
         self.M['구매코드']  = ''
         self.M['대기횟수']  = int(self.S['add19'])
 
@@ -78,8 +80,8 @@ class M_backtest_MyToT(Model) :
         self.D['TR'] = []
         tmp = self.S['add15'].split('/')
         tmp.pop()
-        self.M['종가추종']  = [int(x) for x in tmp]
-        self.M['과거추종']  = 0
+        self.M['추종종가']  = [int(x) for x in tmp]
+        self.M['과거이력']  = 0
         self.M['추종방식']  = self.S['add14']
 
         # 위기극복
@@ -111,7 +113,7 @@ class M_backtest_MyToT(Model) :
         
 
     def normal_sell(self) :
-        if self.M['회차'] < self.M['대기횟수'] : return 
+        if self.M['날수'] < self.M['대기횟수'] : return 
         매도수량 = 0
         매도가격1 = self.M['평균단가'] * self.M['첫매가치']
         매도가격2 = self.M['평균단가'] * self.M['둘매가치']
@@ -132,7 +134,7 @@ class M_backtest_MyToT(Model) :
                 
 
     def normal_buy(self) :
-
+        self.info(f"{self.M['day']} 평균단가 {self.M['평균단가']}")
         매수금액1  = self.M['일매수금'] * self.M['매수비중']
         매수금액2  = self.M['일매수금'] - 매수금액1
         평단가매수 = self.M['평균단가'] * self.M['평단가치'] 
@@ -154,18 +156,16 @@ class M_backtest_MyToT(Model) :
     def acc_cur(self) :
         rate = [0.95,0.94,0.93,0.92,0.91,0.90,0.89]
         for idx, val in enumerate(rate) :
-            if self.M['당일종가'] <= self.M['평균단가'] * rate[idx] and self.M['종가추종'][idx] : 
-                self.M['체결수량'] += math.ceil(self.M['일매수금'] * self.M['종가추종'][idx] / self.M['평균단가'] * val )  
-                self.M['회차'] += self.M['종가추종'][idx]
-                # self.info(f"{self.M['day']} 회차 {self.M['회차']}  종가추종 {self.M['종가추종'][idx]}")
+            if self.M['당일종가'] <= min(self.M['평균단가'], self.M['전일종가']) * rate[idx] and self.M['추종종가'][idx] : 
+                self.M['체결수량'] += math.ceil(self.M['일매수금'] * self.M['추종종가'][idx] / self.M['평균단가'] * val )  
+                self.M['회차'] += self.M['추종종가'][idx]
                 self.M['구매코드'] += 'C'
 
     def acc_old(self) :
-        if  self.M['과거추종'] > 0 and self.M['당일종가'] <= self.M['평균단가'] : 
-            self.M['체결수량'] += math.ceil(self.M['일매수금'] * self.M['과거추종'] / self.M['평균단가'])  
-            self.M['회차'] += self.M['과거추종'] 
-            self.M['구매코드'] += str(self.M['과거추종'])
-            # self.info(f"{self.M['day']} 연속하락 {self.M['과거추종']} 체결수량 {self.M['체결수량']}")
+        if  self.M['과거이력'] > 0 and self.M['당일종가'] <= min(self.M['평균단가'], self.M['전일종가']) : 
+            self.M['체결수량'] += math.ceil(self.M['일매수금'] * self.M['과거이력'] / self.M['평균단가'])  
+            self.M['회차'] += self.M['과거이력'] 
+            self.M['구매코드'] += str(self.M['과거이력'])
 
     def test_it(self) :
 
@@ -176,11 +176,7 @@ class M_backtest_MyToT(Model) :
             self.M['당일종가'] = float(BD['add3'])
             if idx !=0 : self.M['전일종가'] = float(self.B[idx-1]['add3'])     
 
-            if self.M['당일종가'] <= self.M['전일종가'] : self.M['과거추종'] += 1
-            else : self.M['과거추종'] = 0
-
             self.M['당일고가'] = float(BD['add5'])
-            self.M['체결단가'] = self.M['당일종가']
             self.M['체결수량'] = 0
             self.M['매도금액']  = 0.0
             self.M['진행상황'] = '정상진행' 
@@ -210,14 +206,9 @@ class M_backtest_MyToT(Model) :
             
             elif self.M['회차'] <= self.M['횟수제한'] and self.M['가용잔액'] + self.M['추가자본'] > 0 :
 
-                # self.info(f"{BD['add0']} 회차 {self.M['회차']} 횟수제한 {self.M['횟수제한']} 추가잔액포함 {self.M['가용잔액'] + self.M['추가자본']}")
-                
-                if self.M['매수허용'] : self.secondary_buy() ; #self.info(f"{BD['add0']} 위기극복 - 매수진행")
-                if self.M['현재추종'] : self.acc_cur() ; #self.info(f"{BD['add0']} 위기극복 - 현재추종")
-                if self.M['과거추종'] : self.acc_old() ; #self.info(f"{BD['add0']} 위기극복 - 과거추종")
-
-            
-
+                if self.M['매수허용'] : self.secondary_buy() 
+                if self.M['현재추종'] : self.acc_cur() 
+                if self.M['과거추종'] : self.acc_old() 
 
         #   결과정리 --------------------------------------------------------------------------------------------------
             # step4 : 기타항목 계산
