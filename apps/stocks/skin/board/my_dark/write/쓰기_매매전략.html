@@ -12,16 +12,11 @@
 	<tr>
 		<td class='write-td-left'>기본사항</td>
 		<td class='write-td-right'>
-			<select name="add10" class="i-input-div-must">
+			<select name="add1" class="i-input-div-must">
 				<option value="">베이스 전략 선택</option>
-				<option value="IT100" {{ 'selected' if D['BODY']['add10'] == 'IT100' else '' }}>IT100</option>
-				<option value="IT200" {{ 'selected' if D['BODY']['add10'] == 'IT200' else '' }}>IT200</option>
-				<option value="IT201" {{ 'selected' if D['BODY']['add10'] == 'IT201' else '' }}>IT201</option>
-				<option value="TP110" {{ 'selected' if D['BODY']['add10'] == 'TP110' else '' }}>TP110</option>
-				<option value="TP120" {{ 'selected' if D['BODY']['add10'] == 'TP120' else '' }}>TP120</option> 
-				<option value="TP130" {{ 'selected' if D['BODY']['add10'] == 'TP130' else '' }}>TP130</option>
-				<option value="MY100" {{ 'selected' if D['BODY']['add10'] == 'MY100' else '' }}>MY100</option>
-				<option value="MY200" {{ 'selected' if D['BODY']['add10'] == 'MY200' else '' }}>MY200</option>
+				{% for val in D['base_strategy'] %}
+				<option value="{{val}}" {{ 'selected' if D['BODY']['add1'] == val else '' }}>{{val}}</option>
+				{% endfor %}
 			</select>
 
 			<div class='i-input-div'>
@@ -30,7 +25,7 @@
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">분할횟수</div>
-				<input type='text' name='add1' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add1']}}">
+				<input type='text' name='add3' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add3']}}">
 			</div>
 			
 		</td>
@@ -39,54 +34,123 @@
 	<tr>
 		<td class='write-td-left'>매수설정</td>
 		<td class='write-td-right'>
-			<div class="i-input-div-choice" style="padding:5px">
-				평단가 비중
-				<input type='range' name='add2' min='0' max='100' step='1' style="width:170px;" value="{{D['BODY']['add2']}}" oninput="display_range_value(this,1)">
-				<span style="display:inline-block;width:30px;text-align:right">{{D['BODY']['add2']}}</span>&nbsp;%
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">평단가 비중(%)</div>
+				<input type='text' name='add4' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add4']}}">
 			</div>
-			<div class="i-input-div" style="padding:5px">
-				큰단가 비중
-				<input type='range' name='add3' min='0' max='100' step='1' style="width:170px;" value="{{D['BODY']['add3']}}" oninput="display_range_value(this,2)">
-				<span style="display:inline-block;width:30px;text-align:right">{{D['BODY']['add3']}}</span>&nbsp;%
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">평단가 가치(%)</div>
+				<input type='text' name='add5' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add5']}}">
 			</div>
-			<div class="i-input-div" style="padding:5px">
-				평단가 가치
-				<input type='range' name='add4' min='-10' max='10' step='1' style="width:170px;" value="{{D['BODY']['add4']}}" oninput="display_range_value(this,0)">
-				<span style="display:inline-block;width:30px;text-align:right">{{D['BODY']['add4']}}</span>&nbsp;%
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">큰단가 가치(%)</div>
+				<input type='text' name='add6' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add6']}}">
 			</div>
-			<div class="i-input-div" style="padding:5px">
-				큰단가 가치
-				<input type='range' name='add5' min='0' max='20' step='1' style="width:170px;" value="{{D['BODY']['add5']}}" oninput="display_range_value(this,0)">
-				<span style="display:inline-block;width:30px;text-align:right">{{D['BODY']['add5']}}</span>&nbsp;%
-			</div><br>
 		</td>
 	</tr>
 	<tr><td colspan="2" style="font-size:2px;line-height:5px;background-color: rgb(1, 2, 19);">&nbsp;</td></tr>
 	<tr>
 		<td class='write-td-left'>매도설정</td>
 		<td class='write-td-right'>
-			<div class="i-input-div-choice" style="padding:5px">
-				첫매도 비중
-				<input type='range' name='add6' min='0' max='100' step='1' style="width:170px;" value="{{D['BODY']['add6']}}" oninput="display_range_value(this,1)">
-				<span style="display:inline-block;width:30px;text-align:right">{{D['BODY']['add6']}}</span>&nbsp;%
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">첫매도 비중(%)</div>
+				<input type='text' name='add7' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add7']}}">
 			</div>
-			<div class="i-input-div" style="padding:5px">
-				둘매도 비중
-				<input type='range' name='add7' min='0' max='100' step='1' style="width:170px;" value="{{D['BODY']['add7']}}" oninput="display_range_value(this,2)">
-				<span style="display:inline-block;width:30px;text-align:right">{{D['BODY']['add7']}}</span>&nbsp;%
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">첫매도 가치(%)</div>
+				<input type='text' name='add8' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add8']}}">
 			</div>
-			<div class="i-input-div" style="padding:5px">
-				첫매도 가치
-				<input type='range' name='add8' min='-10' max='20' step='1' style="width:170px;" value="{{D['BODY']['add8']}}" oninput="display_range_value(this,0)">
-				<span style="display:inline-block;width:30px;text-align:right">{{D['BODY']['add8']}}</span>&nbsp;%
-			</div>
-			<div class="i-input-div" style="padding:5px">
-				둘매도 가치
-				<input type='range' name='add9' min='-10' max='20' step='1' style="width:170px;" value="{{D['BODY']['add9']}}" oninput="display_range_value(this,0)">
-				<span style="display:inline-block;width:30px;text-align:right">{{D['BODY']['add9']}}</span>&nbsp;%
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">둘매도 가치(%)</div>
+				<input type='text' name='add9' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add9']}}">
 			</div><br>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">대기 횟수</div>
+				<input type='text' name='add19' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add19']}}">
+			</div>
 		</td>
 	</tr>
+	<tr><td colspan="2" style="font-size:2px;line-height:5px;background-color: rgb(1, 2, 19);">&nbsp;</td></tr>
+	<tr>
+		<td class='write-td-left'>강매설정<br>위기극복</td>
+		<td class='write-td-right'>	
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">횟수제한</div>
+				<input type='text' name='add10' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add10']}}">
+			</div>	
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">자본제한(%)</div>
+				<input type='text' name='add11' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add11']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">강매도 가치(%)</div>
+				<input type='text' name='add12' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add12']}}">
+			</div><br>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">매수허용</div>
+				<input type='checkbox' id='can_buy' style="width:48px;margin-top:7px" {{ 'checked' if D['BODY']['add16'] =='on' else '' }} >
+				<input type='hidden'   name='add16' >
+			</div>	
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">현재추종</div>
+				<input type='checkbox' id='can_cur' style="width:48px;margin-top:7px" {{ 'checked' if D['BODY']['add17'] =='on' else '' }} >
+				<input type='hidden'   name='add17' >				
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">과거추종</div>
+				<input type='checkbox' id='can_old' style="width:48px;margin-top:7px" {{ 'checked' if D['BODY']['add18'] =='on' else '' }} >
+				<input type='hidden'   name='add18' >			
+			</div>
+		</td>
+	</tr>
+	<tr><td colspan="2" style="font-size:2px;line-height:5px;background-color: rgb(1, 2, 19);">&nbsp;</td></tr>
+	<tr>
+		<td class='write-td-left'>종가추종</td>
+		<td class='write-td-right'>	
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">5%</div>
+				<input type='text' id='sub5' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub5']}}">
+			</div>		
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">6%</div>
+				<input type='text' id='sub6' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub6']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">7%</div>
+				<input type='text' id='sub7' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub7']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">8%</div>
+				<input type='text' id='sub8' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub8']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">9%</div>
+				<input type='text' id='sub9' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub9']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">10%</div>
+				<input type='text' id='sub10' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub10']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">11%</div>
+				<input type='text' id='sub11' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub11']}}">
+			</div>
+			<select name="add14" class="i-input-div-choice" style="width:100px">
+				<option value="">추종방식</option>
+				<option value="추종안함" {{ 'selected' if D['BODY']['add14'] == '추종안함' else '' }}>추종안함</option>
+				<option value="현재추종" {{ 'selected' if D['BODY']['add14'] == '현재추종' else '' }}>현재추종</option>
+				<option value="과거추종" {{ 'selected' if D['BODY']['add14'] == '과거추종' else '' }}>과거추종</option>
+				<option value="복합추종" {{ 'selected' if D['BODY']['add14'] == '복합추종' else '' }}>복합추종</option>
+			</select>
+			<input type='hidden' name='add15' value="{{D['BODY']['add15']}}" >
+		</td>
+	</tr>
+	<tr><td colspan="2" style="font-size:2px;line-height:5px;background-color: rgb(1, 2, 19);">&nbsp;</td></tr>
+	<tr>
+		<td class='write-td-left'>전략설명</td>
+		<td class='write-td-right'>
+			<input type="text" name="add2" value="{{D['BODY']['add2']}}" style="width:100%">
+		</td>
 	</tbody>
 </table>
 <div style="width:{{D['w_width2']}}">
@@ -134,21 +198,6 @@
 
 
 <script>
-function display_range_value(sel1,opt=0) {
-	var val1  = $(sel1).val(); 	
-	var txt1 = $(sel1).next(); 
-	$(txt1).html(val1);
-	if(opt) {
-		if(opt==2) var sel2 = $(sel1).parent().prev().children().first(); 
-		else var sel2 = $(sel1).parent().next().children().first(); 
-
-		var txt2 = $(sel2).next();
-		var val2  = 100-val1;
-		$(sel2).val(val2);
-		$(txt2).html(val2);
-	}
-}
-
 function form_basic(opt) {
 	var html;
 	$('#contextMenu').hide()
@@ -176,6 +225,15 @@ function check_MainWriteForm(f)	{
 	JYHEDITOR.clearDocuSelect();
 	f.content.value = wDiv.innerHTML;
 	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
+	var add15=''
+	for(i=5;i<12;i++)
+	{
+		add15 += $("#sub"+i).val() + '/';
+	}
+	$("input[name='add15']").val(add15)
+	if($("#can_buy").prop('checked')) $("input[name='add16']").val('on') ; else $("input[name='add16']").val('off') ;
+	if($("#can_cur").prop('checked')) $("input[name='add17']").val('on') ; else $("input[name='add17']").val('off') ;
+	if($("#can_old").prop('checked')) $("input[name='add18']").val('on') ; else $("input[name='add18']").val('off') ;
 	return true;
 }
 </script>

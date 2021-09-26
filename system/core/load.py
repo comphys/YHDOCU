@@ -40,7 +40,6 @@ class Control :
         '''
         self.V = V   # index.py 로 부터 전달받은 초기 파라미터
         self.D = {}  # view에 전달하기 위한 변수 
-        self.M = {}  # model에 값을 전달하기 위한 변수 
         
         imd = ImmutableMultiDict(V['_pos'])
         # control에 전달하는 기본 값
@@ -186,6 +185,7 @@ class Model :
         self.SYS  = SYS
         self.C    = SYS.C
         self.D    = SYS.D
+        self.M    = {}
         self.DB   = SYS.DB
         self.info = SYS.info
         self.parm = SYS.parm

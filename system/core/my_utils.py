@@ -9,6 +9,18 @@ def file_split(filename) :
     '''
     return (os.path.dirname(filename),os.path.basename(filename),os.path.splitext(filename)[1][1:])
 
+def get_dirs(path,*sub) :
+    _dir = os.path.join(path,*sub)
+    return [d for d in os.listdir(_dir) if os.path.isdir(os.path.join(_dir, d))]
+
+def get_files(path,*sub,ext=None) :
+    _dir = os.path.join(path,*sub)
+    if ext :
+        ext = '.' + ext
+        return [f for f in os.listdir(_dir) if f.endswith(ext) ]
+    else :
+        return [f for f in os.listdir(_dir) if os.path.isfile(os.path.join(_dir, f))]
+
 def file_ctime(filename,opt=1) : #파일 생성시각
     ctime = os.path.getctime(filename) ; return timestamp_to_date(ctime,opt=1)
 
