@@ -5,9 +5,8 @@ import math
 class M_backtest_MyToT(Model) :
 
 # 무한매수법의 개인 변형 적용
-# 수수료는 매도 시 30% 공제하며, 매도발생 시 self.M['가용잔액']에 합산하여 복리로 계산한다.
 
-    def print_backtest(self,기록일자) :
+    def print_backtest(self) :
         tx = {}
         # 날수 계산
         self.M['날수'] += 1
@@ -19,7 +18,7 @@ class M_backtest_MyToT(Model) :
         tx['코드'] = self.D['code']
         tx['시즌'] = self.M['날수']
         tx['회차'] = self.M['회차']
-        tx['기록일자'] = 기록일자
+        tx['기록일자'] = self.M['day']
         tx['당일종가'] = f"{round(self.M['당일종가'],4):,.2f}"
         tx['체결단가'] = tx['당일종가']
         tx['체결수량'] = self.M['체결수량']
@@ -39,21 +38,19 @@ class M_backtest_MyToT(Model) :
 
     def calculate(self)  :
 
-        self.M['과거이력'] = self.M['과거이력'] + 1 if  self.M['당일종가'] <= self.M['전일종가'] else 0 
-        self.M['매수금액']  = self.M['체결수량'] * self.M['당일종가']
-        self.M['가용잔액'] -= self.M['매수금액']
-        self.M['보유수량'] += self.M['체결수량']
-        self.M['총매수금'] += self.M['매수금액']
-        self.M['평가금액']  = self.M['당일종가'] * self.M['보유수량']
-        self.M['평균단가'] =  self.M['총매수금'] / self.M['보유수량'] if self.M['보유수량'] != 0 else 0
-        self.M['수익현황'] =  self.M['평가금액'] - self.M['총매수금']
-        self.M['수익률']   = (self.M['수익현황'] / self.M['총매수금']) * 100 if self.M['총매수금'] else 0
+        self.M['연속하락']  =  self.M['연속하락'] + 1 if  self.M['당일종가'] <= self.M['전일종가'] else 0 
+        self.M['매수금액']  =  self.M['체결수량'] * self.M['당일종가']
+        self.M['가용잔액'] -=  self.M['매수금액']
+        self.M['보유수량'] +=  self.M['체결수량']
+        self.M['총매수금'] +=  self.M['매수금액']
+        self.M['평가금액']  =  self.M['당일종가'] * self.M['보유수량']
+        self.M['평균단가']  =  self.M['총매수금'] / self.M['보유수량'] if self.M['보유수량'] != 0 else 0
+        self.M['수익현황']  =  self.M['평가금액'] - self.M['총매수금']
+        self.M['수익률']    = (self.M['수익현황'] / self.M['총매수금']) * 100 if self.M['총매수금'] else 0
         
-        if self.M['진행상황'] in ('강제매도','전량매도','부분매도') :
-            # 수익금의 30% 공제 적용 
-            if self.M['수익현황'] > 0 : 
-                self.M['가용잔액'] -= self.M['수익현황']  * 0.3 
-            
+        if  self.M['진행상황'] in ('강제매도','전량매도','부분매도') :
+            self.M['수익현황'] = self.M['매도수익']
+            self.M['수익률']   = self.M['매수익률']
             self.M['일매수금']  = int(self.M['가용잔액']/self.M['분할횟수'])
 
         if  self.M['보유수량'] == 0 : self.M['첫날기록'] = True
@@ -81,12 +78,12 @@ class M_backtest_MyToT(Model) :
         tmp = self.S['add15'].split('/')
         tmp.pop()
         self.M['추종종가']  = [int(x) for x in tmp]
-        self.M['과거이력']  = 0
+        self.M['연속하락']  = 0
         self.M['추종방식']  = self.S['add14']
 
         # 위기극복
         self.M['횟수제한']  = int(self.S['add10'])
-        self.M['추가자본']  = int(float(self.D['init_capital']) * float(self.S['add11'])/100)
+        self.M['추가자본']  = int(self.D['addition'])
         self.M['매수허용']  = True if self.S['add16'] == 'on' else False
         self.M['현재추종']  = True if self.S['add17'] == 'on' else False
         self.M['과거추종']  = True if self.S['add18'] == 'on' else False
@@ -105,13 +102,12 @@ class M_backtest_MyToT(Model) :
     def force_sell(self,강제매도가) :
         self.M['진행상황']  = '강제매도'
         self.M['매도금액']  =  self.M['보유수량'] * 강제매도가
-        self.M['매도수익률']=  (self.M['매도금액']/self.M['총매수금'] - 1) * 100  
+        self.M['매도수익']  =  self.M['매도금액'] - self.M['총매수금'] 
+        self.M['매수익률']  =  self.M['매도수익'] / self.M['총매수금'] * 100  
         self.M['가용잔액'] +=  self.M['매도금액']
-        self.M['보유수량']  = 0
-        self.M['회차'] = 0.0
+        self.M['보유수량']  = 0 ; self.M['회차']  = 0.0 
         self.M['총매수금']  = 0.0
         
-
     def normal_sell(self) :
         if self.M['날수'] < self.M['대기횟수'] : return 
         매도수량 = 0
@@ -124,17 +120,17 @@ class M_backtest_MyToT(Model) :
         if self.M['당일고가'] >= 매도가격2 : self.M['매도금액'] += 매도가격2 * 매도수량2  ; 매도수량 += 매도수량2  
             
         if 매도수량 : 
-
+            ratio = 매도수량 / self.M['보유수량']
+            self.M['매도수익']  = self.M['매도금액'] - self.M['총매수금'] * ratio  
+            self.M['매수익률']  = self.M['매도수익'] / (self.M['총매수금'] * ratio)
             self.M['보유수량'] -= 매도수량  
             self.M['가용잔액'] += self.M['매도금액']
             self.M['총매수금']  =  self.M['보유수량'] * self.M['평균단가']
-            self.M['일매수금']  = int(self.M['가용잔액']/self.M['분할횟수'])
             self.M['회차'] = 0.0
             self.M['진행상황']  = '전량매도' if self.M['보유수량'] == 0 else '부분매도'
                 
 
     def normal_buy(self) :
-        self.info(f"{self.M['day']} 평균단가 {self.M['평균단가']}")
         매수금액1  = self.M['일매수금'] * self.M['매수비중']
         매수금액2  = self.M['일매수금'] - 매수금액1
         평단가매수 = self.M['평균단가'] * self.M['평단가치'] 
@@ -162,10 +158,11 @@ class M_backtest_MyToT(Model) :
                 self.M['구매코드'] += 'C'
 
     def acc_old(self) :
-        if  self.M['과거이력'] > 0 and self.M['당일종가'] <= min(self.M['평균단가'], self.M['전일종가']) : 
-            self.M['체결수량'] += math.ceil(self.M['일매수금'] * self.M['과거이력'] / self.M['평균단가'])  
-            self.M['회차'] += self.M['과거이력'] 
-            self.M['구매코드'] += str(self.M['과거이력'])
+        # 기준점을 평균단가와 전일종가로 비교했을 경우 평균단가를 기준으로 할 경우 수익성이 더 좋게 나옴
+        if  self.M['연속하락'] > 0 and self.M['당일종가'] <= self.M['평균단가'] : 
+            self.M['체결수량'] += math.ceil(self.M['일매수금'] * self.M['연속하락'] / self.M['평균단가'])  
+            self.M['회차'] += self.M['연속하락'] 
+            self.M['구매코드'] += str(self.M['연속하락'])
 
     def test_it(self) :
 
@@ -178,21 +175,20 @@ class M_backtest_MyToT(Model) :
 
             self.M['당일고가'] = float(BD['add5'])
             self.M['체결수량'] = 0
-            self.M['매도금액']  = 0.0
+            self.M['매도금액'] = 0.0
             self.M['진행상황'] = '정상진행' 
             self.M['구매코드'] = ''       
 
             if  idx == 0 or self.M['첫날기록'] : 
                 self.new_day()
-                self.print_backtest(BD['add0'])
+                self.print_backtest()
                 continue
             
         #   매도부분 --------------------------------------------------------------------------------------------------
-            # step1 : 강제매도 판단    
+            # step1 : 강제매도
             강제매도가 = self.M['평균단가'] * self.M['강매가치']
-            if self.M['회차'] > self.M['분할횟수'] and self.M['당일고가'] > 강제매도가 :  self.force_sell(강제매도가)
-
-            # step2 : 정상매도,  매도는 종가에 결정되는 것이 아닌 장중 최고가에 결정
+            if self.M['회차'] > self.M['분할횟수'] and self.M['당일고가'] >= 강제매도가 :  self.force_sell(강제매도가)
+            # step2 : 일반매도
             else : self.normal_sell()
         
         #   매수부분 --------------------------------------------------------------------------------------------------
@@ -215,7 +211,7 @@ class M_backtest_MyToT(Model) :
             self.calculate()
             # step5 : 결과 기록
             self.result()
-            self.print_backtest(BD['add0'])
+            self.print_backtest()
         # endfor -----------------------------------------------------------------------------------------------------
 
 
@@ -260,4 +256,5 @@ class M_backtest_MyToT(Model) :
         self.D['days_span'] = delta.days
 
         self.D['init_capital'] = int(self.D['capital'].replace(',',''))
+        self.D['addition'] = int(self.D['addition'].replace(',',''))
         self.test_it()

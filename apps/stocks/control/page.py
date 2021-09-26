@@ -41,6 +41,7 @@ class Page(Control) :
         self.D['code']       = self.D['post']['code']
         self.D['strategy']   = self.D['post']['strategy']
         self.D['capital']    = self.D['post']['capital']
+        self.D['addition']   = self.D['post']['addition']
         self.D['start_date'] = self.D['post']['start_date']
         self.D['end_date']   = self.D['post']['end_date']
 
