@@ -51,9 +51,17 @@ class M_backtest_MyToT(Model) :
         if  self.M['진행상황'] in ('강제매도','전량매도','부분매도') :
             self.M['수익현황'] = self.M['매도수익']
             self.M['수익률']   = self.M['매수익률']
-            self.M['일매수금']  = int(self.M['가용잔액']/self.M['분할횟수'])
-
-        if  self.M['보유수량'] == 0 : self.M['첫날기록'] = True
+            self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
+            self.rebalance()      
+        
+        if  self.M['보유수량'] == 0 : 
+            self.M['첫날기록'] = True
+    
+    def rebalance(self)  :
+        total = self.M['가용잔액'] + self.M['추가자본']
+        self.M['가용잔액'] = round(total * self.M['자본비율'], 2)
+        self.M['추가자본'] = round(total - self.M['가용잔액'], 2)
+        # self.info(f"{self.M['day']} : 자본 {self.M['가용잔액']} / 추가 {self.M['추가자본']}" )
 
     def init_value(self) :
         self.M['분할횟수']  = int(self.S['add3'])
@@ -87,6 +95,13 @@ class M_backtest_MyToT(Model) :
         self.M['매수허용']  = True if self.S['add16'] == 'on' else False
         self.M['현재추종']  = True if self.S['add17'] == 'on' else False
         self.M['과거추종']  = True if self.S['add18'] == 'on' else False
+
+        # 리밸런싱
+        total = self.M['가용잔액'] + self.M['추가자본'] 
+        self.M['자본비율'] = self.M['가용잔액'] / total
+        self.M['추가비율'] = self.M['추가자본'] / total
+
+        # self.info(f"초기구성 : 자본 {self.M['가용잔액']} / 추가 {self.M['추가자본']}" )
 
     def new_day(self) :
         self.M['회차'] = 1.0
@@ -218,15 +233,15 @@ class M_backtest_MyToT(Model) :
     def result(self) :
 
         self.D['max_days'] = self.M['최대일수']
-
-        최종자본 = self.M['평가금액'] + self.M['가용잔액']
-        최종수익 = 최종자본 - self.D['init_capital']
-        최종수익률 = (최종수익/self.D['init_capital']) * 100 
+        초기자본 = self.D['init_capital'] + self.D['addition']
+        최종자본 = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본']
+        최종수익 = 최종자본 - self.D['init_capital'] - self.D['addition']
+        최종수익률 = (최종수익/초기자본) * 100 
         style1 = "<span style='font-weight:bold;color:white'>"
         style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
         style3 = "<span style='font-weight:bold;color:#F6CECE'>"
         self.D['output']  = f"총기간 : {style1}{self.D['days_span']:,}</span>일 "
-        self.D['output']  = f"초기자본 {style1}${self.D['capital']}</span> 최종자본 {style1}${최종자본:,.2f}</span> 으로 "
+        self.D['output']  = f"초기자본 {style1}${초기자본:,}</span> 최종자본 {style1}${최종자본:,.2f}</span> 으로 "
         self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 이며 수익률은 {style3}{최종수익률:,.2f}</span>% 입니다"
     
     def view(self) :
@@ -256,5 +271,5 @@ class M_backtest_MyToT(Model) :
         self.D['days_span'] = delta.days
 
         self.D['init_capital'] = int(self.D['capital'].replace(',',''))
-        self.D['addition'] = int(self.D['addition'].replace(',',''))
+        self.D['addition'] = int(self.D['addition'].replace(',','')) if self.D['addition'] else 0
         self.test_it()
