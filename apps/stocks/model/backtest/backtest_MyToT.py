@@ -38,6 +38,9 @@ class M_backtest_MyToT(Model) :
 
     def calculate(self)  :
 
+        max_buy_cnt = math.ceil((self.M['가용잔액'] + self.M['추가자본']) / self.M['평균단가'])    
+        self.M['체결수량'] = min(self.M['체결수량'], max_buy_cnt)
+
         self.M['연속하락']  =  self.M['연속하락'] + 1 if  self.M['당일종가'] <= self.M['전일종가'] else 0 
         self.M['매수금액']  =  self.M['체결수량'] * self.M['당일종가']
         self.M['가용잔액'] -=  self.M['매수금액']
@@ -56,12 +59,20 @@ class M_backtest_MyToT(Model) :
         
         if  self.M['보유수량'] == 0 : 
             self.M['첫날기록'] = True
+
+        # self.info(f"{self.M['day']} : {self.M['가용잔액'] + self.M['추가자본']}")
     
     def rebalance(self)  :
         total = self.M['가용잔액'] + self.M['추가자본']
         self.M['가용잔액'] = round(total * self.M['자본비율'], 2)
         self.M['추가자본'] = round(total - self.M['가용잔액'], 2)
-        # self.info(f"{self.M['day']} : 자본 {self.M['가용잔액']} / 추가 {self.M['추가자본']}" )
+        self.info(f"{self.M['day']} : 자본 {self.M['가용잔액']} / 추가 {self.M['추가자본']}" )
+
+    def rebalance2(self)  :
+        total = self.M['가용잔액'] + self.M['추가자본']
+        self.M['가용잔액'] = int(self.D['init_capital'])
+        self.M['추가자본'] = total - self.M['가용잔액']
+        self.info(f"{self.M['day']} : 자본 {self.M['가용잔액']} / 추가 {self.M['추가자본']}" )
 
     def init_value(self) :
         self.M['분할횟수']  = int(self.S['add3'])
@@ -75,10 +86,10 @@ class M_backtest_MyToT(Model) :
         self.M['둘매가치']  = 1 + float(self.S['add9'])/100
         self.M['채결단가']  = 0.0
         self.M['구매코드']  = ''
-        self.M['대기횟수']  = int(self.S['add19'])
+        self.M['대기횟수']  = int(self.S['add19']) # 대기횟수 이전에 매도되는 것을 방지(보다 큰 수익 실현을 위해)
 
         self.M['날수'] = 0
-        self.M['최대일수'] = 0
+        self.M['최대일수']  = 0 # 최고 오래 지속된 시즌의 일수
         self.M['첫날기록']  = False
         self.M['전일종가']  = 0.0
         self.M['강매가치']  = 1 + float(self.S['add12']) / 100
@@ -90,11 +101,11 @@ class M_backtest_MyToT(Model) :
         self.M['추종방식']  = self.S['add14']
 
         # 위기극복
-        self.M['횟수제한']  = int(self.S['add10'])
+        self.M['횟수제한']  = int(self.S['add10'])  # 매수를 수행 할 날자의 최대치
         self.M['추가자본']  = int(self.D['addition'])
-        self.M['매수허용']  = True if self.S['add16'] == 'on' else False
-        self.M['현재추종']  = True if self.S['add17'] == 'on' else False
-        self.M['과거추종']  = True if self.S['add18'] == 'on' else False
+        self.M['매수허용']  = True if self.S['add16'] == 'on' else False  # 횟수 초과 후 매수허용 선택
+        self.M['현재추종']  = True if self.S['add17'] == 'on' else False  # 횟수 초과 후 현재추종 선택
+        self.M['과거추종']  = True if self.S['add18'] == 'on' else False  # 횟수 초과 후 과거추종 선택
 
         # 리밸런싱
         total = self.M['가용잔액'] + self.M['추가자본'] 
@@ -157,13 +168,11 @@ class M_backtest_MyToT(Model) :
             self.M['체결수량'] += math.ceil(매수금액2 / 큰단가매수) ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'N'  
 
     def secondary_buy(self) :
-
-        매수금액1  = self.M['일매수금'] 
-        평단가매수 = self.M['평균단가'] 
-                
-        if  self.M['당일종가'] <= 평단가매수 : 
-            self.M['체결수량'] += math.ceil(매수금액1 / 평단가매수) ; self.M['회차'] += 1.0 ; self.M['구매코드'] += 'S'
-
+        
+        if  self.M['당일종가'] <= self.M['평균단가'] : 
+            self.M['체결수량'] += math.ceil(self.M['일매수금'] / self.M['평균단가']) 
+            self.M['회차'] += 1.0 ; self.M['구매코드'] += 'S'
+        
     def acc_cur(self) :
         rate = [0.95,0.94,0.93,0.92,0.91,0.90,0.89]
         for idx, val in enumerate(rate) :
@@ -174,8 +183,10 @@ class M_backtest_MyToT(Model) :
 
     def acc_old(self) :
         # 기준점을 평균단가와 전일종가로 비교했을 경우 평균단가를 기준으로 할 경우 수익성이 더 좋게 나옴
-        if  self.M['연속하락'] > 0 and self.M['당일종가'] <= self.M['평균단가'] : 
-            self.M['체결수량'] += math.ceil(self.M['일매수금'] * self.M['연속하락'] / self.M['평균단가'])  
+        # sell_price = min(self.M['전일종가'], self.M['평균단가'])
+        sell_price = self.M['평균단가']
+        if  self.M['연속하락'] > 0 and self.M['당일종가'] <= sell_price : 
+            self.M['체결수량'] += math.ceil(self.M['일매수금'] * self.M['연속하락'] / sell_price)  
             self.M['회차'] += self.M['연속하락'] 
             self.M['구매코드'] += str(self.M['연속하락'])
 
@@ -208,6 +219,7 @@ class M_backtest_MyToT(Model) :
         
         #   매수부분 --------------------------------------------------------------------------------------------------
             # step3 : 정상매수
+            
             if self.M['가용잔액'] > 0 and self.M['회차'] <= self.M['분할횟수'] : 
                 self.normal_buy()
                 # step3-1 : 종가하락 가중 매수
@@ -233,10 +245,10 @@ class M_backtest_MyToT(Model) :
     def result(self) :
 
         self.D['max_days'] = self.M['최대일수']
-        초기자본 = self.D['init_capital'] + self.D['addition']
-        최종자본 = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본']
-        최종수익 = 최종자본 - self.D['init_capital'] - self.D['addition']
-        최종수익률 = (최종수익/초기자본) * 100 
+        초기자본 = self.D['init_capital'] 
+        최종자본 = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본'] - self.D['addition']
+        최종수익 = 최종자본 - self.D['init_capital'] 
+        최종수익률 = (최종수익/self.D['init_capital']) * 100 
         style1 = "<span style='font-weight:bold;color:white'>"
         style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
         style3 = "<span style='font-weight:bold;color:#F6CECE'>"

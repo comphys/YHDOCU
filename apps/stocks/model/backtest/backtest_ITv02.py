@@ -97,7 +97,7 @@ class M_backtest_ITv02(Model) :
         
     def normal_sell(self) :
         매도수량 = 0
-        if self.M['회차'] < 20 :
+        if self.M['회차'] < self.M['분할횟수'] / 2 :
             매도수량1 = self.M['보유수량']
             매도가격1 = self.M['평균단가'] * self.M['첫매가치']
 
