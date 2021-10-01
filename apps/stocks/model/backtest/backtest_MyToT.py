@@ -66,7 +66,7 @@ class M_backtest_MyToT(Model) :
         total = self.M['가용잔액'] + self.M['추가자본']
         self.M['가용잔액'] = round(total * self.M['자본비율'], 2)
         self.M['추가자본'] = round(total - self.M['가용잔액'], 2)
-        self.info(f"{self.M['day']} : 자본 {self.M['가용잔액']} / 추가 {self.M['추가자본']}" )
+        # self.info(f"{self.M['day']} : 자본 {self.M['가용잔액']} / 추가 {self.M['추가자본']}" )
 
     def rebalance2(self)  :
         total = self.M['가용잔액'] + self.M['추가자본']
@@ -101,7 +101,7 @@ class M_backtest_MyToT(Model) :
         self.M['추종방식']  = self.S['add14']
 
         # 위기극복
-        self.M['횟수제한']  = int(self.S['add10'])  # 매수를 수행 할 날자의 최대치
+        self.M['날수제한']  = int(self.S['add10'])  # 매수를 수행 할 날자의 최대치
         self.M['추가자본']  = int(self.D['addition'])
         self.M['매수허용']  = True if self.S['add16'] == 'on' else False  # 횟수 초과 후 매수허용 선택
         self.M['현재추종']  = True if self.S['add17'] == 'on' else False  # 횟수 초과 후 현재추종 선택
@@ -126,6 +126,7 @@ class M_backtest_MyToT(Model) :
         self.M['첫날기록']  = False
 
     def force_sell(self,강제매도가) :
+        return
         self.M['진행상황']  = '강제매도'
         self.M['매도금액']  =  self.M['보유수량'] * 강제매도가
         self.M['매도수익']  =  self.M['매도금액'] - self.M['총매수금'] 
@@ -212,10 +213,15 @@ class M_backtest_MyToT(Model) :
             
         #   매도부분 --------------------------------------------------------------------------------------------------
             # step1 : 강제매도
-            강제매도가 = self.M['평균단가'] * self.M['강매가치']
-            if self.M['회차'] > self.M['분할횟수'] and self.M['당일고가'] >= 강제매도가 :  self.force_sell(강제매도가)
+            # 강제매도가1 = self.M['평균단가'] * self.M['강매가치']
+            # 강제매도가2 = self.M['평균단가'] * 0.9
+            # if self.M['회차'] > self.M['분할횟수']  and self.M['당일고가'] >= 강제매도가1 :  
+                # self.force_sell(강제매도가1)
+            # elif self.M['가용잔액'] + self.M['추가자본'] < 0 and self.M['당일고가'] >= 강제매도가2 :  
+                # self.force_sell(self.M['당일고가']) 
             # step2 : 일반매도
-            else : self.normal_sell()
+            # elif self.M['날수'] > 5 : self.normal_sell()
+            self.normal_sell()
         
         #   매수부분 --------------------------------------------------------------------------------------------------
             # step3 : 정상매수
@@ -227,7 +233,7 @@ class M_backtest_MyToT(Model) :
                 if self.M['추종방식'] == '과거추종' : self.acc_old()
                 if self.M['추종방식'] == '복합추종' : self.acc_cur() ; self.acc_old()
             
-            elif self.M['회차'] <= self.M['횟수제한'] and self.M['가용잔액'] + self.M['추가자본'] > 0 :
+            elif self.M['가용잔액'] + self.M['추가자본'] > 0 :
 
                 if self.M['매수허용'] : self.secondary_buy() 
                 if self.M['현재추종'] : self.acc_cur() 

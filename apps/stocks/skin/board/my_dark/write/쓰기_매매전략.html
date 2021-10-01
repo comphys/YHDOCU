@@ -48,6 +48,47 @@
 			</div>
 		</td>
 	</tr>
+	<tr>
+		<td class='write-td-left'>종가추종</td>
+		<td class='write-td-right'>	
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">5%</div>
+				<input type='text' id='sub5' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub5']}}">
+			</div>		
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">6%</div>
+				<input type='text' id='sub6' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub6']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">7%</div>
+				<input type='text' id='sub7' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub7']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">8%</div>
+				<input type='text' id='sub8' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub8']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">9%</div>
+				<input type='text' id='sub9' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub9']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">10%</div>
+				<input type='text' id='sub10' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub10']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:35px">11%</div>
+				<input type='text' id='sub11' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub11']}}">
+			</div>
+			<select name="add14" class="i-input-div-choice" style="width:100px">
+				<option value="">추종방식</option>
+				<option value="추종안함" {{ 'selected' if D['BODY']['add14'] == '추종안함' else '' }}>추종안함</option>
+				<option value="현재추종" {{ 'selected' if D['BODY']['add14'] == '현재추종' else '' }}>현재추종</option>
+				<option value="과거추종" {{ 'selected' if D['BODY']['add14'] == '과거추종' else '' }}>과거추종</option>
+				<option value="복합추종" {{ 'selected' if D['BODY']['add14'] == '복합추종' else '' }}>복합추종</option>
+			</select>
+			<input type='hidden' name='add15' value="{{D['BODY']['add15']}}" >
+		</td>
+	</tr>
 	<tr><td colspan="2" style="font-size:2px;line-height:5px;background-color: rgb(1, 2, 19);">&nbsp;</td></tr>
 	<tr>
 		<td class='write-td-left'>매도설정</td>
@@ -103,48 +144,7 @@
 			</div>
 		</td>
 	</tr>
-	<tr><td colspan="2" style="font-size:2px;line-height:5px;background-color: rgb(1, 2, 19);">&nbsp;</td></tr>
-	<tr>
-		<td class='write-td-left'>종가추종</td>
-		<td class='write-td-right'>	
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">5%</div>
-				<input type='text' id='sub5' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub5']}}">
-			</div>		
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">6%</div>
-				<input type='text' id='sub6' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub6']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">7%</div>
-				<input type='text' id='sub7' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub7']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">8%</div>
-				<input type='text' id='sub8' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub8']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">9%</div>
-				<input type='text' id='sub9' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub9']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">10%</div>
-				<input type='text' id='sub10' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub10']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">11%</div>
-				<input type='text' id='sub11' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub11']}}">
-			</div>
-			<select name="add14" class="i-input-div-choice" style="width:100px">
-				<option value="">추종방식</option>
-				<option value="추종안함" {{ 'selected' if D['BODY']['add14'] == '추종안함' else '' }}>추종안함</option>
-				<option value="현재추종" {{ 'selected' if D['BODY']['add14'] == '현재추종' else '' }}>현재추종</option>
-				<option value="과거추종" {{ 'selected' if D['BODY']['add14'] == '과거추종' else '' }}>과거추종</option>
-				<option value="복합추종" {{ 'selected' if D['BODY']['add14'] == '복합추종' else '' }}>복합추종</option>
-			</select>
-			<input type='hidden' name='add15' value="{{D['BODY']['add15']}}" >
-		</td>
-	</tr>
+
 	<tr><td colspan="2" style="font-size:2px;line-height:5px;background-color: rgb(1, 2, 19);">&nbsp;</td></tr>
 	<tr>
 		<td class='write-td-left'>전략설명</td>
@@ -169,6 +169,8 @@
 		<div class="clearfix" style="padding:0px;border-top:1px solid black;background-color:#393E4A">
 			<div id="TAG_STRUCTURE" class="pull-left" style="padding:0px 15px"></div>
 			<div class="pull-right">
+				<span style="display:inline-block;color:grey">입력상태 유지</span>
+				<input type="checkbox" name="stay" style="margin-top:9px" value="on" >&nbsp;
 				<span class="btn-transparent" onclick="$('#YHBmainEditorForm').submit()"><i class="fa fa-circle-o" style="font-size:20px;color:#0099ff;margin:2px 0" title="저장"></i></span>
 				<a href="{{D['_bse']}}board/list/{{D['bid']}}/csh=on"><i class="fa fa-circle-o" style="font-size:20px;color:#a66c39;margin:2px 0" title="취소"></i></a>&nbsp;&nbsp;
 			</div>
