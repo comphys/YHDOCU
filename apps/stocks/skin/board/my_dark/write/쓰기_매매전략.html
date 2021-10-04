@@ -25,7 +25,7 @@
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">분할횟수</div>
-				<input type='text' name='add3' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add3']}}">
+				<input type='text' name='add2' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add2']}}">
 			</div>
 			
 		</td>
@@ -36,15 +36,15 @@
 		<td class='write-td-right'>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;width:120px">평단가 비중(%)</div>
-				<input type='text' name='add4' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add4']}}">
+				<input type='text' name='add3' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add3']}}">
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;width:120px">평단가 가치(%)</div>
-				<input type='text' name='add5' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add5']}}">
+				<input type='text' name='add4' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add4']}}">
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;width:120px">큰단가 가치(%)</div>
-				<input type='text' name='add6' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add6']}}">
+				<input type='text' name='add5' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add5']}}">
 			</div>
 		</td>
 	</tr>
@@ -52,41 +52,15 @@
 		<td class='write-td-left'>종가추종</td>
 		<td class='write-td-right'>	
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">5%</div>
-				<input type='text' id='sub5' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub5']}}">
-			</div>		
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">6%</div>
-				<input type='text' id='sub6' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub6']}}">
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">과거추종</div>
+				<input type='checkbox' id='sub6' style="width:48px;margin-top:7px" {{ 'checked' if D['BODY']['add6'] =='on' else '' }} >
+				<input type='hidden'   name='add6' >			
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">7%</div>
-				<input type='text' id='sub7' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub7']}}">
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">종가기준</div>
+				<input type='checkbox' id='sub7' style="width:48px;margin-top:7px" {{ 'checked' if D['BODY']['add7'] =='on' else '' }} >
+				<input type='hidden'   name='add7' >			
 			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">8%</div>
-				<input type='text' id='sub8' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub8']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">9%</div>
-				<input type='text' id='sub9' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub9']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">10%</div>
-				<input type='text' id='sub10' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub10']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:35px">11%</div>
-				<input type='text' id='sub11' class="i-text" style="width:20px;text-align:center" value="{{D['BODY']['sub11']}}">
-			</div>
-			<select name="add14" class="i-input-div-choice" style="width:100px">
-				<option value="">추종방식</option>
-				<option value="추종안함" {{ 'selected' if D['BODY']['add14'] == '추종안함' else '' }}>추종안함</option>
-				<option value="현재추종" {{ 'selected' if D['BODY']['add14'] == '현재추종' else '' }}>현재추종</option>
-				<option value="과거추종" {{ 'selected' if D['BODY']['add14'] == '과거추종' else '' }}>과거추종</option>
-				<option value="복합추종" {{ 'selected' if D['BODY']['add14'] == '복합추종' else '' }}>복합추종</option>
-			</select>
-			<input type='hidden' name='add15' value="{{D['BODY']['add15']}}" >
 		</td>
 	</tr>
 	<tr><td colspan="2" style="font-size:2px;line-height:5px;background-color: rgb(1, 2, 19);">&nbsp;</td></tr>
@@ -95,52 +69,77 @@
 		<td class='write-td-right'>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;width:120px">첫매도 비중(%)</div>
-				<input type='text' name='add7' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add7']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:120px">첫매도 가치(%)</div>
 				<input type='text' name='add8' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add8']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:120px">둘매도 가치(%)</div>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">첫매도 가치(%)</div>
 				<input type='text' name='add9' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add9']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">둘매도 가치(%)</div>
+				<input type='text' name='add10' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add10']}}">
 			</div><br>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:120px">대기 횟수</div>
-				<input type='text' name='add19' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add19']}}">
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">매도 대기</div>
+				<input type='text' name='add11' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add11']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">리밸런싱</div>
+				<input type='checkbox' id='sub12' style="width:48px;margin-top:7px" {{ 'checked' if D['BODY']['add12'] =='on' else '' }} >
+				<input type='hidden'   name='add12' >			
 			</div>
 		</td>
 	</tr>
 	<tr><td colspan="2" style="font-size:2px;line-height:5px;background-color: rgb(1, 2, 19);">&nbsp;</td></tr>
 	<tr>
-		<td class='write-td-left'>강매설정<br>위기극복</td>
+		<td class='write-td-left'>평단관리</td>	
 		<td class='write-td-right'>	
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:120px">횟수제한</div>
-				<input type='text' name='add10' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add10']}}">
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">매수허용</div>
+				<input type='checkbox' id='sub14' style="width:48px;margin-top:7px" {{ 'checked' if D['BODY']['add14'] =='on' else '' }} >
+				<input type='hidden'   name='add14' >
 			</div>	
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:120px">추가자본(%)</div>
-				<input type='text' name='add11' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add11']}}">
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">과거추종</div>
+				<input type='checkbox' id='sub15' style="width:48px;margin-top:7px" {{ 'checked' if D['BODY']['add15'] =='on' else '' }} >
+				<input type='hidden'   name='add15' >			
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td class='write-td-left'>강매설정</td>	
+		<td class='write-td-right'>	
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">걍매허용</div>
+				<input type='checkbox' id='sub16' style="width:48px;margin-top:7px" {{ 'checked' if D['BODY']['add16'] =='on' else '' }} >
+				<input type='hidden'   name='add16' >			
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">강매시작 날수</div>
+				<input type='text' name='add17' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add17']}}">
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;width:120px">강매도 가치(%)</div>
-				<input type='text' name='add12' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add12']}}">
-			</div><br>
+				<input type='text' name='add18' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add18']}}">
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td class='write-td-left'>위기극복</td>
+		<td class='write-td-right'>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:120px">매수허용</div>
-				<input type='checkbox' id='can_buy' style="width:48px;margin-top:7px" {{ 'checked' if D['BODY']['add16'] =='on' else '' }} >
-				<input type='hidden'   name='add16' >
+				<div class='write-input-left' style="background-color:#333F4F;width:120px">수량확보</div>
+				<input type='checkbox' id='sub21' style="width:48px;margin-top:7px" {{ 'checked' if D['BODY']['add21'] =='on' else '' }} >
+				<input type='hidden'   name='add21' >			
+			</div>
+
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:120px;font-size:12px">매도시점(평단대비)</div>
+				<input type='text' name='add22' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add22']}}">
 			</div>	
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:120px">현재추종</div>
-				<input type='checkbox' id='can_cur' style="width:48px;margin-top:7px" {{ 'checked' if D['BODY']['add17'] =='on' else '' }} >
-				<input type='hidden'   name='add17' >				
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:120px">과거추종</div>
-				<input type='checkbox' id='can_old' style="width:48px;margin-top:7px" {{ 'checked' if D['BODY']['add18'] =='on' else '' }} >
-				<input type='hidden'   name='add18' >			
+				<div class='write-input-left' style="background-color:#333F4F;width:120px;font-size:12px">매수시점(매도대비)</div>
+				<input type='text' name='add23' class="i-text" style="width:48px;text-align:center" value="{{D['BODY']['add23']}}">
 			</div>
 		</td>
 	</tr>
@@ -149,7 +148,7 @@
 	<tr>
 		<td class='write-td-left'>전략설명</td>
 		<td class='write-td-right'>
-			<input type="text" name="add2" value="{{D['BODY']['add2']}}" style="width:100%">
+			<input type="text" name="add20" value="{{D['BODY']['add20']}}" style="width:100%">
 		</td>
 	</tbody>
 </table>
@@ -169,8 +168,6 @@
 		<div class="clearfix" style="padding:0px;border-top:1px solid black;background-color:#393E4A">
 			<div id="TAG_STRUCTURE" class="pull-left" style="padding:0px 15px"></div>
 			<div class="pull-right">
-				<span style="display:inline-block;color:grey">입력상태 유지</span>
-				<input type="checkbox" name="stay" style="margin-top:9px" value="on" >&nbsp;
 				<span class="btn-transparent" onclick="$('#YHBmainEditorForm').submit()"><i class="fa fa-circle-o" style="font-size:20px;color:#0099ff;margin:2px 0" title="저장"></i></span>
 				<a href="{{D['_bse']}}board/list/{{D['bid']}}/csh=on"><i class="fa fa-circle-o" style="font-size:20px;color:#a66c39;margin:2px 0" title="취소"></i></a>&nbsp;&nbsp;
 			</div>
@@ -227,15 +224,15 @@ function check_MainWriteForm(f)	{
 	JYHEDITOR.clearDocuSelect();
 	f.content.value = wDiv.innerHTML;
 	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
-	var add15=''
-	for(i=5;i<12;i++)
-	{
-		add15 += $("#sub"+i).val() + '/';
-	}
-	$("input[name='add15']").val(add15)
-	if($("#can_buy").prop('checked')) $("input[name='add16']").val('on') ; else $("input[name='add16']").val('off') ;
-	if($("#can_cur").prop('checked')) $("input[name='add17']").val('on') ; else $("input[name='add17']").val('off') ;
-	if($("#can_old").prop('checked')) $("input[name='add18']").val('on') ; else $("input[name='add18']").val('off') ;
+
+	if($("#sub6").prop('checked')) $("input[name='add6']").val('on') ; else $("input[name='add6']").val('off') ;
+	if($("#sub7").prop('checked')) $("input[name='add7']").val('on') ; else $("input[name='add7']").val('off') ;
+
+	if($("#sub12").prop('checked')) $("input[name='add12']").val('on') ; else $("input[name='add12']").val('off') ;
+	if($("#sub14").prop('checked')) $("input[name='add14']").val('on') ; else $("input[name='add14']").val('off') ;
+	if($("#sub15").prop('checked')) $("input[name='add15']").val('on') ; else $("input[name='add15']").val('off') ;
+	if($("#sub16").prop('checked')) $("input[name='add16']").val('on') ; else $("input[name='add16']").val('off') ;
+	if($("#sub21").prop('checked')) $("input[name='add21']").val('on') ; else $("input[name='add21']").val('off') ;
 	return true;
 }
 </script>

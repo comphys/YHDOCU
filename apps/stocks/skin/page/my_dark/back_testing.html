@@ -2,7 +2,7 @@
 
 {% block contents_page  %}
 <div class="row-row">
-<div style="position:fixed;left:20px;top:30px;width:1350px;background-color:#33363b;">
+<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
 <br>
 <div class="well clearfix">
     <form method='post' name='stock_back_testing' action="{{D['_bse']}}page/backtest/{{D['bid']}}" onsubmit='return check_thisForm()'>
@@ -54,12 +54,12 @@
     </form>
 </div> <!--well-->
 	<div class="pull-left" style="padding:10px;color:lightgray">
-	최대 진행 일수 : {{D['max_days']|safe}} 일
+	최대 진행 일수 : {{D['max_days']|safe}} 일 at {{D['max_date']|safe}}
 	</div>
 	<div class="pull-right" style="padding:10px;color:lightgray">
 	{{D['output']|safe}}
 	</div>
-	<table class='table table-striped table-hover' style="width:1350px;border:2px solid black;">
+	<table class='table table-striped table-hover' style="width:{{D['xwidth']}};border:2px solid black;">
 			<tr style="background-color:#393f4a;border-bottom:1px solid black">
 				<th style='text-align:center;width:50px'>진행</th>
 				<th style='text-align:right;width:50px'>회차</th>
@@ -77,6 +77,8 @@
 				<th style='text-align:right;width:80px'>수익률%</th>
 				<th style='text-align:right;width:100px'>매수매도</th>
 				<th style='text-align:right;width:100px'>가용잔액</th>
+				<th style='text-align:right;width:100px'>추가잔액</th>
+				<th style='text-align:right;width:80px'>일매수금</th>
 				<th style='text-align:center'>진행상황</th>
 				<!-- <th style='text-align:center'>일매수금</th> -->
 			</tr>
@@ -104,6 +106,8 @@
 			<col style="width:80px"> <!-- 수익률 -->
 			<col style="width:100px"> <!-- 매도금액 -->
 			<col style="width:100px"> <!-- 가용잔액 -->
+			<col style="width:100px"> <!-- 추가잔액 -->
+			<col style="width:100px"> <!-- 일매수금 -->
 			<col> <!-- 진행상황 -->	
 		</colgroup>
 
@@ -113,6 +117,8 @@
 			<tr style="border-top:2px solid yellow;border-bottom:2px solid yellow;background-color:black;"> 
 			{% elif TR['진행상황'] == '강제매도' %}
 			<tr style="border-top:2px solid orange;border-bottom:2px solid orange;background-color:black;"> 
+			{% elif TR['진행상황'] == '전략매도' %}
+			<tr style="border-top:2px solid #A9D0F5;border-bottom:2px solid #A9D0F5;background-color:black;">
 			{% else %}
 			<tr>
 			{% endif %}
@@ -132,6 +138,8 @@
 				<td style='text-align:right;font-weight:bold'>{{TR['수익률']|safe}}</td>
 				<td style='text-align:right;color:#F6CECE'>{{TR['매도금액']}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['가용잔액']}}</td>
+				<td style='text-align:right;'>{{TR['추가잔액']}}</td>
+				<td style='text-align:right;color:#CEF6CE'>{{TR['일매수금']}}</td>
 				<td style='text-align:center'>{{TR['진행상황']}}</td>
 				<!-- <td style='text-align:center'>{{TR['일매수금']}}</td> -->
 			</tr>
@@ -140,6 +148,8 @@
 	</table>
 </div>
 {% endif %}
+
+
 <script>
 function check_thisForm() {
     if(! $("input[name='code']").val() ) { h_dialog.notice("코드 입력은 필수입니다"); return false; }

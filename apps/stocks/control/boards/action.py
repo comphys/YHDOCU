@@ -8,18 +8,17 @@ class Action(Control) :
         self.bid   = self.parm[0]
         self.board = 'h_'+self.bid+'_board'
         self.page  = self.gets.get('page','1') 
+        self.DB.tbl, self.DB.wre = ("h_board_config",f"bid='{self.bid}'")
+        self.BCONFIG = self.DB.get("*",many=1,assoc=True)
   
     def save(self) :
         # h_{bid}_board : [no,brother,add0,uid,uname,content,reply,hit,wdate,mdate,add1~add15]
         
         # 저장 시 [정수 및 실수] 형식은 형태를 수정하여 저장한다. 
-        self.DB.tbl, self.DB.wre = ("h_board_config",f"bid='{self.bid}'")
-        BCONFIG = self.DB.get("*",many=1,assoc=True)
-
         USE_KEY = []
         for i in range(16) :
             key = f'add{i}' 
-            if BCONFIG[key] :  USE_KEY.append(key)        
+            if self.BCONFIG[key] :  USE_KEY.append(key)        
 
         SAVE = self.D['post']
 
@@ -70,17 +69,14 @@ class Action(Control) :
     def modify(self) :
         # h_{bid}_board : [no,brother,add0,uid,uname,content,reply,hit,wdate,mdate,add1~add15]
         brother = self.D['post'].get('brother',0)
-        stay = self.D['post'].get('stay','off')
         tbl     = 'h_'+self.parm[0]+'_board'
         no      = self.gets['no']
 
         con     = f"no={no}"
         # 업데이트 항목 외에는 pop 시킨다.
-        self.info(self.D['post'])
         self.D['post'].pop('mode')
         self.D['post'].pop('uid')
         self.D['post'].pop('uname')
-        if stay == 'on' : self.D['post'].pop('stay')
         # 
         self.D['post']['mdate'] = ut.now_timestamp()
         self.D['post']['content'] = self.html_encode(self.D['post']['content'])
@@ -89,8 +85,8 @@ class Action(Control) :
         self.DB.exe(qry)
 
         if self.bid == 'daily_trading' : self.save_chart(no)
-        if stay == 'on' :
-            return self.moveto(f"board/modify/{self.parm[0]}/no={no}/brother={brother}")
+        if self.BCONFIG['stayfom'] == 'on' :
+            return self.moveto(f"board/modify/{self.parm[0]}/no={no}/page={self.page}brother={brother}")
         else :
             return self.moveto(f"board/body/{self.parm[0]}/no={no}/brother={brother}")
 

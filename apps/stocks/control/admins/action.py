@@ -63,6 +63,7 @@ class Action(Control) :
         sec = self.D['post'].pop('sec')
         self.D['post']['row_sum'] = self.D['post'].get('row_sum','off')
         self.D['post']['row_flt'] = self.D['post'].get('row_flt','off')
+        self.D['post']['stayfom'] = self.D['post'].get('stayfom','off')
         wre = f"bid = '{bid}'"
         qry = self.DB.qry_update('h_board_config', self.D['post'], wre)
         self.DB.exe(qry)
