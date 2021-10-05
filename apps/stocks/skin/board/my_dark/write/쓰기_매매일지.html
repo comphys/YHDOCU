@@ -13,7 +13,7 @@
 		<td class='write-td-left'>필수입력</td>
 		<td>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="width:80px;">날자</div>
+				<div class='write-input-left' style="width:82px;">진행일자</div>
 				{% if D['Mode'] == 'modify' %}
 				<input type='text' name='add0' disabled style="width:202px;text-align:center" value="{{D['BODY']['add0']}}">
 				{% else %}
@@ -33,191 +33,309 @@
 		<td class='write-td-left'>로테이션</td>	
 		<td class='write-td-right'>	
 			<div class='i-input-div'>
-				<div class='write-input-left' style="width:80px;">진행시즌</div>
-				<input type='text' name='add15' class="i-text" style="width:50px;text-align:center" value="{{D['BODY']['add15']}}">
+				<div class='write-input-left' style="width:42px;">시즌</div>
+				<input type='text' name='add2' class="i-text" style="width:38px;text-align:center" value="{{D['BODY']['add2']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="width:80px;">로테이션</div>
-				<input type='text' name='add16' class="i-text" style="width:50px;text-align:center" value="{{D['BODY']['add16']}}">
+				<div class='write-input-left' style="width:42px;">날수</div>
+				<input type='text' name='add3' class="i-text" style="width:38px;text-align:center" value="{{D['BODY']['add3']}}">
 			</div>
-			{{D['user_add2']|safe}}
+			<div class='i-input-div'>
+				<div class='write-input-left' style="width:42px;">회차</div>
+				<input type='text' name='add4' class="i-text" style="width:38px;text-align:center" value="{{D['BODY']['add4']}}">
+			</div>
+			{{D['user_add20']|safe}}
 
 			<button class="btn btn-blue" onclick="auto_dataclean();return false">리셋하기</button>
 
 		</td>
 	</tr>
 	<tr>
-		<td colspan="2" style="font-size:2px;line-height:5px;background-color: rgb(1, 2, 19);">&nbsp;</td>
+		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
 	</tr>
 	<tr>
 		<td class='write-td-left'>자동입력</td>	
 		<td class='write-td-right' style="padding-top:10px;padding-bottom:10px">	
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">당일종가</div>
-				<input type='text' name='add3' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add3']}}">
+				<input type='text' name='add5' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add5']}}">
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">체결단가</div>
-				<input type='text' name='add4' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add4']}}">
-			</div>
-			<div class='i-input-div-choice'>
-				<div class='write-input-left' style="background-color:#333F4F;">체결수량</div>
-				<input type='text' name='add5' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add5']}}">
-			</div>
-			<div class='i-input-div-choice'>
-				<div class='write-input-left' style="background-color:#333F4F;">매수금액</div>
 				<input type='text' name='add6' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add6']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">평균단가</div>
-				<input type='text' name='add10' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add10']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">보유수량</div>
+				<div class='write-input-left' style="background-color:#333F4F;">체결수량</div>
 				<input type='text' name='add7' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add7']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">총매수금</div>
-				<input type='text' name='add9' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add9']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">평가금액</div>
+				<div class='write-input-left' style="background-color:#333F4F;">매수금액</div>
 				<input type='text' name='add8' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add8']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">수익현황</div>
+				<div class='write-input-left' style="background-color:#333F4F;">평균단가</div>
+				<input type='text' name='add9' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add9']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">보유수량</div>
+				<input type='text' name='add10' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add10']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">평가금액</div>
 				<input type='text' name='add11' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add11']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">현수익률</div>
+				<div class='write-input-left' style="background-color:#333F4F;">총매수금</div>
 				<input type='text' name='add12' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add12']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">가용잔액</div>
+				<div class='write-input-left' style="background-color:#333F4F;">수익현황</div>
 				<input type='text' name='add14' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add14']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">진행상황</div>
-				<input type='text' name='add17' class="i-text" style="width:90px;text-align:center" value="{{D['BODY']['add17']}}">
+				<div class='write-input-left' style="background-color:#333F4F;">수익률</div>
+				<input type='text' name='add15' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add15']}}">
 			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">가용잔액</div>
+				<input type='text' name='add16' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add16']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">진행상황</div>
+				<input type='text' name='add18' class="i-text" style="width:90px;text-align:center" value="{{D['BODY']['add18']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">매매현황</div>
+				<input type='text' name='add13' class="i-text" style="width:90px;text-align:center" value="{{D['BODY']['add13']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">일매수금</div>
+				<input type='text' name='add19' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add19']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">추가자본</div>
+				<input type='text' name='add17' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add17']}}">
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
+	</tr>
+	<tr>
+		<td class='write-td-left'>추가정보</td>	
+		<td class='write-td-right' style="padding-top:10px;padding-bottom:10px">
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:70px">연속하락</div>
+				<input type='text' name='sub1' class="i-number" style="width:60px;text-align:center" value="{{D['BODY']['sub1']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:70px">위기전략</div>
+				<input type='text' name='sub2' class="i-text" style="width:70px;text-align:center" value="{{D['BODY']['sub2']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:70px">전략매금</div>
+				<input type='text' name='sub3' class="i-number" style="width:70px;text-align:center" value="{{D['BODY']['sub3']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;width:70px">전략가격</div>
+				<input type='text' name='sub4' class="i-number" style="width:70px;text-align:center" value="{{D['BODY']['sub4']}}">
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
+	</tr>
+	<tr>
+		<td class='write-td-left'  style="background-color:#0B2F3A;">매수전략</td>	
+		<td class='write-td-right' style="padding-top:10px;padding-bottom:10px">
+			<div class='i-input-div'>
+				<div class='write-input-left'  style="background-color:#333F4F;">평단매수</div>
+				<input type='text' name='buy1' class="i-text" style="width:90px;text-align:center" value="{{D['BODY']['buy1']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">평단수량</div>
+				<input type='text' name='buy11' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['buy11']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">평단단가</div>
+				<input type='text' name='buy12' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['buy12']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left'  style="background-color:#333F4F;">큰단매수</div>
+				<input type='text' name='buy2' class="i-text" style="width:90px;text-align:center" value="{{D['BODY']['buy2']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">큰단수량</div>
+				<input type='text' name='buy21' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['buy21']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">큰단단가</div>
+				<input type='text' name='buy22' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['buy22']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">추종매수</div>
+				<input type='text' name='buy3' class="i-text" style="width:90px;text-align:center" value="{{D['BODY']['buy3']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">추종수량</div>
+				<input type='text' name='buy31' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['buy31']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">추종단가</div>
+				<input type='text' name='buy32' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['buy32']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">추가매수</div>
+				<input type='text' name='buy4' class="i-text" style="width:90px;text-align:center" value="{{D['BODY']['buy4']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">추가수량</div>
+				<input type='text' name='buy41' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['buy41']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">추가단가</div>
+				<input type='text' name='buy42' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['buy42']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">전략매수</div>
+				<input type='text' name='buy5' class="i-text" style="width:90px;text-align:center" value="{{D['BODY']['buy5']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">전략수량</div>
+				<input type='text' name='buy51' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['buy51']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">전략단가</div>
+				<input type='text' name='buy52' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['buy52']}}">
+			</div>			
+		</td>
+	</tr>
+	<tr>
+		<td class='write-td-left' style="background-color:#0A2229;">매도전략</td>	
+		<td class='write-td-right' style="padding-top:10px;padding-bottom:10px">
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">첫째매도</div>
+				<input type='text' name='sell1' class="i-text" style="width:90px;text-align:center" value="{{D['BODY']['sell1']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">첫째수량</div>
+				<input type='text' name='sell11' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['sell11']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">첫째단가</div>
+				<input type='text' name='sell12' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['sell12']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">둘째매도</div>
+				<input type='text' name='sell2' class="i-text" style="width:90px;text-align:center" value="{{D['BODY']['sell2']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">둘째수량</div>
+				<input type='text' name='sell21' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['sell21']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">둘째단가</div>
+				<input type='text' name='sell22' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['sell22']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">강제매도</div>
+				<input type='text' name='sell3' class="i-text" style="width:90px;text-align:center" value="{{D['BODY']['sell3']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">강제수량</div>
+				<input type='text' name='sell31' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['sell31']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">강제단가</div>
+				<input type='text' name='sell32' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['sell32']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">전략매도</div>
+				<input type='text' name='sell4' class="i-text" style="width:90px;text-align:center" value="{{D['BODY']['sell4']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">전략수량</div>
+				<input type='text' name='sell41' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['sell41']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">전략단가</div>
+				<input type='text' name='sell42' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['sell42']}}">
+			</div>			
 		</td>
 	</tr>
 	</tbody>
 </table>
-<div style="width:{{D['w_width2']}}">
-{% include D['_skn'] + 'board/my_dark/write/basic_editor_tools.htm' %}
-</div>
 <!-- BEGIN ====================================================================================== -->
-<div style="position:relative;width:{{D['w_width1']}}">
-<div id="selectedMarkL"></div>	
-<div id="write-wrap" style="float:left;width:{{D['w_width2']}};z-index:3">
-<div id="YHBmainEditor">
+<div style="position:relative;width:{{D['w_width2']}};background-color:black">
+<textarea name="content" style="width:100%;height:100px;padding:10px;">
 {% if D['Mode'] == 'modify' -%} 
-{{D['OBODY']['content']|safe}}
+{D['OBODY']['content']|safe}}
 {%- endif %}
-</div><!-- YHBmainEditor  -->
+</textarea>
 <!-- 하단 요소====================================================================================== -->
-		<div class="clearfix" style="padding:0px;border-top:1px solid black;background-color:#393E4A">
-			<div id="TAG_STRUCTURE" class="pull-left" style="padding:0px 15px"></div>
-			<div class="pull-right">
-				<span class="btn-transparent" onclick="$('#YHBmainEditorForm').submit()"><i class="fa fa-circle-o" style="font-size:20px;color:#0099ff;margin:2px 0" title="저장"></i></span>
-				<a href="{{D['_bse']}}board/list/{{D['bid']}}/csh=on"><i class="fa fa-circle-o" style="font-size:20px;color:#a66c39;margin:2px 0" title="취소"></i></a>&nbsp;&nbsp;
-			</div>
-		</div>
-	</div><!-- write-wrap  -->
-<div id="choicedMark"   style="left:{{D['w_width2']}}"></div>
-<div id="selectedMarkR" style="left:{{D['w_width2']}}"></div>	
-
+<div class="clearfix" style="padding:0px;border:1px solid black;background-color:#393E4A">
+	<div id="TAG_STRUCTURE" class="pull-left" style="padding:0px 15px"></div>
+	<div class="pull-right">
+		<span class="btn-transparent" onclick="$('#YHBmainEditorForm').submit()"><i class="fa fa-circle-o" style="font-size:20px;color:#0099ff;margin:2px 0" title="저장"></i></span>
+		<a href="{{D['_bse']}}board/list/{{D['bid']}}/csh=on"><i class="fa fa-circle-o" style="font-size:20px;color:#a66c39;margin:2px 0" title="취소"></i></a>&nbsp;&nbsp;
+	</div>
+</div>
 </div>
 <!-- END ====================================================================================== -->
 </form>
-{% include D['_skn'] + 'board/my_dark/write/side_editor_tools.htm' %}
-
-<!-- 표관련 메뉴 -->
-<div id='tableMenu' class="rightClickMenu" style='display:none;'>
-	<li onclick="$('#tableMenu').hide()"> 메뉴감추기 </li>
-	<li class='divider'></li>
-	<li onclick="JYHEDITOR.addRowCol('left')">좌측컬럼 추가</li>
-	<li onclick="JYHEDITOR.addRowCol('right')">우측컬럼 추가</li>
-	<li class='divider'></li>
-	<li onclick="JYHEDITOR.addRowCol('up')">위쪽행 추가</li>
-	<li onclick="JYHEDITOR.addRowCol('down')">아래행 추가</li>
-	<li class='divider'></li>
-	<li onclick="JYHEDITOR.addRowCol('col')">현재컬럼 삭제</li>
-	<li onclick="JYHEDITOR.addRowCol('row')">현재 행 삭제</li>
-</div>
-
 
 <script>
-JYHEDITOR.start('YHBmainEditor');
-
-function open_style_edit() {
-	var furl = uri('linkurl')+"filemanagers-fedit/open/bodyCss.css"; 
-	var specs = "height=700,width=1200,status=no,menubar=no,location=no,titlebar=no,scrollbars=yes";
-	window.open(furl,'css_editor', specs);
-}
 
 function auto_datainput() {
 	
-	if(! $("input[name='add0']").val() ) { h_dialog.notice("날자 입력은 필수입니다"); return false; }
-	if(! $("input[name='add1']").val() ) { h_dialog.notice("종목 코드는 필수입니다"); return false; }
+	if(! $("input[name='add0']").val() )  { h_dialog.notice("날자 입력은 필수입니다"); return false; }
+	if(! $("input[name='add1']").val() )  { h_dialog.notice("종목 코드는 필수입니다"); return false; }
+	if(! $("input[name='add20']").val() ) { h_dialog.notice("전략 선택은 필수입니다"); return false; }
 
-	var posturl = uri('linkurl')+"boards-stocks/autoinput/{{D['method']}}"
+	var posturl = uri('linkurl')+"boards-stock_daily/autoinput/{{D['method']}}"
 	var postData = {}
 
 	postData['add0']  = $("input[name='add0']").val()  // 날자
 	postData['add1']  = $("input[name='add1']").val()  // 종목
-	postData['add2']  = $("input[name='add2']").val()  // 매매전략
-	postData['add4']  = $("input[name='add4']").val()  // 체결단가
-	postData['add5']  = $("input[name='add5']").val()  // 체결수량
-	postData['add6']  = $("input[name='add6']").val()  // 매수금액	
-	postData['add14'] = $("input[name='add14']").val() // 가용잔액	
+	postData['add20']  = $("input[name='add20']").val()  // 매매전략
+	postData['add6']  = $("input[name='add6']").val()  // 체결단가
+	postData['add7']  = $("input[name='add7']").val()  // 체결수량
+	postData['add8']  = $("input[name='add8']").val()  // 매수금액	
+	postData['add16'] = $("input[name='add16']").val() // 가용잔액	
+	postData['add17'] = $("input[name='add17']").val() // 추가자본	
 
 
 	$.post( posturl, postData).done(function(data) {
 		var ans = JSON.parse(data)
 		
-		if(ans.replyCode == 'NMDATA') {
-			$("input[name='add4']" ).parent().removeClass("i-input-div").addClass("i-input-div-must");
-			$("input[name='add2']" ).parent().addClass("i-input-div-must-2");
-			$("input[name='add5']" ).parent().removeClass("i-input-div-choice").addClass("i-input-div-must");
-			$("input[name='add6']" ).parent().removeClass("i-input-div-choice").addClass("i-input-div");
-			$("input[name='add14']").parent().removeClass("i-input-div").addClass("i-input-div-must");
+		if(ans.replyCode == 'NMDATA01') {
+			$("input[name='add16']" ).parent().addClass("i-input-div-must");
+			$("input[name='add17']" ).parent().addClass("i-input-div-must");
 			h_dialog.notice(ans.msg);
 		} 
 		else if(ans.replyCode == 'NOTICE') {
 			h_dialog.notice(ans.msg);
 		}
 		else {
-			var update_key = ['add15','add16','add2','add3','add4','add5','add6','add10','add7','add9','add8','add11','add12','add14','add17']
-				update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
+			h_dialog.notice(ans.msg);
+			var update_key  = ['add2','add3','add4','add5','add6','add7','add8','add9','add10',
+			'add11','add12','add13','add14','add15','add16','add17','add18','add19','sub1','sub2','sub3','sub4']
+			    
+			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
+
+			var update_buy = ['buy1','buy11','buy12','buy2','buy21','buy22','buy3',,'buy31','buy32','buy4','buy41','buy42']
+			update_buy.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
+
+			var update_sell = ['sell1','sell2','sell3','sell4']
+			update_sell.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
+			
 		}
 	});
 }
 function auto_dataclean() {
-		var update_key = ['add15','add16','add2','add3','add4','add5','add6','add10','add7','add9','add8','add11','add12','add14','add17']
+			var update_key  = ['add2','add3','add4','add5','add6','add7','add8','add9','add10',
+			'add11','add12','add13','add14','add15','add16','add17','add18','add19','sub1','sub2','sub3','sub4']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val('')})
-}
-
-function form_basic(opt) {
-	var html;
-	$('#contextMenu').hide()
-	switch (opt){
-		case  'A1'  : html= '\n<div class="pbox">\n<p>글입력</p>\n</div>\n'; break;	
-		case  'A2'  : html= '\n<div class="pbox">\n<p class="p-title">타이틀</p>\n<p class="sbox">\n글내용\n</p>\n</div>\n'; break;
-		case  'B1'  : html= '\n<p class="p-title">타이틀</p>\n<p class="sbox">\n글내용\n</p>\n'; break;
-		case  'A4h' : html= '\n<div class="A4h">\n<p>글내용</p>\n</div>\n'; break;
-		case  'A4w' : html= '\n<div class="A4w">\n글내용\n</div>\n'; break;
-	}
-	if(docuSelected != null) { $(docuSelected).before(html); JYHEDITOR.selectedMark();} 
-	else $("#YHBmainEditor").append(html); 
-	
-}
-
-
-JYHEDITOR.UserTable = function() {
-	if(docuSelectedType != 'TD') return;
-	$("#tableMenu").css({left:mouse_X - 20 , top:mouse_Y }).toggle();
 }
 
 function check_MainWriteForm(f)	{	
@@ -227,5 +345,6 @@ function check_MainWriteForm(f)	{
 	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
 	return true;
 }
+
 </script>
 {% endblock %}

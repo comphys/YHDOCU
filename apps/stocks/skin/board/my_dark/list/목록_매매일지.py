@@ -8,7 +8,7 @@ class 목록_매매일지(SKIN) :
         self.TrCnt = self.D.get('Tr_cnt',0)
         try : 
             self.D['chart_code']   = session['CSH']['csh_add1']
-            self.D['chart_season'] = session['CSH']['csh_add15']
+            self.D['chart_season'] = session['CSH']['csh_add2']
         except : 
             self.D['chart_code']   = None 
             self.D['chart_season'] = None
@@ -32,10 +32,6 @@ class 목록_매매일지(SKIN) :
                 item['wdate'] = ut.timestamp_to_date(item['wdate'],"%Y/%m/%d")
                 item['mdate'] = ut.timestamp_to_date(item['mdate'],"%Y/%m/%d")
     
-    def data_summary(self) :
-        qry = "SELECT max(), min() FROM h_  GROUP BY add"
-        pass
- 
     def list(self) :
 
         self.head()
@@ -65,7 +61,7 @@ class 목록_매매일지(SKIN) :
                     elif key == 'hit'   : tx[key] = f"<td class='list-hit'>{txt}</td>" 
                     elif key == 'uname' : tx[key] = f"<td class='list-name'>{txt}</td>"
 
-                    elif key == 'add1' :
+                    elif key == 'add1' : # 종목코드
                         if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
@@ -96,7 +92,7 @@ class 목록_매매일지(SKIN) :
                         tmp += '</td>'
                         tx[key] = tmp
 
-                    elif key == 'add12' : # 현수익률
+                    elif key == 'add15' : # 현수익률
                         txt_val = float(txt)
                         clr = "#F6CECE;" if txt_val > 0 else "#CED8F6"
                         txt = f"{txt_val:.2f}"

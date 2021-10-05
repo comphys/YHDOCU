@@ -15,8 +15,8 @@ class 쓰기_매매일지(SKIN) :
         self.D['ChkField'] = ','.join(self.D['MustCheck'])
 
         # -------------------
-        self.D['user_add1'] = self.user_add1(OBODY)
-        self.D['user_add2'] = self.user_add2(OBODY)
+        self.D['user_add1']  = self.user_add1( OBODY) # 종목코드
+        self.D['user_add20'] = self.user_add20(OBODY) # 매매전략
 
     
 
@@ -63,15 +63,15 @@ class 쓰기_매매일지(SKIN) :
         tmp += "</div></div>" 
         return tmp
 
-    def user_add2(self,OBODY) :
+    def user_add20(self,OBODY) :
         value =''
-        if OBODY : value = OBODY.get('add2','')
+        if OBODY : value = OBODY.get('add20','')
 
         qry = f"SELECT add0 FROM h_stock_strategy_board ORDER BY add0"
         ITM = self.DB.exe(qry)
 
         tmp  = "<div class='select' style='margin-right:10px;vertical-align:bottom'>"
-        tmp += f"<input placeholder='매매전략' name='add2' type='text' value='{value}' style='width:120px;background-color:#363636;border-color:#24272D'>"
+        tmp += f"<input placeholder='매매전략' name='add20' type='text' value='{value}' style='width:120px;background-color:#363636;border-color:#24272D'>"
         tmp += f"<div class='btn-group'>"
         tmp += f"<button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>"
         tmp += "<ul class='dropdown-menu'>"
@@ -83,26 +83,3 @@ class 쓰기_매매일지(SKIN) :
         tmp += "</ul>"
         tmp += "</div></div>" 
         return tmp
-    
-    def user_cat(self,val,key,xwidth,clss,bid,OBODY) :
-        if key == 'add0' : return 
-        value =''
-        if OBODY : value = OBODY.get(key,'')
-        qry = f"SELECT distinct {key} FROM h_{bid}_board ORDER BY {key}"
-        ITM = self.DB.exe(qry)
-
-        tmp  = "<div class='myselect' style='margin-right:10px'>"
-        tmp += f"<input placeholder='{val}' name='{key}' type='text' value='{value}' style='width:{xwidth};background-color:#363636;border-color:#333333'>"
-        tmp += f"<div class='btn-group'>"
-        tmp += f"<button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>"
-        tmp += "<ul class='dropdown-menu'>"
-        tmp += f"<li><a>{val}</a></li>"
-        if ITM :
-            for cat in ITM :  
-                cat_c = 'N/A' if not cat[0] else cat[0]
-                tmp += "<li><a href='#'>"+ cat_c + "</a></li>"
-        tmp += "</ul>"
-        tmp += "</div></div>" 
-
-        self.D['TR_cat'].append(tmp)
-
