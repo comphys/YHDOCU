@@ -39,7 +39,7 @@ class Action(Control) :
         self.DB.exe(qry)
 
         if self.bid == 'daily_trading' :
-            self.DB.tbl,self.DB.wre = ('h_daily_trading_board',f"add1='{SAVE['add1']}' and add15='{SAVE['add15']}'")
+            self.DB.tbl,self.DB.wre = ('h_daily_trading_board',f"add1='{SAVE['add1']}' and add2='{SAVE['add2']}'")
             self.save_chart(self.DB.get_one('no'))
         
         return self.moveto('board/list/'+self.bid+'/page='+self.page+'/csh=on')
@@ -94,12 +94,12 @@ class Action(Control) :
         import matplotlib.pyplot as plt
 
         self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f'no={no}')
-        code, season = self.DB.get('add1,add15',many=1,assoc=False)
+        code, season = self.DB.get('add1,add2',many=1,assoc=False)
         file_name = f"{self.C['DOCU_ROOT']}/개인자료/주식투자/주식챠트/stock_chart_{code}_{season}.png"
 
-        self.DB.wre = f"add1='{code}' and add15={season}"
-        c_price = self.DB.get('add3',assoc=False)
-        m_price = self.DB.get('add10',assoc=False)
+        self.DB.wre = f"add1='{code}' and add2={season}"
+        c_price = self.DB.get('add5',assoc=False)
+        m_price = self.DB.get('add9',assoc=False)
 
         c_price = [float(x) for x in c_price]
         m_price = [float(x) for x in m_price]

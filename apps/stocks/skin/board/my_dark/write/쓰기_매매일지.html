@@ -65,11 +65,11 @@
 				<input type='text' name='add6' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add6']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">체결수량</div>
+				<div class='write-input-left' style="background-color:#0B4C5F;">체결수량</div>
 				<input type='text' name='add7' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add7']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">매수금액</div>
+				<div class='write-input-left' style="background-color:#0B4C5F;">매수금액</div>
 				<input type='text' name='add8' class="i-number" style="width:90px;text-align:center" value="{{D['BODY']['add8']}}">
 			</div>
 			<div class='i-input-div'>
@@ -269,7 +269,7 @@
 <div style="position:relative;width:{{D['w_width2']}};background-color:black">
 <textarea name="content" style="width:100%;height:100px;padding:10px;">
 {% if D['Mode'] == 'modify' -%} 
-{D['OBODY']['content']|safe}}
+{{D['OBODY']['content']|safe}}
 {%- endif %}
 </textarea>
 <!-- 하단 요소====================================================================================== -->
@@ -323,10 +323,10 @@ function auto_datainput() {
 			    
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
 
-			var update_buy = ['buy1','buy11','buy12','buy2','buy21','buy22','buy3',,'buy31','buy32','buy4','buy41','buy42']
+			var update_buy = ['buy1','buy11','buy12','buy2','buy21','buy22','buy3',,'buy31','buy32','buy4','buy41','buy42','buy5','buy51','buy52']
 			update_buy.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
 
-			var update_sell = ['sell1','sell2','sell3','sell4']
+			var update_sell = ['sell1','sell11','sell12','sell2','sell21','sell22','sell3','sell31','sell32','sell4','sell41','sell42']
 			update_sell.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
 			
 		}
@@ -339,9 +339,6 @@ function auto_dataclean() {
 }
 
 function check_MainWriteForm(f)	{	
-	var wDiv = $id("YHBmainEditor");
-	JYHEDITOR.clearDocuSelect();
-	f.content.value = wDiv.innerHTML;
 	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
 	return true;
 }

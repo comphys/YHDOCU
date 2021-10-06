@@ -67,18 +67,6 @@ class 목록_매매일지(SKIN) :
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
                         tx[key] = f"<td style='{style}' onclick=\"open_stock_chart('{txt}')\">{txt}</td>" 
                     
-                    elif key == 'add16' :
-                        if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
-                        if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
-                        if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
-                        tx[key] = f"<td style='{style}'>{float(txt):.1f}</td>"
-
-                    elif key == 'add17' :
-                        if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
-                        if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
-                        if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
-                        tx[key] = f"<td style='{style}' data-no='{item['no']}' class='todo_today'>{txt}</td>" 
-                    
                     elif key == 'add0'  : 
                         if self.D['EXCOLOR']['add0'] : style = f"style='color:{self.D['EXCOLOR']['add0']}'"
                         
@@ -113,10 +101,7 @@ class 목록_매매일지(SKIN) :
                         
 
                         if (self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
-                        if (self.D['EXFTYPE'][key] == 'float' ) : 
-                            if key in ['add10'] :
-                                txt = f"{float(txt):,.4f}"
-                            else : txt = f"{float(txt):,.2f}"
+                        if (self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,.2f}"
 
                         tx[key] = f"<td style='{style}' {clas}>{txt}</td>"
 
