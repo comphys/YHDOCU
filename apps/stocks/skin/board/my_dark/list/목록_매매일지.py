@@ -101,7 +101,10 @@ class 목록_매매일지(SKIN) :
                         
 
                         if (self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
-                        if (self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,.2f}"
+                        if (self.D['EXFTYPE'][key] == 'float' ) : 
+                            if      key == 'add9' : txt = f"{float(txt):,.4f}"
+                            elif    key == 'add4' : txt = f"{float(txt):,.1f}"
+                            else : txt = f"{float(txt):,.2f}"
 
                         tx[key] = f"<td style='{style}' {clas}>{txt}</td>"
 
