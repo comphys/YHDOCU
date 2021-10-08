@@ -105,9 +105,9 @@ class Action(Control) :
         m_price = [float(x) for x in m_price]
   
         my_dpi = 100
-        xx = list(range(0,51))
+        xx = list(range(0,61))
         plt.figure(facecolor='#24272d')
-        plt.figure(figsize=(1200/my_dpi, 300/my_dpi),dpi=my_dpi)
+        plt.figure(figsize=(1250/my_dpi, 300/my_dpi),dpi=my_dpi)
         # plt.rcParams["figure.figsize"] = (20,4)
         plt.rcParams.update({"figure.figsize":(20,4),"axes.grid" : True, "grid.color": "#24272d",'font.size':8})
         ax = plt.axes()

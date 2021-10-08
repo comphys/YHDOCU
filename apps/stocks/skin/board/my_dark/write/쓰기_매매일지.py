@@ -8,7 +8,7 @@ class 쓰기_매매일지(SKIN) :
         self.D['TR_add'] = []
         self.D['TR_cat'] = []
         self.D['method'] = self.SYS.V['_mtd']
-        w_width = 750
+        w_width = 770
         self.D['w_width1'] = str(w_width + 80)+'px'
         self.D['w_width2'] = str(w_width) + 'px'
 

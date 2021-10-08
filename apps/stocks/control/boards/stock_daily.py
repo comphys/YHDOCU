@@ -10,12 +10,19 @@ class Stock_daily(Control) :
         self.M = {}
 
     def init_value(self) :
-
+        self.auto = True
         # POST 데이타, 사용자 입력으로 부터 데이타를 받아서 초기화 
         self.M['매매전략'] = self.D['post']['add20']
 
         self.M['체결단가'] = self.D['post']['add6']   ; self.M['체결단가'] = float(self.M['체결단가'].replace(',','')) if self.M['체결단가'] else 0.0
-        self.M['체결수량'] = self.D['post']['add7']   ; self.M['체결수량'] = int(self.M['체결수량'].replace(',',''))   if self.M['체결수량'] else 0 
+        self.M['체결수량'] = self.D['post']['add7']   
+        
+        if  self.M['체결수량'] : 
+            self.M['체결수량'] = int(self.M['체결수량'].replace(',',''))   
+            self.auto = False
+        else : 
+            self.M['체결수량'] = 0
+
         self.M['매수금액'] = self.D['post']['add8']   ; self.M['매수금액'] = float(self.M['매수금액'].replace(',','')) if self.M['매수금액'] else 0.0
         self.M['가용잔액'] = self.D['post']['add16']  ; self.M['가용잔액'] = float(self.M['가용잔액'].replace(',','')) if self.M['가용잔액'] else 0.0
         self.M['추가자본'] = self.D['post']['add17']  ; self.M['추가자본'] = float(self.M['추가자본'].replace(',','')) if self.M['추가자본'] else 0.0
@@ -76,7 +83,7 @@ class Stock_daily(Control) :
 
     def calculate(self)  :
         # 모든 매수는 당일종가로 거래된 것으로 가정 LOC 거래 원칙
-        self.M['매수금액']  =  self.M['체결수량'] * self.M['당일종가']
+        self.M['매수금액']  =  self.M['체결수량'] * self.M['체결단가']
         self.M['가용잔액'] -=  self.M['매수금액']
         self.M['보유수량'] +=  self.M['체결수량']
         self.M['총매수금'] +=  self.M['매수금액']
@@ -121,11 +128,14 @@ class Stock_daily(Control) :
         self.M['시즌'] = 1  ; self.M['날수'] = 1 ; self.M['회차'] = 1.0
 
         self.M['일매수금'] = int(self.M['가용잔액'] / self.M['분할횟수'])
-        self.M['평균단가']  = self.M['당일종가']
-        self.M['보유수량']  = self.M['체결수량'] = int(self.M['일매수금']/self.M['당일종가'])
-        self.M['매수금액']  = self.M['당일종가'] * self.M['체결수량']
-        self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
-        self.M['수익현황']  = self.M['수익률'] = 0.0
+        if self.auto : self.M['체결수량'] = int(self.M['일매수금']/self.M['체결단가']) 
+        self.M['매수금액']  = self.M['체결단가'] * self.M['체결수량']
+        self.M['평균단가']  = self.M['체결단가']
+        self.M['보유수량']  = self.M['체결수량']
+        self.M['평가금액']  = self.M['당일종가'] * self.M['보유수량']
+        self.M['총매수금']  = self.M['매수금액']
+        self.M['수익현황']  =  self.M['평가금액'] - self.M['총매수금']
+        self.M['수익률']    = (self.M['수익현황'] / self.M['총매수금']) * 100 if self.M['총매수금'] else 0
         self.M['가용잔액'] -= self.M['매수금액']
         self.M['매매현황']  = 'S'
         self.M['진행상황']  = '첫날거래'
@@ -171,29 +181,32 @@ class Stock_daily(Control) :
 
     def check_buy(self) :
         # 평단매수 검토
-        if many := int(self.B['buy11'])  : 
-            if  self.M['당일종가'] <= float(self.B['buy12']):  
-                self.M['체결수량'] += many ; self.M['회차'] += 0.5 ; self.M['매매현황'] += 'N'
+        if self.auto :
+            if many := int(self.B['buy11'])  : 
+                if  self.M['당일종가'] <= float(self.B['buy12']):  
+                    self.M['체결수량'] += many ; self.M['회차'] += 0.5 ; self.M['매매현황'] += 'N'
 
-        # 큰단매수 검토
-        if many := int(self.B['buy21'])  : 
-            if  self.M['당일종가'] <= float(self.B['buy22']):  
-                self.M['체결수량'] += many ; self.M['회차'] += 0.5 ; self.M['매매현황'] += 'N'           
-        
-        # 추종매수 검토
-        if many := int(self.B['buy31'])  : 
-            if  self.M['당일종가'] <= float(self.B['buy32']):  
-                self.M['체결수량'] += many ; self.M['회차'] += self.M['연속하락'] ; self.M['매매현황'] += str(self.M['연속하락'])
-        
-        # 추가매수 검토
-        if many := int(self.B['buy41'])  : 
-            if  self.M['당일종가'] <= float(self.B['buy42']):  
-                self.M['체결수량'] += many ; self.M['회차'] += 1.0 ; self.M['매매현황'] += 'A'
+            # 큰단매수 검토
+            if many := int(self.B['buy21'])  : 
+                if  self.M['당일종가'] <= float(self.B['buy22']):  
+                    self.M['체결수량'] += many ; self.M['회차'] += 0.5 ; self.M['매매현황'] += 'N'           
+            
+            # 추종매수 검토
+            if many := int(self.B['buy31'])  : 
+                if  self.M['당일종가'] <= float(self.B['buy32']):  
+                    self.M['체결수량'] += many ; self.M['회차'] += self.M['연속하락'] ; self.M['매매현황'] += str(self.M['연속하락'])
+            
+            # 추가매수 검토
+            if many := int(self.B['buy41'])  : 
+                if  self.M['당일종가'] <= float(self.B['buy42']):  
+                    self.M['체결수량'] += many ; self.M['회차'] += 1.0 ; self.M['매매현황'] += 'A'
 
-        # 전략매수 검토
-        if many := int(self.B['buy51'])  : 
-            if  self.M['당일종가'] <= float(self.B['buy52']):  
-                self.M['체결수량'] += many ; self.M['회차'] += 1.0 ; self.M['매매현황'] += 'R' ; self.M['전략매금'] = 0.0
+            # 전략매수 검토
+            if many := int(self.B['buy51'])  : 
+                if  self.M['당일종가'] <= float(self.B['buy52']):  
+                    self.M['체결수량'] += many ; self.M['회차'] += 1.0 ; self.M['매매현황'] += 'R' ; self.M['전략매금'] = 0.0
+        else :
+            self.M['회차'] += 0.0 ; self.M['매매현황'] += 'M'    
 
 
     def autoinput(self) :
@@ -225,7 +238,7 @@ class Stock_daily(Control) :
             # 매수상황 검토
             self.check_buy()
 
-        self.calculate()
+            self.calculate()
 
         # 매도전략
         if self.M['수량확보'] and self.M['위기전략'] == 'YES' and self.M['전략매금'] > 0 : self.strategy_sell()
@@ -249,13 +262,13 @@ class Stock_daily(Control) :
 
         update['add2'] = self.M['시즌'] ; update['add3'] = self.M['날수'] ; update['add4'] = self.M['회차']
 
-        update['add5']   = f"{round(self.M['당일종가'],4):,.2f}" ; update['add6'] = update['add5'] ; update['add7'] = f"{self.M['체결수량']:,}"
+        update['add5']   = f"{round(self.M['당일종가'],4):,.2f}" ; update['add6'] = f"{round(self.M['체결단가'],4):,.2f}" ; update['add7'] = f"{self.M['체결수량']:,}"
 
-        update['add8']   = f"{round(self.M['매수금액'],4):,.2f}"; update['add9'] = f"{round(self.M['평균단가'],4):,.4f}" ; update['add10'] = f"{self.M['보유수량']:,}"
+        update['add8']   = f"{round(self.M['매수금액'],4):,.4f}"; update['add9'] = f"{round(self.M['평균단가'],4):,.4f}" ; update['add10'] = f"{self.M['보유수량']:,}"
 
-        update['add11']  = f"{round(self.M['평가금액'],4):,.2f}"; update['add12']= f"{round(self.M['총매수금'],4):,.2f}" ; update['add14']   = f"{round(self.M['수익현황'],4):,.2f}"
+        update['add11']  = f"{round(self.M['평가금액'],4):,.4f}"; update['add12']= f"{round(self.M['총매수금'],4):,.4f}" ; update['add14']   = f"{round(self.M['수익현황'],4):,.4f}"
 
-        update['add15']  = f"{round(self.M['수익률'],4):,.2f}"  ; update['add16']   = f"{round(self.M['가용잔액'],4):,.2f}" ; update['add18']   = self.M['진행상황']
+        update['add15']  = f"{round(self.M['수익률'],4):,.2f}"  ; update['add16']   = f"{round(self.M['가용잔액'],4):,.4f}" ; update['add18']   = self.M['진행상황']
 
         update['add13']  = self.M['매매현황'] ; update['add19'] = self.M['일매수금'] ; update['add17']   = f"{round(self.M['추가자본'],4):,.2f}"
         
