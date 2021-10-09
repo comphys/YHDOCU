@@ -5,14 +5,13 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 $(function(){ 
 	$(".select>div>ul>li:first-child").click(function(){ var ptr = $(this).parent().parent().prev(); $(ptr).val(''); $(this).siblings().removeClass("select-selected");});
-	$(".select>div>ul>li").not(':first-child').click(function(){var val1 = $(this).text(); var val2 = val1.replace(/^\s+|\s+$/g,''); var ptr = $(this).parent().parent().prev(); var val3 = $(ptr).val();$(ptr).val(val2); $(this).addClass("select-selected"); $(this).siblings().removeClass("select-selected"); });
+	$(".select>div>ul>li").not(':first-child').click(function(){var val1 = $(this).text(); var val2 = val1.replace(/^\s+|\s+$/g,''); var ptr = $(this).parent().parent().prev(); $(ptr).val(val2); $(this).addClass("select-selected"); $(this).siblings().removeClass("select-selected"); });
 
 	$(".myselect>div>ul>li:first-child").click(function(){ var ptr = $(this).parent().parent().prev(); $(ptr).val(''); document.category_search.submit(); });
 	$(".myselect>div>ul>li").not(':first-child').click(function(){ 
 		var val1 = $(this).text(); 
 		var val2 = $.trim(val1); 
 		var ptr = $(this).parent().parent().prev(); 
-		var val3 = $(ptr).val();
 		$(ptr).val(val2); 
 		document.category_search.submit();
 	});

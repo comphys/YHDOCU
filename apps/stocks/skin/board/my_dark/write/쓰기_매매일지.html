@@ -53,7 +53,7 @@
 	<tr>
 		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
 	</tr>
-	<tr style="border:2px solid #a66c39">
+	<tr style="border:2px solid #CEE3F6">
 		<td class='write-td-left'>자동입력</td>	
 		<td class='write-td-right' style="padding-top:10px;padding-bottom:10px">	
 			<div class='i-input-div'>
@@ -69,7 +69,7 @@
 				<input type='text' name='add7' class="i-number" style="width:100px;" value="{{D['BODY']['add7']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">매수금액</div>
+				<div class='write-input-left' style="background-color:#0B4C5F;">매수금액</div>
 				<input type='text' name='add8' class="i-number" style="width:100px;" value="{{D['BODY']['add8']}}">
 			</div>
 			<div class='i-input-div'>
@@ -106,7 +106,7 @@
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">진행상황</div>
-				<input type='text' name='add18' class="i-text" style="width:100px;text-align:center;" value="{{D['BODY']['add18']}}">
+				<input type='text' name='add18' class="i-text" style="width:100px;text-align:right;" value="{{D['BODY']['add18']}}">
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">매매현황</div>
@@ -265,6 +265,8 @@
 	</tr>
 	</tbody>
 </table>
+<input type='hidden' name='sub7' value="{{D['BODY']['sub7']}}">
+<input type='hidden' name='sub8' value="{{D['BODY']['sub8']}}">
 <!-- BEGIN ====================================================================================== -->
 <div style="position:relative;width:{{D['w_width2']}};background-color:black">
 <textarea name="content" style="width:100%;height:100px;padding:10px;">
@@ -328,20 +330,38 @@ function auto_datainput() {
 
 			var update_sell = ['sell1','sell11','sell12','sell2','sell21','sell22','sell3','sell31','sell32','sell4','sell41','sell42']
 			update_sell.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
+
+			var update_sell = ['sub1','sub2','sub3','sub4','sub7','sub8']
+			update_sell.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
 			
 		}
 	});
 }
 function auto_dataclean() {
 			var update_key  = ['add2','add3','add4','add5','add6','add7','add8','add9','add10',
-			'add11','add12','add13','add14','add15','add16','add17','add18','add19','sub1','sub2','sub3','sub4']
+			'add11','add12','add13','add14','add15','add16','add17','add18','add19','sub1','sub2','sub3','sub4',
+			'buy1','buy11','buy12','buy2','buy21','buy22','buy3',,'buy31','buy32','buy4','buy41','buy42','buy5','buy51','buy52',
+			'sell1','sell11','sell12','sell2','sell21','sell22','sell3','sell31','sell32','sell4','sell41','sell42']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val('')})
 }
+
+$("#auto-fill>div>ul>li:first-child").click(function(){ var ptr = $(this).parent().parent().prev(); $(ptr).val(''); $(this).siblings().removeClass("select-selected");});
+$("#auto-fill>div>ul>li").not(':first-child').click(function(){
+	var val1 = $(this).text(); 
+	var ptr = $(this).parent().parent().prev(); 
+	$(ptr).val(val1); $(this).addClass("select-selected"); $(this).siblings().removeClass("select-selected"); 
+	var posturl = uri('linkurl') + 'boards-stock_daily_select_fill/getit';
+	$.post( posturl, {code:val1}).done( function(data) { 
+		var aa = JSON.parse(data);
+		$("input[name='add0']").val(aa.a); $("input[name='add20']").val(aa.b) 
+	});
+});
 
 function check_MainWriteForm(f)	{	
 	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
 	return true;
 }
+
 
 </script>
 {% endblock %}

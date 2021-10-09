@@ -46,11 +46,11 @@ class 쓰기_매매일지(SKIN) :
         value =''
         if OBODY : value = OBODY.get('add1','')
 
-        qry = f"SELECT distinct add1 FROM h_stockHistory_board ORDER BY add1"
+        qry = f"SELECT distinct add1 FROM h_daily_trading_board ORDER BY add1"
         ITM = self.DB.exe(qry)
 
-        tmp  = "<div class='select' style='margin-right:10px;vertical-align:bottom'>"
-        tmp += f"<input placeholder='종목코드' name='add1' type='text' value='{value}' style='width:120px;background-color:#363636;border-color:#24272D'>"
+        tmp  = "<div id='auto-fill' class='select' style='margin-right:10px;vertical-align:bottom;border:1px solid #CEE3F6'>"
+        tmp += f"<input placeholder='종목코드' name='add1' type='text' value='{value}' style='width:125px;background-color:#363636;border-color:#24272D'>"
         tmp += f"<div class='btn-group'>"
         tmp += f"<button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>"
         tmp += "<ul class='dropdown-menu'>"
@@ -71,7 +71,7 @@ class 쓰기_매매일지(SKIN) :
         ITM = self.DB.exe(qry)
 
         tmp  = "<div class='select' style='margin-right:10px;vertical-align:bottom'>"
-        tmp += f"<input placeholder='매매전략' name='add20' type='text' value='{value}' style='width:120px;background-color:#363636;border-color:#24272D'>"
+        tmp += f"<input placeholder='매매전략' name='add20' type='text' value='{value}' style='width:125px;background-color:#363636;border-color:#24272D'>"
         tmp += f"<div class='btn-group'>"
         tmp += f"<button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>"
         tmp += "<ul class='dropdown-menu'>"

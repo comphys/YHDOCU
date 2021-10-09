@@ -160,7 +160,7 @@ class M_backtest_MyToT(Model) :
     def strategy_sell(self) : # LOC 매도
 
         if self.M['전략매금'] > 0 : return
-        if (self.M['평균단가'] - self.M['전일종가'])/self.M['평균단가'] < 0.12 : 
+        if self.M['수익률'] > -10.0 : 
             self.M['진행상황'] = '기준이내'
             return
         

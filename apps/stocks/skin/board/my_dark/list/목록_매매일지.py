@@ -112,7 +112,7 @@ class 목록_매매일지(SKIN) :
                 tx={}
 
             self.D['TR'] = TR
-
+            
             if self.D['BCONFIG']['row_sum'] == 'on' :
                 list_order_cnt = len(self.D['list_order'])
                 td2 =['<td>&nbsp;</td>' for x in range(list_order_cnt)]

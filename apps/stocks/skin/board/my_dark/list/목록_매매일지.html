@@ -68,7 +68,7 @@
 
 		</colgroup>
 		<thead>
-			<tr style="background-color:#393f4a;border-bottom:1px solid black">
+			<tr style="background-color:#393f4a;border-bottom:2px solid black">
 				{% for key,val in D['head_td'].items() %}
 				{{val|safe}}
 				{% endfor %}
@@ -79,10 +79,14 @@
 			<tr id="list-sum">{{D['row_sum']|safe}}</tr>
 			{% endif %}
 			{%- for TR in D['TR'] -%}
-			{% if loop.index0 == D['cno'] %}
-			<tr class="list-current-tr">
+			{% if TR['add18']|striptags == '전량매도' or TR['add18']|striptags == '부분매도' %}
+			<tr style="border-top:2px solid yellow;border-bottom:2px solid yellow;background-color:black;"> 
+			{% elif TR['add18']|striptags == '강제매도' %}
+			<tr style="border-top:2px solid orange;border-bottom:2px solid orange;background-color:black;"> 
+			{% elif TR['add18']|striptags == '전략매도' %}
+			<tr style="border-top:2px solid #A9D0F5;border-bottom:2px solid #A9D0F5;background-color:black;">
 			{% else %}
-			<tr> 
+			<tr>
 			{% endif %}
 			{% for key,val in TR.items() %}
 			{{val|safe}}
@@ -110,8 +114,8 @@
 	</ul></div>
 </div>
 {% if D['chart_code'] and D['chart_season'] %}
-<div style="width:1200px;height:300px;border:1px solid black">
-	<img src="/DOCU_ROOT/개인자료/주식투자/주식챠트/stock_chart_{{D['chart_code']}}_{{D['chart_season']}}.png">
+<div>
+	<img src="/DOCU_ROOT/개인자료/주식투자/주식챠트/stock_chart_{{D['chart_code']}}_{{D['chart_season']}}.png" style="border:1px solid black">
 </div>
 {% endif %}
 
