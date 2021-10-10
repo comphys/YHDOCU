@@ -86,9 +86,9 @@ class Action(Control) :
 
         if self.bid == 'daily_trading' : 
             self.save_chart(no)
-            return self.moveto(f"board/list/{self.parm[0]}/no={no}/page={self.page}/csh=on")
+            return self.moveto(f"board/list/{self.parm[0]}/page={self.page}/csh=on")
         if self.BCONFIG['stayfom'] == 'on' :
-            return self.moveto(f"board/modify/{self.parm[0]}/no={no}/page={self.page}brother={brother}")
+            return self.moveto(f"board/modify/{self.parm[0]}/no={no}/page={self.page}/brother={brother}")
         else :
             return self.moveto(f"board/body/{self.parm[0]}/no={no}/brother={brother}")
 
