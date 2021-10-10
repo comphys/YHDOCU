@@ -68,6 +68,7 @@ class Action(Control) :
 
     def modify(self) :
         # h_{bid}_board : [no,brother,add0,uid,uname,content,reply,hit,wdate,mdate,add1~add15]
+        self.info(self.D['post'])
         brother = self.D['post'].get('brother',0)
         tbl     = 'h_'+self.parm[0]+'_board'
         no      = self.gets['no']
@@ -84,7 +85,9 @@ class Action(Control) :
         qry = self.DB.qry_update(tbl,self.D['post'],con)
         self.DB.exe(qry)
 
-        if self.bid == 'daily_trading' : self.save_chart(no)
+        if self.bid == 'daily_trading' : 
+            self.save_chart(no)
+            return self.moveto(f"board/list/{self.parm[0]}/no={no}/page={self.page}/csh=on")
         if self.BCONFIG['stayfom'] == 'on' :
             return self.moveto(f"board/modify/{self.parm[0]}/no={no}/page={self.page}brother={brother}")
         else :

@@ -8,7 +8,7 @@ class 쓰기_매매일지(SKIN) :
         self.D['TR_add'] = []
         self.D['TR_cat'] = []
         self.D['method'] = self.SYS.V['_mtd']
-        w_width = 770
+        w_width = 760
         self.D['w_width1'] = str(w_width + 80)+'px'
         self.D['w_width2'] = str(w_width) + 'px'
 
@@ -50,7 +50,7 @@ class 쓰기_매매일지(SKIN) :
         ITM = self.DB.exe(qry)
 
         tmp  = "<div id='auto-fill' class='select' style='margin-right:10px;vertical-align:bottom;border:1px solid #CEE3F6'>"
-        tmp += f"<input placeholder='종목코드' name='add1' type='text' value='{value}' style='width:125px;background-color:#363636;border-color:#24272D'>"
+        tmp += f"<input placeholder='종목코드' name='add1' type='text' value='{value}' style='width:122px;background-color:#363636;border-color:#24272D'>"
         tmp += f"<div class='btn-group'>"
         tmp += f"<button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>"
         tmp += "<ul class='dropdown-menu'>"

@@ -65,16 +65,16 @@ class 목록_매매일지(SKIN) :
                         if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
-                        tx[key] = f"<td style='{style}' onclick=\"open_stock_chart('{txt}')\">{txt}</td>" 
+                        tx[key] = f"<td style='cursor:pointer;{style}' onclick=\"open_stock_chart('{txt}')\">{txt}</td>" 
                     
                     elif key == 'add0'  : 
                         if self.D['EXCOLOR']['add0'] : style = f"style='color:{self.D['EXCOLOR']['add0']}'"
                         
-                        tmp = "<td class='text-left'>"
+                        tmp = "<td class='text-center'>"
                         
                         if cno : tmp += f"<span {style}>{txt}</span>"
                         else :
-                            href  = f"{self.D['_bse']}board/body/{self.D['bid']}/no={item['no']}"
+                            href  = f"{self.D['_bse']}board/modify/{self.D['bid']}/no={item['no']}/page={self.D['page']}"
                             tmp += f"<span class='list-subject' data-href='{href}' {style}>{txt}</span>"
 
                         tmp += '</td>'
