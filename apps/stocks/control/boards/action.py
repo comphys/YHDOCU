@@ -68,7 +68,6 @@ class Action(Control) :
 
     def modify(self) :
         # h_{bid}_board : [no,brother,add0,uid,uname,content,reply,hit,wdate,mdate,add1~add15]
-        self.info(self.D['post'])
         brother = self.D['post'].get('brother',0)
         tbl     = 'h_'+self.parm[0]+'_board'
         no      = self.gets['no']
