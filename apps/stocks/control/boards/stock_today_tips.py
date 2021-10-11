@@ -19,7 +19,7 @@ class Stock_today_tips(Control) :
         sty5 ="style='color:#CED8F6'"
         sty6 ="style='color:#F6CECE'"
 
-        output  = "<div id='stock_tips' style='width:350px;height:250px;padding:10px;background-color:#1d1f24;color:#e1e1e1;broder:1px solid black' >"
+        output  = "<div id='stock_tips' style='width:350px;height:250px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:1px solid #F7F8E0;' >"
         output += f"<div style='text-align:center;width:100%;padding:10px'><span style='color:#CEECF5'>{D['add0']}</span> <span style='color:#F7F8E0;font-weight:bold'>{D['add1']}</span> 매매전략</div>"
         output += "<table class='table table-bordered table-striped'>"
         output += "<thead><tr><th>구분</th><th>방법</th><th style='text-align:right;width:60px;padding-right:10px'>수량</th><th style='text-align:right;width:80px;padding-right:10px'>단가</th></tr></thead>"
