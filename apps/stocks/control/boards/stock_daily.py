@@ -129,7 +129,7 @@ class Stock_daily(Control) :
     # 당일종가 전일종가 와 연속하락 일수 구하기  
     def old_price_trace(self) :
         now = int(time.mktime(datetime.strptime(self.M['기록일자'],'%Y-%m-%d').timetuple()))
-        old_date = datetime.fromtimestamp(now-3600*24*10).strftime('%Y-%m-%d')
+        old_date = datetime.fromtimestamp(now-3600*24*14).strftime('%Y-%m-%d')
         qry = f"SELECT add3 FROM h_stockHistory_board WHERE add0 BETWEEN '{old_date}' and '{self.M['기록일자']}' and add1='{self.M['종목코드']}' ORDER BY add0"
         aaa= self.DB.exe(qry)
         bbb= [float(x[0]) for x in aaa ]

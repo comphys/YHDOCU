@@ -1,6 +1,6 @@
 from system.core.load import Model
 from datetime import datetime,date
-import math
+import math,time
 
 class M_backtest_MyToT(Model) :
 
@@ -117,15 +117,19 @@ class M_backtest_MyToT(Model) :
 
 
     def new_day(self) :
-        self.M['회차'] = 1.0
+        self.M['연속하락']  = int(self.old_price_trace(opt=True))
+        self.M['회차'] = 1.0 + self.M['연속하락']
         self.M['평균단가']  = self.M['당일종가']
-        self.M['보유수량']  = self.M['체결수량'] = int(self.M['일매수금']/self.M['당일종가'])
+        self.M['체결수량'] = int(self.M['일매수금']/self.M['당일종가'])
+        if self.M['연속하락'] : self.M['체결수량'] = self.M['체결수량'] * self.M['연속하락']
+        self.M['보유수량']  = self.M['체결수량'] = int(self.M['일매수금']/self.M['당일종가']) 
         self.M['매수금액']  = self.M['당일종가'] * self.M['체결수량']
         self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
         self.M['수익현황']  = self.M['수익률'] = 0.0
         self.M['가용잔액'] -= self.M['매수금액']
         self.M['진행상황']  = '첫날거래'
         self.M['첫날기록']  = False
+        self.M['구매코드']  = 'M' + str(self.M['연속하락'])
 
     def force_sell(self,강제매도가) :
         self.M['진행상황']  = '강제매도'
@@ -325,3 +329,16 @@ class M_backtest_MyToT(Model) :
         self.D['init_capital'] = int(self.D['capital'].replace(',',''))
         self.D['addition'] = int(self.D['addition'].replace(',','')) if self.D['addition'] else 0
         self.test_it()
+
+    def old_price_trace(self,opt=True) :
+        now = int(time.mktime(datetime.strptime(self.M['day'],'%Y-%m-%d').timetuple()))
+        old_date = datetime.fromtimestamp(now-3600*24*14).strftime('%Y-%m-%d')
+        qry = f"SELECT add3 FROM h_stockHistory_board WHERE add0 BETWEEN '{old_date}' and '{self.M['day']}' and add1='{self.D['code']}' ORDER BY add0"
+        aaa= self.DB.exe(qry)
+        aaa= [float(x[0]) for x in aaa ]
+        # 첫날일 경우 그 전날까지만
+        bbb = aaa[:-1] if opt else aaa
+        c_drop = 0
+        for i in range(1,len(bbb)) :
+            c_drop = c_drop + 1 if bbb[i] <= bbb[i-1] else 0
+        return c_drop
