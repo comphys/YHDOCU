@@ -80,6 +80,10 @@ class 목록_매매일지(SKIN) :
                         tmp += '</td>'
                         tx[key] = tmp
 
+                    elif key == 'add4' : # 현수익률
+                        txt = f"{float(txt):,.1f}"
+                        tx[key] = f"<td class='todo_today' data-no='{item['no']}' style='text-align:right;cursor:pointer'>{txt}</td>"
+
                     elif key == 'add15' : # 현수익률
                         txt_val = float(txt)
                         clr = "#F6CECE;" if txt_val > 0 else "#CED8F6"

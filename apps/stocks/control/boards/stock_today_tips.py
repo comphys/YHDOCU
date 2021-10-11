@@ -1,5 +1,4 @@
 from system.core.load import Control
-import math
 
 class Stock_today_tips(Control) : 
     
@@ -7,55 +6,34 @@ class Stock_today_tips(Control) :
         self.DB = self.db('stocks')
 
     def hellow(self) :
-        no = self.gets['no']       
-        # 기본데이타 갖고 오기
-        self.DB.tbl, self.DB.wre = ('h_daily_trading_board', f"no={no}")
-        preDATA = self.DB.get_line("add1,add2,add7,add9,add10,add14")
-        매매전략 = preDATA['add2']
-
-        # 주문전략 갖고 오기
-        self.DB.tbl, self.DB.wre = ("h_stock_strategy_board",f"add0='{매매전략}'")
-        STRAGY = self.DB.get_line("add1,add2,add3,add4,add5,add6,add7,add8,add9")
         
-        # 주문가격 계산
-        일매수금   = (float(preDATA['add9']) + float(preDATA['add14'])) / float(STRAGY['add1'])
-        매수금액1  = 일매수금 * float(STRAGY['add2'])/100
-        매수금액2  = 일매수금 - 매수금액1
-        전일평단가 = float(preDATA['add10'])
-        평단가매수 = 전일평단가 * (1+float(STRAGY['add4'])/100)
-        큰단가매수 = 전일평단가 * (1+float(STRAGY['add5'])/100)
+        no = self.gets['no']
 
-        평단가주문 = math.ceil(매수금액1/평단가매수)
-        큰단가주문 = math.ceil(매수금액2/큰단가매수)
-
-        보유수량   = int(preDATA['add7'])
-        매도비중1  = float(STRAGY['add6'])/100
-        매도비중2  = float(STRAGY['add7'])/100
-        
-        매도분할   = False
-        if  매도비중2 == 0.0 :
-            매도수량 = 보유수량
-            매도가격 = 전일평단가 * (1+float(STRAGY['add8'])/100)
-        else : 
-            매도분할 = True
-            매도수량1  = math.ceil(보유수량 * 매도비중1)
-            매도수량2  = 보유수량 - 매도수량1
-
-            매도가격1  = 전일평단가 * (1+float(STRAGY['add8'])/100)
-            매도가격2  = 전일평단가 * (1+float(STRAGY['add9'])/100)
-
+        self.DB.tbl,self.DB.wre = ('h_daily_trading_board',f"no={no}")
+        D = self.DB.get_line("add0,add1,buy1,buy11,buy12,buy2,buy21,buy22,buy3,buy31,buy32,buy4,buy41,buy42,buy5,buy51,buy52,sell1,sell11,sell12,sell2,sell21,sell22,sell3,sell31,sell32,sell4,sell41,sell42")
         # 출력시작
-        style1 ="<span style='font-weight:bold;color:#A9F5BC;font-size:16px'>"
-        style2 ="<span style='font-weight:bold;color:#F6CECE;font-size:16px'>"
-        style3 ="<span style='font-weight:bold;color:yellow;font-size:16px'>"
-        style4 ="<span style='font-weight:bold;color:#e8f6cd;font-size:14px'>"
+        sty1 ="style='text-align:center;width:100px'"
+        sty2 ="style='text-align:center;width:80px'"
+        sty3 ="style='text-align:right;width:80px;padding-right:10px'"
+        sty4 ="style='text-align:right;width:100px;padding-right:10px'"
+        sty5 ="style='color:#CED8F6'"
+        sty6 ="style='color:#F6CECE'"
 
-        output  = "<div id='stock_tips' style='padding:10px;background-color:#424242;color:#F2F2F2;' >"
-        output += f"{style3}{preDATA['add1']} </span>&nbsp;{style4}(매매전략 : {매매전략})</span>&nbsp;&nbsp; 금일 매수 조건 : (평단가) {style1}{평단가주문} * ${평단가매수:,.2f} </span> &nbsp;&nbsp;"
-        output += f"(큰단가) <span {style1}{큰단가주문} * ${큰단가매수:,.2f}</span> &nbsp;&nbsp;&nbsp;"
-        if 매도분할 : 
-            output += f"금일 매도 조건 : (주문단가1) {style2}{매도수량1} * ${매도가격1:,.2f}</span>  / (주문단가2) {style2}{매도수량2} * ${매도가격2:,.2f} * </span>"
-        else : 
-            output += f"금일 매도 조건 : (주문단가) {style2}{매도수량} * ${매도가격:,.2f}</span>"
+        output  = "<div id='stock_tips' style='width:350px;height:250px;padding:10px;background-color:#1d1f24;color:#e1e1e1;broder:1px solid black' >"
+        output += f"<div style='text-align:center;width:100%;padding:10px'><span style='color:#CEECF5'>{D['add0']}</span> <span style='color:#F7F8E0;font-weight:bold'>{D['add1']}</span> 매매전략</div>"
+        output += "<table class='table table-bordered table-striped'>"
+        output += "<thead><tr><th>구분</th><th>방법</th><th style='text-align:right;width:60px;padding-right:10px'>수량</th><th style='text-align:right;width:80px;padding-right:10px'>단가</th></tr></thead>"
+        output += "<tbody>"
+        if int(D['buy11']) :  output += f"<tr {sty5}><td {sty1}>평단매수</td><td {sty2}>{D['buy1']}</td><td {sty3}>{D['buy11']}</td><td {sty4}>{D['buy12']}</td></tr>"
+        if int(D['buy31']) :  output += f"<tr {sty5}><td {sty1}>추종매수</td><td {sty2}>{D['buy3']}</td><td {sty3}>{D['buy31']}</td><td {sty4}>{D['buy32']}</td></tr>"
+        if int(D['buy41']) :  output += f"<tr {sty5}><td {sty1}>추가매수</td><td {sty2}>{D['buy4']}</td><td {sty3}>{D['buy41']}</td><td {sty4}>{D['buy42']}</td></tr>"
+        if int(D['buy51']) :  output += f"<tr {sty5}><td {sty1}>전략매수</td><td {sty2}>{D['buy5']}</td><td {sty3}>{D['buy51']}</td><td {sty4}>{D['buy52']}</td></tr>"
+        if int(D['buy21']) :  output += f"<tr {sty5}><td {sty1}>큰단매수</td><td {sty2}>{D['buy2']}</td><td {sty3}>{D['buy21']}</td><td {sty4}>{D['buy22']}</td></tr>"
+        output += "<tr style='background-color:black'><td colspan='4' style='line-height:2px'>&nbsp;</td></tr>"
+        if int(D['sell11']) : output += f"<tr {sty6}><td {sty1}>첫째매도</td><td {sty2}>{D['sell1']}</td><td {sty3}>{D['sell11']}</td><td {sty4}>{D['sell12']}</td></tr>"
+        if int(D['sell21']) : output += f"<tr {sty6}><td {sty1}>둘째매도</td><td {sty2}>{D['sell2']}</td><td {sty3}>{D['sell21']}</td><td {sty4}>{D['sell22']}</td></tr>"
+        if int(D['sell31']) : output += f"<tr {sty6}><td {sty1}>강제매도</td><td {sty2}>{D['sell3']}</td><td {sty3}>{D['sell31']}</td><td {sty4}>{D['sell32']}</td></tr>"
+        if int(D['sell41']) : output += f"<tr {sty6}><td {sty1}>전략매도</td><td {sty2}>{D['sell4']}</td><td {sty3}>{D['sell41']}</td><td {sty4}>{D['sell42']}</td></tr>"
+        output += "</tbody></table>"
         output += "</div>"
         return self.echo(output)

@@ -13,24 +13,18 @@ class Stock_daily(Control) :
         self.auto = True
         # POST 데이타, 사용자 입력으로 부터 데이타를 받아서 초기화 
         self.M['매매전략'] = self.D['post']['add20']
-
-        self.M['체결단가'] = self.D['post']['add6']   ; self.M['체결단가'] = float(self.M['체결단가'].replace(',','')) if self.M['체결단가'] else 0.0
         
-        self.M['체결수량'] = self.D['post']['add7']   
-        if  self.M['체결수량'] : 
-            self.M['체결수량'] = int(self.M['체결수량'].replace(',',''))   
-            self.auto = False
-        else : 
-            self.M['체결수량'] = 0
+        self.M['체결단가'] = self.D['post']['add6']   ; self.M['체결단가'] = float(self.M['체결단가'].replace(',','')) if self.M['체결단가'] else 0.0
+        self.M['체결수량'] = self.D['post']['add7']   ; self.M['체결수량'] =   int(self.M['체결수량'].replace(',','')) if self.M['체결수량'] else 0
+        self.M['매수금액'] = self.D['post']['add8']   ; self.M['매수금액'] = float(self.M['매수금액'].replace(',','')) if self.M['매수금액'] else 0.0
 
-        self.M['매수금액'] = self.D['post']['add8'] 
-        if  self.M['매수금액'] :
-            self.M['매수금액'] = float(self.M['매수금액'].replace(',','')) 
-            self.M['체결단가'] = self.M['매수금액'] / self.M['체결수량']
-            self.auto = False
-        else :
-            self.M['매수금액'] = 0.0
-
+        # 임의입력 시 체결단가, 체결수량, 매수금액 중 2개는 입력되어야 함
+        if  self.M['체결단가'] or self.M['체결수량'] or self.M['매수금액'] :
+            self.auto = False 
+            if   self.M['체결단가'] and self.M['체결수량'] : self.M['매수금액'] = self.M['체결단가'] * self.M['체결수량']
+            elif self.M['체결단가'] and self.M['매수금액'] : self.M['체결수량'] = int(self.M['매수금액'] / self.M['체결단가'])
+            elif self.M['체결수량'] and self.M['매수금액'] : self.M['체결단가'] = self.M['매수금액'] / self.M['체결수량']
+        
         self.M['가용잔액'] = self.D['post']['add16']  ; self.M['가용잔액'] = float(self.M['가용잔액'].replace(',','')) if self.M['가용잔액'] else 0.0
         self.M['추가자본'] = self.D['post']['add17']  ; self.M['추가자본'] = float(self.M['추가자본'].replace(',','')) if self.M['추가자본'] else 0.0
         
@@ -107,8 +101,8 @@ class Stock_daily(Control) :
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수'])
 
     def calculate(self)  :
-        # 모든 매수는 당일종가로 거래된 것으로 가정 LOC 거래 원칙
-        self.M['매수금액']  =  self.M['체결수량'] * self.M['체결단가']
+        if self.auto : self.M['매수금액']  =  self.M['체결수량'] * self.M['체결단가']
+
         self.M['가용잔액'] -=  self.M['매수금액']
         self.M['보유수량'] +=  self.M['체결수량']
         self.M['총매수금'] +=  self.M['매수금액']
@@ -174,7 +168,7 @@ class Stock_daily(Control) :
         self.M['진행상황']  = '첫날거래'
         self.M['위기전략']  = 'NO' ; self.M['전략매금'] = 0 ; self.M['전략가격'] = 0
         self.M['첫날기록']  = False
-        self.M['연속하락']  = 0
+        self.M['연속하락']  = self.old_price_trace()
 
     def strategy_sell(self) :
         if  self.M['전략매금'] > 0 : 
@@ -229,7 +223,6 @@ class Stock_daily(Control) :
         self.M['첫매수량'] = int(self.B['sell11']) ; self.M['첫매단가'] = float(self.B['sell12'])
         self.M['둘매수량'] = int(self.B['sell21']) ; self.M['둘매단가'] = float(self.B['sell22'])
         
-
         # 전략매도
         if  self.M['전매수량'] and self.M['당일종가'] >= self.M['전매단가'] : 
             ratio = self.M['전매수량'] / self.M['보유수량']
@@ -311,7 +304,7 @@ class Stock_daily(Control) :
 
         self.init_value()
 
-        if not self.M['당일종가'] : self.update['msg'] = "해당일 당일종가 값을 찾을 수 없습니다" ;self.update['replyCode'] = 'NOTICE'; return self.json(self.update)
+        if not self.M['당일종가'] : self.update['msg'] = "해당일 기록된 주가를 찾을 수 없습니다" ;self.update['replyCode'] = 'NOTICE'; return self.json(self.update)
 
         if not self.preChk :
             if  self.M['가용잔액'] == 0.0 or self.M['추가자본'] == 0.0 :

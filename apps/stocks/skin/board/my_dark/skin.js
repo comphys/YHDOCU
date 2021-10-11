@@ -202,18 +202,6 @@ function remove_reply(sel) {
 		$.post( posturl, { bid : bid, no : no, rno : rno }).done( function(data) { location.reload(); }); 
 }
 
-function delete_confirm(url) 
-{	
-	$("#contextMenu").hide();
-	h_dialog.confirm('정말로 삭제 하시겠습니까?',
-		{ 
-		   buttons:  [
-						{text : '취소하기', call: function(a) { h_dialog.close(a); }},
-						{text : '삭제하기', call: function() { location.href = url; }}
-					]
-	});
-}
-
 // ------------------------------------------------------------------------------------------------
 } else if (uri('method') == 'write' || uri('method') == 'modify' || uri('method') == 'add_body') { // WRITE PART 
 // ------------------------------------------------------------------------------------------------
@@ -326,4 +314,16 @@ function send_to_mobile_file() {
 			h_dialog.notice("[ "+data+" ] 파일 전송을 시작합니다",{notice_stop:true})	
 		} 
 	});	
+}
+
+function delete_confirm(url) 
+{	
+	$("#contextMenu").hide();
+	h_dialog.confirm('정말로 삭제 하시겠습니까?',
+		{ 
+		   buttons:  [
+						{text : '취소하기', call: function(a) { h_dialog.close(a); }},
+						{text : '삭제하기', call: function() { location.href = url; }}
+					]
+	});
 }
