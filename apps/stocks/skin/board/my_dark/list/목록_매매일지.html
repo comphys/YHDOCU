@@ -130,8 +130,7 @@ function list_ontheday() {
 
 var selected_tr = null
 $(document).ready(function(){ 
-	$("#search_input2").Zebra_DatePicker({format:'Y-m-d', offset:[-150,280], first_day_of_week : 0});
-
+	$("#search_input2").Zebra_DatePicker({format:'Y-m-d', offset:[-150,280], first_day_of_week : 0,onSelect:function(){list_ontheday()}});
 	$(".todo_today").click(function(){
 		if( selected_tr ) {
 			$(selected_tr).css("backgroundColor",'')
