@@ -109,6 +109,9 @@ class M_backtest_MyToT(Model) :
         self.M['매수시점']  = float(self.S['add23'])/100
         self.M['전략매금']  = 0
         self.M['위기전략']  = False
+        self.M['위매횟수']  = int(self.S['add24'])
+        self.M['위매비중']  = float(self.S['add25'])/100
+        self.M['매도횟수']  = 0
 
         # 리밸런싱
         total = self.M['가용잔액'] + self.M['추가자본'] 
@@ -163,13 +166,13 @@ class M_backtest_MyToT(Model) :
                 
     def strategy_sell(self) : # LOC 매도
 
-        if self.M['전략매금'] > 0 : return
+        if self.M['전략매금'] > 0 or self.M['매도횟수'] >= self.M['위매횟수'] : return
         if self.M['수익률'] > -10.0 : 
             self.M['진행상황'] = '기준이내'
             return
         
         매도가격 = self.M['평균단가'] * (1+self.M['매도시점']) 
-        매도수량 = int(self.M['보유수량'] * 0.6)
+        매도수량 = int(self.M['보유수량'] * self.M['위매비중'])
         # 전략적 매도는 LOC 매도를 사용한다
         if self.M['당일종가'] > 매도가격 and 매도수량 : 
 
@@ -183,6 +186,7 @@ class M_backtest_MyToT(Model) :
             self.M['진행상황']  = '전략매도' 
             self.M['전략매금']  = self.M['매도금액']
             self.M['전략가격']  = self.M['당일종가']
+            self.M['매도횟수'] += 1
         else :
             self.M['진행상황'] = f"{매도가격:.2f}"
 
@@ -314,7 +318,7 @@ class M_backtest_MyToT(Model) :
 
         # 매매전략 가져오기
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.D['strategy']}'")
-        self.S = self.DB.get_line('add1,add2,add3,add4,add5,add6,add7,add8,add9,add10,add11,add12,add14,add15,add16,add17,add18,add20,add21,add22,add23')
+        self.S = self.DB.get_line('add1,add2,add3,add4,add5,add6,add7,add8,add9,add10,add11,add12,add14,add15,add16,add17,add18,add20,add21,add22,add23,add24,add25')
 
         # 종가 및 최고가 가져오기
         self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['code']}' AND add0 BETWEEN '{self.D['start_date']}' AND '{self.D['end_date']}'",'add0')
