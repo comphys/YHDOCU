@@ -122,7 +122,7 @@ class Stock_daily(Control) :
             self.M['위기전략'] = 'NO'
         
         if  self.M['보유수량'] == 0 : 
-            self.M['첫날기록'] = True
+            self.M['평균단가'] = self.M['당일종가']
 
         self.M['연속하락'] = self.old_price_trace()
 
@@ -323,7 +323,7 @@ class Stock_daily(Control) :
             if self.M['첫날기록'] : self.the_first_day()
 
         # 매도전략
-        if  self.M['수량확보'] and self.M['위기전략'] == 'YES' : self.strategy_sell()
+        if self.M['수량확보'] and self.M['위기전략'] == 'YES' : self.strategy_sell()
         if self.M['강매허용'] and self.M['날수'] > self.M['강매시작'] : self.force_sell()
         if self.M['날수'] > self.M['매도대기'] : self.normal_sell()
 
