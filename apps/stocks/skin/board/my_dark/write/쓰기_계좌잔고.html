@@ -6,15 +6,15 @@
 <input type='hidden' name='uid'		value="{{D['USER']['uid']}}" >
 <input type='hidden' name='uname'	value="{{D['USER']['uname']}}" >
 <textarea  name='content' style="display:none"></textarea>
-<table class='table' style="border:2px solid black;border-radius:4px">
+<table class='table' style="border:2px solid black;border-radius:4px;width:{{D['w_width2']}}">
 	<tbody>
 	<!-- 상단 요소====================================================================================== -->
 	<tr>
 		<td class='write-td-left'>계좌설정</td>
 		<td class='write-td-right'>
 			<div class='i-input-div'>
-				<div class='write-input-left' >기준날자</div>
-				<input type='text' name='add1' class="i-date" style="width:100px" value="{{D['BODY']['add1']}}">
+				<div class='write-input-left' style="width:90px" >기준날자</div>
+				<input type='text' name='add1' class="i-date" style="width:110px" value="{{D['BODY']['add1']}}">
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left'>계좌구분</div>
@@ -26,8 +26,8 @@
 		<td class='write-td-left'>한화정보</td>
 		<td class='write-td-right'>
 			<div class='i-input-div'>
-				<div class='write-input-left'>한화잔고</div>
-				<input type='text' name='add2' class="i-number" style="width:100px" value="{{D['BODY']['add2']}}">
+				<div class='write-input-left' style="width:90px">한화잔고</div>
+				<input type='text' name='add2' class="i-number" style="width:110px" value="{{D['BODY']['add2']}}">
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' >주식매수가</div>
@@ -35,7 +35,7 @@
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' >한화합계</div>
-				<input type='text' name='add7' class="i-number" style="width:100px" value="{{D['BODY']['add7']}}">
+				<input type='text' name='add7' disabled class="i-text" style="width:100px" value="{{D['BODY']['add7']}}">
 			</div>
 		</td>
 	</tr>
@@ -43,8 +43,8 @@
 		<td class='write-td-left'>외화정보</td>
 		<td class='write-td-right'>
 			<div class='i-input-div'>
-				<div class='write-input-left'>외화잔고</div>
-				<input type='text' name='add4' class="i-number" style="width:100px" value="{{D['BODY']['add4']}}">
+				<div class='write-input-left' style="width:90px">외화잔고</div>
+				<input type='text' name='add4' class="i-number" style="width:110px" value="{{D['BODY']['add4']}}">
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' >주식매수가</div>
@@ -52,13 +52,15 @@
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' >외화합계</div>
-				<input type='text' name='add8' class="i-number" style="width:100px" value="{{D['BODY']['add8']}}">
+				<input type='text' name='add8' disabled class="i-text" style="width:100px" value="{{D['BODY']['add8']}}">
 			</div>
 		</td>
 	</tr>
 	</tbody>
 </table>
-{% include D['_skn'] + 'board/my_dark/write/basic_editor_tools.htm' %}
+<div style="width:{{D['w_width2']}}">
+	{% include D['_skn'] + 'board/my_dark/write/basic_editor_tools.htm' %}
+</div>
 <!-- BEGIN ====================================================================================== -->
 <div style="position:relative;width:{{D['w_width1']}}">
 <div id="selectedMarkL"></div>	
@@ -109,6 +111,12 @@ function check_MainWriteForm(f)	{
 	JYHEDITOR.clearDocuSelect();
 	f.content.value = wDiv.innerHTML;
 	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
+	var k1 = $("input[name='add2']").val();
+	var k2 = $("input[name='add3']").val(); var k3 = parseInt(k1)   + parseInt(k2) ;
+	var u1 = $("input[name='add4']").val(); 
+	var u2 = $("input[name='add5']").val(); var u3 = parseFloat(u1) + parseFloat(u2) ;
+	$("input[name='add7']").val(k3); 
+	$("input[name='add8']").val(u3.toFixed(2));
 	return true;
 }
 

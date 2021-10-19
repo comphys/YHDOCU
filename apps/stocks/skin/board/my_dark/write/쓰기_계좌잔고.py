@@ -20,7 +20,7 @@ class 쓰기_계좌잔고(SKIN) :
         self.D['TR_add'] = []
         self.D['TR_cat'] = []
         self.D['method'] = self.SYS.V['_mtd']
-        w_width = 815
+        w_width = 760
         self.D['w_width1'] = str(w_width + 80)+'px'
         self.D['w_width2'] = str(w_width) + 'px'
 
