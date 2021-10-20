@@ -16,10 +16,7 @@
 				<div class='write-input-left' style="width:90px" >기준날자</div>
 				<input type='text' name='add1' class="i-date" style="width:110px" value="{{D['BODY']['add1']}}">
 			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left'>계좌구분</div>
-				<input type='text' name='add0' class="i-text" style="width:322px" value="{{D['BODY']['add0']}}">
-			</div>
+			{{D['user_add0']|safe}}
 		</td>
 	</tr>
 	<tr>
@@ -35,7 +32,7 @@
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' >한화합계</div>
-				<input type='text' name='add7' disabled class="i-text" style="width:100px" value="{{D['BODY']['add7']}}">
+				<input type='text' name='add7' class="i-text" style="width:100px" value="{{D['BODY']['add7']}}">
 			</div>
 		</td>
 	</tr>
@@ -52,7 +49,7 @@
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' >외화합계</div>
-				<input type='text' name='add8' disabled class="i-text" style="width:100px" value="{{D['BODY']['add8']}}">
+				<input type='text' name='add8' class="i-text" style="width:100px" value="{{D['BODY']['add8']}}">
 			</div>
 		</td>
 	</tr>
