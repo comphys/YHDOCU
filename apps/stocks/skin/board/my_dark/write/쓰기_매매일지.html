@@ -319,6 +319,7 @@ function auto_datainput() {
 	postData['add8']  = $("input[name='add8']").val()  // 매수금액	
 	postData['add16'] = $("input[name='add16']").val() // 가용잔액	
 	postData['add17'] = $("input[name='add17']").val() // 추가자본	
+	postData['sub4'] = $("input[name='sub4']").val() // 임의매매 가격
 
 
 	$.post( posturl, postData).done(function(data) {

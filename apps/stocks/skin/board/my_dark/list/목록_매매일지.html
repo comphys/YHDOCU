@@ -81,7 +81,7 @@
 			<tr style="border-top:2px solid yellow;border-bottom:2px solid yellow;background-color:black;"> 
 			{% elif TR['add18']|striptags == '강제매도' %}
 			<tr style="border-top:2px solid orange;border-bottom:2px solid orange;background-color:black;"> 
-			{% elif TR['add18']|striptags == '전략매도' %}
+			{% elif TR['add18']|striptags == '전략매도' or TR['add18']|striptags == '임의매도' %}
 			<tr style="border-top:2px solid #A9D0F5;border-bottom:2px solid #A9D0F5;background-color:black;">
 			{% else %}
 			<tr>
