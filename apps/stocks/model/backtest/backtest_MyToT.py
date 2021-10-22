@@ -57,6 +57,7 @@ class M_backtest_MyToT(Model) :
         if self.M['진행상황'] in ('강제매도','전량매도') : 
             self.M['전략매금'] = 0
             self.M['위기전략'] = False
+            self.M['매도횟수'] = 0
         
         if  self.M['보유수량'] == 0 : 
             self.M['첫날기록'] = True
@@ -146,7 +147,7 @@ class M_backtest_MyToT(Model) :
     def normal_sell(self) :
 
         매도수량 = 0
-        매도가격1 = self.M['평균단가'] * self.M['첫매가치']
+        매도가격1 = self.M['평균단가'] * self.M['첫매가치'] 
         매도가격2 = self.M['평균단가'] * self.M['둘매가치']
         매도수량1 = math.ceil(self.M['보유수량'] * self.M['매도비중'])
         매도수량2 = self.M['보유수량'] - 매도수량1
