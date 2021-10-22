@@ -46,8 +46,8 @@ class Stock_daily(Control) :
         self.M['추종매수']='LOC';  self.M['추종수량'] = 0 ; self.M['추종단가'] = 0.0 
         self.M['추가매수']='LOC';  self.M['추가수량'] = 0 ; self.M['추가단가'] = 0.0         
         self.M['전략매수']='LOC';  self.M['전략수량'] = 0 ; self.M['전략단가'] = 0.0
-        self.M['첫째매도']='NOR';  self.M['첫째수량'] = 0 ; self.M['첫째단가'] = 0.0 ; self.M['매도비중']=float(self.S['add8'])/100 ; self.M['첫매가치']=1+float(self.S['add9'])/100
-        self.M['둘째매도']='NOR';  self.M['둘째수량'] = 0 ; self.M['둘째단가'] = 0.0 ; self.M['둘매가치']=1+float(self.S['add10'])/100
+        self.M['첫째매도']='LOC';  self.M['첫째수량'] = 0 ; self.M['첫째단가'] = 0.0 ; self.M['매도비중']=float(self.S['add8'])/100 ; self.M['첫매가치']=1+float(self.S['add9'])/100
+        self.M['둘째매도']='LOC';  self.M['둘째수량'] = 0 ; self.M['둘째단가'] = 0.0 ; self.M['둘매가치']=1+float(self.S['add10'])/100
         self.M['강제매도']='NOR';  self.M['강제수량'] = 0 ; self.M['강제단가'] = 0.0 ; self.M['강매시작']=int(self.S['add17']) ; self.M['강매가치']=1+float(self.S['add18'])/100
         self.M['전략매도']='LOC';  self.M['전매수량'] = 0 ; self.M['전매단가'] = 0.0 
         self.M['매도금액']=0.0  
@@ -263,8 +263,8 @@ class Stock_daily(Control) :
             self.M['총매수금']  = 0.0
 
         # 일반매도
-        if self.M['첫매수량'] and self.M['당일고가'] >= self.M['첫매단가'] : self.M['매도금액'] += self.M['첫매단가'] * self.M['첫매수량']  ; self.M['매도수량'] += self.M['첫매수량']  
-        if self.M['둘매수량'] and self.M['당일고가'] >= self.M['둘매단가'] : self.M['매도금액'] += self.M['둘매단가'] * self.M['둘매수량']  ; self.M['매도수량'] += self.M['둘매수량']  
+        if self.M['첫매수량'] and self.M['당일종가'] >= self.M['첫매단가'] : self.M['매도금액'] += self.M['당일종가'] * self.M['첫매수량']  ; self.M['매도수량'] += self.M['첫매수량']  
+        if self.M['둘매수량'] and self.M['당일종가'] >= self.M['둘매단가'] : self.M['매도금액'] += self.M['당일종가'] * self.M['둘매수량']  ; self.M['매도수량'] += self.M['둘매수량']  
 
         if  self.M['매도수량'] :
             ratio = self.M['매도수량'] / self.M['보유수량']
