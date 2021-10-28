@@ -97,6 +97,7 @@ def timestamp_to_date(ts='now',opt=1) :
     elif  opt == 4 : t_format = "%y%m%d"   
     elif  opt == 5 : t_format = "%Y/%m/%d %H:%M" 
     elif  opt == 6 : t_format = "%y/%m/%d %H:%M:%S" 
+    elif  opt == 7 : t_format = "%Y-%m-%d"
     else  : t_format = opt 
 
     return datetime.fromtimestamp(ts,kst).strftime(t_format)

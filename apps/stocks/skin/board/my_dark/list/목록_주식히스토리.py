@@ -1,6 +1,8 @@
 import system.core.my_utils as ut
 from flask import session
 from system.core.load import SKIN
+from datetime import datetime
+import time
 
 class 목록_주식히스토리(SKIN) :
 
@@ -25,11 +27,44 @@ class 목록_주식히스토리(SKIN) :
             for item in self.D['LIST'] :
                 item['wdate'] = ut.timestamp_to_date(item['wdate'],"%Y/%m/%d")
                 item['mdate'] = ut.timestamp_to_date(item['mdate'],"%m/%d %H:%M")
- 
+
+    def old_price_trace(self,code,today,old_date) :
+
+        qry = f"SELECT add3 FROM h_stockHistory_board WHERE add0 BETWEEN '{old_date}' and '{today}' and add1='{code}' ORDER BY add0"
+        aaa= self.DB.exe(qry)
+        aaa= [float(x[0]) for x in aaa]
+
+        bbb = aaa[:-1] 
+
+        c_drop = 0
+        c_goup = 0
+        for i in range(1,len(bbb)) :
+            c_drop = c_drop + 1 if bbb[i] <= bbb[i-1] else 0
+            c_goup = c_goup + 1 if bbb[i] >  bbb[i-1] else 0
+        
+        return (c_drop,c_goup)
+
     def list(self) :
         self.D['TimeNow'] = ut.timestamp_to_date(ts='now')
         self.head()
         self.data_preprocess()
+
+        today = ut.timestamp_to_date(ts='now',opt=7)
+        now = int(time.mktime(datetime.strptime(today,'%Y-%m-%d').timetuple()))
+        old_date = datetime.fromtimestamp(now-3600*24*20).strftime('%Y-%m-%d')
+
+        codes = ['TQQQ','BULZ','DNMR','FNGU','SOXL','WEBL','KORU','RETL','NAIL','TECL','BNKU']
+        dns = []
+        ups = []
+
+        for cdx in codes :
+            tmp = self.old_price_trace(cdx,today,old_date)
+            dns.append(tmp[0])
+            ups.append(tmp[1])
+
+        self.D['c_dn'] = dict(zip(codes,dns))
+        self.D['c_up'] = dict(zip(codes,ups))
+
         try :     self.D['code'] = session['CSH']['csh_add1']
         except :  self.D['code'] = 'NONE'
         if self.D['code'] =='' : self.D['code'] = 'NONE'
