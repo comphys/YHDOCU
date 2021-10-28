@@ -2,7 +2,7 @@ from system.core.load import Model
 from datetime import datetime,date
 import math,time
 
-class M_backtest_MyToT(Model) :
+class M_backtest_MyLot(Model) :
 
 # 무한매수법의 개인 변형 적용
 
