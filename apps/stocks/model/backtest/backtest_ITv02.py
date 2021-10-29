@@ -197,8 +197,8 @@ class M_backtest_ITv02(Model) :
             평단가매수 = self.M['평균단가'] * self.M['평단가치'] 
             큰단가매수 = self.M['평균단가'] * self.M['큰단가치']
             
-            if self.M['당일종가'] <= 평단가매수 : self.M['체결수량'] += math.ceil(매수금액1 / self.M['당일종가']) ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'N'
-            if self.M['당일종가'] <= 큰단가매수 : self.M['체결수량'] += math.ceil(매수금액2 / self.M['당일종가']) ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'N'  
+            if self.M['당일종가'] <= 평단가매수 : self.M['체결수량'] += math.ceil(매수금액1 / 평단가매수) ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'N'
+            if self.M['당일종가'] <= 큰단가매수 : self.M['체결수량'] += math.ceil(매수금액2 / 큰단가매수) ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'N'  
         else :
             매수금액1  = self.M['일매수금'] 
             평단가매수 = self.M['평균단가'] * self.M['평단가치'] 
