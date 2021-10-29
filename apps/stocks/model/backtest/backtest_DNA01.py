@@ -199,13 +199,15 @@ class M_backtest_DNA01(Model) :
 
         매수금액  = self.M['일매수금'] 
         구매금액  = self.M['전일종가'] 
+
+        da = 2
         
         if self.M['연속상승'] >= 1 :
         
             if  self.M['당일종가'] > 구매금액 :
                 self.M['체결수량'] = 0; 
             else :
-                self.M['체결수량'] += math.ceil(매수금액 / self.M['평균단가'] * 2 ) ; self.M['회차'] += 2.0 ; self.M['구매코드'] += 'UX'
+                self.M['체결수량'] += math.ceil(매수금액 / self.M['평균단가'] * da ) ; self.M['회차'] += da ; self.M['구매코드'] += 'TN'
         
         if self.M['연속하락'] >= 1 :
 
