@@ -168,7 +168,7 @@ class M_backtest_MyToT(Model) :
     def strategy_sell(self) : # LOC 매도
 
         if self.M['전략매금'] > 0 or self.M['매도횟수'] >= self.M['위매횟수'] : return
-        if self.M['수익률'] > -10.0 : 
+        if self.M['수익률'] >= -5.0 : 
             self.M['진행상황'] = '기준이내'
             return
         
@@ -217,7 +217,7 @@ class M_backtest_MyToT(Model) :
 
             매수단가 = self.M['전략가격'] * (1+self.M['매수시점'])
             if  self.M['당일종가'] <= 매수단가 : 
-                self.M['체결수량'] += math.ceil((self.M['가용잔액'] + self.M['추가자본']) / 매수단가) 
+                self.M['체결수량'] += math.ceil(self.M['전략매금'] / 매수단가) 
                 self.M['회차'] += 1.0 ; self.M['구매코드'] += 'R'     
                 self.M['전략매금'] = 0   
 
