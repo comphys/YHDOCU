@@ -34,13 +34,11 @@ class 목록_주식히스토리(SKIN) :
         aaa= self.DB.exe(qry)
         aaa= [float(x[0]) for x in aaa]
 
-        bbb = aaa[:-1] 
-
         c_drop = 0
         c_goup = 0
-        for i in range(1,len(bbb)) :
-            c_drop = c_drop + 1 if bbb[i] <= bbb[i-1] else 0
-            c_goup = c_goup + 1 if bbb[i] >  bbb[i-1] else 0
+        for i in range(1,len(aaa)) :
+            c_drop = c_drop + 1 if aaa[i] <= aaa[i-1] else 0
+            c_goup = c_goup + 1 if aaa[i] >  aaa[i-1] else 0
         
         return (c_drop,c_goup)
 
