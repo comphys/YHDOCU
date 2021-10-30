@@ -123,11 +123,11 @@ class M_backtest_MyLot(Model) :
 
 
     def new_day(self) :
-        self.M['연속하락']  = int(self.old_price_trace(opt=True))
-        self.M['연속상승']  = int(self.old_price_trace(opt=False))
+        self.M['연속하락']  = int(self.old_price_trace('DN'))
+        self.M['연속상승']  = int(self.old_price_trace('UP'))
         self.M['회차'] = 1.0 + self.M['연속하락']
         self.M['평균단가']  = self.M['당일종가']
-        self.M['체결수량'] = int(self.M['일매수금']/self.M['당일종가'])
+        self.M['체결수량'] = int(self.M['일매수금']/self.old_price_trace('YD'))
         if self.M['연속하락'] : self.M['체결수량'] = self.M['체결수량'] * self.M['연속하락']
         self.M['보유수량']  = self.M['체결수량'] = int(self.M['일매수금']/self.M['당일종가']) 
         self.M['매수금액']  = self.M['당일종가'] * self.M['체결수량']
@@ -353,7 +353,7 @@ class M_backtest_MyLot(Model) :
         self.D['addition'] = int(self.D['addition'].replace(',','')) if self.D['addition'] else 0
         self.test_it()
 
-    def old_price_trace(self,opt=True) : # opt True for C_drop, False for C_up
+    def old_price_trace(self,opt) : # opt True for C_drop, False for C_up
         now = int(time.mktime(datetime.strptime(self.M['day'],'%Y-%m-%d').timetuple()))
         old_date = datetime.fromtimestamp(now-3600*24*14).strftime('%Y-%m-%d')
         qry = f"SELECT add3 FROM h_stockHistory_board WHERE add0 BETWEEN '{old_date}' and '{self.M['day']}' and add1='{self.D['code']}' ORDER BY add0"
@@ -368,7 +368,9 @@ class M_backtest_MyLot(Model) :
             c_drop = c_drop + 1 if bbb[i] <= bbb[i-1] else 0
             c_goup = c_goup + 1 if bbb[i] >= bbb[i-1] else 0
         
-        if opt : 
+        if opt == 'DN' : 
             return c_drop
-        else :
+        elif opt == 'UP' :
             return c_goup
+        elif opt == 'YD' :
+            return aaa[-2]

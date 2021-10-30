@@ -2,9 +2,9 @@ from system.core.load import Model
 from datetime import datetime,date
 import math,time
 
-class M_backtest_MyToT(Model) :
+class M_backtest_DNA02(Model) :
 
-# 무한매수법의 개인 변형 적용
+# 무한매수법의 개인 변형 적용으로 평균가 다운 전략
 
     def print_backtest(self) :
         tx = {}
@@ -40,6 +40,7 @@ class M_backtest_MyToT(Model) :
     def calculate(self)  :
         # 모든 매수는 당일종가로 거래된 것으로 가정 LOC 거래 원칙
         self.M['연속하락']  =  self.M['연속하락'] + 1 if  self.M['당일종가'] <= self.M['전일종가'] else 0 
+        self.M['연속상승']  =  self.M['연속상승'] + 1 if  self.M['당일종가'] >= self.M['전일종가'] else 0 
         self.M['매수금액']  =  self.M['체결수량'] * self.M['당일종가']
         self.M['가용잔액'] -=  self.M['매수금액']
         self.M['보유수량'] +=  self.M['체결수량']
@@ -94,6 +95,7 @@ class M_backtest_MyToT(Model) :
         self.D['TR'] = []
 
         self.M['연속하락']  = 0
+        self.M['연속상승']  = 0
         self.M['추종방식']  = self.S['add14']
 
         # 위기극복
@@ -135,7 +137,7 @@ class M_backtest_MyToT(Model) :
         self.M['진행상황']  = '첫날거래'
         self.M['첫날기록']  = False
         self.M['구매코드']  = 'S' 
-        if self.M['연속하락'] : self.M['구매코드'] += str(self.M['연속하락'])
+        if self.M['연속하락'] : self.M['구매코드']  += str(self.M['연속하락'])
 
     def force_sell(self,강제매도가) :
         self.M['진행상황']  = '강제매도'
@@ -177,7 +179,7 @@ class M_backtest_MyToT(Model) :
         매도가격 = self.M['평균단가'] * (1+self.M['매도시점']) 
         매도수량 = int(self.M['보유수량'] * self.M['위매비중'])
         # 전략적 매도는 LOC 매도를 사용한다
-        if self.M['당일종가'] > 매도가격 and 매도수량 : 
+        if self.M['당일종가'] >= 매도가격 and 매도수량 : 
 
             ratio = 매도수량 / self.M['보유수량']
             self.M['매도금액'] = self.M['당일종가'] * 매도수량  
@@ -193,8 +195,8 @@ class M_backtest_MyToT(Model) :
         else :
             self.M['진행상황'] = f"{매도가격:.2f}"
 
-            
-    def normal_buy(self) :
+    def force_buy(self)  :
+        if self.M['보유수량'] == 0 : return
 
         매수금액1  = self.M['일매수금'] * self.M['매수비중']
         매수금액2  = self.M['일매수금'] - 매수금액1
@@ -202,16 +204,40 @@ class M_backtest_MyToT(Model) :
         큰단가금액 = self.M['평균단가'] * self.M['큰단가치']
         
         if  self.M['당일종가'] <= 평단가금액 : 
-            self.M['체결수량'] += math.ceil(매수금액1 / 평단가금액) ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'N'
+            self.M['체결수량'] += math.ceil(매수금액1 / 평단가금액)*4 ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'A'
         if  self.M['당일종가'] <= 큰단가금액 : 
-            self.M['체결수량'] += math.ceil(매수금액2 / 큰단가금액) ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'N'  
+            self.M['체결수량'] += math.ceil(매수금액2 / 큰단가금액)*2 ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'B' 
         
+        self.M['진행상황'] = '기초매수'
 
+    
+    def normal_buy(self) :
+
+        매수금액  = self.M['일매수금'] 
+        구매금액  = min(self.M['평균단가'],self.M['전일종가'])
+        # 구매금액  = self.M['평균단가']
+        da = 2
+        
+        if self.M['연속상승'] >= 1 :
+        
+            if  self.M['당일종가'] <= 구매금액 :
+                self.M['체결수량'] += math.ceil(매수금액 / 구매금액 * da ) ; self.M['회차'] += da ; self.M['구매코드'] += 'TN'
+        
+        if self.M['연속하락'] >= 1 :
+
+            if  self.M['당일종가'] <= 구매금액 :
+                self.M['체결수량'] += math.ceil(매수금액 / 구매금액)
+                self.M['회차'] += 1.0 ; self.M['구매코드'] += 'D'
+                self.M['체결수량'] += math.ceil(self.M['일매수금'] / self.M['평균단가']) * self.M['연속하락']
+                self.M['회차'] += self.M['연속하락']
+                self.M['구매코드'] += str(self.M['연속하락'])
+
+    
     def secondary_buy(self) :
         
         if  self.M['당일종가'] <= self.M['평균단가'] : 
             self.M['체결수량'] += math.ceil(self.M['일매수금'] / self.M['평균단가']) 
-            self.M['회차'] += 1.0 ; self.M['구매코드'] += 'T'
+            self.M['회차'] += 1.0 ; self.M['구매코드'] += 'S'
 
     def strategy_buy(self) :
 
@@ -226,9 +252,10 @@ class M_backtest_MyToT(Model) :
 
     def acc_old(self) :
 
-        sell_price = self.M['전일종가'] if self.M['종가기준'] else self.M['평균단가']
-        if  self.M['연속하락'] > 0 and self.M['당일종가'] <= sell_price : 
-            self.M['체결수량'] += math.ceil(self.M['일매수금'] * self.M['연속하락'] / sell_price)  
+        # buy_price = min(self.M['전일종가'],self.M['평균단가'])
+        buy_price = self.M['전일종가']
+        if  self.M['연속하락'] > 0 and self.M['당일종가'] <= buy_price : 
+            self.M['체결수량'] += math.ceil(self.M['일매수금'] * self.M['연속하락'] / buy_price)  
             self.M['회차'] += self.M['연속하락'] 
             self.M['구매코드'] += str(self.M['연속하락'])
 
@@ -268,7 +295,10 @@ class M_backtest_MyToT(Model) :
         
         #   매수부분 --------------------------------------------------------------------------------------------------
 
-            if self.M['회차'] <= self.M['분할횟수'] : 
+            if self.M['회차'] < 6 :
+                self.force_buy()
+
+            elif self.M['회차'] <= self.M['분할횟수'] : 
                 self.normal_buy()
                 # step3-1 : 종가하락 가중 매수
                 if self.M['과추일반'] : self.acc_old()
