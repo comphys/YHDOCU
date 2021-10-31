@@ -213,19 +213,6 @@ class Stock_daily2(Control) :
         self.M['첫째단가'] = self.M['평균단가'] * self.M['첫매가치']
         if self.M['둘째수량'] : self.M['둘째단가'] = self.M['평균단가'] * self.M['둘매가치']
     
-    def force_buy(self) :
-        if self.M['보유수량'] == 0 : return
-
-        매수금액1  = self.M['일매수금'] * self.M['매수비중']
-        매수금액2  = self.M['일매수금'] - 매수금액1
-        self.M['평단단가'] = self.M['평균단가'] * self.M['평단가치'] 
-        self.M['큰단단가'] = self.M['평균단가'] * self.M['큰단가치']
-  
-        self.M['평단수량'] += math.ceil(매수금액1 / 평단가금액)*4 ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'A'
-        self.M['큰단수량'] += math.ceil(매수금액2 / 큰단가금액)*2 ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'B' 
-        
-        
-    
     def strategy_buy(self) :
         self.M['전략단가'] = self.M['전략가격'] * (1+self.M['매수시점'])
         self.M['전략수량'] = math.ceil((self.M['가용잔액'] + self.M['추가자본']) / self.M['전략단가'])
@@ -247,6 +234,18 @@ class Stock_daily2(Control) :
         self.M['평단수량'] = math.ceil(매수금액1/self.M['평단단가'])
         self.M['큰단수량'] = math.ceil(매수금액2/self.M['큰단단가']) 
         if self.M['과추일반'] : self.acc_old()  
+
+    def force_buy(self) :
+        if self.M['보유수량'] == 0 : return
+
+        매수금액1  = self.M['일매수금'] * self.M['매수비중']
+        매수금액2  = self.M['일매수금'] - 매수금액1
+        self.M['평단단가'] = self.M['평균단가'] * self.M['평단가치'] 
+        self.M['큰단단가'] = self.M['평균단가'] * self.M['큰단가치']
+  
+        self.M['평단수량'] += math.ceil(매수금액1 / self.M['평단단가']) *4 ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'A'
+        self.M['큰단수량'] += math.ceil(매수금액2 / self.M['큰단단가']) *2 ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'B' 
+
 
     def check_sell(self) :
 
@@ -308,8 +307,9 @@ class Stock_daily2(Control) :
     def check_buy(self) :
 
         if  self.M['임의매도'] : return
-        # 평단매수 검토
+        
         if self.auto :
+            # 평단매수 검토
             if many := int(self.B['buy11'])  : 
                 if  self.M['당일종가'] <= float(self.B['buy12']):  
                     self.M['체결수량'] += many ; self.M['회차'] += 0.5 ; self.M['매매현황'] += 'N'

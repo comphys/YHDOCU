@@ -17,7 +17,7 @@ class 쓰기_매매일지(SKIN) :
         # -------------------
         self.D['user_add1']  = self.user_add1( OBODY) # 종목코드
         self.D['user_add20'] = self.user_add20(OBODY) # 매매전략
-
+        self.D['user_autoinput'] ="boards-stock_daily/autoinput"
     
 
     def add_all(self,category, exFIDktitle, exFormat, bid, OBODY) :
