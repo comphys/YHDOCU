@@ -308,7 +308,7 @@ function auto_datainput() {
 	if(! $("input[name='add1']").val() )  { h_dialog.notice("종목 코드는 필수입니다"); return false; }
 	if(! $("input[name='add20']").val() ) { h_dialog.notice("전략 선택은 필수입니다"); return false; }
 
-	var posturl = uri('linkurl')+"boards-stock_daily/autoinput/{{D['method']}}"
+	var posturl = uri('linkurl')+"boards-stock_daily2/autoinput/{{D['method']}}"
 	var postData = {}
 
 	postData['add0']  = $("input[name='add0']").val()  // 날자

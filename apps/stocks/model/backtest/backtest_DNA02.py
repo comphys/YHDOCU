@@ -125,11 +125,13 @@ class M_backtest_DNA02(Model) :
     def new_day(self) :
         self.M['연속하락']  = int(self.old_price_trace('DN'))
         self.M['연속상승']  = int(self.old_price_trace('UP'))
-        self.M['회차'] = 1.0 + self.M['연속하락']
+        self.M['회차'] = 1.0 
+        if self.M['연속하락'] : self.M['회차'] += 1
         self.M['평균단가']  = self.M['당일종가']
-        self.M['체결수량'] = int(self.M['일매수금']/self.old_price_trace('YD'))
-        if self.M['연속하락'] : self.M['체결수량'] = self.M['체결수량'] * self.M['연속하락']
-        self.M['보유수량']  = self.M['체결수량'] = int(self.M['일매수금']/self.M['당일종가']) 
+        self.M['체결수량'] = math.ceil(self.M['일매수금']/self.old_price_trace('YD'))
+        if self.M['연속하락'] : 
+            self.M['체결수량'] += self.M['체결수량'] * self.M['연속하락']
+        self.M['보유수량']  = self.M['체결수량'] 
         self.M['매수금액']  = self.M['당일종가'] * self.M['체결수량']
         self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
         self.M['수익현황']  = self.M['수익률'] = 0.0
@@ -380,7 +382,7 @@ class M_backtest_DNA02(Model) :
 
         for i in range(1,len(bbb)) :
             c_drop = c_drop + 1 if bbb[i] <= bbb[i-1] else 0
-            c_goup = c_goup + 1 if bbb[i] >= bbb[i-1] else 0
+            c_goup = c_goup + 1 if bbb[i] >  bbb[i-1] else 0
         
         if opt == 'DN' : 
             return c_drop
