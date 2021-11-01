@@ -207,7 +207,7 @@ class Stock_daily(Control) :
 
     def acc_old(self) :
         if  self.M['연속하락'] : 
-            self.M['추종단가'] = self.M['전일종가'] if self.M['종가기준'] else self.M['평균단가']
+            self.M['추종단가'] = self.M['당일종가'] if self.M['종가기준'] else self.M['평균단가']
             self.M['추종수량'] = math.ceil(self.M['일매수금'] * self.M['연속하락'] / self.M['추종단가']) 
 
     def normal_buy(self)  :

@@ -3,7 +3,7 @@ from datetime import datetime
 import time
 import math
 
-class DNA_V2(Control) : 
+class Dna_v2(Control) : 
 
     def _auto(self) :
         self.DB = self.db('stocks')
@@ -31,7 +31,8 @@ class DNA_V2(Control) :
         self.M['가용잔액'] = self.D['post']['add16']  ; self.M['가용잔액'] = float(self.M['가용잔액'].replace(',','')) if self.M['가용잔액'] else 0.0
         self.M['추가자본'] = self.D['post']['add17']  ; self.M['추가자본'] = float(self.M['추가자본'].replace(',','')) if self.M['추가자본'] else 0.0
         
-        self.M['연속하락'] = self.old_price_trace('DN') ; 
+        self.M['연속하락'] = self.old_price_trace('DN')  
+        self.M['연속상승'] = self.old_price_trace('UP') 
         self.M['체결단가'] = self.M['체결단가'] if self.M['체결단가'] else self.M['당일종가']
 
         # 매매전략 가져오기
@@ -168,6 +169,7 @@ class DNA_V2(Control) :
 
         self.M['일매수금'] = int(self.M['가용잔액'] / self.M['분할횟수'])
         self.M['체결단가'] = self.M['당일종가']
+        
         if self.auto : 
             self.M['체결수량'] = math.ceil(self.M['일매수금']/self.old_price_trace('YD')) 
             if cnt:=self.old_price_trace("CDN") : 
@@ -223,19 +225,10 @@ class DNA_V2(Control) :
 
     def acc_old(self) :
         if  self.M['연속하락'] : 
-            self.M['추종단가'] = self.M['전일종가'] if self.M['종가기준'] else self.M['평균단가']
+            self.M['추종단가'] = self.M['당일종가'] 
             self.M['추종수량'] = math.ceil(self.M['일매수금'] * self.M['연속하락'] / self.M['추종단가']) 
 
-    def normal_buy(self)  :
-        매수금액1  = self.M['일매수금'] * self.M['매수비중']
-        매수금액2  = self.M['일매수금'] - 매수금액1
-        self.M['평단단가'] = self.M['평균단가'] * self.M['평단가치'] 
-        self.M['큰단단가'] = self.M['평균단가'] * self.M['큰단가치']    
-        self.M['평단수량'] = math.ceil(매수금액1/self.M['평단단가'])
-        self.M['큰단수량'] = math.ceil(매수금액2/self.M['큰단단가']) 
-        if self.M['과추일반'] : self.acc_old()  
-
-    def force_buy(self) :
+    def base_buy(self) :
         if self.M['보유수량'] == 0 : return
 
         매수금액1  = self.M['일매수금'] * self.M['매수비중']
@@ -243,9 +236,23 @@ class DNA_V2(Control) :
         self.M['평단단가'] = self.M['평균단가'] * self.M['평단가치'] 
         self.M['큰단단가'] = self.M['평균단가'] * self.M['큰단가치']
   
-        self.M['평단수량'] += math.ceil(매수금액1 / self.M['평단단가']) *4 ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'A'
-        self.M['큰단수량'] += math.ceil(매수금액2 / self.M['큰단단가']) *2 ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'B' 
+        self.M['평단수량'] += math.ceil(매수금액1 / self.M['평단단가']) *4  
+        self.M['큰단수량'] += math.ceil(매수금액2 / self.M['큰단단가']) *2  
 
+    def normal_buy(self)  :
+        매수금액  = self.M['일매수금']
+        매수단가 = min(self.M['평균단가'],self.M['당일종가'])
+        매수수량 = math.ceil(매수금액 / 매수단가)
+        
+        da = 2
+        if self.M['연속상승'] >= 1 :
+            self.M['큰단단가']  = 매수단가
+            self.M['큰단수량'] += 매수수량 * da 
+        
+        if self.M['연속하락'] >= 1 :
+            self.M['평단단가'] = 매수단가
+            self.M['평단수량'] = 매수수량 + (매수수량 * self.M['연속하락'])
+        
 
     def check_sell(self) :
 
@@ -309,16 +316,24 @@ class DNA_V2(Control) :
         if  self.M['임의매도'] : return
         
         if self.auto :
-            # 평단매수 검토
-            if many := int(self.B['buy11'])  : 
-                if  self.M['당일종가'] <= float(self.B['buy12']):  
-                    self.M['체결수량'] += many ; self.M['회차'] += 0.5 ; self.M['매매현황'] += 'N'
-
             # 큰단매수 검토
             if many := int(self.B['buy21'])  : 
                 if  self.M['당일종가'] <= float(self.B['buy22']):  
-                    self.M['체결수량'] += many ; self.M['회차'] += 0.5 ; self.M['매매현황'] += 'N'           
-            
+                    if self.M['회차'] < 6 : # 기초매수
+                        self.M['체결수량'] += many ; self.M['회차'] += 0.5 ; self.M['매매현황'] = 'B'  
+                        self.M['진행상황']  = '기초매수'
+                    else : # 연속상승
+                        self.M['체결수량'] += many ; self.M['회차'] += 2.0 ; self.M['매매현황'] += 'TN'
+
+            # 평단매수 검토
+            if many := int(self.B['buy11'])  : 
+                if  self.M['당일종가'] <= float(self.B['buy12']):  
+                    if self.M['회차'] < 6 : # 기초매수
+                        self.M['체결수량'] += many ; self.M['회차'] += 0.5 ; self.M['매매현황'] = 'A'   
+                        self.M['진행상황']  = '기초매수'                      
+                    else : # 연속하락
+                        self.M['체결수량'] += many ; self.M['회차'] += 1.0 + self.M['연속하락']; self.M['매매현황'] += 'D' + str(self.M['연속하락'])
+
             # 추종매수 검토
             if many := int(self.B['buy31'])  : 
                 if  self.M['당일종가'] <= float(self.B['buy32']):  
@@ -347,7 +362,10 @@ class DNA_V2(Control) :
         self.oldChk = self.DB.get_one("min(no)")
 
         self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"add0='{self.M['기록일자']}' and add1='{self.M['종목코드']}'")
-        if self.DB.get_one('add0') and self.parm[0] != 'modify': self.update['msg'] = "같은 날자에 입력된 데이타가 존재합니다" ;self.update['replyCode'] = 'NOTICE';return self.json(self.update)
+        if self.DB.get_one('add0') and self.parm[0] != 'modify': 
+            self.update['msg'] = "같은 날자에 입력된 데이타가 존재합니다" 
+            self.update['replyCode'] = 'NOTICE'
+            return self.json(self.update)
 
         self.init_value()
 
@@ -368,15 +386,20 @@ class DNA_V2(Control) :
             self.check_buy()
             self.calculate()
             if self.M['첫날기록'] : self.the_first_day()
+            
 
         if self.M['임의매도'] : return self.return_value()
+        
         # 매도전략
         if self.M['수량확보'] and self.M['위기전략'] == 'YES' : self.strategy_sell()
         if self.M['강매허용'] and self.M['날수'] > self.M['강매시작'] : self.force_sell()
         if self.M['날수'] > self.M['매도대기'] : self.normal_sell()
 
         # 매수전략
-        if self.M['회차'] <= self.M['분할횟수'] : self.normal_buy()
+        if self.M['회차'] < 6 : 
+            self.base_buy()
+        elif self.M['회차'] <= self.M['분할횟수'] : 
+            self.normal_buy()
         elif self.M['위기전략'] == 'NO' : 
             if self.M['매수허용']   : self.secondary_buy() 
             if self.M['과거추종']   : self.acc_old()          

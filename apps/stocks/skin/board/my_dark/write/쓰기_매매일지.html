@@ -301,7 +301,7 @@
 </form>
 
 <script>
-
+var my_base_strategy = ''
 function auto_datainput() {
 	
 	if(! $("input[name='add0']").val() )  { h_dialog.notice("날자 입력은 필수입니다"); return false; }
@@ -310,25 +310,24 @@ function auto_datainput() {
 	if(! $("input[name='add20']").val() ) { h_dialog.notice("전략 선택은 필수입니다"); return false; }
 
 	var dest = ""
-	switch (strategy) {
-		case '무한매수 V1' : 
-		case '무한매수 V2' : dest = "boards-stock_daily/autoinput"; break;
-		case 'DNA V2' 	  : dest = "boards-DNA_V2/autoinput"; break;
-		default : dest = "boards-stock_daily/autoinput"
+	switch (my_base_strategy) {
+		case 'MyToT' : dest = "boards-stock_daily/autoinput"; break;
+		case 'DNA02' : dest = "boards-dna_v2/autoinput"; break;
+		default : dest = "boards-dna_v2/autoinput"
 	}
 
-	var posturl = uri('linkurl')+ dest
+	var posturl = uri('linkurl')+ dest + "/{{D['method']}}" 
 	var postData = {}
 
 	postData['add0']  = $("input[name='add0']").val()  // 날자
 	postData['add1']  = $("input[name='add1']").val()  // 종목
-	postData['add20']  = $("input[name='add20']").val()  // 매매전략
+	postData['add20'] = $("input[name='add20']").val() // 매매전략
 	postData['add6']  = $("input[name='add6']").val()  // 체결단가
 	postData['add7']  = $("input[name='add7']").val()  // 체결수량
 	postData['add8']  = $("input[name='add8']").val()  // 매수금액	
 	postData['add16'] = $("input[name='add16']").val() // 가용잔액	
 	postData['add17'] = $("input[name='add17']").val() // 추가자본	
-	postData['sub4'] = $("input[name='sub4']").val() // 임의매매 가격
+	postData['sub4']  = $("input[name='sub4']").val()  // 임의매매 가격
 
 
 	$.post( posturl, postData).done(function(data) {
@@ -378,6 +377,7 @@ $("#auto-fill>div>ul>li").not(':first-child').click(function(){
 	$.post( posturl, {code:val1}).done( function(data) { 
 		var aa = JSON.parse(data);
 		$("input[name='add0']").val(aa.a); $("input[name='add20']").val(aa.b) 
+		my_base_strategy = aa.c
 	});
 });
 

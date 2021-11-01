@@ -12,5 +12,8 @@ class Stock_daily_select_fill(Control) :
         today,strategy = self.DB.get('max(add0),add20',assoc=False,many=1)
         now = int(time.mktime(datetime.strptime(today,'%Y-%m-%d').timetuple()))
         tomorrow = datetime.fromtimestamp(now+3600*24).strftime('%Y-%m-%d')
-        tmp = {'a':tomorrow,'b':strategy}
+
+        self.DB.tbl,self.DB.wre = ('h_stock_strategy_board',f"add0='{strategy}'")
+        base = self.DB.get_one('add1')
+        tmp = {'a':tomorrow,'b':strategy,'c':base}
         return json.dumps(tmp)
