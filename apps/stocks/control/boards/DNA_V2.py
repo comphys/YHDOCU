@@ -3,7 +3,7 @@ from datetime import datetime
 import time
 import math
 
-class Stock_daily2(Control) : 
+class DNA_V2(Control) : 
 
     def _auto(self) :
         self.DB = self.db('stocks')
