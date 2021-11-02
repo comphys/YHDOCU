@@ -381,6 +381,18 @@ $("#auto-fill>div>ul>li").not(':first-child').click(function(){
 	});
 });
 
+$("#select-strategy>div>ul>li:first-child").click(function(){ var ptr = $(this).parent().parent().prev(); $(ptr).val(''); $(this).siblings().removeClass("select-selected");});
+$("#select-strategy>div>ul>li").not(':first-child').click(function(){
+	var val1 = $(this).text(); 
+	var ptr = $(this).parent().parent().prev(); 
+	$(ptr).val(val1); $(this).addClass("select-selected"); $(this).siblings().removeClass("select-selected"); 
+	var posturl = uri('linkurl') + 'boards-stock_daily_select_fill/getit2';
+	$.post( posturl, {strategy:val1}).done( function(data) { 
+		my_base_strategy = data
+	});
+});
+
+
 function check_MainWriteForm(f)	{	
 	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
 	return true;

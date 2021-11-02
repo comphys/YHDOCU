@@ -17,7 +17,6 @@ class 쓰기_매매일지(SKIN) :
         # -------------------
         self.D['user_add1']  = self.user_add1( OBODY) # 종목코드
         self.D['user_add20'] = self.user_add20(OBODY) # 매매전략
-        self.D['user_autoinput'] ="boards-stock_daily/autoinput"
     
 
     def add_all(self,category, exFIDktitle, exFormat, bid, OBODY) :
@@ -70,7 +69,7 @@ class 쓰기_매매일지(SKIN) :
         qry = f"SELECT add0 FROM h_stock_strategy_board ORDER BY add0"
         ITM = self.DB.exe(qry)
 
-        tmp  = "<div class='select' style='margin-right:10px;vertical-align:bottom'>"
+        tmp  = "<div id='select-strategy' class='select' style='margin-right:10px;vertical-align:bottom'>"
         tmp += f"<input placeholder='매매전략' name='add20' type='text' value='{value}' style='width:125px;background-color:#363636;border-color:#24272D'>"
         tmp += f"<div class='btn-group'>"
         tmp += f"<button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>"

@@ -17,3 +17,11 @@ class Stock_daily_select_fill(Control) :
         base = self.DB.get_one('add1')
         tmp = {'a':tomorrow,'b':strategy,'c':base}
         return json.dumps(tmp)
+    
+    def getit2(self) :
+        self.DB = self.db('stocks')
+        strategy = self.D['post']['strategy']
+
+        self.DB.tbl,self.DB.wre = ('h_stock_strategy_board',f"add0='{strategy}'")
+        base = self.DB.get_one('add1')
+        return base
