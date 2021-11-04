@@ -49,7 +49,7 @@
 			{{D['user_add20']|safe}}
 
 			<button class="btn btn-blue" onclick="auto_dataclean();return false">리셋하기</button>&nbsp;&nbsp;
-			{% if D['Mode'] == 'modify' %}
+			{% if D['Mode'] == 'modify' and D['BODY']['add10']=='0' %}
 			<button class="btn btn-blue-s4" onclick="season_close();  return false">시즌종료</button>
 			{% endif %}
 
@@ -153,7 +153,7 @@
 				<div class='write-input-left' style="width:76px">추가자산</div>
 				<input type='text' name='sub8' class="i-number" style="width:70px;text-align:center" value="{{D['BODY']['sub8']}}">
 			</div> 
-			시즌마다 기본자산과 추가자산은 리밸런싱 됩니다
+			매도체결 시 기본 및 추가 자산은 리밸런싱 됩니다
 		</td>
 	</tr>
 	<tr>
