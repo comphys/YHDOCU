@@ -20,11 +20,14 @@
 				{% endif %}
 			</div>			
 			{% if D['Mode'] == 'modify' %}
-			<input type='text' name='add1' disabled style="width:135px;margin-right:15px;text-align:center" value="{{D['BODY']['add1']}}">
+			<input type='text' name='add1' disabled style="width:135px;margin-top:3px;margin-right:15px;text-align:center" value="{{D['BODY']['add1']}}">
 			{% else %}
 			{{D['user_add1']|safe}}
 			{% endif %}
-			<button class="btn btn-blue" onclick="auto_datainput();return false">자동계산</button>
+			<button class="btn btn-blue"  onclick="auto_datainput();return false">자동계산</button>&nbsp;&nbsp;
+			{% if D['Mode'] == 'write' %}
+			<button class="btn btn-blue-s4" onclick="auto_suggest();return false">첫날매수</button>&nbsp;&nbsp;
+			{% endif %}
 			
 		</td>
 	</tr>
@@ -45,7 +48,10 @@
 			</div>
 			{{D['user_add20']|safe}}
 
-			<button class="btn btn-blue" onclick="auto_dataclean();return false">리셋하기</button>
+			<button class="btn btn-blue" onclick="auto_dataclean();return false">리셋하기</button>&nbsp;&nbsp;
+			{% if D['Mode'] == 'modify' %}
+			<button class="btn btn-blue-s4" onclick="season_close();  return false">시즌종료</button>
+			{% endif %}
 
 		</td>
 	</tr>
@@ -113,7 +119,7 @@
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">일매수금</div>
-				<input type='text' name='add19' class="i-number" style="width:100px;" value="{{D['BODY']['add19']}}">
+				<input type='text' name='sub6' class="i-number" style="width:100px;" value="{{D['BODY']['sub6']}}">
 			</div>
 		</td>
 	</tr>
@@ -302,6 +308,7 @@
 
 <script>
 var my_base_strategy = ''
+
 function auto_datainput() {
 	
 	if(! $("input[name='add0']").val() )  { h_dialog.notice("날자 입력은 필수입니다"); return false; }
@@ -344,7 +351,7 @@ function auto_datainput() {
 		else {
 			h_dialog.notice(ans.msg);
 			var update_key  = ['add2','add3','add4','add5','add6','add7','add8','add9','add10',
-			'add11','add12','add13','add14','add15','add16','add17','add18','add19','sub1','sub2','sub3','sub4']
+			'add11','add12','add13','add14','add15','add16','add17','add18','sub1','sub2','sub3','sub4']
 			    
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
 
@@ -354,7 +361,7 @@ function auto_datainput() {
 			var update_sell = ['sell1','sell11','sell12','sell2','sell21','sell22','sell3','sell31','sell32','sell4','sell41','sell42']
 			update_sell.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
 
-			var update_sell = ['sub1','sub2','sub3','sub4','sub7','sub8']
+			var update_sell = ['sub1','sub2','sub3','sub4','sub6','sub7','sub8']
 			update_sell.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
 			
 		}
@@ -362,7 +369,7 @@ function auto_datainput() {
 }
 function auto_dataclean() {
 			var update_key  = ['add2','add3','add4','add5','add6','add7','add8','add9','add10',
-			'add11','add12','add13','add14','add15','add16','add17','add18','add19','sub1','sub2','sub3','sub4',
+			'add11','add12','add13','add14','add15','add16','add17','add18','sub1','sub2','sub3','sub4',
 			'buy1','buy11','buy12','buy2','buy21','buy22','buy3',,'buy31','buy32','buy4','buy41','buy42','buy5','buy51','buy52',
 			'sell1','sell11','sell12','sell2','sell21','sell22','sell3','sell31','sell32','sell4','sell41','sell42']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val('')})
@@ -391,6 +398,31 @@ $("#select-strategy>div>ul>li").not(':first-child').click(function(){
 		my_base_strategy = data
 	});
 });
+
+function season_close() {
+	var posturl = uri('linkurl')+ "boards-stock_today_tips/season_close" 
+	var postData = {}
+
+	postData['code']    = $("input[name='add1']").val()  // 날자
+	postData['season']  = $("input[name='add2']").val()  // 종목
+	$.post( posturl, postData).done(function(data) {
+		h_dialog.notice(data);
+	});
+}
+
+function auto_suggest() {
+	if ($id("BUY_SUGGEST")){h_dialog.close("BUY_SUGGEST"); return false;}
+	date = $("input[name='add0']").val()  
+	code = $("input[name='add1']").val()
+	daym = $("input[name='add16']").val() 
+	if(! date )  { h_dialog.notice("날자 입력은 필수입니다"); return false; }
+	if(! code )  { h_dialog.notice("종목 코드는 필수입니다"); return false; }
+	if(! daym )  { h_dialog.notice("가용 잔액은 필수입니다"); return false; }
+
+	var url = uri('linkurl') + 'boards-stock_today_tips/buy_suggest/date='+date+'/code='+code+'/daym='+daym;
+	var o = {id:'BUY_SUGGEST', width:'350px', x:500, y:100,header:false,footer:false,drag:false}
+	h_dialog.load(url,o);
+}
 
 
 function check_MainWriteForm(f)	{	

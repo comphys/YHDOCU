@@ -78,7 +78,7 @@ class Stock_daily(Control) :
 
             self.M['평균단가'] = float(self.B['add9'])
 
-            self.M['일매수금'] = int(self.B['add19'])
+            self.M['일매수금'] = int(self.B['sub6'])
             self.M['날수'] = int(self.B['add3']) + 1
             self.M['회차'] = float(self.B['add4'])            
             self.M['매매현황'] = ''
@@ -374,7 +374,7 @@ class Stock_daily(Control) :
 
         update['add13']  = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['매매현황']
           
-        update['add19'] = self.M['일매수금'] ; update['add17']   = f"{round(self.M['추가자본'],4):,.2f}"
+        update['sub6'] = self.M['일매수금'] ; update['add17']   = f"{round(self.M['추가자본'],4):,.2f}"
         
         update['sub1']   = self.M['연속하락'] ; update['sub2'] = self.M['위기전략'] ; update['sub3'] = self.M['전략매금'] ; update['sub4'] = self.M['전략가격']
 

@@ -1,4 +1,6 @@
 from system.core.load import Control
+from datetime import datetime
+import time,math
 
 class Stock_today_tips(Control) : 
     
@@ -37,3 +39,55 @@ class Stock_today_tips(Control) :
         output += "</tbody></table>"
         output += "</div>"
         return self.echo(output)
+    
+    def season_close(self) :
+        code = self.D['post']['code']
+        season = self.D['post']['season']
+
+        qry = f"UPDATE h_daily_trading_board SET add19='시즌종료' WHERE add1='{code}' and add2='{season}'"
+        self.DB.exe(qry)
+        return "해당 시즌을 종료하였습니다"
+    
+    def buy_suggest(self) :
+        date = self.gets['date']
+        code = self.gets['code']
+        daym = self.gets['daym']
+        daym = float(daym.replace(',',''))
+
+        일매수금 = int(daym / 28)
+        now_date = int(time.mktime(datetime.strptime(date,'%Y-%m-%d').timetuple()))
+        old_date = datetime.fromtimestamp(now_date-3600*24*14).strftime('%Y-%m-%d')
+        qry = f"SELECT add3 FROM h_stockHistory_board WHERE add0 BETWEEN '{old_date}' and '{date}' and add1='{code}' ORDER BY add0"
+        aaa= self.DB.exe(qry)
+        bbb= [float(x[0].replace(',','')) for x in aaa ]
+        yes= bbb[-1]
+        c_drop = 0
+        c_goup = 0
+        for i in range(1,len(bbb)) :
+            c_drop = c_drop + 1 if bbb[i] <= bbb[i-1] else 0
+            c_goup = c_goup + 1 if bbb[i] >  bbb[i-1] else 0
+        
+        매수수량 = math.ceil(일매수금/yes) 
+        회차 = 1.0
+        if c_drop : 
+            매수수량 += 매수수량 * c_drop 
+            회차 = 2.0 
+
+        매수단가 = yes * 1.1
+        output  = "<div style='width:350px;height:250px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:1px solid #F7F8E0;' >"
+        output += "<span style='color:yellow'>DNA V2 전략을 위한 해당종목의 첫날 매수방법</span><br>"
+        output += f"주식종목 : {code}<br>"
+        output += f"매수예정 : {date}<br>"
+        output += f"일매수금 : {일매수금:,}<br>"
+        output += f"연속하락 : {c_drop}<br>"
+        output += f"연속상승 : {c_goup}<br>"
+        output += f"전일종가 : {yes}<br>"
+        output += "---------------------------------<br>"
+        output += f"매수단가 : LOC {매수단가:.2f}<br>"
+        output += f"매수수량 : {매수수량}<br>"
+        output += f"회차 : {회차}<br>"
+        output += "</div>"
+
+        return self.echo(output)
+
+
