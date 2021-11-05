@@ -3,7 +3,7 @@ from datetime import datetime
 import time
 import math
 
-class Dna_v2(Control) : 
+class Stock_dna_v2(Control) : 
 
     def _auto(self) :
         self.DB = self.db('stocks')
@@ -354,6 +354,7 @@ class Dna_v2(Control) :
 
 
     def autoinput(self) :
+
         self.update={}
         self.M['기록일자'] = self.D['post']['add0']
         self.M['종목코드'] = self.D['post']['add1']

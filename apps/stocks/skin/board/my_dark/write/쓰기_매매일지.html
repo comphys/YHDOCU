@@ -319,8 +319,8 @@ function auto_datainput() {
 	var dest = ""
 	switch (my_base_strategy) {
 		case 'MyToT' : dest = "boards-stock_daily/autoinput"; break;
-		case 'DNA02' : dest = "boards-dna_v2/autoinput"; break;
-		default : dest = "boards-dna_v2/autoinput"
+		case 'DNA02' : dest = "boards-stock_dna_v2/autoinput"; break;
+		default : dest = "boards-stock_dna_v2/autoinput"
 	}
 
 	var posturl = uri('linkurl')+ dest + "/{{D['method']}}" 
