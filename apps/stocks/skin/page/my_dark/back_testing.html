@@ -113,7 +113,7 @@
 
 		<tbody>
 			{%- for TR in D['TR'] -%}
-			{% if TR['진행상황'] == '전량매도' or TR['진행상황'] == '부분매도' %}
+			{% if TR['진행상황']|striptags == '전량매도' or TR['진행상황']|striptags == '부분매도' %}
 			<tr style="border-top:2px solid yellow;border-bottom:2px solid yellow;background-color:black;"> 
 			{% elif TR['진행상황'] == '강제매도' %}
 			<tr style="border-top:2px solid orange;border-bottom:2px solid orange;background-color:black;"> 
@@ -125,12 +125,12 @@
 				<td style='text-align:center'>{{TR['시즌']}}</td>
 				<td style='text-align:right;color:#BDBDBD;'>{{TR['회차']}}</td>
 				<td style='text-align:center;color:#CEF6F5'>{{TR['기록일자']}}</td>
-				<td style='text-align:right'>{{TR['당일종가']}}</td>
+				<td style='text-align:right'>{{TR['당일종가']|safe}}</td>
 				<!-- <td style='text-align:right'>{{TR['과거추종']}}</td> -->
 				<!-- <td style='text-align:right'>{{TR['체결단가']}}</td> -->
 				<td style='text-align:right'>{{TR['체결수량']}}</td>
 				<td style='text-align:right'>{{TR['매수금액']}}</td>
-				<td style='text-align:right;color:#F5F6CE'>{{TR['평균단가']}}</td>
+				<td style='text-align:right;color:#F5F6CE'>{{TR['평균단가']|safe}}</td>
 				<td style='text-align:right;color:#E6F8E0'>{{TR['보유수량']}}</td>
 				<td style='text-align:right;color:#F8E6E0'>{{TR['평가금액']}}</td>
 				<td style='text-align:right;color:#E0F8F7'>{{TR['총매수금']}}</td>
@@ -140,7 +140,7 @@
 				<td style='text-align:right;color:#CEF6CE'>{{TR['가용잔액']}}</td>
 				<td style='text-align:right;'>{{TR['추가잔액']}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['일매수금']}}</td>
-				<td style='text-align:center'>{{TR['진행상황']}}</td>
+				<td style='text-align:center'>{{TR['진행상황']|safe}}</td>
 				<!-- <td style='text-align:center'>{{TR['일매수금']}}</td> -->
 			</tr>
 			{%- endfor %}
@@ -159,6 +159,16 @@ function check_thisForm() {
     if(! $("input[name='end_date']").val() ) { h_dialog.notice("종료 일자가 입력되지않았습니다"); return false; }  
     if($("input[name='start_date']").val() > $("input[name='end_date']").val() ) { h_dialog.notice("시작 일자는 종료일보다 커야 합니다"); return false; }
 }
+
+function show_chart(season) {
+	var clss = '';
+	var avgs = '';
+	$(".clsv"+season).each(function() {clss += $(this).text() +'/'});
+	$(".avgv"+season).each(function() {avgs += $(this).text() +'/'});
+	var posturl = uri('linkurl') + 'boards-stock_backtest_chart/show_chart';
+	$.post( posturl, {cls_val:clss,avg_val:avgs});
+}
+
 </script>
 
 

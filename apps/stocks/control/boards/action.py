@@ -108,7 +108,8 @@ class Action(Control) :
         m_price = [float(x) for x in m_price]
   
         my_dpi = 100
-        xx = list(range(0,61))
+        xx = list(range(0,60))
+        xl = [x+1 for x in xx]
         plt.figure(facecolor='#24272d')
         plt.figure(figsize=(1400/my_dpi, 300/my_dpi),dpi=my_dpi)
         # plt.rcParams["figure.figsize"] = (20,4)
@@ -119,7 +120,7 @@ class Action(Control) :
         ax.tick_params(color='#33363b',grid_alpha=0.7)
         plt.plot(c_price,color='#58ACFA',  linestyle='dotted')
         plt.plot(m_price,color='#f78181',  linestyle='solid',marker='o')
-        plt.xticks(xx,color='darkgray')
+        plt.xticks(xx,xl,color='darkgray')
         plt.yticks(color='darkgray')
         plt.savefig(file_name,facecolor='#24272d',dpi=my_dpi,pad_inches=0)
         return

@@ -19,11 +19,11 @@ class M_backtest_ITv02(Model) :
         tx['시즌'] = self.M['날수']
         tx['회차'] = self.M['회차']
         tx['기록일자'] = self.M['day']
-        tx['당일종가'] = f"{round(self.M['당일종가'],4):,.2f}"
+        tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
         tx['체결단가'] = tx['당일종가']
         tx['체결수량'] = self.M['체결수량']
         tx['매수금액'] = f"{round(self.M['매수금액'],4):,.3f}"
-        tx['평균단가'] = f"{round(self.M['평균단가'],4):,.4f}"
+        tx['평균단가'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.4f}</span>"
         tx['보유수량'] = self.M['보유수량']
         tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}"
         tx['총매수금'] = f"{round(self.M['총매수금'],4):,.2f}"
@@ -33,7 +33,7 @@ class M_backtest_ITv02(Model) :
         tx['매도금액'] = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['구매코드']
         tx['가용잔액'] = f"{round(self.M['가용잔액'],4):,.2f}"
         tx['추가잔액'] = f"{round(self.M['추가자본'],4):,.2f}"
-        tx['진행상황'] = self.M['진행상황']
+        tx['진행상황'] = self.M['진행상황'] if self.M['진행상황'] != '전량매도' else f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>전량매도</span>"
         tx['일매수금'] = self.M['일매수금']
         self.D['TR'].append(tx)
 
@@ -69,6 +69,7 @@ class M_backtest_ITv02(Model) :
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
 
     def init_value(self) :
+        self.M['기록시즌']  = 0
         self.M['분할횟수']  = int(self.S['add2'])
         self.M['가용잔액']  = int(self.D['init_capital'])
         self.M['일매수금']  = int(self.M['가용잔액'] / self.M['분할횟수'])
@@ -117,6 +118,7 @@ class M_backtest_ITv02(Model) :
 
 
     def new_day(self) :
+        self.M['기록시즌'] += 1
         self.M['회차'] = 1.0
         self.M['평균단가']  = self.M['당일종가']
         self.M['보유수량']  = self.M['체결수량'] = int(self.M['일매수금']/self.M['당일종가'])

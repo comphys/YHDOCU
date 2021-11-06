@@ -214,7 +214,9 @@ class Stock_dna_v2(Control) :
         self.M['둘째수량'] = self.M['보유수량'] - self.M['첫째수량']
         self.M['첫째단가'] = self.M['평균단가'] * self.M['첫매가치']
         if self.M['둘째수량'] : self.M['둘째단가'] = self.M['평균단가'] * self.M['둘매가치']
-    
+
+
+    # 사기 위한 전략을 수립한다. 내일 구입 전략임으로 기준은 당일종가를 사용한다. 
     def strategy_buy(self) :
         self.M['전략단가'] = self.M['전략가격'] * (1+self.M['매수시점'])
         self.M['전략수량'] = math.ceil((self.M['가용잔액'] + self.M['추가자본']) / self.M['전략단가'])
