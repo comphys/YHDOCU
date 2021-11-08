@@ -163,14 +163,16 @@ function check_thisForm() {
 function show_chart(season) {
 	var clss = '';
 	var avgs = '';
-	$(".clsv"+season).each(function() {clss += $(this).text() +'/'});
-	$(".avgv"+season).each(function() {avgs += $(this).text() +'/'});
-	var posturl = uri('linkurl') + 'boards-stock_backtest_chart/show_chart';
-	$.post( posturl, {cls_val:clss,avg_val:avgs});
+	var code = $("input[name='code']").val();
+	var stra = $("input[name='strategy']").val().replace(/ /gi,'');
+	var start= $("input[name='start_date']").val();
+	$(".clsv"+season).each(function() {clss += $(this).text() +'-'});
+	$(".avgv"+season).each(function() {avgs += $(this).text() +'-'});
+	
+	var url = uri('linkurl') + 'boards-stock_backtest_chart/show_chart/code='+code+'/stra='+stra+'/start='+start+'/season='+season+'/cls_val='+clss+'/avg_val='+avgs;
+	var o = {id:'ST_CHART', width:'1402px', height:'302px', x:50, y:200,header:false,footer:false}
+	h_dialog.load(url,o);
 }
 
 </script>
-
-
-
 {% endblock %}

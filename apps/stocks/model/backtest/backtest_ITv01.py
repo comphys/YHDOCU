@@ -33,7 +33,7 @@ class M_backtest_ITv01(Model) :
         tx['매도금액'] = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['구매코드']
         tx['가용잔액'] = f"{round(self.M['가용잔액'],4):,.2f}"
         tx['추가잔액'] = f"{round(self.M['추가자본'],4):,.2f}"
-        tx['진행상황'] = self.M['진행상황'] if self.M['진행상황'] != '전량매도' else f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>전량매도</span>"
+        tx['진행상황'] = self.M['진행상황'] if self.M['진행상황'] != '전량매도' else f"<span onclick='show_chart({self.M['기록시즌']-1})' style='cursor:pointer'>전량매도</span>"
         tx['일매수금'] = self.M['일매수금']
         self.D['TR'].append(tx)
 
@@ -58,7 +58,6 @@ class M_backtest_ITv01(Model) :
             self.M['전략매금'] = 0
             self.M['위기전략'] = False
             self.M['매도횟수'] = 0
-            self.M['기록시즌'] += 1
         
         if  self.M['보유수량'] == 0 : 
             self.M['첫날기록'] = True
@@ -152,12 +151,9 @@ class M_backtest_ITv01(Model) :
 
         매도수량 = 0
         매도가격1 = self.M['평균단가'] * self.M['첫매가치'] 
-        매도가격2 = self.M['평균단가'] * self.M['둘매가치']
-        매도수량1 = math.ceil(self.M['보유수량'] * self.M['매도비중'])
-        매도수량2 = self.M['보유수량'] - 매도수량1
+        매도수량1 = self.M['보유수량'] 
 
         if self.M['당일고가'] >= 매도가격1 : self.M['매도금액'] += 매도가격1 * 매도수량1  ; 매도수량 += 매도수량1  
-        if self.M['당일고가'] >= 매도가격2 : self.M['매도금액'] += 매도가격2 * 매도수량2  ; 매도수량 += 매도수량2  
             
         if 매도수량 : 
             ratio = 매도수량 / self.M['보유수량']
@@ -167,7 +163,8 @@ class M_backtest_ITv01(Model) :
             self.M['가용잔액'] += self.M['매도금액']
             self.M['총매수금']  =  self.M['보유수량'] * self.M['평균단가']
             self.M['회차'] = 0.0
-            self.M['진행상황']  = '전량매도' if self.M['보유수량'] == 0 else '부분매도'
+            self.M['진행상황']  = '전량매도' 
+            self.M['기록시즌'] += 1
                 
     def strategy_sell(self) : # LOC 매도
 

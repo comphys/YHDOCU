@@ -166,6 +166,7 @@ class M_backtest_DNA02(Model) :
 
         매수금액  = self.M['일매수금'] 
         구매금액  = min(self.M['평균단가'],self.M['전일종가'])
+        # 구매금액  = self.M['평균단가']
         da = 2
         if self.M['연속상승'] >= 1 :
         
@@ -263,6 +264,7 @@ class M_backtest_DNA02(Model) :
             self.M['회차'] += self.M['연속하락'] 
             self.M['구매코드'] += str(self.M['연속하락'])
 
+
     def test_it(self) :
 
         self.init_value()
@@ -304,8 +306,6 @@ class M_backtest_DNA02(Model) :
 
             elif self.M['회차'] <= self.M['분할횟수'] : 
                 self.normal_buy()
-                # step3-1 : 종가하락 가중 매수
-                if self.M['과추일반'] : self.acc_old()
         
             else :
                 if not self.M['위기전략'] :
