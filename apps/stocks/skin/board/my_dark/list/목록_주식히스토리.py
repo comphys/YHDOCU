@@ -51,7 +51,7 @@ class 목록_주식히스토리(SKIN) :
         now = int(time.mktime(datetime.strptime(today,'%Y-%m-%d').timetuple()))
         old_date = datetime.fromtimestamp(now-3600*24*20).strftime('%Y-%m-%d')
 
-        codes = ['TQQQ','BULZ','DNMR','FNGU','SOXL','WEBL','KORU','RETL','NAIL','TECL','BNKU']
+        codes = ['TQQQ','BULZ','DNMR','FNGU','SOXL','WEBL','WANT','HIBL','RETL','NAIL','TECL','BNKU']
         dns = []
         ups = []
 
