@@ -6,7 +6,6 @@ class Stock_backtest_chart(Control) :
     
     def show_chart(self) :
         cls_v = self.gets['cls_val'].split('-')[:-2]
-        self.info(cls_v)
         avg_v = self.gets['avg_val'].split('-')[:-2]
         code  = self.gets['code']
         season= self.gets['season']
