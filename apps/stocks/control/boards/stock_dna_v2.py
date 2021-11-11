@@ -162,7 +162,8 @@ class Stock_dna_v2(Control) :
 
     def the_first_day(self) :
         cnt = 0
-        self.M['시즌'] = 1  ; self.M['날수'] = 1 ; self.M['회차'] = 1.0
+        self.M['시즌'] = int(self.M['시즌체크']) if self.M['시즌체크'] else 1  ; 
+        self.M['날수'] = 1 ; self.M['회차'] = 1.0
         #리밸런싱
         self.M['처음자본'] = self.M['가용잔액']
         self.M['처음추가'] = self.M['추가자본'] 
@@ -360,17 +361,22 @@ class Stock_dna_v2(Control) :
         self.update={}
         self.M['기록일자'] = self.D['post']['add0']
         self.M['종목코드'] = self.D['post']['add1']
+        self.M['시즌체크'] = self.D['post'].get('add2',0)
+
         self.DB.tbl,self.DB.wre = ('h_daily_trading_board',f"add0  < '{self.M['기록일자']}' and add1='{self.M['종목코드']}'")
+        if self.M['시즌체크'] : self.DB.wre += f" and add2='{self.M['시즌체크']}'"
         self.preChk = self.DB.get_one("max(no)")
         self.oldChk = self.DB.get_one("min(no)")
 
         self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"add0='{self.M['기록일자']}' and add1='{self.M['종목코드']}'")
+        if self.M['시즌체크'] : self.DB.wre += f" and add2='{self.M['시즌체크']}'"
         if self.DB.get_one('add0') and self.parm[0] != 'modify': 
             self.update['msg'] = "같은 날자에 입력된 데이타가 존재합니다" 
             self.update['replyCode'] = 'NOTICE'
             return self.json(self.update)
 
         self.init_value()
+
 
         if not self.M['당일종가'] : self.update['msg'] = "해당일 기록된 주가를 찾을 수 없습니다" ;self.update['replyCode'] = 'NOTICE'; return self.json(self.update)
 

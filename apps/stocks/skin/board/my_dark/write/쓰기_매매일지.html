@@ -313,7 +313,6 @@ function auto_datainput() {
 	
 	if(! $("input[name='add0']").val() )  { h_dialog.notice("날자 입력은 필수입니다"); return false; }
 	if(! $("input[name='add1']").val() )  { h_dialog.notice("종목 코드는 필수입니다"); return false; }
-	var strategy = "input[name='add20']"
 	if(! $("input[name='add20']").val() ) { h_dialog.notice("전략 선택은 필수입니다"); return false; }
 
 	var dest = ""
@@ -328,6 +327,7 @@ function auto_datainput() {
 
 	postData['add0']  = $("input[name='add0']").val()  // 날자
 	postData['add1']  = $("input[name='add1']").val()  // 종목
+	postData['add2']  = $("input[name='add2']").val()  // 시즌
 	postData['add20'] = $("input[name='add20']").val() // 매매전략
 	postData['add6']  = $("input[name='add6']").val()  // 체결단가
 	postData['add7']  = $("input[name='add7']").val()  // 체결수량
@@ -369,7 +369,7 @@ function auto_datainput() {
 }
 function auto_dataclean() {
 			var update_key  = ['add2','add3','add4','add5','add6','add7','add8','add9','add10',
-			'add11','add12','add13','add14','add15','add16','add17','add18','sub1','sub2','sub3','sub4',
+			'add11','add12','add13','add14','add15','add16','add17','add18','sub1','sub2','sub3','sub4','sub6',
 			'buy1','buy11','buy12','buy2','buy21','buy22','buy3',,'buy31','buy32','buy4','buy41','buy42','buy5','buy51','buy52',
 			'sell1','sell11','sell12','sell2','sell21','sell22','sell3','sell31','sell32','sell4','sell41','sell42']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val('')})
