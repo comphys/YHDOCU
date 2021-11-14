@@ -35,7 +35,7 @@ class Stock_backtest_chart(Control) :
             plt.savefig(file_name,facecolor='#24272d',dpi=my_dpi,pad_inches=0)
 
         output  = "<div style='width:100%;height:300px;background-color:#1d1f24;color:#e1e1e1;' ondblclick=\"h_dialog.close('ST_CHART')\">"
-        output += f"<img src='/DOCU_ROOT/개인자료/주식투자/백테스트/{code}_{stra}_{season}_{start}.png' style='border:1px solid black'>"
+        output += f"<img src='/DOCU_ROOT/개인자료/주식투자/백테스트/{code}_{stra}_{season}_{start}.png' style='border:1px solid #F7F8E0;'>"
         output += "</div>"
         return output
 
