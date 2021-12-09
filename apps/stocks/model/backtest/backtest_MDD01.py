@@ -2,7 +2,7 @@ from system.core.load import Model
 from datetime import datetime,date
 import math,time
 
-class M_backtest_DNA03(Model) :
+class M_backtest_MDD01(Model) :
 
 # 무한매수법의 개인 변형 적용으로 평균가 다운 전략
 
@@ -248,17 +248,11 @@ class M_backtest_DNA03(Model) :
 
         if self.M['전략매금'] :
 
-            self.normal_buy()
-
-            if self.M['가용잔액'] + self.M['추가자본'] < self.M['일매수금'] : self.M['전략매금'] = 0     
-
-            # if  self.M['당일종가'] <= 회수단가 : 
-            #     self.M['체결수량'] += math.ceil((self.M['가용잔액'] + self.M['추가자본']) / 회수단가) 
-            #     self.M['회차'] += 1.0 ; self.M['구매코드'] += 'R'     
-            #     self.M['전략매금'] = 0 
-
-
-            
+            매수단가 = self.M['전략가격'] * (1+self.M['매수시점'])
+            if  self.M['당일종가'] <= 매수단가 : 
+                self.M['체결수량'] += math.ceil((self.M['가용잔액'] + self.M['추가자본']) / 매수단가) 
+                self.M['회차'] += 1.0 ; self.M['구매코드'] += 'R'     
+                self.M['전략매금'] = 0   
 
 
     def acc_old(self) :
@@ -291,11 +285,10 @@ class M_backtest_DNA03(Model) :
                 self.print_backtest()
                 continue
             
-            if self.M['가용잔액'] + self.M['추가자본'] < self.M['일매수금'] : self.M['위기전략'] = True 
+            if self.M['가용잔액'] + self.M['추가자본'] < self.M['일매수금'] : self.M['위기전략'] = True # 한번 True 셋팅되면 전량매수 또는 강제매수 까지 바뀌지 않음
 
         #   매도부분 --------------------------------------------------------------------------------------------------
-            if self.M['전략매금'] and self.M['수량확보'] : self.strategy_buy()
-            if self.M['수량확보'] and self.M['위기전략'] : self.strategy_sell()
+            if self.M['수량확보'] and self.M['위기전략'] :    self.strategy_sell()
             
             # 강제매도
             if self.M['강매허용'] :
@@ -315,8 +308,14 @@ class M_backtest_DNA03(Model) :
                 self.normal_buy()
         
             else :
-                if not self.M['위기전략'] : self.normal_buy()
+                if not self.M['위기전략'] :
                     
+                    if self.M['매수허용'] : self.secondary_buy() 
+                    if self.M['과거추종'] : self.acc_old() 
+            
+            if self.M['전략매금'] and self.M['수량확보'] : self.strategy_buy()
+           
+
 
         #   결과정리 --------------------------------------------------------------------------------------------------
             # step4 : 기타항목 계산
