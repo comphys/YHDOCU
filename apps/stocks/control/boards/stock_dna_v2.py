@@ -37,7 +37,7 @@ class Stock_dna_v2(Control) :
 
         # 매매전략 가져오기
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.M['매매전략']}'")
-        self.S = self.DB.get_line('add1,add2,add3,add4,add5,add6,add7,add8,add9,add10,add11,add12,add14,add15,add16,add17,add18,add20,add21,add22,add23')
+        self.S = self.DB.get_line('add1,add2,add3,add4,add5,add6,add7,add8,add9,add10,add11,add12,add14,add15,add16,add17,add18,add20,add21,add22,add23,add24,add25')
         self.M['분할횟수']  = int(self.S['add2'])
 
         # 매수 매도 초기화
@@ -63,8 +63,11 @@ class Stock_dna_v2(Control) :
         self.M['매도대기']  = int(self.S['add11']) # 매도대기 이전에 매도되는 것을 방지(보다 큰 수익 실현을 위해)
         self.M['리밸런싱']  = True if self.S['add12'] == 'on' else False  # 리밸런싱 수행 여부
 
+
         # 전략 매수 매도 가격 설정
         self.M['매도시점']  = float(self.S['add22'])/100 ; self.M['매수시점'] = float(self.S['add23'])/100 
+        self.M['전매횟수']  = int(self.S['add24'])
+        self.M['전매비중']  = float(self.S['add25'])/100
         # 매도 체크
         self.M['매도수량'] = 0
 
@@ -201,7 +204,7 @@ class Stock_dna_v2(Control) :
             self.M['진행상황'] = '기준이내' ; 
             self.M['전매수량'] = 0 ; self.M['전매단가'] = 0.0 
         else :
-            self.M['전매수량'] = int(self.M['보유수량']*0.6) 
+            self.M['전매수량'] = int(self.M['보유수량']*self.M['전매비중']) 
             self.M['전매단가'] = self.M['평균단가'] * (1+self.M['매도시점'])
 
     def force_sell(self) :
