@@ -17,7 +17,7 @@ class M_backtest_MDD01(Model) :
 
         tx['코드'] = self.D['code']
         tx['시즌'] = self.M['날수']
-        tx['회차'] = self.M['회차']
+        tx['회차'] = int(self.M['총매수금']/self.M['가용잔액']*100)
         tx['기록일자'] = self.M['day']
         tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
         tx['체결단가'] = tx['당일종가']
@@ -72,9 +72,10 @@ class M_backtest_MDD01(Model) :
 
     def init_value(self) :
         self.M['기록시즌']  = 0
+        self.M['회차'] = 0
         self.M['분할횟수']  = int(self.S['add2'])
         self.M['가용잔액']  = int(self.D['init_capital'])
-        self.M['일매수금']  = int(self.M['가용잔액'] / self.M['분할횟수'])
+        self.M['일매수금']  = int(self.M['가용잔액'] / 20)
         self.M['매수비중']  = float(self.S['add3'])/100
         self.M['평단가치']  = 1 + float(self.S['add4'])/100
         self.M['큰단가치']  = 1 + float(self.S['add5'])/100
@@ -127,9 +128,9 @@ class M_backtest_MDD01(Model) :
         self.M['기록시즌'] += 1
         self.M['연속하락']  = int(self.old_price_trace('DN'))
         self.M['연속상승']  = int(self.old_price_trace('UP'))
-        self.M['회차'] = 1.0 
+
         # 첫날 지나친 회차 증가는 지양함 
-        if self.M['연속하락'] : self.M['회차'] += 1
+        
         self.M['평균단가']  = self.M['당일종가']
         self.M['체결수량']  = math.ceil(self.M['일매수금']/self.old_price_trace('YD'))
         if  self.M['연속하락'] : 
@@ -155,9 +156,9 @@ class M_backtest_MDD01(Model) :
         큰단가금액 = self.M['평균단가'] * self.M['큰단가치']
 
         if  self.M['당일종가'] <= 큰단가금액 : 
-            self.M['체결수량'] += math.ceil(매수금액2 / 큰단가금액)*2 ; self.M['회차'] += 0.5 ; self.M['구매코드'] = 'B'        
+            self.M['체결수량'] += math.ceil(매수금액2 / 큰단가금액)*2 ; self.M['구매코드'] = 'B'        
         if  self.M['당일종가'] <= 평단가금액 : 
-            self.M['체결수량'] += math.ceil(매수금액1 / 평단가금액)*4 ; self.M['회차'] += 0.5 ; self.M['구매코드'] = 'A'
+            self.M['체결수량'] += math.ceil(매수금액1 / 평단가금액)*4 ; self.M['구매코드'] = 'A'
         
         self.M['진행상황'] = '기초매수'
 
@@ -171,15 +172,15 @@ class M_backtest_MDD01(Model) :
         if self.M['연속상승'] >= 1 :
         
             if  self.M['당일종가'] <= 구매금액 :
-                self.M['체결수량'] += math.ceil(매수금액 / 구매금액) * da ; self.M['회차'] += da ; self.M['구매코드'] += 'TN'
+                self.M['체결수량'] += math.ceil(매수금액 / 구매금액) * da ; self.M['구매코드'] += 'TN'
         
         if self.M['연속하락'] >= 1 :
 
             if  self.M['당일종가'] <= 구매금액 :
                 self.M['체결수량'] += math.ceil(매수금액 / 구매금액)
-                self.M['회차'] += 1.0 ; self.M['구매코드'] += 'D'
+                self.M['구매코드'] += 'D'
                 self.M['체결수량'] += math.ceil(self.M['일매수금'] / 구매금액) * self.M['연속하락']
-                self.M['회차'] += self.M['연속하락']
+                
                 self.M['구매코드'] += str(self.M['연속하락'])
 
     def force_sell(self,강제매도가) :
@@ -188,7 +189,7 @@ class M_backtest_MDD01(Model) :
         self.M['매도수익']  =  self.M['매도금액'] - self.M['총매수금'] 
         self.M['매수익률']  =  self.M['매도수익'] / self.M['총매수금'] * 100  
         self.M['가용잔액'] +=  self.M['매도금액']
-        self.M['보유수량']  = 0 ; self.M['회차']  = 0.0 
+        self.M['보유수량']  = 0 ; 
         self.M['총매수금']  = 0.0
         
     def normal_sell(self) :
@@ -209,7 +210,6 @@ class M_backtest_MDD01(Model) :
             self.M['보유수량'] -= 매도수량  
             self.M['가용잔액'] += self.M['매도금액']
             self.M['총매수금']  =  self.M['보유수량'] * self.M['평균단가']
-            self.M['회차'] = 0.0
             self.M['진행상황']  = '전량매도' if self.M['보유수량'] == 0 else '부분매도'
                 
     def strategy_sell(self) : # LOC 매도
@@ -242,7 +242,7 @@ class M_backtest_MDD01(Model) :
         
         if  self.M['당일종가'] <= self.M['평균단가'] : 
             self.M['체결수량'] += math.ceil(self.M['일매수금'] / self.M['평균단가']) 
-            self.M['회차'] += 1.0 ; self.M['구매코드'] += 'S'
+            self.M['구매코드'] += 'S'
 
     def strategy_buy(self) :
 
@@ -251,7 +251,7 @@ class M_backtest_MDD01(Model) :
             매수단가 = self.M['전략가격'] * (1+self.M['매수시점'])
             if  self.M['당일종가'] <= 매수단가 : 
                 self.M['체결수량'] += math.ceil((self.M['가용잔액'] + self.M['추가자본']) / 매수단가) 
-                self.M['회차'] += 1.0 ; self.M['구매코드'] += 'R'     
+                self.M['구매코드'] += 'R'     
                 self.M['전략매금'] = 0   
 
 
@@ -261,7 +261,6 @@ class M_backtest_MDD01(Model) :
         buy_price = self.M['전일종가']
         if  self.M['연속하락'] > 0 and self.M['당일종가'] <= buy_price : 
             self.M['체결수량'] += math.ceil(self.M['일매수금'] * self.M['연속하락'] / buy_price)  
-            self.M['회차'] += self.M['연속하락'] 
             self.M['구매코드'] += str(self.M['연속하락'])
 
 
@@ -300,11 +299,11 @@ class M_backtest_MDD01(Model) :
 
         
         #   매수부분 --------------------------------------------------------------------------------------------------
-
-            if self.M['회차'] < 6 :
+            self.M['회차'] = int(self.M['총매수금']/self.M['가용잔액']*100)
+            if self.M['회차'] < 30 :
                 self.base_buy()
 
-            elif self.M['회차'] <= self.M['분할횟수'] : 
+            elif self.M['회차'] <= 70 : 
                 self.normal_buy()
         
             else :
