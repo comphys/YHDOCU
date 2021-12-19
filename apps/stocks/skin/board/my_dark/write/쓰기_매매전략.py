@@ -43,7 +43,7 @@ class 쓰기_매매전략(SKIN) :
         self.D['ChkField'] = ','.join(self.D['MustCheck'])
 
         dir = self.SYS.V['_pth'] + '/apps/stocks/model/backtest'
-        stg = ut.get_files(dir)
-        self.D['base_strategy'] = [x[9:14] for x in stg]
+        stg = ut.get_file_names(dir)
+        self.D['base_strategy'] = [x[9:] for x in stg]
 
         # -------------------

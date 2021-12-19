@@ -288,9 +288,9 @@ class M_backtest_ITv02(Model) :
             # step4 : 기타항목 계산
             self.calculate()
             # step5 : 결과 기록
-            self.result()
             self.print_backtest()
         # endfor -----------------------------------------------------------------------------------------------------
+        self.result()
 
 
     def result(self) :

@@ -21,6 +21,11 @@ def get_files(path,*sub,ext=None) :
     else :
         return [f for f in os.listdir(_dir) if os.path.isfile(os.path.join(_dir, f))]
 
+def get_file_names(path) :
+    _dir = os.path.join(path)
+    temp = [f for f in os.listdir(_dir) if os.path.isfile(os.path.join(_dir, f))]
+    return [os.path.splitext(f)[0] for f in temp]
+
 def file_ctime(filename,opt=1) : #파일 생성시각
     ctime = os.path.getctime(filename) ; return timestamp_to_date(ctime,opt=1)
 
