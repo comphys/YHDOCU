@@ -69,6 +69,9 @@ class M_backtest_DNA_A01(Model) :
 
     
     def rebalance(self)  :
+        total = self.M['가용잔액'] + self.M['추가자본']
+        self.M['가용잔액'] = int(total * 0.6)
+        self.M['추가자본'] = total - self.M['가용잔액']
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
         self.M['씨드'] = self.M['가용잔액']
 
@@ -122,9 +125,7 @@ class M_backtest_DNA_A01(Model) :
         self.M['매도횟수']  = 0
 
         # 리밸런싱
-        total = self.M['가용잔액'] + self.M['추가자본'] 
-        self.M['자본비율'] = self.M['가용잔액'] / total
-        self.M['추가비율'] = self.M['추가자본'] / total
+
 
         # 매수 첫단계 : 첫날구입 전략
     def new_day(self) :
@@ -174,6 +175,25 @@ class M_backtest_DNA_A01(Model) :
             self.M['진행상황'] = '일반매수'
 
         # 매수 세번째 : 일만 매수 전략
+    def normal_buy(self) :
+
+        매수금액  = self.M['일매수금'] 
+        구매금액  = min(self.M['평균단가'],self.M['전일종가'])
+        # 구매금액  = self.M['평균단가']
+        da = 2
+        if self.M['연속상승'] >= 1 :
+        
+            if  self.M['당일종가'] <= 구매금액 :
+                self.M['체결수량'] += math.ceil(매수금액 / 구매금액) * da ; self.M['회차'] += da ; self.M['구매코드'] += 'TN'
+        
+        if self.M['연속하락'] >= 1 :
+
+            if  self.M['당일종가'] <= 구매금액 :
+                self.M['체결수량'] += math.ceil(매수금액 / 구매금액)
+                self.M['회차'] += 1.0 ; self.M['구매코드'] += 'D'
+                self.M['체결수량'] += math.ceil(self.M['일매수금'] / 구매금액) * self.M['연속하락']
+                self.M['회차'] += self.M['연속하락']
+                self.M['구매코드'] += str(self.M['연속하락'])
 
     def mdd_buy(self,opt) :
         매수금액 = self.M['일매수금']
@@ -207,11 +227,6 @@ class M_backtest_DNA_A01(Model) :
                 
     def strategy_sell(self) : # LOC 매도
 
-        if self.M['전략매금'] > 0 or self.M['매도횟수'] >= self.M['위매횟수'] : return
-        if self.M['수익률'] > -10.0 : 
-            self.M['진행상황'] = '기준이내'
-            return
-        
         매도가격 = self.M['평균단가'] * (1+self.M['매도시점']) 
         매도수량 = int(self.M['보유수량'] * self.M['위매비중'])
         # 전략적 매도는 LOC 매도를 사용한다
@@ -294,17 +309,17 @@ class M_backtest_DNA_A01(Model) :
                 self.print_backtest()
                 continue
             
-            if self.M['가용잔액'] + self.M['추가자본'] < self.M['일매수금'] : self.M['위기전략'] = True # 한번 True 셋팅되면 전량매수 또는 강제매수 까지 바뀌지 않음
 
         #   매도부분 --------------------------------------------------------------------------------------------------
-            # if self.M['수량확보'] and self.M['위기전략'] :    self.strategy_sell()
+            if self.M['수량확보'] and self.M['진행'] >= 140 : self.strategy_sell()
             
 
             # 일반매도
             if    self.M['진행'] > 140 : self.mdd_sell(0)
             elif  self.M['진행'] > 100 : self.mdd_sell(5)
             elif  self.M['진행'] > 70  : self.mdd_sell(10)
-            elif  self.M['진행'] > 50  : self.mdd_sell(15)
+            elif  self.M['진행'] > 30  : self.mdd_sell(12)
+            elif  self.M['진행'] > 10  : self.mdd_sell(20)
 
         
         #   매수부분 --------------------------------------------------------------------------------------------------
