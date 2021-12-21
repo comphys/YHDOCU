@@ -197,12 +197,12 @@ class M_backtest_DNA_A01(Model) :
 
     def mdd_buy(self,opt) :
         매수금액 = self.M['일매수금']
+
         구매금액 = round(self.M['평균단가'] * (1-opt/100),3)
 
         if  self.M['당일종가'] <= 구매금액 :
-            self.M['체결수량'] = math.ceil(매수금액 / 구매금액)
-            self.M['구매코드'] = 'M' + str(opt)
-
+            self.M['체결수량'] = math.ceil(매수금액 / 구매금액) 
+            self.M['구매코드'] = 'M' + str(opt) 
 
     def normal_sell(self) :
 
@@ -316,7 +316,7 @@ class M_backtest_DNA_A01(Model) :
 
             # 일반매도
             if    self.M['진행'] > 140 : self.mdd_sell(0)
-            elif  self.M['진행'] > 100 : self.mdd_sell(5)
+            elif  self.M['진행'] > 100 : self.mdd_sell(3)
             elif  self.M['진행'] > 70  : self.mdd_sell(10)
             elif  self.M['진행'] > 30  : self.mdd_sell(12)
             elif  self.M['진행'] > 10  : self.mdd_sell(20)

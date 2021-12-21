@@ -2,7 +2,7 @@ from system.core.load import Model
 from datetime import datetime,date
 import math,time
 
-class M_backtest_DNA02(Model) :
+class M_backtest_DNA03(Model) :
 
 # 무한매수법의 개인 변형 적용으로 평균가 다운 전략
 
@@ -184,7 +184,7 @@ class M_backtest_DNA02(Model) :
             if  self.M['당일종가'] <= 구매금액 :
                 self.M['체결수량'] += math.ceil(매수금액 / 구매금액) * da ; self.M['회차'] += da ; self.M['구매코드'] += 'TN'
         
-        if self.M['연속하락'] >= 1 :
+        if self.M['연속하락'] > 1 :
 
             if  self.M['당일종가'] <= 구매금액 :
                 self.M['체결수량'] += math.ceil(매수금액 / 구매금액)

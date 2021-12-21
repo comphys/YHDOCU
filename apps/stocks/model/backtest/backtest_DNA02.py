@@ -17,7 +17,8 @@ class M_backtest_DNA02(Model) :
 
         tx['코드'] = self.D['code']
         tx['시즌'] = self.M['날수']
-        tx['회차'] = self.M['회차']
+        # tx['회차'] = self.M['회차']
+        tx['회차'] = self.M['진행']
         tx['기록일자'] = self.M['day']
         tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
         tx['체결단가'] = tx['당일종가']
@@ -62,6 +63,9 @@ class M_backtest_DNA02(Model) :
         
         if  self.M['보유수량'] == 0 : 
             self.M['첫날기록'] = True
+        
+        self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)
+
 
     
     def rebalance(self)  :
@@ -69,6 +73,7 @@ class M_backtest_DNA02(Model) :
         self.M['가용잔액'] = round(total * self.M['자본비율'], 2)
         self.M['추가자본'] = round(total - self.M['가용잔액'], 2)
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
+        self.M['씨드'] = self.M['가용잔액']
 
     def init_value(self) :
         self.M['기록시즌']  = 0
@@ -89,6 +94,8 @@ class M_backtest_DNA02(Model) :
         self.M['리밸런싱']  = True if self.S['add12'] == 'on' else False  # 리밸런싱 수행 여부
 
         self.M['날수'] = 0
+        self.M['진행'] = 0
+        self.M['씨드'] = self.D['init_capital']
         self.M['최대일수']  = 0 # 최고 오래 지속된 시즌의 일수
         self.M['첫날기록']  = False
         self.M['전일종가']  = 0.0
@@ -101,11 +108,8 @@ class M_backtest_DNA02(Model) :
 
         # 위기극복
         self.M['추가자본']  = int(self.D['addition'])
-        self.M['매수허용']  = True if self.S['add14'] == 'on' else False  # 횟수 초과 후 매수허용 선택
         self.M['과거추종']  = True if self.S['add15'] == 'on' else False  # 횟수 초과 후 과거추종 선택
-        self.M['강매허용']  = True if self.S['add16'] == 'on' else False  # 날수 초과 후 강매선택
-        self.M['강매시작']  = int(self.S['add17'])
-        self.M['강매가치']  = 1 + float(self.S['add18']) / 100
+
 
         # 수량확보
         self.M['수량확보']  = True if self.S['add21'] == 'on' else False  # 추가자본 투입 후 수량확보 선택
@@ -171,7 +175,7 @@ class M_backtest_DNA02(Model) :
         if self.M['연속상승'] >= 1 :
         
             if  self.M['당일종가'] <= 구매금액 :
-                self.M['체결수량'] += math.ceil(매수금액 / 구매금액) * da ; self.M['회차'] += da ; self.M['구매코드'] += 'TN'
+                self.M['체결수량'] += math.ceil(매수금액 / 구매금액) * da ; self.M['회차'] += da ; self.M['구매코드'] += 'T'
         
         if self.M['연속하락'] >= 1 :
 
@@ -182,14 +186,6 @@ class M_backtest_DNA02(Model) :
                 self.M['회차'] += self.M['연속하락']
                 self.M['구매코드'] += str(self.M['연속하락'])
 
-    def force_sell(self,강제매도가) :
-        self.M['진행상황']  = '강제매도'
-        self.M['매도금액']  =  self.M['보유수량'] * 강제매도가
-        self.M['매도수익']  =  self.M['매도금액'] - self.M['총매수금'] 
-        self.M['매수익률']  =  self.M['매도수익'] / self.M['총매수금'] * 100  
-        self.M['가용잔액'] +=  self.M['매도금액']
-        self.M['보유수량']  = 0 ; self.M['회차']  = 0.0 
-        self.M['총매수금']  = 0.0
         
     def normal_sell(self) :
 
@@ -238,11 +234,6 @@ class M_backtest_DNA02(Model) :
         else :
             self.M['진행상황'] = f"{매도가격:.2f}"
 
-    def secondary_buy(self) :
-        
-        if  self.M['당일종가'] <= self.M['평균단가'] : 
-            self.M['체결수량'] += math.ceil(self.M['일매수금'] / self.M['평균단가']) 
-            self.M['회차'] += 1.0 ; self.M['구매코드'] += 'S'
 
     def strategy_buy(self) :
 
@@ -290,10 +281,6 @@ class M_backtest_DNA02(Model) :
         #   매도부분 --------------------------------------------------------------------------------------------------
             if self.M['수량확보'] and self.M['위기전략'] :    self.strategy_sell()
             
-            # 강제매도
-            if self.M['강매허용'] :
-                강제매도가 = self.M['평균단가'] * self.M['강매가치']
-                if self.M['날수'] > self.M['강매시작']  and self.M['당일고가'] >= 강제매도가 :  self.force_sell(강제매도가)
  
             # 일반매도
             if self.M['날수'] > self.M['매도대기'] : self.normal_sell()
@@ -310,12 +297,9 @@ class M_backtest_DNA02(Model) :
             else :
                 if not self.M['위기전략'] :
                     
-                    if self.M['매수허용'] : self.secondary_buy() 
                     if self.M['과거추종'] : self.acc_old() 
             
             if self.M['전략매금'] and self.M['수량확보'] : self.strategy_buy()
-           
-
 
         #   결과정리 --------------------------------------------------------------------------------------------------
             # step4 : 기타항목 계산
