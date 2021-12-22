@@ -40,7 +40,7 @@ class M_backtest_DNA02(Model) :
 
     def calculate(self)  :
         # 모든 매수는 당일종가로 거래된 것으로 가정 LOC 거래 원칙
-        self.M['연속하락']  =  self.M['연속하락'] + 1 if  self.M['당일종가'] <= self.M['전일종가'] else 0 
+        self.M['연속하락']  =  self.M['연속하락'] + 1 if  self.M['당일종가'] <  self.M['전일종가'] else 0 
         self.M['연속상승']  =  self.M['연속상승'] + 1 if  self.M['당일종가'] >= self.M['전일종가'] else 0 
         self.M['매수금액']  =  self.M['체결수량'] * self.M['당일종가']
         self.M['가용잔액'] -=  self.M['매수금액']
@@ -211,9 +211,7 @@ class M_backtest_DNA02(Model) :
     def strategy_sell(self) : # LOC 매도
 
         if self.M['전략매금'] > 0 or self.M['매도횟수'] >= self.M['위매횟수'] : return
-        if self.M['수익률'] > -10.0 : 
-            self.M['진행상황'] = '기준이내'
-            return
+        if self.M['수익률'] > -10.0: self.M['진행상황'] = '기준이내' ;return
         
         매도가격 = self.M['평균단가'] * (1+self.M['매도시점']) 
         매도수량 = int(self.M['보유수량'] * self.M['위매비중'])
