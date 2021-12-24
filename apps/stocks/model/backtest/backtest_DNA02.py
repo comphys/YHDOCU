@@ -148,6 +148,7 @@ class M_backtest_DNA02(Model) :
         self.M['첫날기록']  = False
         self.M['구매코드']  = 'S' 
         if self.M['연속하락'] : self.M['구매코드']  += str(self.M['연속하락'])
+        self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)
 
         # 매수 두번째 : 6회차 이하 구입전략
     def base_buy(self)  :
@@ -186,7 +187,15 @@ class M_backtest_DNA02(Model) :
                 self.M['회차'] += self.M['연속하락']
                 self.M['구매코드'] += str(self.M['연속하락'])
 
-        
+    def mdd_buy(self,opt) :
+        매수금액 = self.M['일매수금']
+
+        구매금액 = round(self.M['평균단가'] * (1-opt/100),3)
+
+        if  self.M['당일종가'] <= 구매금액 :
+            self.M['체결수량'] = math.ceil(매수금액 / 구매금액) 
+            self.M['구매코드'] = 'M' + str(opt)
+                   
     def normal_sell(self) :
 
         매도수량 = 0
