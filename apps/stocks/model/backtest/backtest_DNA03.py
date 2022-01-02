@@ -242,7 +242,7 @@ class M_backtest_DNA03(Model) :
                 self.M['회차'] += 1.0 ; self.M['구매코드'] += 'R'     
                 self.M['전략매금'] = 0   
                 self.M['진행상황'] = '전략회수' 
-                self.M['위기전략'] = False
+                # self.M['위기전략'] = False
 
 
     def mdd_sell(self,opt,opt2=100) :
