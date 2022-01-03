@@ -29,8 +29,15 @@ class M_backtest_DNA03(Model) :
         clr = "#F6CECE" if self.M['수익률'] > 0 else "#CED8F6"
         tx['수익률'] = f"<span style='color:{clr}'>{round(self.M['수익률'],4):,.2f}"
         tx['매도금액'] = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['구매코드']
-        tx['가용잔액'] = f"{round(self.M['가용잔액'],4):,.2f}"
-        tx['추가잔액'] = f"{round(self.M['추가자본'],4):,.2f}"
+        if self.M['가용잔액'] < 0 :
+            tx['가용잔액'] = 0
+            tx['추가잔액'] = self.M['추가자본'] + self.M['가용잔액']
+        else :
+            tx['가용잔액'] = self.M['가용잔액']
+            tx['추가잔액'] = self.M['추가자본'] 
+
+        tx['가용잔액'] = f"{round(tx['가용잔액'],4):,.2f}"
+        tx['추가잔액'] = f"{round(tx['추가잔액'],4):,.2f}"
         tx['진행상황'] = self.M['진행상황'] if self.M['진행상황'] != '전량매도' else f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>전량매도</span>"
         tx['일매수금'] = self.M['일매수금']
         self.D['TR'].append(tx)
@@ -204,10 +211,6 @@ class M_backtest_DNA03(Model) :
                 
     def strategy_sell(self) : # LOC 매도
 
-        if  self.M['전략매금'] == 0 and self.M['수익률'] > -10.0 : 
-            self.M['진행상황'] = '기준이내'
-            return
-
         if self.M['전략매금'] > 0 :
             매도가격 = self.M['전략가격'] * (1-self.M['매수시점'])
             매도수량 = int(self.M['보유수량'] * self.M['위매비중'])           
@@ -242,7 +245,7 @@ class M_backtest_DNA03(Model) :
                 self.M['회차'] += 1.0 ; self.M['구매코드'] += 'R'     
                 self.M['전략매금'] = 0   
                 self.M['진행상황'] = '전략회수' 
-                # self.M['위기전략'] = False
+                self.M['위기전략'] = False
 
 
     def mdd_sell(self,opt,opt2=100) :
