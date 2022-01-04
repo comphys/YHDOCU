@@ -67,7 +67,12 @@
 <div id="YHBmainEditor">
 {% if D['Mode'] == 'modify' -%} 
 {{D['OBODY']['content']|safe}}
+{% else %} 
+<div>
+<p>#</p>
+</div>
 {%- endif %}
+
 </div><!-- YHBmainEditor  -->
 <!-- 하단 요소====================================================================================== -->
 		<div class="clearfix" style="padding:0px;border-top:1px solid black;background-color:#393E4A">
