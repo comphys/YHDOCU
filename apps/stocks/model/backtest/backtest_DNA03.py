@@ -88,6 +88,7 @@ class M_backtest_DNA03(Model) :
         self.M['매도대기']  = int(self.S['add11']) # 매도대기 이전에 매도되는 것을 방지(보다 큰 수익 실현을 위해)
         self.M['리밸런싱']  = True if self.S['add12'] == 'on' else False  # 리밸런싱 수행 여부
         self.M['최대날자']  = ' '
+        self.M['매도체결']  = False
 
         self.M['날수'] = 0
         self.M['진행'] = 0
@@ -190,7 +191,8 @@ class M_backtest_DNA03(Model) :
 
 
     def normal_sell(self) :
-
+        
+        if self.M['매도체결'] : return 
         매도수량 = 0
          
         매도가격 = self.M['평균단가'] * self.M['첫매가치']
@@ -207,6 +209,7 @@ class M_backtest_DNA03(Model) :
             self.M['총매수금'] = 0 
             self.M['회차'] = 0.0
             self.M['진행상황']  = '전량매도' 
+            self.M['매도체결']  = True
             
                 
     def strategy_sell(self) : # LOC 매도
@@ -232,6 +235,7 @@ class M_backtest_DNA03(Model) :
             self.M['진행상황']  = '전략매도' 
             self.M['전략매금'] += self.M['매도금액']
             self.M['전략가격']  = self.M['당일종가']
+            self.M['매도체결']  = True
         else :
             매수단가 = self.M['전략가격'] * (1+self.M['매수시점'])
             self.M['진행상황'] = f"{매도가격:.2f}-{매수단가:.2f}" if self.M['전략가격'] else f"매도:{매도가격:.2f}"
@@ -295,22 +299,23 @@ class M_backtest_DNA03(Model) :
                 self.print_backtest()
                 continue
             
-            if self.M['진행'] >= 160 : self.M['위기전략'] = True
         #   매도부분 --------------------------------------------------------------------------------------------------
-            if self.M['날수'] > self.M['매도대기'] and self.M['수익률'] > -10 : self.normal_sell()
-            elif self.M['수량확보'] and self.M['위기전략'] : self.strategy_sell()
-
+            
+            if self.M['수량확보'] and self.M['수익률'] <= -10 : self.strategy_sell()
+            if self.M['날수'] > self.M['매도대기']  : self.normal_sell()
+            
         #   매수부분 --------------------------------------------------------------------------------------------------
-            if self.M['위기전략'] :
-                if self.M['전략매금'] and self.M['수량확보'] : self.strategy_buy()
-            else :
-                if   self.M['회차'] < 6 : self.base_buy() 
-                elif self.M['진행'] < 100 : self.normal_buy()
-                elif self.M['진행'] < 160 : 
-                    self.acc_old() 
-                    self.mdd_buy(25)
+            if not self.M['매도체결'] :
                 
-
+                if self.M['전략매금'] and self.M['수량확보'] : self.strategy_buy()
+                if self.M['추가자본'] + self.M['가용잔액'] > 0 :
+                    if   self.M['회차'] < 6 : self.base_buy() 
+                    elif self.M['진행'] < 100 : self.normal_buy()
+                    elif self.M['진행'] < 160 : 
+                        self.acc_old() 
+                        self.mdd_buy(25)
+                
+            self.M['매도체결']  = False
         #   결과정리 --------------------------------------------------------------------------------------------------
             self.calculate()
             self.print_backtest()
