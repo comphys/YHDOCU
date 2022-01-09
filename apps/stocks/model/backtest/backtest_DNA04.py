@@ -2,7 +2,7 @@ from system.core.load import Model
 from datetime import datetime,date
 import math,time
 
-class M_backtest_DNA03(Model) :
+class M_backtest_DNA04(Model) :
 
 # 무한매수법의 개인 변형 적용으로 평균가 다운 전략
 
@@ -10,7 +10,7 @@ class M_backtest_DNA03(Model) :
         tx = {}
         # 날수 계산
         self.M['날수'] += 1
-        if self.M['진행상황'] in ('전량매도') : self.M['날수'] = 0 
+        if self.M['진행상황'] in ('전량매도','전략매도') : self.M['날수'] = 0 
         if self.M['진행상황'] == '첫날거래' : self.M['날수'] = 1
 
         tx['코드'] = self.D['code']
@@ -61,8 +61,11 @@ class M_backtest_DNA03(Model) :
             self.M['전략매금'] = 0
             self.M['위기전략'] = False
             self.M['첫날기록'] = True
-            if self.M['날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['날수'] ; self.M['최대날자'] = self.M['day']
+
             if self.M['리밸런싱'] : self.rebalance()  
+
+        if self.M['진행상황'] in ('전량매도','전략매도') :
+            if self.M['날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['날수'] ; self.M['최대날자'] = self.M['day']
         
         self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)
 
@@ -102,7 +105,6 @@ class M_backtest_DNA03(Model) :
         self.M['연속하락']  = 0
         self.M['연속상승']  = 0
 
-        # 위기극복
         self.M['추가자본']  = int(self.D['addition'])
         self.M['전략가격']  = 0
 
@@ -113,6 +115,10 @@ class M_backtest_DNA03(Model) :
         self.M['전략매금']  = 0
         self.M['위기전략']  = False
         self.M['위매비중']  = float(self.S['add25'])/100
+        self.M['위매횟수']  = int(self.S['add24'])
+        self.M['매도횟수']  = 0
+
+
 
         # 리밸런싱
         total = self.M['가용잔액'] + self.M['추가자본'] 
@@ -153,25 +159,35 @@ class M_backtest_DNA03(Model) :
 
         if  self.M['당일종가'] <= 큰단가금액 : 
             self.M['체결수량'] += math.ceil(매수금액2 / 큰단가금액)*2 ; self.M['구매코드'] = 'B'        
-        if  self.M['당일종가'] <= 평단가금액 : 
+        if  self.M['당일종가'] <= self.M['전일종가'] : 
             self.M['체결수량'] += math.ceil(매수금액1 / 평단가금액)*4 ; self.M['구매코드'] = 'A'
         self.M['진행상황'] = '기초매수'
         
 
     def normal_buy(self) :
 
-        구매금액  = min(self.M['평균단가'],self.M['전일종가'])
+        구매금액  = self.M['전일종가']
+        한도금액  = self.M['추가자본'] + self.M['가용잔액']
 
         if self.M['연속상승'] >= 1 :
             if  self.M['당일종가'] <= 구매금액 :
-                self.M['체결수량']  = math.ceil(self.M['일매수금'] / 구매금액) * 2 ; self.M['구매코드'] += 'T'
+                self.M['체결수량']  = math.ceil(self.M['일매수금'] / 구매금액) * 2 ; 
+                if 한도금액 < self.M['체결수량'] * 구매금액 : 
+                    self.M['체결수량'] = 0
+                    self.M['위기전략'] = True 
+                    return
+                self.M['구매코드'] += 'T'
         
         if self.M['연속하락'] >= 1 :
 
             if  self.M['당일종가'] <= 구매금액 :
                 self.M['체결수량']  = math.ceil(self.M['일매수금'] / 구매금액)
-                self.M['구매코드'] += 'D'
                 self.M['체결수량'] += math.ceil(self.M['일매수금'] / 구매금액) * self.M['연속하락']
+                if 한도금액 < self.M['체결수량'] * 구매금액 : 
+                    self.M['체결수량'] = 0
+                    self.M['위기전략'] = True 
+                    return
+                self.M['구매코드'] += 'D'
                 self.M['구매코드'] += str(self.M['연속하락'])
         
         self.M['진행상황'] = '일반매수'
@@ -181,6 +197,7 @@ class M_backtest_DNA03(Model) :
         if self.M['매도체결'] : return 
          
         매도가격 = self.M['평균단가'] * self.M['첫매가치']
+        if self.M['전략매금'] : 매도가격 = self.M['평균단가'] * 1.05
         매도수량 = self.M['보유수량']
         
         self.M['진행상황'] = '매도대기' 
@@ -198,10 +215,13 @@ class M_backtest_DNA03(Model) :
                 
     def strategy_sell(self) : # LOC 매도
 
-        if self.M['매도체결'] : return 
+        if self.M['매도체결'] or self.M['수익률'] > 0 : return 
 
-        매도수량 = int(self.M['보유수량'] * self.M['위매비중']) 
-        매도가격 = self.M['전략가격'] * (1-self.M['매수시점']) if self.M['전략매금'] > 0 else self.M['평균단가'] * (1+self.M['매도시점']) 
+        # 매도수량 = int(self.M['보유수량'] * self.M['위매비중']) 
+        # 매도가격 = self.M['전략가격'] * (1-self.M['매수시점']) if self.M['전략매금'] > 0 else self.M['평균단가'] * (1+self.M['매도시점']) 
+
+        매도가격 = self.M['평균단가'] * (1+self.M['매도시점']) 
+        매도수량 = int(self.M['보유수량'] * self.M['위매비중'])
 
         if self.M['당일종가'] >= 매도가격  : 
 
@@ -216,34 +236,11 @@ class M_backtest_DNA03(Model) :
             self.M['전략매금'] += self.M['매도금액']
             self.M['전략가격']  = self.M['당일종가']
             self.M['매도체결']  = True
+            self.M['매도횟수'] += 1
+            self.M['위기전략'] = False
         else :
             매수단가 = self.M['전략가격'] * (1+self.M['매수시점'])
             self.M['진행상황'] = f"{매도가격:.2f}-{매수단가:.2f}" if self.M['전략가격'] else f"매도:{매도가격:.2f}"
-
-    def strategy_buy(self) :
-
-        if self.M['매도체결'] : return 
-
-        if self.M['전략매금'] :
-            매수단가 = self.M['전략가격'] * (1+self.M['매수시점'])
-            매수금액 = self.M['추가자본'] + self.M['가용잔액']
-            if  self.M['당일종가'] <= 매수단가 : 
-                self.M['체결수량'] += math.ceil(매수금액/ 매수단가) 
-                self.M['회차'] += 1.0 ; self.M['구매코드'] += 'R'     
-                self.M['전략매금'] = 0   
-                self.M['진행상황'] = '전략회수' 
-                self.M['위기전략'] = False
-
-
-    def acc_old(self) :
-
-        buy_price = self.M['전일종가']
-        if  self.M['연속하락'] > 0 and self.M['당일종가'] <= buy_price : 
-            self.M['체결수량'] += math.ceil(self.M['일매수금'] * self.M['연속하락'] / buy_price)  
-            self.M['회차'] += self.M['연속하락'] 
-            self.M['구매코드'] += str(self.M['연속하락'])
-        self.M['진행상황'] = '종가추종'    
-
 
     def test_it(self) :
 
@@ -264,18 +261,14 @@ class M_backtest_DNA03(Model) :
                 self.new_day()
                 self.print_backtest()
                 continue
-
             
         #   ----------------------------------------------------------------------------------------------------------
             if self.M['날수'] > self.M['매도대기'] : self.normal_sell()
-            if self.M['수익률'] < -10 : self.strategy_sell()
+            if self.M['위기전략'] : self.strategy_sell()
         #   ----------------------------------------------------------------------------------------------------------
-            if not self.M['매도체결'] :  
-                if self.M['진행'] < 45 : self.base_buy()
-                elif self.M['진행'] < 100 : self.normal_buy()
-                elif self.M['진행'] < 160 : self.acc_old() 
-
-                if self.M['전략매금'] : self.strategy_buy()
+            if  not self.M['매도체결'] and self.M['추가자본'] + self.M['가용잔액'] > 0 :  
+                if self.M['진행'] < 24 : self.base_buy()
+                else : self.normal_buy()
 
             self.M['매도체결']  = False
 
