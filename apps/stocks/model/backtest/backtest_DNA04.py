@@ -166,29 +166,31 @@ class M_backtest_DNA04(Model) :
 
     def normal_buy(self) :
 
+        if self.M['위기전략'] : return 
+
         구매금액  = self.M['전일종가']
         한도금액  = self.M['추가자본'] + self.M['가용잔액']
+        기본수량  = math.ceil(self.M['일매수금'] / 구매금액)
 
         if self.M['연속상승'] >= 1 :
-            if  self.M['당일종가'] <= 구매금액 :
-                self.M['체결수량']  = math.ceil(self.M['일매수금'] / 구매금액) * 2 ; 
-                if 한도금액 < self.M['체결수량'] * 구매금액 : 
-                    self.M['체결수량'] = 0
-                    self.M['위기전략'] = True 
-                    return
-                self.M['구매코드'] += 'T'
-        
-        if self.M['연속하락'] >= 1 :
+            if 한도금액 < self.M['일매수금'] * 2 :
+                self.M['체결수량']  = math.ceil(한도금액 / 구매금액)
+                self.M['위기전략'] = True
+            else :
+                self.M['체결수량']  = 기본수량 * 2
 
-            if  self.M['당일종가'] <= 구매금액 :
-                self.M['체결수량']  = math.ceil(self.M['일매수금'] / 구매금액)
-                self.M['체결수량'] += math.ceil(self.M['일매수금'] / 구매금액) * self.M['연속하락']
-                if 한도금액 < self.M['체결수량'] * 구매금액 : 
-                    self.M['체결수량'] = 0
-                    self.M['위기전략'] = True 
-                    return
-                self.M['구매코드'] += 'D'
-                self.M['구매코드'] += str(self.M['연속하락'])
+            if  self.M['당일종가'] <= 구매금액 : self.M['구매코드'] = 'T'
+            else : self.M['체결수량'] = 0
+
+        if self.M['연속하락'] >= 1 :
+            if 한도금액 < self.M['일매수금'] * (1+self.M['연속하락']) :
+                self.M['체결수량']  = math.ceil(한도금액 / 구매금액)
+                self.M['위기전략'] = True 
+            else :
+                self.M['체결수량']  = 기본수량 * (1+self.M['연속하락'])
+            if  self.M['당일종가'] <= 구매금액 : self.M['구매코드'] = 'D' + str(self.M['연속하락'])
+            else : self.M['체결수량'] = 0
+                
         
         self.M['진행상황'] = '일반매수'
 
