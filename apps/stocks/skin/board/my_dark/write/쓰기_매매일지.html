@@ -319,6 +319,7 @@ function auto_datainput() {
 	switch (my_base_strategy) {
 		case 'MyToT' : dest = "boards-stock_daily/autoinput"; break;
 		case 'DNA02' : dest = "boards-stock_dna_v2/autoinput"; break;
+		case 'DNA22' : dest = "boards-stock_dna_2002/autoinput"; break;
 		default : dest = "boards-stock_dna_v2/autoinput"
 	}
 
@@ -410,6 +411,7 @@ function season_close() {
 	});
 }
 
+// 첫날매수 제안
 function auto_suggest() {
 	if ($id("BUY_SUGGEST")){h_dialog.close("BUY_SUGGEST"); return false;}
 	date = $("input[name='add0']").val()  

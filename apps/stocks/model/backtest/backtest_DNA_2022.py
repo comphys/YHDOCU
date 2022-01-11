@@ -2,7 +2,7 @@ from system.core.load import Model
 from datetime import datetime,date
 import math,time
 
-class M_backtest_DNA04(Model) :
+class M_backtest_DNA_2022(Model) :
 
 # 무한매수법의 개인 변형 적용으로 평균가 다운 전략
 
