@@ -188,6 +188,7 @@ class M_backtest_DNA04(Model) :
                 self.M['위기전략'] = True 
             else :
                 self.M['체결수량']  = 기본수량 * (1+self.M['연속하락'])
+                
             if  self.M['당일종가'] <= 구매금액 : self.M['구매코드'] = 'D' + str(self.M['연속하락'])
             else : self.M['체결수량'] = 0
                 
