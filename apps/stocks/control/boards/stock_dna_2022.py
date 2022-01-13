@@ -98,7 +98,7 @@ class Stock_dna_2022(Control) :
             self.M['처음추가'] = float(self.B['sub8']) 
             self.M['연속하락'] = int(self.B['sub1'])
 
-        self.M['진행'] = round(self.M['총매수금'] / self.M['처음자본'] * 100,1)
+            self.M['진행'] = round(self.M['총매수금'] / self.M['처음자본'] * 100,1)
 
     def rebalance(self)  :
         total = self.M['처음자본'] + self.M['처음추가']
@@ -199,16 +199,10 @@ class Stock_dna_2022(Control) :
         self.M['진행'] = round(self.M['총매수금'] / self.M['처음자본'] * 100,1)
 
     def strategy_sell(self) :
-        if  self.M['전략매금'] > 0 : 
-            self.M['전매수량'] = 0 ; 
-            self.M['전매단가'] = 0.0
-            return
-        if  self.M['수익률'] > -10.0 :  
-            self.M['진행상황'] = '기준이내' ; 
-            self.M['전매수량'] = 0 ; self.M['전매단가'] = 0.0 
-        else :
-            self.M['전매수량'] = int(self.M['보유수량']*self.M['전매비중']) 
-            self.M['전매단가'] = self.M['평균단가'] * (1+self.M['매도시점'])
+        if self.M['매도체결'] or self.M['수익률'] > 0 : return
+
+        self.M['전매수량'] = int(self.M['보유수량']*self.M['전매비중']) 
+        self.M['전매단가'] = self.M['평균단가'] * (1+self.M['매도시점'])
 
     def force_sell(self) :
         self.M['강제단가'] = self.M['평균단가'] * self.M['강매가치']
@@ -251,24 +245,28 @@ class Stock_dna_2022(Control) :
     def normal_buy(self)  :
 
         매수단가 = self.M['당일종가']
+        
         한도금액 = 한도금액  = self.M['추가자본'] + self.M['가용잔액']
         기본수량 = math.ceil(self.M['일매수금'] / 매수단가)
-
+        
         if self.M['연속상승'] >=1 :
             if 한도금액 < self.M['일매수금'] * 2 :
-                self.M['큰단수량']  = math.ceil(한도금액 / 매수단가)
-                self.M['큰단단가']  = 매수단가
+                self.M['큰단수량'] = math.ceil(한도금액 / 매수단가)
+                self.M['큰단단가'] = 매수단가
                 self.M['위기전략'] = True
             else :
-                self.M['체결수량']  = 기본수량 * 2
+                self.M['큰단수량'] = 기본수량 * 2
+                self.M['큰단단가'] = 매수단가
 
         if self.M['연속하락'] >= 1 :
+            
             if 한도금액 < self.M['일매수금'] * (1+self.M['연속하락']) :
                 self.M['평단수량']  = math.ceil(한도금액 / 매수단가)
                 self.M['평단단가']  = 매수단가
                 self.M['위기전략'] = True 
             else :
-                self.M['체결수량']  = 기본수량 * (1+self.M['연속하락'])
+                self.M['평단수량']  = 기본수량 * (1+self.M['연속하락'])
+                self.M['평단단가'] = 매수단가
                 
     def check_sell(self) :
 
@@ -344,7 +342,7 @@ class Stock_dna_2022(Control) :
             if many := int(self.B['buy11'])  : 
                 if  self.M['당일종가'] <= float(self.B['buy12']):  
                     if self.M['진행'] < 24 : # 기초매수
-                        self.M['체결수량'] += many ; self.M['매매현황'] = 'A'   
+                        self.M['체결수량'] += many ; self.M['매매현황'] = 'A' 
                         self.M['진행상황']  = '기초매수'                      
                     else : # 연속하락
                         self.M['체결수량'] += many ; self.M['매매현황'] += 'D' + str(self.M['연속하락'])
@@ -406,12 +404,18 @@ class Stock_dna_2022(Control) :
         if self.M['임의매도'] : return self.return_value()
         
         # 매도전략
-        if self.M['수량확보'] and self.M['위기전략'] : self.strategy_sell()
+        if self.M['위기전략'] : self.strategy_sell()
         if self.M['날수'] > self.M['매도대기'] : self.normal_sell()
 
-        if self.M['가용잔액'] + self.M['추가자본'] > 0 :
-            if self.M['진행'] < 24 : self.base_buy()
-            else : self.normal_buy()
+ 
+        # 매수전략
+        if not  self.M['위기전략'] :
+            if  self.M['진행'] < 24 : 
+                self.base_buy()
+            else : 
+                self.normal_buy()
+
+   
         return self.return_value()
 
     def return_value(self) :
