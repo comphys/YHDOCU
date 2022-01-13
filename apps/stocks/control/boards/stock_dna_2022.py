@@ -91,13 +91,14 @@ class Stock_dna_2022(Control) :
             self.M['가용잔액'] = float(self.B['add16'])
             self.M['추가자본'] = float(self.B['add17'])
             self.M['총매수금'] = float(self.B['add12'])
-            self.M['위기전략'] = self.B['sub2'] ; 
+            self.M['위기전략'] = True if self.B['sub2'] == 'YES' else False  
             self.M['전략매금'] = float(self.B['sub3']) ; self.M['전략가격'] = float(self.B['sub4'])
 
             self.M['처음자본'] = float(self.B['sub7']) 
             self.M['처음추가'] = float(self.B['sub8']) 
             self.M['연속하락'] = int(self.B['sub1'])
 
+        self.M['진행'] = round(self.M['총매수금'] / self.M['처음자본'] * 100,1)
 
     def rebalance(self)  :
         total = self.M['처음자본'] + self.M['처음추가']
@@ -119,7 +120,6 @@ class Stock_dna_2022(Control) :
         self.M['수익률']    = (self.M['수익현황'] / self.M['총매수금']) * 100 if self.M['총매수금'] else 0
         self.M['진행'] = round(self.M['총매수금'] / self.M['처음자본'] * 100,1)
 
-        if self.M['가용잔액'] + self.M['추가자본'] : self.M['위기전략'] = 'YES' 
 
         if  self.M['진행상황'] in ('강제매도','전량매도','임의매도','부분매도') :
             self.M['수익현황'] = self.M['매도수익']
@@ -128,7 +128,7 @@ class Stock_dna_2022(Control) :
 
         if self.M['진행상황'] in ('강제매도','전량매도','임의매도') : 
             self.M['전략매금'] = 0
-            self.M['위기전략'] = 'NO'
+            self.M['위기전략'] = False
         
         if  self.M['보유수량'] == 0 : 
             self.M['평균단가'] = float(self.B['add9'])
@@ -193,7 +193,7 @@ class Stock_dna_2022(Control) :
         self.M['매매현황']  = 'S'
         if cnt : self.M['매매현황']  += str(cnt)
         self.M['진행상황']  = '첫날거래'
-        self.M['위기전략']  = 'NO' ; self.M['전략매금'] = 0 ; self.M['전략가격'] = 0
+        self.M['위기전략']  = False ; self.M['전략매금'] = 0 ; self.M['전략가격'] = 0
         self.M['첫날기록']  = False
         self.M['연속하락']  = self.old_price_trace('DN')
         self.M['진행'] = round(self.M['총매수금'] / self.M['처음자본'] * 100,1)
@@ -242,11 +242,11 @@ class Stock_dna_2022(Control) :
 
         매수금액1  = self.M['일매수금'] * self.M['매수비중']
         매수금액2  = self.M['일매수금'] - 매수금액1
-        self.M['평단단가'] = self.M['평균단가'] * self.M['평단가치'] 
+        self.M['평단단가'] = self.M['당일종가'] 
         self.M['큰단단가'] = self.M['평균단가'] * self.M['큰단가치']
   
-        self.M['평단수량'] += math.ceil(매수금액1 / self.M['평단단가']) *4  
-        self.M['큰단수량'] += math.ceil(매수금액2 / self.M['큰단단가']) *2  
+        self.M['평단수량'] = math.ceil(매수금액1 / self.M['평단단가']) *4  
+        self.M['큰단수량'] = math.ceil(매수금액2 / self.M['큰단단가']) *2  
 
     def normal_buy(self)  :
 
@@ -369,12 +369,10 @@ class Stock_dna_2022(Control) :
 
 
     def autoinput(self) :
-
         self.update={}
         self.M['기록일자'] = self.D['post']['add0']
         self.M['종목코드'] = self.D['post']['add1']
         self.M['시즌체크'] = self.D['post'].get('add2',0)
-
         self.DB.tbl,self.DB.wre = ('h_daily_trading_board',f"add0  < '{self.M['기록일자']}' and add1='{self.M['종목코드']}' and add19='시즌진행'")
         if self.M['시즌체크'] : self.DB.wre += f" and add2='{self.M['시즌체크']}'"
         self.preChk = self.DB.get_one("max(no)")
@@ -386,12 +384,9 @@ class Stock_dna_2022(Control) :
             self.update['msg'] = "같은 날자에 입력된 데이타가 존재합니다" 
             self.update['replyCode'] = 'NOTICE'
             return self.json(self.update)
-
         self.init_value()
 
-
         if not self.M['당일종가'] : self.update['msg'] = "해당일 기록된 주가를 찾을 수 없습니다" ;self.update['replyCode'] = 'NOTICE'; return self.json(self.update)
-
         if not self.preChk :
             if  self.M['가용잔액'] == 0.0 or self.M['추가자본'] == 0.0 :
                 self.update['msg'] = "가용잔액과 추자자본에 대한 정보를 입력하여 주시기바랍니다"
@@ -408,17 +403,15 @@ class Stock_dna_2022(Control) :
             self.calculate()
             if self.M['첫날기록'] : self.the_first_day()
             
-
         if self.M['임의매도'] : return self.return_value()
         
         # 매도전략
-        if self.M['수량확보'] and self.M['위기전략'] == 'YES' : self.strategy_sell()
+        if self.M['수량확보'] and self.M['위기전략'] : self.strategy_sell()
         if self.M['날수'] > self.M['매도대기'] : self.normal_sell()
 
         if self.M['가용잔액'] + self.M['추가자본'] > 0 :
             if self.M['진행'] < 24 : self.base_buy()
             else : self.normal_buy()
-
         return self.return_value()
 
     def return_value(self) :
@@ -426,7 +419,7 @@ class Stock_dna_2022(Control) :
         update['msg']       = "데이타를 자동으로 계산하였습니다. 확인해 보시고 저장하시기 바랍니다"
         update['replyCode'] = "SUCCESS"
 
-        update['add2'] = self.M['시즌'] ; update['add3'] = self.M['날수'] ; update['add4'] = self.M['진행']
+        update['add2'] = self.M['시즌'] ; update['add3'] = self.M['날수'] ; update['add4'] = self.M['진행'] 
 
         update['add5']   = f"{round(self.M['당일종가'],4):,.2f}" ; update['add6'] = f"{round(self.M['체결단가'],4):,.2f}" ; update['add7'] = f"{self.M['체결수량']:,}"
 
@@ -440,7 +433,8 @@ class Stock_dna_2022(Control) :
           
         update['sub6'] = self.M['일매수금'] ; update['add17']   = f"{round(self.M['추가자본'],4):,.2f}"
         
-        update['sub1']   = self.M['연속하락'] ; update['sub2'] = self.M['위기전략'] ; update['sub3'] = self.M['전략매금'] ; update['sub4'] = self.M['전략가격']
+        update['sub1']   = self.M['연속하락'] ; update['sub2'] = 'YES' if self.M['위기전략'] else 'NO'; 
+        update['sub3'] = self.M['전략매금'] ;   update['sub4'] = self.M['전략가격']
 
         update['buy1']   = self.M['평단매수'] ; update['buy11'] = self.M['평단수량'] ; update['buy12'] = f"{round(self.M['평단단가'],4):,.2f}"
         update['buy2']   = self.M['큰단매수'] ; update['buy21'] = self.M['큰단수량'] ; update['buy22'] = f"{round(self.M['큰단단가'],4):,.2f}"

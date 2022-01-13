@@ -310,7 +310,7 @@
 var my_base_strategy = ''
 
 function auto_datainput() {
-	
+
 	if(! $("input[name='add0']").val() )  { h_dialog.notice("날자 입력은 필수입니다"); return false; }
 	if(! $("input[name='add1']").val() )  { h_dialog.notice("종목 코드는 필수입니다"); return false; }
 	if(! $("input[name='add20']").val() ) { h_dialog.notice("전략 선택은 필수입니다"); return false; }
@@ -319,7 +319,7 @@ function auto_datainput() {
 	switch (my_base_strategy) {
 		case 'MyToT' : dest = "boards-stock_daily/autoinput"; break;
 		case 'DNA02' : dest = "boards-stock_dna_v2/autoinput"; break;
-		case 'DNA22' : dest = "boards-stock_dna_2002/autoinput"; break;
+		case 'DNA_2022' : dest = "boards-stock_dna_2022/autoinput"; break;
 		default : dest = "boards-stock_dna_v2/autoinput"
 	}
 
