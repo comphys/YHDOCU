@@ -199,7 +199,7 @@ class Stock_dna_2022(Control) :
         self.M['진행'] = round(self.M['총매수금'] / self.M['처음자본'] * 100,1)
 
     def strategy_sell(self) :
-        if self.M['매도체결'] or self.M['수익률'] > 0 : return
+        if self.M['수익률'] > 0 : return
 
         self.M['전매수량'] = int(self.M['보유수량']*self.M['전매비중']) 
         self.M['전매단가'] = self.M['평균단가'] * (1+self.M['매도시점'])
@@ -210,11 +210,12 @@ class Stock_dna_2022(Control) :
         else : self.M['강제수량'] = self.M['보유수량']
         
     def normal_sell(self) :
-        self.M['첫째수량'] = math.ceil(self.M['보유수량'] * self.M['매도비중'])
-        # self.info(f"{self.M['기록일자']} 보유수량 {self.M['보유수량']}")
-        self.M['둘째수량'] = self.M['보유수량'] - self.M['첫째수량']
+        self.M['첫째수량'] = self.M['보유수량'] 
+        self.M['둘째수량'] = 0
         self.M['첫째단가'] = self.M['평균단가'] * self.M['첫매가치']
         if self.M['둘째수량'] : self.M['둘째단가'] = self.M['평균단가'] * self.M['둘매가치']
+
+        if self.M['전략매금'] : self.M['첫째단가'] = self.M['평균단가'] * 1.05
 
 
     # 사기 위한 전략을 수립한다. 내일 구입 전략임으로 기준은 당일종가를 사용한다. 
@@ -300,6 +301,9 @@ class Stock_dna_2022(Control) :
             self.M['진행상황']  = '전략매도' 
             self.M['전략매금']  = self.M['매도금액']
             self.M['전략가격']  = self.M['당일종가']
+            self.M['전매수량']  = 0
+            self.M['전매단가']  = 0.0
+            self.M['위기전략']  = False
         
         # 강제매도
         if  self.M['강매수량'] and self.M['당일고가'] >= self.M['강매단가'] :
@@ -323,6 +327,8 @@ class Stock_dna_2022(Control) :
             self.M['가용잔액'] += self.M['매도금액']
             self.M['총매수금']  = self.M['보유수량'] * self.M['평균단가']
             self.M['진행상황']  = '전량매도' if self.M['보유수량'] == 0 else '부분매도'
+            self.M['전략매금']  = 0
+            self.M['전략가격']  = 0
         
     def check_buy(self) :
 
@@ -404,10 +410,10 @@ class Stock_dna_2022(Control) :
         if self.M['임의매도'] : return self.return_value()
         
         # 매도전략
+        
+        self.normal_sell()
         if self.M['위기전략'] : self.strategy_sell()
-        if self.M['날수'] > self.M['매도대기'] : self.normal_sell()
 
- 
         # 매수전략
         if not  self.M['위기전략'] :
             if  self.M['진행'] < 24 : 

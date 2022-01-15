@@ -8,7 +8,7 @@ class Stock_daily_select_fill(Control) :
         self.DB = self.db('stocks')
         code = self.D['post']['code']
 
-        self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"add1='{code}'")
+        self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"add1='{code}' and add19='시즌진행'")
         today,strategy = self.DB.get('max(add0),add20',assoc=False,many=1)
         now = int(time.mktime(datetime.strptime(today,'%Y-%m-%d').timetuple()))
         tomorrow = datetime.fromtimestamp(now+3600*24).strftime('%Y-%m-%d')
