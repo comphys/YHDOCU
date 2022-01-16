@@ -154,7 +154,7 @@ class M_backtest_DNA_2022(Model) :
 
         매수금액1  = self.M['일매수금'] * self.M['매수비중']
         매수금액2  = self.M['일매수금'] - 매수금액1
-        평단가금액 = self.M['평균단가'] * self.M['평단가치'] 
+        평단가금액 = self.M['전일종가'] 
         큰단가금액 = self.M['평균단가'] * self.M['큰단가치']
 
         if  self.M['당일종가'] <= 큰단가금액 : 
@@ -172,9 +172,10 @@ class M_backtest_DNA_2022(Model) :
         if self.M['위기전략'] : return 
 
         구매금액  = self.M['전일종가']
+
         한도금액  = self.M['추가자본'] + self.M['가용잔액']
         기본수량  = math.ceil(self.M['일매수금'] / 구매금액)
-
+        
         if self.M['연속상승'] >= 1 :
             if 한도금액 < self.M['일매수금'] * 2 :
                 self.M['체결수량']  = math.ceil(한도금액 / 구매금액)
@@ -269,7 +270,7 @@ class M_backtest_DNA_2022(Model) :
                 continue
             
         #   ----------------------------------------------------------------------------------------------------------
-            if self.M['날수'] > self.M['매도대기'] : self.normal_sell()
+            self.normal_sell()
             if self.M['위기전략'] : self.strategy_sell()
         #   ----------------------------------------------------------------------------------------------------------
             if  not self.M['매도체결'] and self.M['추가자본'] + self.M['가용잔액'] > 0 :  

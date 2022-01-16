@@ -86,7 +86,7 @@ class Stock_dna_2022(Control) :
             self.M['날수'] = int(self.B['add3']) + 1
             self.M['회차'] = float(self.B['add4'])            
             self.M['매매현황'] = ''
-            self.M['진행상황'] = '정상진행'
+            self.M['진행상황'] = '일반매수'
             self.M['보유수량'] = int(self.B['add10'])
             self.M['가용잔액'] = float(self.B['add16'])
             self.M['추가자본'] = float(self.B['add17'])
@@ -121,12 +121,10 @@ class Stock_dna_2022(Control) :
         self.M['진행'] = round(self.M['총매수금'] / self.M['처음자본'] * 100,1)
 
 
-        if  self.M['진행상황'] in ('강제매도','전량매도','임의매도','부분매도') :
+        if  self.M['진행상황'] in ('강제매도','전량매도','임의매도') :
             self.M['수익현황'] = self.M['매도수익']
             self.M['수익률']   = self.M['매수익률']
             if self.M['리밸런싱'] : self.rebalance()      
-
-        if self.M['진행상황'] in ('강제매도','전량매도','임의매도') : 
             self.M['전략매금'] = 0
             self.M['위기전략'] = False
         
@@ -148,8 +146,8 @@ class Stock_dna_2022(Control) :
         c_drop = 0
         c_goup = 0
         for i in range(1,len(bbb)) :
-            c_drop = c_drop + 1 if bbb[i] <= bbb[i-1] else 0
-            c_goup = c_goup + 1 if bbb[i] >  bbb[i-1] else 0
+            c_drop = c_drop + 1 if bbb[i] <  bbb[i-1] else 0
+            c_goup = c_goup + 1 if bbb[i] >= bbb[i-1] else 0
         if opt == 'DN' or opt == 'CDN' :
             return c_drop
         elif opt == 'UP' or opt == 'CUP' :
@@ -200,6 +198,7 @@ class Stock_dna_2022(Control) :
 
     def strategy_sell(self) :
         if self.M['수익률'] > 0 : return
+        if self.M['전략가격'] and self.M['수익률'] > -5 :  return
 
         self.M['전매수량'] = int(self.M['보유수량']*self.M['전매비중']) 
         self.M['전매단가'] = self.M['평균단가'] * (1+self.M['매도시점'])
@@ -246,8 +245,7 @@ class Stock_dna_2022(Control) :
     def normal_buy(self)  :
 
         매수단가 = self.M['당일종가']
-        
-        한도금액 = 한도금액  = self.M['추가자본'] + self.M['가용잔액']
+        한도금액 = self.M['추가자본'] + self.M['가용잔액']
         기본수량 = math.ceil(self.M['일매수금'] / 매수단가)
         
         if self.M['연속상승'] >=1 :
@@ -288,6 +286,24 @@ class Stock_dna_2022(Control) :
         self.M['강매수량'] = int(self.B['sell31']) ; self.M['강매단가'] = float(self.B['sell32'])
         self.M['첫매수량'] = int(self.B['sell11']) ; self.M['첫매단가'] = float(self.B['sell12'])
         self.M['둘매수량'] = int(self.B['sell21']) ; self.M['둘매단가'] = float(self.B['sell22'])
+
+
+        # 일반매도
+        if self.M['첫매수량'] and self.M['당일종가'] >= self.M['첫매단가'] : self.M['매도금액'] += self.M['당일종가'] * self.M['첫매수량']  ; self.M['매도수량'] += self.M['첫매수량']  
+        if self.M['둘매수량'] and self.M['당일종가'] >= self.M['둘매단가'] : self.M['매도금액'] += self.M['당일종가'] * self.M['둘매수량']  ; self.M['매도수량'] += self.M['둘매수량']  
+
+        if  self.M['매도수량'] :
+            ratio = self.M['매도수량'] / self.M['보유수량']
+            self.M['매도수익']  = self.M['매도금액'] - self.M['총매수금'] * ratio  
+            self.M['매수익률']  = self.M['매도수익'] / (self.M['총매수금'] * ratio) * 100
+            self.M['보유수량'] -= self.M['매도수량']  
+            self.M['가용잔액'] += self.M['매도금액']
+            self.M['총매수금']  = self.M['보유수량'] * self.M['평균단가']
+            self.M['진행상황']  = '전량매도' if self.M['보유수량'] == 0 else '부분매도'
+            self.M['전략매금']  = 0
+            self.M['전략가격']  = 0
+            return
+
         
         # 전략매도
         if  self.M['전매수량'] and self.M['당일종가'] >= self.M['전매단가'] : 
@@ -315,20 +331,7 @@ class Stock_dna_2022(Control) :
             self.M['보유수량']  = 0 
             self.M['총매수금']  = 0.0
 
-        # 일반매도
-        if self.M['첫매수량'] and self.M['당일종가'] >= self.M['첫매단가'] : self.M['매도금액'] += self.M['당일종가'] * self.M['첫매수량']  ; self.M['매도수량'] += self.M['첫매수량']  
-        if self.M['둘매수량'] and self.M['당일종가'] >= self.M['둘매단가'] : self.M['매도금액'] += self.M['당일종가'] * self.M['둘매수량']  ; self.M['매도수량'] += self.M['둘매수량']  
 
-        if  self.M['매도수량'] :
-            ratio = self.M['매도수량'] / self.M['보유수량']
-            self.M['매도수익']  = self.M['매도금액'] - self.M['총매수금'] * ratio  
-            self.M['매수익률']  = self.M['매도수익'] / (self.M['총매수금'] * ratio) * 100
-            self.M['보유수량'] -= self.M['매도수량']  
-            self.M['가용잔액'] += self.M['매도금액']
-            self.M['총매수금']  = self.M['보유수량'] * self.M['평균단가']
-            self.M['진행상황']  = '전량매도' if self.M['보유수량'] == 0 else '부분매도'
-            self.M['전략매금']  = 0
-            self.M['전략가격']  = 0
         
     def check_buy(self) :
 
@@ -343,6 +346,7 @@ class Stock_dna_2022(Control) :
                         self.M['진행상황']  = '기초매수'
                     else : # 연속상승
                         self.M['체결수량'] += many ; self.M['매매현황'] += 'T'
+                        self.M['진행상황']  = '일반전환'
 
             # 평단매수 검토
             if many := int(self.B['buy11'])  : 
@@ -352,6 +356,7 @@ class Stock_dna_2022(Control) :
                         self.M['진행상황']  = '기초매수'                      
                     else : # 연속하락
                         self.M['체결수량'] += many ; self.M['매매현황'] += 'D' + str(self.M['연속하락'])
+                        self.M['진행상황']  = '일반하강'
 
             # 추종매수 검토
             if many := int(self.B['buy31'])  : 
