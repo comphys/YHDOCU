@@ -197,11 +197,16 @@ class Stock_dna_2022(Control) :
         self.M['진행'] = round(self.M['총매수금'] / self.M['처음자본'] * 100,1)
 
     def strategy_sell(self) :
-        if self.M['수익률'] > 0 : return
-        if self.M['전략가격'] and self.M['수익률'] > -5 :  return
+        if self.M['수익률'] > 0 : 
+            self.M['진행상황'] = '일매대기'
+            return
+        if self.M['전략가격'] and self.M['수익률'] > -5 :  
+            self.M['진행상황'] = '오매대기'
+            return
 
         self.M['전매수량'] = int(self.M['보유수량']*self.M['전매비중']) 
         self.M['전매단가'] = self.M['평균단가'] * (1+self.M['매도시점'])
+        self.M['진행상황'] = '전매대기'
 
     def force_sell(self) :
         self.M['강제단가'] = self.M['평균단가'] * self.M['강매가치']
