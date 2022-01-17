@@ -323,6 +323,7 @@ class Stock_dna_2022(Control) :
             self.M['전매수량']  = 0
             self.M['전매단가']  = 0.0
             self.M['위기전략']  = False
+            self.M['날수'] = 0
         
         # 강제매도
         if  self.M['강매수량'] and self.M['당일고가'] >= self.M['강매단가'] :
