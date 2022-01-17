@@ -52,7 +52,7 @@ class M_backtest_ITv01(Model) :
         if  self.M['진행상황'] in ('강제매도','전량매도','부분매도') :
             self.M['수익현황'] = self.M['매도수익']
             self.M['수익률']   = self.M['매수익률']
-            if self.M['리밸런싱'] : self.rebalance()      
+            self.rebalance()      
 
         if self.M['진행상황'] in ('강제매도','전량매도') : 
             self.M['전략매금'] = 0
@@ -123,12 +123,9 @@ class M_backtest_ITv01(Model) :
 
     def new_day(self) :
         
-        self.M['연속하락']  = int(self.old_price_trace('DN'))
-        self.M['연속상승']  = int(self.old_price_trace('UP'))
-        self.M['회차'] = 1.0 + self.M['연속하락']
+        self.M['회차'] = 1.0 
         self.M['평균단가']  = self.M['당일종가']
         self.M['체결수량'] = int(self.M['일매수금']/self.old_price_trace('YD'))
-        if self.M['연속하락'] : self.M['체결수량'] = self.M['체결수량'] * self.M['연속하락']
         self.M['보유수량']  = self.M['체결수량'] = int(self.M['일매수금']/self.M['당일종가']) 
         self.M['매수금액']  = self.M['당일종가'] * self.M['체결수량']
         self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
@@ -136,7 +133,7 @@ class M_backtest_ITv01(Model) :
         self.M['가용잔액'] -= self.M['매수금액']
         self.M['진행상황']  = '첫날거래'
         self.M['첫날기록']  = False
-        self.M['구매코드']  = 'M' + str(self.M['연속하락'])
+        self.M['구매코드']  = 'S' 
 
     def force_sell(self,강제매도가) :
         self.M['진행상황']  = '강제매도'
@@ -200,10 +197,15 @@ class M_backtest_ITv01(Model) :
         평단가금액 = self.M['평균단가'] * self.M['평단가치'] 
         큰단가금액 = self.M['평균단가'] * self.M['큰단가치']
         
-        if  self.M['당일종가'] <= 평단가금액 : 
-            self.M['체결수량'] += math.ceil(매수금액1 / 평단가금액) ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'N'
         if  self.M['당일종가'] <= 큰단가금액 : 
-            self.M['체결수량'] += math.ceil(매수금액2 / 큰단가금액) ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'N'  
+            self.M['체결수량'] += math.ceil(매수금액2 / 큰단가금액) 
+            self.M['회차'] += 0.5 
+            self.M['구매코드'] = 'B'  
+        
+        if  self.M['당일종가'] <= 평단가금액 : 
+            self.M['체결수량'] += math.ceil(매수금액1 / 평단가금액)  
+            self.M['회차'] += 0.5  
+            self.M['구매코드'] = 'A'
         
 
     def secondary_buy(self) :
@@ -244,43 +246,23 @@ class M_backtest_ITv01(Model) :
             self.M['체결수량'] = 0
             self.M['매도금액'] = 0.0
             self.M['진행상황'] = '정상진행' 
-            self.M['구매코드'] = ''       
+            self.M['구매코드'] = ' '       
 
             if  idx == 0 or self.M['첫날기록'] : 
                 self.new_day()
                 self.print_backtest()
                 continue
             
-            if self.M['가용잔액'] + self.M['추가자본'] < self.M['일매수금'] : self.M['위기전략'] = True # 한번 True 셋팅되면 전량매수 또는 강제매수 까지 바뀌지 않음
-
-        #   매도부분 --------------------------------------------------------------------------------------------------
-            if self.M['수량확보'] and self.M['위기전략'] :    self.strategy_sell()
             
-            # 강제매도
-            if self.M['강매허용'] :
-                강제매도가 = self.M['평균단가'] * self.M['강매가치']
-                if self.M['날수'] > self.M['강매시작']  and self.M['당일고가'] >= 강제매도가 :  self.force_sell(강제매도가)
- 
+        #   매도부분 --------------------------------------------------------------------------------------------------
+            
             # 일반매도
             if self.M['날수'] > self.M['매도대기'] : self.normal_sell()
 
         
         #   매수부분 --------------------------------------------------------------------------------------------------
 
-            if self.M['회차'] <= self.M['분할횟수'] : 
-                self.normal_buy()
-                # step3-1 : 종가하락 가중 매수
-                if self.M['과추일반'] : self.acc_old()
-        
-            else :
-                if not self.M['위기전략'] :
-                    
-                    if self.M['매수허용'] : self.secondary_buy() 
-                    if self.M['과거추종'] : self.acc_old() 
-            
-            if self.M['전략매금'] and self.M['수량확보'] : self.strategy_buy()
-           
-
+            if self.M['가용잔액'] > self.M['일매수금'] : self.normal_buy()
 
         #   결과정리 --------------------------------------------------------------------------------------------------
             # step4 : 기타항목 계산
