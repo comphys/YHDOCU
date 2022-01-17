@@ -215,9 +215,7 @@ class Stock_dna_2022(Control) :
         
     def normal_sell(self) :
         self.M['첫째수량'] = self.M['보유수량'] 
-        self.M['둘째수량'] = 0
         self.M['첫째단가'] = self.M['평균단가'] * self.M['첫매가치']
-        if self.M['둘째수량'] : self.M['둘째단가'] = self.M['평균단가'] * self.M['둘매가치']
 
         if self.M['전략매금'] : self.M['첫째단가'] = self.M['평균단가'] * 1.05
 
