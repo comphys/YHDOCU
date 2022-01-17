@@ -176,6 +176,8 @@ class M_backtest_DNA_2022(Model) :
         한도금액  = self.M['추가자본'] + self.M['가용잔액']
         기본수량  = math.ceil(self.M['일매수금'] / 구매금액)
         
+        # if self.M['수익률'] <= 20 : 
+
         if self.M['연속상승'] >= 1 :
             if 한도금액 < self.M['일매수금'] * 2 :
                 self.M['체결수량']  = math.ceil(한도금액 / 구매금액)
@@ -289,10 +291,10 @@ class M_backtest_DNA_2022(Model) :
 
         self.D['max_days'] = self.M['최대일수']
         self.D['max_date'] = self.M['최대날자']
-        초기자본 = self.D['init_capital'] 
-        최종자본 = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본'] - self.D['addition']
-        최종수익 = 최종자본 - self.D['init_capital'] 
-        최종수익률 = (최종수익/self.D['init_capital']) * 100 
+        초기자본 = self.D['init_capital'] + self.D['addition']
+        최종자본 = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본']
+        최종수익 = 최종자본 - 초기자본 
+        최종수익률 = (최종수익/초기자본) * 100 
         style1 = "<span style='font-weight:bold;color:white'>"
         style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
         style3 = "<span style='font-weight:bold;color:#F6CECE'>"
