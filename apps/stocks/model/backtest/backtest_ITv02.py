@@ -52,7 +52,7 @@ class M_backtest_ITv02(Model) :
         if  self.M['진행상황'] in ('강제매도','전량매도','부분매도') :
             self.M['수익현황'] = self.M['매도수익']
             self.M['수익률']   = self.M['매수익률']
-            if self.M['리밸런싱'] : self.rebalance()      
+            self.rebalance()      
 
         if self.M['진행상황'] in ('강제매도','전량매도') : 
             self.M['전략매금'] = 0

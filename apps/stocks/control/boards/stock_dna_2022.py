@@ -421,7 +421,7 @@ class Stock_dna_2022(Control) :
         
         # 매도전략
         
-        self.normal_sell()
+        if self.M['날수'] > self.M['매도대기'] : self.normal_sell()
         if self.M['위기전략'] : self.strategy_sell()
 
         # 매수전략

@@ -320,10 +320,10 @@ class M_backtest_DNA02(Model) :
 
         self.D['max_days'] = self.M['최대일수']
         self.D['max_date'] = self.M['최대날자']
-        초기자본 = self.D['init_capital'] 
-        최종자본 = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본'] - self.D['addition']
-        최종수익 = 최종자본 - self.D['init_capital'] 
-        최종수익률 = (최종수익/self.D['init_capital']) * 100 
+        초기자본 = self.D['init_capital'] + self.D['addition']
+        최종자본 = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본']
+        최종수익 = 최종자본 - 초기자본 
+        최종수익률 = (최종수익/초기자본) * 100
         style1 = "<span style='font-weight:bold;color:white'>"
         style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
         style3 = "<span style='font-weight:bold;color:#F6CECE'>"

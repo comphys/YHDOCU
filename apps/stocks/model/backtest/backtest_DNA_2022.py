@@ -176,8 +176,6 @@ class M_backtest_DNA_2022(Model) :
         한도금액  = self.M['추가자본'] + self.M['가용잔액']
         기본수량  = math.ceil(self.M['일매수금'] / 구매금액)
         
-        # if self.M['수익률'] <= 20 : 
-
         if self.M['연속상승'] >= 1 :
             if 한도금액 < self.M['일매수금'] * 2 :
                 self.M['체결수량']  = math.ceil(한도금액 / 구매금액)
@@ -272,7 +270,7 @@ class M_backtest_DNA_2022(Model) :
                 continue
             
         #   ----------------------------------------------------------------------------------------------------------
-            self.normal_sell()
+            if self.M['날수'] > self.M['매도대기'] : self.normal_sell()
             if self.M['위기전략'] : self.strategy_sell()
         #   ----------------------------------------------------------------------------------------------------------
             if  not self.M['매도체결'] and self.M['추가자본'] + self.M['가용잔액'] > 0 :  
