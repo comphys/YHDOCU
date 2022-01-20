@@ -18,9 +18,6 @@ class Stock_dna_2022(Control) :
         self.M['체결수량'] = self.D['post']['add7']   ; self.M['체결수량'] =   int(self.M['체결수량'].replace(',','')) if self.M['체결수량'] else 0
         self.M['매수금액'] = self.D['post']['add8']   ; self.M['매수금액'] = float(self.M['매수금액'].replace(',','')) if self.M['매수금액'] else 0.0
         
-        # 전략가격이 사용자 데이타로 받아들여 졌을 경우는 사용자의 판단 매매로 계산한다. (전략가격으로 전량 매도)
-        self.M['임의매도'] = self.D['post']['sub4']   ; self.M['임의매도'] = float(self.M['임의매도'].replace(',','')) if self.M['임의매도'] else 0.0
-
         # 임의입력 시 체결단가, 체결수량, 매수금액 중 2개는 입력되어야 함
         if  self.M['체결단가'] or self.M['체결수량'] or self.M['매수금액'] :
             self.auto = False 
@@ -121,7 +118,7 @@ class Stock_dna_2022(Control) :
         self.M['진행'] = round(self.M['총매수금'] / self.M['처음자본'] * 100,1)
 
 
-        if  self.M['진행상황'] in ('강제매도','전량매도','임의매도') :
+        if  self.M['진행상황'] == '전량매도' :
             self.M['수익현황'] = self.M['매도수익']
             self.M['수익률']   = self.M['매수익률']
             if self.M['리밸런싱'] : self.rebalance()      
@@ -272,18 +269,6 @@ class Stock_dna_2022(Control) :
                 
     def check_sell(self) :
 
-        # 사용자 임의 매도
-        if  self.M['임의매도'] :
-            self.M['매도금액'] = self.M['임의매도'] * self.M['보유수량']
-            self.M['매도수익'] = self.M['매도금액'] - self.M['총매수금']
-            self.M['매수익률'] = self.M['매도수익'] / self.M['총매수금'] * 100
-            self.M['보유수량'] = 0
-            self.M['가용잔액'] += self.M['매도금액']
-            self.M['총매수금'] = 0.0
-            self.M['체결단가'] = 0.0
-            self.M['진행상황'] = '임의매도'
-            return
-
         # 변수 불러오기
         self.M['전매수량'] = int(self.B['sell41']) ; self.M['전매단가'] = float(self.B['sell42'])
         self.M['강매수량'] = int(self.B['sell31']) ; self.M['강매단가'] = float(self.B['sell32'])
@@ -326,21 +311,19 @@ class Stock_dna_2022(Control) :
             self.M['날수'] = 0
         
         # 강제매도
-        if  self.M['강매수량'] and self.M['당일고가'] >= self.M['강매단가'] :
-            self.M['진행상황']  = '강제매도'
-            self.M['매도금액']  =  self.M['강매수량'] * self.M['강매단가']
-            self.M['매도수익']  =  self.M['매도금액'] - self.M['총매수금'] 
-            self.M['매수익률']  =  self.M['매도수익'] / self.M['총매수금'] * 100  
-            self.M['가용잔액'] +=  self.M['매도금액']
-            self.M['보유수량']  = 0 
-            self.M['총매수금']  = 0.0
-
+        if  self.M['강매수량'] and self.M['당일고가'] >= self.M['강매단가'] : 
+            ratio = self.M['강매수량'] / self.M['보유수량']
+            self.M['매도금액']  = self.M['강매수량'] * self.M['강매단가'] 
+            self.M['매도수익']  = self.M['매도금액'] - self.M['총매수금'] * ratio  
+            self.M['매수익률']  = self.M['매도수익'] / (self.M['총매수금'] * ratio) * 100
+            self.M['보유수량'] -= self.M['강매수량']  
+            self.M['가용잔액'] += self.M['매도금액']
+            self.M['총매수금']  =  self.M['보유수량'] * self.M['평균단가']
+            self.M['진행상황']  = '강제매도' 
 
         
     def check_buy(self) :
 
-        if  self.M['임의매도'] : return
-        
         if self.auto :
             # 큰단매수 검토
             if many := int(self.B['buy21'])  : 
@@ -416,8 +399,7 @@ class Stock_dna_2022(Control) :
             self.calculate()
             if self.M['첫날기록'] : self.the_first_day()
             
-        if self.M['임의매도'] : return self.return_value()
-        
+       
         # 매도전략
         
         if self.M['날수'] > self.M['매도대기'] : self.normal_sell()
