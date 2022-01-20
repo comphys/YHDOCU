@@ -9,9 +9,9 @@
 			{%- for cats in D['CAT_LIST'] %}
 			<div class='myselect' style='margin-right:5px;'>
 				{%- if cats['chked'] %}
-				<input placeholder="{{cats['title']}}" name="csh_{{cats['fkey']}}" id="{{cats['id']}}" type="text" style="color:black;width:100px;background-color:#b5daff" value="{{cats['value']}}" />
+				<input placeholder="{{cats['title']}}" name="csh_{{cats['fkey']}}" id="{{cats['id']}}" type="text" style="color:black;width:80px;background-color:#b5daff" value="{{cats['value']}}" />
 				{%- else %}
-				<input placeholder="{{cats['title']}}" name="csh_{{cats['fkey']}}" id="{{cats['id']}}" type="text" style="width:100px" value="{{cats['value']}}" />
+				<input placeholder="{{cats['title']}}" name="csh_{{cats['fkey']}}" id="{{cats['id']}}" type="text" style="width:80px" value="{{cats['value']}}" />
 				{%- endif %}
 				<div class='btn-group'>
 					<button class="btn btn-select dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
@@ -103,6 +103,8 @@
 	<div class='pull-left'>
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>쓰 기</button></a>&nbsp;
+		<span style="display:inline-block;margin-left:240px;color:#E0F2F7">{{D['종가변동']}}</span>
+		<span style="display:inline-block;margin-left:280px;color:#F6CECE">{{D['평가변동']}}</span>	
 	</div>
 	<div class='pagination pull-right'><ul>
 		{{D['Pagination']|safe}}

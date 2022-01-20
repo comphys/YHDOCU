@@ -31,7 +31,22 @@ class 목록_매매일지(SKIN) :
             for item in self.D['LIST'] :
                 item['wdate'] = ut.timestamp_to_date(item['wdate'],"%Y/%m/%d")
                 item['mdate'] = ut.timestamp_to_date(item['mdate'],"%Y/%m/%d")
-    
+        
+        code   = session['CSH'].get('csh_add1','')
+        season = session['CSH'].get('csh_add2','')
+
+        if code and season : 
+            self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"add1='{code}' and add2={season}")
+            c_price = self.DB.get('add5',assoc=False)
+            m_price = self.DB.get('add9',assoc=False)
+
+            c_price = [float(x) for x in c_price]
+            m_price = [float(x) for x in m_price]
+
+            self.D['종가변동'] = f"{(c_price[-1] - c_price[0]) / c_price[0] * 100:5.2f}%"
+            self.D['평가변동'] = f"{(m_price[-1] - m_price[0]) / m_price[0] * 100:5.2f}%"
+
+
     def list(self) :
 
         self.head()
