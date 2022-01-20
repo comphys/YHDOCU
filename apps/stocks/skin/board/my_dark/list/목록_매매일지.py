@@ -39,12 +39,12 @@ class 목록_매매일지(SKIN) :
             self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"add1='{code}' and add2={season}")
             c_price = self.DB.get('add5',assoc=False)
             m_price = self.DB.get('add9',assoc=False)
+            if  c_price :
+                c_price = [float(x) for x in c_price]
+                m_price = [float(x) for x in m_price]
 
-            c_price = [float(x) for x in c_price]
-            m_price = [float(x) for x in m_price]
-
-            self.D['종가변동'] = f"{(c_price[-1] - c_price[0]) / c_price[0] * 100:5.2f}%"
-            self.D['평가변동'] = f"{(m_price[-1] - m_price[0]) / m_price[0] * 100:5.2f}%"
+                self.D['종가변동'] = f"{(c_price[-1] - c_price[0]) / c_price[0] * 100:5.2f}%"
+                self.D['평가변동'] = f"{(m_price[-1] - m_price[0]) / m_price[0] * 100:5.2f}%"
 
 
     def list(self) :
