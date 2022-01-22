@@ -7,8 +7,8 @@ class Stock_daily_select_fill(Control) :
     def getit(self) :
         self.DB = self.db('stocks')
         code = self.D['post']['code']
-
-        self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"add1='{code}' and add19='시즌진행'")
+            
+        self.DB.tbl, self.DB.wre = (self.parm[0],f"add1='{code}' and add19='시즌진행'")
         today,strategy = self.DB.get('max(add0),add20',assoc=False,many=1)
         
         datetime_today = datetime.strptime(today,'%Y-%m-%d')

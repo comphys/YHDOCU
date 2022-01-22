@@ -38,8 +38,8 @@ class Action(Control) :
         qry = self.DB.qry_insert(self.board,SAVE)
         self.DB.exe(qry)
 
-        if self.bid == 'daily_trading' :
-            self.DB.tbl,self.DB.wre = ('h_daily_trading_board',f"add1='{SAVE['add1']}' and add2='{SAVE['add2']}'")
+        if self.bid in ('daily_trading','daily_first','daily_second') :
+            self.DB.tbl,self.DB.wre = (f"h_{self.bid}_board",f"add1='{SAVE['add1']}' and add2='{SAVE['add2']}'")
             self.save_chart(self.DB.get_one('no'))
         
         return self.moveto('board/list/'+self.bid+'/page='+self.page+'/csh=on')
@@ -84,7 +84,7 @@ class Action(Control) :
         qry = self.DB.qry_update(tbl,self.D['post'],con)
         self.DB.exe(qry)
 
-        if self.bid == 'daily_trading' : 
+        if self.bid in ('daily_trading','daily_first','daily_second') : 
             self.save_chart(no)
             return self.moveto(f"board/list/{self.parm[0]}/page={self.page}/csh=on")
         if self.BCONFIG['stayfom'] == 'on' :
@@ -96,9 +96,9 @@ class Action(Control) :
 
         import matplotlib.pyplot as plt
 
-        self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f'no={no}')
+        self.DB.tbl, self.DB.wre = (f"h_{self.bid}_board",f'no={no}')
         code, season = self.DB.get('add1,add2',many=1,assoc=False)
-        file_name = f"{self.C['DOCU_ROOT']}/개인자료/주식투자/주식챠트/stock_chart_{code}_{season}.png"
+        file_name = f"{self.C['DOCU_ROOT']}/개인자료/주식투자/주식챠트/{self.bid}_stock_chart_{code}_{season}.png"
 
         self.DB.wre = f"add1='{code}' and add2={season}"
         c_price = self.DB.get('add5',assoc=False)

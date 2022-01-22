@@ -72,7 +72,7 @@ class Stock_dna_2022(Control) :
         self.M['첫날기록']  = False
         if self.preChk :
 
-            self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"no={self.preChk}")
+            self.DB.tbl, self.DB.wre = (self.parm[0],f"no={self.preChk}")
             self.B = self.DB.get_line('*')
 
             self.M['시즌'] = int(self.B['add2'])
@@ -369,12 +369,12 @@ class Stock_dna_2022(Control) :
         self.M['기록일자'] = self.D['post']['add0']
         self.M['종목코드'] = self.D['post']['add1']
         self.M['시즌체크'] = self.D['post'].get('add2',0)
-        self.DB.tbl,self.DB.wre = ('h_daily_trading_board',f"add0  < '{self.M['기록일자']}' and add1='{self.M['종목코드']}' and add19='시즌진행'")
+        self.DB.tbl,self.DB.wre = (self.parm[0],f"add0  < '{self.M['기록일자']}' and add1='{self.M['종목코드']}' and add19='시즌진행'")
         if self.M['시즌체크'] : self.DB.wre += f" and add2='{self.M['시즌체크']}'"
         self.preChk = self.DB.get_one("max(no)")
         self.oldChk = self.DB.get_one("min(no)")
 
-        self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"add0='{self.M['기록일자']}' and add1='{self.M['종목코드']}'")
+        self.DB.tbl, self.DB.wre = (self.parm[0],f"add0='{self.M['기록일자']}' and add1='{self.M['종목코드']}'")
         if self.M['시즌체크'] : self.DB.wre += f" and add2='{self.M['시즌체크']}'"
         if self.DB.get_one('add0') and self.parm[0] != 'modify': 
             self.update['msg'] = "같은 날자에 입력된 데이타가 존재합니다" 

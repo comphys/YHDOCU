@@ -88,6 +88,28 @@
 			{% endfor %}
 			</tr>
 			{%- endfor %}
+			{% if D['code'] and D['season'] %}
+			<tr style="border-top:2px solid black;">
+				<td>정보</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td style="text-align:right;color:#E0F2F7">{{D['종가변동']}}</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td style="text-align:right;color:#F6CECE">{{D['평가변동']}}</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			{% endif %}
 		</tbody>
 	</table>
 </div>
@@ -103,8 +125,6 @@
 	<div class='pull-left'>
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>쓰 기</button></a>&nbsp;
-		<span style="display:inline-block;margin-left:240px;color:#E0F2F7">{{D['종가변동']}}</span>
-		<span style="display:inline-block;margin-left:280px;color:#F6CECE">{{D['평가변동']}}</span>	
 	</div>
 	<div class='pagination pull-right'><ul>
 		{{D['Pagination']|safe}}
@@ -112,7 +132,7 @@
 </div>
 {% if D['chart_code'] and D['chart_season'] %}
 <div>
-	<img src="/DOCU_ROOT/개인자료/주식투자/주식챠트/stock_chart_{{D['chart_code']}}_{{D['chart_season']}}.png" style="border:1px solid black">
+	<img src="/DOCU_ROOT/개인자료/주식투자/주식챠트/{{D['bid']}}_stock_chart_{{D['chart_code']}}_{{D['chart_season']}}.png" style="border:1px solid black">
 </div>
 {% endif %}
 
@@ -140,7 +160,7 @@ $(document).ready(function(){
 		{
 			selected_tr = $(this).parent()
 			$(selected_tr).css("backgroundColor","black")
-			var url = uri('linkurl') + 'boards-stock_today_tips/hellow/no='+$(this).attr('data-no');
+			var url = uri('linkurl') + 'boards-stock_today_tips/hellow/no='+$(this).attr('data-no')+"/tbl={{D['tbl']}}";
 			var ypos= $(this).closest('table').get(0).offsetTop + this.offsetTop + this.offsetHeight
 			if(ypos > 400) ypos = ypos-280
 			var o = {id:'ST_TIPS', width:'350px', x:240, y:ypos,header:false,footer:false,drag:false}

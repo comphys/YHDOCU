@@ -317,10 +317,10 @@ function auto_datainput() {
 
 	var dest = ""
 	switch (my_base_strategy) {
-		case 'MyToT' : dest = "boards-stock_daily/autoinput"; break;
-		case 'DNA02' : dest = "boards-stock_dna_v2/autoinput"; break;
-		case 'DNA_2022' : dest = "boards-stock_dna_2022/autoinput"; break;
-		default : dest = "boards-stock_dna_v2/autoinput"
+		case 'MyToT' : dest = "boards-stock_daily/autoinput/{{D['tbl']}}"; break;
+		case 'DNA02' : dest = "boards-stock_dna_v2/autoinput/{{D['tbl']}}"; break;
+		case 'DNA_2022' : dest = "boards-stock_dna_2022/autoinput/{{D['tbl']}}"; break;
+		default : dest = "boards-stock_dna_v2/autoinput/{{D['tbl']}}"
 	}
 
 	var posturl = uri('linkurl')+ dest + "/{{D['method']}}" 
@@ -381,7 +381,7 @@ $("#auto-fill>div>ul>li").not(':first-child').click(function(){
 	var val1 = $(this).text(); 
 	var ptr = $(this).parent().parent().prev(); 
 	$(ptr).val(val1); $(this).addClass("select-selected"); $(this).siblings().removeClass("select-selected"); 
-	var posturl = uri('linkurl') + 'boards-stock_daily_select_fill/getit';
+	var posturl = uri('linkurl') + 'boards-stock_daily_select_fill/getit/{{D['tbl']}}';
 	$.post( posturl, {code:val1}).done( function(data) { 
 		var aa = JSON.parse(data);
 		$("input[name='add0']").val(aa.a); $("input[name='add20']").val(aa.b) 

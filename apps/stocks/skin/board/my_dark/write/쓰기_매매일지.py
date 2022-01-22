@@ -45,7 +45,7 @@ class 쓰기_매매일지(SKIN) :
         value =''
         if OBODY : value = OBODY.get('add1','')
 
-        qry = f"SELECT distinct add1 FROM h_daily_trading_board WHERE add19 == '시즌진행' ORDER BY add1"
+        qry = f"SELECT distinct add1 FROM {self.D['tbl']} WHERE add19 == '시즌진행' ORDER BY add1"
         ITM = self.DB.exe(qry)
 
         tmp  = "<div id='auto-fill' class='select' style='margin-right:10px;vertical-align:bottom;border:1px solid #CEE3F6'>"

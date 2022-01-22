@@ -10,8 +10,9 @@ class Stock_today_tips(Control) :
     def hellow(self) :
         
         no = self.gets['no']
+        self.tbl = self.gets['tbl']
 
-        self.DB.tbl,self.DB.wre = ('h_daily_trading_board',f"no={no}")
+        self.DB.tbl,self.DB.wre = (self.tbl,f"no={no}")
         D = self.DB.get_line("add0,add1,buy1,buy11,buy12,buy2,buy21,buy22,buy3,buy31,buy32,buy4,buy41,buy42,buy5,buy51,buy52,sell1,sell11,sell12,sell2,sell21,sell22,sell3,sell31,sell32,sell4,sell41,sell42")
         # 출력시작
         sty1 ="style='text-align:center;width:100px'"
@@ -44,7 +45,7 @@ class Stock_today_tips(Control) :
         code = self.D['post']['code']
         season = self.D['post']['season']
 
-        qry = f"UPDATE h_daily_trading_board SET add19='시즌종료' WHERE add1='{code}' and add2='{season}'"
+        qry = f"UPDATE {self.tbl} SET add19='시즌종료' WHERE add1='{code}' and add2='{season}'"
         self.DB.exe(qry)
         return "해당 시즌을 종료하였습니다"
     

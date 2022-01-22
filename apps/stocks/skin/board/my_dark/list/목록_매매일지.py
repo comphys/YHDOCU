@@ -32,11 +32,11 @@ class 목록_매매일지(SKIN) :
                 item['wdate'] = ut.timestamp_to_date(item['wdate'],"%Y/%m/%d")
                 item['mdate'] = ut.timestamp_to_date(item['mdate'],"%Y/%m/%d")
         
-        code   = session['CSH'].get('csh_add1','')
-        season = session['CSH'].get('csh_add2','')
+        self.D['code']   = session['CSH'].get('csh_add1','')
+        self.D['season'] = session['CSH'].get('csh_add2','')
 
-        if code and season : 
-            self.DB.tbl, self.DB.wre = ('h_daily_trading_board',f"add1='{code}' and add2={season}")
+        if self.D['code'] and self.D['season'] : 
+            self.DB.tbl, self.DB.wre = (self.D['tbl'],f"add1='{self.D['code']}' and add2={self.D['season']}")
             c_price = self.DB.get('add5',assoc=False)
             m_price = self.DB.get('add9',assoc=False)
             if  c_price :
