@@ -143,7 +143,7 @@ function open_stock_chart(stock) {
 
 function list_ontheday() { 
 	var search = $("input[name='search_value']").val(); if(! search ) return;
-	var url = uri('linkurl') + 'board/list/daily_trading/search=' + search + '/search_f=기록일자/csh=off' ;
+	var url = uri('linkurl') + 'board/list/{{D['bid']}}/search=' + search + '/search_f=기록일자/csh=off' ;
 	location.href = url; 
 }
 
