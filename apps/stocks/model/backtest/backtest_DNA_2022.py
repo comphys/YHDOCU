@@ -204,7 +204,7 @@ class M_backtest_DNA_2022(Model) :
         if self.M['매도체결'] : return 
          
         매도가격 = self.M['평균단가'] * self.M['첫매가치']
-        if self.M['전략매금'] : 매도가격 = self.M['평균단가'] * 1.05
+        if self.M['전략매금'] : 매도가격 = self.M['평균단가'] * self.M['둘매가치']
         매도수량 = self.M['보유수량']
         
         self.M['진행상황'] = '매도대기' 
