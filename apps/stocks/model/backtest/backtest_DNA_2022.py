@@ -8,7 +8,6 @@ class M_backtest_DNA_2022(Model) :
 
     def print_backtest(self) :
         tx = {}
-        # 날수 계산
         self.M['날수'] += 1
         if self.M['진행상황'] in ('전량매도','전략매도') : self.M['날수'] = 0 
         if self.M['진행상황'] == '첫날거래' : self.M['날수'] = 1
@@ -118,8 +117,6 @@ class M_backtest_DNA_2022(Model) :
         self.M['위매횟수']  = int(self.S['add24'])
         self.M['매도횟수']  = 0
 
-
-
         # 리밸런싱
         total = self.M['가용잔액'] + self.M['추가자본'] 
         self.M['자본비율'] = self.M['가용잔액'] / total
@@ -130,9 +127,7 @@ class M_backtest_DNA_2022(Model) :
         self.M['기록시즌'] += 1
         self.M['연속하락']  = int(self.old_price_trace('DN'))
         self.M['연속상승']  = int(self.old_price_trace('UP'))
-        self.M['회차'] = 1.0 
-        # 첫날 지나친 회차 증가는 지양함 
-        if self.M['연속하락'] : self.M['회차'] += 1
+
         self.M['평균단가']  = self.M['당일종가']
         self.M['체결수량']  = math.ceil(self.M['일매수금']/self.old_price_trace('YD'))
         if  self.M['연속하락'] : 
@@ -157,7 +152,7 @@ class M_backtest_DNA_2022(Model) :
         평단가금액 = self.M['전일종가'] 
         큰단가금액 = self.M['평균단가'] * self.M['큰단가치']
 
-        if  self.M['당일종가'] <= 큰단가금액 : 
+        if  self.M['당일종가'] <= self.M['평균단가'] * 1.15 : 
             self.M['체결수량'] += math.ceil(매수금액2 / 큰단가금액)*2 
             self.M['구매코드'] = 'B'        
         
@@ -215,7 +210,6 @@ class M_backtest_DNA_2022(Model) :
             self.M['보유수량'] = 0  
             self.M['가용잔액'] += self.M['매도금액']
             self.M['총매수금'] = 0 
-            self.M['회차'] = 0.0
             self.M['진행상황']  = '전량매도' 
             self.M['매도체결']  = True
             
@@ -223,9 +217,6 @@ class M_backtest_DNA_2022(Model) :
     def strategy_sell(self) : # LOC 매도
 
         if self.M['매도체결'] or self.M['수익률'] > 0 : return 
-
-        # 매도수량 = int(self.M['보유수량'] * self.M['위매비중']) 
-        # 매도가격 = self.M['전략가격'] * (1-self.M['매수시점']) if self.M['전략매금'] > 0 else self.M['평균단가'] * (1+self.M['매도시점']) 
 
         매도가격 = self.M['평균단가'] * (1+self.M['매도시점']) 
         매도수량 = int(self.M['보유수량'] * self.M['위매비중'])
