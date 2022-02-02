@@ -203,6 +203,8 @@ class M_backtest_DNA_2022(Model) :
                 else : self.M['매수수량']  = 기본수량 * 2
 
                 self.M['구매코드'] = 'T'
+                self.M['진행상황'] = '터닝매수'
+
 
             if self.M['연속하락'] >= 1 :
                 if 한도금액 < self.M['일매수금'] * (1+self.M['연속하락']) :
@@ -211,9 +213,9 @@ class M_backtest_DNA_2022(Model) :
                 else : self.M['매수수량']  = 기본수량 * (1+self.M['연속하락'])
                     
                 self.M['구매코드'] = 'D' + str(self.M['연속하락'])
-        
-            self.M['진행상황'] = '일반매수'
+                self.M['진행상황'] = '추종매수'
 
+        
     def normal_sell(self) :
         
         매도가격 = self.M['평균단가'] * self.M['둘매가치'] if self.M['전략가격']  else self.M['평균단가'] * self.M['첫매가치']
