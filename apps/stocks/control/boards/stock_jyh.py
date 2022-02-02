@@ -1,9 +1,8 @@
 from system.core.load import Control
-from datetime import datetime
-import time
+from datetime import datetime,timedelta
 import math
 
-class Stock_dna_2022(Control) : 
+class Stock_jyh(Control) : 
 
     def _auto(self) :
         self.DB = self.db('stocks')
@@ -117,7 +116,6 @@ class Stock_dna_2022(Control) :
         self.M['수익률']    = (self.M['수익현황'] / self.M['총매수금']) * 100 if self.M['총매수금'] else 0
         self.M['진행'] = round(self.M['총매수금'] / self.M['처음자본'] * 100,1)
 
-
         if  self.M['진행상황'] == '전량매도' :
             self.M['수익현황'] = self.M['매도수익']
             self.M['수익률']   = self.M['매수익률']
@@ -132,8 +130,8 @@ class Stock_dna_2022(Control) :
 
     # 당일종가 전일종가 와 연속하락 일수 구하기  
     def old_price_trace(self,opt) :
-        now = int(time.mktime(datetime.strptime(self.M['기록일자'],'%Y-%m-%d').timetuple()))
-        old_date = datetime.fromtimestamp(now-3600*24*14).strftime('%Y-%m-%d')
+        datetime_now = datetime.strptime(self.M['기록일자'],'%Y-%m-%d')
+        old_date = datetime_now - timedelta(days=14)
         qry = f"SELECT add3 FROM h_stockHistory_board WHERE add0 BETWEEN '{old_date}' and '{self.M['기록일자']}' and add1='{self.M['종목코드']}' ORDER BY add0"
         aaa= self.DB.exe(qry)
         bbb= [float(x[0]) for x in aaa ]
@@ -231,15 +229,14 @@ class Stock_dna_2022(Control) :
             self.M['추종수량'] = math.ceil(self.M['일매수금'] * self.M['연속하락'] / self.M['추종단가']) 
 
     def base_buy(self) :
-        if self.M['보유수량'] == 0 : return
-
+        
         매수금액1  = self.M['일매수금'] * self.M['매수비중']
         매수금액2  = self.M['일매수금'] - 매수금액1
         self.M['평단단가'] = self.M['당일종가'] 
-        self.M['큰단단가'] = self.M['평균단가'] * self.M['큰단가치']
+        self.M['큰단단가'] = self.M['당일종가'] * 1.15
   
         self.M['평단수량'] = math.ceil(매수금액1 / self.M['평단단가']) *4  
-        self.M['큰단수량'] = math.ceil(매수금액2 / self.M['큰단단가']) *2  
+        self.M['큰단수량'] = math.ceil(매수금액2 / (self.M['평균단가']*self.M['큰단가치'])) *2  
 
     def normal_buy(self)  :
 
@@ -249,7 +246,7 @@ class Stock_dna_2022(Control) :
         
         if self.M['연속상승'] >=1 :
             if 한도금액 < self.M['일매수금'] * 2 :
-                self.M['큰단수량'] = math.ceil(한도금액 / 매수단가)
+                self.M['큰단수량'] = int(한도금액 / 매수단가)
                 self.M['큰단단가'] = 매수단가
                 self.M['위기전략'] = True
             else :
@@ -259,9 +256,9 @@ class Stock_dna_2022(Control) :
         if self.M['연속하락'] >= 1 :
             
             if 한도금액 < self.M['일매수금'] * (1+self.M['연속하락']) :
-                self.M['평단수량']  = math.ceil(한도금액 / 매수단가)
+                self.M['평단수량']  = int(한도금액 / 매수단가)
                 self.M['평단단가']  = 매수단가
-                self.M['위기전략'] = True 
+                self.M['위기전략']  = True 
             else :
                 self.M['평단수량']  = 기본수량 * (1+self.M['연속하락'])
                 self.M['평단단가'] = 매수단가
@@ -401,7 +398,7 @@ class Stock_dna_2022(Control) :
        
         # 매도전략
         
-        if self.M['날수'] > self.M['매도대기'] : self.normal_sell()
+        if self.M['진행'] >= 24 : self.normal_sell()
         if self.M['위기전략'] : self.strategy_sell()
 
         # 매수전략

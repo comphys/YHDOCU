@@ -1,6 +1,6 @@
 from system.core.load import Control
 from datetime import datetime,timedelta
-import time,json
+import json
 
 class Stock_daily_select_fill(Control) :
     

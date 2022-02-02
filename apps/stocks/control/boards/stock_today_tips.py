@@ -42,10 +42,11 @@ class Stock_today_tips(Control) :
         return self.echo(output)
     
     def season_close(self) :
+        tbl  = self.D['post']['tbl']
         code = self.D['post']['code']
         season = self.D['post']['season']
 
-        qry = f"UPDATE {self.tbl} SET add19='시즌종료' WHERE add1='{code}' and add2='{season}'"
+        qry = f"UPDATE h_{tbl}_board SET add19='시즌종료' WHERE add1='{code}' and add2='{season}'"
         self.DB.exe(qry)
         return "해당 시즌을 종료하였습니다"
     

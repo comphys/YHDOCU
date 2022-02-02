@@ -320,6 +320,7 @@ function auto_datainput() {
 		case 'MyToT' : dest = "boards-stock_daily/autoinput/{{D['tbl']}}"; break;
 		case 'DNA02' : dest = "boards-stock_dna_v2/autoinput/{{D['tbl']}}"; break;
 		case 'DNA_2022' : dest = "boards-stock_dna_2022/autoinput/{{D['tbl']}}"; break;
+		case 'JYH' : dest = "boards-stock_jyh/autoinput/{{D['tbl']}}"; break;
 		default : dest = "boards-stock_dna_v2/autoinput/{{D['tbl']}}"
 	}
 
@@ -403,7 +404,7 @@ $("#select-strategy>div>ul>li").not(':first-child').click(function(){
 function season_close() {
 	var posturl = uri('linkurl')+ "boards-stock_today_tips/season_close" 
 	var postData = {}
-
+	postData['tbl']     = "{{D['bid']}}"  // 테이블
 	postData['code']    = $("input[name='add1']").val()  // 날자
 	postData['season']  = $("input[name='add2']").val()  // 종목
 	$.post( posturl, postData).done(function(data) {
