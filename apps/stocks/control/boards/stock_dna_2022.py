@@ -321,10 +321,11 @@ class Stock_dna_2022(Control) :
     def check_buy(self) :
 
         if self.auto :
+            CP = 25
             # 큰단매수 검토
             if many := int(self.B['buy21'])  : 
                 if  self.M['당일종가'] <= float(self.B['buy22']):  
-                    if self.M['진행'] < 24 : # 기초매수
+                    if self.M['진행'] < CP : # 기초매수
                         self.M['체결수량'] += many ; self.M['매매현황'] = 'B'  
                         self.M['진행상황']  = '기초매수'
                     else : # 연속상승
@@ -334,7 +335,7 @@ class Stock_dna_2022(Control) :
             # 평단매수 검토
             if many := int(self.B['buy11'])  : 
                 if  self.M['당일종가'] <= float(self.B['buy12']):  
-                    if self.M['진행'] < 24 : # 기초매수
+                    if self.M['진행'] < CP : # 기초매수
                         self.M['체결수량'] += many ; self.M['매매현황'] = 'A' 
                         self.M['진행상황']  = '기초매수'                      
                     else : # 연속하락
@@ -397,13 +398,13 @@ class Stock_dna_2022(Control) :
             
        
         # 매도전략
-        
-        if self.M['진행'] >= 24 : self.normal_sell()
+        CP = 25
+        if self.M['진행'] >= CP : self.normal_sell()
         if self.M['위기전략'] : self.strategy_sell()
 
         # 매수전략
         if not  self.M['위기전략'] :
-            if  self.M['진행'] < 24 : 
+            if  self.M['진행'] < CP : 
                 self.base_buy()
             else : 
                 self.normal_buy()
