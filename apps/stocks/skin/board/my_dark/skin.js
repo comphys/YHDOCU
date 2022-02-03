@@ -86,7 +86,7 @@ if(uri('method') == 'list')	{ // LIST PART when Document is ready
 // ------------------------------------------------------------------------------------------------
 } else if (uri('method') == 'write' || uri('method') == 'modify' || uri('method') == 'add_body'  ) { // WRITE PART 
 // ------------------------------------------------------------------------------------------------
-	$(".i-date").Zebra_DatePicker({format:'Y-m-d', offset:[-150,280], first_day_of_week : 0}); 
+	$(".i-date").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0}); 
 	$(".i-number").comma('init');
 	$("#editor-tools-bar").on("contextmenu", function(e) {	e.preventDefault();	$("#contextMenu").css({left:mouse_X-20,top:mouse_Y}).toggle();});	
 // ------------------------------------------------------------------------------------------------
