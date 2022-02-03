@@ -16,7 +16,7 @@ class M_backtest_MyToT(Model) :
         if  self.M['날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['날수'] ; self.M['최대날자'] = self.M['day']
 
         tx['코드'] = self.D['code']
-        tx['시즌'] = self.M['날수']
+        tx['날수'] = self.M['날수']
         tx['회차'] = self.M['회차']
         tx['기록일자'] = self.M['day']
         tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
@@ -31,8 +31,16 @@ class M_backtest_MyToT(Model) :
         clr = "#F6CECE" if self.M['수익률'] > 0 else "#CED8F6"
         tx['수익률'] = f"<span style='color:{clr}'>{round(self.M['수익률'],4):,.2f}"
         tx['매도금액'] = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['구매코드']
-        tx['가용잔액'] = f"{round(self.M['가용잔액'],4):,.2f}"
-        tx['추가잔액'] = f"{round(self.M['추가자본'],4):,.2f}"
+
+        if self.M['가용잔액'] < 0 :
+            tx['가용잔액'] = 0
+            tx['추가잔액'] = self.M['추가자본'] + self.M['가용잔액']
+        else :
+            tx['가용잔액'] = self.M['가용잔액']
+            tx['추가잔액'] = self.M['추가자본']
+
+        tx['가용잔액'] = f"{round(tx['가용잔액'],4):,.2f}"
+        tx['추가잔액'] = f"{round(tx['추가잔액'],4):,.2f}"
         tx['진행상황'] = self.M['진행상황'] if self.M['진행상황'] != '전량매도' else f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>전량매도</span>"
         tx['일매수금'] = self.M['일매수금']
         self.D['TR'].append(tx)
@@ -202,11 +210,13 @@ class M_backtest_MyToT(Model) :
         매수금액2  = self.M['일매수금'] - 매수금액1
         평단가금액 = self.M['평균단가'] * self.M['평단가치'] 
         큰단가금액 = self.M['평균단가'] * self.M['큰단가치']
+
+        if  self.M['당일종가'] <= 큰단가금액 : 
+            self.M['체결수량'] += math.ceil(매수금액2 / 큰단가금액) ; self.M['회차'] += 0.5 ; self.M['구매코드'] = 'B'         
         
         if  self.M['당일종가'] <= 평단가금액 : 
-            self.M['체결수량'] += math.ceil(매수금액1 / 평단가금액) ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'N'
-        if  self.M['당일종가'] <= 큰단가금액 : 
-            self.M['체결수량'] += math.ceil(매수금액2 / 큰단가금액) ; self.M['회차'] += 0.5 ; self.M['구매코드'] += 'N'  
+            self.M['체결수량'] += math.ceil(매수금액1 / 평단가금액) ; self.M['회차'] += 0.5 ; self.M['구매코드'] = 'A'
+ 
         
 
     def secondary_buy(self) :
@@ -232,7 +242,7 @@ class M_backtest_MyToT(Model) :
         if  self.M['연속하락'] > 0 and self.M['당일종가'] <= sell_price : 
             self.M['체결수량'] += math.ceil(self.M['일매수금'] * self.M['연속하락'] / sell_price)  
             self.M['회차'] += self.M['연속하락'] 
-            self.M['구매코드'] += str(self.M['연속하락'])
+            self.M['구매코드'] = 'D' + str(self.M['연속하락'])
 
     def test_it(self) :
 
@@ -247,7 +257,7 @@ class M_backtest_MyToT(Model) :
             self.M['체결수량'] = 0
             self.M['매도금액'] = 0.0
             self.M['진행상황'] = '정상진행' 
-            self.M['구매코드'] = ''       
+            self.M['구매코드'] = ' '       
 
             if  idx == 0 or self.M['첫날기록'] : 
                 self.new_day()

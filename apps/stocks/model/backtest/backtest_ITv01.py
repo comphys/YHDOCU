@@ -16,7 +16,7 @@ class M_backtest_ITv01(Model) :
         if  self.M['날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['날수'] ; self.M['최대날자'] = self.M['day']
 
         tx['코드'] = self.D['code']
-        tx['시즌'] = self.M['날수']
+        tx['날수'] = self.M['날수']
         tx['회차'] = self.M['회차']
         tx['기록일자'] = self.M['day']
         tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
