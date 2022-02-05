@@ -19,6 +19,10 @@ class M_board_list(Model) :
             if self.D['post'] :
                 # key : csh_add1, csh_add2 ... 
                 for key, val in self.D['post'].items() : session['CSH'][key] = val 
+            else :
+                if self.D['bid'] in ("daily_first","daily_second") : 
+                    session['CSH']['csh_add19'] = '시즌진행' 
+                    session['CSH']['csh_add1'] = 'SOXL'
             
             session.modified = True # for mutable variable in session
 
@@ -43,9 +47,8 @@ class M_board_list(Model) :
             for key,val in session['CSH'].items() :
                 if val and 'csh' in key : C_search.append(f"{key.replace('csh_','')} = '{val}' ")
 
-
         tbl = f"h_{self.D['bid']}_board"
-    
+
         Cond = 'WHERE '+ ' AND '.join(C_search) 
   
         total_cnt = self.DB.one(f"SELECT count(no) FROM {tbl} {Cond}")
