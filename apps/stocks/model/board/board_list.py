@@ -13,7 +13,6 @@ class M_board_list(Model) :
         self.D['Title'] = self.D['BCONFIG']['title']
 
         if self.D['Cat_use'] :
-            self.D['list_filter']=''
 
             if (not self.D['No'] and not self.D['search'] and not self.D['csh'] and not self.D['Page']) or self.D['csh'] == 'off' : session['CSH'].clear()
 
@@ -39,28 +38,16 @@ class M_board_list(Model) :
         
         elif self.D['search'] : C_search.append(" add0 like '%" + self.D['search'] + "%' OR content like '%"+self.D['search']+"%' ")
         
-        list_filter = ''
+
         if session['CSH'] :
             for key,val in session['CSH'].items() :
                 if val and 'csh' in key : C_search.append(f"{key.replace('csh_','')} = '{val}' ")
 
-            if list_filter := session['CSH']['list_filter'] :
-                self.D['list_filter'] = list_filter 
-                temp  = { v:k for k,v in self.D['EXTITLE'].items() }
-                temp1 = { "또는":"OR","그리고":"AND","[":"='","]":"'","{":"like '%","}":"%'"}
-                for key,val in temp.items() : 
-                    if   self.D['EXFTYPE'][val] == 'int'  : new_val = f"CAST({val} as INT)"
-                    elif self.D['EXFTYPE'][val] == 'real' : new_val = f"CAST({val} as REAL)"
-                    else : new_val = val
-                    list_filter = list_filter.replace(key,new_val)
-                for key,val in temp1.items() : list_filter = list_filter.replace(key,val)
 
-        
         tbl = f"h_{self.D['bid']}_board"
     
         Cond = 'WHERE '+ ' AND '.join(C_search) 
-        if list_filter : Cond += ' AND '+ list_filter
-
+  
         total_cnt = self.DB.one(f"SELECT count(no) FROM {tbl} {Cond}")
         
         page_total = page_start = page_end = 1

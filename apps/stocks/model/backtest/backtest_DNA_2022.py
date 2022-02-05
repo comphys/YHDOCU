@@ -31,6 +31,7 @@ class M_backtest_DNA_2022(Model) :
         if self.M['가용잔액'] < 0 :
             tx['가용잔액'] = 0
             tx['추가잔액'] = self.M['추가자본'] + self.M['가용잔액']
+            if self.M['진행상황'] == '전략매도' : tx['가용잔액'] = self.M['수익현황'] * self.M['위매비중']
         else :
             tx['가용잔액'] = self.M['가용잔액']
             tx['추가잔액'] = self.M['추가자본'] 

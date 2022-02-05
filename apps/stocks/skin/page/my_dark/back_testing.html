@@ -128,7 +128,7 @@
 			{% endif %}
 				<td style='text-align:center'>{{TR['날수']}}</td>
 				<td style='text-align:right;color:#BDBDBD;'>{{TR['회차']}}</td>
-				<td style='text-align:center;color:#CEF6F5'>{{TR['기록일자']}}</td>
+				<td style='text-align:center;color:#CEF6F5' class="backtest_date">{{TR['기록일자']}}</td>
 				<td style='text-align:right'>{{TR['당일종가']|safe}}</td>
 				<!-- <td style='text-align:right'>{{TR['과거추종']}}</td> -->
 				<!-- <td style='text-align:right'>{{TR['체결단가']}}</td> -->
@@ -155,6 +155,11 @@
 {% endif %}
 
 <script>
+
+$(document).ready(function(){ 
+	$(".backtest_date").click(function(){$("input[name='start_date']").val($(this).text())})
+});	
+
 function check_thisForm() {
     if(! $("input[name='code']").val() ) { h_dialog.notice("코드 입력은 필수입니다"); return false; }
 	if(! $("input[name='strategy']").val() ) { h_dialog.notice("전략 입력은 필수입니다"); return false; }
