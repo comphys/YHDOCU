@@ -242,7 +242,7 @@ class M_backtest_DNA_2022(Model) :
 
         self.init_value()
 
-        CP = 25
+        CP = 21
         for idx,BD in enumerate(self.B) :
             self.M['day'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
@@ -252,7 +252,7 @@ class M_backtest_DNA_2022(Model) :
 
             if  idx == 0 or self.M['첫날기록'] : self.new_day(); self.print_backtest(); continue
             
-            self.normal_sell()
+            if self.M['진행'] >= CP : self.normal_sell()
             
             if self.M['위기전략'] : self.strategy_sell()
             else : self.base_buy() if self.M['진행'] < CP else self.normal_buy()
