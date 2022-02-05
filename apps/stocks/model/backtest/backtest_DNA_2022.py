@@ -252,7 +252,7 @@ class M_backtest_DNA_2022(Model) :
 
             if  idx == 0 or self.M['첫날기록'] : self.new_day(); self.print_backtest(); continue
             
-            if self.M['진행'] >= CP : self.normal_sell()
+            self.normal_sell()
             
             if self.M['위기전략'] : self.strategy_sell()
             else : self.base_buy() if self.M['진행'] < CP else self.normal_buy()
