@@ -398,7 +398,7 @@ class Stock_dna_2022(Control) :
             
        
         # 매도전략
-        CP = 25
+        CP = 21
         if self.M['진행'] >= CP : self.normal_sell()
         if self.M['위기전략'] : self.strategy_sell()
 
