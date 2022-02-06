@@ -12,3 +12,13 @@ class M_back_testing(Model) :
 
         self.DB.tbl, self.DB.wre = ("h_stock_strategy_board",None)
         self.D['sel_strategy'] = self.DB.get("add0",assoc=False)
+
+        # 기본 값
+        self.D['code'] = 'SOXL'
+        self.D['strategy'] = 'DNA 2022'
+        self.D['capital'] = '20,000'
+        self.D['addition'] = '9,000'
+        self.D['start_date'] = '2017-01-02'
+        self.D['end_date'] = '2021-12-27'
+
+        
