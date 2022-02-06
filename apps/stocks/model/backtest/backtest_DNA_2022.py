@@ -249,6 +249,7 @@ class M_backtest_DNA_2022(Model) :
             self.M['당일고가'] = float(BD['add5'])
             self.M['전일종가'] = float(self.B[idx-1]['add3'])   
             self.M['매도금액'] = 0 
+            self.M['체결수량'] = 0
 
             if  idx == 0 or self.M['첫날기록'] : self.new_day(); self.print_backtest(); continue
             
