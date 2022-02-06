@@ -239,7 +239,6 @@ class Stock_dna_2022(Control) :
 
         매수단가 = self.M['당일종가']
         한도금액 = self.M['추가자본'] + self.M['가용잔액']
-        self.info(f"{self.M['기록일자']} : {한도금액}")
        
         기본수량 = math.ceil(self.M['일매수금'] / 매수단가)
         
@@ -302,21 +301,6 @@ class Stock_dna_2022(Control) :
                         self.M['체결수량'] += many ; self.M['매매현황'] += 'D' + str(self.M['연속하락'])
                         self.M['진행상황']  = '추종매수'
 
-            # 추종매수 검토
-            if many := int(self.B['buy31'])  : 
-                if  self.M['당일종가'] <= float(self.B['buy32']):  
-                    self.M['체결수량'] += many ; self.M['매매현황'] += str(self.M['연속하락'])
-            
-            # 추가매수 검토
-            if many := int(self.B['buy41'])  : 
-                if  self.M['당일종가'] <= float(self.B['buy42']):  
-                    self.M['체결수량'] += many ; self.M['매매현황'] += 'A'
-
-            # 전략매수 검토
-            if many := int(self.B['buy51'])  : 
-                if  self.M['당일종가'] <= float(self.B['buy52']):  
-                    self.M['체결수량'] += many ; self.M['매매현황'] += 'R' 
-                    self.M['전략매금'] = 0.0 ; self.M['전략가격'] = 0.0
         else :
             self.M['매매현황'] += 'M'    
 
