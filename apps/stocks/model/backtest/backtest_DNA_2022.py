@@ -46,6 +46,7 @@ class M_backtest_DNA_2022(Model) :
 
         self.M['연속하락']  =  self.M['연속하락'] + 1 if  self.M['당일종가'] <  self.M['전일종가'] else 0 
         self.M['연속상승']  =  self.M['연속상승'] + 1 if  self.M['당일종가'] >= self.M['전일종가'] else 0 
+        self.M['어제평균']  =  self.M['평균단가']
 
         if  self.M['매수수량'] : 
             self.M['매수금액']  =  self.M['매수수량'] * self.M['당일종가']
@@ -79,6 +80,7 @@ class M_backtest_DNA_2022(Model) :
             self.M['수익현황'] = self.M['매도수익']
             self.M['수익률']   = self.M['매수익률']
             self.M['전략매금'] = self.M['전략가격'] = 0
+            self.M['평균단가'] = self.M['어제평균']
             self.M['위기전략'] = False
             self.M['첫날기록'] = True   
             if self.M['리밸런싱'] : self.rebalance()   
