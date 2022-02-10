@@ -257,7 +257,7 @@ class M_backtest_DNA_2022(Model) :
             
             if self.M['진행'] >= CP : self.normal_sell()
             
-            if self.M['위기전략'] : self.strategy_sell()
+            if self.M['위기전략'] and self.M['수량확보'] : self.strategy_sell()
             else : self.base_buy() if self.M['진행'] < CP else self.normal_buy()
 
         #   결과정리 --------------------------------------------------------------------------------------------------

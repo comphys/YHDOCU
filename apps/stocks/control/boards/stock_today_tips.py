@@ -56,7 +56,7 @@ class Stock_today_tips(Control) :
         daym = self.gets['daym']
         daym = float(daym.replace(',',''))
 
-        일매수금 = int(daym / 28)
+        일매수금 = int(daym / 27)
         now_date = int(time.mktime(datetime.strptime(date,'%Y-%m-%d').timetuple()))
         old_date = datetime.fromtimestamp(now_date-3600*24*14).strftime('%Y-%m-%d')
         qry = f"SELECT add3 FROM h_stockHistory_board WHERE add0 BETWEEN '{old_date}' and '{date}' and add1='{code}' ORDER BY add0"
@@ -77,7 +77,7 @@ class Stock_today_tips(Control) :
 
         매수단가 = yes * 1.1
         output  = "<div style='width:350px;height:250px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:1px solid #F7F8E0;' >"
-        output += "<span style='color:yellow'>DNA V2 전략을 위한 해당종목의 첫날 매수방법</span><br>"
+        output += "<span style='color:yellow'>DNA 2002 전략을 위한 해당종목의 첫날 매수방법</span><br>"
         output += f"주식종목 : {code}<br>"
         output += f"매수예정 : {date}<br>"
         output += f"일매수금 : {일매수금:,}<br>"
