@@ -31,12 +31,14 @@ class M_backtest_DNA_2022(Model) :
         if self.M['가용잔액'] < 0 :
             tx['가용잔액'] = 0
             tx['추가잔액'] = self.M['추가자본'] + self.M['가용잔액']
-            if self.M['진행상황'] == '전략매도' : tx['가용잔액'] = self.M['수익현황'] * self.M['위매비중']
+            
         else :
             tx['가용잔액'] = self.M['가용잔액']
             tx['추가잔액'] = self.M['추가자본'] 
 
+        if self.M['진행상황'] == '전략매도' : tx['가용잔액'] = self.M['수익현황'] * self.M['위매비중']
         tx['가용잔액'] = f"{round(tx['가용잔액'],4):,.2f}"
+        
         tx['추가잔액'] = f"{round(tx['추가잔액'],4):,.2f}"
         tx['진행상황'] = self.M['진행상황'] if self.M['진행상황'] != '전량매도' else f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>전량매도</span>"
         tx['일매수금'] = self.M['일매수금']
