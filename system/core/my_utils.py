@@ -1,5 +1,5 @@
 import os, re
-from datetime import datetime
+from datetime import datetime, timedelta
 from pytz import timezone
 
 # 파일조작 관련 함수 
@@ -106,4 +106,10 @@ def timestamp_to_date(ts='now',opt=1) :
     else  : t_format = opt 
 
     return datetime.fromtimestamp(ts,kst).strftime(t_format)
+
+def dayofdate(theday,delta=0) :
+    dow = ('월','화','수','목','금','토','일')
+    a = datetime.strptime(theday,'%Y-%m-%d')
+    if delta : b = a+timedelta(days=delta) ; return (b.strftime('%Y-%m-%d'),dow[b.weekday()])
+    else : return dow[a.weekday()]
 
