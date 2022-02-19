@@ -13,7 +13,7 @@
 </head>
 <body>
 <div id="logo" >	<img src="/sys/mycss/logo.png" alt="" /></div>
-{% if not D['_mbl']  %} 
+{% if D['_mbl']  %} 
 <div id="loginbox" style="height:140px;" >
 	<form id="loginform" class="form-vertical" method='post' action="{{D['_bse']}}{{D['back']}}">
 		<p>로그인 페이지 입니다</p>
