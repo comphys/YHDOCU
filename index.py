@@ -86,8 +86,15 @@ def main(myapp=None, control=None, method=None, option=None):
     except :
         DOCU_ROOT = ''
 
+    # detect mobile
+
+    user_agent = request.headers.get('User-Agent')
+    user_agent = user_agent.lower()
+
+    user_agent = True if "android" in user_agent else False
+
     # option : 매개변수, via : 수단, data : form data
-    Instance = CLS(_opt=option,_pos=data,_bse=mybase,_url=request.path,_ctr=control,_mtd=method,_app=myapp,_pth=app_root,_skn=myskin,_cfg=myconfig,_ctl=control)
+    Instance = CLS(_opt=option,_pos=data,_bse=mybase,_url=request.path,_ctr=control,_mtd=method,_app=myapp,_pth=app_root,_skn=myskin,_cfg=myconfig,_ctl=control,_mbl=user_agent)
     # _auto 함수에서는 클라이언트에 출력정보를 리턴하지 않으며, 해당 메서드에서만 최종 DATA를 전달받는다.
     DATA = getattr(Instance,method)()
     

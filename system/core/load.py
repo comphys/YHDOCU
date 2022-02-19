@@ -50,6 +50,7 @@ class Control :
         self.D['post'] = imd.to_dict()
         self.D['_skn'] = V['_skn']
         self.D['_bse'] = V['_bse']
+        self.D['_mbl'] = V['_mbl']
 
         try :    self.C = self.CFG['general']
         except : self.C = None

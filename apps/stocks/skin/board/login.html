@@ -12,31 +12,56 @@
 <script src="/sys/jyh/yhutils.js"></script>
 </head>
 <body>
-	<div id="logo" >	<img src="/sys/mycss/logo.png" alt="" /></div>
-	<div id="loginbox" >
-		<form id="loginform" class="form-vertical" method='post' action="{{D['_bse']}}{{D['back']}}">
-			<p>로그인 페이지 입니다</p>
-			<div class="control-group" style='margin:0;padding:0'>
-				<div class="controls">
-					<div class="input-prepend">
-						<span class="add-on"><i class="fa fa-user" style='color:#010e63'></i></span>
-						<input type="text" name='userid' placeholder="사용자아이디" style='width:150px;ime-mode:disabled' />
-					</div>
-				</div>
-				<div class="controls">
-					<div class="input-prepend">
-						<span class="add-on"><i class="fa fa-lock" style='color:#a70330'></i></span>
-						<input type="text" name='userpass' placeholder="사용자패스워드" style='width:150px;ime-mode:disabled' />
-						<input type="hidden" name='redirect' value="{{D['redirect']}}" />
-					</div>
+<div id="logo" >	<img src="/sys/mycss/logo.png" alt="" /></div>
+{% if D['_mbl']  %} 
+<div id="loginbox" >
+	<form id="loginform" class="form-vertical" method='post' action="{{D['_bse']}}{{D['back']}}">
+		<p>로그인 페이지 입니다</p>
+		<div class="control-group" style='margin:0;padding:0'>
+			<div class="controls">
+				<div class="input-prepend">
+					<span class="add-on"><i class="fa fa-user" style='color:#010e63'></i></span>
+					<input type="text" name='userid' value="mobile" style='width:150px;ime-mode:disabled' />
 				</div>
 			</div>
-				<div class="form-actions">
-					<input type="submit" class="btn btn-inverse" value="YHDOCU로 진입합니다" />
+			<div class="controls">
+				<div class="input-prepend">
+					<span class="add-on"><i class="fa fa-lock" style='color:#a70330'></i></span>
+					<input type="number" name='userpass' placeholder="사용자패스워드" style='width:150px;ime-mode:disabled' />
+					<input type="hidden" name='redirect' value="{{D['redirect']}}" />
 				</div>
-			</form>
+			</div>
 		</div>
-
+			<div class="form-actions">
+				<input type="submit" class="btn btn-inverse" value="YHDOCU로 진입합니다" />
+			</div>
+		</form>
+	</div>
+{% else %} 
+<div id="loginbox" >
+	<form id="loginform" class="form-vertical" method='post' action="{{D['_bse']}}{{D['back']}}">
+		<p>로그인 페이지 입니다</p>
+		<div class="control-group" style='margin:0;padding:0'>
+			<div class="controls">
+				<div class="input-prepend">
+					<span class="add-on"><i class="fa fa-user" style='color:#010e63'></i></span>
+					<input type="text" name='userid' placeholder="사용자아이디" style='width:150px;ime-mode:disabled' />
+				</div>
+			</div>
+			<div class="controls">
+				<div class="input-prepend">
+					<span class="add-on"><i class="fa fa-lock" style='color:#a70330'></i></span>
+					<input type="text" name='userpass' placeholder="사용자패스워드" style='width:150px;ime-mode:disabled' />
+					<input type="hidden" name='redirect' value="{{D['redirect']}}" />
+				</div>
+			</div>
+		</div>
+			<div class="form-actions">
+				<input type="submit" class="btn btn-inverse" value="YHDOCU로 진입합니다" />
+			</div>
+		</form>
+	</div>
+{% endif %}
 <script>
 	$(document).ready(function(){
 		$("input[name='userid']").focus(); 
