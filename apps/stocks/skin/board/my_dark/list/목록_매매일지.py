@@ -1,5 +1,6 @@
 import system.core.my_utils as ut
 from system.core.load import SKIN
+from datetime import date
 from flask import session
 
 class 목록_매매일지(SKIN) :
@@ -56,6 +57,11 @@ class 목록_매매일지(SKIN) :
             self.DB.wre = f"add0='{last_date}'"
             평가금액, 가용잔액, 추가자본 = self.DB.get("add11,add16,add17",many=1,assoc=False) 
 
+            d0 = date(int(start_date[0:4]),int(start_date[5:7]),int(start_date[8:10]))
+            d1 = date(int(last_date[0:4]),int(last_date[5:7]),int(last_date[8:10]))
+            delta = d1-d0
+            경과일수 = delta.days            
+
             초기자본 = float(기본자산) + float(추가자산)
             최종자본 = float(평가금액) + float(가용잔액) + float(추가자본)
             최종수익 = 최종자본 - 초기자본 
@@ -63,7 +69,8 @@ class 목록_매매일지(SKIN) :
             style1 = "<span style='font-weight:bold;color:white'>"
             style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
             style3 = "<span style='font-weight:bold;color:#F6CECE'>"
-            self.D['earning_info']  = f"초기자본 {style1}${초기자본:,}</span> 최종자본 {style1}${최종자본:,.2f}</span> 으로 "
+            self.D['earning_info']  = f"투자기간 : {style1}{경과일수:,}</span>일 "
+            self.D['earning_info'] += f"초기자본 {style1}${초기자본:,}</span> 최종평가액 {style1}${최종자본:,.2f}</span> 으로 "
             self.D['earning_info'] += f"수익은 {style2}${최종수익:,.2f}</span> 이며 수익률은 {style3}{최종수익률:,.2f}%</span> 입니다"            
 
     def list(self) :

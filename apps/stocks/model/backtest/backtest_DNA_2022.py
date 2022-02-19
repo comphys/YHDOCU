@@ -280,7 +280,7 @@ class M_backtest_DNA_2022(Model) :
         style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
         style3 = "<span style='font-weight:bold;color:#F6CECE'>"
         self.D['output']  = f"총기간 : {style1}{self.D['days_span']:,}</span>일 "
-        self.D['output']  = f"초기자본 {style1}${초기자본:,}</span> 최종자본 {style1}${최종자본:,.2f}</span> 으로 "
+        self.D['output'] += f"초기자본 {style1}${초기자본:,}</span> 최종자본 {style1}${최종자본:,.2f}</span> 으로 "
         self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 이며 수익률은 {style3}{최종수익률:,.2f}</span>% 입니다"
     
     def view(self) :
