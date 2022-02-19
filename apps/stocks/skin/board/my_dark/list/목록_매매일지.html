@@ -24,11 +24,11 @@
 				</div>
 			</div>
 			{% endfor -%}
-			<input type="hidden" name="list_filter" value="{{D['list_filter']}}" >
 		</form>
 	</div>
 {% endif -%}
 	<div class='pull-right'>
+		{{D['earning_info']|safe}}&nbsp;&nbsp;
 		<input  type="hidden" name="search_field" value="기록일자" />
 		<input  id="search_input2" type='text' name='search_value' value="{{D['search']}}" style='height:24px;vertical-align:baseline;width:120px;text-align:center' />
 		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="list_ontheday()">검색</button>
