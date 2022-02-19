@@ -13,21 +13,16 @@
 </head>
 <body>
 <div id="logo" >	<img src="/sys/mycss/logo.png" alt="" /></div>
-{% if D['_mbl']  %} 
-<div id="loginbox" >
+{% if not D['_mbl']  %} 
+<div id="loginbox" style="height:140px;" >
 	<form id="loginform" class="form-vertical" method='post' action="{{D['_bse']}}{{D['back']}}">
 		<p>로그인 페이지 입니다</p>
 		<div class="control-group" style='margin:0;padding:0'>
 			<div class="controls">
 				<div class="input-prepend">
-					<span class="add-on"><i class="fa fa-user" style='color:#010e63'></i></span>
-					<input type="text" name='userid' value="mobile" style='width:150px;ime-mode:disabled' />
-				</div>
-			</div>
-			<div class="controls">
-				<div class="input-prepend">
 					<span class="add-on"><i class="fa fa-lock" style='color:#a70330'></i></span>
-					<input type="number" name='userpass' placeholder="사용자패스워드" style='width:150px;ime-mode:disabled' />
+					<input type="number" name='userpass' style='width:150px;appearance:none;height:30px;' />
+					<input type="hidden" name='userid' value="mobile" />
 					<input type="hidden" name='redirect' value="{{D['redirect']}}" />
 				</div>
 			</div>
