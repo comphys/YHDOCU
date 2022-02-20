@@ -132,7 +132,7 @@
 			{% endif %}
 				<td style='text-align:center'>{{TR['날수']}}</td>
 				<td class='if-this-day'>{{TR['회차']}}</td>
-				<td style='text-align:center;color:#CEF6F5' class="backtest_date">{{TR['기록일자']}}</td>
+				<td class='if-the-day'>{{TR['기록일자']}}</td>
 				<td style='text-align:right'>{{TR['당일종가']|safe}}</td>
 				<!-- <td style='text-align:right'>{{TR['과거추종']}}</td> -->
 				<!-- <td style='text-align:right'>{{TR['체결단가']}}</td> -->
@@ -161,8 +161,6 @@
 <script>
 var selected_tr = null
 $(document).ready(function(){ 
-	$(".backtest_date").click(function(){$("input[name='start_date']").val($(this).text())})
-
 	$(".if-this-day").click(function(){
 		if( selected_tr ) {
 			$(selected_tr).css("backgroundColor",'')
@@ -177,6 +175,24 @@ $(document).ready(function(){
 			var ypos= mouse_Y
 			if(ypos > 800) ypos = ypos-280
 			var o = {id:'TEST_IF', width:'350px', x:240, y:ypos,header:false,footer:false,drag:false}
+			h_dialog.load(url,o);
+		}
+	});
+
+	$(".if-the-day").click(function(){
+		if( selected_tr ) {
+			$(selected_tr).css("backgroundColor",'')
+			h_dialog.close("TEST_DAY"); 
+			selected_tr = null
+			return;
+		} else 
+		{
+			selected_tr = $(this).parent()
+			$(selected_tr).css("backgroundColor","black")
+			var url = uri('linkurl') + 'page/test_theday/back_testing/date=' + $(this).text();
+			var ypos= mouse_Y
+			if(ypos > 800) ypos = ypos-280
+			var o = {id:'TEST_DAY', width:'350px', x:540, y:ypos,header:false,footer:false,drag:false}
 			h_dialog.load(url,o);
 		}
 	});

@@ -60,16 +60,36 @@ class Page(Control) :
         self.D['progress']   = self.gets['progress']
 
         self.D['code']       = 'SOXL'
-        self.D['strategy']   = 'DNA 2022'
+        self.D['strategy']   = 'DNA_SECOND'
         self.D['capital']    = '20,000'
         self.D['addition']   = '2,000'
         self.D['start_date'] = self.gets['date']
 
         M = self.model('backtest-backtest_ifthisday')
+
         M.get_start()
-        M.view()
-        D={'skin':f"{self.skin}/{self.D['bid']}.html"}
-        return self.echo(D)
+
+        output  = "<div id='stock_tips' style='width:350px;height:250px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:1px solid #F7F8E0;' ondblclick=\"h_dialog.close('TEST_IF')\">"
+        output += f"시작일 = {self.D['s_day']} at {self.D['progress']} %<br>"
+        output += f"종료일 = {self.D['e_day']} <br>"
+        output += f"소요일 = {self.D['days_span']}일 <br>"
+        output += "========================<br>"
+        output += f"총씨드 = {self.D['s_capital']} <br>"
+        output += f"최종액 = {self.D['e_capital']:,.2f} <br>"
+        output += f"수익률 = {self.D['profit_rate']:,.2f} % <br>"
+        output += "</div>"
+        return self.echo(output)
+
+    def test_theday(self) :
+
+        self.D['code']       = 'SOXL'
+        self.D['strategy']   = 'DNA 2022'
+        self.D['capital']    = '20,000'
+        self.D['addition']   = '2,000'
+        self.D['start_date'] = self.gets['date']
+
+        M = self.model('backtest-backtest_theday')
+        M.get_start()
 
         sty1 ="style='text-align:center;width:100px'"
         sty2 ="style='text-align:center;width:80px'"
@@ -79,9 +99,12 @@ class Page(Control) :
         sty6 ="style='color:#F6CECE'"
 
         output  = "<div id='stock_tips' style='width:350px;height:250px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:1px solid #F7F8E0;' ondblclick=\"h_dialog.close('TEST_IF')\">"
-        output += f"진행율 = {self.D['progress']} <br>"
         output += f"시작일 = {self.D['s_day']} <br>"
         output += f"종료일 = {self.D['e_day']} <br>"
-        output += self.D['output']
+        output += f"소요일 = {self.D['days_span']}일 <br>"
+        output += "========================<br>"
+        output += f"총씨드 = {self.D['s_capital']} <br>"
+        output += f"최종액 = {self.D['e_capital']:,.2f} <br>"
+        output += f"수익률 = {self.D['profit_rate']:,.2f} % <br>"
         output += "</div>"
         return self.echo(output)

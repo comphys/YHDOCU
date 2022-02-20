@@ -1,8 +1,9 @@
 from system.core.load import Model
 from datetime import datetime,date
+import system.core.my_utils as ut
 import math,time
 
-class M_backtest_DNA_SECOND(Model) :
+class M_backtest_theday(Model) :
 
 # 무한매수법의 개인 변형 적용으로 평균가 다운 전략
 
@@ -43,6 +44,7 @@ class M_backtest_DNA_SECOND(Model) :
         tx['진행상황'] = self.M['진행상황'] if self.M['진행상황'] != '전량매도' else f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>전량매도</span>"
         tx['일매수금'] = self.M['일매수금']
         self.D['TR'].append(tx)
+
 
     def calculate(self)  :
 
@@ -115,7 +117,6 @@ class M_backtest_DNA_SECOND(Model) :
         self.M['매도대기']  = int(self.S['add11']) # 매도대기 이전에 매도되는 것을 방지(보다 큰 수익 실현을 위해)
         self.M['리밸런싱']  = True if self.S['add12'] == 'on' else False  # 리밸런싱 수행 여부
         self.M['최대날자']  = ' '
-        self.D['종료일자']  = ''
 
         self.M['날수'] = 0
         self.M['진행'] = 0
@@ -148,31 +149,6 @@ class M_backtest_DNA_SECOND(Model) :
         # 리밸런싱
         total = self.M['가용잔액'] + self.M['추가자본'] 
         self.M['자본비율'] = self.M['가용잔액'] / total
-
-    def the_day(self) :
-        self.M['기록시즌'] += 1
-
-        self.M['연속하락']  = int(self.old_price_trace('DN'))
-        self.M['연속상승']  = int(self.old_price_trace('UP'))
-
-        self.M['progress'] = float(self.D['progress'])
-        총매수금 = int(self.D['init_capital'] * self.M['progress']/100)
-        self.M['평균단가']  = self.M['당일종가']
-        self.M['매수수량']  = math.ceil(총매수금/self.old_price_trace('YD'))
-
-        self.M['보유수량']  = self.M['매수수량'] 
-        self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량']
-        self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
-        self.M['수익현황']  = self.M['수익률'] = 0.0
-        self.M['가용잔액'] -= self.M['매수금액']
-        self.M['체결수량']  = self.M['매수수량']
-        self.M['진행상황']  = '첫날거래'
-        self.M['첫날기록']  = False
-        self.M['구매코드']  = 'ST' 
-        
-        self.M['매수수량'] = 0
-        self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)
-
 
     def new_day(self) :
         self.M['기록시즌'] += 1
@@ -282,8 +258,8 @@ class M_backtest_DNA_SECOND(Model) :
             self.M['매도금액'] = 0 
             self.M['체결수량'] = 0
 
-            if  idx == 0 : self.the_day(); self.print_backtest(); continue
-            if  self.M['첫날기록'] : break
+            if  idx == 0 : self.new_day(); continue
+            if  self.M['첫날기록'] : self.D['sell_date'] = self.M['day']; break
             
             if self.M['진행'] >= CP : self.normal_sell()
             
@@ -292,32 +268,10 @@ class M_backtest_DNA_SECOND(Model) :
 
         #   결과정리 --------------------------------------------------------------------------------------------------
             self.calculate()
-            self.print_backtest()
+            # self.print_backtest()
         # endfor -----------------------------------------------------------------------------------------------------
         self.result()
 
-    def result(self) :
-
-        # 기간 계산하기
-        if not self.D['종료일자'] : self.D['종료일자'] = self.D['end_date']
-        self.D['s_day'] = s_day = self.D['start_date']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
-        self.D['e_day'] = e_day = self.D['종료일자'];      d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
-        delta = d1-d0
-        self.D['days_span'] = delta.days        
-
-        self.D['max_days'] = self.M['최대일수']
-        self.D['max_date'] = self.M['최대날자']
-        초기자본 = self.D['init_capital'] + self.D['addition']
-        최종자본 = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본']
-        최종수익 = 최종자본 - 초기자본 
-        최종수익률 = (최종수익/초기자본) * 100 
-        style1 = "<span style='font-weight:bold;color:white'>"
-        style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
-        style3 = "<span style='font-weight:bold;color:#F6CECE'>"
-        self.D['output']  = f"총기간 : {style1}{self.D['days_span']:,}</span>일 "
-        self.D['output'] += f"초기자본 {style1}${초기자본:,}</span> 최종자본 {style1}${최종자본:,.2f}</span> 으로 "
-        self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 이며 수익률은 {style3}{최종수익률:,.2f}</span>% 입니다"
-    
     def view(self) :
         
         now = int(datetime.now().timestamp())
@@ -328,8 +282,24 @@ class M_backtest_DNA_SECOND(Model) :
         self.DB.tbl, self.DB.wre = ("h_stock_strategy_board",None)
         self.D['sel_strategy'] = self.DB.get("add0",assoc=False)
 
-    def get_start(self) :
 
+    def result(self) :
+
+        # 기간 계산하기
+        self.D['s_day'] = s_day = self.D['start_date']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
+        self.D['e_day'] = e_day = self.D['종료일자'];      d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
+        delta = d1-d0
+        self.D['days_span'] = delta.days        
+
+        self.D['s_capital'] = self.D['init_capital'] + self.D['addition']
+        self.D['e_capital'] = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본']
+        self.D['ca_profit'] = self.D['e_capital'] - self.D['s_capital'] 
+        self.D['profit_rate'] = (self.D['ca_profit']/self.D['s_capital']) * 100 
+
+    
+
+    def get_start(self) :
+        self.D['end_date']   = ut.dayofdate(self.D['start_date'],delta=300)[0]
         # 매매전략 가져오기
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.D['strategy']}'")
         self.S = self.DB.get_line('add1,add2,add3,add4,add5,add6,add7,add8,add9,add10,add11,add12,add14,add15,add16,add17,add18,add20,add21,add22,add23,add24,add25')
@@ -344,12 +314,6 @@ class M_backtest_DNA_SECOND(Model) :
         if chk_data > self.D['start_date'] : 
             self.D['NOTICE'] = f" {self.D['start_date']} 에서 {self.D['end_date']} 까지 분석을 위한 데이타가 부족합니다. 시작 날자를 {chk_data} 이후 3일 뒤로 조정하시기 바랍니다."
             return
-
-        # 기간 계산하기
-        self.D['s_day'] = s_day = self.B[0]['add0']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
-        self.D['e_day'] = e_day = self.B[-1]['add0'] ; d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
-        delta = d1-d0
-        self.D['days_span'] = delta.days
 
         self.D['init_capital'] = int(self.D['capital'].replace(',',''))
         self.D['addition'] = int(self.D['addition'].replace(',','')) if self.D['addition'] else 0
