@@ -44,12 +44,44 @@ class Page(Control) :
         self.D['addition']   = self.D['post']['addition']
         self.D['start_date'] = self.D['post']['start_date']
         self.D['end_date']   = self.D['post']['end_date']
+        self.D['progress']   = self.D['post']['progress']
 
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.D['strategy']}'")
         s_code = self.DB.get_one('add1')
         
         M = self.model('backtest-backtest_'+s_code)
+        M.view()
+        M.get_start()
+        D={'skin':f"{self.skin}/{self.D['bid']}.html"}
+        return self.echo(D)
+    
+    def test_if(self) :
+
+        self.D['progress']   = self.gets['progress']
+
+        self.D['code']       = 'SOXL'
+        self.D['strategy']   = 'DNA 2022'
+        self.D['capital']    = '20,000'
+        self.D['addition']   = '2,000'
+        self.D['start_date'] = self.gets['date']
+
+        M = self.model('backtest-backtest_ifthisday')
         M.get_start()
         M.view()
         D={'skin':f"{self.skin}/{self.D['bid']}.html"}
         return self.echo(D)
+
+        sty1 ="style='text-align:center;width:100px'"
+        sty2 ="style='text-align:center;width:80px'"
+        sty3 ="style='text-align:right;width:80px;padding-right:10px'"
+        sty4 ="style='text-align:right;width:100px;padding-right:10px'"
+        sty5 ="style='color:#CED8F6'"
+        sty6 ="style='color:#F6CECE'"
+
+        output  = "<div id='stock_tips' style='width:350px;height:250px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:1px solid #F7F8E0;' ondblclick=\"h_dialog.close('TEST_IF')\">"
+        output += f"진행율 = {self.D['progress']} <br>"
+        output += f"시작일 = {self.D['s_day']} <br>"
+        output += f"종료일 = {self.D['e_day']} <br>"
+        output += self.D['output']
+        output += "</div>"
+        return self.echo(output)
