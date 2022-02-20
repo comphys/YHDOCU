@@ -20,6 +20,6 @@ class M_back_testing(Model) :
         self.D['addition'] = '2,000'
         self.D['start_date'] = '2017-01-02'
         self.D['end_date'] = '2021-12-27'
-        self.D['progress'] = '60'
+        self.D['progress'] = '40'
 
         
