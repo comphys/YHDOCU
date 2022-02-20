@@ -9,11 +9,12 @@ class M_backtest_DNA_2022(Model) :
     def print_backtest(self) :
         tx = {}
         self.M['날수'] += 1
-        if self.M['진행상황'] in ('전량매도','전략매도') : self.M['날수'] = 0 
+         
         if self.M['진행상황'] == '첫날거래' : self.M['날수'] = 1
 
         tx['코드'] = self.D['code']
         tx['날수'] = self.M['날수']
+        if self.M['진행상황'] in ('전량매도','전략매도') : self.M['날수'] = 0
         tx['회차'] = self.M['진행']
         tx['기록일자'] = self.M['day']
         tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
@@ -23,7 +24,8 @@ class M_backtest_DNA_2022(Model) :
         tx['보유수량'] = self.M['보유수량']
         tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}"
         tx['총매수금'] = f"{round(self.M['총매수금'],4):,.2f}"
-        tx['수익현황'] = f"{round(self.M['수익현황'],4):,.2f}"
+        if self.M['진행상황'] == '전량매도': tx['수익현황'] = f"[ {round(self.M['수익현황'],4):,.2f} ]"
+        else : tx['수익현황'] = f"{round(self.M['수익현황'],4):,.2f}"
         clr = "#F6CECE" if self.M['수익률'] > 0 else "#CED8F6"
         tx['수익률'] = f"<span style='color:{clr}'>{round(self.M['수익률'],4):,.2f}"
         tx['매도금액'] = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['구매코드']
