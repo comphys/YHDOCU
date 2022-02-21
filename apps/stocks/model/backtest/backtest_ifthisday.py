@@ -156,7 +156,9 @@ class M_backtest_ifthisday(Model) :
         self.M['연속하락']  = int(self.old_price_trace('DN'))
         self.M['연속상승']  = int(self.old_price_trace('UP'))
 
-        self.M['progress'] = float(self.D['progress'])
+        # self.M['progress'] = float(self.D['progress'])
+        # if self.M['progress'] > 70 : self.M['progress'] = self.D['progress'] = 70
+        self.M['progress'] = self.D['progress'] = 70
         총매수금 = int(self.D['init_capital'] * self.M['progress']/100)
         self.M['평균단가']  = self.M['당일종가']
         self.M['매수수량']  = math.ceil(총매수금/self.old_price_trace('YD'))
@@ -304,7 +306,7 @@ class M_backtest_ifthisday(Model) :
     
 
     def get_start(self) :
-        self.D['end_date']   = ut.dayofdate(self.D['start_date'],delta=500)[0]
+        self.D['end_date']   = ut.dayofdate(self.D['start_date'],delta=2000)[0]
         # 매매전략 가져오기
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='DNA_SECOND'")
         self.S = self.DB.get_line('add1,add2,add3,add4,add5,add6,add7,add8,add9,add10,add11,add12,add14,add15,add16,add17,add18,add20,add21,add22,add23,add24,add25')
