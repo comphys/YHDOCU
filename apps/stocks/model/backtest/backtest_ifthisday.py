@@ -117,6 +117,7 @@ class M_backtest_ifthisday(Model) :
         self.M['매도대기']  = int(self.S['add11']) # 매도대기 이전에 매도되는 것을 방지(보다 큰 수익 실현을 위해)
         self.M['리밸런싱']  = True if self.S['add12'] == 'on' else False  # 리밸런싱 수행 여부
         self.M['최대날자']  = ' '
+        self.D['종료일자']  = ''
 
         self.M['날수'] = 0
         self.M['진행'] = 0
@@ -294,6 +295,7 @@ class M_backtest_ifthisday(Model) :
         # 기간 계산하기
 
         self.D['s_day'] = s_day = self.D['start_date']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
+        if not self.D['종료일자'] : self.D['종료일자'] = self.M['day']
         self.D['e_day'] = e_day = self.D['종료일자'];      d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
         delta = d1-d0
         self.D['days_span'] = delta.days        
