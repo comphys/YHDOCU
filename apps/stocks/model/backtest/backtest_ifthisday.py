@@ -310,7 +310,7 @@ class M_backtest_ifthisday(Model) :
     def get_start(self) :
         self.D['end_date']   = ut.dayofdate(self.D['start_date'],delta=2000)[0]
         # 매매전략 가져오기
-        self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='DNA_SECOND'")
+        self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.D['strategy']}'")
         self.S = self.DB.get_line('add1,add2,add3,add4,add5,add6,add7,add8,add9,add10,add11,add12,add14,add15,add16,add17,add18,add20,add21,add22,add23,add24,add25')
 
         # 종가 및 최고가 가져오기

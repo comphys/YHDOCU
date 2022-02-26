@@ -69,12 +69,12 @@ class Page(Control) :
 
         M.get_start()
 
-        output  = "<div id='stock_tips' style='width:350px;height:250px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:1px solid #F7F8E0;' ondblclick=\"h_dialog.close('TEST_IF')\">"
-        output += f"시작일 = {self.D['s_day']} at {self.D['progress']} %<br>"
+        output  = "<div id='stock_tips' style='width:260px;height:180px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:2px solid #f6cece;' ondblclick=\"h_dialog.close('TEST_IF')\">"
+        output += f"시작일 = {self.D['s_day']} 진행률 {self.D['progress']} %<br>"
         output += f"종료일 = {self.D['e_day']} <br>"
         output += f"소요일 = {self.D['days_span']}일 <br>"
-        output += "========================<br>"
-        output += f"총씨드 = {self.D['s_capital']} <br>"
+        output += "=======================<br>"
+        output += f"총씨드 = {self.D['s_capital']:,} <br>"
         output += f"최종액 = {self.D['e_capital']:,.2f} <br>"
         output += f"수익률 = {self.D['profit_rate']:,.2f} % <br>"
         output += "</div>"
@@ -98,11 +98,11 @@ class Page(Control) :
         sty5 ="style='color:#CED8F6'"
         sty6 ="style='color:#F6CECE'"
 
-        output  = "<div id='stock_tips' style='width:350px;height:250px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:1px solid #F7F8E0;' ondblclick=\"h_dialog.close('TEST_IF')\">"
+        output  = "<div id='stock_tips' style='width:200px;height:180px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:2px solid #F7F8E0;' ondblclick=\"h_dialog.close('TEST_IF')\">"
         output += f"시작일 = {self.D['s_day']} <br>"
         output += f"종료일 = {self.D['e_day']} <br>"
         output += f"소요일 = {self.D['days_span']}일 <br>"
-        output += "========================<br>"
+        output += "==============<br>"
         output += f"총씨드 = {self.D['s_capital']} <br>"
         output += f"최종액 = {self.D['e_capital']:,.2f} <br>"
         output += f"수익률 = {self.D['profit_rate']:,.2f} % <br>"

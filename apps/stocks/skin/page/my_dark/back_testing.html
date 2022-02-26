@@ -174,7 +174,7 @@ $(document).ready(function(){
 			var url = uri('linkurl') + 'page/test_if/back_testing/progress='+$(this).text() + '/date=' + $(this).next().text();
 			var ypos= mouse_Y
 			if(ypos > 800) ypos = ypos-280
-			var o = {id:'TEST_IF', width:'350px', x:240, y:ypos,header:false,footer:false,drag:false}
+			var o = {id:'TEST_IF', width:'260px', x:240, y:ypos,header:false,footer:false,drag:false}
 			h_dialog.load(url,o);
 		}
 	});
@@ -192,7 +192,7 @@ $(document).ready(function(){
 			var url = uri('linkurl') + 'page/test_theday/back_testing/date=' + $(this).text();
 			var ypos= mouse_Y
 			if(ypos > 800) ypos = ypos-280
-			var o = {id:'TEST_DAY', width:'350px', x:540, y:ypos,header:false,footer:false,drag:false}
+			var o = {id:'TEST_DAY', width:'200px', x:510, y:ypos,header:false,footer:false,drag:false}
 			h_dialog.load(url,o);
 		}
 	});
