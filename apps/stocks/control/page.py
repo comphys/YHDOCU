@@ -54,7 +54,11 @@ class Page(Control) :
         M.get_start()
         D={'skin':f"{self.skin}/{self.D['bid']}.html"}
         return self.echo(D)
-    
+
+    def dashboard(self) :
+        D={'skin':f"{self.skin}/{self.D['bid']}.html"}
+        return self.echo(D)        
+
     def test_if(self) :
 
         self.D['progress']   = self.gets['progress']
