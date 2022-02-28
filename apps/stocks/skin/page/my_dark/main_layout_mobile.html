@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
 <meta charset="utf-8" >
-<meta name="viewport" content="width=device-width,initial-scale=1.2" >
+<meta name="viewport" content="width=device-width,initial-scale=1.0" >
 <title> {{D['BCONFIG']['title']}} </title>
 <link href="/sys/mycss/mycss_dark.css"  rel="stylesheet" >
 <link href="/sys/fontawesome/css/font-awesome.css" rel="stylesheet">
@@ -17,7 +17,7 @@
 </head>
 <body>
 <div class="navbar navbar-fixed-top">
-	<div class="navbar-inner" style="width:{{D['xwidth']}}">
+	<div class="navbar-inner" style="width:{{D['xwidth']}};margin-left:-20px">
 		<ul class="nav">
 		{% for menu in D['MENU_SECTION'] %}
 			<li class='dropdown'>
@@ -45,8 +45,8 @@
 <div class="row-body" id="content" style="width:{{D['xwidth']}}"><!-- 본문 시작 -->
 	{% block contents_page  %}{% endblock %}
 	<div class='row-row clearfix'>
-		<div class="pull-right" style="color:#6a6a6a">
-			All Rights reserved to JYH. YH Board with Python in 2021. 
+		<div class="pull-right" style="color:#6a6a6a;font-size:16px">
+			All Rights reserved to JYH.
 		</div>
 	</div>
 </div><!-- 본문 끝 -->
