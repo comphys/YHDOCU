@@ -30,8 +30,12 @@ def skn(app,filename) :
 
 @app.route('/download/<path:filename>')
 def download(filename) :
-    directory = session['epl_path']
-    return send_from_directory(directory,filename)    
+    if  filename == 'stock_mydata' and session['N_NO'] :
+        directory = os.path.join(app_root,'mydb')
+        return send_from_directory(directory,'stocks.sqlite')
+    else :
+        directory = session['epl_path']
+        return send_from_directory(directory,filename)    
 
 @app.route('/DOCU_ROOT/<path:filename>')
 def docu_root(filename) :
