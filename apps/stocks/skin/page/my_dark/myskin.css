@@ -9,3 +9,14 @@
 .write-input-left  {width:100px; display:inline-block;border:2px solid #000;background-color:#004200;vertical-align:middle;padding:1px 5px 2px 5px;}
 .if-this-day {text-align:right;color:#BDBDBD;cursor:pointer}
 .if-the-day  {text-align:center;color:#CEF6F5;cursor:pointer}
+
+.dash-div {width:100%;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:2px solid black;border-radius:6px;}
+.dash-div+.dash-div {margin-top:10px;}
+.dash-table {width:100%}
+.dash-table td {padding:3px;text-align:right;}
+.dash-table tr td:nth-child(1) {color:yellow}
+.dash-table tr td:nth-child(2) {font-weight:bold}
+.dash-table tr td:nth-child(3) {color:#b9b9b9}
+.dash-table tr td:nth-child(4) {background-color:black;font-weight:bold}
+.dash-table tr td:nth-child(5) {background-color:black;padding:0px}
+.dash-table tr td:nth-child(6) {background-color:black;color:#b9b9b9}
