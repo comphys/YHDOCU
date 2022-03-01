@@ -40,7 +40,7 @@ class M_dashboard(Model) :
         sty6 ="style='color:#F6CECE'"
 
         output  = f"<div style='text-align:center;margin-bottom:5px'>"
-        output += f"<span style='color:#E0F8E0;text-weight:bold'><i class='fa fa-check'></i> {title}</span>"
+        output += f"<span style='color:#E0F8E0;text-weight:bold'><i class='fa fa-check'></i> {title} : </span>&nbsp;"
         output += f"<span style='color:#F7F8E0;font-weight:bold'>{D['add1']}</span> 매매전략 " 
         output += f"From <span style='color:#CEECF5'>{self.D['확인날자']}({self.D['확인요일']})</span></div>" 
         output += "<table class='table table-bordered'>"
