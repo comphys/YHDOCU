@@ -36,9 +36,6 @@ class M_dashboard(Model) :
         self.DB.tbl, self.DB.wre = ('h_daily_second_third',f"add0='{self.D['확인날자']}' and add19='시즌진행'")
         D = self.DB.get_line("add0,add1,buy1,buy11,buy12,buy2,buy21,buy22,buy3,buy31,buy32,buy4,buy41,buy42,buy5,buy51,buy52,sell1,sell11,sell12,sell2,sell21,sell22,sell3,sell31,sell32,sell4,sell41,sell42")
 
-        if D : self.D['세째전략'] = self.print_out(D,title='세째일지')
-        else : self.D['세째전략'] = "<div style='text-align:center'>No information for the day. Check it</div>"
-
     def print_out(self,D,title='') :
         sty1 ="style='text-align:center;width:100px'"
         sty2 ="style='text-align:center;width:80px'"
