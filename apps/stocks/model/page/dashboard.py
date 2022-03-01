@@ -74,8 +74,8 @@ class M_dashboard(Model) :
         최종수익 = 최종자본 - 초기자본 
         최종수익률 = (최종수익/초기자본) * 100 
 
-        초기자본 = f"{초기자본:,}"
-        최종자본 = f"{최종자본:,}"
+        초기자본 = f"{초기자본:,.0f}"
+        최종자본 = f"{최종자본:,.0f}"
         최종수익 = f"<span style='color:#ced8f6'>{최종수익:,.2f}</span>" if 최종수익 < 0 else f"<span style='color:#f6cece'>{최종수익:,.2f}</span>"
         최종수익률 = f"<span style='color:#ced8f6'>{최종수익률:,.1f}%</span>" if 최종수익률 < 0 else f"<span style='color:#f6cece'>{최종수익률:,.1f}%</span>"
 
