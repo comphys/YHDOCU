@@ -21,20 +21,15 @@ class M_dashboard(Model) :
         self.D['확인요일']  = ckday[1]
 
         # 전략
-
-        self.DB.tbl, self.DB.wre = ('h_daily_first_board',f"add0='{self.D['확인날자']}' and add19='시즌진행'")
-        D = self.DB.get_line("add0,add1,buy1,buy11,buy12,buy2,buy21,buy22,buy3,buy31,buy32,buy4,buy41,buy42,buy5,buy51,buy52,sell1,sell11,sell12,sell2,sell21,sell22,sell3,sell31,sell32,sell4,sell41,sell42")
-        if D : self.D['첫째전략'] = self.print_out(D,title='첫째일지')
-        else : self.D['첫째전략'] = "<div style='text-align:center'>No information for the day. Check it</div>"
-
-        self.DB.tbl, self.DB.wre = ('h_daily_second_board',f"add0='{self.D['확인날자']}' and add19='시즌진행'")
-        D = self.DB.get_line("add0,add1,buy1,buy11,buy12,buy2,buy21,buy22,buy3,buy31,buy32,buy4,buy41,buy42,buy5,buy51,buy52,sell1,sell11,sell12,sell2,sell21,sell22,sell3,sell31,sell32,sell4,sell41,sell42")
-
-        if D : self.D['둘째전략'] = self.print_out(D,title='둘째일지')
-        else : self.D['둘째전략'] = "<div style='text-align:center'>No information for the day. Check it</div>"
-
-        self.DB.tbl, self.DB.wre = ('h_daily_second_third',f"add0='{self.D['확인날자']}' and add19='시즌진행'")
-        D = self.DB.get_line("add0,add1,buy1,buy11,buy12,buy2,buy21,buy22,buy3,buy31,buy32,buy4,buy41,buy42,buy5,buy51,buy52,sell1,sell11,sell12,sell2,sell21,sell22,sell3,sell31,sell32,sell4,sell41,sell42")
+        tbl = ('h_daily_first_board','h_daily_second_board','h_daily_third_board')
+        tle = ('첫째일지','둘째일지','셋째일지')
+        ttt = ('첫째전략','둘째전략','셋째전략')
+       
+        for i, tbl in enumerate(tbl) :
+            self.DB.tbl, self.DB.wre = (tbl,f"add0='{self.D['확인날자']}' and add19='시즌진행'")
+            D = self.DB.get_line("add0,add1,buy1,buy11,buy12,buy2,buy21,buy22,buy3,buy31,buy32,buy4,buy41,buy42,buy5,buy51,buy52,sell1,sell11,sell12,sell2,sell21,sell22,sell3,sell31,sell32,sell4,sell41,sell42")
+            if D : self.D[ttt[i]] = self.print_out(D,title=tle[i])
+            else : self.D[ttt[i]] = f"<div style='text-align:center'>{self.D['확인날자']}({self.D['확인요일']}) 일에 대한 {tle[i]} 정보가 없습니다</div>"            
 
     def print_out(self,D,title='') :
         sty1 ="style='text-align:center;width:100px'"
@@ -47,7 +42,6 @@ class M_dashboard(Model) :
         output  = f"<div style='text-align:center;margin-bottom:5px'><span style='color:#E0F8E0;text-weight:bold'>{title}</span> <span style='color:#F7F8E0;font-weight:bold'>{D['add1']}</span> 매매전략 " 
         output += f"From <span style='color:#CEECF5'>{self.D['확인날자']}({self.D['확인요일']})</span></div>" 
         output += "<table class='table table-bordered table-striped'>"
-        output += "<thead><tr><th>구분</th><th>방법</th><th style='text-align:right;width:60px;padding-right:10px'>수량</th><th style='text-align:right;width:80px;padding-right:10px'>단가</th></tr></thead>"
         output += "<tbody>"
         if int(D['buy11']) :  output += f"<tr {sty5}><td {sty1}>평단매수</td><td {sty2}>{D['buy1']}</td><td {sty3}>{D['buy11']}</td><td {sty4}>{D['buy12']}</td></tr>"
         if int(D['buy31']) :  output += f"<tr {sty5}><td {sty1}>추종매수</td><td {sty2}>{D['buy3']}</td><td {sty3}>{D['buy31']}</td><td {sty4}>{D['buy32']}</td></tr>"
