@@ -15,7 +15,7 @@ class M_back_testing(Model) :
 
         # 기본 값
         self.D['code'] = 'SOXL'
-        self.D['strategy'] = 'DNA 2022'
+        self.D['strategy'] = '첫째계좌'
         self.D['capital'] = '20,000'
         self.D['addition'] = '2,000'
         self.D['start_date'] = '2017-01-02'

@@ -64,7 +64,7 @@ class Page(Control) :
         self.D['progress']   = self.gets['progress']
 
         self.D['code']       = 'SOXL'
-        self.D['strategy']   = 'DNA_SECOND'
+        self.D['strategy']   = '셋째계좌'
         self.D['capital']    = '20,000'
         self.D['addition']   = '2,000'
         self.D['start_date'] = self.gets['date']
@@ -87,20 +87,13 @@ class Page(Control) :
     def test_theday(self) :
 
         self.D['code']       = 'SOXL'
-        self.D['strategy']   = 'DNA 2022'
+        self.D['strategy']   = '첫째계좌'
         self.D['capital']    = '20,000'
         self.D['addition']   = '2,000'
         self.D['start_date'] = self.gets['date']
 
         M = self.model('backtest-backtest_theday')
         M.get_start()
-
-        sty1 ="style='text-align:center;width:100px'"
-        sty2 ="style='text-align:center;width:80px'"
-        sty3 ="style='text-align:right;width:80px;padding-right:10px'"
-        sty4 ="style='text-align:right;width:100px;padding-right:10px'"
-        sty5 ="style='color:#CED8F6'"
-        sty6 ="style='color:#F6CECE'"
 
         output  = "<div id='stock_tips' style='width:200px;height:180px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:2px solid #F7F8E0;' ondblclick=\"h_dialog.close('TEST_IF')\">"
         output += f"시작일 = {self.D['s_day']} <br>"
