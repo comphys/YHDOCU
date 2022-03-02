@@ -46,7 +46,7 @@ class M_dashboard(Model) :
 
         output  = f"<div style='text-align:center;margin-bottom:5px'>"
         output += f"<span style='color:#E0F8E0;text-weight:bold'><i class='fa fa-check'></i> {title} : </span>&nbsp;"
-        output += f"{D['add4']}% ( {D['add9']} / {D['add5']} ) {수익률}%</div>"
+        output += f"{D['add4']}% ( {D['add5']} | {D['add9']} ) {수익률}%</div>"
         output += "<table class='table table-bordered'>"
         output += "<tbody>"
         if int(D['buy11']) :  output += f"<tr {sty5}><td {sty1}>평단매수</td><td {sty2}>{D['buy1']}</td><td {sty3}>{D['buy11']}</td><td {sty4}>{D['buy12']}</td></tr>"
