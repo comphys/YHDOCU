@@ -35,7 +35,7 @@ class M_dashboard(Model) :
     def print_out(self,D,title='') :
 
         수익률 = float(D['add15'])
-        수익률 = f"<span style='color:#ced8f6'>{수익률:,.2f}</span>" if 수익률 < 0 else f"<span style='color:#f6cece'>{수익률:,.2f}</span>"
+        수익률 = f"<span style='color:#ced8f6'>{수익률:,.2f}"+"%</span>" if 수익률 < 0 else f"<span style='color:#f6cece'>{수익률:,.2f}"+"%</span>"
 
         sty1 ="style='text-align:center;width:100px'"
         sty2 ="style='text-align:center;width:80px'"
@@ -43,22 +43,23 @@ class M_dashboard(Model) :
         sty4 ="style='text-align:right;width:100px;padding-right:10px'"
         sty5 ="style='color:#CEECF5'"
         sty6 ="style='color:#F6CECE'"
+        sty7 ="style='color:#f0f0ab'"
 
         output  = f"<div style='text-align:center;margin-bottom:5px'>"
         output += f"<span style='color:#E0F8E0;text-weight:bold'><i class='fa fa-check'></i> {title} : </span>&nbsp;"
-        output += f"{D['add4']}% ( {D['add5']} | {D['add9']} ) {수익률}%</div>"
-        output += "<table class='table table-bordered'>"
+        output += f"{D['add3']}일 {D['add4']}% ( {D['add5']} | {D['add9']} ) &nbsp;{수익률}</div>"
+        output += "<table class='table'>"
         output += "<tbody>"
-        if int(D['buy11']) :  output += f"<tr {sty5}><td {sty1}>평단매수</td><td {sty2}>{D['buy1']}</td><td {sty3}>{D['buy11']}</td><td {sty4}>{D['buy12']}</td></tr>"
+        if int(D['buy11']) :  output += f"<tr {sty5}><td {sty1}>하강매수</td><td {sty2}>{D['buy1']}</td><td {sty3}>{D['buy11']}</td><td {sty4}>{D['buy12']}</td></tr>"
         if int(D['buy31']) :  output += f"<tr {sty5}><td {sty1}>추종매수</td><td {sty2}>{D['buy3']}</td><td {sty3}>{D['buy31']}</td><td {sty4}>{D['buy32']}</td></tr>"
         if int(D['buy41']) :  output += f"<tr {sty5}><td {sty1}>추가매수</td><td {sty2}>{D['buy4']}</td><td {sty3}>{D['buy41']}</td><td {sty4}>{D['buy42']}</td></tr>"
         if int(D['buy51']) :  output += f"<tr {sty5}><td {sty1}>전략매수</td><td {sty2}>{D['buy5']}</td><td {sty3}>{D['buy51']}</td><td {sty4}>{D['buy52']}</td></tr>"
-        if int(D['buy21']) :  output += f"<tr {sty5}><td {sty1}>큰단매수</td><td {sty2}>{D['buy2']}</td><td {sty3}>{D['buy21']}</td><td {sty4}>{D['buy22']}</td></tr>"
+        if int(D['buy21']) :  output += f"<tr {sty5}><td {sty1}>상승매수</td><td {sty2}>{D['buy2']}</td><td {sty3}>{D['buy21']}</td><td {sty4}>{D['buy22']}</td></tr>"
         
-        if int(D['sell11']) : output += f"<tr {sty6}><td {sty1}>첫째매도</td><td {sty2}>{D['sell1']}</td><td {sty3}>{D['sell11']}</td><td {sty4}>{D['sell12']}</td></tr>"
+        if int(D['sell11']) : output += f"<tr {sty6}><td {sty1}>일반매도</td><td {sty2}>{D['sell1']}</td><td {sty3}>{D['sell11']}</td><td {sty4}>{D['sell12']}</td></tr>"
         if int(D['sell21']) : output += f"<tr {sty6}><td {sty1}>둘째매도</td><td {sty2}>{D['sell2']}</td><td {sty3}>{D['sell21']}</td><td {sty4}>{D['sell22']}</td></tr>"
         if int(D['sell31']) : output += f"<tr {sty6}><td {sty1}>강제매도</td><td {sty2}>{D['sell3']}</td><td {sty3}>{D['sell31']}</td><td {sty4}>{D['sell32']}</td></tr>"
-        if int(D['sell41']) : output += f"<tr {sty6}><td {sty1}>전략매도</td><td {sty2}>{D['sell4']}</td><td {sty3}>{D['sell41']}</td><td {sty4}>{D['sell42']}</td></tr>"
+        if int(D['sell41']) : output += f"<tr {sty7}><td {sty1}>전략매도</td><td {sty2}>{D['sell4']}</td><td {sty3}>{D['sell41']}</td><td {sty4}>{D['sell42']}</td></tr>"
         output += "</tbody></table>"
         output += f"<div style='text-align:right;font-size:12px'><span style='color:#F7F8E0;font-weight:bold'>{D['add1']}</span> " 
         output += f"from <span style='color:#F7F8E0;'>{self.D['확인날자']}({self.D['확인요일']})</span>&nbsp;</div>" 
