@@ -84,7 +84,7 @@ class Action(Control) :
         qry = self.DB.qry_update(tbl,self.D['post'],con)
         self.DB.exe(qry)
 
-        if self.bid in ('daily_trading','daily_first','daily_second') : 
+        if self.bid in ('daily_trading','daily_first','daily_second','daily_third') : 
             self.save_chart(no)
             return self.moveto(f"board/list/{self.parm[0]}/page={self.page}/csh=on")
         if self.BCONFIG['stayfom'] == 'on' :
