@@ -7,7 +7,7 @@ class M_dashboard(Model) :
         # 상황
         self.D['첫째상황'] = self.outcome('h_daily_first_board')
         self.D['둘째상황'] = self.outcome('h_daily_second_board')
-        # self.D['셋째상황'] = self.outcome('h_daily_third_board')
+        self.D['셋째상황'] = self.outcome('h_daily_third_board')
 
         today = self.DB.one('SELECT max(add0) FROM h_stockHistory_board')
         today,weekd = ut.dayofdate(today,delta=1)
