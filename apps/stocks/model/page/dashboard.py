@@ -29,10 +29,11 @@ class M_dashboard(Model) :
         for i, tbl in enumerate(tbl) :
             self.DB.tbl, self.DB.wre = (tbl,f"add0='{self.D['확인날자']}' and add19='시즌진행'")
             D = self.DB.get_line("*")
-            if D : self.D[ttt[i]] = self.print_out(D,title=tle[i])
+            days = self.DB.one(f"SELECT count(no) FROM {tbl} WHERE add19='시즌진행'")
+            if D : self.D[ttt[i]] = self.print_out(D,title=tle[i],days=days)
             else : self.D[ttt[i]] = f"<div style='text-align:center'>{self.D['확인날자']}({self.D['확인요일']}) 일에 대한 {tle[i]} 정보가 없습니다</div>"            
 
-    def print_out(self,D,title='') :
+    def print_out(self,D,title='',days=0) :
 
         수익률 = float(D['add15'])
         수익률 = f"<span style='color:#ced8f6'>{수익률:,.2f}"+"%</span>" if 수익률 < 0 else f"<span style='color:#f6cece'>{수익률:,.2f}"+"%</span>"
@@ -47,7 +48,7 @@ class M_dashboard(Model) :
 
         output  = f"<div style='text-align:center;margin-bottom:5px'>"
         output += f"<span style='color:#E0F8E0;text-weight:bold'><i class='fa fa-check'></i> {title} : </span>&nbsp;"
-        output += f"{D['add3']}일 {D['add4']}% ( {D['add5']} | {D['add9']} ) &nbsp;{수익률}</div>"
+        output += f"{days}일 {D['add4']}% ( {D['add5']} | {D['add9']} ) &nbsp;{수익률}</div>"
         output += "<table class='table'>"
         output += "<tbody>"
         if int(D['buy11']) :  output += f"<tr {sty5}><td {sty1}>일반매수</td><td {sty2}>{D['buy1']}</td><td {sty3}>{D['buy11']}</td><td {sty4}>{D['buy12']}</td></tr>"
