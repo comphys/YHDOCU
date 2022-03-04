@@ -52,8 +52,8 @@ class M_dashboard(Model) :
         sty2 ="style='text-align:center;width:80px'"
         sty3 ="style='text-align:right;width:80px;padding-right:10px'"
         sty4 ="style='text-align:right;width:100px;padding-right:10px'"
-        sty5 ="style='color:#CEECF5'"
-        sty6 ="style='color:#F6CECE'"
+        sty5 ="style='color:#d3d3d3'"
+        sty6 ="style='color:#eeeeee'"
         sty7 ="style='color:#f0f0ab'"
 
         output  = f"<div class='dash-div-head'>"
