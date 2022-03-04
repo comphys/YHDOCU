@@ -10,9 +10,11 @@
 .if-this-day {text-align:right;color:#BDBDBD;cursor:pointer}
 .if-the-day  {text-align:center;color:#CEF6F5;cursor:pointer}
 
-.dash-div {width:100%;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:2px solid black;border-radius:6px;}
+.dash-div {width:100%;background-color:#1d1f24;color:#e1e1e1;border:2px solid darkslategray;border-radius:6px;}
+.dash-div-head {width:100%;border-bottom:3px solid darkslategrey;margin-bottom:5px;border-radius:6px 6px 0 0;padding:5px 5px 5px 20px}
+.dash-div-tail {width:100%;border-top:3px solid darkslategrey;text-align:right;border-radius:0 0 6px 6px;font-size:12px;padding:5px;}
 .dash-div+.dash-div {margin-top:10px;}
-.dash-table {width:100%}
+.dash-table {width:100%;}
 .dash-table td {padding:3px;text-align:right;}
 .dash-table tr td:nth-child(1) {color:yellow}
 .dash-table tr td:nth-child(2) {font-weight:bold}

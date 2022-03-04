@@ -9,6 +9,16 @@ class M_dashboard(Model) :
         self.D['둘째상황'] = self.outcome('h_daily_second_board')
         self.D['셋째상황'] = self.outcome('h_daily_third_board')
 
+        self.D['평가합계'] = float(self.D['첫째상황'][2].replace(',','')) + float(self.D['둘째상황'][2].replace(',','')) + float(self.D['셋째상황'][2].replace(',',''))
+        self.D['투자합계'] = float(self.D['첫째상황'][3].replace(',','')) + float(self.D['둘째상황'][3].replace(',','')) + float(self.D['셋째상황'][3].replace(',',''))
+        self.D['손익현황'] = self.D['평가합계'] - self.D['투자합계']
+        self.D['합수익률'] = self.D['손익현황'] / self.D['투자합계'] * 100
+        
+        self.D['평가합계'] = f"{self.D['평가합계']:,.0f}"
+        self.D['투자합계'] = f"{self.D['투자합계']:,.0f}"
+        self.D['손익현황'] = f"<span style='color:#ced8f6'>{self.D['손익현황']:,.2f}</span>"  if self.D['손익현황'] < 0 else f"<span style='color:#f6cece'>{self.D['손익현황']:,.2f}</span>"
+        self.D['합수익률'] = f"<span style='color:#ced8f6'>{self.D['합수익률']:,.1f}%</span>" if self.D['합수익률'] < 0 else f"<span style='color:#f6cece'>{self.D['합수익률']:,.1f}%</span>"
+
         today = self.DB.one('SELECT max(add0) FROM h_stockHistory_board')
         today,weekd = ut.dayofdate(today,delta=1)
         if   weekd == '월' : ckday = ut.dayofdate(today,delta=-3)
@@ -46,10 +56,10 @@ class M_dashboard(Model) :
         sty6 ="style='color:#F6CECE'"
         sty7 ="style='color:#f0f0ab'"
 
-        output  = f"<div style='text-align:center;margin-bottom:5px'>"
-        output += f"<span style='color:#E0F8E0;text-weight:bold'><i class='fa fa-check'></i> {title} : </span>&nbsp;"
+        output  = f"<div class='dash-div-head'>"
+        output += f"<span style='color:#E0F8E0;text-weight:bold'>{title} : </span>&nbsp;"
         output += f"{days}일 {D['add4']}% ( {D['add5']} | {D['add9']} ) &nbsp;{수익률}</div>"
-        output += "<table class='table'>"
+        output += "<table class='table' style='width:95%'>"
         output += "<tbody>"
         if int(D['buy11']) :  output += f"<tr {sty5}><td {sty1}>일반매수</td><td {sty2}>{D['buy1']}</td><td {sty3}>{D['buy11']}</td><td {sty4}>{D['buy12']}</td></tr>"
         if int(D['buy31']) :  output += f"<tr {sty5}><td {sty1}>추종매수</td><td {sty2}>{D['buy3']}</td><td {sty3}>{D['buy31']}</td><td {sty4}>{D['buy32']}</td></tr>"
@@ -62,8 +72,8 @@ class M_dashboard(Model) :
         if int(D['sell31']) : output += f"<tr {sty6}><td {sty1}>강제매도</td><td {sty2}>{D['sell3']}</td><td {sty3}>{D['sell31']}</td><td {sty4}>{D['sell32']}</td></tr>"
         if int(D['sell41']) : output += f"<tr {sty7}><td {sty1}>전략매도</td><td {sty2}>{D['sell4']}</td><td {sty3}>{D['sell41']}</td><td {sty4}>{D['sell42']}</td></tr>"
         output += "</tbody></table>"
-        output += f"<div style='text-align:right;font-size:12px'><span style='color:#F7F8E0;font-weight:bold'>{D['add1']}</span> " 
-        output += f"from <span style='color:#F7F8E0;'>{self.D['확인날자']}({self.D['확인요일']})</span>&nbsp;</div>" 
+        output += f"<div class='dash-div-tail'><span style='font-weight:bold'>{D['add1']}</span> " 
+        output += f"from {self.D['확인날자']}({self.D['확인요일']})&nbsp;</div>" 
         return output
 
     def outcome(self,tbl) :

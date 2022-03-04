@@ -1,10 +1,10 @@
 {% extends D['_skn'] + 'page/my_dark/main_layout_mobile.html' %}
 
 {% block contents_page  %}
-<div class="dash-div" style="text-align:center;border-color: beige;">
+<div class="dash-div" style="text-align:center;border-color: beige;padding:10px">
 <span style='font-size:16px;color:#f0f0ab;font-weight:bold'>{{D['오늘날자']}}({{D['오늘요일']}})</span> 종합 상황보고<br>
 <table class="dash-table" style="margin-top:5px">
-<tr>
+<tr style="border-top:3px solid darkslategrey">
 	<td>1</td>
 	<td>{{D['첫째상황'][0]|safe}}</td>
 	<td>{{D['첫째상황'][1]|safe}}%</td>
@@ -34,6 +34,16 @@
 	<td>{{D['셋째상황'][4]|safe}}</td>
 	<td>{{D['셋째상황'][5]|safe}}</td>	
 </tr>
+<tr style="border-top:3px solid darkslategrey">
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td> {{D['평가합계']}}</td>
+	<td>◂</td>
+	<td>{{D['투자합계']}}&nbsp;</td>
+	<td>{{D['손익현황']|safe}}</td>
+	<td>{{D['합수익률']|safe}}</td>	
+</tr>
 </table>
 </div>
 <div class="dash-div">
@@ -45,7 +55,7 @@
 <div class="dash-div">
 {{D['셋째전략']|safe}}
 </div>
-<div class="dash-div" style="text-align:center;border-color: darkgray;">
+<div style="text-align:center;padding:10px;color:darkgray">
 주식매매전략 Ver 1.0 by JYH
 </div>
 {% endblock %}
