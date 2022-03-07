@@ -22,7 +22,6 @@ class Stock_backtest_chart(Control) :
             xl = [x+1 for x in xx]
             plt.figure(facecolor='#24272d')
             plt.figure(figsize=(1400/my_dpi, 300/my_dpi),dpi=my_dpi)
-            # plt.rcParams["figure.figsize"] = (20,4)
             plt.rcParams.update({"figure.figsize":(20,4),"axes.grid" : True, "grid.color": "#24272d",'font.size':8})
             ax = plt.axes()
             ax.set_facecolor('#33363b')
