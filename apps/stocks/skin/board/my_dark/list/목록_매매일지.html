@@ -161,8 +161,9 @@ $(document).ready(function(){
 			selected_tr = $(this).parent()
 			$(selected_tr).css("backgroundColor","black")
 			var url = uri('linkurl') + 'boards-stock_today_tips/hellow/no='+$(this).attr('data-no')+"/tbl={{D['tbl']}}";
-			var ypos= $(this).closest('table').get(0).offsetTop + this.offsetTop + this.offsetHeight
-			if(ypos > 400) ypos = ypos-280
+			var ypos = mouse_Y
+			// var ypos= $(this).closest('table').get(0).offsetTop + this.offsetTop + this.offsetHeight
+			if(ypos > 400) ypos = ypos-250
 			var o = {id:'ST_TIPS', width:'350px', x:240, y:ypos,header:false,footer:false,drag:false}
 			h_dialog.load(url,o);
 		}
