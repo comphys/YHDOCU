@@ -226,8 +226,6 @@ class M_backtest_DNA_2022(Model) :
 
         매도가격 = self.M['평균단가'] * self.M['둘매가치'] if self.M['전략가격']  else self.M['평균단가'] * self.M['첫매가치']
 
-        if (매도가격 - self.M['당일종가']) / self.M['당일종가'] > 0.34 : return 
-        
         self.M['진행상황'] = '매도대기'
 
         if  self.M['당일종가'] >= 매도가격 : 

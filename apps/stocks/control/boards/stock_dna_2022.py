@@ -220,11 +220,12 @@ class Stock_dna_2022(Control) :
         self.M['진행상황'] = '전매대기'
 
     def normal_sell(self) :
-        
-        self.M['첫째수량'] = self.M['보유수량'] 
-        self.M['첫째단가'] = self.M['평균단가'] * self.M['첫매가치']
 
-        if self.M['전략매금'] : self.M['첫째단가'] = self.M['평균단가'] * self.M['둘매가치']
+        self.M['첫째단가'] = self.M['평균단가'] * self.M['첫매가치'] if not self.M['전략매금'] else self.M['평균단가'] * self.M['둘매가치']
+        if (self.M['첫째단가']-self.M['당일종가']) / self.M['당일종가'] > 0.35 : return
+
+        self.M['첫째수량'] = self.M['보유수량'] 
+
 
     def base_buy(self) :
         
