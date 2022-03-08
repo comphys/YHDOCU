@@ -224,7 +224,7 @@ class M_backtest_DNA_2022(Model) :
         
     def normal_sell(self) :
 
-        if self.M['수익률'] < -20 : return 
+        if self.M['수익률'] < -23 : return 
         
         매도가격 = self.M['평균단가'] * self.M['둘매가치'] if self.M['전략가격']  else self.M['평균단가'] * self.M['첫매가치']
         
