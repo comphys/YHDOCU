@@ -222,6 +222,7 @@ class Stock_dna_2022(Control) :
     def normal_sell(self) :
 
         self.M['첫째단가'] = self.M['평균단가'] * self.M['첫매가치'] if not self.M['전략매금'] else self.M['평균단가'] * self.M['둘매가치']
+        # 매도단가와 현재종가의 차이가 35% 이상일 경우 매도주문을 하지 않음
         if (self.M['첫째단가']-self.M['당일종가']) / self.M['당일종가'] > 0.35 : return
 
         self.M['첫째수량'] = self.M['보유수량'] 
