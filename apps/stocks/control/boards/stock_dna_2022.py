@@ -220,7 +220,7 @@ class Stock_dna_2022(Control) :
         self.M['진행상황'] = '전매대기'
 
     def normal_sell(self) :
-        if self.M['수익률'] < -23 : return
+        
         self.M['첫째수량'] = self.M['보유수량'] 
         self.M['첫째단가'] = self.M['평균단가'] * self.M['첫매가치']
 
