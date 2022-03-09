@@ -9,6 +9,7 @@ class M_backtest_DNA_2022(Model) :
     def print_backtest(self) :
         tx = {}
         self.M['날수'] += 1
+        self.M['완료일수'] += 1
          
         if self.M['진행상황'] == '첫날거래' : self.M['날수'] = 1
 
@@ -25,7 +26,10 @@ class M_backtest_DNA_2022(Model) :
         tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}"
         tx['총매수금'] = f"{round(self.M['총매수금'],4):,.2f}"
 
-        if    self.M['진행상황'] == '전량매도' : tx['수익현황'] = f"[ {round(self.M['수익현황'],4):,.2f} ]"
+        if  self.M['진행상황'] == '전량매도' : 
+            tx['수익현황'] = f"[ {round(self.M['수익현황'],4):,.2f} ]"
+            tx['날수'] = self.M['완료일수']
+            self.M['완료일수'] = 0
         elif  self.M['진행상황'] == '전략매도' : tx['수익현황'] = f"[ {round(self.M['매도수익'],4):,.2f} ]"
         else : tx['수익현황'] = f"{round(self.M['수익현황'],4):,.2f}"
 
@@ -119,6 +123,7 @@ class M_backtest_DNA_2022(Model) :
         self.M['매도대기']  = int(self.S['add11']) # 매도대기 이전에 매도되는 것을 방지(보다 큰 수익 실현을 위해)
         self.M['리밸런싱']  = True if self.S['add12'] == 'on' else False  # 리밸런싱 수행 여부
         self.M['최대날자']  = ' '
+        self.M['완료일수']  = 0
 
         self.M['날수'] = 0
         self.M['진행'] = 0
