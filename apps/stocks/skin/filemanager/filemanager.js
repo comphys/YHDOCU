@@ -262,3 +262,14 @@ function list_renew() {
 	dest += (F_PATH)? 'filemanager/move/' + F_PATH : 'filemanager/home';
 	location.href = dest;
 }
+
+
+function Clear_folder() {
+	var ax_file = uri('linkurl')+"filemanager/clear_folder" ;	
+	var post_val = {operation : 'clear_folder'};
+	h_dialog.confirm("<span style='color:red;font-weight:bold'>이 폴더 내 파일을 전부 삭제하시겠습니까?</span>",{
+		buttons:[{text:'삭제',call:function(a){
+			$.post(ax_file,post_val).done( function() { list_renew(); }); h_dialog_close(a);
+		}},h_dialog.cancel_button]}	
+	);
+}

@@ -127,6 +127,10 @@ class Filemanager(Control) :
             del_fx = session['epl_path'] 
             if my.delete_foler(del_fx) : return self.echo('OK')
     
+    def clear_folder(self) :
+        folder_pass = session['epl_path']
+        my.clear_folder(folder_pass)
+
     def file_dropUp(self) :
         f = request.files['drop_file']
         save_dir = request.form["save_dir"]

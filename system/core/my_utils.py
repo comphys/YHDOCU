@@ -60,6 +60,10 @@ def makefile(fname) :
 def delete_file(fx) :
     os.remove(fx) 
 
+def clear_folder(fx) :
+    for file in os.scandir(fx) :
+        os.remove(file.path)
+
 def delete_foler(fx) :
     try:
         os.rmdir(fx)

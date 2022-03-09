@@ -10,7 +10,7 @@
 <link href="/sys/jyh/yhutils.css" rel="stylesheet">
 <script src="/sys/jyh/jquery-yh-2107.js"></script>
 <script src="/sys/jyh/yhutils.js"></script>
-<script src="/skn/docu/filemanager/filemanager.js"></script>
+<script src="/skn/stocks/filemanager/filemanager.js"></script>
 </head>
 <body>
 <div id="exp_title" style="border-bottom:1px solid grey;color:black;font-weight:bold;background-color:yellow;position:fixed;left:0;top:0;padding:5px;width:100%">
@@ -23,8 +23,9 @@
 	</div>
 	<div style="float:right">
 		<span id="temporary_folder" style="color:#828200;cursor:pointer" onclick="bottom_menu('moveToTemporary')">&nbsp;</span>&nbsp;	
-		<span onclick="bottom_menu('saveToTemporary')" style="cursor:pointer"><i class='fa fa-user fa-plus'></i></span>&nbsp;
-	    <span onclick="Clear_temporary('folder')" style="cursor:pointer"><i class='fa fa-user fa-minus'></i></span>&nbsp;
+		<span onclick="bottom_menu('saveToTemporary')" style="cursor:pointer"><i class='fa fa-plus'></i></span>&nbsp;
+	    <span onclick="Clear_temporary('folder')" style="cursor:pointer"><i class='fa fa-minus'></i></span>&nbsp;
+		<span onclick="Clear_folder()" style="cursor:pointer"><i class='fa fa-trash-o'></i></span>&nbsp;
 		<a href="{{D['_bse']}}filemanager/logout"><i class='fa fa-user fa-lg'></i></a>&nbsp;	
  	</div>
 </div>
