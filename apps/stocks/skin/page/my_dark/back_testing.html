@@ -62,7 +62,8 @@
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
 {% else %}
 	<div class="pull-left" style="padding:10px;color:lightgray">
-	최대 진행 일수 : {{D['max_days']|safe}} 일 at {{D['max_date']|safe}}
+	{% if D['max_days'] %}최대 진행 일수 : {{D['max_days']}} 일 at {{D['max_date']}} {% endif %}
+	{% if D['MDD'] %} / MDD : {{D['MDD']}}% at {{D['MDD_DAY']}} {% endif %}
 	</div>
 	<div class="pull-right" style="padding:10px;color:lightgray">
 	{{D['output']|safe}}

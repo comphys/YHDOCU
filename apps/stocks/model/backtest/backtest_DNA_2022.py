@@ -92,6 +92,7 @@ class M_backtest_DNA_2022(Model) :
             if self.M['리밸런싱'] : self.rebalance()   
 
         if self.M['날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['날수'] ; self.M['최대날자'] = self.M['day']
+        if self.M['수익률'] < self.M['MDD'] : self.M['MDD'] = self.M['수익률'] ; self.M['MDD_DAY'] = self.M['day']
 
         self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)
         self.M['매수수량'] = self.M['매도수량'] = 0
@@ -122,7 +123,9 @@ class M_backtest_DNA_2022(Model) :
         self.M['날수'] = 0
         self.M['진행'] = 0
         self.M['씨드'] = self.D['init_capital']
-        self.M['최대일수']  = 0 # 최고 오래 지속된 시즌의 일수
+        self.M['최대일수']  = 0   # 최고 오래 지속된 시즌의 일수
+        self.M['MDD']  = -5      # 최고 MDD
+        self.M['MDD_DAY']  = ' ' # 최고 오래 지속된 시즌의 일수
         self.M['첫날기록']  = False
         self.M['전일종가']  = 0.0
         self.M['매수수량']  = 0
@@ -276,6 +279,8 @@ class M_backtest_DNA_2022(Model) :
 
         self.D['max_days'] = self.M['최대일수']
         self.D['max_date'] = self.M['최대날자']
+        self.D['MDD'] = f"{self.M['MDD']:.2f}"
+        self.D['MDD_DAY'] = self.M['MDD_DAY']
         초기자본 = self.D['init_capital'] + self.D['addition']
         최종자본 = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본']
         최종수익 = 최종자본 - 초기자본 
