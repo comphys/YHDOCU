@@ -28,7 +28,7 @@ class Stock_backtest_chart(Control) :
 
             ax.tick_params(color='#33363b',grid_alpha=0.7)
             plt.plot(c_price,color='#58ACFA',  linestyle='dotted')
-            plt.plot(m_price,color='#f78181',  linestyle='solid',marker='o')
+            plt.plot(m_price,color='#f78181',  linestyle='solid',marker='.')
             plt.xticks(xx,xl,color='darkgray')
             plt.yticks(color='darkgray')
             plt.savefig(file_name,facecolor='#24272d',dpi=my_dpi,pad_inches=0)

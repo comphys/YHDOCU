@@ -85,7 +85,7 @@ class 목록_주식히스토리(SKIN) :
                         if cno : tx[key] = "<td class='list-current-no'><i class='fa fa-edit'></i></td>"
                         else   : tx[key] = f"<td class='list-no'>{TrCnt}</td>"
                         TrCnt -= 1
-
+                    elif key == 'add1'  : tx[key] = f"<td class='list-code' style='color:#F7F8E0'>{txt}</td>"
                     elif key == 'wdate' : tx[key] = f"<td class='list-wdate'>{txt}</td>"
                     elif key == 'mdate' : tx[key] = f"<td class='list-mdate'>{txt}</td>"                    
                     elif key == 'hit'   : tx[key] = f"<td class='list-hit'>{txt}</td>" 

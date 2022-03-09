@@ -29,6 +29,15 @@ class Stock_update(Control) :
         self.set_message("종목 업데이트를 완료하였습니다")
         return self.moveto('board/list/stockHistory/csh=on')
 
+    def delete(self) :
+
+        code = self.parm[0]
+        if not code : return
+        self.DB.exe(f"DELETE FROM h_stockHistory_board WHERE add1='{code}'")
+        self.set_message("종목 삭제를 완료하였습니다")
+        return self.moveto('board/list/stockHistory')
+
+
     def update_stock(self,cdx,USER) :
 
         self.DB.tbl = 'h_stockHistory_board'

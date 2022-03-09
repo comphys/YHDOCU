@@ -105,7 +105,8 @@
 	<div class='pull-left'>
 		<a href="{{D['_bse']}}boards-stock_update/update/{{D['code']}}"><button class='btn btn-small btn-red'>업데이트</button></a>&nbsp;
 		<input  name="add_new_stock" type='text' style='height:24px;vertical-align:baseline;width:100px' />
-		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="add_newstock()">종목추가</button>
+		<button class='btn btn-blue btn-small' style="height:25px;vertical-align:top;" onclick="add_newstock()">종목추가</button>
+		<button class='btn btn-red-s2 btn-small' style="height:25px;vertical-align:top;" onclick="del_oldstock()">종목삭제</button>
 	</div>
 	<div class='pagination pull-right'><ul>
 		{{D['Pagination']|safe}}
@@ -119,6 +120,19 @@ function add_newstock() {
 	var url = uri('linkurl') + 'boards-stock_update/update/' + new_stock ;
 	location.href = url; 
 }
+
+function del_oldstock() { 
+	var old_stock = $("input[name='add_new_stock']").val();
+	if(! old_stock ) return;
+	var url = uri('linkurl') + 'boards-stock_update/delete/' + old_stock ;
+	location.href = url; 
+}
+
+$(".list-code").click(function(){
+	var code = $(this).text()
+	winopen('winopen/chart2/'+code,820,450,'stock_chart');
+});
+
 </script>
 
 {% endblock %}
