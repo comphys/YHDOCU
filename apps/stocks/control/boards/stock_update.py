@@ -16,9 +16,10 @@ class Stock_update(Control) :
 
         code = self.parm[0]
         if code == 'NONE' : 
-            now = int(datetime.now().timestamp())
-            old = str(now - 3600*24*7)
-            self.DB.tbl, self.DB.wre = ("h_stockHistory_board",f"wdate > '{old}'")
+            today = ut.timestamp_to_date(opt=7)
+            old_day = ut.dayofdate(today,delta=-7)[0]
+
+            self.DB.tbl, self.DB.wre = ("h_stockHistory_board",f"add1 > '{old_day}'")
             codes = self.DB.get("distinct add1",assoc=False)
 
             for cdx in codes :
@@ -37,8 +38,31 @@ class Stock_update(Control) :
         self.set_message("종목 삭제를 완료하였습니다")
         return self.moveto('board/list/stockHistory')
 
-
     def update_stock(self,cdx,USER) :
+
+        self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
+        start_b = self.DB.get("max(add0)",many=1,assoc=False) 
+        start_e = ut.timestamp_to_date(opt=7)
+
+        if not start_b : start_b = '2017-01-01'
+
+        self.DB.exe(f"DELETE FROM {self.DB.tbl} WHERE add0 >= '{start_b}' AND add1='{cdx}'")
+
+        data = ut.get_stock_data(cdx,start_b,start_e)
+
+        ohlc = data['data']
+
+        db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
+        time_now = ut.now_timestamp()
+        cdx = cdx.upper()
+        for row in ohlc :
+            row2 = list(row)
+            row2 += [cdx,cdx,USER['uid'],USER['uname'],time_now,time_now]
+            values = str(row2)[1:-1]
+            sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
+            self.DB.exe(sql)
+
+    def update_stock_old(self,cdx,USER) :
 
         self.DB.tbl = 'h_stockHistory_board'
         self.DB.wre = f"add1='{cdx}'"
@@ -58,6 +82,7 @@ class Stock_update(Control) :
         db_keys = "add0,add3,add4,add5,add6,add7,add8,add1,add2,uid,uname,wdate,mdate"
         time_now = ut.now_timestamp()
         
+        cdx = cdx.upper()
         for row in data_db_in :
             row2 = list(row)
             row2.append(cdx)

@@ -47,22 +47,6 @@ class 목록_주식히스토리(SKIN) :
         self.head()
         self.data_preprocess()
 
-        today = ut.timestamp_to_date(ts='now',opt=7)
-        now = int(time.mktime(datetime.strptime(today,'%Y-%m-%d').timetuple()))
-        old_date = datetime.fromtimestamp(now-3600*24*20).strftime('%Y-%m-%d')
-
-        codes = ['TQQQ','BULZ','FNGU','SOXL','WEBL','WANT','HIBL','RETL','NAIL','TECL','BNKU']
-        dns = []
-        ups = []
-
-        for cdx in codes :
-            tmp = self.old_price_trace(cdx,today,old_date)
-            dns.append(tmp[0])
-            ups.append(tmp[1])
-
-        self.D['c_dn'] = dict(zip(codes,dns))
-        self.D['c_up'] = dict(zip(codes,ups))
-
         try :     self.D['code'] = session['CSH']['csh_add1']
         except :  self.D['code'] = 'NONE'
         if self.D['code'] =='' : self.D['code'] = 'NONE'
