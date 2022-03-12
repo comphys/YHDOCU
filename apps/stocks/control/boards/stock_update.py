@@ -44,7 +44,7 @@ class Stock_update(Control) :
         start_b = self.DB.get("max(add0)",many=1,assoc=False) 
         start_e = ut.timestamp_to_date(opt=7)
 
-        if not start_b : start_b = '2017-01-01'
+        if not start_b : start_b = '2015-01-01'
 
         self.DB.exe(f"DELETE FROM {self.DB.tbl} WHERE add0 >= '{start_b}' AND add1='{cdx}'")
 

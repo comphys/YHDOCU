@@ -138,8 +138,8 @@ def get_stock_data(symbol,start_date,end_date='') :
     index = 0
     for i in range(1,len(rst2)) : 
         rst2[i][6]  = round((rst2[i][4] - rst2[i-1][4])/rst2[i-1][4],4)
-        rst2[i][7]  = rst2[i-1][7]+1 if rst2[i][4] >= rst2[i-1][4] else 0    
-        rst2[i][8]  = rst2[i-1][8]+1 if rst2[i][4] <  rst2[i-1][4] else 0 
+        rst2[i][7]  = rst2[i-1][7]+1 if rst2[i][4] >   rst2[i-1][4] else 0    
+        rst2[i][8]  = rst2[i-1][8]+1 if rst2[i][4] <=  rst2[i-1][4] else 0 
         if rst2[i][0] < start_date : index = i+1
 
     rst3 = rst2[index:] 
