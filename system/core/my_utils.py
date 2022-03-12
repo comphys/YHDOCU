@@ -122,7 +122,7 @@ def dayofdate(theday,delta=0) :
 def get_stock_data(symbol,start_date,end_date='') :
 
     if not end_date : date_b = dayofdate(start_date,-5)[0]; date_e = start_date
-    else : date_b = dayofdate(start_date,-1)[0]; date_e = end_date           
+    else : date_b = dayofdate(start_date,-5)[0]; date_e = end_date           
 
     app_key = '92DC8890E1874E1D97EE34387D72F152'
     url  = f"https://api.stockdio.com/data/financial/prices/v1/GetHistoricalPrices?app-key={app_key}&stockExchange=USA&symbol={symbol}&from={date_b}&to={date_e}"
@@ -133,8 +133,11 @@ def get_stock_data(symbol,start_date,end_date='') :
     rst = data['data']['prices']['values']
 
     rst2 = [ [x[0][:10],float(x[1]),float(x[2]),float(x[3]),float(x[4]),int(x[5]),0.0] for x in rst]
-    for i in range(1,len(rst2)) : rst2[i][6] = round((rst2[i][4] - rst2[i-1][4])/rst2[i-1][4],4)
+    index = 0
+    for i in range(1,len(rst2)) : 
+        rst2[i][6] = round((rst2[i][4] - rst2[i-1][4])/rst2[i-1][4],4)
+        if rst2[i][0] < start_date : index = i+1
 
-    rst3 = rst2[1:] if end_date else rst2[-1]
+    rst3 = rst2[index:] 
     return {'count':len(rst3),'column':col,'data':rst3}
 
