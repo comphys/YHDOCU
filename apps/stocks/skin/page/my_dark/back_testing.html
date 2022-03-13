@@ -63,7 +63,7 @@
 {% else %}
 	<div class="pull-left" style="padding:10px;color:lightgray">
 	{% if D['max_days'] %}최대 진행 일수 : <b>{{D['max_days']}}</b> 일 {{D['max_date']}} {% endif %}
-	{% if D['MDD'] %} &nbsp;&nbsp; MDD : <b>{{D['MDD']}}</b> % {{D['MDD_DAY']}} {% endif %}
+	{% if D['MDD'] %} &nbsp; MDD : <b>{{D['MDD']}}</b> % {{D['MDD_DAY']}} {% endif %}
 	</div>
 	<div class="pull-right" style="padding:10px;color:lightgray">
 	{{D['output']|safe}}
