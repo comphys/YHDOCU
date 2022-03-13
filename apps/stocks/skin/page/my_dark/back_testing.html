@@ -41,17 +41,17 @@
     </div>
     <div class='i-input-div'>
         <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 초기 진행률</div>
-        <input type='text' name="progress" style="width:70px;text-align:center;" value="{{D['progress']}}">
+        <input type='text' name="progress" style="width:60px;text-align:center;" value="{{D['progress']}}">
     </div>
     </div> <!--pull left-->
     <div class="pull-right">
     <div class='i-input-div'>
         <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 시작일자</div>
-        <input type='text' name='start_date' class="i-date" value="{{D['start_date']}}" style="width:120px;text-align:center;">
+        <input type='text' name='start_date' class="i-date" value="{{D['start_date']}}" style="width:110px;text-align:center;">
     </div>
     <div class='i-input-div'>
         <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 종료일자</div>
-        <input type='text' name='end_date' class="i-date" value="{{D['end_date']}}" style="width:120px;text-align:center;">
+        <input type='text' name='end_date' class="i-date" value="{{D['end_date']}}" style="width:110px;text-align:center;">
     </div>
     <button class="btn btn-red-s3" style="vertical-align:middle;">테스팅</button>
     </div> <!--pull right-->
@@ -62,8 +62,8 @@
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
 {% else %}
 	<div class="pull-left" style="padding:10px;color:lightgray">
-	{% if D['max_days'] %}최대 진행 일수 : {{D['max_days']}} 일 at {{D['max_date']}} {% endif %}
-	{% if D['MDD'] %} / MDD : {{D['MDD']}}% at {{D['MDD_DAY']}} {% endif %}
+	{% if D['max_days'] %}최대 진행 일수 : <b>{{D['max_days']}}</b> 일 {{D['max_date']}} {% endif %}
+	{% if D['MDD'] %} &nbsp;&nbsp; MDD : <b>{{D['MDD']}}</b> % {{D['MDD_DAY']}} {% endif %}
 	</div>
 	<div class="pull-right" style="padding:10px;color:lightgray">
 	{{D['output']|safe}}
@@ -73,23 +73,20 @@
 			<th style='text-align:center;width:50px'>날수</th>
 			<th style='text-align:right;width:60px'>진행</th>
 			<th style='text-align:center;width:110px'>기록일자</th>
-			<th style='text-align:right;width:80px'>당일종가</th>
-			<!-- <th style='text-align:right'>과거추종</th> -->
-			<!-- <th style='text-align:right'>체결단가</th> -->
-			<th style='text-align:right;width:80px'>체결수량</th>
-			<th style='text-align:right;width:100px'>매수금액</th>
+			<th style='text-align:right;width:80px'>종가</th>
+			<th style='text-align:right;width:80px'>매수</th> 
+			<th style='text-align:right;;width:100px'>매수금액</th>
 			<th style='text-align:right;width:80px'>평균단가</th>
+			<th style='text-align:right;width:60px'>매도</th>
+			<th style='text-align:right;width:100px'>매도금액</th>
+			<th style='text-align:right;width:100px'>진행상황</th>
 			<th style='text-align:right;width:80px'>보유수량</th>
-			<th style='text-align:right;width:100px'>평가금액</th>
 			<th style='text-align:right;width:100px'>총매수금</th>
-			<th style='text-align:right;width:120px'>수익현황</th>
+			<th style='text-align:right;width:100px'>평가금액</th>
+			<th style='text-align:right;width:100px'>수익현황</th>
 			<th style='text-align:right;width:80px'>수익률%</th>
-			<th style='text-align:right;width:100px'>매수매도</th>
-			<th style='text-align:right;width:120px'>가용잔액</th>
-			<th style='text-align:center;width:120px'>추가잔액</th>
 			<th style='text-align:right;width:80px'>일매수금</th>
-			<th style='text-align:center'>진행상황</th>
-			<!-- <th style='text-align:center'>일매수금</th> -->
+			<th style='text-align:right;'>가용잔액</th>
 		</tr>
 	</table>
 </div> <!--postion:fixed-->
@@ -100,57 +97,53 @@
 	
 	<table class='table table-striped table-hover' style="border:2px solid black">
 		<colgroup>
-			<col style="width:50px;"> <!-- 진행일 -->
-			<col style="width:60px;"> <!-- 회차 -->
-			<col style="width:110px;"> <!-- 기록일자 -->
+			<col style="width:50px;"> <!-- 날수 -->
+			<col style="width:60px;"> <!-- 진행 -->
+			<col style="width:110px;"> <!-- 일자 -->
 			<col style="width:80px;background-color:#24272d;border:2px solid black;"> <!-- 당일종가 -->
-			<!-- <col> -->
-			<col style="width:80px"> <!-- 체결수량 -->
+			<col style="width:80px"> <!-- 매수 -->
 			<col style="width:100px"> <!-- 매수금액 -->
 			<col style="width:80px;background-color:#24272d;border:2px solid black;"> <!-- 평균단가 -->
+			<col style="width:60px"> <!-- 매도 -->
+			<col style="width:100px"> <!-- 거래코드 / 매도금액 -->
+			<col style="width:100px"> <!-- 진행상황 -->
 			<col style="width:80px"> <!-- 보유수량 -->
-			<col style="width:100px"> <!-- 평가금액 -->
 			<col style="width:100px"> <!-- 총매수금 -->
-			<col style="width:120px"> <!-- 수익현황 -->
+			<col style="width:100px"> <!-- 평가금액 -->
+			<col style="width:100px"> <!-- 수익현황 -->
 			<col style="width:80px"> <!-- 수익률 -->
-			<col style="width:100px"> <!-- 매도금액 -->
-			<col style="width:120px"> <!-- 가용잔액 -->
-			<col style="width:100px"> <!-- 추가잔액 -->
-			<col style="width:100px"> <!-- 일매수금 -->
-			<col> <!-- 진행상황 -->	
+			<col style="width:80px"> <!-- 일매수금 -->
+			<col> <!-- 가용잔액 -->
 		</colgroup>
 
 		<tbody>
 			{%- for TR in D['TR'] -%}
-			{% if TR['진행상황']|striptags == '전량매도' or TR['진행상황']|striptags == '부분매도' %}
+			{% if TR['가용잔액']|striptags == '전량매도'  %}
 			<tr style="border-top:2px solid yellow;border-bottom:2px solid yellow;background-color:black;"> 
-			{% elif TR['진행상황'] == '강제매도' %}
+			{% elif TR['가용잔액'] == '부분매도' %}
 			<tr style="border-top:2px solid orange;border-bottom:2px solid orange;background-color:black;"> 
-			{% elif TR['진행상황'] == '전략매도' %}
+			{% elif TR['가용잔액'] == '전략매도' %}
 			<tr style="border-top:2px solid #A9D0F5;border-bottom:2px solid #A9D0F5;background-color:black;">
 			{% else %}
 			<tr>
 			{% endif %}
 				<td style='text-align:center'>{{TR['날수']}}</td>
-				<td class='if-this-day'>{{TR['회차']}}</td>
+				<td class='if-this-day'>{{TR['진행']}}</td>
 				<td class='if-the-day'>{{TR['기록일자']}}</td>
-				<td style='text-align:right'>{{TR['당일종가']|safe}}</td>
-				<!-- <td style='text-align:right'>{{TR['과거추종']}}</td> -->
-				<!-- <td style='text-align:right'>{{TR['체결단가']}}</td> -->
-				<td style='text-align:right'>{{TR['체결수량']}}</td>
+				<td class='ohlc-price' style='text-align:right;cursor:pointer'>{{TR['당일종가']|safe}}</td>
+				<td style='text-align:right'>{{TR['매수수량']}}</td>
 				<td style='text-align:right'>{{TR['매수금액']}}</td>
 				<td style='text-align:right;color:#F5F6CE'>{{TR['평균단가']|safe}}</td>
+				<td style='text-align:right'>{{TR['매도수량']}}</td>
+				<td style='text-align:right;color:#F6CECE'>{{TR['매도금액']}}</td>
+				<td style='text-align:right'>{{TR['실현수익']}}</td>
 				<td style='text-align:right;color:#E6F8E0'>{{TR['보유수량']}}</td>
-				<td style='text-align:right;color:#F8E6E0'>{{TR['평가금액']}}</td>
 				<td style='text-align:right;color:#E0F8F7'>{{TR['총매수금']}}</td>
+				<td style='text-align:right;color:#F8E6E0'>{{TR['평가금액']}}</td>
 				<td style='text-align:right'>{{TR['수익현황']}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['수익률']|safe}}</td>
-				<td style='text-align:right;color:#F6CECE'>{{TR['매도금액']}}</td>
-				<td style='text-align:right;color:#CEF6CE'>{{TR['가용잔액']}}</td>
-				<td style='text-align:right;'>{{TR['추가잔액']}}</td>
-				<td style='text-align:right;color:#CEF6CE'>{{TR['일매수금']}}</td>
-				<td style='text-align:center'>{{TR['진행상황']|safe}}</td>
-				<!-- <td style='text-align:center'>{{TR['일매수금']}}</td> -->
+				<td style='text-align:right;font-weight:bold'>{{TR['일매수금']}}</td>
+				<td style='text-align:right;color:#CEF6CE'>{{TR['가용잔액']|safe}}</td>
 			</tr>
 			{%- endfor %}
 		</tbody>
@@ -163,41 +156,39 @@
 var selected_tr = null
 $(document).ready(function(){ 
 	$(".if-this-day").click(function(){
-		if( selected_tr ) {
+		if( selected_tr ) {	
 			$(selected_tr).css("backgroundColor",'')
-			h_dialog.close("TEST_IF"); 
+			h_dialog.close("TEST_IF");
+			h_dialog.close("TEST_DAY");
 			selected_tr = null
-			return;
 		} else 
 		{
 			selected_tr = $(this).parent()
 			$(selected_tr).css("backgroundColor","black")
-			var url = uri('linkurl') + 'page/test_if/back_testing/progress='+$(this).text() + '/date=' + $(this).next().text();
+			var date = $(this).next().text();
+			var url = uri('linkurl') + 'page/test_if/back_testing/progress='+$(this).text() + '/date=' + date;
 			var ypos= mouse_Y
 			if(ypos > 800) ypos = ypos-280
 			var o = {id:'TEST_IF', width:'260px', x:240, y:ypos,header:false,footer:false,drag:false}
 			h_dialog.load(url,o);
+			
+			url = uri('linkurl') + 'page/test_theday/back_testing/date=' + date;
+			o = {id:'TEST_DAY', width:'200px', x:510, y:ypos,header:false,footer:false,drag:false}
+			h_dialog.load(url,o)
 		}
 	});
 
-	$(".if-the-day").click(function(){
-		if( selected_tr ) {
-			$(selected_tr).css("backgroundColor",'')
-			h_dialog.close("TEST_DAY"); 
-			selected_tr = null
-			return;
-		} else 
-		{
-			selected_tr = $(this).parent()
-			$(selected_tr).css("backgroundColor","black")
-			var url = uri('linkurl') + 'page/test_theday/back_testing/date=' + $(this).text();
-			var ypos= mouse_Y
-			if(ypos > 800) ypos = ypos-280
-			var o = {id:'TEST_DAY', width:'200px', x:510, y:ypos,header:false,footer:false,drag:false}
-			h_dialog.load(url,o);
-		}
-	});
 
+	$(".ohlc-price").click(function(){
+		if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
+		var code = $("input[name='code']").val()
+		var date = $(this).prev().text();
+		var url = uri('linkurl') + 'page/get_ohlc/back_testing/date=' + date + '/code=' + code;
+		var ypos= mouse_Y
+		if(ypos > 800) ypos = ypos-280
+		var o = {id:'OHLC_DAY', width:'430px', x:323, y:ypos,header:false,footer:false,drag:false}
+		h_dialog.load(url,o)		
+	});
 
 });	
 
