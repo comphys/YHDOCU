@@ -130,6 +130,11 @@ class 목록_매매일지(SKIN) :
                         clr = "#F6CECE;" if txt_val > 0 else "#CED8F6"
                         txt = f"{txt_val:.2f}"
                         tx[key] = f"<td style='text-align:right;color:{clr}'>{txt}</td>"
+                    
+                    elif key == 'add16' : # 가용잔액 
+                        txt_val = float(txt) + float(item['add17'])
+                        txt = f"{txt_val:,.2f}"
+                        tx[key] = f"<td style='text-align:right;color:#E0F8E0'>{txt}</td>"
 
                     else : 
                         if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"

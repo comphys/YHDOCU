@@ -13,23 +13,23 @@ class Stock_dna_2022(Control) :
         # POST 데이타, 사용자 입력으로 부터 데이타를 받아서 초기화 
         self.M['매매전략'] = self.D['post']['add20']
         
-        self.M['체결단가'] = self.D['post']['add6']   ; self.M['체결단가'] = float(self.M['체결단가'].replace(',','')) if self.M['체결단가'] else 0.0
-        self.M['체결수량'] = self.D['post']['add7']   ; self.M['체결수량'] =   int(self.M['체결수량'].replace(',','')) if self.M['체결수량'] else 0
+        self.M['매수단가'] = self.D['post']['add6']   ; self.M['매수단가'] = float(self.M['매수단가'].replace(',','')) if self.M['매수단가'] else 0.0
+        self.M['매수수량'] = self.D['post']['add7']   ; self.M['매수수량'] =   int(self.M['매수수량'].replace(',','')) if self.M['매수수량'] else 0
         self.M['매수금액'] = self.D['post']['add8']   ; self.M['매수금액'] = float(self.M['매수금액'].replace(',','')) if self.M['매수금액'] else 0.0
         
         # 임의입력 시 체결단가, 체결수량, 매수금액 중 2개는 입력되어야 함
-        if  self.M['체결단가'] or self.M['체결수량'] or self.M['매수금액'] :
+        if  self.M['매수단가'] or self.M['매수수량'] or self.M['매수금액'] :
             self.auto = False 
-            if   self.M['체결단가'] and self.M['체결수량'] : self.M['매수금액'] = self.M['체결단가'] * self.M['체결수량']
-            elif self.M['체결단가'] and self.M['매수금액'] : self.M['체결수량'] = int(self.M['매수금액'] / self.M['체결단가'])
-            elif self.M['체결수량'] and self.M['매수금액'] : self.M['체결단가'] = self.M['매수금액'] / self.M['체결수량']
+            if   self.M['매수단가'] and self.M['매수수량'] : self.M['매수금액'] = self.M['매수단가'] * self.M['매수수량']
+            elif self.M['매수단가'] and self.M['매수금액'] : self.M['매수수량'] = int(self.M['매수금액'] / self.M['매수단가'])
+            elif self.M['매수수량'] and self.M['매수금액'] : self.M['매수단가'] = self.M['매수금액'] / self.M['매수수량']
         
         self.M['가용잔액'] = self.D['post']['add16']  ; self.M['가용잔액'] = float(self.M['가용잔액'].replace(',','')) if self.M['가용잔액'] else 0.0
         self.M['추가자본'] = self.D['post']['add17']  ; self.M['추가자본'] = float(self.M['추가자본'].replace(',','')) if self.M['추가자본'] else 0.0
         
         self.M['연속하락'] = self.old_price_trace('DN')  
         self.M['연속상승'] = self.old_price_trace('UP') 
-        self.M['체결단가'] = self.M['체결단가'] if self.M['체결단가'] else self.M['당일종가']
+        self.M['매수단가'] = self.M['매수단가'] if self.M['매수단가'] else self.M['당일종가']
 
         # 매매전략 가져오기
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.M['매매전략']}'")
@@ -48,6 +48,7 @@ class Stock_dna_2022(Control) :
         self.M['강제매도']='NOR';  self.M['강제수량'] = 0 ; self.M['강제단가'] = 0.0 ; self.M['강매시작']=int(self.S['add17']) ; self.M['강매가치']=1+float(self.S['add18'])/100
         self.M['전략매도']='LOC';  self.M['전매수량'] = 0 ; self.M['전매단가'] = 0.0 
         self.M['매도금액']=0.0  
+        self.M['매도수익']=0.0 
         
         # 조건 트리거
         self.M['수량확보']  = True if self.S['add21'] == 'on' else False  # 추가자본 투입 후 수량확보 선택
@@ -128,10 +129,10 @@ class Stock_dna_2022(Control) :
             self.M['위기전략']  = False
             self.M['날수'] = 0
 
-        if self.M['체결수량'] :
-            if self.auto : self.M['매수금액']  =  self.M['체결수량'] * self.M['체결단가']
+        if self.M['매수수량'] :
+            if self.auto : self.M['매수금액']  =  self.M['매수수량'] * self.M['매수단가']
             self.M['가용잔액'] -=  self.M['매수금액']
-            self.M['보유수량'] +=  self.M['체결수량']
+            self.M['보유수량'] +=  self.M['매수수량']
             self.M['총매수금'] +=  self.M['매수금액']
 
 
@@ -188,16 +189,16 @@ class Stock_dna_2022(Control) :
         self.M['처음추가'] = self.M['추가자본'] 
 
         self.M['일매수금'] = int(self.M['가용잔액'] / self.M['분할횟수'])
-        self.M['체결단가'] = self.M['당일종가']
+        self.M['매수단가'] = self.M['당일종가']
         
         if self.auto : 
-            self.M['체결수량'] = math.ceil(self.M['일매수금']/self.old_price_trace('YD')) 
+            self.M['매수수량'] = math.ceil(self.M['일매수금']/self.old_price_trace('YD')) 
             if cnt:=self.old_price_trace("CDN") : 
-                self.M['체결수량'] += self.M['체결수량'] * cnt 
+                self.M['매수수량'] += self.M['매수수량'] * cnt 
 
-        self.M['매수금액']  = self.M['당일종가'] * self.M['체결수량']
+        self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량']
         self.M['평균단가']  = self.M['당일종가']
-        self.M['보유수량']  = self.M['체결수량']
+        self.M['보유수량']  = self.M['매수수량']
         self.M['평가금액']  = self.M['당일종가'] * self.M['보유수량']
         self.M['총매수금']  = self.M['매수금액']
         self.M['수익현황']  =  self.M['평가금액'] - self.M['총매수금']
@@ -286,22 +287,22 @@ class Stock_dna_2022(Control) :
             if many := int(self.B['buy21'])  : 
                 if  self.M['당일종가'] <= float(self.B['buy22']):  
                     if self.M['진행'] < CP : # 기초매수
-                        self.M['체결수량'] += many ; self.M['매매현황'] = 'B'  
+                        self.M['매수수량'] += many ; self.M['매매현황'] = 'B'  
                         self.M['진행상황']  = '기초매수'
                     else : # 연속상승
                         if (self.M['추가자본'] + self.M['가용잔액']) < self.M['일매수금'] * 2 : self.M['위기전략'] = True
-                        self.M['체결수량'] += many ; self.M['매매현황'] += 'T'
+                        self.M['매수수량'] += many ; self.M['매매현황'] += 'T'
                         self.M['진행상황']  = '터닝매수'
 
             # 평단매수 검토
             if many := int(self.B['buy11'])  : 
                 if  self.M['당일종가'] <= float(self.B['buy12']):  
                     if self.M['진행'] < CP : # 기초매수
-                        self.M['체결수량'] += many ; self.M['매매현황'] = 'A' 
+                        self.M['매수수량'] += many ; self.M['매매현황'] = 'A' 
                         self.M['진행상황']  = '기초매수'                      
                     else : # 연속하락
                         if (self.M['추가자본'] + self.M['가용잔액']) < self.M['일매수금'] * (1+self.M['연속하락']) : self.M['위기전략'] = True
-                        self.M['체결수량'] += many ; self.M['매매현황'] += 'D' + str(self.M['연속하락'])
+                        self.M['매수수량'] += many ; self.M['매매현황'] += 'D' + str(self.M['연속하락'])
                         self.M['진행상황']  = '추종매수'
 
         else :
@@ -366,15 +367,15 @@ class Stock_dna_2022(Control) :
 
         update['add2'] = self.M['시즌'] ; update['add3'] = self.M['날수'] ; update['add4'] = self.M['진행'] 
 
-        update['add5']   = f"{round(self.M['당일종가'],4):,.2f}" ; update['add6'] = f"{round(self.M['체결단가'],4):,.2f}" ; update['add7'] = f"{self.M['체결수량']:,}"
+        update['add5']   = f"{round(self.M['당일종가'],4):,.2f}" ; update['add6'] = f"{round(self.M['매수단가'],4):,.2f}" ; update['add7'] = f"{self.M['매수수량']-self.M['매도수량']:,}"
 
-        update['add8']   = f"{round(self.M['매수금액'],4):,.4f}"; update['add9'] = f"{round(self.M['평균단가'],4):,.4f}" ; update['add10'] = f"{self.M['보유수량']:,}"
+        update['add8']   = f"{round(self.M['매수금액']-self.M['매도금액'],4):,.4f}"; update['add9'] = f"{round(self.M['평균단가'],4):,.4f}" ; update['add10'] = f"{self.M['보유수량']:,}"
 
         update['add11']  = f"{round(self.M['평가금액'],4):,.4f}"; update['add12']= f"{round(self.M['총매수금'],4):,.4f}" ; update['add14']   = f"{round(self.M['수익현황'],4):,.4f}"
 
         update['add15']  = f"{round(self.M['수익률'],4):,.4f}"  ; update['add16']   = f"{round(self.M['가용잔액'],4):,.4f}" ; update['add18']   = self.M['진행상황']
 
-        update['add13']  = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['매매현황']
+        update['add13']  = f"{round(self.M['매도수익'],4):,.2f}" if self.M['매도수익'] else self.M['매매현황']
           
         update['sub6'] = self.M['일매수금'] ; update['add17']   = f"{round(self.M['추가자본'],4):,.2f}"
         
@@ -396,3 +397,9 @@ class Stock_dna_2022(Control) :
         update['sub8'] = self.M['처음추가']
 
         return self.json(update)
+"""
+        h_diary_first_board
+        [분류01] no, brother, tle_color, uid, uname, content, reply, hit, wdate, mdate
+        add1 = [code], add2 = [시즌], add3=[날수], add4=[진행]
+        add5 = [종가], add6 = [체결단가], add7=[체결수량], add8=[매수금액]
+"""
