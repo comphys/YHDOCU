@@ -24,16 +24,20 @@ class M_backtest_DNA_2022(Model) :
         #-----------------------------------------------------------
         tx['매도수량'] = self.M['매도수량'] if self.M['매도수량'] else ' '
         tx['매도금액'] = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['거래코드']
-        tx['실현수익'] = f"{round(self.M['실현수익'],4):,.2f}" if self.M['매도금액'] else self.M['진행상황']
+        
+        if  self.M['매도금액'] : 
+            clr = "#F6CECE" if self.M['실현수익'] > 0 else "#CED8F6"
+            tx['실현수익'] = f"<span style='color:{clr}'>{round(self.M['실현수익'],4):,.2f}</span>"
+        else : tx['실현수익'] = self.M['진행상황']
 
         tx['보유수량'] = self.M['보유수량']
         tx['총매수금'] = f"{round(self.M['총매수금'],4):,.2f}"
         자금합계 = f"{round(self.M['추가자본'] + self.M['가용잔액'],4):,.2f}"
-        tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}" if self.M['평가금액'] else 자금합계 
+        tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span style='color:#CEF6CE'>{자금합계}</span>" 
         tx['수익현황'] = f"{round(self.M['수익현황'],4):,.2f}"
 
         clr = "#F6CECE" if self.M['수익률'] > 0 else "#CED8F6"
-        tx['수익률'] = f"<span style='color:{clr}'>{round(self.M['수익률'],4):,.2f}"
+        tx['수익률'] = f"<span style='color:{clr}'>{round(self.M['수익률'],4):,.2f}</span>"
         tx['거래코드'] = self.M['거래코드']
 
         tx['일매수금'] = f"{self.M['일매수금']:,}"
@@ -50,39 +54,33 @@ class M_backtest_DNA_2022(Model) :
 
         self.M['연속하락']  =  self.M['연속하락'] + 1 if  self.M['당일종가'] <  self.M['전일종가'] else 0 
         self.M['연속상승']  =  self.M['연속상승'] + 1 if  self.M['당일종가'] >= self.M['전일종가'] else 0 
-        self.M['어제평균']  =  self.M['평균단가']
-
+        
         if  self.M['매수수량'] : 
             self.M['매수금액']  =  self.M['매수수량'] * self.M['당일종가']
             self.M['가용잔액'] -=  self.M['매수금액']
             self.M['보유수량'] +=  self.M['매수수량']
             self.M['총매수금'] +=  self.M['매수금액']
+            self.M['평균단가']  =  self.M['총매수금'] / self.M['보유수량'] 
 
-        elif  self.M['매도수량'] :
-            ratio = self.M['매도수량'] / self.M['보유수량']
+        if  self.M['매도수량'] :
             self.M['매도금액']  = self.M['매도단가'] * self.M['매도수량']  
-            self.M['실현수익']  = self.M['매도금액'] - (self.M['총매수금'] * ratio)  
-            self.M['매수익률']  = self.M['실현수익'] / (self.M['총매수금'] * ratio) * 100
+            self.M['실현수익']  = (self.M['당일종가']-self.M['평균단가'])*self.M['매도수량']   
+            self.M['매수익률']  = (self.M['당일종가']/self.M['평균단가'] -1 ) * 100
             self.M['보유수량'] -= self.M['매도수량'] 
             self.M['가용잔액'] += self.M['매도금액']
             self.M['총매수금']  = self.M['보유수량'] * self.M['평균단가']
             self.M['전략매금'] += self.M['매도금액']
             self.M['전략가격']  = self.M['당일종가']
-            self.M['매수금액']  = 0
 
-        else :
-            self.M['매수금액']  = 0
-            self.M['거래코드']  = ' '
 
         self.M['평가금액']  =  self.M['당일종가'] * self.M['보유수량']
-        self.M['평균단가']  =  self.M['총매수금'] / self.M['보유수량'] if self.M['보유수량'] != 0 else 0
         self.M['수익현황']  =  self.M['평가금액'] - self.M['총매수금']
-        self.M['수익률']    = (self.M['수익현황'] / self.M['총매수금']) * 100 if self.M['총매수금'] else 0
+        self.M['수익률']    = (self.M['당일종가']/self.M['평균단가'] -1) * 100 
 
         if  self.M['보유수량'] == 0 : 
             self.M['수익률']   = self.M['매수익률']
             self.M['전략매금'] = self.M['전략가격'] = 0
-            self.M['평균단가'] = self.M['어제평균']
+            self.M['평균단가'] = 0.0
             self.M['위기전략'] = False
             self.M['첫날기록'] = True   
             if self.M['리밸런싱'] : self.rebalance()   
@@ -258,7 +256,8 @@ class M_backtest_DNA_2022(Model) :
             self.M['당일종가'] = float(BD['add3'])
             self.M['당일고가'] = float(BD['add5'])
             self.M['전일종가'] = float(self.B[idx-1]['add3'])   
-            self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = 0
+            self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
+            self.M['거래코드'] = ' '
 
             if  idx == 0 or self.M['첫날기록'] : self.new_day(); self.print_backtest(); continue
             
