@@ -6,7 +6,7 @@ from slack_sdk.errors import SlackApiError
 class Sms(Control) :
 
     def _auto(self) :
-        self.client = WebClient(token="xapp-1-A028Z167UPJ-2531365888928-ad7012ceed6dc52437569fe941fcc0c6eaabf04c3437aa69720ac126c153d670")
+        self.client = WebClient(token="xapp-yur-token")
 
     def post_slack(self):
 
