@@ -10,8 +10,8 @@ class DB :
         self.num = 0
         self.tbl = ''
         self.err = ''
-        # mydb = '/home/comphys/YHDOCU/mydb/' + dbname + '.sqlite'
-        mydb = 'C:/YHDOCU/mydb/' + dbname + '.sqlite'
+        mydb = '/home/comphys/YHDOCU/mydb/' + dbname + '.sqlite'
+        # mydb = 'C:/YHDOCU/mydb/' + dbname + '.sqlite'
         self.con = sqlite3.connect(mydb, check_same_thread=True)
         self.cur = self.con.cursor()
 
