@@ -8,6 +8,7 @@ class Stock_update(Control) :
 
     def _auto(self) :
         self.DB = self.db('stocks')
+        self.app_key = self.DB.one('SELECT p_data_02 FROM my_keep_data WHERE no=1')
 
     def update(self) :
 
@@ -64,39 +65,35 @@ class Stock_update(Control) :
 
     def update_stock(self,cdx,USER) :
 
-        self.DB.tbl = 'h_stockHistory_board'
-        self.DB.wre = f"add1='{cdx}'"
+        self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
+        b_date = self.DB.get("max(add0)",many=1,assoc=False)
+        e_date = ut.timestamp_to_date(opt=7)
 
-        stocks_end = self.DB.get("max(add0)",many=1,assoc=False) 
-
-        sql = f"DELETE FROM {self.DB.tbl} WHERE add0 = '{stocks_end}' AND add1='{cdx}'"
-        self.DB.exe(sql)
-
-        df = fdr.DataReader(cdx,start=stocks_end)
+        df = fdr.DataReader(cdx,start=b_date, end=e_date)
         df = df.astype({'Volume':'int'})
-        data_field  = list(df.columns)
-        data_field.insert(0,'Date')
-        data_index  = [x.strftime('%Y-%m-%d') for x in df.index]
-        data_db_in  = list(zip(data_index, df['Close'], df['Open'], df['High'], df['Low'], df['Volume'], df['Change']))
-        
-        db_keys = "add0,add3,add4,add5,add6,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
+
+        Date    = [x.strftime('%Y-%m-%d') for x in df.index]
+        Change  = [round(x,3) for x in df['Change']]
+
+        cnt = len(Date)
+        Up  = [0]*cnt
+        Dn  = [0]*cnt
+
+        for i in range(1,cnt) :
+            if df['Close'][i] <  df['Close'][i-1] : Dn[i] = Dn[i-1] + 1 
+            if df['Close'][i] >= df['Close'][i-1] : Up[i] = Up[i-1] + 1 
+
+        ohlc = list(zip(Date,df['Open'],df['High'],df['Low'],df['Close'],df['Volume'],Change,Up,Dn))
+
+        self.DB.exe(f"DELETE FROM {self.DB.tbl} WHERE add0 >= '{b_date}' AND add1='{cdx}'")
+
+        db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
         time_now = ut.now_timestamp()
-        
         cdx = cdx.upper()
-        for row in data_db_in :
-            row2 = list(row)
-            row2.append(0)
-            row2.append(0)
-            row2.append(cdx)
-            row2.append(cdx)
-            row2.append(USER['uid'])
-            row2.append(USER['uname'])
-            row2.append(time_now)
-            row2.append(time_now)
-
-            values = str(row2)[1:-1]
-
-            sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
-            self.DB.exe(sql)
         
-        #  df = fdr.DataReader(code,start=None, end='2010-02-26')
+        for row in ohlc :
+            row2 = list(row)    
+            row2 += [cdx,cdx,'comphys','정용훈',time_now,time_now]
+            values = str(row2)[1:-1]
+            sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
+            self.DB.exe(sql)        

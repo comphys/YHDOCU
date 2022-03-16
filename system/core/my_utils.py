@@ -119,12 +119,11 @@ def dayofdate(theday,delta=0) :
 
 # stock
 
-def get_stock_data(symbol,start_date,end_date='') :
+def get_stock_data(symbol,app_key,start_date,end_date='') :
 
     date_b = dayofdate(start_date,-10)[0]
     date_e = start_date if not end_date else end_date           
 
-    app_key = '92DC8890E1874E1D97EE34387D72F152'
     url  = f"https://api.stockdio.com/data/financial/prices/v1/GetHistoricalPrices?app-key={app_key}&stockExchange=USA&symbol={symbol}&from={date_b}&to={date_e}"
 
     data = json.loads(ul.urlopen(url).read())

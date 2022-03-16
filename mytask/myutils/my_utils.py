@@ -119,8 +119,6 @@ def dayofdate(theday,delta=0) :
     if delta : b = a+timedelta(days=delta) ; return (b.strftime('%Y-%m-%d'),dow[b.weekday()])
     else : return dow[a.weekday()]
 
-
-
 def post_slack(key,text,ch='주식'):
 
     client = WebClient(token=key)
