@@ -158,7 +158,7 @@ class M_backtest_ifthisday(Model) :
         self.M['연속상승']  = int(self.old_price_trace('UP'))
 
         self.M['progress'] = float(self.D['progress'])
-        if self.M['progress'] > 80 : self.M['progress'] = self.D['progress'] = 80
+        if self.M['progress'] > 70 : self.M['progress'] = self.D['progress'] = 70
  
         총매수금 = int(self.D['init_capital'] * self.M['progress']/100)
         self.M['평균단가']  = self.M['당일종가']
