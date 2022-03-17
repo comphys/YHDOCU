@@ -29,13 +29,16 @@ class SU :
         self.mydb.close()
 
         message = f"[{today}] 주가 정보 업데이트를 완료하였습니다"
-        my.post_slack(self.skey,message)
+        # my.post_slack(self.skey,message)
 
     def update_stock(self,cdx) :
 
         self.mydb.tbl, self.mydb.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.mydb.get("max(add0)",many=1,assoc=False)
         e_date = my.timestamp_to_date(opt=7)
+        
+        self.mydb.wre = f"add0 ='{b_date}' and add1='{cdx}'"
+        old_data = self.mydb.get('add9,add10',many=1,assoc=False)
 
         df = fdr.DataReader(cdx,start=b_date, end=e_date)
         df = df.astype({'Volume':'int'})
@@ -44,8 +47,8 @@ class SU :
         Change  = [round(x,3) for x in df['Change']]
 
         cnt = len(Date)
-        Up  = [0]*cnt
-        Dn  = [0]*cnt
+        Up  = [0]*cnt ; Up[0] = int(old_data[0])
+        Dn  = [0]*cnt ; Dn[0] = int(old_data[1])
 
         for i in range(1,cnt) :
             if df['Close'][i] <  df['Close'][i-1] : Dn[i] = Dn[i-1] + 1 
