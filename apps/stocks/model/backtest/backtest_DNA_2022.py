@@ -43,6 +43,8 @@ class M_backtest_DNA_2022(Model) :
         tx['일매수금'] = f"{self.M['일매수금']:,}"
         if  self.M['진행상황'] == '전량매도' :
             tx['가용잔액'] =  f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>전량매도</span>"
+            tx['수익현황'] = f"<span style='color:#CED8F6'>{tx['수익현황']}</span>"
+
         elif self.M['진행상황'] in ('전략매도','부분매도') :  
             tx['가용잔액'] = self.M['진행상황'] 
         else : 
