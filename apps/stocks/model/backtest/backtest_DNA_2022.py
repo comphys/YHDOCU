@@ -22,7 +22,7 @@ class M_backtest_DNA_2022(Model) :
         tx['매수금액'] = f"{round(self.M['매수금액'],4):,.3f}" if self.M['매수금액'] else ' '
         tx['평균단가'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.4f}</span>"
         #-----------------------------------------------------------
-        tx['매도수량'] = self.M['매도수량'] if self.M['매도수량'] else ' '
+        tx['매도수량'] = f"{self.M['매도수량']:,}" if self.M['매도수량'] else ' '
         tx['매도금액'] = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['거래코드']
         
         if  self.M['매도금액'] : 
@@ -65,6 +65,7 @@ class M_backtest_DNA_2022(Model) :
         if  self.M['매도수량'] :
             self.M['매도금액']  = self.M['매도단가'] * self.M['매도수량']  
             self.M['실현수익']  = (self.M['당일종가']-self.M['평균단가'])*self.M['매도수량']   
+            self.M['수익누적'] += self.M['실현수익'] 
             self.M['매수익률']  = (self.M['당일종가']/self.M['평균단가'] -1 ) * 100
             self.M['보유수량'] -= self.M['매도수량'] 
             self.M['가용잔액'] += self.M['매도금액']
@@ -79,6 +80,7 @@ class M_backtest_DNA_2022(Model) :
 
         if  self.M['보유수량'] == 0 : 
             self.M['수익률']   = self.M['매수익률']
+            self.M['수익현황'] = self.M['수익누적']
             self.M['전략매금'] = self.M['전략가격'] = 0
             self.M['평균단가'] = 0.0
             self.M['위기전략'] = False
@@ -114,6 +116,7 @@ class M_backtest_DNA_2022(Model) :
         self.M['리밸런싱']  = True if self.S['add12'] == 'on' else False  # 리밸런싱 수행 여부
         self.M['최대날자']  = ' '
         self.M['완료일수']  = 0
+        self.M['수익누적']  = 0.0
 
         self.M['날수'] = 0
         self.M['진행'] = 0
@@ -154,6 +157,7 @@ class M_backtest_DNA_2022(Model) :
         self.M['기록시즌'] += 1
         self.M['연속하락']  = int(self.old_price_trace('DN'))
         self.M['연속상승']  = int(self.old_price_trace('UP'))
+        self.M['수익누적']  = 0.0
 
         self.M['평균단가']  = self.M['당일종가']
         self.M['매수수량']  = math.ceil(self.M['일매수금']/self.old_price_trace('YD'))
