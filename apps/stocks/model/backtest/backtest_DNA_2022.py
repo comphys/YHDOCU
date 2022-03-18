@@ -179,9 +179,9 @@ class M_backtest_DNA_2022(Model) :
         매수금액1  = self.M['일매수금'] * self.M['매수비중']
         매수금액2  = self.M['일매수금'] - 매수금액1
         평단가금액 = self.M['전일종가'] 
-        큰단가금액 = self.M['평균단가'] * self.M['큰단가치']
+        큰단가금액 = self.M['전일종가'] * 1.10
 
-        if  self.M['당일종가'] <= self.M['전일종가'] * 1.15 : 
+        if  self.M['당일종가'] <= self.M['전일종가'] * self.M['큰단가치'] : 
             self.M['매수수량']  = math.ceil(매수금액2 / 큰단가금액)*2 
             self.M['거래코드']  = 'B'        
         
