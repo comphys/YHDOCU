@@ -5,6 +5,7 @@
 <input type='hidden' name='mode'	value="{{D['Mode']}}" >
 <input type='hidden' name='uid'		value="{{D['USER']['uid']}}" >
 <input type='hidden' name='uname'	value="{{D['USER']['uname']}}" >
+<textarea  name='content' style="display:none"></textarea>
 <table class='table' style="border:2px solid black;border-radius:4px;width:{{D['w_width2']}}">
 	<tbody>
 	<!-- 상단 요소====================================================================================== -->
@@ -281,13 +282,21 @@
 </table>
 <input type='hidden' name='sub7' value="{{D['BODY']['sub7']}}">
 <input type='hidden' name='sub8' value="{{D['BODY']['sub8']}}">
+<div style="width:{{D['w_width2']}}">
+{% include D['_skn'] + 'board/my_dark/write/basic_editor_tools.htm' %}
+</div>
 <!-- BEGIN ====================================================================================== -->
-<div style="position:relative;width:{{D['w_width2']}};background-color:black">
-<textarea name="content" style="width:100%;height:100px;padding:10px;">
-{% if D['Mode'] == 'modify' -%} 
-{{D['OBODY']['content']|safe}}
-{%- endif %}
-</textarea>
+<div style="position:relative;width:{{D['w_width1']}}">
+	<div id="selectedMarkL"></div>	
+	<div id="write-wrap" style="float:left;width:{{D['w_width2']}};z-index:3;">
+	<div id="YHBmainEditor" >
+	{% if D['Mode'] == 'modify' -%} 
+	{{D['OBODY']['content']|safe}}
+	{% else %} 
+	<div><p>#</p></div>
+	{%- endif %}
+	</div>
+<!-- YHBmainEditor  -->
 <!-- 하단 요소====================================================================================== -->
 <div class="clearfix" style="padding:0px;border:1px solid black;background-color:#393E4A">
 	<div class="pull-left">
@@ -302,11 +311,28 @@
 		<button class="btn btn-small btn-red-s3" style="height:30px">저장</button>
 	</div>
 </div>
+<div id="choicedMark"   style="left:{{D['w_width2']}}"></div>
+<div id="selectedMarkR" style="left:{{D['w_width2']}}"></div>
 </div>
 <!-- END ====================================================================================== -->
 </form>
+{% include D['_skn'] + 'board/my_dark/write/side_editor_tools.htm' %}
+
+<div id='tableMenu' class="rightClickMenu" style='display:none;'>
+	<li onclick="$('#tableMenu').hide()"> 메뉴감추기 </li>
+	<li class='divider'></li>
+	<li onclick="JYHEDITOR.addRowCol('left')">좌측컬럼 추가</li>
+	<li onclick="JYHEDITOR.addRowCol('right')">우측컬럼 추가</li>
+	<li class='divider'></li>
+	<li onclick="JYHEDITOR.addRowCol('up')">위쪽행 추가</li>
+	<li onclick="JYHEDITOR.addRowCol('down')">아래행 추가</li>
+	<li class='divider'></li>
+	<li onclick="JYHEDITOR.addRowCol('col')">현재컬럼 삭제</li>
+	<li onclick="JYHEDITOR.addRowCol('row')">현재 행 삭제</li>
+</div>
 
 <script>
+JYHEDITOR.start('YHBmainEditor');
 var my_base_strategy = ''
 
 function auto_datainput() {
@@ -427,8 +453,36 @@ function auto_suggest() {
 	h_dialog.load(url,o);
 }
 
+function open_style_edit() {
+	var furl = uri('linkurl')+"filemanagers-fedit/open/bodyCss.css"; 
+	var specs = "height=700,width=1200,status=no,menubar=no,location=no,titlebar=no,scrollbars=yes";
+	window.open(furl,'css_editor', specs);
+}
+
+function form_basic(opt) {
+	var html;
+	$('#contextMenu').hide()
+	switch (opt){
+		case  'A1'  : html= '\n<div class="pbox">\n<p>글입력</p>\n</div>\n'; break;	
+		case  'A2'  : html= '\n<div class="pbox">\n<p class="p-title">타이틀</p>\n<p class="sbox">\n글내용\n</p>\n</div>\n'; break;
+		case  'B1'  : html= '\n<p class="p-title">타이틀</p>\n<p class="sbox">\n글내용\n</p>\n'; break;
+		case  'A4h' : html= '\n<div class="A4h">\n<p>글내용</p>\n</div>\n'; break;
+		case  'A4w' : html= '\n<div class="A4w">\n글내용\n</div>\n'; break;
+	}
+	if(docuSelected != null) { $(docuSelected).before(html); JYHEDITOR.selectedMark();} 
+	else $("#YHBmainEditor").append(html); 
+	
+}
+
+JYHEDITOR.UserTable = function() {
+	if(docuSelectedType != 'TD') return;
+	$("#tableMenu").css({left:mouse_X - 20 , top:mouse_Y }).toggle();
+}
 
 function check_MainWriteForm(f)	{	
+	var wDiv = $id("YHBmainEditor");
+	JYHEDITOR.clearDocuSelect();
+	f.content.value = wDiv.innerHTML;	
 	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
 	return true;
 }
