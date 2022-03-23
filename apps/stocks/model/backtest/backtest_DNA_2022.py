@@ -213,10 +213,12 @@ class M_backtest_DNA_2022(Model) :
 
 
             if self.M['연속하락'] >= 1 :
-                if 한도금액 < self.M['일매수금'] * (1+self.M['연속하락']) :
+                
+                가중치 = 1 + self.M['연속하락']
+                if 한도금액 < self.M['일매수금'] * 가중치 :
                     self.M['매수수량']  = int(한도금액 / self.M['전일종가'])
                     self.M['위기전략'] = True 
-                else : self.M['매수수량']  = 기본수량 * (1+self.M['연속하락'])
+                else : self.M['매수수량']  = 기본수량 * 가중치
                     
                 self.M['거래코드'] = 'D' + str(self.M['연속하락'])
                 self.M['진행상황'] = '추종매수'
@@ -244,7 +246,7 @@ class M_backtest_DNA_2022(Model) :
         매도가격 = self.M['평균단가'] * (1+self.M['매도시점']) 
         
         if  self.M['당일종가'] >= 매도가격  : 
-            self.M['매도수량'] = int(self.M['보유수량'] * self.M['위매비중'])
+            self.M['매도수량'] = round(self.M['보유수량'] * self.M['위매비중'])
             self.M['전략가격']  = self.M['당일종가']
             self.M['위기전략'] = False
             self.M['진행상황']  = '전략매도'
