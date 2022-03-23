@@ -101,8 +101,8 @@ class Stock_dna_2022(Control) :
         total = self.M['처음자본'] + self.M['처음추가']
         self.M['자본비율'] = self.M['처음자본'] / total
         total1 =self.M['가용잔액'] + self.M['추가자본']
-        self.M['가용잔액'] = round(total1 * self.M['자본비율'], 2)
-        self.M['추가자본'] = total1 - self.M['가용잔액']
+        self.M['가용잔액'] = round(total1 * self.M['자본비율'])
+        self.M['추가자본'] = round(total1 - self.M['가용잔액'])
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수'])
 
     def calculate(self)  :
@@ -283,7 +283,7 @@ class Stock_dna_2022(Control) :
     def check_buy(self) :
 
         if self.auto :
-            CP = 21
+            CP = self.M['매도대기']
             # 큰단매수 검토
             if many := int(self.B['buy21'])  : 
                 if  self.M['당일종가'] <= float(self.B['buy22']):  
@@ -347,7 +347,7 @@ class Stock_dna_2022(Control) :
             
        
         # 매도전략
-        CP = 21
+        CP = self.M['매도대기']
         if self.M['진행'] >= CP : self.normal_sell()
         if self.M['위기전략'] : self.strategy_sell()
 

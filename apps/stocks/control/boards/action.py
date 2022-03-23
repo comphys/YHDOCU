@@ -38,7 +38,7 @@ class Action(Control) :
         qry = self.DB.qry_insert(self.board,SAVE)
         self.DB.exe(qry)
 
-        if self.bid in ('daily_trading','daily_first','daily_second') :
+        if self.bid in ('daily_first','daily_second','daily_third') :
             self.DB.tbl,self.DB.wre = (f"h_{self.bid}_board",f"add1='{SAVE['add1']}' and add2='{SAVE['add2']}'")
             self.save_chart(self.DB.get_one('no'))
         

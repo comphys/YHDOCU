@@ -94,8 +94,8 @@ class M_backtest_DNA_2022(Model) :
 
     def rebalance(self)  :
         total = self.M['가용잔액'] + self.M['추가자본']
-        self.M['가용잔액'] = round(total * self.M['자본비율'], 2)
-        self.M['추가자본'] = round(total - self.M['가용잔액'], 2)
+        self.M['가용잔액'] = round(total * self.M['자본비율'])
+        self.M['추가자본'] = round(total - self.M['가용잔액'])
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
         self.M['씨드'] = self.M['가용잔액']
 
