@@ -234,10 +234,11 @@ class Stock_dna_2022(Control) :
         매수금액1  = self.M['일매수금'] * self.M['매수비중']
         매수금액2  = self.M['일매수금'] - 매수금액1
         self.M['평단단가'] = self.M['당일종가'] 
-        self.M['큰단단가'] = self.M['당일종가'] * 1.15
-  
+        self.M['큰단단가'] = self.M['당일종가'] * self.M['큰단가치'] 
+        
+        큰단가금액 = self.M['당일종가'] * 1.10
         self.M['평단수량'] = math.ceil(매수금액1 / self.M['평단단가']) *4  
-        self.M['큰단수량'] = math.ceil(매수금액2 / (self.M['평균단가']*self.M['큰단가치'])) *2  
+        self.M['큰단수량'] = math.ceil(매수금액2 / 큰단가금액) *2  
 
     def normal_buy(self)  :
 
