@@ -155,6 +155,12 @@
 <script>
 var selected_tr = null
 $(document).ready(function(){ 
+
+	$(".if-the-day").click(function(){
+		var date=$(this).text(); $("input[name='start_date']").val(date);
+		var progress=$(this).prev().text(); $("input[name='progress']").val(progress);
+	});
+
 	$(".if-this-day").click(function(){
 		if( selected_tr ) {	
 			$(selected_tr).css("backgroundColor",'')

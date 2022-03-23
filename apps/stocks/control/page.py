@@ -1,5 +1,6 @@
 from system.core.load import Control
 from flask import session
+import system.core.my_utils as my
 
 class Page(Control) : 
 
@@ -44,7 +45,7 @@ class Page(Control) :
         self.D['addition']   = self.D['post']['addition']
         self.D['start_date'] = self.D['post']['start_date']
         self.D['end_date']   = self.D['post']['end_date']
-        self.D['progress']   = self.D['post']['progress']
+        self.D['progress']   = float(self.D['post']['progress'])
 
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.D['strategy']}'")
         s_code = self.DB.get_one('add1')
@@ -52,6 +53,8 @@ class Page(Control) :
         M = self.model('backtest-backtest_'+s_code)
         M.view()
         M.get_start()
+        if self.D['progress'] : M.test_with_progress()
+        else : M.test_it()
         D={'skin':f"{self.skin}/{self.D['bid']}.html"}
         return self.echo(D)
 
@@ -83,16 +86,17 @@ class Page(Control) :
     def test_if(self) :
 
         self.D['progress']   = self.gets['progress']
-
         self.D['code']       = 'SOXL'
         self.D['strategy']   = '셋째계좌'
         self.D['capital']    = '20,000'
         self.D['addition']   = '2,000'
         self.D['start_date'] = self.gets['date']
+        self.D['end_date']   = my.timestamp_to_date(opt=7)
 
-        M = self.model('backtest-backtest_ifthisday')
+        M = self.model('backtest-backtest_DNA_2022')
 
         M.get_start()
+        M.test_this_day()
 
         output  = "<div id='stock_tips' style='width:260px;height:180px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:2px solid #f6cece;' ondblclick=\"h_dialog.close('TEST_IF')\">"
         output += f"시작일 = {self.D['s_day']} 진행률 {self.D['progress']} %<br>"
@@ -112,9 +116,12 @@ class Page(Control) :
         self.D['capital']    = '20,000'
         self.D['addition']   = '2,000'
         self.D['start_date'] = self.gets['date']
+        self.D['end_date']   = my.timestamp_to_date(opt=7)
 
-        M = self.model('backtest-backtest_theday')
+
+        M = self.model('backtest-backtest_DNA_2022')
         M.get_start()
+        M.test_the_day()
 
         output  = "<div id='stock_tips' style='width:200px;height:180px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:2px solid #F7F8E0;' ondblclick=\"h_dialog.close('TEST_DAY')\">"
         output += f"시작일 = {self.D['s_day']} <br>"

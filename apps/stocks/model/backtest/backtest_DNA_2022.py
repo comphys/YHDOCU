@@ -331,7 +331,7 @@ class M_backtest_DNA_2022(Model) :
 
         self.D['init_capital'] = int(self.D['capital'].replace(',',''))
         self.D['addition'] = int(self.D['addition'].replace(',','')) if self.D['addition'] else 0
-        self.test_it()
+
 
     def old_price_trace(self,opt) : # opt True for C_drop, False for C_up
         now = int(time.mktime(datetime.strptime(self.M['day'],'%Y-%m-%d').timetuple()))
@@ -354,3 +354,137 @@ class M_backtest_DNA_2022(Model) :
             return c_goup
         elif opt == 'YD' :
             return aaa[-2]
+
+    # [IF THIS DAY] ----------------------------------------------------------------------------
+
+    def this_day(self) :
+        
+        self.M['기록시즌'] += 1
+
+        self.M['연속하락']  = int(self.old_price_trace('DN'))
+        self.M['연속상승']  = int(self.old_price_trace('UP'))
+
+        self.M['progress'] = float(self.D['progress'])
+        if self.M['progress'] > 70 : self.M['progress'] = self.D['progress'] = 70
+ 
+        총매수금 = int(self.D['init_capital'] * self.M['progress']/100)
+        self.M['평균단가']  = self.M['당일종가']
+        self.M['매수수량']  = math.ceil(총매수금/self.old_price_trace('YD'))
+
+        self.M['보유수량']  = self.M['매수수량'] 
+        self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량']
+        self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
+        self.M['수익현황']  = self.M['수익률'] = 0.0
+        self.M['가용잔액'] -= self.M['매수금액']
+        self.M['체결수량']  = self.M['매수수량']
+        self.M['진행상황']  = '첫날거래'
+        self.M['첫날기록']  = False
+        self.M['구매코드']  = 'ST' 
+        
+        self.M['매수수량'] = 0
+        self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)  
+
+    def test_this_day(self) :
+
+        self.init_value()
+
+        for idx,BD in enumerate(self.B) :
+            self.M['day'] = BD['add0']
+            self.M['당일종가'] = float(BD['add3'])
+            self.M['당일고가'] = float(BD['add5'])
+            self.M['전일종가'] = float(self.B[idx-1]['add3'])   
+            self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
+            self.M['거래코드'] = ' '
+
+            if  idx == 0 : self.this_day(); continue
+            if  self.M['첫날기록'] : self.D['sell_date'] = self.M['day']; break
+            
+            if self.M['진행'] >= self.M['매도대기']: self.normal_sell()
+            
+            if self.M['위기전략'] and self.M['수량확보'] : self.strategy_sell()
+            else : self.base_buy() if self.M['진행'] < self.M['매도대기'] else self.normal_buy()
+
+            self.calculate()
+        self.result_this_day()     
+
+    def result_this_day(self) :
+
+        # 기간 계산하기
+
+        self.D['s_day'] = s_day = self.D['start_date']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
+        self.D['종료일자'] = self.M['day']
+        self.D['e_day'] = e_day = self.D['종료일자'];      d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
+        delta = d1-d0
+        self.D['days_span'] = delta.days        
+
+        self.D['s_capital'] = self.D['init_capital'] + self.D['addition']
+        self.D['e_capital'] = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본']
+        self.D['ca_profit'] = self.D['e_capital'] - self.D['s_capital'] 
+        self.D['profit_rate'] = (self.D['ca_profit']/self.D['s_capital']) * 100     
+
+    # [IF THIS DAY] ----------------------------------------------------------------------------
+
+    def test_the_day(self) :
+
+        self.init_value()
+
+        for idx,BD in enumerate(self.B) :
+            self.M['day'] = BD['add0']
+            self.M['당일종가'] = float(BD['add3'])
+            self.M['당일고가'] = float(BD['add5'])
+            self.M['전일종가'] = float(self.B[idx-1]['add3'])   
+            self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
+            self.M['거래코드'] = ' '
+
+            if  idx == 0 : self.new_day(); continue
+            if  self.M['첫날기록'] : self.D['sell_date'] = self.M['day']; break
+            
+            if self.M['진행'] >= self.M['매도대기'] : self.normal_sell()
+            
+            if self.M['위기전략'] and self.M['수량확보'] : self.strategy_sell()
+            else : self.base_buy() if self.M['진행'] < self.M['매도대기'] else self.normal_buy()
+
+            self.calculate()
+        # endfor -----------------------------------------------------------------------------------------------------
+        self.result_the_day()
+
+    def result_the_day(self) :
+
+        # 기간 계산하기
+        self.D['s_day'] = s_day = self.D['start_date']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
+        self.D['종료일자'] = self.M['day']
+        self.D['e_day'] = e_day = self.D['종료일자'];      d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
+        delta = d1-d0
+        self.D['days_span'] = delta.days        
+
+        self.D['s_capital'] = self.D['init_capital'] + self.D['addition']
+        self.D['e_capital'] = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본']
+        self.D['ca_profit'] = self.D['e_capital'] - self.D['s_capital'] 
+        self.D['profit_rate'] = (self.D['ca_profit']/self.D['s_capital']) * 100
+
+    
+    def test_with_progress(self) :
+
+        self.init_value()
+
+        for idx,BD in enumerate(self.B) :
+            self.M['day'] = BD['add0']
+            self.M['당일종가'] = float(BD['add3'])
+            self.M['당일고가'] = float(BD['add5'])
+            self.M['전일종가'] = float(self.B[idx-1]['add3'])   
+            self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
+            self.M['거래코드'] = ' '
+
+            if  idx == 0 : self.this_day(); continue
+            if  self.M['첫날기록'] : self.D['sell_date'] = self.M['day']; break
+            
+            if self.M['진행'] >= self.M['매도대기'] : self.normal_sell()
+            
+            if self.M['위기전략'] and self.M['수량확보'] : self.strategy_sell()
+            else : self.base_buy() if self.M['진행'] < self.M['매도대기'] else self.normal_buy()
+
+        #   결과정리 --------------------------------------------------------------------------------------------------
+            self.calculate()
+            self.print_backtest()
+        # endfor -----------------------------------------------------------------------------------------------------
+        self.result()
