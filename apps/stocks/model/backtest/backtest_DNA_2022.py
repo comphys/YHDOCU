@@ -84,6 +84,7 @@ class M_backtest_DNA_2022(Model) :
             self.M['전략가격'] = 0.0
             self.M['위기전략'] = False
             self.M['첫날기록'] = True   
+            self.D['종료일자'] = self.M['day']
             if self.M['리밸런싱'] : self.rebalance()   
 
         if self.M['날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['날수'] ; self.M['최대날자'] = self.M['day']
@@ -215,6 +216,7 @@ class M_backtest_DNA_2022(Model) :
             if self.M['연속하락'] >= 1 :
                 
                 가중치 = 1 + self.M['연속하락']
+
                 if 한도금액 < self.M['일매수금'] * 가중치 :
                     self.M['매수수량']  = int(한도금액 / self.M['전일종가'])
                     self.M['위기전략'] = True 
@@ -405,22 +407,7 @@ class M_backtest_DNA_2022(Model) :
             else : self.base_buy() if self.M['진행'] < self.M['매도대기'] else self.normal_buy()
 
             self.calculate()
-        self.result_this_day()     
-
-    def result_this_day(self) :
-
-        # 기간 계산하기
-
-        self.D['s_day'] = s_day = self.D['start_date']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
-        self.D['종료일자'] = self.M['day']
-        self.D['e_day'] = e_day = self.D['종료일자'];      d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
-        delta = d1-d0
-        self.D['days_span'] = delta.days        
-
-        self.D['s_capital'] = self.D['init_capital'] + self.D['addition']
-        self.D['e_capital'] = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본']
-        self.D['ca_profit'] = self.D['e_capital'] - self.D['s_capital'] 
-        self.D['profit_rate'] = (self.D['ca_profit']/self.D['s_capital']) * 100     
+        self.result_the_day()    
 
     # [IF THIS DAY] ----------------------------------------------------------------------------
 
@@ -452,7 +439,6 @@ class M_backtest_DNA_2022(Model) :
 
         # 기간 계산하기
         self.D['s_day'] = s_day = self.D['start_date']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
-        self.D['종료일자'] = self.M['day']
         self.D['e_day'] = e_day = self.D['종료일자'];      d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
         delta = d1-d0
         self.D['days_span'] = delta.days        
