@@ -34,7 +34,7 @@ class M_backtest_DNA_2022(Model) :
         tx['보유수량'] = self.M['보유수량']
         tx['총매수금'] = f"{round(self.M['총매수금'],4):,.2f}"
         자금합계 = f"{round(self.M['추가자본'] + self.M['가용잔액'],4):,.2f}"
-        tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span style='color:#CEF6CE'>{자금합계}</span>" 
+        tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span style='font-weight:bold;color:#CEF6CE'>{자금합계}</span>" 
         tx['수익현황'] = f"{round(self.M['수익현황'],4):,.2f}"
 
         clr = "#F6CECE" if self.M['수익률'] > 0 else "#CED8F6"
@@ -44,7 +44,7 @@ class M_backtest_DNA_2022(Model) :
         tx['일매수금'] = f"{self.M['일매수금']:,}"
         if  self.M['진행상황'] == '전량매도' :
             tx['가용잔액'] =  f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>전량매도</span>"
-            tx['수익현황'] = f"<span style='color:#CED8F6'>{tx['수익현황']}</span>"
+            tx['수익현황'] = f"<span style='font-weight:bold;color:#F6CECE'>{tx['수익현황']}</span>"
 
         elif self.M['진행상황'] in ('전략매도','부분매도') :  
             tx['가용잔액'] = self.M['진행상황'] 
