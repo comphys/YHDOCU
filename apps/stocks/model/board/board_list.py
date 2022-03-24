@@ -22,8 +22,8 @@ class M_board_list(Model) :
             else :
                 if self.D['bid'] in ('daily_first','daily_second','daily_third') : 
                     # session['CSH']['csh_add19'] = '시즌진행' 
-                    session['CSH']['csh_add1'] = 'SOXL'
-                    session['CSH']['csh_add2'] =  self.DB.one(f"SELECT max(add2) FROM h_{self.D['bid']}_board")
+                    session['CSH']['csh_add1'] =  session['CSH'].get('csh_add1','SOXL')
+                    session['CSH']['csh_add2'] =  session['CSH'].get('csh_add2',self.DB.one(f"SELECT max(add2) FROM h_{self.D['bid']}_board"))
             
             session.modified = True # for mutable variable in session
 
