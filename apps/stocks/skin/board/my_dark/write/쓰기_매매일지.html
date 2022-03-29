@@ -160,7 +160,10 @@
 	<tr>
 		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
 	</tr>
-	<tr style="border:2px solid black">
+	<tr onclick="$('.stategy-toggle').toggle()">
+		<td colspan="2" style="background-color:#393f4a;">&nbsp;</td>
+	</tr>	
+	<tr class='stategy-toggle' style="border:2px solid black;">
 		<td class='write-td-left'  style="background-color:#0B2F3A;">매수전략</td>	
 		<td class='write-td-right' style="padding-top:10px;padding-bottom:10px">
 			<div class='i-input-div'>
@@ -225,7 +228,7 @@
 			</div>			
 		</td>
 	</tr>
-	<tr style="border:2px solid black">
+	<tr class='stategy-toggle' style="border:2px solid black">
 		<td class='write-td-left' style="background-color:#0A2229;">매도전략</td>	
 		<td class='write-td-right' style="padding-top:10px;padding-bottom:10px">
 			<div class='i-input-div'>
@@ -282,7 +285,7 @@
 </table>
 <input type='hidden' name='sub7' value="{{D['BODY']['sub7']}}">
 <input type='hidden' name='sub8' value="{{D['BODY']['sub8']}}">
-<div style="width:{{D['w_width2']}}">
+<div style="margin-top:-12px;width:{{D['w_width2']}}">
 {% include D['_skn'] + 'board/my_dark/write/basic_editor_tools.htm' %}
 </div>
 <!-- BEGIN ====================================================================================== -->

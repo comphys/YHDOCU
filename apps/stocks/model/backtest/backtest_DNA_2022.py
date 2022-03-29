@@ -4,7 +4,7 @@ import math,time
 
 class M_backtest_DNA_2022(Model) :
 
-# 무한매수법의 개인 변형 적용으로 평균가 다운 전략
+# 분할 매수를 통한 수익 극대화 전략
 
     def print_backtest(self) :
         tx = {}
