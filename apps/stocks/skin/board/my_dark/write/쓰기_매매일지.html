@@ -131,30 +131,33 @@
 		<td class='write-td-left'>추가정보</td>	
 		<td class='write-td-right' style="padding-top:10px;padding-bottom:10px">
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:76px">연속하락</div>
-				<input type='text' name='sub1' class="i-number" style="width:60px;text-align:center" value="{{D['BODY']['sub1']}}">
+				<div class='write-input-left' style="background-color:#333F4F;width:70px">전략매금</div>
+				<input type='text' name='sub3' class="i-number" style="width:100px;text-align:center" value="{{D['BODY']['sub3']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:76px">위기전략</div>
-				<input type='text' name='sub2' class="i-text" style="width:70px;text-align:center" value="{{D['BODY']['sub2']}}">
+				<div class='write-input-left' style="background-color:#333F4F;width:70px">전략가격</div>
+				<input type='text' name='sub4' class="i-number" style="width:100px;text-align:center" value="{{D['BODY']['sub4']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:78px">전략매금</div>
-				<input type='text' name='sub3' class="i-number" style="width:70px;text-align:center" value="{{D['BODY']['sub3']}}">
+				<div class='write-input-left' style="background-color:#333F4F;width:70px">연속하락</div>
+				<input type='text' name='sub1' class="i-number" style="width:40px;text-align:center" value="{{D['BODY']['sub1']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;width:78px">전략가격</div>
-				<input type='text' name='sub4' class="i-number" style="width:70px;text-align:center" value="{{D['BODY']['sub4']}}">
+				<div class='write-input-left' style="background-color:#333F4F;width:70px">위기전략</div>
+				<input type='text' name='sub2' class="i-text" style="width:40px;text-align:center" value="{{D['BODY']['sub2']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left'  style="width:76px">기본자산</div>
-				<input type='text' name='sub7' class="i-number" style="width:60px;text-align:center" value="{{D['BODY']['sub7']}}">
+				<div class='write-input-left'  style="width:70px">기본자산</div>
+				<input type='text' name='sub7' class="i-number" style="width:100px;text-align:center" value="{{D['BODY']['sub7']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="width:76px">추가자산</div>
-				<input type='text' name='sub8' class="i-number" style="width:70px;text-align:center" value="{{D['BODY']['sub8']}}">
+				<div class='write-input-left' style="width:70px">추가자산</div>
+				<input type='text' name='sub8' class="i-number" style="width:100px;text-align:center" value="{{D['BODY']['sub8']}}">
 			</div> 
-			매도체결 시 기본 및 추가 자산은 리밸런싱 됩니다
+			<div class='i-input-div'>
+				<div class='write-input-left' style="width:70px">실현손익</div>
+				<input type='text' name='sub5' class="i-number" style="width:171px;text-align:center" value="{{D['BODY']['sub5']}}">
+			</div>
 		</td>
 	</tr>
 	<tr>
@@ -393,7 +396,7 @@ function auto_datainput() {
 			var update_sell = ['sell1','sell11','sell12','sell2','sell21','sell22','sell3','sell31','sell32','sell4','sell41','sell42']
 			update_sell.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
 
-			var update_sell = ['sub1','sub2','sub3','sub4','sub6','sub7','sub8']
+			var update_sell = ['sub1','sub2','sub3','sub4','sub5','sub6','sub7','sub8']
 			update_sell.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})
 			
 		}
@@ -401,7 +404,7 @@ function auto_datainput() {
 }
 function auto_dataclean() {
 			var update_key  = ['add2','add3','add4','add5','add6','add7','add8','add9','add10',
-			'add11','add12','add13','add14','add15','add16','add17','add18','sub1','sub2','sub3','sub4','sub6',
+			'add11','add12','add13','add14','add15','add16','add17','add18','sub1','sub2','sub3','sub4','sub5','sub6',
 			'buy1','buy11','buy12','buy2','buy21','buy22','buy3',,'buy31','buy32','buy4','buy41','buy42','buy5','buy51','buy52',
 			'sell1','sell11','sell12','sell2','sell21','sell22','sell3','sell31','sell32','sell4','sell41','sell42']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val('')})

@@ -94,6 +94,7 @@ class Stock_dna_2022(Control) :
             self.M['처음자본'] = float(self.B['sub7']) 
             self.M['처음추가'] = float(self.B['sub8']) 
             self.M['연속하락'] = int(self.B['sub1'])
+            self.M['실현손익'] = float(self.B['sub5'])
 
             self.M['진행'] = round(self.M['총매수금'] / self.M['처음자본'] * 100,1)
 
@@ -111,6 +112,7 @@ class Stock_dna_2022(Control) :
             ratio = self.M['매도수량'] / self.M['보유수량']
             self.M['매도금액']  = self.M['당일종가'] * self.M['매도수량']
             self.M['매도수익']  = self.M['매도금액'] - self.M['총매수금'] * ratio  
+            self.M['실현손익'] += self.M['매도수익'] 
             self.M['매수익률']  = self.M['매도수익'] / (self.M['총매수금'] * ratio) * 100
             self.M['보유수량'] -= self.M['매도수량']  
             self.M['가용잔액'] += self.M['매도금액']
@@ -211,6 +213,7 @@ class Stock_dna_2022(Control) :
         self.M['첫날기록']  = False
         self.M['연속하락']  = self.old_price_trace('DN')
         self.M['진행'] = round(self.M['총매수금'] / self.M['처음자본'] * 100,1)
+        self.M['실현손익']  = 0
 
     def strategy_sell(self) :
         if  self.M['수익률'] > 0 : 
@@ -376,8 +379,9 @@ class Stock_dna_2022(Control) :
 
         update['add15']  = f"{round(self.M['수익률'],4):,.4f}"  ; update['add16']   = f"{round(self.M['가용잔액'],4):,.4f}" ; update['add18']   = self.M['진행상황']
 
-        update['add13']  = f"{round(self.M['매도수익'],4):,.2f}" if self.M['매도수익'] else self.M['매매현황']
-          
+        update['add13']  = f"{round(self.M['실현손익'],4):,.2f}" if self.M['매도수익'] else self.M['매매현황']
+        
+        update['sub5'] = f"{round(self.M['실현손익'],4):,.2f}"
         update['sub6'] = self.M['일매수금'] ; update['add17']   = f"{round(self.M['추가자본'],4):,.2f}"
         
         update['sub1']   = self.M['연속하락'] ; update['sub2'] = 'YES' if self.M['위기전략'] else 'NO'; 
