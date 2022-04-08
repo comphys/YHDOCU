@@ -379,7 +379,7 @@ class Stock_dna_2022(Control) :
 
         update['add15']  = f"{round(self.M['수익률'],4):,.4f}"  ; update['add16']   = f"{round(self.M['가용잔액'],4):,.4f}" ; update['add18']   = self.M['진행상황']
 
-        update['add13']  = f"{round(self.M['실현손익'],4):,.2f}" if self.M['매도수익'] else self.M['매매현황']
+        update['add13']  = f"{round(self.M['매도수익'],4):,.2f}" if self.M['매도수익'] else self.M['매매현황']
         
         update['sub5'] = f"{round(self.M['실현손익'],4):,.2f}"
         update['sub6'] = self.M['일매수금'] ; update['add17']   = f"{round(self.M['추가자본'],4):,.2f}"

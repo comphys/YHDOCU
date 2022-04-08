@@ -1,5 +1,6 @@
 from system.core.load import Model
 from datetime import datetime,date
+import system.core.my_utils as my
 import math,time
 
 class M_backtest_DNA_2022(Model) :
@@ -55,9 +56,6 @@ class M_backtest_DNA_2022(Model) :
 
     def calculate(self)  :
 
-        self.M['연속하락']  =  self.M['연속하락'] + 1 if  self.M['당일종가'] <  self.M['전일종가'] else 0 
-        self.M['연속상승']  =  self.M['연속상승'] + 1 if  self.M['당일종가'] >= self.M['전일종가'] else 0 
-        
         if  self.M['매수수량'] : 
             self.M['가용잔액'] -=  self.M['매수금액']
             self.M['보유수량'] +=  self.M['매수수량']
@@ -84,7 +82,6 @@ class M_backtest_DNA_2022(Model) :
             self.M['전략가격'] = 0.0
             self.M['위기전략'] = False
             self.M['첫날기록'] = True   
-            self.D['종료일자'] = self.M['day']
             if self.M['리밸런싱'] : self.rebalance()   
 
         if self.M['날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['날수'] ; self.M['최대날자'] = self.M['day']
@@ -153,12 +150,12 @@ class M_backtest_DNA_2022(Model) :
 
     def new_day(self) :
         self.M['기록시즌'] += 1
-        self.M['연속하락']  = int(self.old_price_trace('DN'))
-        self.M['연속상승']  = int(self.old_price_trace('UP'))
+        self.M['연속하락']  = self.M['전속하락']
+        self.M['연속상승']  = self.M['전속상승']
         self.M['수익누적']  = 0.0
 
         self.M['평균단가']  = self.M['당일종가']
-        self.M['매수수량']  = math.ceil(self.M['일매수금']/self.old_price_trace('YD'))
+        self.M['매수수량']  = math.ceil(self.M['일매수금']/self.M['전일종가'])
         if  self.M['연속하락'] : 
             self.M['매수수량'] += self.M['매수수량'] * self.M['연속하락']
 
@@ -261,14 +258,18 @@ class M_backtest_DNA_2022(Model) :
         self.init_value()
 
         for idx,BD in enumerate(self.B) :
+            if BD['add0'] < self.D['start_date'] : idxx = idx; continue
+
             self.M['day'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
             self.M['당일고가'] = float(BD['add5'])
-            self.M['전일종가'] = float(self.B[idx-1]['add3'])   
+            self.M['전일종가'] = float(self.B[idx-1]['add3'])  
+            self.M['전속상승'] = int(self.B[idx-1]['add9'])
+            self.M['전속하락'] = int(self.B[idx-1]['add10']) 
             self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
             self.M['거래코드'] = ' '
 
-            if  idx == 0 or self.M['첫날기록'] : self.new_day(); self.print_backtest(); continue
+            if  idx == idxx + 1 or self.M['첫날기록'] : self.new_day(); self.print_backtest(); continue
             
             if self.M['진행'] >= self.M['매도대기'] : self.normal_sell()
             
@@ -276,6 +277,8 @@ class M_backtest_DNA_2022(Model) :
             else : self.base_buy() if self.M['진행'] < self.M['매도대기'] else self.normal_buy()
 
         #   결과정리 --------------------------------------------------------------------------------------------------
+            self.M['연속상승'] = int(BD['add9'])
+            self.M['연속하락'] = int(BD['add10'])
             self.calculate()
             self.print_backtest()
         # endfor -----------------------------------------------------------------------------------------------------
@@ -315,8 +318,9 @@ class M_backtest_DNA_2022(Model) :
         self.S = self.DB.get_line('add1,add2,add3,add4,add5,add6,add7,add8,add9,add10,add11,add12,add14,add15,add16,add17,add18,add20,add21,add22,add23,add24,add25')
 
         # 종가 및 최고가 가져오기
-        self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['code']}' AND add0 BETWEEN '{self.D['start_date']}' AND '{self.D['end_date']}'",'add0')
-        self.B = self.DB.get('add0,add3,add5') # 날자, 종가, 고가 
+        old_date = my.dayofdate(self.D['start_date'],-7)[0]
+        self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['code']}' AND add0 BETWEEN '{old_date}' AND '{self.D['end_date']}'",'add0')
+        self.B = self.DB.get('add0,add3,add5,add9,add10') # 날자, 종가, 고가, 상승, 하락 
 
         # 데이타 존재 여부 확인
         self.DB.tbl, self.DB.wre = ("h_stockHistory_board",f"add1='{self.D['code']}'")
@@ -335,43 +339,20 @@ class M_backtest_DNA_2022(Model) :
         self.D['addition'] = int(self.D['addition'].replace(',','')) if self.D['addition'] else 0
 
 
-    def old_price_trace(self,opt) : # opt True for C_drop, False for C_up
-        now = int(time.mktime(datetime.strptime(self.M['day'],'%Y-%m-%d').timetuple()))
-        old_date = datetime.fromtimestamp(now-3600*24*14).strftime('%Y-%m-%d')
-        qry = f"SELECT add3 FROM h_stockHistory_board WHERE add0 BETWEEN '{old_date}' and '{self.M['day']}' and add1='{self.D['code']}' ORDER BY add0"
-        aaa= self.DB.exe(qry)
-        aaa= [float(x[0]) for x in aaa ]
-
-        bbb = aaa[:-1] 
-        c_drop = 0
-        c_goup   = 0
-
-        for i in range(1,len(bbb)) :
-            c_drop = c_drop + 1 if bbb[i] <= bbb[i-1] else 0
-            c_goup = c_goup + 1 if bbb[i] >  bbb[i-1] else 0
-        
-        if opt == 'DN' : 
-            return c_drop
-        elif opt == 'UP' :
-            return c_goup
-        elif opt == 'YD' :
-            return aaa[-2]
-
     # [IF THIS DAY] ----------------------------------------------------------------------------
 
     def this_day(self) :
         
         self.M['기록시즌'] += 1
 
-        self.M['연속하락']  = int(self.old_price_trace('DN'))
-        self.M['연속상승']  = int(self.old_price_trace('UP'))
+        self.M['연속하락']  = self.M['전속하락']
+        self.M['연속상승']  = self.M['전속상승']
 
         self.M['progress'] = float(self.D['progress'])
-        if self.M['progress'] > 50 : self.M['progress'] = self.D['progress'] = 50
  
         총매수금 = int(self.D['init_capital'] * self.M['progress']/100)
         self.M['평균단가']  = self.M['당일종가']
-        self.M['매수수량']  = math.ceil(총매수금/self.old_price_trace('YD'))
+        self.M['매수수량']  = math.ceil(총매수금/self.M['전일종가'])
 
         self.M['보유수량']  = self.M['매수수량'] 
         self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량']
@@ -391,21 +372,26 @@ class M_backtest_DNA_2022(Model) :
         self.init_value()
 
         for idx,BD in enumerate(self.B) :
+            if BD['add0'] < self.D['start_date'] : idxx = idx; continue
             self.M['day'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
             self.M['당일고가'] = float(BD['add5'])
-            self.M['전일종가'] = float(self.B[idx-1]['add3'])   
+            self.M['전일종가'] = float(self.B[idx-1]['add3'])
+            self.M['전속상승'] = int(self.B[idx-1]['add9'])
+            self.M['전속하락'] = int(self.B[idx-1]['add10']) 
             self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
             self.M['거래코드'] = ' '
 
-            if  idx == 0 : self.this_day(); continue
+            if  idx == idxx+1 : self.this_day(); continue
             if  self.M['첫날기록'] : self.D['sell_date'] = self.M['day']; break
             
             if self.M['진행'] >= self.M['매도대기']: self.normal_sell()
             
             if self.M['위기전략'] and self.M['수량확보'] : self.strategy_sell()
             else : self.base_buy() if self.M['진행'] < self.M['매도대기'] else self.normal_buy()
-
+            
+            self.M['연속상승'] = int(BD['add9'])
+            self.M['연속하락'] = int(BD['add10'])
             self.calculate()
         self.result_the_day()    
 
@@ -416,14 +402,17 @@ class M_backtest_DNA_2022(Model) :
         self.init_value()
 
         for idx,BD in enumerate(self.B) :
+            if BD['add0'] < self.D['start_date'] : idxx = idx; continue
             self.M['day'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
             self.M['당일고가'] = float(BD['add5'])
             self.M['전일종가'] = float(self.B[idx-1]['add3'])   
+            self.M['전속상승'] = int(self.B[idx-1]['add9'])
+            self.M['전속하락'] = int(self.B[idx-1]['add10']) 
             self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
             self.M['거래코드'] = ' '
 
-            if  idx == 0 : self.new_day(); continue
+            if  idx == idxx+1 : self.new_day(); continue
             if  self.M['첫날기록'] : self.D['sell_date'] = self.M['day']; break
             
             if self.M['진행'] >= self.M['매도대기'] : self.normal_sell()
@@ -431,6 +420,8 @@ class M_backtest_DNA_2022(Model) :
             if self.M['위기전략'] and self.M['수량확보'] : self.strategy_sell()
             else : self.base_buy() if self.M['진행'] < self.M['매도대기'] else self.normal_buy()
 
+            self.M['연속상승'] = int(BD['add9'])
+            self.M['연속하락'] = int(BD['add10'])
             self.calculate()
         # endfor -----------------------------------------------------------------------------------------------------
         self.result_the_day()
@@ -439,7 +430,7 @@ class M_backtest_DNA_2022(Model) :
 
         # 기간 계산하기
         self.D['s_day'] = s_day = self.D['start_date']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
-        self.D['e_day'] = e_day = self.D['종료일자'];      d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
+        self.D['e_day'] = e_day = self.M['day'];      d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
         delta = d1-d0
         self.D['days_span'] = delta.days        
 
@@ -454,14 +445,17 @@ class M_backtest_DNA_2022(Model) :
         self.init_value()
 
         for idx,BD in enumerate(self.B) :
+            if BD['add0'] < self.D['start_date'] : idxx = idx; continue
             self.M['day'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
             self.M['당일고가'] = float(BD['add5'])
-            self.M['전일종가'] = float(self.B[idx-1]['add3'])   
+            self.M['전일종가'] = float(self.B[idx-1]['add3'])  
+            self.M['전속상승'] = int(self.B[idx-1]['add9'])
+            self.M['전속하락'] = int(self.B[idx-1]['add10']) 
             self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
             self.M['거래코드'] = ' '
 
-            if  idx == 0 : self.this_day(); continue
+            if  idx == idxx+1 : self.this_day(); continue
             if  self.M['첫날기록'] : self.D['sell_date'] = self.M['day']; break
             
             if self.M['진행'] >= self.M['매도대기'] : self.normal_sell()
@@ -470,6 +464,8 @@ class M_backtest_DNA_2022(Model) :
             else : self.base_buy() if self.M['진행'] < self.M['매도대기'] else self.normal_buy()
 
         #   결과정리 --------------------------------------------------------------------------------------------------
+            self.M['연속상승'] = int(BD['add9'])
+            self.M['연속하락'] = int(BD['add10'])
             self.calculate()
             self.print_backtest()
         # endfor -----------------------------------------------------------------------------------------------------

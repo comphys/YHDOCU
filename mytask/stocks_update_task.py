@@ -51,6 +51,7 @@ class SU :
         Dn  = [0]*cnt ; Dn[0] = int(old_data[1])
 
         for i in range(1,cnt) :
+
             if df['Close'][i] <  df['Close'][i-1] : Dn[i] = Dn[i-1] + 1 
             if df['Close'][i] >= df['Close'][i-1] : Up[i] = Up[i-1] + 1 
 
