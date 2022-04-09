@@ -43,6 +43,9 @@ class 목록_매매일지(SKIN) :
             if  c_price :
                 c_price = [float(x) for x in c_price]
                 m_price = [float(x) for x in m_price]
+                self.D['x_axis']   = len(c_price) if len(c_price) > 60 else 60
+                self.D['c_price'] = c_price
+                self.D['m_price'] = m_price
 
                 self.D['종가변동'] = f"{(c_price[-1] - c_price[0]) / c_price[0] * 100:5.2f}%"
                 self.D['평가변동'] = f"{(m_price[-1] - m_price[0]) / m_price[0] * 100:5.2f}%"
