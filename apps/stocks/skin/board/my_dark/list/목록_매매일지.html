@@ -183,18 +183,21 @@ const data = {
         {
             label:'당일종가',
             data : {{D['c_price']}},
-            borderColor:'#58ACFA', borderWidth:2,borderDash: [2,2], pointStyle:'circle', pointRadius:2, pointHoverRadius:15, backgroundColor: '#58ACFA',
+            borderColor:'#58ACFA', borderWidth:2,borderDash: [2,2], pointStyle:'circle', pointRadius:2, pointHoverRadius:15, backgroundColor:'#58ACFA',
+			lineTension:0.2
 
         },
         {
             label:'평균단가',
             data : {{D['m_price']}},
-            pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'#f78181',backgroundColor: '#f78181',
+            pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',
+			lineTension:0.2
 
         }
     ]   
 };
 const options = {
+	animation : {duration:0},
     plugins : { legend: {display:false} },
     responsive:false,
     layout:{padding:20},
