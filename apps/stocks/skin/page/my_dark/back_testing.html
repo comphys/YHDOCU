@@ -160,6 +160,7 @@
 <script src="/sys/chart/chart.min.js"></script>
 <script>
 
+// 챠트 객체 생성
 const ctx = $id('mybackTestChart');
 ctx.style.backgroundColor = '#33363b';
 ctx.style.border = '2px solid black';
@@ -196,6 +197,7 @@ const options = {
 };
 const config  = {type:'line',data:backData,options:options};
 const myChart = new Chart(ctx, config);
+// --------------------------------------------------------------------------------------
 
 
 var selected_tr = null
@@ -267,26 +269,20 @@ function check_thisForm() {
 
 function show_chart(season) {
 	$('#backTestingChart').css({top:'170px',left:'20px'}).toggle();
-	var clss = '';
-	var avgs = '';
+	var clsv = [];
+	var avgv = [];
 
-	$(".clsv"+season).each(function() {clss += $(this).text() +'-'});
-	$(".avgv"+season).each(function() {avgs += $(this).text() +'-'});
+	$(".clsv"+season).each(function() {clsv.push(parseFloat($(this).text()))});
+	$(".avgv"+season).each(function() {avgv.push(parseFloat($(this).text()))});
 	
-	clss = clss.slice(0,-1).split('-').map(function(item){return parseFloat(item);});
-	avgs = avgs.slice(0,-1).split('-').map(function(item){return parseFloat(item);});
-	
-	var c_price = clss;
-	var m_price = avgs;
-	var xticks = c_price.length
+	var xticks = clsv.length
 	if (xticks < 60 ) { xticks = 60; }
 	var new_labels = Array.from(new Array(xticks),(x,i)=> i+1);
-	m_price[m_price.length - 1] = m_price[m_price.length - 2]
+	avgv[avgv.length - 1] = avgv[avgv.length - 2]
 	myChart.config.data.labels = new_labels;
-	myChart.config.data.datasets[0].data =  c_price;
-	myChart.config.data.datasets[1].data =  m_price;
+	myChart.config.data.datasets[0].data =  clsv;
+	myChart.config.data.datasets[1].data =  avgv;
 	myChart.update();
-
 }
 
 //
