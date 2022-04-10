@@ -198,12 +198,12 @@ const data = {
 };
 const options = {
 	animation : {duration:0},
-    plugins : { legend: {display:false} },
+    plugins : { legend: {display:false},xticks:{backdropColor:'yellow'} },
     responsive:false,
     layout:{padding:20},
     scales:{
-        x:{ ticks : {color:'lightgray'}, grid:{color:'#272727'}},
-        y:{ ticks : {color:'lightgray'}, grid:{color:'#272727'}}
+        x:{ ticks : {color:'lightgray'}, grid:{color:'#272727'} },
+        y:{ ticks : {color:'lightgray'}, grid:{color:'#272727'} }
     }
 };
 const config  = {type:'line',data:data,options:options};
