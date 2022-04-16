@@ -38,10 +38,6 @@ class Action(Control) :
         qry = self.DB.qry_insert(self.board,SAVE)
         self.DB.exe(qry)
 
-        # if self.bid in ('daily_first','daily_second','daily_third') :
-        #     self.DB.tbl,self.DB.wre = (f"h_{self.bid}_board",f"add1='{SAVE['add1']}' and add2='{SAVE['add2']}'")
-        #     self.save_chart(self.DB.get_one('no'))
-        
         return self.moveto('board/list/'+self.bid+'/page='+self.page+'/csh=on')
 
     def delete(self) :
@@ -85,42 +81,9 @@ class Action(Control) :
         self.DB.exe(qry)
 
         if self.bid in ('daily_trading','daily_first','daily_second','daily_third') : 
-            self.save_chart(no)
             return self.moveto(f"board/list/{self.parm[0]}/page={self.page}/csh=on")
         if self.BCONFIG['stayfom'] == 'on' :
             return self.moveto(f"board/modify/{self.parm[0]}/no={no}/page={self.page}/brother={brother}")
         else :
             return self.moveto(f"board/body/{self.parm[0]}/no={no}/brother={brother}")
 
-    def save_chart(self,no) :
-
-        import matplotlib.pyplot as plt
-
-        self.DB.tbl, self.DB.wre = (f"h_{self.bid}_board",f'no={no}')
-        code, season = self.DB.get('add1,add2',many=1,assoc=False)
-        file_name = f"{self.C['DOCU_ROOT']}/개인자료/주식투자/주식챠트/{self.bid}_stock_chart_{code}_{season}.png"
-
-        self.DB.wre = f"add1='{code}' and add2={season}"
-        c_price = self.DB.get('add5',assoc=False)
-        m_price = self.DB.get('add9',assoc=False)
-
-        c_price = [float(x) for x in c_price]
-        m_price = [float(x) for x in m_price]
-  
-        my_dpi = 100
-        xx = list(range(0,60))
-        xl = [x+1 for x in xx]
-        plt.figure(facecolor='#24272d')
-        plt.figure(figsize=(1400/my_dpi, 300/my_dpi),dpi=my_dpi)
-        # plt.rcParams["figure.figsize"] = (20,4)
-        plt.rcParams.update({"figure.figsize":(20,4),"axes.grid" : True, "grid.color": "#24272d",'font.size':8})
-        ax = plt.axes()
-        ax.set_facecolor('#33363b')
-
-        ax.tick_params(color='#33363b',grid_alpha=0.7)
-        plt.plot(c_price,color='#58ACFA',  linestyle='dotted')
-        plt.plot(m_price,color='#f78181',  linestyle='solid',marker='o')
-        plt.xticks(xx,xl,color='darkgray')
-        plt.yticks(color='darkgray')
-        plt.savefig(file_name,facecolor='#24272d',dpi=my_dpi,pad_inches=0)
-        return
