@@ -15,6 +15,8 @@ class Stock_longterm(Control) :
         update['add14'] = self.DB.get_one('add3')
 
         self.DB.tbl,self.DB.wre = (self.tbl,f"add0 < '{day}'")
+        old_date = self.DB.get_one("max(no)")
+        self.DB.wre = f"no={old_date}"
         old_data = self.DB.get_line("add0,add3,add7,add13")
 
         update['add0'] = old_data['add0']
