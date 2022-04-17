@@ -117,6 +117,14 @@ def dayofdate(theday,delta=0) :
     if delta : b = a+timedelta(days=delta) ; return (b.strftime('%Y-%m-%d'),dow[b.weekday()])
     else : return dow[a.weekday()]
 
+def diff_day(day1,day2='') :
+    a = datetime.strptime(day1,'%Y-%m-%d')
+    b = datetime.now() if not day2 else datetime.strptime(day2,'%Y-%m-%d')
+    c = b-a
+    return c.days 
+
+
+
 # stock
 
 def get_stock_data(symbol,app_key,start_date,end_date='') :

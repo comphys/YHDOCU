@@ -45,9 +45,9 @@ class DB :
         fld = ','.join(fld) if type(fld) is list else fld
 
         wre = "WHERE "      + self.wre if self.wre else ''
-        lmt = "LIMIT "      + self.lmt if self.lmt else ''
         odr = "ORDER BY "   + self.odr if self.odr else ''
-        qry = f"SELECT {fld} FROM {self.tbl} {wre} {lmt} {odr}"
+        lmt = "LIMIT "      + self.lmt if self.lmt else ''
+        qry = f"SELECT {fld} FROM {self.tbl} {wre} {odr} {lmt}"
         self.qry = qry.strip()
 
         try : 

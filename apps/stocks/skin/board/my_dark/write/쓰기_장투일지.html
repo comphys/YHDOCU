@@ -132,12 +132,16 @@
 				<input type='text' name='add18' class="i-number" style="width:100px;" value="{{D['BODY']['add18']}}">
 			</div>
 			<div class='i-input-div-must'>
+				<div class='write-input-left' style="background-color:darkslategray;">목표가치</div>
+				<input type='text' name='add19' class="i-number" style="width:100px;" value="{{D['BODY']['add19']}}">
+			</div>
+			<div class='i-input-div-must'>
 				<div class='write-input-left' style="background-color:darkslategray;">현재가치</div>
-				<input type='text' name='add17' class="i-number" style="width:100px;" value="{{D['BODY']['add17']}}">
+				<input type='text' name='add17' class="i-number" style="width:110px;" value="{{D['BODY']['add17']}}">
 			</div>
 			<div class='i-input-div-must'>
 				<div class='write-input-left' style="background-color:darkslategray;">최대가치</div>
-				<input type='text' name='add19' class="i-number" style="width:110px;" value="{{D['BODY']['add19']}}">
+				<input type='text' name='add20' class="i-number" style="width:100px;" value="{{D['BODY']['add20']}}">
 			</div>
         </td>
     </tr>
@@ -245,33 +249,47 @@ function auto_datainput() {
 }
 
 function auto_calculate() {
-	입금    = txt_to_num('add1','i');
-    출금    = txt_to_num('add2','i');
-    매수금1 = txt_to_num('add5','f');
-    매도금1 = txt_to_num('add6','f');
-    매수금2 = txt_to_num('add11','f');
-    매도금2 = txt_to_num('add12','f');
-    종가1   = txt_to_num('add8','f');
-    수량1   = txt_to_num('add7','i');
-    종가2   = txt_to_num('add14','f');
-    수량2   = txt_to_num('add13','i');
-    잔액    = txt_to_num('add3','i');
-    
-    가치1   = (종가1 * 수량1)
-    가치2   = (종가2 * 수량2)
-    잔액    = (잔액+입금+매도금1+매도금2-출금-매수금1-매수금2)
-    현재가치 = (잔액 + 가치1 + 가치2)
+	
+	const 현재일  = $("input[name='add0']").val()
+	const 기준일  = '2022-04-12'
 
-    비중1 = (잔액/현재가치*100).toFixed(2);
-    비중2 = (가치1/현재가치*100).toFixed(2);
-    비중3 = (가치2/현재가치*100).toFixed(2);
+	const date1= new Date(현재일)
+	const date2= new Date(기준일)
+	const diffDate = date1.getTime() - date2.getTime()
+	const diffDays = diffDate/(1000*3600*24) 
+	
+	const 입금    = txt_to_num('add1','i');
+    const 출금    = txt_to_num('add2','i');
+    const 매수금1 = txt_to_num('add5','f');
+    const 매도금1 = txt_to_num('add6','f');
+    const 매수금2 = txt_to_num('add11','f');
+    const 매도금2 = txt_to_num('add12','f');
+    const 종가1   = txt_to_num('add8','f');
+    const 수량1   = txt_to_num('add7','i');
+    const 종가2   = txt_to_num('add14','f');
+    const 수량2   = txt_to_num('add13','i');
+    let   잔액    = txt_to_num('add3','i');
+
+	잔액    = (잔액+입금+매도금1+매도금2-출금-매수금1-매수금2)
+	let 목표가치 = 6860 * (1+0.002)**diffDays
+    
+    let 가치1   = (종가1 * 수량1)
+    let 가치2   = (종가2 * 수량2)
+    let 현재가치 = (잔액 + 가치1 + 가치2)
+
+    let 비중1 = (잔액/현재가치*100).toFixed(2);
+    let 비중2 = (가치1/현재가치*100).toFixed(2);
+    let 비중3 = (가치2/현재가치*100).toFixed(2);
 
     잔액  = 잔액.toFixed()
     가치1 = 가치1.toFixed(2)
     가치2 = 가치2.toFixed(2)
     현재가치 = 현재가치.toFixed()
-    최소가치 = (현재가치*0.9).toFixed();
-    최대가치 = (현재가치*1.2).toFixed();
+    let 최소가치 = (목표가치*0.9).toFixed();
+    let 최대가치 = (목표가치*1.2).toFixed();
+	목표가치 = 목표가치.toFixed();
+
+
 
     $("input[name='add1']").val(입금).comma('init');
     $("input[name='add2']").val(출금).comma('init');
@@ -285,7 +303,8 @@ function auto_calculate() {
     $("input[name='add15']").val(가치2).comma('init');
     $("input[name='add17']").val(현재가치).comma('init');
     $("input[name='add18']").val(최소가치).comma('init');
-    $("input[name='add19']").val(최대가치).comma('init');
+	$("input[name='add19']").val(목표가치).comma('init');
+    $("input[name='add20']").val(최대가치).comma('init');
     $("input[name='add4']").val(비중1).comma('init');
     $("input[name='add10']").val(비중2).comma('init');
     $("input[name='add16']").val(비중3).comma('init');

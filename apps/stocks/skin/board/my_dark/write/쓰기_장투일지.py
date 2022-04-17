@@ -1,6 +1,6 @@
 from system.core.load import SKIN
 
-class 쓰기_리밸런싱(SKIN) :
+class 쓰기_장투일지(SKIN) :
 
     def write(self) :
         OBODY = self.D.get('OBODY',None)

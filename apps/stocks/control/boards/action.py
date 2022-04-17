@@ -80,7 +80,7 @@ class Action(Control) :
         qry = self.DB.qry_update(tbl,self.D['post'],con)
         self.DB.exe(qry)
 
-        if self.bid in ('daily_trading','daily_first','daily_second','daily_third') : 
+        if self.bid in ('daily_trading','daily_first','daily_second','daily_third','longterm_invest') : 
             return self.moveto(f"board/list/{self.parm[0]}/page={self.page}/csh=on")
         if self.BCONFIG['stayfom'] == 'on' :
             return self.moveto(f"board/modify/{self.parm[0]}/no={no}/page={self.page}/brother={brother}")
