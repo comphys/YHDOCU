@@ -14,17 +14,18 @@ class 목록_장투일지(SKIN) :
         self.DB.odr = "add0 ASC"
 
         chart_data = self.DB.get("add0,add18,add19,add17,add20",assoc=False)
-        last_date  = chart_data[-1][0]
+        if chart_data :
+            last_date  = chart_data[-1][0]
 
-        self.D['chart_date'] = [x[0][2:] for x in chart_data]
-        self.D['chart_min'] = [float(x[1]) for x in chart_data]
-        self.D['chart_target'] = [float(x[2]) for x in chart_data]
-        self.D['chart_cur'] = [float(x[3]) for x in chart_data]
-        self.D['chart_max'] = [float(x[4]) for x in chart_data]
+            self.D['chart_date'] = [x[0][2:] for x in chart_data]
+            self.D['chart_min'] = [float(x[1]) for x in chart_data]
+            self.D['chart_target'] = [float(x[2]) for x in chart_data]
+            self.D['chart_cur'] = [float(x[3]) for x in chart_data]
+            self.D['chart_max'] = [float(x[4]) for x in chart_data]
 
-        self.DB.wre = f"add0='{last_date}'"
-        percent = self.DB.get("add4,add10,add16",many=1,assoc=False)
-        self.D['chart_percent'] = [float(x) for x in percent]
+            self.DB.wre = f"add0='{last_date}'"
+            percent = self.DB.get("add4,add10,add16",many=1,assoc=False)
+            self.D['chart_percent'] = [float(x) for x in percent]
         
 
     def list(self) :
