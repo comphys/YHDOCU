@@ -15,8 +15,9 @@ class Stock_longterm(Control) :
         self.DB.wre = f"add0='{old_date}' and add1='JEPI'"; update['add8'] = self.DB.get_one('add3')
         self.DB.wre = f"add0='{old_date}' and add1='TQQQ'"; update['add14'] = self.DB.get_one('add3')
 
-        self.DB.tbl,self.DB.wre = (self.tbl,f"add0='{old_date}'")
+        self.DB.tbl,self.DB.wre = (self.tbl,f"add0 <='{old_date}'")
         old_data = self.DB.get_line("add0,add3,add7,add13")
+        self.info(self.DB.qry)
 
         update['add0'] = old_data['add0']
         update['add3'] = f"{int(old_data['add3']):,}"
