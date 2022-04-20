@@ -8,7 +8,8 @@ class Stock_longterm(Control) :
 
     def autoinput(self) :
         update = {}
-        self.DB.tbl,self.DB.wre = ('h_stockHistory_board',f"add0 <= '{self.D['post']['add0']}'")
+        pick_day = self.D['post']['add0']
+        self.DB.tbl,self.DB.wre = ('h_stockHistory_board',f"add0 <= '{pick_day}'")
         old_date = self.DB.get_one("max(add0)")
         
         self.DB.wre = f"add0='{old_date}' and add1='JEPI'"; update['add8'] = self.DB.get_one('add3')
