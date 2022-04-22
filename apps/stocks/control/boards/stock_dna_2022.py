@@ -110,7 +110,8 @@ class Stock_dna_2022(Control) :
         
         if  self.M['매도수량'] :
             ratio = self.M['매도수량'] / self.M['보유수량']
-            self.M['매도금액']  = self.M['당일종가'] * self.M['매도수량']
+            매도가격 = self.M['강매단가']  if self.M['강매단가'] else self.M['당일종가']
+            self.M['매도금액']  = 매도가격 * self.M['매도수량']
             self.M['매도수익']  = self.M['매도금액'] - self.M['총매수금'] * ratio  
             self.M['실현손익'] += self.M['매도수익'] 
             self.M['매수익률']  = self.M['매도수익'] / (self.M['총매수금'] * ratio) * 100
@@ -281,6 +282,8 @@ class Stock_dna_2022(Control) :
         if self.M['둘매수량'] and self.M['당일종가'] >= self.M['둘매단가'] : self.M['매도금액'] += self.M['당일종가'] * self.M['둘매수량']  ; self.M['매도수량'] += self.M['둘매수량']  
         # 전략매도
         if self.M['전매수량'] and self.M['당일종가'] >= self.M['전매단가'] : self.M['매도수량'] += self.M['전매수량'] 
+        # 강제매도
+        if self.M['강매수량'] and self.M['당일고가'] >= self.M['강매단가'] : self.M['매도수량'] += self.M['강매수량'] 
 
     
     def check_buy(self) :
