@@ -12,16 +12,20 @@
         <td class='write-td-left'>기본정보</td>
 		<td class="write-td-right" style="background-color:#393e4a">
 			<div class='i-input-div'>
-				<div class='write-input-left'>진행일자</div>
+				<div class='write-input-left' style="width:80px">진행일자</div>
 				{% if D['Mode'] == 'modify' %}
-				<input type='text' name='add0' disabled style="width:150px;text-align:center" value="{{D['BODY']['add0']}}">
+				<input type='text' name='add0' disabled style="width:120px;text-align:center" value="{{D['BODY']['add0']}}">
 				{% else %}
-				<input type='text' name='add0' class="i-date" style="width:150px;text-align:center" value="">
+				<input type='text' name='add0' class="i-date" style="width:120px;text-align:center" value="">
 				{% endif %}
+            </div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="width:80px">목표일자</div>
+				<input type='text' name='sub5' class="i-date" style="width:120px;text-align:center" value="{{D['BODY']['sub5']}}">
             </div>
             <button class="btn btn-blue"  onclick="auto_datainput();return false">이전정보</button>&nbsp;&nbsp;
             <button class="btn btn-blue-s4" onclick="auto_calculate();return false">자동계산</button>&nbsp;&nbsp;
-            <button class="btn btn-blue-s4" onclick="auto_suggest();return false">리셋하기</button>&nbsp;&nbsp;
+            <button class="btn btn-blue-s4" onclick="auto_reset();return false">리셋하기</button>&nbsp;&nbsp;
         </td>
     </tr>
 	<tr>
@@ -52,7 +56,7 @@
 		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
 	</tr>
     <tr>
-        <td class='write-td-left'>JEPI</td>
+        <td class='write-td-left' id="first_stock">{{D['BODY']['sub6']}}</td>
 		<td class="write-td-right">
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">매수금</div>
@@ -63,12 +67,8 @@
 				<input type='text' name='add6' class="i-number" style="width:100px;" value="{{D['BODY']['add6']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">수량</div>
-				<input type='text' name='add7' class="i-number" style="width:110px;" value="{{D['BODY']['add7']}}">
-			</div>
-			<div class='i-input-div-choice'>
-				<div class='write-input-left' style="background-color:#333F4F;">비중</div>
-				<input type='text' name='add10' class="i-number" style="width:100px;" value="{{D['BODY']['add10']}}">
+				<div class='write-input-left' style="background-color:#333F4F;">변동수량</div>
+				<input type='text' name='sub8' class="i-number" style="width:110px;" value="{{D['BODY']['sub8']}}">
 			</div>
             <br>
 			<div class='i-input-div-choice'>
@@ -79,8 +79,13 @@
 				<div class='write-input-left' style="background-color:#333F4F;">가치</div>
 				<input type='text' name='add9' class="i-number" style="width:100px;" value="{{D['BODY']['add9']}}">
 			</div>
-			<div style="display:inline-block;width:227px">
-                &nbsp;
+			<div class='i-input-div-choice'>
+				<div class='write-input-left' style="background-color:#333F4F;">누적수량</div>
+				<input type='text' name='add7' class="i-number" style="width:110px;" value="{{D['BODY']['add7']}}">
+			</div>
+			<div class='i-input-div-choice'>
+				<div class='write-input-left' style="background-color:#333F4F;">비중</div>
+				<input type='text' name='add10' class="i-number" style="width:100px;" value="{{D['BODY']['add10']}}">
 			</div>
         </td>
     </tr>
@@ -88,7 +93,7 @@
 		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
 	</tr>
     <tr>
-        <td class='write-td-left'>TQQQ</td>
+        <td class='write-td-left' id="second_stock">{{D['BODY']['sub7']}}</td>
 		<td class="write-td-right">
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">매수금</div>
@@ -99,12 +104,8 @@
 				<input type='text' name='add12' class="i-number" style="width:100px;" value="{{D['BODY']['add12']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">수량</div>
-				<input type='text' name='add13' class="i-number" style="width:110px;" value="{{D['BODY']['add13']}}">
-			</div>
-			<div class='i-input-div-choice'>
-				<div class='write-input-left' style="background-color:#333F4F;">비중</div>
-				<input type='text' name='add16' class="i-number" style="width:100px;" value="{{D['BODY']['add16']}}">
+				<div class='write-input-left' style="background-color:#333F4F;">변동수량</div>
+				<input type='text' name='sub9' class="i-number" style="width:110px;" value="{{D['BODY']['sub9']}}">
 			</div>
             <br>
 			<div class='i-input-div-choice'>
@@ -115,8 +116,13 @@
 				<div class='write-input-left' style="background-color:#333F4F;">가치</div>
 				<input type='text' name='add15' class="i-number" style="width:100px;" value="{{D['BODY']['add15']}}">
 			</div>
-			<div style="display:inline-block;width:227px">
-                &nbsp;
+			<div class='i-input-div-choice'>
+				<div class='write-input-left' style="background-color:#333F4F;">누적수량</div>
+				<input type='text' name='add13' class="i-number" style="width:110px;" value="{{D['BODY']['add13']}}">
+			</div>
+			<div class='i-input-div-choice'>
+				<div class='write-input-left' style="background-color:#333F4F;">비중</div>
+				<input type='text' name='add16' class="i-number" style="width:100px;" value="{{D['BODY']['add16']}}">
 			</div>
         </td>
     </tr>
@@ -141,6 +147,28 @@
 			<div class='i-input-div-must'>
 				<div class='write-input-left' style="background-color:darkslategray;">최대가치</div>
 				<input type='text' name='add20' class="i-number" style="width:100px;" value="{{D['BODY']['add20']}}">
+			</div>
+        </td>
+    </tr>
+    <tr>
+        <td class='write-td-left'>기본정보</td>
+		<td class="write-td-right">
+			<div class='i-input-div-notice'>
+				<div class='write-input-left' style="background-color:darkslategray;">하강한계</div>
+				<input type='text' name='sub4' class="i-number" style="width:100px;" value="{{D['BODY']['sub4']}}">
+			</div>
+			<div class='i-input-div-notice'>
+				<div class='write-input-left' style="background-color:darkslategray;">증가율</div>
+				<input type='text' name='sub2' class="i-number" style="width:100px;" value="{{D['BODY']['sub2']}}">
+			</div>
+			<div class='i-input-div-notice'>
+				<div class='write-input-left' style="background-color:darkslategray;">초기자금</div>
+				<input type='text' name='sub1' class="i-number" style="width:100px;" value="{{D['BODY']['sub1']}}">
+			</div>
+
+			<div class='i-input-div-notice'>
+				<div class='write-input-left' style="background-color:darkslategray;">상승한계</div>
+				<input type='text' name='sub3' class="i-number" style="width:110px;" value="{{D['BODY']['sub3']}}">
 			</div>
         </td>
     </tr>
@@ -238,13 +266,22 @@ function auto_datainput() {
 	var dest = "boards-stock_longterm/autoinput/{{D['tbl']}}"
     var posturl = uri('linkurl')+ dest 
 	var postData = {}
-    postData['add0']  = $("input[name='add0']").val()
+	var ck_date = $("input[name='add0']").val(); 
+	if (!ck_date) { h_dialog.notice("진행일자를 입력해 주세요"); return; }
 
+    postData['add0'] = ck_date
     $.post( posturl, postData).done(function(data)  {
         var ans = JSON.parse(data)
-        var update_key  = ['add3','add7','add8','add13','add14']
-			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})        
+        var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5']
+			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})  
+			$("#first_stock" ).text(ans['sub6'])
+			$("#second_stock" ).text(ans['sub7'])		      
     });
+}
+
+function auto_reset() {
+	var reset_key  = ['add1','add2','add5','add6','sub8','add11','add12','sub9']
+		reset_key.forEach(function(i){$("input[name='"+i+"']" ).val(0)})  
 }
 
 function auto_calculate() {
@@ -257,23 +294,31 @@ function auto_calculate() {
 	const diffDate = date1.getTime() - date2.getTime()
 	const diffDays = diffDate/(1000*3600*24) 
 	
-	const 입금    = txt_to_num('add1','i');
-    const 출금    = txt_to_num('add2','i');
-    const 매수금1 = txt_to_num('add5','f');
-    const 매도금1 = txt_to_num('add6','f');
-    const 매수금2 = txt_to_num('add11','f');
-    const 매도금2 = txt_to_num('add12','f');
-    const 종가1   = txt_to_num('add8','f');
-    const 수량1   = txt_to_num('add7','i');
-    const 종가2   = txt_to_num('add14','f');
-    const 수량2   = txt_to_num('add13','i');
-    let   잔액    = txt_to_num('add3','i');
+	const 입금     = txt_to_num('add1','i');
+    const 출금     = txt_to_num('add2','i');
+    const 매수금1  = txt_to_num('add5','f');
+    const 매도금1  = txt_to_num('add6','f');
+    const 매수금2  = txt_to_num('add11','f');
+    const 매도금2  = txt_to_num('add12','f');
+    const 종가1    = txt_to_num('add8','f');
+    const 수량1    = txt_to_num('sub8','i');
+	let   누적1    = txt_to_num('add7','i');
+    const 종가2    = txt_to_num('add14','f');
+    const 수량2    = txt_to_num('sub9','i');
+	const 초기자금 = txt_to_num('sub1','f');
+	const 증가율   = txt_to_num('sub2','f');
+	const 최대임계 = txt_to_num('sub3','f');
+	const 최소임계 = txt_to_num('sub4','f');
+	let   누적2    = txt_to_num('add13','i');
+    let   잔액     = txt_to_num('add3','i');
+
+	누적1 += 수량1; 누적2 += 수량2;
 
 	잔액    = (잔액+입금+매도금1+매도금2-출금-매수금1-매수금2)
-	let 목표가치 = 6860 * (1+0.002)**diffDays
+	let 목표가치 = 초기자금 * (1+ 증가율 )**diffDays
     
-    let 가치1   = (종가1 * 수량1)
-    let 가치2   = (종가2 * 수량2)
+    let 가치1   = (종가1 * 누적1)
+    let 가치2   = (종가2 * 누적2)
     let 현재가치 = (잔액 + 가치1 + 가치2)
 
     let 비중1 = (잔액/현재가치*100).toFixed(2);
@@ -284,8 +329,8 @@ function auto_calculate() {
     가치1 = 가치1.toFixed(2)
     가치2 = 가치2.toFixed(2)
     현재가치 = 현재가치.toFixed()
-    let 최소가치 = (목표가치*0.9).toFixed();
-    let 최대가치 = (목표가치*1.1).toFixed();
+    let 최소가치 = ( 목표가치* 최소임계 ).toFixed();
+    let 최대가치 = ( 목표가치* 최대임계 ).toFixed();
 	목표가치 = 목표가치.toFixed();
 
 
