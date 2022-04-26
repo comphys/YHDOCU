@@ -17,6 +17,13 @@
 </div>
 
 {% if D['TR'] %}
+<div class="row-row clearfix" style="margin-bottom:-2px"> 
+	<div class='well'>
+		목표값 도달 필요자금 : {{D['need_cash']}} &nbsp;
+		최소값 매수 금액 : {{D['bottom_price']}} &nbsp;
+		최소값 매수 가능 수량 : {{D['bottom_count']}} &nbsp;
+	</div> 
+</div>
 <div class="row-row clearfix">
 	<table class='table table-bordered table-striped table-hover'>
 		<thead>

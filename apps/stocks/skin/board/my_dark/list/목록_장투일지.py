@@ -23,10 +23,22 @@ class 목록_장투일지(SKIN) :
             self.D['chart_cur'] = [float(x[3]) for x in chart_data]
             self.D['chart_max'] = [float(x[4]) for x in chart_data]
 
+            self.D['need_cash'] =  self.D['chart_target'][-1] - self.D['chart_cur'][-1]
+            self.D['need_cash'] = 0 if self.D['need_cash'] < 0 else f"{self.D['need_cash']:,.2f}"
+
             self.DB.wre = f"add0='{last_date}'"
             percent = self.DB.get("add4,add10,add16",many=1,assoc=False)
             self.D['chart_percent'] = [float(x) for x in percent]
-        
+
+            stock_cnt = self.DB.get("add7,add13,add3",many=1,assoc=False)
+            self.D['stock_cnt'] = [int(x) for x in stock_cnt]
+
+            bottom_price = self.D['chart_min'][-1] * (self.D['chart_percent'][2]/100) / self.D['stock_cnt'][1]
+            bottom_count = int(self.D['stock_cnt'][2] / bottom_price)
+
+            self.D['bottom_price'] = f"{bottom_price:,.2f}"
+            self.D['bottom_count'] = f"{bottom_count:,}"
+         
 
     def list(self) :
         self.chart()
