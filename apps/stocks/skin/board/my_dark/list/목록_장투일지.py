@@ -13,7 +13,7 @@ class 목록_장투일지(SKIN) :
         self.DB.lmt = '60'
         self.DB.odr = "add0 ASC"
 
-        chart_data = self.DB.get("add0,add18,add19,add17,add20",assoc=False)
+        chart_data = self.DB.get("add0,add18,add19,add15,add20",assoc=False)
         if chart_data :
             last_date  = chart_data[-1][0]
 
@@ -33,7 +33,7 @@ class 목록_장투일지(SKIN) :
             stock_cnt = self.DB.get("add7,add13,add3",many=1,assoc=False)
             self.D['stock_cnt'] = [int(x) for x in stock_cnt]
 
-            bottom_price = self.D['chart_min'][-1] * (self.D['chart_percent'][2]/100) / self.D['stock_cnt'][1]
+            bottom_price = self.D['chart_min'][-1] / self.D['stock_cnt'][1]
             bottom_count = int(self.D['stock_cnt'][2] / bottom_price)
 
             self.D['bottom_price'] = f"{bottom_price:,.2f}"

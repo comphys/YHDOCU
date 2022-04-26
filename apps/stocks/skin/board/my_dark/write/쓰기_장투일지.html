@@ -5,6 +5,8 @@
 <input type='hidden' name='mode'	value="{{D['Mode']}}" >
 <input type='hidden' name='uid'		value="{{D['USER']['uid']}}" >
 <input type='hidden' name='uname'	value="{{D['USER']['uname']}}" >
+<input type='hidden' name='sub6'	value="{{D['BODY']['sub6']}}" >
+<input type='hidden' name='sub7'	value="{{D['BODY']['sub7']}}" >
 <textarea  name='content' style="display:none"></textarea>
 <table class='table' style="border:2px solid black;border-radius:4px;width:{{D['w_width2']}}">
 <tbody>
@@ -272,7 +274,7 @@ function auto_datainput() {
     postData['add0'] = ck_date
     $.post( posturl, postData).done(function(data)  {
         var ans = JSON.parse(data)
-        var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5']
+        var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})  
 			$("#first_stock" ).text(ans['sub6'])
 			$("#second_stock" ).text(ans['sub7'])		      

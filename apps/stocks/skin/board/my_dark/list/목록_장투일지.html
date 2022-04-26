@@ -19,7 +19,7 @@
 {% if D['TR'] %}
 <div class="row-row clearfix" style="margin-bottom:-2px"> 
 	<div class='well'>
-		목표값 도달 필요자금 : {{D['need_cash']}} &nbsp;
+		목표값 도달 필요 가치 : {{D['need_cash']}} &nbsp;
 		최소값 매수 금액 : {{D['bottom_price']}} &nbsp;
 		최소값 매수 가능 수량 : {{D['bottom_count']}} &nbsp;
 	</div> 
@@ -35,7 +35,7 @@
 
 				<th colspan='6' style="background-color:#0A2229;font-style:italic">Leverage Stock</th>
 
-				<th rowspan='2' style="background-color:#071418;;font-style:italic">Value</th>
+				<th style="background-color:#071418;;font-style:italic">Total</th>
 			</tr>
 			<tr>
 				<th style="background-color:#071418;font-style:italic">Diary</th>
@@ -57,6 +57,7 @@
 				<th style="background-color:#0A2229;text-align:right">종가</th>
 				<th style="background-color:#0A2229;text-align:right">가치</th>
 				<th style="background-color:#0A2229;text-align:right">비중</th>
+				<th style="background-color:#071418;;font-style:italic">Value</th>
 			</tr>
 
 
@@ -176,7 +177,7 @@ const config2 = {
 	animation : {duration:1000},
     plugins : { legend: {display:false},
 				tooltip : {enabled:false},
-				datalabels : {color:'white', anchor:'end', align:'end',offset:5,font:{size:14}}			
+				datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:14}}			
 	},
     scales: {
       y: {
