@@ -17,6 +17,7 @@ class 목록_장투일지(SKIN) :
         if chart_data :
 
             last_date  = chart_data[-1][0]
+            self.D['경과일수'] = ut.diff_day('2022-04-12',last_date)
 
             self.D['chart_date'] = [x[0][2:] for x in chart_data]
             self.D['chart_min'] = [float(x[1]) for x in chart_data]
@@ -27,28 +28,46 @@ class 목록_장투일지(SKIN) :
             self.D['need_cash'] =  self.D['chart_target'][-1] - self.D['chart_cur'][-1]
             self.D['need_cash'] = 0 if self.D['need_cash'] < 0 else f"{self.D['need_cash']:,.0f}"
 
+            # ------------------------------------------------------------------------------------
+            self.DB.clear()
+            self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
-            percent = self.DB.get("add4,add10,add16",many=1,assoc=False)
-            self.D['chart_percent'] = [float(x) for x in percent]
-            총자산 = self.DB.get_one('add17')
-    
-            stock_cnt = self.DB.get("add7,add13,add3",many=1,assoc=False)
-            self.D['stock_cnt'] = [int(x) for x in stock_cnt]
-
-            bottom_price = self.D['chart_min'][-1] / self.D['stock_cnt'][1]
-            bottom_count = int(self.D['stock_cnt'][2] / bottom_price)
+            
+            LD = self.DB.get_line('*')
+            self.D['chart_percent'] = [float(LD['add4']),float(LD['add10']),float(LD['add16'])]
+            
+            bottom_price = self.D['chart_min'][-1] / int(LD['add13'])
+            bottom_count = int(LD['add3']) / bottom_price
 
             self.D['bottom_price'] = f"{bottom_price:,.2f}"
-            self.D['bottom_count'] = f"{bottom_count:,}"
+            self.D['bottom_count'] = f"{bottom_count:,.0f}"
             # --------------
-            qry = f"SELECT sum(add1), sum(add2) FROM {self.DB.tbl}"
+            qry = f"SELECT sum(add1), sum(add2), sum(add5), sum(add6), sum(add11), sum(add12) FROM {self.DB.tbl}"
             invest = self.DB.exe(qry,many=1,assoc=False)
- 
+
             총투자금 = int(invest[0]) - int(invest[1])
-            총수익금 = int(총자산) - 총투자금
+            총수익금 = int(LD['add17']) - 총투자금
             총수익률 = 총수익금/총투자금 * 100
+            self.D['총입금'] = f"{int(invest[0]):,}"
+            self.D['총출금'] = f"{int(invest[1]):,}"
             self.D['총수익금'] = f"{총수익금:,}"
             self.D['총수익률'] = f"{총수익률:.2f}"
+            # -- dividend
+            매수금1 = float(invest[2]) - float(invest[3])
+            수익금1 = float(LD['add9']) - 매수금1
+            평단가1 = 매수금1/int(LD['add7'])
+            수익률1 = (float(LD['add8']) - 평단가1) / 평단가1 *100
+            self.D['평단가1'] = f"{평단가1:,.2f}"
+            self.D['수익금1'] = f"{수익금1:,.2f}"
+            self.D['수익률1'] = f"{수익률1:.2f}"
+            # -- leverage
+            매수금2 = float(invest[4]) - float(invest[5])
+            수익금2 = float(LD['add15']) - 매수금2
+            평단가2 = 매수금2/int(LD['add13'])
+            수익률2 = (float(LD['add14']) - 평단가2) / 평단가2 *100
+            self.D['평단가2'] = f"{평단가2:,.2f}"
+            self.D['수익금2'] = f"{수익금2:,.2f}"
+            self.D['수익률2'] = f"{수익률2:.2f}"
 
 
     def list(self) :
