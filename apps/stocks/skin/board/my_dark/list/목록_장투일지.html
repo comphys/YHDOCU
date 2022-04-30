@@ -18,7 +18,8 @@
 
 {% if D['TR'] %}
 <div class="row-row clearfix" style="margin-bottom:-2px"> 
-	<div class='well'>
+	<div class='well' style="color:lightgray">
+		총수익금 : {{D['총수익금']}} &nbsp; {{D['총수익률']}}% &nbsp;
 		목표값 도달 필요 가치 : {{D['need_cash']}} &nbsp;
 		최소값 매수 금액 : {{D['bottom_price']}} &nbsp;
 		최소값 매수 가능 수량 : {{D['bottom_count']}} &nbsp;

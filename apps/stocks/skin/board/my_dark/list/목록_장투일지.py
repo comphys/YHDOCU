@@ -15,6 +15,7 @@ class 목록_장투일지(SKIN) :
 
         chart_data = self.DB.get("add0,add18,add19,add15,add20",assoc=False)
         if chart_data :
+
             last_date  = chart_data[-1][0]
 
             self.D['chart_date'] = [x[0][2:] for x in chart_data]
@@ -24,12 +25,13 @@ class 목록_장투일지(SKIN) :
             self.D['chart_max'] = [float(x[4]) for x in chart_data]
 
             self.D['need_cash'] =  self.D['chart_target'][-1] - self.D['chart_cur'][-1]
-            self.D['need_cash'] = 0 if self.D['need_cash'] < 0 else f"{self.D['need_cash']:,.2f}"
+            self.D['need_cash'] = 0 if self.D['need_cash'] < 0 else f"{self.D['need_cash']:,.0f}"
 
             self.DB.wre = f"add0='{last_date}'"
             percent = self.DB.get("add4,add10,add16",many=1,assoc=False)
             self.D['chart_percent'] = [float(x) for x in percent]
-
+            총자산 = self.DB.get_one('add17')
+    
             stock_cnt = self.DB.get("add7,add13,add3",many=1,assoc=False)
             self.D['stock_cnt'] = [int(x) for x in stock_cnt]
 
@@ -38,7 +40,16 @@ class 목록_장투일지(SKIN) :
 
             self.D['bottom_price'] = f"{bottom_price:,.2f}"
             self.D['bottom_count'] = f"{bottom_count:,}"
-         
+            # --------------
+            qry = f"SELECT sum(add1), sum(add2) FROM {self.DB.tbl}"
+            invest = self.DB.exe(qry,many=1,assoc=False)
+ 
+            총투자금 = int(invest[0]) - int(invest[1])
+            총수익금 = int(총자산) - 총투자금
+            총수익률 = 총수익금/총투자금 * 100
+            self.D['총수익금'] = f"{총수익금:,}"
+            self.D['총수익률'] = f"{총수익률:.2f}"
+
 
     def list(self) :
         self.chart()
