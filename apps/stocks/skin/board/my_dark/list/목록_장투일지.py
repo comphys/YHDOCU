@@ -25,7 +25,7 @@ class 목록_장투일지(SKIN) :
             self.D['chart_cur'] = [float(x[3]) for x in chart_data]
             self.D['chart_max'] = [float(x[4]) for x in chart_data]
 
-            self.D['need_cash'] =  self.D['chart_target'][-1] - self.D['chart_cur'][-1]
+            self.D['need_cash'] =   self.D['chart_target'][-1] - self.D['chart_cur'][-1]
             self.D['need_cash'] = 0 if self.D['need_cash'] < 0 else f"{self.D['need_cash']:,.0f}"
 
             # ------------------------------------------------------------------------------------
@@ -68,6 +68,10 @@ class 목록_장투일지(SKIN) :
             self.D['평단가2'] = f"{평단가2:,.2f}"
             self.D['수익금2'] = f"{수익금2:,.2f}"
             self.D['수익률2'] = f"{수익률2:.2f}"
+
+            self.D['info_color']= 'white' 
+            if LD['add15'] < LD['add18'] : self.D['info_color'] = '#F6CECE' 
+            if LD['add15'] > LD['add20'] : self.D['info_color'] = '#CEF6F5'
 
 
     def list(self) :
