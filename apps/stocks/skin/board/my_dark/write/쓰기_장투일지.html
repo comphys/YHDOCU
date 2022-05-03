@@ -72,6 +72,10 @@
 				<div class='write-input-left' style="background-color:#333F4F;">변동수량</div>
 				<input type='text' name='sub8' class="i-number" style="width:110px;" value="{{D['BODY']['sub8']}}">
 			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="background-color:#333F4F;">배당금</div>
+				<input type='text' name='sub10' class="i-number" style="width:100px;" value="{{D['BODY']['sub10']}}">
+			</div>
             <br>
 			<div class='i-input-div-choice'>
 				<div class='write-input-left' style="background-color:#333F4F;">종가</div>
@@ -282,7 +286,7 @@ function auto_datainput() {
 }
 
 function auto_reset() {
-	var reset_key  = ['add1','add2','add5','add6','sub8','add11','add12','sub9']
+	var reset_key  = ['add1','add2','add5','add6','sub8','add11','add12','sub9','sub10']
 		reset_key.forEach(function(i){$("input[name='"+i+"']" ).val(0)})  
 }
 
@@ -300,6 +304,7 @@ function auto_calculate() {
     const 출금     = txt_to_num('add2','i');
     const 매수금1  = txt_to_num('add5','f');
     const 매도금1  = txt_to_num('add6','f');
+	const 배당금   = txt_to_num('sub10','f');
     const 매수금2  = txt_to_num('add11','f');
     const 매도금2  = txt_to_num('add12','f');
     const 종가1    = txt_to_num('add8','f');
@@ -316,7 +321,7 @@ function auto_calculate() {
 
 	누적1 += 수량1; 누적2 += 수량2;
 
-	잔액    = (잔액+입금+매도금1+매도금2-출금-매수금1-매수금2)
+	잔액    = (잔액+입금+매도금1+매도금2-출금-매수금1-매수금2+배당금)
 	let 목표가치 = 초기자금 * (1+ 증가율 )**diffDays
     
     let 가치1   = (종가1 * 누적1)
@@ -341,6 +346,7 @@ function auto_calculate() {
     $("input[name='add2']").val(출금).comma('init');
     $("input[name='add5']").val(매수금1).comma('init');
     $("input[name='add6']").val(매도금1).comma('init');
+	$("input[name='sub10']").val(배당금).comma('init');
     $("input[name='add11']").val(매수금2).comma('init');
     $("input[name='add12']").val(매도금2).comma('init');
 	$("input[name='add7']").val(누적1).comma('init');
@@ -361,7 +367,7 @@ function auto_calculate() {
 function txt_to_num(key,opt) {
     var a =  $("input[name='"+key+"']").val();
     if(!a) return 0
-    a = a.replace(',','');
+    a = a.replace(/,/g,'');
     if(opt=='i') return parseInt(a);
     else return parseFloat(a);
 }

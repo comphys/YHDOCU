@@ -42,7 +42,7 @@ class 목록_장투일지(SKIN) :
             self.D['bottom_price'] = f"{bottom_price:,.2f}"
             self.D['bottom_count'] = f"{bottom_count:,.0f}"
             # --------------
-            qry = f"SELECT sum(add1), sum(add2), sum(add5), sum(add6), sum(add11), sum(add12) FROM {self.DB.tbl}"
+            qry = f"SELECT sum(add1), sum(add2), sum(add5), sum(add6), sum(add11), sum(add12), sum(sub10) FROM {self.DB.tbl}"
             invest = self.DB.exe(qry,many=1,assoc=False)
 
             총투자금 = int(invest[0]) - int(invest[1])
@@ -52,6 +52,7 @@ class 목록_장투일지(SKIN) :
             self.D['총출금'] = f"{int(invest[1]):,}"
             self.D['총수익금'] = f"{총수익금:,}"
             self.D['총수익률'] = f"{총수익률:.2f}"
+            self.D['배당금'] = f"{float(invest[6]):,.2f}"
             # -- dividend
             매수금1 = float(invest[2]) - float(invest[3])
             수익금1 = float(LD['add9']) - 매수금1
