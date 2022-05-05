@@ -11,12 +11,12 @@ class 목록_장투일지(SKIN) :
         self.DB.tbl = self.D['tbl']
         self.DB.wre = ''
         self.DB.lmt = '60'
-        self.DB.odr = "add0 ASC"
+        self.DB.odr = "add0 DESC"
 
         chart_data = self.DB.get("add0,add18,add19,add15,add20,add17",assoc=False)
         if chart_data :
 
-            last_date  = chart_data[-1][0]
+            last_date  = chart_data[0][0]
             self.D['경과일수'] = ut.diff_day('2022-04-12',last_date)
 
             self.D['chart_date'] = [x[0][2:] for x in chart_data]
@@ -25,6 +25,13 @@ class 목록_장투일지(SKIN) :
             self.D['chart_cur'] = [float(x[3]) for x in chart_data]
             self.D['chart_max'] = [float(x[4]) for x in chart_data]
             self.D['chart_total'] = [float(x[5])*0.6 for x in chart_data]
+
+            self.D['chart_date'].reverse()
+            self.D['chart_min'].reverse()
+            self.D['chart_target'].reverse()
+            self.D['chart_cur'].reverse()
+            self.D['chart_max'].reverse()
+            self.D['chart_total'].reverse()
 
             self.D['need_cash'] =   self.D['chart_target'][-1] - self.D['chart_cur'][-1]
             self.D['need_cash'] = 0 if self.D['need_cash'] < 0 else f"{self.D['need_cash']:,.0f}"

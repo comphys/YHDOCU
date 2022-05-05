@@ -60,7 +60,11 @@ class Page(Control) :
 
     def dashboard(self) :
         D={'skin':f"{self.skin}/{self.D['bid']}.html"}
-        return self.echo(D)        
+        return self.echo(D)     
+
+    def dashboard2(self) :
+        D={'skin':f"{self.skin}/{self.D['bid']}.html"}
+        return self.echo(D)    
 
 
     def get_ohlc(self) :

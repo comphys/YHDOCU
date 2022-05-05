@@ -1,0 +1,172 @@
+{% extends D['_skn'] + 'page/my_dark/main_layout_mobile.html' %}
+
+{% block contents_page  %}
+<script src="/sys/chart/chart.min.js"></script>
+<script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
+
+
+<div class="clearfix" style="width:100%;background-color:#24272d;padding:20px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
+	<div class="pull-left" style="margin-right:20px">
+		<canvas id="myChart"  style="width:1100px;height:350px;background-color:#24272d;"></canvas>
+	</div>
+	<div class="pull-left">
+		<canvas id="myChart2" style="width:310px;height:350px;background-color:#24272d"></canvas>
+	</div>
+</div>
+
+
+
+<div class="dash-div" style="text-align:center;border-color: beige;padding:10px;margin-top:20px">
+<span style='font-size:16px;color:#f0f0ab;font-weight:bold'>{{D['오늘날자']}}({{D['오늘요일']}})</span> 종합 상황보고<br>
+<table class="dash-table" style="margin-top:5px">
+<tr style="border-top:3px solid darkslategrey">
+	<td>1</td>
+	<td>{{D['첫째상황'][0]|safe}}</td>
+	<td>{{D['첫째상황'][1]|safe}}%</td>
+	<td> {{D['첫째상황'][2]|safe}}</td>
+	<td>◂</td>
+	<td>{{D['첫째상황'][3]|safe}}&nbsp;</td>
+	<td>{{D['첫째상황'][4]|safe}}</td>
+	<td>{{D['첫째상황'][5]|safe}}</td>	
+</tr>
+<tr>
+	<td>2</td>
+	<td>{{D['둘째상황'][0]|safe}}</td>
+	<td>{{D['둘째상황'][1]|safe}}%</td>
+	<td> {{D['둘째상황'][2]|safe}}</td>
+	<td>◂</td>
+	<td>{{D['둘째상황'][3]|safe}}&nbsp;</td>
+	<td>{{D['둘째상황'][4]|safe}}</td>
+	<td>{{D['둘째상황'][5]|safe}}</td>	
+</tr>
+<tr>
+	<td>3</td>
+	<td>{{D['셋째상황'][0]|safe}}</td>
+	<td>{{D['셋째상황'][1]|safe}}%</td>
+	<td> {{D['셋째상황'][2]|safe}}</td>
+	<td>◂</td>
+	<td>{{D['셋째상황'][3]|safe}}&nbsp;</td>
+	<td>{{D['셋째상황'][4]|safe}}</td>
+	<td>{{D['셋째상황'][5]|safe}}</td>	
+</tr>
+<tr style="border-top:3px solid darkslategrey">
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td> {{D['평가합계']}}</td>
+	<td>◂</td>
+	<td>{{D['투자합계']}}&nbsp;</td>
+	<td>{{D['손익현황']|safe}}</td>
+	<td>{{D['합수익률']|safe}}</td>	
+</tr>
+</table>
+</div>
+<div class="dash-div">
+{{D['첫째전략']|safe}}
+</div>
+<div class="dash-div">
+{{D['둘째전략']|safe}}
+</div>
+<div class="dash-div">
+{{D['셋째전략']|safe}}
+</div>
+<div style="text-align:center;padding:10px;color:darkgray">
+주식매매전략 Ver 1.0 by JYH
+</div>
+
+
+<script>
+
+	// 챠트 그리기
+	const ctx = $id('myChart');
+	const ctx2= $id('myChart2');
+	
+	ctx.style.backgroundColor = '#33363b';
+	ctx.style.border = '2px solid black';
+	
+	let labels = {{D['날자']|safe}};
+	const data = {
+		labels : labels,
+		datasets : [
+			{
+				label:' 종가',
+				data : {{D['종가']|safe}},
+				borderColor:'white', borderWidth:2,borderDash: [2,2], pointStyle:'circle', pointRadius:0, 
+				lineTension:0.2
+	
+			},
+			{
+				label:' 첫째',
+				data : {{D['첫째']|safe}},
+				pointStyle:'circle', borderWidth:4,pointRadius:0,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',
+				lineTension:0.2
+	
+			},
+			{
+				label:' 둘째',
+				data : {{D['둘째']|safe}},
+				pointStyle:'circle', borderWidth:4,pointRadius:0,pointHoverRadius:15,borderColor:'rgba(75, 192, 192, 0.4)',
+				lineTension:0.2
+	
+			},
+	
+			{
+				label:' 셋째',
+				data : {{D['셋째']|safe}},
+				pointStyle:'circle', borderWidth:4,pointRadius:0,pointHoverRadius:15,borderColor:'yellow',
+				lineTension:0.2
+	
+			}
+	
+		]   
+	};
+	const options = {
+		animation : {duration:1000},
+		plugins : { legend: {display:false}},
+		responsive:false,
+		layout:{padding:20},
+		scales:{
+			x:{ ticks : {color:'gray'}, grid:{color:'#272727'}},
+			y:{ ticks : {color:'lightgray'}, grid:{color:'#272727'} }
+		}
+	};
+	const config  = {type:'line',data:data,options:options};
+	const myChart = new Chart(ctx, config); 
+	//
+
+	const labels2 = ['첫째','둘째','셋째','종합'];
+	const data2 = {
+	labels: labels2,
+	datasets: [{
+		label: ' 자산배분비율 ',
+		data: [{{D['첫째상황'][6]|safe}},{{D['둘째상황'][6]|safe}},{{D['셋째상황'][6]|safe}},{{D['total_rate']|safe}}],
+		backgroundColor: ['rgba(255, 99, 132, 0.4)', 'rgba(75, 192, 192, 0.4)','rgba(255, 205, 86, 0.4)','rgba(54, 162, 235, 0.4)'],
+		borderColor: ['rgb(255, 99, 132)','rgb(75, 192, 192)','rgb(255, 205, 86)','rgb(54, 162, 235)'],
+		borderWidth: 1
+	}]
+	};
+
+	const config2 = {
+	type: 'bar',
+	data: data2,
+	plugins:[ChartDataLabels],
+	options: {
+		animation : {duration:1000},
+		plugins : { legend: {display:false},
+					tooltip : {enabled:false},
+					datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:14}}			
+		},
+		scales: {
+		y: {
+			beginAtZero: true
+		}
+		}
+	},
+	};
+
+	const myChart2 = new Chart(ctx2, config2); 
+
+	</script>
+	
+	
+{% endblock %}
