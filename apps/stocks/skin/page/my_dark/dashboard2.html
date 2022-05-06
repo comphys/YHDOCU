@@ -14,6 +14,9 @@
 	</div>
 </div>
 <div class="row-row clearfix" style="margin-bottom:-2px;"> 
+	<div style="display:inline-block;width:{{D['fy_w']}}px;margin:0;background-color:rgba(255, 99, 132, 0.4)">&nbsp;{{D['첫째상황'][1]}}</div>
+	<div style="display:inline-block;width:{{D['sy_w']}}px;margin:0;background-color:rgba(54, 162, 235, 0.4)">&nbsp;{{D['둘째상황'][1]}}</div>
+	<div style="display:inline-block;width:{{D['ty_w']}}px;margin:0;background-color:rgba(255, 205, 86, 0.4)">&nbsp;{{D['셋째상황'][1]}}</div>		
 	<div class='well'>
 		<i class="fa fa-calendar"></i> {{D['오늘날자']}}({{D['오늘요일']}}) &nbsp;
 	</div> 
@@ -188,7 +191,7 @@
 	labels: labels2,
 	datasets: [{
 		label: ' 자산배분비율 ',
-		data: [{{D['첫째상황'][8]|safe}},{{D['둘째상황'][8]|safe}},{{D['셋째상황'][8]|safe}},{{D['total_rate']|safe}}],
+		data: [{{D['첫째상황'][3]}},{{D['둘째상황'][3]}},{{D['셋째상황'][3]}},{{D['total_rate']}}],
 		backgroundColor: ['rgba(255, 99, 132, 0.4)','rgba(54, 162, 235, 0.4)','rgba(255, 205, 86, 0.4)','rgba(75, 192, 192, 0.4)'],
 		borderColor: ['rgb(255, 99, 132)','rgb(54, 162, 235)','rgb(255, 205, 86)','rgb(75, 192, 192)'],
 		borderWidth: 1
