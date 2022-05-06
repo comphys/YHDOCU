@@ -32,7 +32,7 @@ class M_dashboard2(Model) :
             if key in DTD : DFD[key].append(DTD[key])
             else : DFD[key].append('null')
 
-            self.D['날자'].append(key)
+            self.D['날자'].append(key[2:])
             self.D['종가'].append(DFD[key][0])
             self.D['첫째'].append(DFD[key][1])
             self.D['둘째'].append(DFD[key][2])
