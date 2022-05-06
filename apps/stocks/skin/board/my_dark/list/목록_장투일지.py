@@ -33,8 +33,8 @@ class 목록_장투일지(SKIN) :
             self.D['chart_max'].reverse()
             self.D['chart_total'].reverse()
 
-            self.D['need_cash'] =   self.D['chart_target'][-1] - self.D['chart_cur'][-1]
-            self.D['need_cash'] = 0 if self.D['need_cash'] < 0 else f"{self.D['need_cash']:,.0f}"
+            self.D['need_cash'] = self.D['chart_cur'][-1] - self.D['chart_target'][-1]
+            self.D['need_cash'] = f"{self.D['need_cash']:,.0f}"
 
             # ------------------------------------------------------------------------------------
             self.DB.clear()
