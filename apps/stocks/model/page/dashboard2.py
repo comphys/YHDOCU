@@ -55,7 +55,6 @@ class M_dashboard2(Model) :
 
         self.DB.clear()
 
-        # 상황
         self.D['첫째상황']  = self.outcome('h_daily_first_board')
         self.D['둘째상황']  = self.outcome('h_daily_second_board')
         self.D['셋째상황']  = self.outcome('h_daily_third_board')
