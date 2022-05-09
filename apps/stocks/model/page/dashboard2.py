@@ -5,7 +5,7 @@ class M_dashboard2(Model) :
     def view(self) :
         
         self.DB.tbl, self.DB.wre, self.DB.odr =('h_daily_first_board',"add19='시즌진행'",'add0 DESC')
-        self.DB.lmt = '60'
+        self.DB.lmt = '90'
         DF = self.DB.get("add0,add5,add9",assoc=False)
         DFD= {x[0]:[x[1],x[2]] for x in DF}
         start_date = DF[-1][0]
