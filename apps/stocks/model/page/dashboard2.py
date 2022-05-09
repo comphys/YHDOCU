@@ -46,6 +46,8 @@ class M_dashboard2(Model) :
         
         self.D['종가최대'] = max(self.D['종가'])
         self.D['종가최소'] = min(self.D['종가'])
+        MDD = (float(self.D['종가최대'])-float(self.D['종가최소']))/float(self.D['종가최대']) * 100
+        self.D['MDD'] = f"{MDD:.2f}"
 
         self.D['첫째10'] = [float(x)*0.9 for x in self.D['첫째']]
         self.D['첫째20'] = [float(x)*0.8 for x in self.D['첫째']]
