@@ -134,7 +134,7 @@ const data = {
         },
         {
             label:' 현재가치',
-            data : {{D['chart_cur']}},
+            data : {{D['chart_cur']|safe}},
             borderColor:'yellow', borderWidth:4,pointStyle:'circle', pointRadius:2, pointHoverRadius:15, backgroundColor:'yellow',
 			lineTension:0.2
 
@@ -149,8 +149,8 @@ const data = {
 
         {
             label:' 배당가치',
-            data : {{D['chart_dividend']}},
-            borderColor:'lightpink', borderWidth:4,borderDash:[4,4],pointRadius:0,
+            data : {{D['chart_dividend']|safe}},
+            borderColor:'lightpink', borderWidth:4,borderDash:[4,2],pointRadius:0,
 			lineTension:0.2
 
         },

@@ -1,3 +1,4 @@
+from contextlib import nullcontext
 import system.core.my_utils as ut
 from system.core.load import SKIN
 
@@ -13,7 +14,7 @@ class 목록_장투일지(SKIN) :
         self.DB.lmt = '60'
         self.DB.odr = "add0 DESC"
 
-        chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9",assoc=False)
+        chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3",assoc=False)
         if chart_data :
 
             last_date  = chart_data[0][0]
@@ -34,7 +35,11 @@ class 목록_장투일지(SKIN) :
             self.D['chart_max'].reverse()
             self.D['chart_total'].reverse()
             self.D['chart_dividend'].reverse()
-
+            
+            for i, x in enumerate(self.D['chart_max']) :
+                if self.D['chart_cur'][i]  < self.D['chart_min'][i]*0.8 or self.D['chart_cur'][i]  > self.D['chart_max'][i]*1.2 : self.D['chart_cur'][i]  = 'null'
+                if self.D['chart_dividend'][i]  < self.D['chart_min'][i]*0.8 or self.D['chart_dividend'][i]  > self.D['chart_max'][i]*1.2 : self.D['chart_dividend'][i]  = 'null'
+            
             self.D['need_cash'] = self.D['chart_cur'][-1] - self.D['chart_target'][-1]
             self.D['need_cash'] = f"{self.D['need_cash']:,.0f}"
 
