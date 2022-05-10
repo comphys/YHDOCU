@@ -142,7 +142,15 @@ const data = {
         {
             label:' 종합가치',
             data : {{D['chart_total']}},
-            borderColor:'rgba(75, 192, 192, 0.8)', borderWidth:4, pointRadius:0,
+            borderColor:'rgba(75, 192, 192, 0.8)', borderWidth:4,pointRadius:0,
+			lineTension:0.2
+
+        },
+
+        {
+            label:' 배당가치',
+            data : {{D['chart_dividend']}},
+            borderColor:'lightpink', borderWidth:4,borderDash:[4,4],pointRadius:0,
 			lineTension:0.2
 
         },
