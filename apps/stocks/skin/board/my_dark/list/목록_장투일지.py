@@ -35,6 +35,10 @@ class 목록_장투일지(SKIN) :
             self.D['chart_max'].reverse()
             self.D['chart_total'].reverse()
             self.D['chart_dividend'].reverse()
+
+            self.D['target_value']  = f"{float(self.D['chart_target'][-1])/0.6:,.0f}"
+            self.D['current_value'] = f"{int(chart_data[0][5]):,}"
+            
             
             for i, x in enumerate(self.D['chart_max']) :
                 if self.D['chart_cur'][i]  < self.D['chart_min'][i]*0.8 or self.D['chart_cur'][i]  > self.D['chart_max'][i]*1.2 : self.D['chart_cur'][i]  = 'null'
