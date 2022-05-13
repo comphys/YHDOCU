@@ -52,6 +52,8 @@ class M_dashboard2(Model) :
         self.D['첫째10'] = [float(x)*0.9 for x in self.D['첫째']]
         self.D['첫째20'] = [float(x)*0.8 for x in self.D['첫째']]
         self.D['첫째30'] = [float(x)*0.7 for x in self.D['첫째']]
+        self.D['첫째40'] = [float(x)*0.6 for x in self.D['첫째']]
+        self.D['첫째50'] = [float(x)*0.5 for x in self.D['첫째']]
 
         self.DB.clear()
 

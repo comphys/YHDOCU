@@ -147,14 +147,16 @@
 			{
 				label:' 종가',
 				data : {{D['종가']|safe}},
-				borderColor:'lightpink', borderWidth:2,borderDash: [2,2], pointStyle:'circle', pointRadius:0, 
-				lineTension:0.2
+				borderColor:'lightpink', borderWidth:2,borderDash: [2,2],pointRadius:0, 
+				lineTension:0.2,
+				fill:true,
+				backgroundColor:'rgba(11,47,58,0.3)'
 	
 			},
 			{   
 				label:' 첫째',
 				data : {{D['첫째']|safe}},
-				pointStyle:'circle', borderWidth:4,pointRadius:0,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',
+				pointStyle:'circle', borderWidth:4,pointRadius:0,borderColor:'#f78181',backgroundColor:'#f78181',
 				lineTension:0.2
 	
 			},
@@ -182,7 +184,20 @@
 				lineTension:0.2
 	
 			},
-
+			{
+				label:' 첫째-40%',
+				data : {{D['첫째40']|safe}},
+				borderWidth:2,borderDash:[2,3],pointRadius:0,borderColor:'#58ACFA',
+				lineTension:0.2
+	
+			},
+			{
+				label:' 첫째-50%',
+				data : {{D['첫째50']|safe}},
+				borderWidth:2,borderDash:[2,3],pointRadius:0,borderColor:'#58ACFA',
+				lineTension:0.2
+	
+			},
 			{
 				label:' 둘째',
 				data : {{D['둘째']|safe}},
@@ -207,8 +222,11 @@
 		responsive:false,
 		layout:{padding:20},
 		scales:{
-			x:{ ticks : {color:'gray'}, grid:{color:'#272727'}},
-			y:{ ticks : {color:'lightgray'}, grid:{color:'#272727'} }
+			x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+			y: { ticks : {color:'lightgray'}, position:'right', grid:{display:false}},
+			y1:{ ticks : {color:'lightgray'}, 
+				grid:{ lineWidth:6,color: function(context) {if(context.tick.value == 0) { return 'rgba(0,0,0,0.3)'} else return '#33363b'}}, 
+				position:'left',min:-50,max:50}
 		}
 	};
 	const config  = {type:'line',data:data,options:options};

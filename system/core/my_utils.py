@@ -74,6 +74,12 @@ def delete_foler(fx) :
 def rename_file(fx1, fx2) :
     return os.rename(fx1, fx2)
 
+def copy_file(fx1, fx2) :
+    pass
+
+def move_file(fx1, fx2) :
+    pass
+
 # string
 def dequote(s):
     """

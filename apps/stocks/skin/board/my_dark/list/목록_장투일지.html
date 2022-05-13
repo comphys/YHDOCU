@@ -142,7 +142,7 @@ const data = {
         {
             label:' 종합가치',
             data : {{D['chart_total']}},
-            borderColor:'rgba(75, 192, 192, 0.8)', borderWidth:4,pointRadius:0,
+            borderColor:'rgba(75, 192, 192, 0.8)', borderWidth:2,pointRadius:0,
 			lineTension:0.2
 
         },
@@ -213,6 +213,12 @@ const config2 = {
 	},
     scales: {
       y: {
+		grid : {
+			lineWidth:2,
+			color: function(context) {
+				if(context.tick.value == 20) { return 'black'} else return ''
+			}
+		},
         beginAtZero: true
       }
     }
