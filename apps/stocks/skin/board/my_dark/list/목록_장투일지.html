@@ -133,22 +133,29 @@ const data = {
 
         },
         {
-            label:' 현재가치',
+            label:' 현재위치',
             data : {{D['chart_cur']|safe}},
             borderColor:'yellow', borderWidth:4,pointStyle:'circle', pointRadius:0, pointHoverRadius:15, backgroundColor:'yellow',
 			lineTension:0.2
 
         },
         {
-            label:' 종합가치',
-            data : {{D['chart_total']}},
-            borderColor:'rgba(75, 192, 192, 0.8)', borderWidth:2,pointRadius:0,
+            label:' 현금위치',
+            data : {{D['chart_cash']|safe}},
+            borderColor:'rgba(75, 192, 192, 0.8)', borderWidth:2,borderDash:[2,3],pointRadius:0,
+			lineTension:0.2
+
+        },
+        {
+            label:' 합계위치',
+            data : {{D['chart_total']|safe}},
+            borderColor:'rgba(75, 192, 192, 0.8)', borderWidth:4,pointRadius:0,
 			lineTension:0.2
 
         },
 
         {
-            label:' 배당가치',
+            label:' 배당위치',
             data : {{D['chart_dividend']|safe}},
             borderColor:'lightpink', borderWidth:2,borderDash:[2,3],pointRadius:0,
 			lineTension:0.2

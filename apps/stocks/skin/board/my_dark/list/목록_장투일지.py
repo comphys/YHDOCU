@@ -27,6 +27,7 @@ class 목록_장투일지(SKIN) :
             self.D['chart_max'] = [float(x[4]) for x in chart_data]
             self.D['chart_total'] = [float(x[5])*0.6 for x in chart_data]
             self.D['chart_dividend'] = [float(x[6])*3 for x in chart_data]
+            self.D['chart_cash'] = [float(x[7])*3 for x in chart_data]
 
             self.D['chart_date'].reverse()
             self.D['chart_min'].reverse()
@@ -35,6 +36,7 @@ class 목록_장투일지(SKIN) :
             self.D['chart_max'].reverse()
             self.D['chart_total'].reverse()
             self.D['chart_dividend'].reverse()
+            self.D['chart_cash'].reverse()
 
             self.D['target_value']  = f"{float(self.D['chart_target'][-1])/0.6:,.0f}"
             self.D['current_value'] = f"{int(chart_data[0][5]):,}"
@@ -43,6 +45,8 @@ class 목록_장투일지(SKIN) :
             for i, x in enumerate(self.D['chart_max']) :
                 if self.D['chart_cur'][i]  < self.D['chart_min'][i]*0.8 or self.D['chart_cur'][i]  > self.D['chart_max'][i]*1.2 : self.D['chart_cur'][i]  = 'null'
                 if self.D['chart_dividend'][i]  < self.D['chart_min'][i]*0.8 or self.D['chart_dividend'][i]  > self.D['chart_max'][i]*1.2 : self.D['chart_dividend'][i]  = 'null'
+                if self.D['chart_total'][i]  < self.D['chart_min'][i]*0.8 or self.D['chart_total'][i]  > self.D['chart_max'][i]*1.5 : self.D['chart_total'][i]  = 'null'
+                if self.D['chart_cash'][i]  < self.D['chart_min'][i] * 0.8 or self.D['chart_cash'][i]  > self.D['chart_max'][i] : self.D['chart_cash'][i]  = 'null'
             
             self.D['need_cash'] = self.D['chart_cur'][-1] - self.D['chart_target'][-1]
             self.D['need_cash'] = f"{self.D['need_cash']:,.0f}"
