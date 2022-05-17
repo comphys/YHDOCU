@@ -128,14 +128,14 @@ const data = {
 		{
             label:' 최대가치',
             data : {{D['chart_max']}},
-            pointStyle:'circle', borderWidth:2,pointRadius:0,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',
+            pointStyle:'circle', borderWidth:2,pointRadius:0,borderColor:'#f78181',backgroundColor:'#f78181',
 			lineTension:0.2
 
         },
         {
             label:' 현재위치',
             data : {{D['chart_cur']|safe}},
-            borderColor:'yellow', borderWidth:4,pointStyle:'circle', pointRadius:0, pointHoverRadius:15, backgroundColor:'yellow',
+            borderColor:'yellow', borderWidth:4,pointRadius:0, pointHoverRadius:24, backgroundColor:'yellow',
 			lineTension:0.2
 
         },
@@ -165,7 +165,7 @@ const data = {
         {
             label:' 목표가치',
             data : {{D['chart_target']}},
-            borderColor:'lightgray', borderWidth:2,borderDash: [2,2], pointStyle:'circle', pointRadius:0, pointHoverRadius:15, backgroundColor:'lightgray',
+            borderColor:'lightgray', borderWidth:2,borderDash: [2,2], pointRadius:0,  backgroundColor:'lightgray',
 			lineTension:0.2
 
         },
@@ -173,16 +173,18 @@ const data = {
         {
             label:' 최소가치',
             data : {{D['chart_min']}},
-            borderColor:'#58ACFA', borderWidth:2,pointStyle:'circle', pointRadius:0, pointHoverRadius:15, backgroundColor:'#58ACFA',
-			lineTension:0.2
-
+            borderColor:'#58ACFA', borderWidth:2, pointRadius:0,  backgroundColor:'#58ACFA',
+			lineTension:0.2,
+			fill:true,
+			backgroundColor:'rgba(11,47,58,0.3)'
         },
 
     ]   
 };
 const options = {
-	animation : {duration:1000},
-    plugins : { legend: {display:false}, 
+	animation : { duration:1000	},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:false},
 				title:{display:true, text:'Taget Value : {{D['target_value']}}({{D['current_value']}})',color:'lightgray',align:'end',font:{size:14}}},
     responsive:false,
     layout:{padding:20},
