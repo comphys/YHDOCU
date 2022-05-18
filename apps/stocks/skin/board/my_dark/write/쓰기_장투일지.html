@@ -5,8 +5,6 @@
 <input type='hidden' name='mode'	value="{{D['Mode']}}" >
 <input type='hidden' name='uid'		value="{{D['USER']['uid']}}" >
 <input type='hidden' name='uname'	value="{{D['USER']['uname']}}" >
-<input type='hidden' name='sub6'	value="{{D['BODY']['sub6']}}" >
-<input type='hidden' name='sub7'	value="{{D['BODY']['sub7']}}" >
 <textarea  name='content' style="display:none"></textarea>
 <table class='table' style="border:2px solid black;border-radius:4px;width:{{D['w_width2']}}">
 <tbody>
@@ -58,7 +56,7 @@
 		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
 	</tr>
     <tr>
-        <td class='write-td-left' id="first_stock">{{D['BODY']['sub6']}}</td>
+        <td class='write-td-left' id="first_stock"><input type='text' name='sub6' style="border:none;width:70px;background-color:#4a505e;color:white" value="{{D['BODY']['sub6']}}"></td>
 		<td class="write-td-right">
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">매수금</div>
@@ -99,7 +97,7 @@
 		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
 	</tr>
     <tr>
-        <td class='write-td-left' id="second_stock">{{D['BODY']['sub7']}}</td>
+        <td class='write-td-left' id="second_stock"><input type='text' name='sub7' style="border:none;width:70px;background-color:#4a505e;color:white" value="{{D['BODY']['sub7']}}"></td>
 		<td class="write-td-right">
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">매수금</div>

@@ -14,14 +14,13 @@ class Stock_longterm(Control) :
         old_date = self.DB.get_one("max(add0)")
         self.DB.wre = f"add0='{old_date}'"
         old_data = self.DB.get_line("add0,add3,add7,add13,sub1,sub2,sub3,sub4,sub5,sub6,sub7")
-        self.info(old_data)
 
         self.DB.clear()
 
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add0 <= '{pick_day}'")
         old_date2 = self.DB.get_one("max(add0)")
-        self.DB.wre = f"add0='{old_date2}' and add1='JEPI'"; update['add8'] = self.DB.get_one('add3')
-        self.DB.wre = f"add0='{old_date2}' and add1='TQQQ'"; update['add14'] = self.DB.get_one('add3')
+        self.DB.wre = f"add0='{old_date2}' and add1='{old_data['sub6']}'"; update['add8'] = self.DB.get_one('add3')
+        self.DB.wre = f"add0='{old_date2}' and add1='{old_data['sub7']}'"; update['add14'] = self.DB.get_one('add3')
         
         update['add0'] = old_data['add0']
         update['add3'] = f"{int(old_data['add3']):,}"
