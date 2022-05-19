@@ -281,8 +281,6 @@ function auto_datainput() {
         var ans = JSON.parse(data)
         var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})  
-			$("#first_stock" ).text(ans['sub6'])
-			$("#second_stock" ).text(ans['sub7'])		      
     });
 }
 
