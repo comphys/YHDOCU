@@ -17,7 +17,10 @@ class 목록_장투일지(SKIN) :
         chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3",assoc=False)
         if chart_data :
 
-            last_date  = chart_data[0][0]
+            chart_data.reverse()
+
+            last_date  = chart_data[-1][0]
+
             self.D['경과일수'] = ut.diff_day('2022-04-12',last_date)
 
             self.D['chart_date'] = [x[0][2:] for x in chart_data]
@@ -29,17 +32,8 @@ class 목록_장투일지(SKIN) :
             self.D['chart_dividend'] = [float(x[6])*3 for x in chart_data]
             self.D['chart_cash'] = [float(x[7])*3 for x in chart_data]
 
-            self.D['chart_date'].reverse()
-            self.D['chart_min'].reverse()
-            self.D['chart_target'].reverse()
-            self.D['chart_cur'].reverse()
-            self.D['chart_max'].reverse()
-            self.D['chart_total'].reverse()
-            self.D['chart_dividend'].reverse()
-            self.D['chart_cash'].reverse()
-
-            self.D['target_value']  = f"{float(self.D['chart_target'][-1])/0.6:,.0f}"
-            self.D['current_value'] = f"{int(chart_data[0][5]):,}"
+            self.D['target_value']  = f"{float(self.D['chart_target'][-1]):,.0f}"
+            self.D['current_value'] = f"{float(chart_data[-1][3]):,.0f}"
             
             
             for i, x in enumerate(self.D['chart_max']) :
