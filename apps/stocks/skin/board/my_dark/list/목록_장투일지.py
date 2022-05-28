@@ -42,9 +42,6 @@ class 목록_장투일지(SKIN) :
                 if self.D['chart_total'][i]  < self.D['chart_min'][i]*0.8 or self.D['chart_total'][i]  > self.D['chart_max'][i]*1.5 : self.D['chart_total'][i]  = 'null'
                 if self.D['chart_cash'][i]  < self.D['chart_min'][i] * 0.8 or self.D['chart_cash'][i]  > self.D['chart_max'][i] : self.D['chart_cash'][i]  = 'null'
             
-            self.D['need_cash'] = self.D['chart_cur'][-1] - self.D['chart_target'][-1]
-            self.D['need_cash'] = f"{self.D['need_cash']:,.0f}"
-
             # ------------------------------------------------------------------------------------
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
@@ -53,11 +50,6 @@ class 목록_장투일지(SKIN) :
             LD = self.DB.get_line('*')
             self.D['chart_percent'] = [float(LD['add4']),float(LD['add10']),float(LD['add16'])]
             
-            bottom_price = self.D['chart_min'][-1] / int(LD['add13'])
-            bottom_count = int(LD['add3']) / bottom_price
-
-            self.D['bottom_price'] = f"{bottom_price:,.2f}"
-            self.D['bottom_count'] = f"{bottom_count:,.0f}"
             # --------------
             qry = f"SELECT sum(add1), sum(add2), sum(add5), sum(add6), sum(add11), sum(add12), sum(sub10) FROM {self.DB.tbl}"
             invest = self.DB.exe(qry,many=1,assoc=False)
@@ -88,8 +80,23 @@ class 목록_장투일지(SKIN) :
             self.D['수익률2'] = f"{수익률2:.2f}"
 
             self.D['info_color']= 'white' 
-            if LD['add15'] < LD['add18'] : self.D['info_color'] = '#F6CECE' 
-            if LD['add15'] > LD['add20'] : self.D['info_color'] = '#CEF6F5'
+            if LD['add15'] < LD['add18'] : 
+                self.D['need_cash'] = self.D['chart_cur'][-1] - self.D['chart_target'][-1]
+                bottom_price = self.D['chart_min'][-1] / int(LD['add13'])
+                bottom_count = self.D['need_cash'] / bottom_price
+                self.D['대응전략'] = 'Buy guide'
+                self.D['info_color'] = '#F6CECE' 
+
+            if LD['add15'] > LD['add20'] : 
+                self.D['need_cash'] =  self.D['chart_cur'][-1] - self.D['chart_max'][-1]
+                bottom_price = self.D['chart_max'][-1] / int(LD['add13'])
+                bottom_count = self.D['need_cash'] / bottom_price
+                self.D['대응전략'] = 'Sell guide'
+                self.D['info_color'] = '#CEF6F5'
+            
+            self.D['need_cash'] = f"{self.D['need_cash']:,.0f}" 
+            self.D['bottom_price'] = f"{bottom_price:,.2f}"
+            self.D['bottom_count'] = f"{bottom_count:,.0f}"
 
 
     def list(self) :
