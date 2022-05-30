@@ -57,7 +57,7 @@ class Board(Control) :
         self.D['Mode'] = 'add_body'
         self.D['No'] = self.gets['no']
         self.D['Brother']  = int(self.gets.get('brother','0')) 
-        self.D['Form_act'] = self.D['_bse'] + 'boards-action/save/' + self.bid
+        self.D['Form_act'] = self.D['_bse'] + 'boards-action/save/' + self.D['bid']
         o_no = self.D['Brother'] if self.D['Brother'] > 0 else self.D['No']
         sql = f"SELECT add0 FROM h_{self.parm[0]}_board WHERE no={o_no}"
         self.D['B_title'] = self.DB.one(sql)
