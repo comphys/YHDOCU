@@ -165,7 +165,7 @@ const data = {
         {
             label:' 목표가치',
             data : {{D['chart_target']}},
-            borderColor:'lightgray', borderWidth:2,borderDash: [2,2], pointRadius:0,  backgroundColor:'lightgray',
+            borderColor:'lightgray', borderWidth:1,pointRadius:0,  backgroundColor:'lightgray',
 			lineTension:0.2
 
         },
@@ -225,7 +225,7 @@ const config2 = {
 		grid : {
 			lineWidth:2,
 			color: function(context) {
-				if(context.tick.value == 20) { return 'black'} else return ''
+				if(context.tick.value == 20 || context.tick.value == 60 ) { return 'black'} else return ''
 			}
 		},
         beginAtZero: true
