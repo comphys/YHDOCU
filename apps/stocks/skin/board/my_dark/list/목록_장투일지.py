@@ -11,7 +11,7 @@ class 목록_장투일지(SKIN) :
     def chart(self) :
         self.DB.tbl = self.D['tbl']
         self.DB.wre = ''
-        self.DB.lmt = '60'
+        self.DB.lmt = '180'
         self.DB.odr = "add0 DESC"
 
         chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3",assoc=False)
