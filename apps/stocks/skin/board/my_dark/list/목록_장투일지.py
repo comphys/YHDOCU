@@ -83,17 +83,22 @@ class 목록_장투일지(SKIN) :
             if LD['add15'] < LD['add18'] : 
                 self.D['need_cash'] = self.D['chart_cur'][-1] - self.D['chart_target'][-1]
                 bottom_price = self.D['chart_min'][-1] / int(LD['add13'])
-                bottom_count = self.D['need_cash'] / bottom_price
                 self.D['대응전략'] = 'Buy guide'
                 self.D['info_color'] = '#F6CECE' 
 
-            if LD['add15'] > LD['add20'] : 
+            elif LD['add15'] > LD['add20'] : 
                 self.D['need_cash'] =  self.D['chart_cur'][-1] - self.D['chart_max'][-1]
                 bottom_price = self.D['chart_max'][-1] / int(LD['add13'])
-                bottom_count = self.D['need_cash'] / bottom_price
                 self.D['대응전략'] = 'Sell guide'
                 self.D['info_color'] = '#CEF6F5'
             
+            else :
+                self.D['need_cash'] =  self.D['chart_target'][-1] - self.D['chart_cur'][-1]
+                bottom_price = self.D['chart_min'][-1] / int(LD['add13'])
+                self.D['대응전략'] = 'Stay watch'
+                self.D['info_color'] = 'white'  
+
+            bottom_count = self.D['need_cash'] / bottom_price
             self.D['need_cash'] = f"{self.D['need_cash']:,.0f}" 
             self.D['bottom_price'] = f"{bottom_price:,.2f}"
             self.D['bottom_count'] = f"{bottom_count:,.0f}"
