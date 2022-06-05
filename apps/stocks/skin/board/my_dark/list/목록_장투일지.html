@@ -45,9 +45,13 @@
 		<thead>
 			<tr>
 				<th style="background-color:#071418;font-style:italic">Progress</th>
-				<th colspan='4' style="background-color:#0A2229;font-style:italic">US dollar</th>
-
-				<th colspan='6' style="background-color:#0B2F3A;font-style:italic">Dividend Stock</th>
+				<th style="background-color:#0A2229;text-align:right;">입금</th>
+				<th style="background-color:#0A2229;text-align:right;">출금</th>
+				<th colspan='2' style="background-color:#0A2229;font-style:italic">US dollar</th>
+				
+				<th style="background-color:#0B2F3A;text-align:right">매수금</th>
+				<th style="background-color:#0B2F3A;text-align:right">매도금</th>
+				<th colspan='4' style="background-color:#0B2F3A;font-style:italic">Dividend Stock</th>
 
 				<th colspan='6' style="background-color:#0A2229;font-style:italic">Leverage Stock</th>
 
@@ -55,20 +59,20 @@
 			</tr>
 			<tr>
 				<th style="background-color:#071418;font-style:italic">Diary</th>
-				<th style="background-color:#0A2229;text-align:right">입금</th>
-				<th style="background-color:#0A2229;text-align:right">출금</th>
+				<th style="background-color:#0A2229;text-align:right">{{D['총입금']}}</th>
+				<th style="background-color:#0A2229;text-align:right">{{D['총출금']}}</th>
 				<th style="background-color:#0A2229;text-align:right">잔액</th>
 				<th style="background-color:#0A2229;text-align:right">비중</th>
 
-				<th style="background-color:#0B2F3A;text-align:right">매수금</th>
-				<th style="background-color:#0B2F3A;text-align:right">매도금</th>
+				<th style="background-color:#0B2F3A;text-align:right">{{D['매수금1']}}</th>
+				<th style="background-color:#0B2F3A;text-align:right">{{D['매도금1']}}</th>
 				<th style="background-color:#0B2F3A;text-align:right">수량</th>
 				<th style="background-color:#0B2F3A;text-align:right">종가</th>
 				<th style="background-color:#0B2F3A;text-align:right">가치</th>
 				<th style="background-color:#0B2F3A;text-align:right">비중</th>
 
-				<th style="background-color:#0A2229;text-align:right">매수금</th>
-				<th style="background-color:#0A2229;text-align:right">매도금</th>
+				<th style="background-color:#0A2229;text-align:right">{{D['매수금2']}}</th>
+				<th style="background-color:#0A2229;text-align:right">{{D['매도금2']}}</th>
 				<th style="background-color:#0A2229;text-align:right">수량</th>
 				<th style="background-color:#0A2229;text-align:right">종가</th>
 				<th style="background-color:#0A2229;text-align:right">가치</th>

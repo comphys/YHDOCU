@@ -8,6 +8,19 @@ class 목록_장투일지(SKIN) :
         self.TrCnt = self.D.get('Tr_cnt',0)
         self.Type = self.D['BCONFIG']['type']
 
+    def head(self) : 
+        TH_title = {'no':'번호','uname':'작성자','wdate':'작성일','mdate':'수정일','hit':'조회','uid':'아이디'}
+        TH_align = {'no':'center','uname':'center','wdate':'center','mdate':'center','hit':'center','uid':'center'}
+        THX = {}
+        TH_title |= self.D['EXTITLE'] ; TH_align |= self.D['EXALIGN']
+
+        for key in self.D['list_order'] :
+            if   key == self.D['Sort']  : THX[key] = f"<th class='list-sort'  onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
+            elif key == self.D['Sort1'] : THX[key] = f"<th class='list-sort1' onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
+            else : THX[key] = f"<th class='list-sort2' onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
+        
+        self.D['head_td'] = THX
+
     def chart(self) :
         self.DB.tbl = self.D['tbl']
         self.DB.wre = ''
@@ -35,12 +48,11 @@ class 목록_장투일지(SKIN) :
             self.D['target_value']  = f"{float(self.D['chart_target'][-1]):,.0f}"
             self.D['current_value'] = f"{float(chart_data[-1][3]):,.0f}"
             
-            
-            for i, x in enumerate(self.D['chart_max']) :
-                if self.D['chart_cur'][i]  < self.D['chart_min'][i]*0.8 or self.D['chart_cur'][i]  > self.D['chart_max'][i]*1.2 : self.D['chart_cur'][i]  = 'null'
-                if self.D['chart_dividend'][i]  < self.D['chart_min'][i]*0.8 or self.D['chart_dividend'][i]  > self.D['chart_max'][i]*1.2 : self.D['chart_dividend'][i]  = 'null'
-                if self.D['chart_total'][i]  < self.D['chart_min'][i]*0.8 or self.D['chart_total'][i]  > self.D['chart_max'][i]*1.5 : self.D['chart_total'][i]  = 'null'
-                if self.D['chart_cash'][i]  < self.D['chart_min'][i] * 0.8 or self.D['chart_cash'][i]  > self.D['chart_max'][i] : self.D['chart_cash'][i]  = 'null'
+            check_items = ('chart_cur','chart_dividend','chart_total','chart_cash')
+            for item in check_items :
+                for i, x in enumerate(self.D['chart_max']) :
+                    if self.D[item][i]  < self.D['chart_min'][i]*0.8 : self.D[item][i] = self.D['chart_min'][i]*0.8
+                    if self.D[item][i]  > self.D['chart_max'][i]*1.2 : self.D[item][i] = self.D['chart_max'][i]*1.2
             
             # ------------------------------------------------------------------------------------
             self.DB.clear()
@@ -52,18 +64,20 @@ class 목록_장투일지(SKIN) :
             
             # --------------
             qry = f"SELECT sum(add1), sum(add2), sum(add5), sum(add6), sum(add11), sum(add12), sum(sub10) FROM {self.DB.tbl}"
-            invest = self.DB.exe(qry,many=1,assoc=False)
+            invest = self.DB.exe(qry,many=1,assoc=True)
 
-            총투자금 = int(invest[0]) - int(invest[1])
+            총투자금 = int(invest['sum(add1)']) - int(invest['sum(add2)'])
             총수익금 = int(LD['add17']) - 총투자금
             총수익률 = 총수익금/총투자금 * 100
-            self.D['총입금'] = f"{int(invest[0]):,}"
-            self.D['총출금'] = f"{int(invest[1]):,}"
+            self.D['총입금'] = f"{int(invest['sum(add1)']):,}"
+            self.D['총출금'] = f"{int(invest['sum(add2)']):,}"
             self.D['총수익금'] = f"{총수익금:,}"
             self.D['총수익률'] = f"{총수익률:.2f}"
-            self.D['배당금'] = f"{float(invest[6]):,.2f}"
+            self.D['배당금'] = f"{float(invest['sum(sub10)']):,.2f}"
             # -- dividend
-            매수금1 = float(invest[2]) - float(invest[3])
+            self.D['매수금1'] = float(invest['sum(add5)'])
+            self.D['매도금1'] = float(invest['sum(add6)'])
+            매수금1 = self.D['매수금1'] - self.D['매도금1']
             수익금1 = float(LD['add9']) - 매수금1
             평단가1 = 매수금1/int(LD['add7'])
             수익률1 = (float(LD['add8']) - 평단가1) / 평단가1 *100
@@ -71,13 +85,20 @@ class 목록_장투일지(SKIN) :
             self.D['수익금1'] = f"{수익금1:,.2f}"
             self.D['수익률1'] = f"{수익률1:.2f}"
             # -- leverage
-            매수금2 = float(invest[4]) - float(invest[5])
+            self.D['매수금2'] = float(invest['sum(add11)'])
+            self.D['매도금2'] = float(invest['sum(add12)'])
+            매수금2 = self.D['매수금2'] - self.D['매도금2']
             수익금2 = float(LD['add15']) - 매수금2
             평단가2 = 매수금2/int(LD['add13'])
             수익률2 = (float(LD['add14']) - 평단가2) / 평단가2 *100
             self.D['평단가2'] = f"{평단가2:,.2f}"
             self.D['수익금2'] = f"{수익금2:,.2f}"
             self.D['수익률2'] = f"{수익률2:.2f}"
+
+            self.D['매수금1'] = f"{self.D['매수금1']:,.2f}"
+            self.D['매도금1'] = f"{self.D['매도금1']:,.2f}"
+            self.D['매수금2'] = f"{self.D['매수금2']:,.2f}"
+            self.D['매도금2'] = f"{self.D['매도금2']:,.2f}"
 
             self.D['info_color']= 'white' 
             if LD['add15'] < LD['add18'] : 
@@ -105,6 +126,7 @@ class 목록_장투일지(SKIN) :
 
 
     def list(self) :
+        self.head()
         self.chart()
 
         TR = [] ; tx = {}
