@@ -34,7 +34,7 @@ class 목록_장투일지(SKIN) :
 
             last_date  = chart_data[-1][0]
 
-            self.D['경과일수'] = ut.diff_day('2022-04-12',last_date)
+            self.D['경과일수'] = ut.diff_day('2022-04-12',last_date) + 1
 
             self.D['chart_date'] = [x[0][2:] for x in chart_data]
             self.D['chart_min'] = [float(x[1]) for x in chart_data]
