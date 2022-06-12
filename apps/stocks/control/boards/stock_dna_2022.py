@@ -388,7 +388,7 @@ class Stock_dna_2022(Control) :
         update['sub6'] = self.M['일매수금'] ; update['add17']   = f"{round(self.M['추가자본'],4):,.2f}"
         
         update['sub1']   = self.M['연속하락'] ; update['sub2'] = 'YES' if self.M['위기전략'] else 'NO'; 
-        update['sub3'] = self.M['전략매금'] ;   update['sub4'] = self.M['전략가격']
+        update['sub3']   = f"{round(self.M['전략매금'],4):,.4f}";   update['sub4'] = self.M['전략가격']
 
         update['buy1']   = self.M['평단매수'] ; update['buy11'] = self.M['평단수량'] ; update['buy12'] = f"{round(self.M['평단단가'],4):,.2f}"
         update['buy2']   = self.M['큰단매수'] ; update['buy21'] = self.M['큰단수량'] ; update['buy22'] = f"{round(self.M['큰단단가'],4):,.2f}"
