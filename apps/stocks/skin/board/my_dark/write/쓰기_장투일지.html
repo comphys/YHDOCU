@@ -234,6 +234,8 @@
 <script>
 JYHEDITOR.start('YHBmainEditor');
 
+var previous_target
+
 function check_MainWriteForm(f)	{	
 	var wDiv = $id("YHBmainEditor");
 	JYHEDITOR.clearDocuSelect();
@@ -279,6 +281,7 @@ function auto_datainput() {
     postData['add0'] = ck_date
     $.post( posturl, postData).done(function(data)  {
         var ans = JSON.parse(data)
+		previous_target = ans['add19']
         var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})  
     });
@@ -326,7 +329,7 @@ function auto_calculate() {
 	누적1 += 수량1; 누적2 += 수량2;
 
 	잔액    = (잔액+입금+매도금1+매도금2+기타수익-출금-매수금1-매수금2+배당금)
-	let 목표가치 = 초기자금 * (1+ 증가율 )**diffDays
+	let 목표가치 = previous_target * (1+ 증가율 )
     
     let 가치1   = (종가1 * 누적1)
     let 가치2   = (종가2 * 누적2)
