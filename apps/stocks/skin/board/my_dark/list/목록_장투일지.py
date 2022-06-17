@@ -41,15 +41,18 @@ class 목록_장투일지(SKIN) :
             self.D['chart_target'] = [float(x[2]) for x in chart_data]
             self.D['chart_cur'] = [float(x[3]) for x in chart_data]
             self.D['chart_max'] = [float(x[4]) for x in chart_data]
-
+            self.D['chart_total'] = [float(x[5])*0.5 for x in chart_data]
+            self.D['chart_dividend'] = [float(x[6])*2.5 for x in chart_data]
+            self.D['chart_cash'] = [float(x[7])*1.67 for x in chart_data]
 
             self.D['target_value']  = f"{float(self.D['chart_target'][-1]):,.0f}"
             self.D['current_value'] = f"{float(chart_data[-1][3]):,.0f}"
             
-            item = 'chart_cur'
-            for i, x in enumerate(self.D['chart_max']) :
-                if self.D[item][i]  < self.D['chart_min'][i]*0.8 : self.D[item][i] = self.D['chart_min'][i]*0.8
-                if self.D[item][i]  > self.D['chart_max'][i]*1.2 : self.D[item][i] = self.D['chart_max'][i]*1.2
+            check_items = ('chart_cur','chart_dividend','chart_total','chart_cash')
+            for item in check_items :
+                for i, x in enumerate(self.D['chart_max']) :
+                    if self.D[item][i]  < self.D['chart_min'][i]*0.8 : self.D[item][i] = self.D['chart_min'][i]*0.8
+                    if self.D[item][i]  > self.D['chart_max'][i]*1.2 : self.D[item][i] = self.D['chart_max'][i]*1.2
             
             # ------------------------------------------------------------------------------------
             self.DB.clear()
