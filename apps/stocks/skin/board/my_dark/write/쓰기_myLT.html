@@ -234,7 +234,7 @@
 <script>
 JYHEDITOR.start('YHBmainEditor');
 
-var previous_target
+var previous_target, previous_date
 
 function check_MainWriteForm(f)	{	
 	var wDiv = $id("YHBmainEditor");
@@ -282,6 +282,7 @@ function auto_datainput() {
     $.post( posturl, postData).done(function(data)  {
         var ans = JSON.parse(data)
 		previous_target = ans['add19']
+		previous_date = ans['add0']
         var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})  
     });
@@ -299,7 +300,7 @@ function auto_reset() {
 function auto_calculate() {
 	
 	const 현재일  = $("input[name='add0']").val()
-	const 기준일  = '2022-04-12'
+	const 기준일  = previous_date
 
 	const date1= new Date(현재일)
 	const date2= new Date(기준일)
@@ -329,7 +330,7 @@ function auto_calculate() {
 	누적1 += 수량1; 누적2 += 수량2;
 
 	잔액    = (잔액+입금+매도금1+매도금2+기타수익-출금-매수금1-매수금2+배당금)
-	let 목표가치 = previous_target * (1+ 증가율 )
+	let 목표가치 = previous_target * (1+ 증가율 )^diffDays
     
     let 가치1   = (종가1 * 누적1)
     let 가치2   = (종가2 * 누적2)

@@ -18,9 +18,9 @@ class Stock_longterm(Control) :
         self.DB.clear()
 
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add0 <= '{pick_day}'")
-        old_date2 = self.DB.get_one("max(add0)")
-        self.DB.wre = f"add0='{old_date2}' and add1='{old_data['sub6']}'"; update['add8'] = self.DB.get_one('add3')
-        self.DB.wre = f"add0='{old_date2}' and add1='{old_data['sub7']}'"; update['add14'] = self.DB.get_one('add3')
+        on_day = self.DB.get_one("max(add0)")
+        self.DB.wre = f"add0='{on_day}' and add1='{old_data['sub6']}'"; update['add8'] = self.DB.get_one('add3')
+        self.DB.wre = f"add0='{on_day}' and add1='{old_data['sub7']}'"; update['add14'] = self.DB.get_one('add3')
         
         update['add0'] = old_data['add0']
         update['add3'] = f"{int(old_data['add3']):,}"
@@ -35,6 +35,8 @@ class Stock_longterm(Control) :
         update['sub5'] = old_data['sub5']
         update['sub6'] = old_data['sub6']
         update['sub7'] = old_data['sub7']
+
+        self.info(update['add0'])
 
 
         return self.json(update)
