@@ -7,8 +7,8 @@ class M_LT_backtest(Model) :
         
         # 기본 값
         self.D['code'] = 'SOXL'
-        self.D['capital'] = '5,000'
-        self.D['addition'] = '3,000'
+        self.D['leverage'] = '5,000'
+        self.D['cash'] = '3,000'
         self.D['start_date'] = '2021-01-02'
-        self.D['end_date'] = '2021-12-31'
+        self.D['end_date'] = '2021-01-31'
         
