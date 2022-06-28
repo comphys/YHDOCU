@@ -170,7 +170,7 @@
 				<input type='text' name='sub4' class="i-number" style="width:100px;" value="{{D['BODY']['sub4']}}">
 			</div>
 			<div class='i-input-div-notice'>
-				<div class='write-input-left' style="background-color:darkslategray;">증가율</div>
+				<div class='write-input-left' style="background-color:darkslategray;">가중치</div>
 				<input type='text' name='sub2' class="i-number" style="width:110px;" value="{{D['BODY']['sub2']}}">
 			</div>
 			<div class='i-input-div-notice'>
@@ -234,7 +234,6 @@
 <script>
 JYHEDITOR.start('YHBmainEditor');
 
-var previous_target
 
 function check_MainWriteForm(f)	{	
 	var wDiv = $id("YHBmainEditor");
@@ -281,7 +280,6 @@ function auto_datainput() {
     postData['add0'] = ck_date
     $.post( posturl, postData).done(function(data)  {
         var ans = JSON.parse(data)
-		previous_target = ans['add19']
         var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})  
     });
@@ -318,8 +316,8 @@ function auto_calculate() {
 	let   누적1    = txt_to_num('add7','i');
     const 종가2    = txt_to_num('add14','f');
     const 수량2    = txt_to_num('sub9','i');
-	const 초기자금 = txt_to_num('sub1','f');
-	const 증가율   = txt_to_num('sub2','f');
+	const 기초가치 = txt_to_num('sub1','f');
+	const 가중치   = txt_to_num('sub2','f');
 	const 최대임계 = txt_to_num('sub3','f');
 	const 최소임계 = txt_to_num('sub4','f');
 	const 기타수익 = txt_to_num('sub11','f');
@@ -329,7 +327,7 @@ function auto_calculate() {
 	누적1 += 수량1; 누적2 += 수량2;
 
 	잔액    = (잔액+입금+매도금1+매도금2+기타수익-출금-매수금1-매수금2+배당금)
-	let 목표가치 = previous_target * 증가율
+	let 목표가치 = 기초가치 * 가중치
     
     let 가치1   = (종가1 * 누적1)
     let 가치2   = (종가2 * 누적2)
