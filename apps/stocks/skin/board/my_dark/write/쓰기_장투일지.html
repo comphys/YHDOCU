@@ -141,29 +141,32 @@
         <td class='write-td-left'>투자상황</td>
 		<td class="write-td-right">
 			<div class='i-input-div-must'>
-				<div class='write-input-left' style="background-color:darkslategray;">기본가치</div>
-				<input type='text' name='sub1' class="i-number" style="width:100px;" value="{{D['BODY']['sub1']}}">
-			</div>
-			<div class='i-input-div-must'>
 				<div class='write-input-left' style="background-color:darkslategray;">최소가치</div>
 				<input type='text' name='add18' class="i-number" style="width:100px;" value="{{D['BODY']['add18']}}">
 			</div>
 			<div class='i-input-div-must'>
 				<div class='write-input-left' style="background-color:darkslategray;">목표가치</div>
-				<input type='text' name='add19' class="i-number" style="width:110px;" value="{{D['BODY']['add19']}}">
+				<input type='text' name='add19' class="i-number" style="width:100px;" value="{{D['BODY']['add19']}}">
 			</div>
 			<div class='i-input-div-must'>
 				<div class='write-input-left' style="background-color:darkslategray;">최대가치</div>
-				<input type='text' name='add20' class="i-number" style="width:100px;" value="{{D['BODY']['add20']}}">
+				<input type='text' name='add20' class="i-number" style="width:110px;" value="{{D['BODY']['add20']}}">
+			</div>
+			<div class='i-input-div-must'>
+				<div class='write-input-left' style="background-color:darkslategray;">가치합계</div>
+				<input type='text' name='add17' class="i-number" style="width:100px;" value="{{D['BODY']['add17']}}">
 			</div>
         </td>
     </tr>
-    <tr>
-        <td class='write-td-left'>기본정보</td>
+	<tr onclick="$('.stategy-toggle').toggle()">
+		<td colspan="2" style="font-size:2px;line-height:2px;background-color: #393e4a;">&nbsp;</td>
+	</tr>
+    <tr class='stategy-toggle'>
+        <td class='write-td-left'>설정정보</td>
 		<td class="write-td-right">
 			<div class='i-input-div-notice'>
-				<div class='write-input-left' style="background-color:darkslategray;">가치합계</div>
-				<input type='text' name='add17' class="i-number" style="width:100px;" value="{{D['BODY']['add17']}}">
+				<div class='write-input-left' style="background-color:darkslategray;">기본가치</div>
+				<input type='text' name='sub1' class="i-number" style="width:100px;" value="{{D['BODY']['sub1']}}">
 			</div>
 			<div class='i-input-div-notice'>
 				<div class='write-input-left' style="background-color:darkslategray;">하강한계</div>
@@ -176,6 +179,10 @@
 			<div class='i-input-div-notice'>
 				<div class='write-input-left' style="background-color:darkslategray;">상승한계</div>
 				<input type='text' name='sub3' class="i-number" style="width:100px;" value="{{D['BODY']['sub3']}}">
+			</div>
+			<div class='i-input-div-notice'>
+				<div class='write-input-left' style="background-color:darkslategray;">기본수량</div>
+				<input type='text' name='sub12' class="i-number" style="width:100px;" value="{{D['BODY']['sub12']}}">
 			</div>
         </td>
     </tr>
@@ -280,7 +287,7 @@ function auto_datainput() {
     postData['add0'] = ck_date
     $.post( posturl, postData).done(function(data)  {
         var ans = JSON.parse(data)
-        var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7']
+        var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7','sub12']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})  
     });
 }
