@@ -49,11 +49,11 @@ class 목록_장투일지(SKIN) :
             self.D['target_value']  = f"{float(self.D['chart_target'][-1]):,.0f}"
             self.D['current_value'] = f"{float(chart_data[-1][3]):,.0f}"
             
-            check_items = ('chart_cur','chart_dividend','chart_total','chart_cash')
-            for item in check_items :
-                for i, x in enumerate(self.D['chart_max']) :
-                    if self.D[item][i]  < self.D['chart_min'][i]*0.8 : self.D[item][i] = self.D['chart_min'][i]*0.8
-                    if self.D[item][i]  > self.D['chart_max'][i]*1.2 : self.D[item][i] = self.D['chart_max'][i]*1.2
+            # check_items = ('chart_cur','chart_dividend','chart_total','chart_cash')
+            # for item in check_items :
+            #     for i, x in enumerate(self.D['chart_max']) :
+            #         if self.D[item][i]  < self.D['chart_min'][i]*0.8 : self.D[item][i] = self.D['chart_min'][i]*0.8
+            #         if self.D[item][i]  > self.D['chart_max'][i]*1.2 : self.D[item][i] = self.D['chart_max'][i]*1.2
             
             # ------------------------------------------------------------------------------------
             self.DB.clear()
