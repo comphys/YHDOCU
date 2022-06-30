@@ -27,7 +27,7 @@ class 목록_장투일지(SKIN) :
         self.DB.lmt = '180'
         self.DB.odr = "add0 DESC"
 
-        chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3",assoc=False)
+        chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3,add14",assoc=False)
         if chart_data :
 
             chart_data.reverse()
@@ -44,6 +44,7 @@ class 목록_장투일지(SKIN) :
             self.D['chart_total'] = [float(x[5])*0.5 for x in chart_data]
             self.D['chart_dividend'] = [float(x[6])*2.5 for x in chart_data]
             self.D['chart_cash'] = [float(x[7])*1.67 for x in chart_data]
+            self.D['chart_ori'] = [float(x[8])*250 for x in chart_data]
 
             self.D['target_value']  = f"{float(self.D['chart_target'][-1]):,.0f}"
             self.D['current_value'] = f"{float(chart_data[-1][3]):,.0f}"
