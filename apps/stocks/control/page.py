@@ -65,6 +65,7 @@ class Page(Control) :
         self.D['cash']   = self.D['post']['cash']
         self.D['start_date'] = self.D['post']['start_date']
         self.D['end_date']   = self.D['post']['end_date']
+        self.D['strategy']   = self.D['post']['strategy']
 
         M = self.model('backtest-backtest_LT_backtest')
         M.view()
