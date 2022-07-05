@@ -1,7 +1,6 @@
 from system.core.load import Model
-from datetime import datetime,date
 import system.core.my_utils as my
-import math,time
+
 
 class M_backtest_LT_backtest(Model) :
 
@@ -45,13 +44,6 @@ class M_backtest_LT_backtest(Model) :
         pass
         
 
-    def rebalance(self)  :
-        total = self.M['가용잔액'] + self.M['추가자본']
-        self.M['가용잔액'] = round(total * self.M['자본비율'])
-        self.M['추가자본'] = round(total - self.M['가용잔액'])
-        self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
-        self.M['씨드'] = self.M['가용잔액']
-
     def init_value(self) :
         self.D['TR'] = []
         self.D['chart_date'] = []
@@ -76,22 +68,31 @@ class M_backtest_LT_backtest(Model) :
 
 
     def buy(self) :
+        
         if  self.M['당일종가'] <= self.M['전일종가'] :
-            self.M['매수'] = int((self.M['목표가치'] - self.M['현재가치']) / self.M['당일종가']) 
+            # self.M['매수'] = int((self.M['최대가치'] - self.M['현재가치']) / self.M['당일종가']) 
+            self.M['매수'] = int((self.M['가용잔액'] * 0.1)  / self.M['당일종가']) 
             self.M['거래금액'] = self.M['매수'] * self.M['당일종가']
+            if  self.M['가용잔액'] - self.M['거래금액'] < 0 :
+                self.M['매수'] = 0
+                return
             self.M['보유수량'] += self.M['매수']
             self.M['가용잔액'] -= self.M['거래금액']
             self.M['가용잔액'] = round(self.M['가용잔액'],2)
 
     def sell(self) :
         if self.M['당일종가'] >= self.M['전일종가'] :
-            self.M['매도'] = int((self.M['현재가치'] - self.M['목표가치']) / self.M['당일종가'])
+            # self.M['매도'] = int((self.M['현재가치'] - self.M['최소가치']) / self.M['당일종가'])
+            self.M['매도'] = int(self.M['보유수량'] * 0.05) 
             self.M['보유수량'] -= self.M['매도']
             self.M['거래금액'] = self.M['매도'] * self.M['당일종가']
             self.M['가용잔액'] += self.M['거래금액']
             self.M['가용잔액'] = round(self.M['가용잔액'],2)
-            # self.M['기본배수'] = self.M['최대가치'] / self.M['기본종가']
-            self.M['기본배수'] = self.M['기본배수'] * 1.10
+
+    
+    def rebalance(self) :
+        # return
+        self.M['기본배수'] = self.M['최대가치'] / self.M['기본종가'] 
 
     def new_day(self) :
         self.M['보유수량'] = int(self.D['init_leverage'] / self.M['당일종가'])
@@ -100,6 +101,9 @@ class M_backtest_LT_backtest(Model) :
         self.M['목표가치'] = self.M['기본종가'] * self.M['기본배수']
         self.M['최소가치'] = self.M['목표가치'] * self.M['하강밴드']
         self.M['최대가치'] = self.M['목표가치'] * self.M['상승밴드']
+        self.M['가용잔액'] = self.M['가용잔액'] + self.D['init_leverage'] - self.M['현재가치']
+        self.M['기종가'] = self.M['기본종가']
+        self.M['당종가'] = self.M['당일종가']
         self.proportion()
 
     def proportion(self) :
@@ -131,21 +135,28 @@ class M_backtest_LT_backtest(Model) :
 
             self.M['현재가치'] = self.M['당일종가'] * self.M['보유수량']
 
-            if self.D['strategy'] == '변동리밸런싱_기본' :
-                self.M['목표가치'] = self.M['기본종가'] * self.M['기본배수']
-                self.M['최소가치'] = self.M['목표가치'] * self.M['하강밴드']
-                self.M['최대가치'] = self.M['목표가치'] * self.M['상승밴드']
+            if   self.D['strategy'] == '변동리밸런싱_기본' :
+                 self.M['목표가치'] = self.M['기본종가'] * self.M['기본배수']
+                 self.M['최소가치'] = self.M['목표가치'] * self.M['하강밴드']
+                 self.M['최대가치'] = self.M['목표가치'] * self.M['상승밴드']
+            elif self.D['strategy'] == '고정리밸런싱_증가' :
+                 self.M['목표가치'] = self.M['목표가치'] * 1.002
+                 self.M['최소가치'] = self.M['목표가치'] * self.M['하강밴드']
+                 self.M['최대가치'] = self.M['목표가치'] * self.M['상승밴드']
 
             
         #   결과정리 --------------------------------------------------------------------------------------------------
             # self.calculate()
             self.proportion()
+            if self.M['매도'] : self.rebalance()
             self.print_backtest()
         # endfor -----------------------------------------------------------------------------------------------------
         self.result()
 
     def result(self) :
-
+        code_price_change = (self.M['당일종가'] - self.M['당종가']) / self.M['당종가'] * 100
+        base_price_change = (self.M['기본종가'] - self.M['기종가']) / self.M['기종가'] * 100 
+       
         초기자본 = self.D['init_leverage'] + self.D['init_cash']
         최종자본 = self.M['현재가치'] + self.M['가용잔액'] 
         최종수익 = 최종자본 - 초기자본 
@@ -153,8 +164,9 @@ class M_backtest_LT_backtest(Model) :
         style1 = "<span style='font-weight:bold;color:white'>"
         style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
         style3 = "<span style='font-weight:bold;color:#F6CECE'>"
-        self.D['output']  = f"초기자본 {style1}${초기자본:,}</span> 최종자본 {style1}${최종자본:,.2f}</span> 으로 "
-        self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 이며 수익률은 {style3}{최종수익률:,.2f}</span>% 입니다"
+        self.D['output_l']  = f"{style2}{self.D['기본코드']}</span>({style3}{base_price_change:,.2f}</span>%)&nbsp; {style1}{self.D['code']}</span>({style3}{code_price_change:,.2f}</span>%)"
+        self.D['output_r']  = f"초기자본 {style1}${초기자본:,}</span> 최종자본 {style1}${최종자본:,.2f}</span> 으로 "
+        self.D['output_r'] += f"수익은 {style2}${최종수익:,.2f}</span> 이며 수익률은 {style3}{최종수익률:,.2f}</span>% 입니다"
     
     def view(self) :
         

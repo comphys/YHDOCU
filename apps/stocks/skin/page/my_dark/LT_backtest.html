@@ -26,15 +26,16 @@
                         <li><a>매매전략</a></li>
                         <li><a href='#'>변동리밸런싱_기본</a></li>
 						<li><a href='#'>고정리밸런싱_기본</a></li>
+						<li><a href='#'>고정리밸런싱_증가</a></li>
                     </ul>
             </div>
     </div>
     <div class='i-input-div'>
-        <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 주식 자본금</div>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 최초 투자금</div>
         <input type='text' name='leverage' class="i-number" style="width:80px;text-align:center;" value="{{D['leverage']}}">
     </div>
     <div class='i-input-div'>
-        <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 현금 자본금</div>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 예비 자본금</div>
         <input type='text' class="i-number" name="cash" style="width:80px;text-align:center;" value="{{D['cash']}}">
     </div>
 
@@ -64,10 +65,10 @@
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
 {% else %}
 	<div class="pull-left" style="padding:10px;color:lightgray">
-		&nbsp;
+	{{D['output_l']|safe}}
 	</div>
 	<div class="pull-right" style="padding:10px;color:lightgray">
-	{{D['output']|safe}}
+	{{D['output_r']|safe}}
 	</div>
 	<table class='table table-striped table-hover' style="width:{{D['xwidth']}};border:2px solid black;">
 		<tr style="background-color:#393f4a;border-bottom:1px solid black">
@@ -170,7 +171,7 @@ const data = {
         {
             label:' 현재가치',
             data : {{D['chart_cur']|safe}},
-            borderColor:'yellow', borderWidth:4,pointRadius:0, pointHoverRadius:24, backgroundColor:'yellow',
+            borderColor:'yellow', borderWidth:3,pointRadius:0, pointHoverRadius:24, backgroundColor:'yellow',
 			lineTension:0.2
 
         },

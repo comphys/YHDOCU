@@ -27,27 +27,32 @@ class 목록_장투일지(SKIN) :
         self.DB.lmt = '180'
         self.DB.odr = "add0 DESC"
 
-        chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3,add14,sub12",assoc=False)
+        chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3,add14,sub12,add11",assoc=True)
         if chart_data :
 
             chart_data.reverse()
 
-            last_date  = chart_data[-1][0]
+            last_date  = chart_data[-1]['add0']
 
             self.D['경과일수'] = ut.diff_day('2022-06-14',last_date) + 1
+            self.D['profit_limit'] = []
+            acc = 0.0
+            for x in chart_data :
+                acc = acc + float(x['add11'])
+                self.D['profit_limit'].append(acc)
 
-            self.D['chart_date'] = [x[0][2:] for x in chart_data]
-            self.D['chart_min'] = [float(x[1]) for x in chart_data]
-            self.D['chart_target'] = [float(x[2]) for x in chart_data]
-            self.D['chart_cur'] = [float(x[3]) for x in chart_data]
-            self.D['chart_max'] = [float(x[4]) for x in chart_data]
-            self.D['chart_total'] = [float(x[5])*0.5 for x in chart_data]
-            self.D['chart_dividend'] = [float(x[6])*2.5 for x in chart_data]
-            self.D['chart_cash'] = [float(x[7])*1.67 for x in chart_data]
-            self.D['chart_ori'] = [float(x[8])*float(x[9]) for x in chart_data]
+            self.D['chart_date'] = [x['add0'][2:] for x in chart_data]
+            self.D['chart_min'] = [float(x['add18']) for x in chart_data]
+            self.D['chart_target'] = [float(x['add19']) for x in chart_data]
+            self.D['chart_cur'] = [float(x['add15']) for x in chart_data]
+            self.D['chart_max'] = [float(x['add20']) for x in chart_data]
+            self.D['chart_total'] = [float(x['add17'])*0.5 for x in chart_data]
+            self.D['chart_dividend'] = [float(x['add9'])*2.5 for x in chart_data]
+            self.D['chart_cash'] = [float(x['add3'])*1.67 for x in chart_data]
+            self.D['chart_ori'] = [float(x['add14'])*float(x['sub12']) for x in chart_data]
 
             self.D['target_value']  = f"{float(self.D['chart_target'][-1]):,.0f}"
-            self.D['current_value'] = f"{float(chart_data[-1][3]):,.0f}"
+            self.D['current_value'] = f"{float(chart_data[-1]['add15']):,.0f}"
             
             # check_items = ('chart_cur','chart_dividend','chart_total','chart_cash')
             # for item in check_items :
