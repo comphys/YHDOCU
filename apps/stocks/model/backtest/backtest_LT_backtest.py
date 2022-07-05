@@ -35,8 +35,6 @@ class M_backtest_LT_backtest(Model) :
         tx['현금비중']  = f"{self.M['현금비중']:,.1f}%"
         tx['수익률']    = f"{self.M['수익률']:,.2f}%"
 
-
-
         self.D['TR'].append(tx)
         
     def calculate(self)  :
