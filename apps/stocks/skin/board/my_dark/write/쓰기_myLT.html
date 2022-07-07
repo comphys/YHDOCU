@@ -306,6 +306,7 @@ function auto_calculate() {
 	const date2= new Date(기준일)
 	const diffDate = date1.getTime() - date2.getTime()
 	const diffDays = diffDate/(1000*3600*24) 
+
 	
 	const 입금     = txt_to_num('add1','i');
     const 출금     = txt_to_num('add2','i');
@@ -330,7 +331,8 @@ function auto_calculate() {
 	누적1 += 수량1; 누적2 += 수량2;
 
 	잔액    = (잔액+입금+매도금1+매도금2+기타수익-출금-매수금1-매수금2+배당금)
-	let 목표가치 = previous_target * (1+ 증가율 )^diffDays
+	let 목표가치 = previous_target * (1+ 증가율 )**diffDays
+
     
     let 가치1   = (종가1 * 누적1)
     let 가치2   = (종가2 * 누적2)
