@@ -24,7 +24,7 @@ class 목록_장투일지(SKIN) :
     def chart(self) :
         self.DB.tbl = self.D['tbl']
         self.DB.wre = ''
-        self.DB.lmt = '180'
+        # self.DB.lmt = '180'
         self.DB.odr = "add0 DESC"
 
         chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3,add14,sub12,add11",assoc=True)
@@ -129,7 +129,15 @@ class 목록_장투일지(SKIN) :
             self.D['need_cash'] = f"{self.D['need_cash']:,.0f}" 
             self.D['bottom_price'] = f"{bottom_price:,.2f}"
             self.D['bottom_count'] = f"{bottom_count:,.0f}"
-
+            # For Chart
+            chart_back_limit = -120
+            self.D['chart_date'] = self.D['chart_date'][chart_back_limit:] 
+            self.D['chart_min'] = self.D['chart_min'][chart_back_limit:]
+            self.D['chart_target'] = self.D['chart_target'][chart_back_limit:]
+            self.D['chart_cur'] = self.D['chart_cur'][chart_back_limit:]
+            self.D['chart_max'] = self.D['chart_max'][chart_back_limit:]
+            self.D['profit_limit'] = self.D['profit_limit'][chart_back_limit:]
+            self.D['chart_ori'] = self.D['chart_ori'][chart_back_limit:]
 
     def list(self) :
         self.head()

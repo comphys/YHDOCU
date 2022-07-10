@@ -63,6 +63,7 @@ class M_backtest_LT_backtest(Model) :
 
         self.M['상승밴드']  = 1.1
         self.M['하강밴드']  = 0.9
+        self.M['가치증가']  = 1.0
 
 
     def buy(self) :
@@ -71,9 +72,11 @@ class M_backtest_LT_backtest(Model) :
             # self.M['매수'] = int((self.M['최대가치'] - self.M['현재가치']) / self.M['당일종가']) 
             self.M['매수'] = int((self.M['가용잔액'] * 0.1)  / self.M['당일종가']) 
             self.M['거래금액'] = self.M['매수'] * self.M['당일종가']
-            if  self.M['가용잔액'] - self.M['거래금액'] < 0 :
+            if  self.M['가용잔액'] - self.M['거래금액'] < 0 : 
                 self.M['매수'] = 0
+                self.M['거래금액'] = 0
                 return
+            self.M['가치증가'] = (self.M['보유수량']+ self.M['매수'])/self.M['보유수량']
             self.M['보유수량'] += self.M['매수']
             self.M['가용잔액'] -= self.M['거래금액']
             self.M['가용잔액'] = round(self.M['가용잔액'],2)
@@ -88,10 +91,6 @@ class M_backtest_LT_backtest(Model) :
             self.M['가용잔액'] = round(self.M['가용잔액'],2)
 
     
-    def rebalance(self) :
-        # return
-        self.M['기본배수'] = self.M['최대가치'] / self.M['기본종가'] 
-
     def new_day(self) :
         self.M['보유수량'] = int(self.D['init_leverage'] / self.M['당일종가'])
         self.M['현재가치'] = self.M['보유수량'] * self.M['당일종가']
@@ -112,8 +111,6 @@ class M_backtest_LT_backtest(Model) :
         self.M['수익률'] = (total-init_total)/init_total * 100
        
 
-
-
     def test_it(self) :
         self.init_value()
         for idx,LD in enumerate(self.L) :
@@ -133,23 +130,31 @@ class M_backtest_LT_backtest(Model) :
 
             self.M['현재가치'] = self.M['당일종가'] * self.M['보유수량']
 
-            if   self.D['strategy'] == '변동리밸런싱_기본' :
-                 self.M['목표가치'] = self.M['기본종가'] * self.M['기본배수']
-                 self.M['최소가치'] = self.M['목표가치'] * self.M['하강밴드']
-                 self.M['최대가치'] = self.M['목표가치'] * self.M['상승밴드']
-            elif self.D['strategy'] == '고정리밸런싱_증가' :
-                 self.M['목표가치'] = self.M['목표가치'] * 1.002
-                 self.M['최소가치'] = self.M['목표가치'] * self.M['하강밴드']
-                 self.M['최대가치'] = self.M['목표가치'] * self.M['상승밴드']
-
-            
         #   결과정리 --------------------------------------------------------------------------------------------------
             # self.calculate()
             self.proportion()
-            if self.M['매도'] : self.rebalance()
+            self.rebalance()
             self.print_backtest()
         # endfor -----------------------------------------------------------------------------------------------------
         self.result()
+
+    def rebalance(self) :
+
+        if self.D['strategy'] == '변동리밸런싱_기본'  :
+            if self.M['매도'] : self.M['기본배수'] = self.M['최대가치'] / self.M['기본종가'] 
+            self.M['목표가치'] = self.M['기본종가'] * self.M['기본배수']
+        
+        elif self.D['strategy'] == '변동리밸런싱_매수' :
+            if self.M['매수'] : self.M['기본배수'] = self.M['기본배수'] * self.M['가치증가']
+            self.M['목표가치'] = self.M['기본종가'] * self.M['기본배수']
+        
+        elif self.D['strategy'] == '고정리밸런싱_증가' :
+            self.M['목표가치'] = self.M['목표가치'] * 1.002
+        
+        self.M['최소가치'] = self.M['목표가치'] * self.M['하강밴드']
+        self.M['최대가치'] = self.M['목표가치'] * self.M['상승밴드']
+
+         
 
     def result(self) :
         code_price_change = (self.M['당일종가'] - self.M['당종가']) / self.M['당종가'] * 100

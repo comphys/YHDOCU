@@ -24,7 +24,7 @@ class 목록_myLT(SKIN) :
     def chart(self) :
         self.DB.tbl = self.D['tbl']
         self.DB.wre = ''
-        self.DB.lmt = '180'
+        # self.DB.lmt = '180'
         self.DB.odr = "add0 DESC"
 
         chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3,add11",assoc=True)
@@ -46,18 +46,18 @@ class 목록_myLT(SKIN) :
             self.D['chart_target'] = [float(x['add19']) for x in chart_data]
             self.D['chart_cur'] = [float(x['add15']) for x in chart_data]
             self.D['chart_max'] = [float(x['add20']) for x in chart_data]
-            self.D['chart_total'] = [float(x['add17'])*0.6 for x in chart_data]
-            self.D['chart_dividend'] = [float(x['add9'])*3 for x in chart_data]
-            self.D['chart_cash'] = [float(x['add3'])*3 for x in chart_data]
+            # self.D['chart_total'] = [float(x['add17'])*0.6 for x in chart_data]
+            # self.D['chart_dividend'] = [float(x['add9'])*3 for x in chart_data]
+            # self.D['chart_cash'] = [float(x['add3'])*3 for x in chart_data]
 
             self.D['target_value']  = f"{float(self.D['chart_target'][-1]):,.0f}"
             self.D['current_value'] = f"{float(chart_data[-1]['add15']):,.0f}"
             
-            check_items = ('chart_cur','chart_dividend','chart_total','chart_cash')
-            for item in check_items :
-                for i, x in enumerate(self.D['chart_max']) :
-                    if self.D[item][i]  < self.D['chart_min'][i]*0.8 : self.D[item][i] = self.D['chart_min'][i]*0.8
-                    if self.D[item][i]  > self.D['chart_max'][i]*1.2 : self.D[item][i] = self.D['chart_max'][i]*1.2
+            # check_items = ('chart_cur','chart_dividend','chart_total','chart_cash')
+            # for item in check_items :
+            #     for i, x in enumerate(self.D['chart_max']) :
+            #         if self.D[item][i]  < self.D['chart_min'][i]*0.8 : self.D[item][i] = self.D['chart_min'][i]*0.8
+            #         if self.D[item][i]  > self.D['chart_max'][i]*1.2 : self.D[item][i] = self.D['chart_max'][i]*1.2
             
             # ------------------------------------------------------------------------------------
             self.DB.clear()
@@ -128,6 +128,14 @@ class 목록_myLT(SKIN) :
             self.D['need_cash'] = f"{self.D['need_cash']:,.0f}" 
             self.D['bottom_price'] = f"{bottom_price:,.2f}"
             self.D['bottom_count'] = f"{bottom_count:,.0f}"
+            # For Chart
+            chart_back_limit = -120
+            self.D['chart_date'] = self.D['chart_date'][chart_back_limit:] 
+            self.D['chart_min'] = self.D['chart_min'][chart_back_limit:]
+            self.D['chart_target'] = self.D['chart_target'][chart_back_limit:]
+            self.D['chart_cur'] = self.D['chart_cur'][chart_back_limit:]
+            self.D['chart_max'] = self.D['chart_max'][chart_back_limit:]
+            self.D['profit_limit'] = self.D['profit_limit'][chart_back_limit:]
 
 
     def list(self) :
