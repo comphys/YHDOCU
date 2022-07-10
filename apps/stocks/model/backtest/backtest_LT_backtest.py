@@ -141,7 +141,7 @@ class M_backtest_LT_backtest(Model) :
     def rebalance(self) :
 
         if self.D['strategy'] == '변동리밸런싱_기본'  :
-            if self.M['매도'] : self.M['기본배수'] = self.M['최대가치'] / self.M['기본종가'] 
+            if self.M['매도'] :  self.M['기본배수'] = (self.M['당일종가'] * self.M['보유수량'])/self.M['기본종가']
             self.M['목표가치'] = self.M['기본종가'] * self.M['기본배수']
         
         elif self.D['strategy'] == '변동리밸런싱_매수' :
