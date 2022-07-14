@@ -132,6 +132,22 @@
 				<div class='write-input-left' style="background-color:#333F4F;">비중</div>
 				<input type='text' name='add16' class="i-number" style="width:100px;" value="{{D['BODY']['add16']}}">
 			</div>
+			<div class='i-input-div-choice'>
+				<div class='write-input-left' style="background-color:#333F4F;">매수누적</div>
+				<input type='text' name='sub14' class="i-number" style="width:100px;" value="{{D['BODY']['sub14']}}">
+			</div>
+			<div class='i-input-div-choice'>
+				<div class='write-input-left' style="background-color:#333F4F;">매도누적</div>
+				<input type='text' name='sub15' class="i-number" style="width:100px;" value="{{D['BODY']['sub15']}}">
+			</div>
+			<div class='i-input-div-choice'>
+				<div class='write-input-left' style="background-color:#333F4F;">평균단가</div>
+				<input type='text' name='sub16' class="i-number" style="width:110px;" value="{{D['BODY']['sub16']}}">
+			</div>
+			<div class='i-input-div-choice'>
+				<div class='write-input-left' style="background-color:#333F4F;">현매수금</div>
+				<input type='text' name='sub17' class="i-number" style="width:100px;" value="{{D['BODY']['sub17']}}">
+			</div>
         </td>
     </tr>
 	<tr>
@@ -287,7 +303,7 @@ function auto_datainput() {
     postData['add0'] = ck_date
     $.post( posturl, postData).done(function(data)  {
         var ans = JSON.parse(data)
-        var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7','sub12']
+        var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7','sub12','sub14','sub15','sub16','sub17']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})  
     });
 }
@@ -303,33 +319,37 @@ function auto_reset() {
 
 function auto_calculate() {
 	
-	const 현재일  = $("input[name='add0']").val()
-	const 기준일  = '2022-06-14'
+	let 현재일  = $("input[name='add0']").val()
+	let 기준일  = '2022-06-14'
 
-	const date1= new Date(현재일)
-	const date2= new Date(기준일)
-	const diffDate = date1.getTime() - date2.getTime()
-	const diffDays = diffDate/(1000*3600*24) 
+	let date1= new Date(현재일)
+	let date2= new Date(기준일)
+	let diffDate = date1.getTime() - date2.getTime()
+	let diffDays = diffDate/(1000*3600*24) 
 	
-	const 입금     = txt_to_num('add1','i');
-    const 출금     = txt_to_num('add2','i');
-    const 매수금1  = txt_to_num('add5','f');
-    const 매도금1  = txt_to_num('add6','f');
-	const 배당금   = txt_to_num('sub10','f');
-    const 매수금2  = txt_to_num('add11','f');
-    const 매도금2  = txt_to_num('add12','f');
-    const 종가1    = txt_to_num('add8','f');
-    const 수량1    = txt_to_num('sub8','i');
+	let 입금     = txt_to_num('add1','i');
+    let 출금     = txt_to_num('add2','i');
+    let 매수금1  = txt_to_num('add5','f');
+    let 매도금1  = txt_to_num('add6','f');
+	let 배당금   = txt_to_num('sub10','f');
+    let 매수금2  = txt_to_num('add11','f');
+    let 매도금2  = txt_to_num('add12','f');
+    let 종가1    = txt_to_num('add8','f');
+    let 수량1    = txt_to_num('sub8','i');
 	let   누적1    = txt_to_num('add7','i');
-    const 종가2    = txt_to_num('add14','f');
-    const 수량2    = txt_to_num('sub9','i');
-	const 기초가치 = txt_to_num('sub1','f');
-	const 가중치   = txt_to_num('sub2','f');
-	const 최대임계 = txt_to_num('sub3','f');
-	const 최소임계 = txt_to_num('sub4','f');
-	const 기타수익 = txt_to_num('sub11','f');
-	let   누적2    = txt_to_num('add13','i');
-    let   잔액     = txt_to_num('add3','i');
+    let 종가2    = txt_to_num('add14','f');
+    let 수량2    = txt_to_num('sub9','i');
+	let 기초가치 = txt_to_num('sub1','f');
+	let 가중치   = txt_to_num('sub2','f');
+	let 최대임계 = txt_to_num('sub3','f');
+	let 최소임계 = txt_to_num('sub4','f');
+	let 기타수익 = txt_to_num('sub11','f');
+	let 누적2    = txt_to_num('add13','i');
+    let 잔액     = txt_to_num('add3','i');
+	let 매수누적 = txt_to_num('sub14','f');
+	let 매도누적 = txt_to_num('sub15','f');
+	let 평균단가 = txt_to_num('sub16','f');
+	let 현매수금 = txt_to_num('sub17','f');
 
 	누적1 += 수량1; 누적2 += 수량2;
 
@@ -352,7 +372,16 @@ function auto_calculate() {
     let 최대가치 = ( 목표가치* 최대임계 ).toFixed();
 	목표가치 = 목표가치.toFixed();
 
+	if(매수금2) {
+		매수누적 += 매수금2
+		평균단가  = (매수누적 / 누적2).toFixed(2);
+		현매수금  = 매수누적
+	} 
 
+	if(매도금2) {
+		매도누적 += 매도금2
+		현매수금 = (평균단가 * 누적2).toFixed(2);
+	}
 
     $("input[name='add1']").val(입금).comma('init');
     $("input[name='add2']").val(출금).comma('init');
@@ -375,6 +404,11 @@ function auto_calculate() {
     $("input[name='add10']").val(비중2).comma('init');
     $("input[name='add16']").val(비중3).comma('init');
 	$("input[name='sub11']").val(기타수익).comma('init');
+
+	$("input[name='sub14']").val(매수누적).comma('init');
+	$("input[name='sub15']").val(기타수익).comma('init');
+	$("input[name='sub16']").val(기타수익).comma('init');
+	$("input[name='sub17']").val(기타수익).comma('init');
 }
 
 function txt_to_num(key,opt) {

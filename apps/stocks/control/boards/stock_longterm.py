@@ -48,7 +48,7 @@ class Stock_longterm(Control) :
         self.DB.tbl, self.DB.wre = (self.tbl, f"add0 < '{pick_day}'")
         old_date = self.DB.get_one("max(add0)")
         self.DB.wre = f"add0='{old_date}'"
-        old_data = self.DB.get_line("add0,add3,add7,add13,sub2,sub3,sub4,sub5,sub6,sub7,add19,sub12")
+        old_data = self.DB.get_line("add0,add3,add7,add13,sub2,sub3,sub4,sub5,sub6,sub7,add19,sub12,sub14,sub15,sub16,sub17")
 
         self.DB.clear()
 
