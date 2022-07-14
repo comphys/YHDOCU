@@ -72,6 +72,10 @@ class Stock_longterm(Control) :
         update['sub6']  = old_data['sub6']
         update['sub7']  = old_data['sub7']
         update['sub12'] = old_data['sub12']
+        update['sub14'] = old_data['sub14']
+        update['sub15'] = old_data['sub15']
+        update['sub16'] = old_data['sub16']
+        update['sub17'] = old_data['sub17']
 
 
         return self.json(update)

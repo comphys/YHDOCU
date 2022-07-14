@@ -374,7 +374,9 @@ function auto_calculate() {
 
 	if(매수금2) {
 		매수누적 += 매수금2
-		평균단가  = (매수누적 / 누적2).toFixed(2);
+		평균단가  = (매수누적 / 누적2)
+		매수누적  = 매수누적.toFixed(2)
+		평균단가  = 평균단가.toFixed(4)
 		현매수금  = 매수누적
 	} 
 
@@ -406,9 +408,9 @@ function auto_calculate() {
 	$("input[name='sub11']").val(기타수익).comma('init');
 
 	$("input[name='sub14']").val(매수누적).comma('init');
-	$("input[name='sub15']").val(기타수익).comma('init');
-	$("input[name='sub16']").val(기타수익).comma('init');
-	$("input[name='sub17']").val(기타수익).comma('init');
+	$("input[name='sub15']").val(매도누적).comma('init');
+	$("input[name='sub16']").val(평균단가).comma('init');
+	$("input[name='sub17']").val(현매수금).comma('init');
 }
 
 function txt_to_num(key,opt) {
