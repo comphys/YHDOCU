@@ -53,7 +53,7 @@ class M_dashboard(Model) :
  
         output  = f"<div class='dash-div-head'>"
         output += f"<span style='display:inline-block;color:#E0F8E0;text-weight:bold'>{title} : </span>&nbsp;"
-        output += f"<span style='display:inline-block;text-align:right;width:35px'>{days}일</span>"
+        output += f"<span style='display:inline-block;text-align:right;width:45px'>{days}일</span>"
         output += f"<span style='display:inline-block;text-align:right;width:55px'>{D['add4']}%</span>"
         output += f"<span style='display:inline-block;text-align:right;width:55px'>{D['add5']} |</span>"
         output += f"<span style='display:inline-block;text-align:left;width:60px'>&nbsp;{D['add9']}</span>"
