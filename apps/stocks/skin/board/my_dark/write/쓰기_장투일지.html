@@ -132,19 +132,19 @@
 				<div class='write-input-left' style="background-color:#333F4F;">비중</div>
 				<input type='text' name='add16' class="i-number" style="width:100px;" value="{{D['BODY']['add16']}}">
 			</div>
-			<div class='i-input-div-choice'>
-				<div class='write-input-left' style="background-color:#333F4F;">매수누적</div>
-				<input type='text' name='sub14' class="i-number" style="width:100px;" value="{{D['BODY']['sub14']}}">
+			<div class='i-input-div-choice2'>
+				<div class='write-input-left' style="background-color:#333F4F;">평균단가</div>
+				<input type='text' name='sub16' class="i-number" style="width:100px;" value="{{D['BODY']['sub16']}}">
 			</div>
-			<div class='i-input-div-choice'>
+			<div class='i-input-div-choice2'>
 				<div class='write-input-left' style="background-color:#333F4F;">매도누적</div>
 				<input type='text' name='sub15' class="i-number" style="width:100px;" value="{{D['BODY']['sub15']}}">
 			</div>
-			<div class='i-input-div-choice'>
-				<div class='write-input-left' style="background-color:#333F4F;">평균단가</div>
-				<input type='text' name='sub16' class="i-number" style="width:110px;" value="{{D['BODY']['sub16']}}">
+			<div class='i-input-div-choice2'>
+				<div class='write-input-left' style="background-color:#333F4F;">매수누적</div>
+				<input type='text' name='sub14' class="i-number" style="width:110px;" value="{{D['BODY']['sub14']}}">
 			</div>
-			<div class='i-input-div-choice'>
+			<div class='i-input-div-choice2'>
 				<div class='write-input-left' style="background-color:#333F4F;">현매수금</div>
 				<input type='text' name='sub17' class="i-number" style="width:100px;" value="{{D['BODY']['sub17']}}">
 			</div>
@@ -309,7 +309,7 @@ function auto_datainput() {
 }
 
 function auto_reset() {
-	var reset_key  = ['add1','add2','add5','add6','sub8','add11','add12','sub9','sub10','sub11']
+	var reset_key  = ['add1','add2','add5','add6','sub8','add11','add12','sub9','sub10','sub11','sub14','sub15','sub16','sub17']
 		reset_key.forEach(function(i){$("input[name='"+i+"']" ).val(0)})
 	var reset_key2  = ['add4','add9','add10','add15','add16','add17','add18','add19','add20']
 		reset_key2.forEach(function(i){$("input[name='"+i+"']" ).val('')})  
@@ -336,7 +336,7 @@ function auto_calculate() {
     let 매도금2  = txt_to_num('add12','f');
     let 종가1    = txt_to_num('add8','f');
     let 수량1    = txt_to_num('sub8','i');
-	let   누적1    = txt_to_num('add7','i');
+	let 누적1    = txt_to_num('add7','i');
     let 종가2    = txt_to_num('add14','f');
     let 수량2    = txt_to_num('sub9','i');
 	let 기초가치 = txt_to_num('sub1','f');

@@ -24,10 +24,10 @@ class 목록_장투일지(SKIN) :
     def chart(self) :
         self.DB.tbl = self.D['tbl']
         self.DB.wre = ''
-        # self.DB.lmt = '180'
+        self.DB.lmt = '120'
         self.DB.odr = "add0 DESC"
 
-        chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3,add14,sub12,add11",assoc=True)
+        chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3,add14,sub12,add11,sub17",assoc=True)
         if chart_data :
 
             chart_data.reverse()
@@ -35,11 +35,6 @@ class 목록_장투일지(SKIN) :
             last_date  = chart_data[-1]['add0']
 
             self.D['경과일수'] = ut.diff_day('2022-06-14',last_date) + 1
-            self.D['profit_limit'] = []
-            acc = 0.0
-            for x in chart_data :
-                acc = acc + float(x['add11'])
-                self.D['profit_limit'].append(acc)
 
             self.D['chart_date'] = [x['add0'][2:] for x in chart_data]
             self.D['chart_min'] = [float(x['add18']) for x in chart_data]
@@ -50,7 +45,7 @@ class 목록_장투일지(SKIN) :
             self.D['chart_dividend'] = [float(x['add9'])*2.5 for x in chart_data]
             self.D['chart_cash'] = [float(x['add3'])*1.67 for x in chart_data]
             self.D['chart_ori'] = [float(x['add14'])*float(x['sub12']) for x in chart_data]
-
+            self.D['profit_limit'] = [float(x['sub17']) for x in chart_data]
             self.D['target_value']  = f"{float(self.D['chart_target'][-1]):,.0f}"
             self.D['current_value'] = f"{float(chart_data[-1]['add15']):,.0f}"
             
@@ -129,15 +124,7 @@ class 목록_장투일지(SKIN) :
             self.D['need_cash'] = f"{self.D['need_cash']:,.0f}" 
             self.D['bottom_price'] = f"{bottom_price:,.2f}"
             self.D['bottom_count'] = f"{bottom_count:,.0f}"
-            # For Chart
-            chart_back_limit = -120
-            self.D['chart_date'] = self.D['chart_date'][chart_back_limit:] 
-            self.D['chart_min'] = self.D['chart_min'][chart_back_limit:]
-            self.D['chart_target'] = self.D['chart_target'][chart_back_limit:]
-            self.D['chart_cur'] = self.D['chart_cur'][chart_back_limit:]
-            self.D['chart_max'] = self.D['chart_max'][chart_back_limit:]
-            self.D['profit_limit'] = self.D['profit_limit'][chart_back_limit:]
-            self.D['chart_ori'] = self.D['chart_ori'][chart_back_limit:]
+
 
     def list(self) :
         self.head()
