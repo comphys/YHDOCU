@@ -42,12 +42,13 @@ class 목록_장투일지(SKIN) :
             self.D['chart_target'] = [float(x['add19']) for x in chart_data]
             self.D['chart_cur'] = [float(x['add15']) for x in chart_data]
             self.D['chart_max'] = [float(x['add20']) for x in chart_data]
-            self.D['chart_total'] = [float(x['add17'])*0.5 for x in chart_data]
-            self.D['chart_dividend'] = [float(x['add9'])*2.5 for x in chart_data]
-            self.D['chart_cash'] = [float(x['add3'])*1.67 for x in chart_data]
+            # self.D['chart_total'] = [float(x['add17'])*0.5 for x in chart_data]
+            # self.D['chart_dividend'] = [float(x['add9'])*2.5 for x in chart_data]
+            # self.D['chart_cash'] = [float(x['add3'])*1.67 for x in chart_data]
             self.D['chart_ori'] = [float(x['add14'])*float(x['sub12']) for x in chart_data]
             self.D['profit_limit'] = [float(x['sub17']) for x in chart_data]
             self.D['target_value']  = f"{float(self.D['chart_target'][-1]):,.0f}"
+            
             self.D['current_value'] = f"{float(chart_data[-1]['add15']):,.0f}"
             
             # check_items = ('chart_cur','chart_dividend','chart_total','chart_cash')
