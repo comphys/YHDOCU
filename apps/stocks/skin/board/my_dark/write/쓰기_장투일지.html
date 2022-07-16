@@ -200,6 +200,18 @@
 				<div class='write-input-left' style="background-color:darkslategray;">기본수량</div>
 				<input type='text' name='sub12' class="i-number" style="width:100px;" value="{{D['BODY']['sub12']}}">
 			</div>
+			<div class='i-input-div-notice'>
+				<div class='write-input-left' style="background-color:darkslategray;">증가율</div>
+				<input type='text' name='sub18' class="i-number" style="width:100px;" value="{{D['BODY']['sub18']}}">
+			</div>
+			<div class='i-input-div-notice'>
+				<div class='write-input-left' style="background-color:darkslategray;">적용전략</div>
+				<input type='text' name='sub19' class="i-text" style="width:110px;text-align:right;" value="{{D['BODY']['sub19']}}">
+			</div>
+			<div class='i-input-div-notice'>
+				<div class='write-input-left' style="background-color:darkslategray;">시즌</div>
+				<input type='text' name='sub20' class="i-text" style="width:100px;text-align:right;" value="{{D['BODY']['sub20']}}">
+			</div>
         </td>
     </tr>
 </tbody>
@@ -257,6 +269,8 @@
 <script>
 JYHEDITOR.start('YHBmainEditor');
 
+let 이전목표 = 0.0
+let 이전날자 = ''
 
 function check_MainWriteForm(f)	{	
 	var wDiv = $id("YHBmainEditor");
@@ -303,7 +317,9 @@ function auto_datainput() {
     postData['add0'] = ck_date
     $.post( posturl, postData).done(function(data)  {
         var ans = JSON.parse(data)
-        var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7','sub12','sub14','sub15','sub16','sub17']
+		이전날자 = ans['add0']
+		이전목표 = ans['add19']
+        var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7','sub12','sub14','sub15','sub16','sub17','sub18','sub19','sub20']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})  
     });
 }
@@ -319,13 +335,13 @@ function auto_reset() {
 
 function auto_calculate() {
 	
-	let 현재일  = $("input[name='add0']").val()
-	let 기준일  = '2022-06-14'
+	const 현재일  = $("input[name='add0']").val()
+	const 기준일  = 이전날자
 
-	let date1= new Date(현재일)
-	let date2= new Date(기준일)
-	let diffDate = date1.getTime() - date2.getTime()
-	let diffDays = diffDate/(1000*3600*24) 
+	const date1= new Date(현재일)
+	const date2= new Date(기준일)
+	const diffDate = date1.getTime() - date2.getTime()
+	const diffDays = diffDate/(1000*3600*24) 
 	
 	let 입금     = txt_to_num('add1','i');
     let 출금     = txt_to_num('add2','i');
@@ -350,11 +366,18 @@ function auto_calculate() {
 	let 매도누적 = txt_to_num('sub15','f');
 	let 평균단가 = txt_to_num('sub16','f');
 	let 현매수금 = txt_to_num('sub17','f');
+	let 증가율   = txt_to_num('sub18','f');
+	let 적용전략 = $("input[name='sub19']").val();
+	let 목표가치 = 0.0
 
 	누적1 += 수량1; 누적2 += 수량2;
 
 	잔액    = (잔액+입금+매도금1+매도금2+기타수익-출금-매수금1-매수금2+배당금)
-	let 목표가치 = 기초가치 * 가중치
+
+	switch(적용전략) {
+		case '기초변동추종' : 목표가치 = 기초가치 * 가중치; break;
+		case '고정비율상승' : 목표가치 = 이전목표 * (1+ 증가율 )**diffDays; break;
+	}
     
     let 가치1   = (종가1 * 누적1)
     let 가치2   = (종가2 * 누적2)

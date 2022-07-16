@@ -48,7 +48,7 @@ class Stock_longterm(Control) :
         self.DB.tbl, self.DB.wre = (self.tbl, f"add0 < '{pick_day}'")
         old_date = self.DB.get_one("max(add0)")
         self.DB.wre = f"add0='{old_date}'"
-        old_data = self.DB.get_line("add0,add3,add7,add13,sub2,sub3,sub4,sub5,sub6,sub7,add19,sub12,sub14,sub15,sub16,sub17")
+        old_data = self.DB.get_line("add0,add3,add7,add13,sub2,sub3,sub4,sub5,sub6,sub7,add19,sub12,sub14,sub15,sub16,sub17,sub18,sub19,sub20")
 
         self.DB.clear()
 
@@ -56,7 +56,10 @@ class Stock_longterm(Control) :
         on_day = self.DB.get_one("max(add0)")
         self.DB.wre = f"add0='{on_day}'   and add1='{old_data['sub6']}'"; update['add8']  = self.DB.get_one('add3')
         self.DB.wre = f"add0='{on_day}'   and add1='{old_data['sub7']}'"; update['add14'] = self.DB.get_one('add3') 
-        self.DB.wre = f"add0='{on_day}'   and add1='SOXX'"; base_value = float(self.DB.get_one('add3'))
+
+        base_code = {'SOXL':'SOXX','TQQQ':'QQQ'}
+        self.DB.wre = f"add0='{on_day}'   and add1='{base_code[old_data['sub7']]}'" 
+        base_value = float(self.DB.get_one('add3'))
           
         update['add0'] = old_data['add0']
         update['add3'] = f"{int(old_data['add3']):,}"
@@ -76,6 +79,9 @@ class Stock_longterm(Control) :
         update['sub15'] = old_data['sub15']
         update['sub16'] = old_data['sub16']
         update['sub17'] = old_data['sub17']
+        update['sub18'] = old_data['sub18']
+        update['sub19'] = old_data['sub19']
+        update['sub20'] = old_data['sub20']
 
 
         return self.json(update)
