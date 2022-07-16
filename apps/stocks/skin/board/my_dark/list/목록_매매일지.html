@@ -37,6 +37,13 @@
 </div>
 <!-- 리스트 상부 카테고리 종료 -->
 
+{% if D['chart_code'] and D['chart_season'] %}
+<script src="/sys/chart/chart.min.js"></script>
+<div style="width:100%;background-color:#24272d;padding:20px;border:2px solid black">
+	<canvas id="myChart" style="width:100%;height:280px;background-color:#24272d"></canvas>
+</div>
+{% endif %}
+
 <!-- 리스트 메인 테이블 시작 -->
 
 {% if D['TR'] %}
@@ -130,12 +137,7 @@
 		{{D['Pagination']|safe}}
 	</ul></div>
 </div>
-{% if D['chart_code'] and D['chart_season'] %}
-<script src="/sys/chart/chart.min.js"></script>
-<div style="width:100%;background-color:#24272d;padding:20px;border:2px solid black">
-	<canvas id="myChart" style="width:100%;height:280px;background-color:#24272d"></canvas>
-</div>
-{% endif %}
+
 
 <script>
 function open_stock_chart(stock) {

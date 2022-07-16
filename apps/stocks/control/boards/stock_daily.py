@@ -22,11 +22,19 @@ class Stock_daily(Control) :
         self.M['임의매도'] = self.D['post']['sub4']   ; self.M['임의매도'] = float(self.M['임의매도'].replace(',','')) if self.M['임의매도'] else 0.0
 
         # 임의입력 시 체결단가, 체결수량, 매수금액 중 2개는 입력되어야 함
+        self.info(self.M['체결단가'])
+        self.info(self.M['체결수량'])
+        self.info(self.M['매수금액'])
         if  self.M['체결단가'] or self.M['체결수량'] or self.M['매수금액'] :
             self.auto = False 
-            if   self.M['체결단가'] and self.M['체결수량'] : self.M['매수금액'] = self.M['체결단가'] * self.M['체결수량']
-            elif self.M['체결단가'] and self.M['매수금액'] : self.M['체결수량'] = int(self.M['매수금액'] / self.M['체결단가'])
-            elif self.M['체결수량'] and self.M['매수금액'] : self.M['체결단가'] = self.M['매수금액'] / self.M['체결수량']
+            if   self.M['체결단가'] == 1.0 and  self.M['체결수량'] == 1 and self.M['매수금액'] == 1.0 :
+                 self.M['체결단가'] = 0.0
+                 self.M['체결수량'] = 0
+                 self.M['매수금액'] = 0.0
+            else :
+                if   self.M['체결단가'] and self.M['체결수량'] : self.M['매수금액'] = self.M['체결단가'] * self.M['체결수량']
+                elif self.M['체결단가'] and self.M['매수금액'] : self.M['체결수량'] = int(self.M['매수금액'] / self.M['체결단가'])
+                elif self.M['체결수량'] and self.M['매수금액'] : self.M['체결단가'] = self.M['매수금액'] / self.M['체결수량']
         
         self.M['가용잔액'] = self.D['post']['add16']  ; self.M['가용잔액'] = float(self.M['가용잔액'].replace(',','')) if self.M['가용잔액'] else 0.0
         self.M['추가자본'] = self.D['post']['add17']  ; self.M['추가자본'] = float(self.M['추가자본'].replace(',','')) if self.M['추가자본'] else 0.0

@@ -18,11 +18,18 @@ class Stock_dna_2022(Control) :
         self.M['매수금액'] = self.D['post']['add8']   ; self.M['매수금액'] = float(self.M['매수금액'].replace(',','')) if self.M['매수금액'] else 0.0
         
         # 임의입력 시 체결단가, 체결수량, 매수금액 중 2개는 입력되어야 함
+
+
         if  self.M['매수단가'] or self.M['매수수량'] or self.M['매수금액'] :
             self.auto = False 
-            if   self.M['매수단가'] and self.M['매수수량'] : self.M['매수금액'] = self.M['매수단가'] * self.M['매수수량']
-            elif self.M['매수단가'] and self.M['매수금액'] : self.M['매수수량'] = int(self.M['매수금액'] / self.M['매수단가'])
-            elif self.M['매수수량'] and self.M['매수금액'] : self.M['매수단가'] = self.M['매수금액'] / self.M['매수수량']
+            if   self.M['매수단가'] == 1.0 and  self.M['매수수량'] == 1 and self.M['매수금액'] == 1.0 :
+                 self.M['매수단가'] = 0.0
+                 self.M['매수수량'] = 0
+                 self.M['매수금액'] = 0.0
+            else :
+                if   self.M['매수단가'] and self.M['매수수량'] : self.M['매수금액'] = self.M['매수단가'] * self.M['매수수량']
+                elif self.M['매수단가'] and self.M['매수금액'] : self.M['매수수량'] = int(self.M['매수금액'] / self.M['매수단가'])
+                elif self.M['매수수량'] and self.M['매수금액'] : self.M['매수단가'] = self.M['매수금액'] / self.M['매수수량']
         
         self.M['가용잔액'] = self.D['post']['add16']  ; self.M['가용잔액'] = float(self.M['가용잔액'].replace(',','')) if self.M['가용잔액'] else 0.0
         self.M['추가자본'] = self.D['post']['add17']  ; self.M['추가자본'] = float(self.M['추가자본'].replace(',','')) if self.M['추가자본'] else 0.0
