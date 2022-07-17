@@ -142,15 +142,13 @@ const data = {
             label:' 현재위치',
             data : {{D['chart_cur']|safe}},
             borderColor:'yellow', borderWidth:4,pointRadius:0, pointHoverRadius:24, backgroundColor:'yellow',
-			lineTension:0.2
-
+			lineTension:0.2,
         },
         {
             label:' SOXX',
             data : {{D['chart_ori']|safe}},
             borderColor:'YellowGreen', borderWidth:3,borderDash:[3,4],pointRadius:0,
 			lineTension:0.2
-
         },
         {
             label:' 손익한계',
@@ -184,8 +182,7 @@ const data = {
             label:' 목표가치',
             data : {{D['chart_target']}},
             borderColor:'lightgray', borderWidth:1,pointRadius:0,  backgroundColor:'lightgray',
-			lineTension:0.2
-
+			lineTension:0.2,
         },
         {
             label:' 최소가치',
@@ -202,12 +199,12 @@ const options = {
 	animation : { duration:1000	},
 
 	plugins : { legend: {display:false}, tooltip:{enabled:false},
-				title:{display:true, text:'Current Value : {{D['current_value']}} / {{D['target_value']}}',color:'lightgray',align:'end',font:{size:14}}},
+				title:{display:true, text:'Current Value : {{D['current_value']}} / {{D['target_value']}}',color:'lightgray',align:'center',font:{size:16}}},
     responsive:false,
     layout:{padding:20},
     scales:{
-        x:{ ticks : {color:'gray'}, grid:{color:'#272727'}},
-        y:{ ticks : {color:'lightgray'}, grid:{color:'#272727'} }
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'right'},
     }
 };
 const config  = {type:'line',data:data,options:options};

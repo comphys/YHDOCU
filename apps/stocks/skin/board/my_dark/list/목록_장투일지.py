@@ -23,8 +23,8 @@ class 목록_장투일지(SKIN) :
 
     def chart(self) :
         self.DB.tbl = self.D['tbl']
-        self.DB.wre = ''
-        self.DB.lmt = '120'
+        self.DB.wre = "add0 > '2022-04-18'"
+        # self.DB.lmt = '120'
         self.DB.odr = "add0 DESC"
 
         chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3,add14,sub12,add11,sub17",assoc=True)
@@ -32,7 +32,9 @@ class 목록_장투일지(SKIN) :
 
             chart_data.reverse()
 
-            first_date  = chart_data[0]['add0']
+            self.DB.wre = ''
+            first_date = self.DB.get_one("min(add0)")
+            self.info(first_date)
             last_date  = chart_data[-1]['add0']
 
             self.D['경과일수'] = ut.diff_day(first_date,last_date) + 1
