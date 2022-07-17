@@ -119,7 +119,7 @@ class 목록_장투일지(SKIN) :
                 self.D['info_color'] = '#CEF6F5'
             
             else :
-                self.D['need_cash'] =  self.D['chart_target'][-1] - self.D['chart_cur'][-1]
+                self.D['need_cash'] =  self.D['chart_cur'][-1] - self.D['chart_target'][-1]
                 bottom_price = self.D['chart_min'][-1] / int(LD['add13'])
                 self.D['대응전략'] = 'Stay watch'
                 self.D['info_color'] = 'white'  
