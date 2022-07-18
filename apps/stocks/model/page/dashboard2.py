@@ -3,21 +3,26 @@ import system.core.my_utils as ut
 class M_dashboard2(Model) :
 
     def view(self) :
-        
-        self.DB.tbl, self.DB.wre, self.DB.odr =('h_daily_first_board',"add19='시즌진행'",'add0 DESC')
+        date_from = '2022-07-07'
+        self.DB.tbl, self.DB.wre, self.DB.odr =('h_daily_first_board',f"add0 > '{date_from}'",'add0 DESC')
         self.DB.lmt = '180'
-        DF = self.DB.get("add0,add5,add9",assoc=False)
-        DFD= {x[0]:[x[1],x[2]] for x in DF}
-        start_date = DF[-1][0]
+        DF = self.DB.get("add0,add5,add9")
+        DFD= {x['add0']:[x['add5'],x['add9']] for x in DF}
+        cnt= len(DFD)
+
+        DSD = {}
+        DTD = {}
+
+        start_date = DF[-1]['add0']
 
         self.DB.wre = f"add0 >= '{start_date}'"
         self.DB.tbl ='h_daily_second_board'
-        DS = self.DB.get("add0,add9",assoc=False)
-        DSD= {x[0]:x[1] for x in DS}
+        DS = self.DB.get("add0,add9")
+        if DS : DSD= {x[0]:x[1] for x in DS}
 
         self.DB.tbl ='h_daily_third_board'
         DT = self.DB.get("add0,add9",assoc=False)
-        DTD= {x[0]:x[1] for x in DT}
+        if DT : DTD= {x[0]:x[1] for x in DT}
 
         self.D['날자'] = []
         self.D['종가'] = []
@@ -52,9 +57,7 @@ class M_dashboard2(Model) :
         self.D['첫째10'] = [float(x)*0.9 for x in self.D['첫째']]
         self.D['첫째20'] = [float(x)*0.8 for x in self.D['첫째']]
         self.D['첫째30'] = [float(x)*0.7 for x in self.D['첫째']]
-        self.D['첫째40'] = [float(x)*0.6 for x in self.D['첫째']]
-        self.D['첫째50'] = [float(x)*0.5 for x in self.D['첫째']]
-
+ 
         self.DB.clear()
 
         self.D['첫째상황']  = self.outcome('h_daily_first_board')
