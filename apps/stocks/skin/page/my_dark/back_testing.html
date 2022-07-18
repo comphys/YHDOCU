@@ -120,6 +120,8 @@
 			{%- for TR in D['TR'] -%}
 			{% if TR['가용잔액']|striptags == '전량매도'  %}
 			<tr style="border-top:2px solid yellow;border-bottom:2px solid yellow;background-color:black;"> 
+			{% elif TR['가용잔액'] == '손절매도' %}
+			<tr style="border-top:2px solid #cef6ce;border-bottom:2px solid #cef6ce;background-color:black;"> 
 			{% elif TR['가용잔액'] == '부분매도' %}
 			<tr style="border-top:2px solid orange;border-bottom:2px solid orange;background-color:black;"> 
 			{% elif TR['가용잔액'] == '전략매도' %}

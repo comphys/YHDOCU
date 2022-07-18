@@ -47,7 +47,7 @@ class M_backtest_DNA_2022(Model) :
             tx['가용잔액'] =  f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>전량매도</span>"
             tx['수익현황'] = f"<span style='font-weight:bold;color:#F6CECE'>{tx['수익현황']}</span>"
 
-        elif self.M['진행상황'] in ('전략매도','부분매도') :  
+        elif self.M['진행상황'] in ('전략매도','부분매도','손절매도') :  
             tx['가용잔액'] = self.M['진행상황'] 
         else : 
             tx['가용잔액'] = 자금합계
@@ -144,6 +144,10 @@ class M_backtest_DNA_2022(Model) :
         self.M['위매횟수']  = int(self.S['add24'])
         self.M['매도횟수']  = 0
 
+        self.M['강매허용']  = True if self.S['add16'] == 'on' else False  # 날수 초과 후 강매선택
+        self.M['강매시작']  = float(self.S['add17'])
+        self.M['강매가치']  = 1 + float(self.S['add18']) / 100
+
         # 리밸런싱
         total = self.M['가용잔액'] + self.M['추가자본'] 
         self.M['자본비율'] = self.M['가용잔액'] / total
@@ -237,6 +241,11 @@ class M_backtest_DNA_2022(Model) :
             self.M['진행상황'] = '전량매도' 
             
             self.M['매도금액'] = self.M['당일종가'] * self.M['매도수량']
+
+    def sell_cut(self) :
+        self.M['매도수량'] = self.M['보유수량']
+        self.M['진행상황'] = '손절매도'
+        self.M['매도금액'] = self.M['당일종가'] * self.M['매도수량']
                 
     def strategy_sell(self) : # LOC 매도
 
@@ -273,8 +282,11 @@ class M_backtest_DNA_2022(Model) :
             
             if self.M['진행'] >= self.M['매도대기'] : self.normal_sell()
             
-            if self.M['위기전략'] and self.M['수량확보'] : self.strategy_sell()
-            else : self.base_buy() if self.M['진행'] < self.M['매도대기'] else self.normal_buy()
+            if self.M['강매허용'] and self.M['진행'] > self.M['강매시작'] and self.M['당일종가'] > (self.M['평균단가'] * self.M['강매가치']) :
+                self.sell_cut()
+            else :
+                if self.M['위기전략'] and self.M['수량확보'] : self.strategy_sell()
+                else : self.base_buy() if self.M['진행'] < self.M['매도대기'] else self.normal_buy()
 
         #   결과정리 --------------------------------------------------------------------------------------------------
             self.M['연속상승'] = int(BD['add9'])
