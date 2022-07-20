@@ -96,7 +96,7 @@ class 목록_장투일지(SKIN) :
             수익금2 = float(LD['add15']) - 매수금2
             평단가2 = 매수금2/int(LD['add13'])
             수익률2 = (float(LD['add14']) - 평단가2) / 평단가2 *100
-            self.D['평단가2'] = f"{평단가2:,.2f}"
+            self.D['평단가2'] = f"{float(LD['sub16']):,.2f}"
             self.D['수익금2'] = f"{수익금2:,.2f}"
             self.D['수익률2'] = f"{수익률2:.2f}"
 
@@ -113,7 +113,7 @@ class 목록_장투일지(SKIN) :
                 self.D['info_color'] = '#F6CECE' 
 
             elif LD['add15'] > LD['add20'] : 
-                self.D['need_cash'] =  self.D['chart_cur'][-1] - self.D['chart_max'][-1]
+                self.D['need_cash'] =  self.D['chart_cur'][-1] - self.D['chart_target'][-1]
                 bottom_price = self.D['chart_max'][-1] / int(LD['add13'])
                 self.D['대응전략'] = 'Sell guide'
                 self.D['info_color'] = '#CEF6F5'

@@ -362,6 +362,7 @@ function auto_calculate() {
 	let 기타수익 = txt_to_num('sub11','f');
 	let 누적2    = txt_to_num('add13','i');
     let 잔액     = txt_to_num('add3','i');
+	let 기본수량 = txt_to_num('sub12','i');
 	let 매수누적 = txt_to_num('sub14','f');
 	let 매도누적 = txt_to_num('sub15','f');
 	let 평균단가 = txt_to_num('sub16','f');
@@ -393,20 +394,29 @@ function auto_calculate() {
     현재가치 = 현재가치.toFixed()
     let 최소가치 = ( 목표가치* 최소임계 ).toFixed();
     let 최대가치 = ( 목표가치* 최대임계 ).toFixed();
-	목표가치 = 목표가치.toFixed();
+	
 
 	if(매수금2) {
 		매수누적 += 매수금2
-		평균단가  = (매수누적 / 누적2)
-		매수누적  = 매수누적.toFixed(2)
-		평균단가  = 평균단가.toFixed(4)
 		현매수금  = 매수누적
+		평균단가  = (현매수금 / 누적2)
+		매수누적  = 매수누적.toFixed(2)
 	} 
 
 	if(매도금2) {
 		매도누적 += 매도금2
 		현매수금 = (평균단가 * 누적2).toFixed(2);
+
+		실현수익 = (종가2 - 평균단가) * -수량2
+		기본수량 = 누적2
+
+		if(실현수익 > 0) {
+			가중치 = ((목표가치 + 실현수익) / 기초가치).toFixed(4)
+		} 
 	}
+
+	평균단가  = 평균단가.toFixed(4)
+	목표가치 = 목표가치.toFixed();
 
     $("input[name='add1']").val(입금).comma('init');
     $("input[name='add2']").val(출금).comma('init');
@@ -430,6 +440,8 @@ function auto_calculate() {
     $("input[name='add16']").val(비중3).comma('init');
 	$("input[name='sub11']").val(기타수익).comma('init');
 
+	$("input[name='sub2']").val(가중치).comma('init');
+	$("input[name='sub12']").val(기본수량).comma('init');
 	$("input[name='sub14']").val(매수누적).comma('init');
 	$("input[name='sub15']").val(매도누적).comma('init');
 	$("input[name='sub16']").val(평균단가).comma('init');
