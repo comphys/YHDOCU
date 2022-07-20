@@ -108,13 +108,13 @@ class 목록_장투일지(SKIN) :
             self.D['info_color']= 'white' 
             if LD['add15'] < LD['add18'] : 
                 self.D['need_cash'] = self.D['chart_cur'][-1] - self.D['chart_target'][-1]
-                bottom_price = self.D['chart_min'][-1] / int(LD['add13'])
+                bottom_price = float(LD['add14'])
                 self.D['대응전략'] = 'Buy guide'
                 self.D['info_color'] = '#F6CECE' 
 
             elif LD['add15'] > LD['add20'] : 
                 self.D['need_cash'] =  self.D['chart_cur'][-1] - self.D['chart_target'][-1]
-                bottom_price = self.D['chart_max'][-1] / int(LD['add13'])
+                bottom_price = float(LD['add14'])
                 self.D['대응전략'] = 'Sell guide'
                 self.D['info_color'] = '#CEF6F5'
             
