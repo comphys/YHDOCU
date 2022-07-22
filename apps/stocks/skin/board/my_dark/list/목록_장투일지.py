@@ -82,21 +82,20 @@ class 목록_장투일지(SKIN) :
             # -- dividend
             self.D['매수금1'] = float(invest['sum(add5)'])
             self.D['매도금1'] = float(invest['sum(add6)'])
-            매수금1 = self.D['매수금1'] - self.D['매도금1']
-            수익금1 = float(LD['add9']) - 매수금1
-            평단가1 = 매수금1/int(LD['add7'])
+            수익금1 = float(LD['add9']) - self.D['매수금1'] + self.D['매도금1']
+            평단가1 = float(LD['sub21'])
             수익률1 = (float(LD['add8']) - 평단가1) / 평단가1 *100
             self.D['평단가1'] = f"{평단가1:,.2f}"
             self.D['수익금1'] = f"{수익금1:,.2f}"
             self.D['수익률1'] = f"{수익률1:.2f}"
+
             # -- leverage
             self.D['매수금2'] = float(invest['sum(add11)'])
             self.D['매도금2'] = float(invest['sum(add12)'])
-            매수금2 = self.D['매수금2'] - self.D['매도금2']
-            수익금2 = float(LD['add15']) - 매수금2
-            평단가2 = 매수금2/int(LD['add13'])
+            수익금2 = float(LD['add15']) - self.D['매수금2'] + self.D['매도금2']
+            평단가2 = float(LD['sub16'])
             수익률2 = (float(LD['add14']) - 평단가2) / 평단가2 *100
-            self.D['평단가2'] = f"{float(LD['sub16']):,.2f}"
+            self.D['평단가2'] = f"{평단가2:,.2f}"
             self.D['수익금2'] = f"{수익금2:,.2f}"
             self.D['수익률2'] = f"{수익률2:.2f}"
 
