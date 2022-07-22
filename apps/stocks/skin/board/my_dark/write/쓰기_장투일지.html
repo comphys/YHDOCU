@@ -91,6 +91,22 @@
 				<div class='write-input-left' style="background-color:#333F4F;">비중</div>
 				<input type='text' name='add10' class="i-number" style="width:100px;" value="{{D['BODY']['add10']}}">
 			</div>
+			<div class='i-input-div-choice2'>
+				<div class='write-input-left' style="background-color:#333F4F;">평균단가</div>
+				<input type='text' name='sub21' class="i-number" style="width:100px;" value="{{D['BODY']['sub21']}}">
+			</div>
+			<div class='i-input-div-choice2'>
+				<div class='write-input-left' style="background-color:#333F4F;">매도누적</div>
+				<input type='text' name='sub22' class="i-number" style="width:100px;" value="{{D['BODY']['sub22']}}">
+			</div>
+			<div class='i-input-div-choice2'>
+				<div class='write-input-left' style="background-color:#333F4F;">매수누적</div>
+				<input type='text' name='sub23' class="i-number" style="width:110px;" value="{{D['BODY']['sub23']}}">
+			</div>
+			<div class='i-input-div-choice2'>
+				<div class='write-input-left' style="background-color:#333F4F;">현매수금</div>
+				<input type='text' name='sub24' class="i-number" style="width:100px;" value="{{D['BODY']['sub24']}}">
+			</div>
         </td>
     </tr>
 	<tr>
@@ -319,13 +335,13 @@ function auto_datainput() {
         var ans = JSON.parse(data)
 		이전날자 = ans['add0']
 		이전목표 = ans['add19']
-        var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7','sub12','sub14','sub15','sub16','sub17','sub18','sub19','sub20']
+        var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7','sub12','sub14','sub15','sub16','sub17','sub18','sub19','sub20','sub21','sub22','sub23','sub24']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})  
     });
 }
 
 function auto_reset() {
-	var reset_key  = ['add1','add2','add5','add6','sub8','add11','add12','sub9','sub10','sub11','sub14','sub15','sub16','sub17']
+	var reset_key  = ['add1','add2','add5','add6','sub8','add11','add12','sub9','sub10','sub11','sub14','sub15','sub16','sub17','sub21','sub22','sub23','sub24']
 		reset_key.forEach(function(i){$("input[name='"+i+"']" ).val(0)})
 	var reset_key2  = ['add4','add9','add10','add15','add16','add17','add18','add19','add20']
 		reset_key2.forEach(function(i){$("input[name='"+i+"']" ).val('')})  
@@ -363,10 +379,14 @@ function auto_calculate() {
 	let 누적2    = txt_to_num('add13','i');
     let 잔액     = txt_to_num('add3','i');
 	let 기본수량 = txt_to_num('sub12','i');
-	let 매수누적 = txt_to_num('sub14','f');
-	let 매도누적 = txt_to_num('sub15','f');
-	let 평균단가 = txt_to_num('sub16','f');
-	let 현매수금 = txt_to_num('sub17','f');
+	let 매수누적2= txt_to_num('sub14','f');
+	let 매도누적2= txt_to_num('sub15','f');
+	let 평균단가2= txt_to_num('sub16','f');
+	let 현매수금2= txt_to_num('sub17','f');
+	let 평균단가1= txt_to_num('sub21','f');
+	let 매도누적1= txt_to_num('sub22','f');
+	let 매수누적1= txt_to_num('sub23','f');
+	let 현매수금1= txt_to_num('sub24','f');
 	let 증가율   = txt_to_num('sub18','f');
 	let 적용전략 = $("input[name='sub19']").val();
 	let 목표가치 = 0.0
@@ -395,19 +415,30 @@ function auto_calculate() {
     let 최소가치 = ( 목표가치* 최소임계 ).toFixed();
     let 최대가치 = ( 목표가치* 최대임계 ).toFixed();
 	
-
-	if(매수금2) {
-		매수누적 += 매수금2
-		현매수금  = 매수누적
-		평균단가  = (현매수금 / 누적2)
-		매수누적  = 매수누적.toFixed(2)
+	if(매수금1) {
+		매수누적1 += 매수금2
+		현매수금1  = 매수누적1
+		평균단가1  = (현매수금1 / 누적2)
+		매수누적1  = 매수누적1.toFixed(2)
 	} 
 
-	if(매도금2) {
-		매도누적 += 매도금2
-		현매수금 = (평균단가 * 누적2).toFixed(2);
+	if(매수금2) {
+		매수누적2 += 매수금2
+		현매수금2  = 매수누적2
+		평균단가2  = (현매수금2 / 누적2)
+		매수누적2  = 매수누적2.toFixed(2)
+	} 
 
-		실현수익 = (종가2 - 평균단가) * -수량2
+	if(매도금1) {
+		매도누적1 += 매도금1
+		현매수금1 = (평균단가1 * 누적1).toFixed(2);
+	}
+
+	if(매도금2) {
+		매도누적2 += 매도금2
+		현매수금2 = (평균단가2 * 누적2).toFixed(2);
+
+		실현수익 = (종가2 - 평균단가2) * -수량2
 
 		if(실현수익 > 0) {
 			가중치 = ((목표가치 + 실현수익) / 기초가치).toFixed(4)
@@ -442,10 +473,14 @@ function auto_calculate() {
 
 	$("input[name='sub2']").val(가중치).comma('init');
 	$("input[name='sub12']").val(기본수량).comma('init');
-	$("input[name='sub14']").val(매수누적).comma('init');
-	$("input[name='sub15']").val(매도누적).comma('init');
-	$("input[name='sub16']").val(평균단가).comma('init');
-	$("input[name='sub17']").val(현매수금).comma('init');
+	$("input[name='sub14']").val(매수누적2).comma('init');
+	$("input[name='sub15']").val(매도누적2).comma('init');
+	$("input[name='sub16']").val(평균단가2).comma('init');
+	$("input[name='sub17']").val(현매수금2).comma('init');
+	$("input[name='sub21']").val(평균단가1).comma('init');
+	$("input[name='sub22']").val(매도누적1).comma('init');
+	$("input[name='sub23']").val(매수누적1).comma('init');
+	$("input[name='sub24']").val(현매수금1).comma('init');
 }
 
 function txt_to_num(key,opt) {
