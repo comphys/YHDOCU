@@ -17,7 +17,7 @@
 </div>
 
 {% if D['TR'] %}
-<div class="row-row clearfix" style="margin-bottom:-2px;"> 
+<div class="row-row clearfix" style="margin-bottom:-2px;" onclick="$('#extra-info-toggle').toggle()"> 
 	<div class='well' style="color:{{D['info_color']}}">
 		<div style="display:inline-block;width:375px;padding-left:20px" >
 			<i class="fa fa-calendar"></i> {{D['경과일수']}} &nbsp;
@@ -39,6 +39,19 @@
 			<i class="fa fa-shopping-cart"></i> {{D['bottom_count']}} &nbsp;
 		</div>
 	</div> 
+</div>
+<div id="extra-info-toggle" class="row-row clearfix" style="margin-bottom:-2px;">
+	<div class="well">
+		<div style="padding-left:20px" >
+			<span>Chart Analysis for {{D['적용종목']}}</span>&nbsp;
+			<span style="color:#f78181"><i class="fa fa-thermometer" ></i> {{D['최대가치']}} (<i class="fa fa-usd"></i> {{D['최대가치_단가']}})</span> &nbsp;
+			<span style="color:yellow"><i class="fa fa-thermometer-half" ></i> {{D['current_value']}} (<i class="fa fa-usd"></i> {{D['현재가치_종가']}})</span> &nbsp;
+			<span style="color:#58ACFA"><i class="fa fa-thermometer-0" ></i> {{D['최소가치']}} (<i class="fa fa-usd"></i> {{D['최소가치_단가']}})</span> &nbsp; / &nbsp;
+			<span style="font-weight:bold"><i class="fa fa-thermometer-half"></i> {{D['목표가치']}} (<i class="fa fa-usd"></i> {{D['목표가치_단가']}})</span> &nbsp;
+			<span style="color:#a7ebce"><i class="fa fa-thermometer-half"></i> {{D['현매수금']}} (<i class="fa fa-usd"></i> {{D['현매수금_단가']}})</span> &nbsp; : &nbsp;
+			<span style="font-style:italic">profit <i class="fa fa-usd"></i>{{D['현수익금']}} profit_rate {{D['현수익률']}}%</span>
+		</div>
+	</div>
 </div>
 <div class="row-row clearfix">
 	<table class='table table-bordered table-striped table-hover'>

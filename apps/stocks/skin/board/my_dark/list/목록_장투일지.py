@@ -68,7 +68,7 @@ class 목록_장투일지(SKIN) :
             self.D['chart_percent'] = [float(LD['add4']),float(LD['add10']),float(LD['add16'])]
             
             # --------------
-            qry = f"SELECT sum(add1), sum(add2), sum(add5), sum(add6), sum(add11), sum(add12), sum(sub10) FROM {self.DB.tbl}"
+            qry = f"SELECT sum(add1), sum(add2), sum(sub10) FROM {self.DB.tbl}"
             invest = self.DB.exe(qry,many=1,assoc=True)
 
             총투자금 = int(invest['sum(add1)']) - int(invest['sum(add2)'])
@@ -78,20 +78,21 @@ class 목록_장투일지(SKIN) :
             self.D['총출금'] = f"{int(invest['sum(add2)']):,}"
             self.D['총수익금'] = f"{총수익금:,}"
             self.D['총수익률'] = f"{총수익률:.2f}"
-            self.D['배당금'] = f"{float(invest['sum(sub10)']):,.2f}"
+            
             # -- dividend
-            self.D['매수금1'] = float(invest['sum(add5)'])
-            self.D['매도금1'] = float(invest['sum(add6)'])
+            self.D['매수금1'] = float(LD['sub23'])
+            self.D['매도금1'] = float(LD['sub22'])
             수익금1 = float(LD['add9']) - self.D['매수금1'] + self.D['매도금1']
             평단가1 = float(LD['sub21'])
             수익률1 = (float(LD['add8']) - 평단가1) / 평단가1 *100
             self.D['평단가1'] = f"{평단가1:,.2f}"
             self.D['수익금1'] = f"{수익금1:,.2f}"
             self.D['수익률1'] = f"{수익률1:.2f}"
+            self.D['배당금'] = f"{float(invest['sum(sub10)']):,.2f}"
 
             # -- leverage
-            self.D['매수금2'] = float(invest['sum(add11)'])
-            self.D['매도금2'] = float(invest['sum(add12)'])
+            self.D['매수금2'] = float(LD['sub14'])
+            self.D['매도금2'] = float(LD['sub15'])
             수익금2 = float(LD['add15']) - self.D['매수금2'] + self.D['매도금2']
             평단가2 = float(LD['sub16'])
             수익률2 = (float(LD['add14']) - 평단가2) / 평단가2 *100
@@ -103,6 +104,23 @@ class 목록_장투일지(SKIN) :
             self.D['매도금1'] = f"{self.D['매도금1']:,.2f}"
             self.D['매수금2'] = f"{self.D['매수금2']:,.2f}"
             self.D['매도금2'] = f"{self.D['매도금2']:,.2f}"
+
+            # -- extra-info
+            self.D['적용종목'] = LD['sub7']
+            self.D['최소가치'] = f"{int(LD['add18']):,}"
+            self.D['목표가치'] = f"{int(LD['add19']):,}"
+            self.D['최대가치'] = f"{int(LD['add20']):,}"
+            self.D['현매수금'] = f"{float(LD['sub17']):,}"
+            self.D['현수익금'] = float(chart_data[-1]['add15']) - float(LD['sub17'])
+            self.D['현수익률'] = self.D['현수익금'] / float(LD['sub17']) * 100
+            self.D['현수익금'] = f"{self.D['현수익금']:,.2f}"
+            self.D['현수익률'] = f"{self.D['현수익률']:,.2f}"
+
+            self.D['최소가치_단가'] = f"{int(LD['add18'])/int(LD['add13']):,.2f}"
+            self.D['목표가치_단가'] = f"{int(LD['add19'])/int(LD['add13']):,.2f}"
+            self.D['현재가치_종가'] = f"{float(LD['add14']):,.2f}"
+            self.D['최대가치_단가'] = f"{int(LD['add20'])/int(LD['add13']):,.2f}"
+            self.D['현매수금_단가'] = f"{float(LD['sub17'])/int(LD['add13']):,.2f}"
 
             self.D['info_color']= 'white' 
             if LD['add15'] < LD['add18'] : 
