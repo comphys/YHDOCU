@@ -4,31 +4,31 @@ class M_dashboard2(Model) :
 
     def view(self) :
         date_from = '2022-07-07'
-        self.DB.tbl, self.DB.wre, self.DB.odr =('h_daily_first_board',f"add0 > '{date_from}'",'add0 DESC')
+        self.DB.tbl, self.DB.wre, self.DB.odr =('h_daily_virtual_board',f"add0 > '{date_from}'",'add0 DESC')
         self.DB.lmt = '180'
         DF = self.DB.get("add0,add5,add9")
         DFD= {x['add0']:[x['add5'],x['add9']] for x in DF}
         cnt= len(DFD)
 
-        DSD = {}
+        DSD = {}    
         DTD = {}
 
         start_date = DF[-1]['add0']
 
         self.DB.wre = f"add0 >= '{start_date}'"
-        self.DB.tbl ='h_daily_second_board'
+        self.DB.tbl ='h_daily_first_board'
         DS = self.DB.get("add0,add9")
         if DS : DSD= {x[0]:x[1] for x in DS}
 
-        self.DB.tbl ='h_daily_third_board'
+        self.DB.tbl ='h_daily_second_board'
         DT = self.DB.get("add0,add9",assoc=False)
         if DT : DTD= {x[0]:x[1] for x in DT}
 
         self.D['날자'] = []
         self.D['종가'] = []
+        self.D['가상'] = []
         self.D['첫째'] = []
         self.D['둘째'] = []
-        self.D['셋째'] = []
 
         for key in DFD :
             if key in DSD : DFD[key].append(DSD[key])
@@ -39,34 +39,34 @@ class M_dashboard2(Model) :
 
             self.D['날자'].append(key[2:])
             self.D['종가'].append(DFD[key][0])
-            self.D['첫째'].append(DFD[key][1])
-            self.D['둘째'].append(DFD[key][2])
-            self.D['셋째'].append(DFD[key][3])
+            self.D['가상'].append(DFD[key][1])
+            self.D['첫째'].append(DFD[key][2])
+            self.D['둘째'].append(DFD[key][3])
 
         self.D['날자'].reverse()
         self.D['종가'].reverse()
+        self.D['가상'].reverse()
         self.D['첫째'].reverse()
-        self.D['둘째'].reverse()
-        self.D['셋째'].reverse() 
+        self.D['둘째'].reverse() 
         
         self.D['종가최대'] = max(self.D['종가'])
         self.D['종가최소'] = min(self.D['종가'])
         MDD = (float(self.D['종가최대'])-float(self.D['종가최소']))/float(self.D['종가최대']) * 100
         self.D['MDD'] = f"{MDD:.2f}"
 
-        self.D['첫째10'] = [float(x)*0.9 for x in self.D['첫째']]
-        self.D['첫째20'] = [float(x)*0.8 for x in self.D['첫째']]
-        self.D['첫째30'] = [float(x)*0.7 for x in self.D['첫째']]
+        self.D['가상10'] = [float(x)*0.9 for x in self.D['가상']]
+        self.D['가상20'] = [float(x)*0.8 for x in self.D['가상']]
+        self.D['가상30'] = [float(x)*0.7 for x in self.D['가상']]
  
         self.DB.clear()
 
+        self.D['가상상황']  = self.outcome('h_daily_virtual_board')
         self.D['첫째상황']  = self.outcome('h_daily_first_board')
         self.D['둘째상황']  = self.outcome('h_daily_second_board')
-        self.D['셋째상황']  = self.outcome('h_daily_third_board')
 
-        fx = float(self.D['첫째상황']['t1'].replace(',','')); fy = float(self.D['첫째상황']['t2'].replace(',',''))
-        sx = float(self.D['둘째상황']['t1'].replace(',','')); sy = float(self.D['둘째상황']['t2'].replace(',',''))
-        tx = float(self.D['셋째상황']['t1'].replace(',','')); ty = float(self.D['셋째상황']['t2'].replace(',',''))
+        fx = float(self.D['가상상황']['t1'].replace(',','')); fy = float(self.D['가상상황']['t2'].replace(',',''))
+        sx = float(self.D['첫째상황']['t1'].replace(',','')); sy = float(self.D['첫째상황']['t2'].replace(',',''))
+        tx = float(self.D['둘째상황']['t1'].replace(',','')); ty = float(self.D['둘째상황']['t2'].replace(',',''))
          
         self.D['평가합계'] = fy + sy + ty
         self.D['투자합계'] = fx + sx + tx
@@ -133,7 +133,7 @@ class M_dashboard2(Model) :
             if int(LD['buy21']) :  strategy[0] = '터닝매수' ; strategy[1] = LD['buy21']; strategy[2] = LD['buy22']
 
             if int(LD['sell11']) : strategy[3] = '일반매도' ; strategy[4] = LD['sell11']; strategy[5] = LD['sell12']
-            if int(LD['sell21']) : strategy[3] = '둘째매도' ; strategy[4] = LD['sell21']; strategy[5] = LD['sell22']
+            if int(LD['sell21']) : strategy[3] = '첫째매도' ; strategy[4] = LD['sell21']; strategy[5] = LD['sell22']
             if int(LD['sell31']) : strategy[3] = '강제매도' ; strategy[4] = LD['sell31']; strategy[5] = LD['sell32']
             if int(LD['sell41']) : strategy[3] = '전략매도' ; strategy[4] = LD['sell41']; strategy[5] = LD['sell42']
         
