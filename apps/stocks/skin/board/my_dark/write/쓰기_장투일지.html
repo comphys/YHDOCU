@@ -446,7 +446,9 @@ function auto_calculate() {
 		} 
 	}
 
-	평균단가  = 평균단가.toFixed(4)
+	// 평균단가는 매수할 때만 변동됨
+
+	평균단가1= 평균단가1.toFixed(4) ; 평균단가2= 평균단가2.toFixed(4)
 	목표가치 = 목표가치.toFixed();
 
     $("input[name='add1']").val(입금).comma('init');
