@@ -36,9 +36,6 @@ class Stock_longterm(Control) :
         update['sub6'] = old_data['sub6']
         update['sub7'] = old_data['sub7']
 
-        self.info(update['add0'])
-
-
         return self.json(update)
 
     def autoinput2(self) :
