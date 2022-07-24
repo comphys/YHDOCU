@@ -38,7 +38,6 @@ class M_dashboard(Model) :
 
             for key, val in self.D[category].items() : 
                 self.D[category][key] = self.outcome(key,val[0],val[1],val[3]) #key, table, type, init
-                self.info(self.D[category][key])
 
                 if val[2] == 1 :
                     self.D['평가합계'][category] += float(self.D[category][key][1].replace(',',''))
