@@ -50,7 +50,7 @@ class 목록_매매일지(SKIN) :
                 self.D['종가변동'] = f"{(c_price[-1] - c_price[0]) / c_price[0] * 100:5.2f}%"
                 self.D['평가변동'] = f"{(m_price[-1] - m_price[0]) / m_price[0] * 100:5.2f}%"
         
-            if  self.D['bid'] in ('daily_first','daily_second','daily_third') :
+            if  self.D['bid'] in ('daily_first','daily_second','daily_virtual') :
                 self.DB.tbl, self.DB.wre = (self.D['tbl'],f"add1='{self.D['code']}'")
                 start_date, last_date = self.DB.get("min(add0),max(add0)",many=1,assoc=False)
 

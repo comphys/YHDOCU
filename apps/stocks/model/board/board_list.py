@@ -20,7 +20,7 @@ class M_board_list(Model) :
                 # key : csh_add1, csh_add2 ... 
                 for key, val in self.D['post'].items() : session['CSH'][key] = val 
             else :
-                if self.D['bid'] in ('daily_first','daily_second','daily_third') : 
+                if self.D['bid'] in ('daily_first','daily_second','daily_virtual') : 
                     # session['CSH']['csh_add19'] = '시즌진행' 
                     session['CSH']['csh_add1'] =  session['CSH'].get('csh_add1','SOXL')
                     session['CSH']['csh_add2'] =  session['CSH'].get('csh_add2',self.DB.one(f"SELECT max(add2) FROM h_{self.D['bid']}_board"))
