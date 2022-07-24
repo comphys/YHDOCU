@@ -1,36 +1,38 @@
 {% extends D['_skn'] + 'page/my_dark/main_layout_mobile.html' %}
 
 {% block contents_page  %}
+<div style='text-align:center;font-size:16px;color:#f0f0ab;font-weight:bold;margin-bottom:10px'>{{D['오늘날자']}}({{D['오늘요일']}})</div>
+{% for category in D['CATEGORY'] %}
 <div class="dash-div" style="text-align:center;border-color: beige;padding:10px">
-<span style='font-size:16px;color:#f0f0ab;font-weight:bold'>{{D['오늘날자']}}({{D['오늘요일']}})</span> 현재시즌<br>
+{{category}} 
+
 <table class="dash-table" style="margin-top:5px">
-<!-- <tr style="border-top:3px solid darkslategrey"> -->
-{% for item in D['현재시즌'] %}
+
+{% for item in D[category] %}
 {% if loop.index == 1 %}
 <tr style="border-top:3px solid darkslategrey"></tr>
 {% else %}
 <tr>
 {% endif %}
 	<td>{{loop.index}}</td>
-	<td>{{D[item][0]|safe}}</td>
-	<td>{{D[item][1]|safe}}</td>
+	<td>{{D[category][item][0]|safe}}</td>
+	<td>{{D[category][item][1]|safe}}</td>
 	<td>◂</td>
-	<td>{{D[item][2]|safe}}&nbsp;</td>
-	<td>{{D[item][3]|safe}}</td>
-	<td>{{D[item][4]|safe}}</td>	
+	<td>{{D[category][item][2]|safe}}&nbsp;</td>
+	<td>{{D[category][item][3]|safe}}</td>
+	<td>{{D[category][item][4]|safe}}</td>	
 </tr>
 {% endfor %}
 <tr style="border-top:3px solid darkslategrey">
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td> {{D['평가합계1']}}</td>
+	<td> {{D['평가합계'][category]}}</td>
 	<td>◂</td>
-	<td>{{D['투자합계1']}}&nbsp;</td>
-	<td>{{D['손익현황1']|safe}}</td>
-	<td>{{D['합수익률1']|safe}}</td>	
+	<td>{{D['투자합계'][category]}}&nbsp;</td>
+	<td>{{D['손익현황'][category]|safe}}</td>
+	<td>{{D['합수익률'][category]|safe}}</td>	
 </tr>
 </table>
 </div>
-
-
+{% endfor %}
 {% endblock %}

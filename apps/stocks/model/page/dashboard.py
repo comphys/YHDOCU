@@ -5,41 +5,53 @@ class M_dashboard(Model) :
     def view(self) :
 
         # 조회목록
-        LC = ['현재시즌','전체시즌']
+        self.D['CATEGORY'] = ['현재시즌','전체시즌','분할매수','개인장투']
 
         self.D['현재시즌'] = {}
         self.D['전체시즌'] = {}
+        self.D['분할매수'] = {}
+        self.D['개인장투'] = {}
 
-        self.D['현재시즌']['첫째상황'] = ['h_daily_first_board','IFB',1,5377]
-        self.D['현재시즌']['둘째상황'] = ['h_daily_second_board','IFB',1,5200]
-        self.D['현재시즌']['SX_VR'] = ['h_myCLD_board','VR',1,0]
-        self.D['현재시즌']['TQ_VR'] = ['h_myOLT_board','VR',1,0]
+        self.D['현재시즌']['첫째계좌'] = ['h_daily_first_board','IFB',1,5377]
+        self.D['현재시즌']['둘째계좌'] = ['h_daily_second_board','IFB',1,5200]
+        self.D['현재시즌']['장투계좌'] = ['h_myCLD_board','VR',1,0]
 
-        self.D['전체시즌']['가상상황'] = ['h_daily_virtual_board','IFB',1,0]
-        self.D['전체시즌']['첫째상황'] = ['h_daily_first_board','IFB',1,0]
-        self.D['전체시즌']['둘째상황'] = ['h_daily_second_board','IFB',1,0]
-        self.D['전체시즌']['SX_VR'] = ['h_myCLD_board','VR',1,0]
-        self.D['전체시즌']['TQ_VR'] = ['h_myOLT_board','VR',1,0]
+        self.D['전체시즌']['첫째계좌'] = ['h_daily_first_board','IFB',1,0]
+        self.D['전체시즌']['둘째계좌'] = ['h_daily_second_board','IFB',1,0]
+        self.D['전체시즌']['장투계좌'] = ['h_myCLD_board','VR',1,22000]
+
+        self.D['분할매수']['가상일지'] = ['h_daily_virtual_board','IFB',0,8030]
+        self.D['분할매수']['첫째일지'] = ['h_daily_first_board','IFB',1,5377]
+        self.D['분할매수']['둘째일지'] = ['h_daily_second_board','IFB',1,5200]
+
+        self.D['개인장투']['장투일지'] = ['h_myOLT_board','VR',1,0]
         # -------------------------------------------------------------
 
-        for category in LC : 
-            self.D[category]['평가합계'] = 0
-            self.D[category]['투자합계'] = 0
+        self.D['평가합계'] = {}
+        self.D['투자합계'] = {}
+        self.D['손익현황'] = {}
+        self.D['합수익률'] = {}
+
+        for category in self.D['CATEGORY'] : 
+            self.D['평가합계'][category] = 0
+            self.D['투자합계'][category] = 0
 
             for key, val in self.D[category].items() : 
-                self.D[category][key] = self.outcome(key,val[0],val[1],val[3])
+                self.D[category][key] = self.outcome(key,val[0],val[1],val[3]) #key, table, type, init
+                self.info(self.D[category][key])
+
                 if val[2] == 1 :
-                    self.D[category]['평가합계'] += float(self.D[category][key][1].replace(',',''))
-                    self.D[category]['투자합계'] += float(self.D[category][key][2].replace(',',''))
+                    self.D['평가합계'][category] += float(self.D[category][key][1].replace(',',''))
+                    self.D['투자합계'][category] += float(self.D[category][key][2].replace(',',''))
 
         
-            self.D[category]['손익현황'] = self.D[category]['평가합계'] - self.D[category]['투자합계']
-            self.D[category]['합수익률'] = self.D[category]['손익현황'] / self.D[category]['투자합계'] * 100
+            self.D['손익현황'][category] = self.D['평가합계'][category] - self.D['투자합계'][category]
+            self.D['합수익률'][category] = self.D['손익현황'][category] / self.D['투자합계'][category] * 100
         
-            self.D[category]['평가합계'] = f"{self.D[category]['평가합계']:,.0f}"
-            self.D[category]['투자합계'] = f"{self.D[category]['투자합계']:,.0f}"
-            self.D[category]['손익현황'] = f"<span style='color:#ced8f6'>{self.D[category]['손익현황']:,.2f}</span>"  if self.D[category]['손익현황'] < 0 else f"<span style='color:#f6cece'>{self.D[category]['손익현황']:,.2f}</span>"
-            self.D[category]['합수익률'] = f"<span style='color:#ced8f6'>{self.D[category]['합수익률']:,.1f}%</span>" if self.D[category]['합수익률'] < 0 else f"<span style='color:#f6cece'>{self.D[category]['합수익률']:,.1f}%</span>"
+            self.D['평가합계'][category] = f"{self.D['평가합계'][category]:,.0f}"
+            self.D['투자합계'][category] = f"{self.D['투자합계'][category]:,.0f}"
+            self.D['손익현황'][category] = f"<span style='color:#ced8f6'>{self.D['손익현황'][category]:,.2f}</span>"  if self.D['손익현황'][category] < 0 else f"<span style='color:#f6cece'>{self.D['손익현황'][category]:,.2f}</span>"
+            self.D['합수익률'][category] = f"<span style='color:#ced8f6'>{self.D['합수익률'][category]:,.1f}%</span>" if self.D['합수익률'][category] < 0 else f"<span style='color:#f6cece'>{self.D['합수익률'][category]:,.1f}%</span>"
 
         #-----------------------------------------------------------------------------------------------------------------------------
         
