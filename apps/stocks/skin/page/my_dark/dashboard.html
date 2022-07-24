@@ -2,60 +2,35 @@
 
 {% block contents_page  %}
 <div class="dash-div" style="text-align:center;border-color: beige;padding:10px">
-<span style='font-size:16px;color:#f0f0ab;font-weight:bold'>{{D['오늘날자']}}({{D['오늘요일']}})</span> 종합 상황보고<br>
+<span style='font-size:16px;color:#f0f0ab;font-weight:bold'>{{D['오늘날자']}}({{D['오늘요일']}})</span> 현재시즌<br>
 <table class="dash-table" style="margin-top:5px">
-<tr style="border-top:3px solid darkslategrey">
-	<td>1</td>
-	<td>{{D['첫째상황'][0]|safe}}</td>
-	<td>{{D['첫째상황'][1]|safe}}%</td>
-	<td> {{D['첫째상황'][2]|safe}}</td>
-	<td>◂</td>
-	<td>{{D['첫째상황'][3]|safe}}&nbsp;</td>
-	<td>{{D['첫째상황'][4]|safe}}</td>
-	<td>{{D['첫째상황'][5]|safe}}</td>	
-</tr>
+<!-- <tr style="border-top:3px solid darkslategrey"> -->
+{% for item in D['현재시즌'] %}
+{% if loop.index == 1 %}
+<tr style="border-top:3px solid darkslategrey"></tr>
+{% else %}
 <tr>
-	<td>2</td>
-	<td>{{D['둘째상황'][0]|safe}}</td>
-	<td>{{D['둘째상황'][1]|safe}}%</td>
-	<td> {{D['둘째상황'][2]|safe}}</td>
+{% endif %}
+	<td>{{loop.index}}</td>
+	<td>{{D[item][0]|safe}}</td>
+	<td>{{D[item][1]|safe}}</td>
 	<td>◂</td>
-	<td>{{D['둘째상황'][3]|safe}}&nbsp;</td>
-	<td>{{D['둘째상황'][4]|safe}}</td>
-	<td>{{D['둘째상황'][5]|safe}}</td>	
+	<td>{{D[item][2]|safe}}&nbsp;</td>
+	<td>{{D[item][3]|safe}}</td>
+	<td>{{D[item][4]|safe}}</td>	
 </tr>
-<tr>
-	<td>3</td>
-	<td>{{D['셋째상황'][0]|safe}}</td>
-	<td>{{D['셋째상황'][1]|safe}}%</td>
-	<td> {{D['셋째상황'][2]|safe}}</td>
-	<td>◂</td>
-	<td>{{D['셋째상황'][3]|safe}}&nbsp;</td>
-	<td>{{D['셋째상황'][4]|safe}}</td>
-	<td>{{D['셋째상황'][5]|safe}}</td>	
-</tr>
+{% endfor %}
 <tr style="border-top:3px solid darkslategrey">
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td> {{D['평가합계']}}</td>
+	<td> {{D['평가합계1']}}</td>
 	<td>◂</td>
-	<td>{{D['투자합계']}}&nbsp;</td>
-	<td>{{D['손익현황']|safe}}</td>
-	<td>{{D['합수익률']|safe}}</td>	
+	<td>{{D['투자합계1']}}&nbsp;</td>
+	<td>{{D['손익현황1']|safe}}</td>
+	<td>{{D['합수익률1']|safe}}</td>	
 </tr>
 </table>
 </div>
-<div class="dash-div">
-{{D['첫째전략']|safe}}
-</div>
-<div class="dash-div">
-{{D['둘째전략']|safe}}
-</div>
-<div class="dash-div">
-{{D['셋째전략']|safe}}
-</div>
-<div style="text-align:center;padding:10px;color:darkgray">
-주식매매전략 Ver 1.0 by JYH
-</div>
+
+
 {% endblock %}

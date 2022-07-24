@@ -18,7 +18,7 @@
 .dash-table td {padding:3px;text-align:right;}
 .dash-table tr td:nth-child(1) {color:yellow}
 .dash-table tr td:nth-child(2) {font-weight:bold}
-.dash-table tr td:nth-child(3) {color:#b9b9b9}
+.dash-table tr td:nth-child(3) {color:#E0F8E0;font-weight:bold}
 .dash-table tr td:nth-child(4) {font-weight:bold}
 .dash-table tr td:nth-child(5) {padding:0px}
-.dash-table tr td:nth-child(6) {color:#b9b9b9}
+
