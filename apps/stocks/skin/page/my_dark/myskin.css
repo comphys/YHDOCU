@@ -16,9 +16,10 @@
 .dash-div+.dash-div {margin-top:10px;}
 .dash-table {width:100%;}
 .dash-table td {padding:3px;text-align:right;}
-.dash-table tr td:nth-child(1) {color:yellow}
-.dash-table tr td:nth-child(2) {font-weight:bold}
-.dash-table tr td:nth-child(3) {color:#E0F8E0;font-weight:bold}
-.dash-table tr td:nth-child(4) {font-weight:bold}
-.dash-table tr td:nth-child(5) {padding:0px}
+.dash-table tr td:nth-child(1) {color:yellow;width:10px}
+.dash-table tr td:nth-child(2) {font-weight:bold;width:70px}
+.dash-table tr td:nth-child(3) {color:#E0F8E0;font-weight:bold;width:70px}
+.dash-table tr td:nth-child(4) {font-weight:bold;width:5px}
+.dash-table tr td:nth-child(5) {padding:0px;width:60px}
+.dash-table tr td:nth-child(6) {padding:0px;width:80px}
 
