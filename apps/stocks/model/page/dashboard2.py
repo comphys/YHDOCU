@@ -17,7 +17,7 @@ class M_dashboard2(Model) :
 
         self.DB.wre = f"add0 >= '{start_date}'"
         self.DB.tbl ='h_daily_first_board'
-        DS = self.DB.get("add0,add9")
+        DS = self.DB.get("add0,add9",assoc=False)
         if DS : DSD= {x[0]:x[1] for x in DS}
 
         self.DB.tbl ='h_daily_second_board'
