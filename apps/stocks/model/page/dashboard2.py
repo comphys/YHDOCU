@@ -126,16 +126,17 @@ class M_dashboard2(Model) :
         strategy = ['&nbsp','&nbsp','&nbsp','&nbsp','&nbsp','&nbsp']
         
         if LD['add19'] == '시즌진행' :
-            if int(LD['buy11']) :  strategy[0] = '일반매수' ; strategy[1] = LD['buy11']; strategy[2] = LD['buy12']
-            if int(LD['buy31']) :  strategy[0] = '추종매수' ; strategy[1] = LD['buy31']; strategy[2] = LD['buy32']
-            if int(LD['buy41']) :  strategy[0] = '추가매수' ; strategy[1] = LD['buy41']; strategy[2] = LD['buy42']
-            if int(LD['buy51']) :  strategy[0] = '전략매수' ; strategy[1] = LD['buy51']; strategy[2] = LD['buy52']
-            if int(LD['buy21']) :  strategy[0] = '터닝매수' ; strategy[1] = LD['buy21']; strategy[2] = LD['buy22']
-
-            if int(LD['sell11']) : strategy[3] = '일반매도' ; strategy[4] = LD['sell11']; strategy[5] = LD['sell12']
-            if int(LD['sell21']) : strategy[3] = '첫째매도' ; strategy[4] = LD['sell21']; strategy[5] = LD['sell22']
-            if int(LD['sell31']) : strategy[3] = '강제매도' ; strategy[4] = LD['sell31']; strategy[5] = LD['sell32']
-            if int(LD['sell41']) : strategy[3] = '전략매도' ; strategy[4] = LD['sell41']; strategy[5] = LD['sell42']
+            k = 0
+            if int(LD['buy11']) :  strategy[k] = "<span style='color:#CEF6F5'>평단매수</span>" ; strategy[k+1] = LD['buy11'];  strategy[k+2] = LD['buy12']   ; k+=3
+            if int(LD['buy21']) :  strategy[k] = "<span style='color:#CEF6F5'>큰단매수</span>" ; strategy[k+1] = LD['buy21'];  strategy[k+2] = LD['buy22']   ; k+=3
+            if int(LD['buy31']) :  strategy[k] = "<span style='color:#CEF6F5'>추종매수</span>" ; strategy[k+1] = LD['buy31'];  strategy[k+2] = LD['buy32']   ; k+=3
+            if int(LD['buy41']) :  strategy[k] = "<span style='color:#CEF6F5'>추가매수</span>" ; strategy[k+1] = LD['buy41'];  strategy[k+2] = LD['buy42']   ; k+=3
+            if int(LD['buy51']) :  strategy[k] = "<span style='color:#CEF6F5'>전략매수</span>" ; strategy[k+1] = LD['buy51'];  strategy[k+2] = LD['buy52']   ; k+=3
+            
+            if int(LD['sell11']) : strategy[k] = "<span style='color:#F8E6E0'>첫째매도</span>" ; strategy[k+1] = LD['sell11']; strategy[k+2] = LD['sell12']  ; k+=3
+            if int(LD['sell21']) : strategy[k] = "<span style='color:#F8E6E0'>둘째매도</span>" ; strategy[k+1] = LD['sell21']; strategy[k+2] = LD['sell22']  ; k+=3
+            if int(LD['sell31']) : strategy[k] = "<span style='color:#F8E6E0'>강제매도</span>" ; strategy[k+1] = LD['sell31']; strategy[k+2] = LD['sell32']  ; k+=3
+            if int(LD['sell41']) : strategy[k] = "<span style='color:#F8E6E0'>전략매도</span>" ; strategy[k+1] = LD['sell41']; strategy[k+2] = LD['sell42']
         
         out['s1'] = strategy[0] 
         out['s2'] = strategy[1] 
