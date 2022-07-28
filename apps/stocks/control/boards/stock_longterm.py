@@ -55,7 +55,7 @@ class Stock_longterm(Control) :
         self.DB.wre = f"add0='{on_day}'   and add1='{old_data['sub7']}'"; update['add14'] = self.DB.get_one('add3') 
 
         base_code = {'SOXL':'SOXX','TQQQ':'QQQ'}
-        self.DB.wre = f"add0='{on_day}'   and add1='{base_code[old_data['sub7']]}'" 
+        self.DB.wre = f"add0='{on_day}' and add1='{base_code[old_data['sub7']]}'" 
         base_value = float(self.DB.get_one('add3'))
           
         update['add0'] = old_data['add0']
