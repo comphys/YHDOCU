@@ -110,16 +110,27 @@ class 목록_장투일지(SKIN) :
             self.D['목표가치'] = f"{int(LD['add19']):,}"
             self.D['최대가치'] = f"{int(LD['add20']):,}"
             self.D['현매수금'] = f"{float(LD['sub17']):,}"
-            self.D['현수익금'] = float(chart_data[-1]['add15']) - float(LD['sub17'])
-            self.D['현수익률'] = self.D['현수익금'] / float(LD['sub17']) * 100
-            self.D['현수익금'] = f"{self.D['현수익금']:,.2f}"
-            self.D['현수익률'] = f"{self.D['현수익률']:,.2f}"
+
+            # self.D['현수익금'] = float(chart_data[-1]['add15']) - float(LD['sub17'])
+            # self.D['현수익률'] = self.D['현수익금'] / float(LD['sub17']) * 100
+            # self.D['현수익금'] = f"{self.D['현수익금']:,.2f}"
+            # self.D['현수익률'] = f"{self.D['현수익률']:,.2f}"
 
             self.D['최소가치_단가'] = f"{int(LD['add18'])/int(LD['add13']):,.2f}"
             self.D['목표가치_단가'] = f"{int(LD['add19'])/int(LD['add13']):,.2f}"
             self.D['현재가치_종가'] = f"{float(LD['add14']):,.2f}"
             self.D['최대가치_단가'] = f"{int(LD['add20'])/int(LD['add13']):,.2f}"
             self.D['현매수금_단가'] = f"{float(LD['sub17'])/int(LD['add13']):,.2f}"
+
+            매도금액 = int(LD['add20'])-int(LD['add19'])*1.002
+            매수금액 = int(LD['add19'])-int(LD['add18'])*1.002
+            매도단가 = int(LD['add20'])/int(LD['add13'])*1.002
+            매수단가 = int(LD['add18'])/int(LD['add13'])*1.002
+
+            self.D['매도단가'] = f"{매도단가:,.2f}" 
+            self.D['매수단가'] = f"{매수단가:,.2f}" 
+            self.D['매도갯수'] = f"{ 매도금액 / 매도단가 :,.0f}"
+            self.D['매수갯수'] = f"{ 매수금액 / 매수단가 :,.0f}"
 
             self.D['info_color']= 'white' 
             if LD['add15'] < LD['add18'] : 
