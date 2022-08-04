@@ -222,8 +222,9 @@
 	</ul></div>
 </div>
 
-{% if D['BCONFIG']['row_flt']=='on' %}
 <script>
+
+{% if D['BCONFIG']['row_flt']=='on' %}
 $(document).ready(function(){ 
 	if("{{D['list_filter']}}") $("#list-filter").show();
 	$(document).on('keydown',null,'f1',function(){ $("#list-filter").toggle(); return false; })
@@ -231,16 +232,12 @@ $(document).ready(function(){
 	$("#filter-reset").click(function(){$("#filter-qry").text('');});
 	$("#list-filter-submit").click(function(){var txt = $("#filter-qry").text(); $("input[name='list_filter']").val(txt);document.category_search.submit();});
 });
-</script>
-{% else %}
-<script>	
+{% endif %}
+	
 function delete_chk(url) {
 	if(uri('brother') < 0) h_dialog.notice("추가글이 존재합니다."); 
 	else delete_confirm(url);
 }
 </script>
 {% endif %}
-
 {% endblock %}
-
-
