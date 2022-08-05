@@ -1,13 +1,13 @@
 from system.core.load import SKIN
 
-class 쓰기_표준(SKIN) :
+class 쓰기_풍력단지현황(SKIN) :
 
     def write(self) :
         OBODY = self.D.get('OBODY',None)
+        self.D['BODY'] = OBODY
         self.D['TR_add'] = []
         self.D['TR_cat'] = []
-        if self.D['BCONFIG']['width'] : w_width  = int( (self.D['BCONFIG']['width']).replace('px','') )
-        else : w_width = 815
+        w_width = 815
         self.D['w_width1'] = str(w_width + 80)+'px'
         self.D['w_width2'] = str(w_width) + 'px'
 
@@ -32,19 +32,9 @@ class 쓰기_표준(SKIN) :
                 elif exFormat[key] == 'n_edit' : clss="class='i-number'" 
                 elif exFormat[key] == 'date'   : clss="class='i-date'" 
                 else : clss="class='i-text'"
-                if key in CAT_KEY : self.user_cat(val,key,'132px',clss,self.D['bid'],OBODY) 
-                else : self.user_add(val,key,clss,OBODY)
+                if key in CAT_KEY : self.user_cat(val,key,'132px',self.D['bid'],OBODY) 
     
-    def user_add(self,val,key,clss,OBODY) :
-        if key == 'add0' : return 
-        value =''
-        if OBODY : value = OBODY.get(key,'')
-        tmp  = f"<div class='i-input-div'><div class='write-input-left'>{val}</div>"
-        tmp += f"<input type='text' name='{key}' {clss} value='{value}'></div>"
-        
-        self.D['TR_add'].append(tmp)
-    
-    def user_cat(self,val,key,xwidth,clss,bid,OBODY) :
+    def user_cat(self,val,key,xwidth,bid,OBODY) :
         if key == 'add0' : return 
         value =''
         if OBODY : value = OBODY.get(key,'')
@@ -64,5 +54,5 @@ class 쓰기_표준(SKIN) :
         tmp += "</ul>"
         tmp += "</div></div>" 
 
-        self.D['TR_cat'].append(tmp)
+        self.D[key] = tmp 
 
