@@ -223,7 +223,6 @@
 </div>
 
 <script>
-
 {% if D['BCONFIG']['row_flt']=='on' %}
 $(document).ready(function(){ 
 	if("{{D['list_filter']}}") $("#list-filter").show();
@@ -239,5 +238,5 @@ function delete_chk(url) {
 	else delete_confirm(url);
 }
 </script>
-{% endif %}
+
 {% endblock %}
