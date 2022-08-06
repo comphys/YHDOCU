@@ -75,6 +75,7 @@ class 목록_장투일지(SKIN) :
             총수익률 = 총수익금/총투자금 * 100
             self.D['총입금'] = f"{int(invest['sum(add1)']):,}"
             self.D['총출금'] = f"{int(invest['sum(add2)']):,}"
+            self.D['현재총액'] = f"{int(LD['add17']):,}"
             self.D['총수익금'] = f"{총수익금:,}"
             self.D['총수익률'] = f"{총수익률:.2f}"
             

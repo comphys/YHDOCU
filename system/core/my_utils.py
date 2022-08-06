@@ -1,4 +1,5 @@
 import os, re, json,urllib.request as ul 
+import shutil
 from datetime import datetime, timedelta
 from pytz import timezone
 
@@ -74,11 +75,11 @@ def delete_foler(fx) :
 def rename_file(fx1, fx2) :
     return os.rename(fx1, fx2)
 
-def copy_file(fx1, fx2) :
-    pass
+def copy_file(src, tgt) :
+    shutil.copy(src,tgt)
 
-def move_file(fx1, fx2) :
-    pass
+def move_file(src, tgt) :
+    shutil.move(src,tgt)
 
 # string
 def dequote(s):

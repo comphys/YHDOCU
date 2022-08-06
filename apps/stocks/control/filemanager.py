@@ -151,6 +151,15 @@ class Filemanager(Control) :
         my.rename_file(f_old,f_new)
         return False
 
+    def copy_paste_file(self) :
+        f_src = self.D['post']['src'] ; src = self.D['ROOT'] + '/' + f_src
+        f_tgt = self.D['post']['tgt'] ; tgt = self.D['ROOT'] + '/' + f_tgt
+        opt   = self.D['post']['opt'] ; 
+        if   opt == 'copy' : my.copy_file(src,tgt)
+        elif opt == 'move' : my.move_file(src,tgt)
+        self.info(opt)
+        return self.echo('OK')
+
         
 
 

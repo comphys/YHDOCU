@@ -20,9 +20,9 @@
 <div class="row-row clearfix" style="margin-bottom:-2px;" onclick="$('#extra-info-toggle').toggle()"> 
 	<div class='well' style="color:{{D['info_color']}}">
 		<div style="display:inline-block;width:375px;padding-left:20px" >
-			<i class="fa fa-calendar"></i> {{D['경과일수']}} &nbsp;
 			<i class="fa fa-sign-in"></i> {{D['총입금']}} &nbsp;
 			<i class="fa fa-sign-out"></i> {{D['총출금']}} &nbsp;
+			<i class="fa fa-signal"></i> {{D['현재총액']}} &nbsp;
 			<i class="fa fa-usd"></i> {{D['총수익금']}} &nbsp; <i class="fa fa-line-chart"></i> {{D['총수익률']}}% &nbsp;
 			
 		</div>
@@ -76,7 +76,7 @@
 				<th style="background-color:#071418;;font-style:italic">Total</th>
 			</tr>
 			<tr>
-				<th style="background-color:#071418;font-style:italic">Diary</th>
+				<th style="background-color:#071418;font-style:italic"><i class="fa fa-calendar"></i> {{D['경과일수']}}</th>
 				<th style="background-color:#0A2229;text-align:right">{{D['총입금']}}</th>
 				<th style="background-color:#0A2229;text-align:right">{{D['총출금']}}</th>
 				<th style="background-color:#0A2229;text-align:right">잔액</th>
