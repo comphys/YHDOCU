@@ -61,8 +61,8 @@ class M_backtest_LT_backtest(Model) :
         self.M['최대가차']  = 0
         self.M['가용잔액']  = self.D['init_cash']
 
-        self.M['상승밴드']  = 1.1
-        self.M['하강밴드']  = 0.9
+        self.M['상승밴드']  = 1.12
+        self.M['하강밴드']  = 0.88
         self.M['가치증가']  = 1.0
 
 

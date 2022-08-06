@@ -105,7 +105,9 @@ class 목록_장투일지(SKIN) :
             self.D['매도금2'] = f"{self.D['매도금2']:,.2f}"
 
             # -- extra-info
+            self.D['배당종목'] = LD['sub6']
             self.D['적용종목'] = LD['sub7']
+
             self.D['최소가치'] = f"{int(LD['add18']):,}"
             self.D['목표가치'] = f"{int(LD['add19']):,}"
             self.D['최대가치'] = f"{int(LD['add20']):,}"
@@ -122,10 +124,10 @@ class 목록_장투일지(SKIN) :
             self.D['최대가치_단가'] = f"{int(LD['add20'])/int(LD['add13']):,.2f}"
             self.D['현매수금_단가'] = f"{float(LD['sub17'])/int(LD['add13']):,.2f}"
 
-            매도금액 = int(LD['add20'])-int(LD['add19'])*1.002
-            매수금액 = int(LD['add19'])-int(LD['add18'])*1.002
-            매도단가 = int(LD['add20'])/int(LD['add13'])*1.002
-            매수단가 = int(LD['add18'])/int(LD['add13'])*1.002
+            매도금액 = int(LD['add20'])-int(LD['add19'])
+            매수금액 = int(LD['add19'])-int(LD['add18'])
+            매도단가 = int(LD['add20'])/int(LD['add13'])
+            매수단가 = int(LD['add18'])/int(LD['add13'])
 
             self.D['매도단가'] = f"{매도단가:,.2f}" 
             self.D['매수단가'] = f"{매수단가:,.2f}" 
