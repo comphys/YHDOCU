@@ -157,7 +157,6 @@ class Filemanager(Control) :
         opt   = self.D['post']['opt'] ; 
         if   opt == 'copy' : my.copy_file(src,tgt)
         elif opt == 'move' : my.move_file(src,tgt)
-        self.info(opt)
         return self.echo('OK')
 
         

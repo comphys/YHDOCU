@@ -22,9 +22,6 @@
 						var posturl = uri('linkurl') + 'filemanager/file_rename'; 
 						var f_rname = $(this).text(); 
 						$.post( posturl, { f_oname : f_oname, f_rname : f_rname } ).done(function(){list_renew();});}
-
-					if(event.which == 116) { event.preventDefault(); Copy_Move_file(this,'copy'); } 
-					if(event.which == 117) { event.preventDefault(); Copy_Move_file(this,'move'); } 
 				}   
 				);  // end of keydown
 
@@ -232,19 +229,6 @@ function copy_paste_file(opt) {
 	Clear_temporary('file');
 }
 
-// function Copy_Move_file(sel,opt) {
-// 	var src =  Storage.r('CopyPasteFile');     if( !src) { h_dialog.notice('선택된 파일이 없습니다'); return; }
-// 	var tgt =  Storage.r('TargetFolderName');   
-// 	var ax_file = uri('linkurl') + "filemanager/copy_move_file" ;
-// 	var post_val = {'opt': opt, 'src' : src, 'tgt' : tgt };
-// 	$.post(ax_file , post_val).done( function(data) { if(data !="OK") h_dialog.alert(data); 
-// 		else {
-// 			if(opt == 'copy') $(sel).css('color','blue'); 
-// 			else $(sel).css('text-decoration','line-through'); 
-// 		}
-// 	});
-// 	Clear_temporary('file');
-// }
 
 function Clear_temporary(opt) {
 	if(opt == 'file')   {Storage.d('CopyPasteFile');    $('#temporary_file').text(''); }
