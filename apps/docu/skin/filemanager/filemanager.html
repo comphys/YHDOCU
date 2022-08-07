@@ -25,6 +25,7 @@
 		<span id="temporary_folder" style="color:#828200;cursor:pointer" onclick="bottom_menu('moveToTemporary')">&nbsp;</span>&nbsp;	
 		<span onclick="bottom_menu('saveToTemporary')" style="cursor:pointer"><i class='fa fa-plus'></i></span>&nbsp;
 	    <span onclick="Clear_temporary('folder')" style="cursor:pointer"><i class='fa fa-minus'></i></span>&nbsp;
+		<span onclick="Clear_folder()" style="cursor:pointer"><i class='fa fa-trash-o'></i></span>&nbsp;
 		<a href="{{D['_bse']}}filemanager/logout"><i class='fa fa-user fa-lg'></i></a>&nbsp;	
  	</div>
 </div>
@@ -77,14 +78,17 @@
 </div>
 
 <!-- 마우스 우측 메뉴 -->
-	<div id='contextMenu' class="rightClickMenu" style='display:none'>
+	<div id='contextMenu' class="rightClickMenu" style='display:none;'>
 		<li onclick="add_file('folder')"> 새폴더생성 </li>
 		<li onclick="del_folder()"> 현재폴더삭제 </li>
 		<li onclick="rename_folder()"> 폴더이름변경 </li>
-		<li class='divider'></li>
+	</div>
+
+	<div id='contextMenu1' class="rightClickMenu" style='display:none;'>
 		<li onclick="add_file('file')"> 새파일생성 </li>
 		<li onclick="copy_paste_file('copy')"> 파일복사하기 </li>
 		<li onclick="copy_paste_file('move')"> 파일옮겨넣기 </li>
+		<li onclick="delete_this_file()"> 현재파일삭제 </li>
 	</div>
 
 <!-- 마우스 우측 메뉴2 -->

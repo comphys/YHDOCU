@@ -127,6 +127,16 @@ class Filemanager(Control) :
             del_fx = session['epl_path'] 
             if my.delete_foler(del_fx) : return self.echo('OK')
     
+    def delete_file(self) :
+        src = self.C['DOCU_ROOT'] + '/' + self.D['post']['f_name']
+        self.info(src)
+        my.delete_file(src)
+
+
+    def clear_folder(self) :
+        folder_pass = session['epl_path']
+        my.clear_folder(folder_pass)
+
     def file_dropUp(self) :
         f = request.files['drop_file']
         save_dir = request.form["save_dir"]
@@ -146,6 +156,14 @@ class Filemanager(Control) :
         f_new = self.C['DOCU_ROOT'] + '/' + f_pth + '/' + f_new
         my.rename_file(f_old,f_new)
         return False
+
+    def copy_paste_file(self) :
+        f_src = self.D['post']['src'] ; src = self.D['ROOT'] + '/' + f_src
+        f_tgt = self.D['post']['tgt'] ; tgt = self.D['ROOT'] + '/' + f_tgt
+        opt   = self.D['post']['opt'] ; 
+        if   opt == 'copy' : my.copy_file(src,tgt)
+        elif opt == 'move' : my.move_file(src,tgt)
+        return self.echo('OK')
 
         
 

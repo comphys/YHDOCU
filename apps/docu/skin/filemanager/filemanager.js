@@ -1,9 +1,17 @@
+
 (function($){ 
 	var YH_liveRename={ 
 		init:function(){ 
 			return this.each(function(){ 
 				var f_oname; 
 				// F1 key : 112, ESC key : 27, F5 : 116 (copy), F6 : 117 (move)
+				$(this).on("contextmenu", function(e){
+					e.preventDefault(); 
+					var f_name = $(this).text(); 
+					f_oname=(F_PATH)? F_PATH+'/'+f_name:f_name; 
+					$("#temporary_file").text(f_oname); Storage.a('CopyPasteFile',f_oname);
+					$("#contextMenu1").css({left:mouse_X, top:mouse_Y }).toggle();
+				});
 				$(this).on('dblclick', function() { 
 						var f_name = $(this).text();
 						insert_to_wbody(f_name);
@@ -15,8 +23,6 @@
 						var posturl = uri('linkurl') + 'filemanager/file_rename'; 
 						var f_rname = $(this).text(); 
 						$.post( posturl, { f_oname : f_oname, f_rname : f_rname } ).done(function(){list_renew();});}
-					if(event.which == 116) { event.preventDefault(); Copy_Move_file(this,'copy'); } 
-					if(event.which == 117) { event.preventDefault(); Copy_Move_file(this,'move'); } 
 				}   
 				);  // end of keydown
 
@@ -28,6 +34,7 @@
 $.fn.liveRename =function(method) { if(YH_liveRename[method]) { return YH_liveRename[method].apply(this,Array.prototype.slice.call(arguments,1));} else if(typeof method === 'object' || ! method){ return YH_liveRename.init.apply( this,arguments);} else { $.error( 'Method ' +method+' does not exist on jQuery.comma');}};})(jQuery);
 
 $(document).ready(function(){ $(".list-file-edit").liveRename(); 
+	var old_pointer = ''
 	var temp_file   = Storage.r('CopyPasteFile');    $('#temporary_file').text(temp_file);
 	var temp_folder = Storage.r('TargetFolderName'); if(temp_folder) temp_folder=temp_folder.replace(ROOT,'HOME'); $('#temporary_folder').text(temp_folder);
 });
@@ -46,6 +53,7 @@ $(document).ready(function(){
 
 	fileDropDown();
 });
+
 
 function file_run(sel) {
 	var f_name = sel.text();
@@ -215,25 +223,21 @@ function uploadFile(files){
 
 
 function copy_paste_file(opt) {
-	var fname = Storage.r('CopyPasteFile');
+	var src =  Storage.r('CopyPasteFile');     if( !src) { h_dialog.notice('선택된 파일이 없습니다'); return; }
+	var tgt =  Storage.r('TargetFolderName');  if( !tgt) { h_dialog.notice('선택된 위치가 없습니다'); return; }
+	$(fm_selected_tr).css('color','red');
 	var ax_file = uri('linkurl') + "filemanager/copy_paste_file" ;
-	var post_val = {'paste_file': fname, 'opt' : opt };
+	var post_val = {'src': src, 'tgt' : tgt, 'opt' : opt };
 	$.post(ax_file , post_val).done( function(data) { if(data !="OK") h_dialog.alert(data); else {list_renew();} });
 	Clear_temporary('file');
 }
 
-function Copy_Move_file(sel,opt) {
-	var src =  Storage.r('CopyPasteFile');     if( !src) { h_dialog.alert('파일을 선택하지 않았습니다'); return; }
-	var tgt =  Storage.r('TargetFolderName');  if( !tgt) { tgt=''; }
-	var ax_file = uri('linkurl') + "filemanager/copy_move_file" ;
-	var post_val = {'opt': opt, 'src' : src, 'tgt' : tgt };
-	$.post(ax_file , post_val).done( function(data) { if(data !="OK") h_dialog.alert(data); 
-		else {
-			if(opt == 'copy') $(sel).css('color','blue'); 
-			else $(sel).css('text-decoration','line-through'); 
-		}
-	});
-	Clear_temporary('file');
+function delete_this_file() {
+	var f_name = Storage.r('CopyPasteFile');	
+	var ax_file = uri('linkurl')+"filemanager/delete_file" ;
+	var post_val = { f_name : f_name }; 	
+	h_dialog.confirm("<span style='color:red'>" + f_name +"</span> 파일을 정말로 삭제하시겠습니까?",
+	{x: mouse_X + 80, y: mouse_Y - 90, buttons	: [{ text : '삭제', call : function(a) {$.post(ax_file , post_val).done(function() { list_renew(); });	h_dialog.close(a);}},h_dialog.cancel_button]});
 }
 
 function Clear_temporary(opt) {
@@ -262,3 +266,15 @@ function list_renew() {
 	dest += (F_PATH)? 'filemanager/move/' + F_PATH : 'filemanager/home';
 	location.href = dest;
 }
+
+
+function Clear_folder() {
+	var ax_file = uri('linkurl')+"filemanager/clear_folder" ;	
+	var post_val = {operation : 'clear_folder'};
+	h_dialog.confirm("<span style='color:red;font-weight:bold'>이 폴더 내 파일을 전부 삭제하시겠습니까?</span>",{
+		buttons:[{text:'삭제',call:function(a){
+			$.post(ax_file,post_val).done( function() { list_renew(); }); h_dialog_close(a);
+		}},h_dialog.cancel_button]}	
+	);
+}
+
