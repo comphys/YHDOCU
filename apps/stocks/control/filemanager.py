@@ -127,6 +127,12 @@ class Filemanager(Control) :
             del_fx = session['epl_path'] 
             if my.delete_foler(del_fx) : return self.echo('OK')
     
+    def delete_file(self) :
+        src = self.C['DOCU_ROOT'] + '/' + self.D['post']['f_name']
+        self.info(src)
+        my.delete_file(src)
+
+
     def clear_folder(self) :
         folder_pass = session['epl_path']
         my.clear_folder(folder_pass)
