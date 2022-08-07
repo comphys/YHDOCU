@@ -129,7 +129,6 @@ class Filemanager(Control) :
     
     def delete_file(self) :
         src = self.C['DOCU_ROOT'] + '/' + self.D['post']['f_name']
-        self.info(src)
         my.delete_file(src)
 
 

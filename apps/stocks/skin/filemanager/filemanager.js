@@ -225,7 +225,6 @@ function uploadFile(files){
 function copy_paste_file(opt) {
 	var src =  Storage.r('CopyPasteFile');     if( !src) { h_dialog.notice('선택된 파일이 없습니다'); return; }
 	var tgt =  Storage.r('TargetFolderName');  if( !tgt) { h_dialog.notice('선택된 위치가 없습니다'); return; }
-	$(fm_selected_tr).css('color','red');
 	var ax_file = uri('linkurl') + "filemanager/copy_paste_file" ;
 	var post_val = {'src': src, 'tgt' : tgt, 'opt' : opt };
 	$.post(ax_file , post_val).done( function(data) { if(data !="OK") h_dialog.alert(data); else {list_renew();} });
