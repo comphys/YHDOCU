@@ -19,7 +19,6 @@ class Stock_dna_2022(Control) :
         
         # 임의입력 시 체결단가, 체결수량, 매수금액 중 2개는 입력되어야 함
 
-
         if  self.M['매수단가'] or self.M['매수수량'] or self.M['매수금액'] :
             self.auto = False 
             if   self.M['매수단가'] == 1.0 and  self.M['매수수량'] == 1 and self.M['매수금액'] == 1.0 :
@@ -140,6 +139,7 @@ class Stock_dna_2022(Control) :
             self.M['날수'] = 0
 
         if self.M['매수수량'] :
+            self.info(self.auto)
             if self.auto : self.M['매수금액']  =  self.M['매수수량'] * self.M['매수단가']
             self.M['가용잔액'] -=  self.M['매수금액']
             self.M['보유수량'] +=  self.M['매수수량']
@@ -199,17 +199,23 @@ class Stock_dna_2022(Control) :
         self.M['처음추가'] = self.M['추가자본'] 
 
         self.M['일매수금'] = int(self.M['가용잔액'] / self.M['분할횟수'])
-        self.M['매수단가'] = self.M['당일종가']
         
         if self.auto : 
+            self.M['매수단가'] = self.M['당일종가']
             self.M['매수수량'] = math.ceil(self.M['일매수금']/self.old_price_trace('YD')) 
             if cnt:=self.old_price_trace("CDN") : 
                 self.M['매수수량'] += self.M['매수수량'] * cnt 
 
-        self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량']
-        self.M['평균단가']  = self.M['당일종가']
-        self.M['보유수량']  = self.M['매수수량']
-        self.M['평가금액']  = self.M['당일종가'] * self.M['보유수량']
+            self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량']
+            self.M['평균단가']  = self.M['당일종가']
+            self.M['보유수량']  = self.M['매수수량']
+            self.M['평가금액']  = self.M['당일종가'] * self.M['보유수량']
+
+        else :
+            self.M['평균단가']  = self.M['매수단가']
+            self.M['보유수량']  = self.M['매수수량']
+            self.M['평가금액']  = self.M['당일종가'] * self.M['보유수량']        
+        
         self.M['총매수금']  = self.M['매수금액']
         self.M['수익현황']  =  self.M['평가금액'] - self.M['총매수금']
         self.M['수익률']    = (self.M['수익현황'] / self.M['총매수금']) * 100 if self.M['총매수금'] else 0
@@ -342,6 +348,7 @@ class Stock_dna_2022(Control) :
         self.init_value()
 
         if not self.M['당일종가'] : self.update['msg'] = "해당일 기록된 주가를 찾을 수 없습니다" ;self.update['replyCode'] = 'NOTICE'; return self.json(self.update)
+        
         if not self.preChk :
             if  self.M['가용잔액'] == 0.0 or self.M['추가자본'] == 0.0 :
                 self.update['msg'] = "가용잔액과 추자자본에 대한 정보를 입력하여 주시기바랍니다"

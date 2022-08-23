@@ -20,7 +20,7 @@ class Stock_longterm_info(Control) :
 
         self.DB.tbl, self.DB.wre, self.DB.odr = (self.tbl, f"{qry_opt} != '0'", "add0 DESC")
         D = self.DB.get(f"add0,{qry_opt}",assoc=False)
-        output  = "<div style='width:200px;max-height:250px;overflow-x:hidden' ondblclick=\"h_dialog.close('POP_INFO')\">"
+        output  = "<div style='width:200px;max-height:250px;background-color:black;overflow-x:hidden' ondblclick=\"h_dialog.close('POP_INFO')\">"
         if D :
             output += "<table class='table table-bordered table-striped;' style='background-color:#0A2229;color:#e1e1e1;'>"
             for d in D :
