@@ -20,9 +20,9 @@ class M_dashboard(Model) :
         self.D['전체시즌']['둘째계좌'] = ['h_daily_second_board','IFB',1,0]
         self.D['전체시즌']['장투계좌'] = ['h_myCLD_board','VR',1,22000]
 
-        self.D['분할매수']['가상일지'] = ['h_daily_virtual_board','IFB',0,8030]
-        self.D['분할매수']['첫째일지'] = ['h_daily_first_board','IFB',1,5377]
-        self.D['분할매수']['둘째일지'] = ['h_daily_second_board','IFB',1,5200]
+        self.D['분할매수']['가상계좌'] = ['h_daily_virtual_board','IFB',0,8030]
+        self.D['분할매수']['첫째계좌'] = ['h_daily_first_board','IFB',1,5377]
+        self.D['분할매수']['둘째계좌'] = ['h_daily_second_board','IFB',1,5200]
 
         self.D['개인장투']['장투일지'] = ['h_myOLT_board','VR',1,0]
         # -------------------------------------------------------------
