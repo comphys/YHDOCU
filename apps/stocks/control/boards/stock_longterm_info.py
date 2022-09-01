@@ -23,6 +23,7 @@ class Stock_longterm_info(Control) :
         output  = "<div style='width:200px;max-height:250px;background-color:black;overflow-x:hidden' ondblclick=\"h_dialog.close('POP_INFO')\">"
         if D :
             output += "<table class='table table-bordered table-striped;' style='background-color:#0A2229;color:#e1e1e1;'>"
+            output += f"<tr style='background-color:#0B2F3A'><td>일자</td><td style='text-align:right'>금액</td></tr>"
             for d in D :
                 output += f"<tr><td>{d[0]}</td><td style='text-align:right'>{float(d[1]):,.2f}</td></tr>"
             output += "</table></div>"
