@@ -64,7 +64,7 @@ class Stock_update(Control) :
             sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
             self.DB.exe(sql)
 
-    def update_stock(self,cdx) :
+    def update_stock(self,cdx,USER) :
 
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.DB.get("max(add0)",many=1,assoc=False)
@@ -94,7 +94,7 @@ class Stock_update(Control) :
         
         for row in ohlc :
             row2 = list(row)    
-            row2 += [cdx,cdx,'comphys','정용훈',time_now,time_now]
+            row2 += [cdx,cdx,USER['uid'],USER['uname'],time_now,time_now]
             values = str(row2)[1:-1]
             sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
             self.DB.exe(sql)        
