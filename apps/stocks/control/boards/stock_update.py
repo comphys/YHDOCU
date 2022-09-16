@@ -38,7 +38,8 @@ class Stock_update(Control) :
         self.DB.exe(f"DELETE FROM h_stockHistory_board WHERE add1='{code}'")
         self.set_message("종목 삭제를 완료하였습니다")
         return self.moveto('board/list/stockHistory')
-
+        
+    # 2022-09-16 finance data-reader 에러로 update_stock2를 update_stock으로 변경
     def update_stock(self,cdx,USER) :
 
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
