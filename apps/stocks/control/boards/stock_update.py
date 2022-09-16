@@ -39,7 +39,7 @@ class Stock_update(Control) :
         self.set_message("종목 삭제를 완료하였습니다")
         return self.moveto('board/list/stockHistory')
 
-    def update_stock2(self,cdx,USER) :
+    def update_stock(self,cdx,USER) :
 
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         start_b = self.DB.get("max(add0)",many=1,assoc=False) 
@@ -63,7 +63,7 @@ class Stock_update(Control) :
             sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
             self.DB.exe(sql)
 
-    def update_stock(self,cdx,USER) :
+    def update_stock2(self,cdx,USER) :
 
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.DB.get("max(add0)",many=1,assoc=False)
