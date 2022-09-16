@@ -100,6 +100,7 @@
 		<input  name="add_new_stock" type='text' style='height:24px;vertical-align:baseline;width:100px' />
 		<button class='btn btn-blue btn-small' style="height:25px;vertical-align:top;" onclick="add_newstock()">종목추가</button>
 		<button class='btn btn-red-s2 btn-small' style="height:25px;vertical-align:top;" onclick="del_oldstock()">종목삭제</button>
+		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>직접입력</button></a>
 	</div>
 	<div class='pagination pull-right'><ul>
 		{{D['Pagination']|safe}}
