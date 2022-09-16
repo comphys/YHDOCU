@@ -1,0 +1,159 @@
+{% extends D['_skn'] + 'board/my_dark/main_layout.html' %}
+
+{% block contents_write %}
+<form id='YHBmainEditorForm' method="POST" action="{{D['Form_act']}}" onsubmit='return check_MainWriteForm(this)' >
+<input type='hidden' name='mode'	value="{{D['Mode']}}" >
+<input type='hidden' name='uid'		value="{{D['USER']['uid']}}" >
+<input type='hidden' name='uname'	value="{{D['USER']['uname']}}" >
+<textarea  name='content' style="display:none"></textarea>
+<table class='table' style="border:2px solid black;border-radius:4px;width:{{D['w_width2']}}">
+	<tbody>
+	<!-- 상단 요소====================================================================================== -->
+	<tr>
+		<td class='write-td-left'>종목선택</td>
+		<td class='write-td-right'>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="width:90px" >기준날자</div>
+				<input type='text' name='add0' class="i-date" style="width:110px" value="">
+			</div>
+			{{D['user_add1']|safe}}
+			<div class='i-input-div'>
+				<div class='write-input-left' style="width:90px">종목별명</div>
+				<input type='text' name='add2' class="i-text" style="width:110px" value="{{D['BODY']['add2']}}">
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td class='write-td-left'>종가정보</td>
+		<td class='write-td-right'>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="width:60px">종가</div>
+				<input type='text' name='add3' class="i-number" style="width:70px" value="{{D['BODY']['add3']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="width:60px">증감</div>
+				<input type='text' name='add8' class="i-number" style="width:70px" value="{{D['BODY']['add8']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-left' style="width:60px">거래량</div>
+				<input type='text' name='add7' class="i-number" style="width:95px" value="{{D['BODY']['add7']}}">
+			</div>
+		</td>
+	</tr>
+	<td class='write-td-left'>일간변동</td>
+	<td class='write-td-right'>
+		<div class='i-input-div'>
+			<div class='write-input-left' style="width:60px">시가</div>
+			<input type='text' name='add4' class="i-number" style="width:70px" value="{{D['BODY']['add4']}}">
+		</div>
+		<div class='i-input-div'>
+			<div class='write-input-left' style="width:60px">고가</div>
+			<input type='text' name='add5' class="i-number" style="width:70px" value="{{D['BODY']['add5']}}">
+		</div>
+		<div class='i-input-div'>
+			<div class='write-input-left' style="width:60px">저가</div>
+			<input type='text' name='add6' class="i-number" style="width:95px" value="{{D['BODY']['add6']}}">
+		</div>
+		<div class='i-input-div'>
+			<div class='write-input-left' style="width:45px">상승</div>
+			<input type='text' name='add9' class="i-number" style="width:25px" value="{{D['BODY']['add9']}}">
+		</div>
+		<div class='i-input-div'>
+			<div class='write-input-left' style="width:45px">하락</div>
+			<input type='text' name='add10' class="i-number" style="width:25px" value="{{D['BODY']['add10']}}">
+		</div>
+	</td>
+</tr>
+
+	</tbody>
+</table>
+<div style="width:{{D['w_width2']}}">
+	{% include D['_skn'] + 'board/my_dark/write/basic_editor_tools.htm' %}
+</div>
+<!-- BEGIN ====================================================================================== -->
+<div style="position:relative;width:{{D['w_width1']}}">
+<div id="selectedMarkL"></div>	
+<div id="write-wrap" style="float:left;width:{{D['w_width2']}};z-index:3">
+<div id="YHBmainEditor">
+{% if D['Mode'] == 'modify' -%} 
+{{D['OBODY']['content']|safe}}
+{% else %} 
+<div><p>#</p></div>
+{%- endif %}
+</div><!-- YHBmainEditor  -->
+<!-- 하단 요소====================================================================================== -->
+		<div class="clearfix" style="padding:0px;border-top:1px solid black;background-color:#393E4A">
+			<div id="TAG_STRUCTURE" class="pull-left" style="padding:0px 15px"></div>
+			<div class="pull-right">
+				<span class="btn-transparent" onclick="$('#YHBmainEditorForm').submit()"><i class="fa fa-circle-o" style="font-size:20px;color:#0099ff;margin:2px 0" title="저장"></i></span>
+				<a href="{{D['_bse']}}board/list/{{D['bid']}}/csh=on"><i class="fa fa-circle-o" style="font-size:20px;color:#a66c39;margin:2px 0" title="취소"></i></a>&nbsp;&nbsp;
+			</div>
+		</div>
+	</div><!-- write-wrap  -->
+<div id="choicedMark"   style="left:{{D['w_width2']}}"></div>
+<div id="selectedMarkR" style="left:{{D['w_width2']}}"></div>	
+
+</div>
+<!-- END ====================================================================================== -->
+</form>
+{% include D['_skn'] + 'board/my_dark/write/side_editor_tools.htm' %}
+
+<!-- 표관련 메뉴 -->
+<div id='tableMenu' class="rightClickMenu" style='display:none;'>
+	<li onclick="$('#tableMenu').hide()"> 메뉴감추기 </li>
+	<li class='divider'></li>
+	<li onclick="JYHEDITOR.addRowCol('left')">좌측컬럼 추가</li>
+	<li onclick="JYHEDITOR.addRowCol('right')">우측컬럼 추가</li>
+	<li class='divider'></li>
+	<li onclick="JYHEDITOR.addRowCol('up')">위쪽행 추가</li>
+	<li onclick="JYHEDITOR.addRowCol('down')">아래행 추가</li>
+	<li class='divider'></li>
+	<li onclick="JYHEDITOR.addRowCol('col')">현재컬럼 삭제</li>
+	<li onclick="JYHEDITOR.addRowCol('row')">현재 행 삭제</li>
+</div>
+
+<script>
+
+
+function check_MainWriteForm(f)	{	
+	var wDiv = $id("YHBmainEditor");
+	JYHEDITOR.clearDocuSelect();
+	f.content.value = wDiv.innerHTML;
+	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
+	var code   = $("input[name='add1']").val();
+	var change = $("input[name='add8']").val();
+	var nick = $("input[name='add1']").val();
+	if(!nick)  $("input[name='add2']").val(code);
+	change = change / 100;
+	$("input[name='add8']").val(change);
+	return true;
+}
+
+function open_style_edit() {
+	var furl = uri('linkurl')+"filemanagers-fedit/open/bodyCss.css"; 
+	var specs = "height=700,width=1200,status=no,menubar=no,location=no,titlebar=no,scrollbars=yes";
+	window.open(furl,'css_editor', specs);
+}
+
+function form_basic(opt) {
+	var html;
+	$('#contextMenu').hide()
+	switch (opt){
+		case  'A1'  : html= '\n<div class="pbox">\n<p>글입력</p>\n</div>\n'; break;	
+		case  'A2'  : html= '\n<div class="pbox">\n<p class="p-title">타이틀</p>\n<p class="sbox">\n글내용\n</p>\n</div>\n'; break;
+		case  'B1'  : html= '\n<p class="p-title">타이틀</p>\n<p class="sbox">\n글내용\n</p>\n'; break;
+		case  'A4h' : html= '\n<div class="A4h">\n<p>글내용</p>\n</div>\n'; break;
+		case  'A4w' : html= '\n<div class="A4w">\n글내용\n</div>\n'; break;
+	}
+	if(docuSelected != null) { $(docuSelected).before(html); JYHEDITOR.selectedMark();} 
+	else $("#YHBmainEditor").append(html); 
+	
+}
+
+JYHEDITOR.UserTable = function() {
+	if(docuSelectedType != 'TD') return;
+	$("#tableMenu").css({left:mouse_X - 20 , top:mouse_Y }).toggle();
+}
+
+</script>
+{% endblock %}
