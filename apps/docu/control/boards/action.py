@@ -28,7 +28,7 @@ class Action(Control) :
             origin = int(SAVE['brother']) if int(SAVE['brother']) > 0 else no
             qry = f"UPDATE {self.board} SET brother = brother-1 WHERE no={origin}"
             self.DB.exe(qry)
-            SAVE['brother'] = no
+            SAVE['brother'] = no if int(SAVE['brother']) == 0 else int(SAVE['brother'])
 
  
         SAVE['wdate']   = ut.now_timestamp()
