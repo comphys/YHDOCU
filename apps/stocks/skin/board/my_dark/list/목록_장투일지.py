@@ -151,7 +151,7 @@ class 목록_장투일지(SKIN) :
             else :
                 self.D['need_cash'] =  self.D['chart_cur'][-1] - self.D['chart_target'][-1]
                 bottom_price = self.D['chart_min'][-1] / int(LD['add13'])
-                self.D['대응전략'] = 'Stay watch'
+                self.D['대응전략'] = 'Stay'
                 self.D['info_color'] = 'white'  
 
             bottom_count = self.D['need_cash'] / bottom_price
