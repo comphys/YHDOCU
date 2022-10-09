@@ -7,19 +7,18 @@ class Action(Control) :
         self.DB = self.db('docu')
         self.bid   = self.parm[0]
         self.board = 'h_'+self.bid+'_board'
-        self.page  = self.gets.get('page','1') 
+        self.page  = self.gets.get('page','1')
+        self.DB.tbl, self.DB.wre = ("h_board_config",f"bid='{self.bid}'")
+        self.BCONFIG = self.DB.get("*",many=1,assoc=True)
   
     def save(self) :
         # h_{bid}_board : [no,brother,add0,uid,uname,content,reply,hit,wdate,mdate,add1~add15]
         
         # 저장 시 [정수 및 실수] 형식은 형태를 수정하여 저장한다. 
-        self.DB.tbl, self.DB.wre = ("h_board_config",f"bid='{self.bid}'")
-        BCONFIG = self.DB.get("*",many=1,assoc=True)
-
         USE_KEY = []
         for i in range(16) :
             key = f'add{i}' 
-            if BCONFIG[key] :  USE_KEY.append(key)        
+            if self.BCONFIG[key] :  USE_KEY.append(key)        
 
         SAVE = self.D['post']
 
@@ -39,7 +38,7 @@ class Action(Control) :
         qry = self.DB.qry_insert(self.board,SAVE)
         self.DB.exe(qry)
 
-        return self.moveto('board/list/'+self.bid+'/page='+self.page)
+        return self.moveto('board/list/'+self.bid+'/page='+self.page+'/csh=on')
 
     def delete(self) :
         no      = self.gets['no']

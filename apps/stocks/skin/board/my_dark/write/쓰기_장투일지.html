@@ -188,6 +188,22 @@
 				<div class='write-input-left' style="background-color:darkslategray;">가치합계</div>
 				<input type='text' name='add17' class="i-number" style="width:100px;" value="{{D['BODY']['add17']}}">
 			</div>
+			<div class='i-input-div-must2'>
+				<div class='write-input-left' style="background-color:darkslategray;">입금합계</div>
+				<input type='text' name='sub25' class="i-number" style="width:100px;" value="{{D['BODY']['sub25']}}">
+			</div>
+			<div class='i-input-div-must2'>
+				<div class='write-input-left' style="background-color:darkslategray;">출금합계</div>
+				<input type='text' name='sub26' class="i-number" style="width:100px;" value="{{D['BODY']['sub26']}}">
+			</div>
+			<div class='i-input-div-must2'>
+				<div class='write-input-left' style="background-color:darkslategray;">총투자금</div>
+				<input type='text' name='sub27' class="i-number" style="width:110px;" value="{{D['BODY']['sub27']}}">
+			</div>
+			<div class='i-input-div-must2'>
+				<div class='write-input-left' style="background-color:darkslategray;">총수익률</div>
+				<input type='text' name='sub28' class="i-number" style="width:100px;" value="{{D['BODY']['sub28']}}">
+			</div>
         </td>
     </tr>
 	<tr onclick="$('#config-toggle').toggle()">
@@ -335,15 +351,15 @@ function auto_datainput() {
         var ans = JSON.parse(data)
 		이전날자 = ans['add0']
 		이전목표 = ans['add19']
-        var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7','sub12','sub14','sub15','sub16','sub17','sub18','sub19','sub20','sub21','sub22','sub23','sub24']
+        var update_key  = ['add3','add7','add8','add13','add14','sub1','sub2','sub3','sub4','sub5','sub6','sub7','sub12','sub14','sub15','sub16','sub17','sub18','sub19','sub20','sub21','sub22','sub23','sub24',,'sub25',,'sub26']
 			update_key.forEach(function(i){$("input[name='"+i+"']" ).val(ans[i])})  
     });
 }
 
 function auto_reset() {
-	var reset_key  = ['add1','add2','add5','add6','sub8','add11','add12','sub9','sub10','sub11','sub14','sub15','sub16','sub17','sub21','sub22','sub23','sub24']
+	var reset_key  = ['add1','add2','add5','add6','sub8','add11','add12','sub9','sub10','sub11','sub14','sub15','sub16','sub17','sub21','sub22','sub23','sub24','sub25','sub26']
 		reset_key.forEach(function(i){$("input[name='"+i+"']" ).val(0)})
-	var reset_key2  = ['add4','add9','add10','add15','add16','add17','add18','add19','add20']
+	var reset_key2  = ['add4','add9','add10','add15','add16','add17','add18','add19','add20','sub27','sub28']
 		reset_key2.forEach(function(i){$("input[name='"+i+"']" ).val('')})  
 
 	auto_datainput()
@@ -387,6 +403,10 @@ function auto_calculate() {
 	let 매도누적1= txt_to_num('sub22','f');
 	let 매수누적1= txt_to_num('sub23','f');
 	let 현매수금1= txt_to_num('sub24','f');
+	let 입금합계 = txt_to_num('sub25','i');
+	let 출금합계 = txt_to_num('sub26','i');
+	let 총투자금 = txt_to_num('sub27','i');
+	let 총수익률 = txt_to_num('sub28','f');
 	let 증가율   = txt_to_num('sub18','f');
 	let 적용전략 = $("input[name='sub19']").val();
 	let 목표가치 = 0.0
@@ -404,6 +424,11 @@ function auto_calculate() {
     let 가치2   = (종가2 * 누적2)
     let 현재가치 = (잔액 + 가치1 + 가치2)
 
+	입금합계 = 입금합계 + 입금
+	출금합계 = 출금합계 - 출금
+	총투자금 = 입금합계 - 출금합계
+	총수익률 = ((현재가치 / 총투자금 - 1) * 100).toFixed(1);
+
     let 비중1 = (잔액/현재가치*100).toFixed(2);
     let 비중2 = (가치1/현재가치*100).toFixed(2);
     let 비중3 = (가치2/현재가치*100).toFixed(2);
@@ -420,6 +445,7 @@ function auto_calculate() {
 		현매수금1 += 매수금1
 		평균단가1  = (현매수금1 / 누적1)
 		매수누적1  = 매수누적1.toFixed(2)
+		현매수금1  = 현매수금1.toFixed(2)
 	} 
 
 	if(매수금2) {
@@ -427,6 +453,7 @@ function auto_calculate() {
 		현매수금2 += 매수금2
 		평균단가2  = (현매수금2 / 누적2)
 		매수누적2  = 매수누적2.toFixed(2)
+		현매수금2  = 현매수금2.toFixed(2)
 	} 
 
 	if(매도금1) {
@@ -482,6 +509,11 @@ function auto_calculate() {
 	$("input[name='sub22']").val(매도누적1).comma('init');
 	$("input[name='sub23']").val(매수누적1).comma('init');
 	$("input[name='sub24']").val(현매수금1).comma('init');
+
+	$("input[name='sub25']").val(입금합계).comma('init');
+	$("input[name='sub26']").val(출금합계).comma('init');
+	$("input[name='sub27']").val(총투자금).comma('init');
+	$("input[name='sub28']").val(총수익률).comma('init');	
 }
 
 function txt_to_num(key,opt) {

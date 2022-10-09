@@ -61,16 +61,16 @@
 		<thead>
 			<tr>
 				<th style="background-color:#071418;font-style:italic">Progress</th>
-				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('입금내역')">입금</th>
-				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('출금내역')">출금</th>
+				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('입금내역',0)">입금</th>
+				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('출금내역',0)">출금</th>
 				<th colspan='2' style="background-color:#0A2229;font-style:italic">US dollar</th>
 				
-				<th style="background-color:#0B2F3A;text-align:right;cursor:pointer" onclick="popup_notice('매수금1')">매수금</th>
-				<th style="background-color:#0B2F3A;text-align:right;cursor:pointer" onclick="popup_notice('매도금1')">매도금</th>
-				<th colspan='4' style="background-color:#0B2F3A;font-style:italic;cursor:pointer" onclick="popup_notice('배당내역')">Dividend Stock {{D['배당종목']}}</th>
+				<th style="background-color:#0B2F3A;text-align:right;cursor:pointer" onclick="popup_notice('매수금1',1)">매수금</th>
+				<th style="background-color:#0B2F3A;text-align:right;cursor:pointer" onclick="popup_notice('매도금1',1)">매도금</th>
+				<th colspan='4' style="background-color:#0B2F3A;font-style:italic;cursor:pointer" onclick="popup_notice('배당내역',1)">Dividend Stock {{D['배당종목']}}</th>
 
-				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('매수금2')">매수금</th>
-				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('매도금2')">매도금</th>
+				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('매수금2',1)">매수금</th>
+				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('매도금2',1)">매도금</th>
 				<th colspan='4' style="background-color:#0A2229;font-style:italic">Leverage Stock {{D['적용종목']}}</th>
 
 				<th style="background-color:#071418;;font-style:italic">Total</th>
@@ -134,18 +134,19 @@
 
 <script>
 var notice_popup = false;
-function popup_notice(option) {
+function popup_notice(option,size) {
 	if( notice_popup ) {
 			h_dialog.close("POP_INFO"); 
 			notice_popup = null
 			return;
 		} else 
-		{
+		{	
+			if(size) width = '300px' ; else width = '200px' 
 			notice_popup = true
 			var url = uri('linkurl') + 'boards-stock_longterm_info/get_subinfo/tbl={{D['tbl']}}/opt='+option;
 			var ypos = mouse_Y
 			// if(ypos > 400) ypos = ypos-250
-			var o = {id:'POP_INFO', width:'200px', x:mouse_X+10, y:mouse_Y,header:false,footer:false,drag:true}
+			var o = {id:'POP_INFO', width: width, x:mouse_X+10, y:mouse_Y,header:false,footer:false,drag:true}
 			h_dialog.load(url,o);
 		}
 }
@@ -222,6 +223,13 @@ const data = {
 			fill:true,
 			backgroundColor:'rgba(11,47,58,0.3)'
         },
+        // {
+        //     label:' 수익률',
+        //     data : {{D['earnings_rate']}},
+        //     borderColor:'white', borderWidth:2, pointRadius:0,  backgroundColor:'white',
+		// 	lineTension:0.2,
+		// 	yAxisID : 'y1'
+        // }
 
     ]   
 };
@@ -235,6 +243,7 @@ const options = {
     scales:{
         x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
         y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'right'},
+		y1:{ type:'linear', display:true, position:'left'}
     }
 };
 const config  = {type:'line',data:data,options:options};

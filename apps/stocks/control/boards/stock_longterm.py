@@ -45,7 +45,7 @@ class Stock_longterm(Control) :
         self.DB.tbl, self.DB.wre = (self.tbl, f"add0 < '{pick_day}'")
         old_date = self.DB.get_one("max(add0)")
         self.DB.wre = f"add0='{old_date}'"
-        old_data = self.DB.get_line("add0,add3,add7,add13,sub2,sub3,sub4,sub5,sub6,sub7,add19,sub12,sub14,sub15,sub16,sub17,sub18,sub19,sub20,sub21,sub22,sub23,sub24")
+        old_data = self.DB.get_line("add0,add3,add7,add13,sub2,sub3,sub4,sub5,sub6,sub7,add19,sub12,sub14,sub15,sub16,sub17,sub18,sub19,sub20,sub21,sub22,sub23,sub24,sub25,sub26")
 
         self.DB.clear()
 
@@ -83,6 +83,8 @@ class Stock_longterm(Control) :
         update['sub22'] = old_data['sub22']
         update['sub23'] = old_data['sub23']
         update['sub24'] = old_data['sub24']
+        update['sub25'] = old_data['sub25']
+        update['sub26'] = old_data['sub26']
 
 
         return self.json(update)
