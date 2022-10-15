@@ -27,7 +27,7 @@ class 목록_장투일지(SKIN) :
         # self.DB.lmt = '120'
         self.DB.odr = "add0 DESC"
 
-        chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3,add14,sub12,add11,sub17,sub28",assoc=True)
+        chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3,add14,sub12,add11,sub17,sub27,sub28",assoc=True)
         if chart_data :
 
             chart_data.reverse()
@@ -43,7 +43,8 @@ class 목록_장투일지(SKIN) :
             self.D['chart_target'] = [float(x['add19']) for x in chart_data]
             self.D['chart_cur'] = [float(x['add15']) for x in chart_data]
             self.D['chart_max'] = [float(x['add20']) for x in chart_data]
-            # self.D['earnings_rate'] = [float(x['sub28']) for x in chart_data]
+            self.D['earnings_rate'] = [float(x['sub28']) for x in chart_data]
+            self.D['acc_money'] = [int(x['sub27']) for x in chart_data]
             # self.D['chart_total'] = [float(x['add17'])*0.5 for x in chart_data]
             # self.D['chart_dividend'] = [float(x['add9'])*2.5 for x in chart_data]
             # self.D['chart_cash'] = [float(x['add3'])*1.67 for x in chart_data]
@@ -135,6 +136,7 @@ class 목록_장투일지(SKIN) :
             self.D['매수단가'] = f"{매수단가:,.2f}" 
             self.D['매도갯수'] = f"{ 매도금액 / 매도단가 :,.0f}"
             self.D['매수갯수'] = f"{ 매수금액 / 매수단가 :,.0f}"
+            self.D['매수금액'] = f"{ 매수금액 + 매수단가 :,.2f}"
 
             self.D['info_color']= 'white' 
             if LD['add15'] < LD['add18'] : 

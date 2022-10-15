@@ -9,7 +9,7 @@
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 <div class="clearfix" style="width:100%;background-color:#24272d;padding:20px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
 	<div class="pull-left" style="margin-right:20px">
-		<canvas id="myChart"  style="width:1100px;height:350px;background-color:#24272d;"></canvas>
+		<canvas id="myChart"  style="width:1100px;height:350px;background-color:#24272d;" ondblclick="chart_toggle()"></canvas>
 	</div>
 	<div class="pull-left">
 		<canvas id="myChart2" style="width:220px;height:350px;background-color:#24272d"></canvas>
@@ -52,7 +52,7 @@
 			<span style="color:yellow"><i class="fa fa-thermometer-half" ></i> {{D['current_value']}} (<i class="fa fa-usd"></i> {{D['현재가치_종가']}})</span> &nbsp;
 			<span style="color:#a7ebce"><i class="fa fa-thermometer-half"></i> {{D['현매수금']}} (<i class="fa fa-usd"></i> {{D['현매수금_단가']}})</span> &nbsp; / &nbsp;
 			<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <i class="fa fa-usd"></i> {{D['매도단가']}} &nbsp;</span> / &nbsp;
-			<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} &nbsp;</span>
+			<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} ( {{D['매수금액']}} )&nbsp;</span>
 		</div>
 	</div>
 </div>
@@ -159,7 +159,7 @@ ctx.style.backgroundColor = '#33363b';
 ctx.style.border = '2px solid black';
 
 let labels = {{D['chart_date']|safe}};
-const data = {
+const data1 = {
     labels : labels,
     datasets : [
 		{
@@ -188,27 +188,6 @@ const data = {
 			lineTension:0.2
 
         },
-        // {
-        //     label:' 현금위치',
-        //     data : {{D['chart_cash']|safe}},
-        //     borderColor:'rgba(75, 192, 192, 0.8)', borderWidth:2,borderDash:[2,3],pointRadius:0,
-		// 	lineTension:0.2
-
-        // },
-        // {
-        //     label:' 합계위치',
-        //     data : {{D['chart_total']|safe}},
-        //     borderColor:'rgba(75, 192, 192, 0.8)', borderWidth:4,pointRadius:0,
-		// 	lineTension:0.2
-
-        // },
-        // {
-        //     label:' 배당위치',
-        //     data : {{D['chart_dividend']|safe}},
-        //     borderColor:'lightpink', borderWidth:2,borderDash:[2,3],pointRadius:0,
-		// 	lineTension:0.2
-
-        // },
         {
             label:' 목표가치',
             data : {{D['chart_target']}},
@@ -222,18 +201,10 @@ const data = {
 			lineTension:0.2,
 			fill:true,
 			backgroundColor:'rgba(11,47,58,0.3)'
-        },
-        // {
-        //     label:' 수익률',
-        //     data : {{D['earnings_rate']}},
-        //     borderColor:'white', borderWidth:2, pointRadius:0,  backgroundColor:'white',
-		// 	lineTension:0.2,
-		// 	yAxisID : 'y1'
-        // }
-
+        }
     ]   
 };
-const options = {
+const options1 = {
 	animation : { duration:1000	},
 
 	plugins : { legend: {display:false}, tooltip:{enabled:false},
@@ -246,8 +217,9 @@ const options = {
 		// y1:{ type:'linear', display:true, position:'left'}
     }
 };
-const config  = {type:'line',data:data,options:options};
-const myChart = new Chart(ctx, config); 
+const config1  = {type:'line',data:data1,options:options1};
+const myChart = new Chart(ctx, config1); 
+let second_chart = false;
 //
 
 
@@ -286,8 +258,63 @@ const config2 = {
     }
   },
 };
-
 const myChart2 = new Chart(ctx2, config2); 
+
+
+const data3 = {
+    labels : labels,
+    datasets : [
+		{
+            label:' 총투자금',
+            data : {{D['acc_money']}},
+            borderColor:'rgba(255, 205, 86, 0.8)', borderWidth:4,pointRadius:0, pointHoverRadius:24, 
+			lineTension:0.2,
+			yAxisID : 'y1',
+        },
+
+        {
+            label:' 수익률',
+            data : {{D['earnings_rate']}},
+            borderColor:'rgba(255, 99, 132, 0.4)', borderWidth:4, pointRadius:0,  
+			lineTension:0.2,
+        },
+    ]   
+};
+
+const options3 = {
+	animation : { duration:1000	},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:false},
+				title:{display:true, text:'수익률 / 총투자금',color:'white', font:{size:16}}},
+    responsive:false,
+    layout:{padding:20},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'gray'}, 
+		   	
+		   grid:{
+			color:function(context) {if(context.tick.value == 0 ) { return 'rgba(75, 192, 192, 0.4)'} else return '#272727'},
+			lineWidth: function(context) {if(context.tick.value == 0 ) { return 2 } else return 1},
+		   },
+		   position:'left'},
+		y1:{ type:'linear', display:true, position:'right'}
+    }
+};
+
+const config3  = {type:'line',data:data3,options:options3};
+
+
+function chart_toggle() {
+	if(! second_chart ) {
+		myChart.config.data = data3;
+		myChart.config.options = options3;
+	} else {
+		myChart.config.data = data1;
+		myChart.config.options = options1;
+	}
+	myChart.update();
+	second_chart = ! second_chart;
+}
 </script>
 
 
