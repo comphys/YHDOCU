@@ -27,7 +27,7 @@ class 목록_장투일지(SKIN) :
         # self.DB.lmt = '120'
         self.DB.odr = "add0 DESC"
 
-        chart_data = self.DB.get("add0,add18,add19,add15,add20,add17,add9,add3,add14,sub12,add11,sub17,sub27,sub28",assoc=True)
+        chart_data = self.DB.get("add0,add3,add9,add11,add14,add15,add17,add18,add19,add20,sub1,sub12,sub17,sub27,sub28",assoc=True)
         if chart_data :
 
             chart_data.reverse()
@@ -45,6 +45,10 @@ class 목록_장투일지(SKIN) :
             self.D['chart_max'] = [float(x['add20']) for x in chart_data]
             self.D['earnings_rate'] = [float(x['sub28']) for x in chart_data]
             self.D['acc_money'] = [int(x['sub27']) for x in chart_data]
+            self.D['close_price'] = [float(x['add14']) for x in chart_data] ; op_price = self.D['close_price'][0]  
+            self.D['close_change'] = [ (x-op_price) / op_price * 100  for x in self.D['close_price'] ]
+            self.D['base_price'] = [float(x['sub1']) for x in chart_data] ; op_price = self.D['base_price'][0]  
+            self.D['base_change'] = [ (x-op_price) / op_price * 100  for x in self.D['base_price'] ]
             # self.D['chart_total'] = [float(x['add17'])*0.5 for x in chart_data]
             # self.D['chart_dividend'] = [float(x['add9'])*2.5 for x in chart_data]
             # self.D['chart_cash'] = [float(x['add3'])*1.67 for x in chart_data]
