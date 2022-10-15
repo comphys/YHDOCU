@@ -271,7 +271,13 @@ const data3 = {
 			lineTension:0.2,
 			yAxisID : 'y1',
         },
-
+		{
+            label:' 가치합계',
+            data : {{D['chart_total']}},
+            borderColor:'yellow', borderWidth:2,pointRadius:0, 
+			lineTension:0.2,
+			yAxisID : 'y1',
+        },
         {
             label:' 수익률',
             data : {{D['earnings_rate']}},
@@ -293,7 +299,7 @@ const data3 = {
     ]   
 };
 
-var check_value = new Array(100,80,60,40,20,0,-20,-40,-60)
+// var check_value = new Array(100,80,60,40,20,0,-20,-40,-60)
 const options3 = {
 	animation : { duration:1000	},
 

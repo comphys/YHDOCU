@@ -49,7 +49,7 @@ class 목록_장투일지(SKIN) :
             self.D['close_change'] = [ (x-op_price) / op_price * 100  for x in self.D['close_price'] ]
             self.D['base_price'] = [float(x['sub1']) for x in chart_data] ; op_price = self.D['base_price'][0]  
             self.D['base_change'] = [ (x-op_price) / op_price * 100  for x in self.D['base_price'] ]
-            # self.D['chart_total'] = [float(x['add17'])*0.5 for x in chart_data]
+            self.D['chart_total'] = [float(x['add17']) for x in chart_data]
             # self.D['chart_dividend'] = [float(x['add9'])*2.5 for x in chart_data]
             # self.D['chart_cash'] = [float(x['add3'])*1.67 for x in chart_data]
             self.D['chart_ori'] = [float(x['add14'])*float(x['sub12']) for x in chart_data]
