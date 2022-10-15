@@ -267,7 +267,7 @@ const data3 = {
 		{
             label:' 총투자금',
             data : {{D['acc_money']}},
-            borderColor:'rgba(255, 205, 86, 0.8)', borderWidth:4,pointRadius:0, pointHoverRadius:24, 
+            borderColor:'rgba(255, 205, 86, 0.8)', borderWidth:2,pointRadius:0, borderDash:[2,3], 
 			lineTension:0.2,
 			yAxisID : 'y1',
         },
@@ -275,7 +275,7 @@ const data3 = {
         {
             label:' 수익률',
             data : {{D['earnings_rate']}},
-            borderColor:'rgba(255, 99, 132, 0.4)', borderWidth:4, pointRadius:0,  
+            borderColor:'rgba(255, 99, 132, 0.6)', borderWidth:4, pointRadius:0,  
 			lineTension:0.2,
         },
         {
@@ -293,6 +293,7 @@ const data3 = {
     ]   
 };
 
+var check_value = new Array(100,80,60,40,20,0,-20,-40,-60)
 const options3 = {
 	animation : { duration:1000	},
 
@@ -305,8 +306,8 @@ const options3 = {
         y: { ticks : {color:'gray'}, 
 		   	
 		   grid:{
-			color:function(context) {if(context.tick.value == 0 ) { return 'rgba(75, 192, 192, 0.4)'} else return '#272727'},
-			lineWidth: function(context) {if(context.tick.value == 0 ) { return 2 } else return 1},
+			color:function(context) {if(context.tick.value % 20 == 0 ) { return 'rgba(75, 192, 192, 0.4)'} else return '#272727'},
+			// lineWidth: function(context) {if(context.tick.value % 20 == 0 ) { return 2 } else return 1},
 		   },
 		   position:'left'},
 		y1:{ type:'linear', display:true, position:'right'}
