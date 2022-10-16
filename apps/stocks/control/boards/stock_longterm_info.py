@@ -20,7 +20,7 @@ class Stock_longterm_info(Control) :
 
         self.DB.tbl, self.DB.wre, self.DB.odr = (self.tbl, f"{qry_wre} != '0'", "add0 DESC")
         D = self.DB.get(f"add0,{qry_opt}",assoc=False)
-        self.info(self.DB.qry)
+        # self.info(self.DB.qry)
 
         if D and opt in ('입금내역','출금내역','배당내역'):
             output  = "<div style='width:200px;max-height:250px;background-color:black;overflow-x:hidden' ondblclick=\"h_dialog.close('POP_INFO')\">"
