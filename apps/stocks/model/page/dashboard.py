@@ -5,27 +5,25 @@ class M_dashboard(Model) :
     def view(self) :
 
         # 조회목록
-        self.D['CATEGORY'] = ['현재시즌','전체시즌','분할매수','개인장투']
+        self.D['CATEGORY'] = ['현재시즌','전체시즌','분할매수']
 
         self.D['현재시즌'] = {}
         self.D['전체시즌'] = {}
         self.D['분할매수'] = {}
         self.D['개인장투'] = {}
 
-        self.D['현재시즌']['첫째계좌'] = ['h_daily_first_board','IFB',1,5377]
-        self.D['현재시즌']['둘째계좌'] = ['h_daily_second_board','IFB',1,5200]
-        self.D['현재시즌']['장투계좌'] = ['h_myCLD_board','VR',1,0]
+        self.D['현재시즌']['공동투자'] = ['h_myJVA_board','VR',1,8292]
+        self.D['현재시즌']['개인장투'] = ['h_myOLT_board','VR',1,0]
 
-        self.D['전체시즌']['첫째계좌'] = ['h_daily_first_board','IFB',1,0]
-        self.D['전체시즌']['둘째계좌'] = ['h_daily_second_board','IFB',1,0]
-        self.D['전체시즌']['장투계좌'] = ['h_myCLD_board','VR',1,22000]
+        self.D['전체시즌']['공동투자'] = ['h_myJVA_board','VR',1,0]
+        self.D['전체시즌']['개인장투'] = ['h_myOLT_board','VR',1,0]
 
         self.D['분할매수']['가상계좌'] = ['h_daily_virtual_board','IFB',0,8030]
         self.D['분할매수']['첫째계좌'] = ['h_daily_first_board','IFB',1,5377]
         self.D['분할매수']['둘째계좌'] = ['h_daily_second_board','IFB',1,5200]
 
-        self.D['개인장투']['장투일지'] = ['h_myOLT_board','VR',1,0]
         # -------------------------------------------------------------
+        # 1 이면 카테고리별 합계에 포함, 0 이면 포함하지 않음(virtual)
 
         self.D['평가합계'] = {}
         self.D['투자합계'] = {}
