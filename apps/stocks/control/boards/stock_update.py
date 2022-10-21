@@ -40,8 +40,8 @@ class Stock_update(Control) :
         return self.moveto('board/list/stockHistory')
         
 
-    def update_stock2(self,cdx,USER) :
-
+    def update_stock(self,cdx,USER) :
+        
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         start_b = self.DB.get("max(add0)",many=1,assoc=False) 
         start_e = ut.timestamp_to_date(opt=7)
@@ -50,7 +50,8 @@ class Stock_update(Control) :
 
         self.DB.exe(f"DELETE FROM {self.DB.tbl} WHERE add0 >= '{start_b}' AND add1='{cdx}'")
 
-        data = ut.get_stock_data(cdx,start_b,start_e)
+        app_key = self.DB.one("SELECT p_data_02 FROM my_keep_data WHERE no=1")
+        data = ut.get_stock_data(app_key,cdx,start_b,start_e)
 
         ohlc = data['data']
 
@@ -64,7 +65,7 @@ class Stock_update(Control) :
             sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
             self.DB.exe(sql)
 
-    def update_stock(self,cdx,USER) :
+    def update_stock2(self,cdx,USER) :
 
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.DB.get("max(add0)",many=1,assoc=False)
