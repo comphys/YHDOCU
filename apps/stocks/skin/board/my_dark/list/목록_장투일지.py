@@ -76,11 +76,11 @@ class 목록_장투일지(SKIN) :
             qry = f"SELECT sum(add1), sum(add2), sum(sub10) FROM {self.DB.tbl}"
             invest = self.DB.exe(qry,many=1,assoc=True)
 
-            총투자금 = int(invest['sum(add1)']) - int(invest['sum(add2)'])
+            총투자금 = int(LD['sub27'])
             총수익금 = int(LD['add17']) - 총투자금
-            총수익률 = 총수익금/총투자금 * 100
-            self.D['총입금'] = f"{int(invest['sum(add1)']):,}"
-            self.D['총출금'] = f"{int(invest['sum(add2)']):,}"
+            총수익률 = 총수익금/총투자금 * 100 if 총투자금 else 0
+            self.D['총입금'] = f"{int(LD['sub25']):,}"
+            self.D['총출금'] = f"{int(LD['sub26']):,}"
             self.D['현재총액'] = f"{int(LD['add17']):,}"
             self.D['총수익금'] = f"{총수익금:,}"
             self.D['총수익률'] = f"{총수익률:.2f}"
@@ -90,7 +90,7 @@ class 목록_장투일지(SKIN) :
             self.D['매도금1'] = float(LD['sub22'])
             수익금1 = float(LD['add9']) - self.D['매수금1'] + self.D['매도금1']
             평단가1 = float(LD['sub21'])
-            수익률1 = (float(LD['add8']) - 평단가1) / 평단가1 *100
+            수익률1 = (float(LD['add8']) - 평단가1) / 평단가1 *100 if 평단가1 else 0
             self.D['평단가1'] = f"{평단가1:,.2f}"
             self.D['수익금1'] = f"{수익금1:,.2f}"
             self.D['수익률1'] = f"{수익률1:.2f}"
@@ -101,7 +101,7 @@ class 목록_장투일지(SKIN) :
             self.D['매도금2'] = float(LD['sub15'])
             수익금2 = float(LD['add15']) - self.D['매수금2'] + self.D['매도금2']
             평단가2 = float(LD['sub16'])
-            수익률2 = (float(LD['add14']) - 평단가2) / 평단가2 *100
+            수익률2 = (float(LD['add14']) - 평단가2) / 평단가2 *100 if 평단가2 else 0
             self.D['평단가2'] = f"{평단가2:,.2f}"
             self.D['수익금2'] = f"{수익금2:,.2f}"
             self.D['수익률2'] = f"{수익률2:.2f}"
