@@ -1,6 +1,5 @@
 from system.core.load import Control
 from flask import session
-from datetime import datetime
 import FinanceDataReader as fdr
 import system.core.my_utils as ut
 

@@ -134,7 +134,7 @@ def diff_day(day1,day2='') :
 
 # stock
 
-def get_stock_data(symbol,app_key,start_date,end_date='') :
+def get_stock_data(app_key,symbol,start_date,end_date='') :
 
     date_b = dayofdate(start_date,-10)[0]
     date_e = start_date if not end_date else end_date           
