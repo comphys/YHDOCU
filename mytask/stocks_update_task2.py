@@ -23,7 +23,7 @@ class SU :
         codes = ['SOXX','SOXL','JEPQ','QQQ','TQQQ','JEPI']
         for cdx in codes : 
             self.update_stock(cdx)
-            time.sleep(3)
+            time.sleep(6)
 
         message = f"[{today}] 주가 정보 업데이트를 완료하였습니다"
         my.post_slack(self.skey,message)
@@ -36,9 +36,11 @@ class SU :
 
         if not b_date : b_date = '2015-01-01'
         b_date = my.dayofdate(b_date,delta=1)[0]
+        if e_date < b_date : return
 
         data = my.get_stock_data(self.appkey,cdx,b_date,e_date)
         ohlc = data['data']
+        if not ohlc : return
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
         time_now = my.now_timestamp()

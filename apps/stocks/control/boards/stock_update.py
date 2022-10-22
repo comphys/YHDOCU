@@ -1,7 +1,7 @@
 from system.core.load import Control
 from flask import session
 import FinanceDataReader as fdr
-import system.core.my_utils as ut
+import time,system.core.my_utils as ut
 
 class Stock_update(Control) : 
 
@@ -16,14 +16,11 @@ class Stock_update(Control) :
 
         code = self.parm[0]
         if code == 'NONE' : 
-            today = ut.timestamp_to_date(opt=7)
-            old_day = ut.dayofdate(today,delta=-7)[0]
-
-            self.DB.tbl, self.DB.wre = ("h_stockHistory_board",f"add1 > '{old_day}'")
-            codes = self.DB.get("distinct add1",assoc=False)
+            codes = ['SOXX','SOXL','JEPQ','QQQ','TQQQ','JEPI']
 
             for cdx in codes :
                 self.update_stock(cdx,USER)
+                time.sleep(3)
 
         else :  self.update_stock(code,USER)
             
@@ -47,13 +44,12 @@ class Stock_update(Control) :
 
         if not start_b : start_b = '2015-01-01'
         start_b = ut.dayofdate(start_b,delta=1)[0]
-
-        self.DB.exe(f"DELETE FROM {self.DB.tbl} WHERE add0 >= '{start_b}' AND add1='{cdx}'")
+        if start_e < start_b : return
 
         app_key = self.DB.one("SELECT p_data_02 FROM my_keep_data WHERE no=1")
         data = ut.get_stock_data(app_key,cdx,start_b,start_e)
-
         ohlc = data['data']
+        if not ohlc : return
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
         time_now = ut.now_timestamp()
