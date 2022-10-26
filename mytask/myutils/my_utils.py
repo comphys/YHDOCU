@@ -1,10 +1,10 @@
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
-import os, re
+import os, re, json,urllib.request as ul
 from datetime import datetime, timedelta
 from pytz import timezone
 
-# 파일조작 관련 함수 
+# 파일조작 관련 함수
 def file_split(filename) :
     '''
     filename을 입력으로 [경로, 파일명, 확장자]를 리턴함
@@ -46,7 +46,7 @@ def makedir(directory) :
         return False
 
 def checkdir(fdir,d=True) :
-    if d : 
+    if d :
         if os.path.isdir(fdir) : return True
         else : return False
     else :
@@ -60,7 +60,7 @@ def makefile(fname) :
     return True
 
 def delete_file(fx) :
-    os.remove(fx) 
+    os.remove(fx)
 
 def clear_folder(fx) :
     for file in os.scandir(fx) :
@@ -88,8 +88,8 @@ def dequote(s):
     return s
 
 def rg_ex(op,txt) :
-    if op == 'mobile' : see = re.compile('010-\d{3,4}-\d{4}') 
-    return  True if see.match(txt) else False 
+    if op == 'mobile' : see = re.compile('010-\d{3,4}-\d{4}')
+    return  True if see.match(txt) else False
 
 
 # time & date
@@ -104,12 +104,12 @@ def timestamp_to_date(ts='now',opt=1) :
 
     if    opt == 1 : t_format = "%Y-%m-%d %H:%M:%S"
     elif  opt == 2 : t_format = "%Y/%m/%d %H:%M:%S"
-    elif  opt == 3 : t_format = "%y-%m-%d %H:%M"  
-    elif  opt == 4 : t_format = "%y%m%d"   
-    elif  opt == 5 : t_format = "%Y/%m/%d %H:%M" 
-    elif  opt == 6 : t_format = "%y/%m/%d %H:%M:%S" 
+    elif  opt == 3 : t_format = "%y-%m-%d %H:%M"
+    elif  opt == 4 : t_format = "%y%m%d"
+    elif  opt == 5 : t_format = "%Y/%m/%d %H:%M"
+    elif  opt == 6 : t_format = "%y/%m/%d %H:%M:%S"
     elif  opt == 7 : t_format = "%Y-%m-%d"
-    else  : t_format = opt 
+    else  : t_format = opt
 
     return datetime.fromtimestamp(ts,kst).strftime(t_format)
 
@@ -118,6 +118,8 @@ def dayofdate(theday,delta=0) :
     a = datetime.strptime(theday,'%Y-%m-%d')
     if delta : b = a+timedelta(days=delta) ; return (b.strftime('%Y-%m-%d'),dow[b.weekday()])
     else : return dow[a.weekday()]
+
+
 
 def post_slack(key,text,ch='주식'):
 
@@ -129,3 +131,26 @@ def post_slack(key,text,ch='주식'):
         assert e.response["ok"] is False
         assert e.response["error"]
         print(f"slack error : {e.response['error']}")
+
+
+# stock
+
+def get_stock_data(app_key,symbol,start_date,end_date,clp,up,dn) :
+
+    url  = f"https://api.stockdio.com/data/financial/prices/v1/GetHistoricalPrices?app-key={app_key}&stockExchange=USA&symbol={symbol}&from={start_date}&to={end_date}"
+
+    data = json.loads(ul.urlopen(url).read())
+
+    col = data['data']['prices']['columns'] + ['change','up','down']
+
+    rst = data['data']['prices']['values']
+
+    rst2 = [ [x[0][:10],float(x[1]),float(x[2]),float(x[3]),float(x[4]),int(x[5]),0.0,0,0] for x in rst]
+
+    for i in range(0,len(rst2)) :
+        rst2[i][6]  = round((rst2[i][4] - clp)/clp,4)
+        rst2[i][7]  = up + 1 if rst2[i][4] >=   clp else 0
+        rst2[i][8]  = dn + 1 if rst2[i][4] <    clp else 0
+    
+    return {'count':len(rst2),'column':col,'data':rst2}
+

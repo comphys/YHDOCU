@@ -21,9 +21,11 @@ class SU :
             return
 
         codes = ['SOXX','SOXL','JEPQ','QQQ','TQQQ','JEPI']
-        for cdx in codes : 
+        for cdx in codes :
             self.update_stock(cdx)
             time.sleep(6)
+
+        self.mydb.close()
 
         message = f"[{today}] 주가 정보 업데이트를 완료하였습니다"
         my.post_slack(self.skey,message)
@@ -35,16 +37,20 @@ class SU :
         e_date = my.timestamp_to_date(opt=7)
 
         if not b_date : b_date = '2015-01-01'
+
+        self.mydb.wre = f"add0='{b_date}' add1='{cdx}'"
+        (clp,up,dn) = self.mydb.get("add3,add9,add10",many=1,assoc=False)
+
         b_date = my.dayofdate(b_date,delta=1)[0]
         if e_date < b_date : return
-
-        data = my.get_stock_data(self.appkey,cdx,b_date,e_date)
+        
+        data = my.get_stock_data(self.appkey,cdx,b_date,e_date,float(clp),int(up),int(dn))
         ohlc = data['data']
         if not ohlc : return
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
         time_now = my.now_timestamp()
-        cdx = cdx.upper()
+
         for row in ohlc :
             row2 = list(row)
             row2 += [cdx,cdx,'comphys','정용훈',time_now,time_now]
@@ -55,3 +61,5 @@ class SU :
 
 my_stocks = SU()
 my_stocks.stocks_update()
+
+
