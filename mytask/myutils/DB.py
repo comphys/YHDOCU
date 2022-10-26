@@ -17,9 +17,6 @@ class DB :
     def close(self) :
         self.con.close()
 
-    def close(self) :
-        self.con.close()
-
     def cnt(self,qry) :
         self.rst = self.cur.execute(qry)
         return len(self.rst.fetchall())
