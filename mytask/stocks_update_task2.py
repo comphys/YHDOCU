@@ -9,7 +9,6 @@ class SU :
         self.mydb = DB('stocks')
         self.skey, self.appkey = self.mydb.exe("SELECT p_data_01,p_data_02 FROM my_keep_data WHERE no=1",many=1,assoc=False)
 
-
     def stocks_update(self) :
 
         today = my.timestamp_to_date(opt=7)
@@ -35,29 +34,33 @@ class SU :
         self.mydb.tbl, self.mydb.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.mydb.get("max(add0)",many=1,assoc=False)
         e_date = my.timestamp_to_date(opt=7)
-
         if not b_date : b_date = '2015-01-01'
 
-        self.mydb.wre = f"add0='{b_date}' add1='{cdx}'"
-        (clp,up,dn) = self.mydb.get("add3,add9,add10",many=1,assoc=False)
+        the_next_day = my.dayofdate(b_date,delta=1)[0]
+        self.mydb.wre = f"add0='{b_date}' and add1='{cdx}'"
+        one = self.mydb.get('add0,add4,add5,add6,add3,add7,add8,add9,add10',many=1,assoc=False)
+        the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
 
-        b_date = my.dayofdate(b_date,delta=1)[0]
-        if e_date < b_date : return
-        
-        data = my.get_stock_data(self.appkey,cdx,b_date,e_date,float(clp),int(up),int(dn))
-        ohlc = data['data']
+        ohlc = my.get_stock_data(self.appkey,cdx,the_next_day,e_date)
         if not ohlc : return
+        ohlc.insert(0,the_first_data)
+
+        for i in range(1,len(ohlc)) :
+            ohlc[i][6]  = round((ohlc[i][4] - ohlc[i-1][4])/ohlc[i-1][4],4)
+            ohlc[i][7]  = ohlc[i-1][7]+1 if ohlc[i][4] >= ohlc[i-1][4] else 0
+            ohlc[i][8]  = ohlc[i-1][8]+1 if ohlc[i][4] <  ohlc[i-1][4] else 0
+
+        rst3 = ohlc[1:]
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
         time_now = my.now_timestamp()
 
-        for row in ohlc :
+        for row in rst3 :
             row2 = list(row)
             row2 += [cdx,cdx,'comphys','정용훈',time_now,time_now]
             values = str(row2)[1:-1]
             sql = f"INSERT INTO {self.mydb.tbl} ({db_keys}) VALUES({values})"
             self.mydb.exe(sql)
-
 
 my_stocks = SU()
 my_stocks.stocks_update()

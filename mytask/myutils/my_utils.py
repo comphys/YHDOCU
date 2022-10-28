@@ -135,22 +135,15 @@ def post_slack(key,text,ch='주식'):
 
 # stock
 
-def get_stock_data(app_key,symbol,start_date,end_date,clp,up,dn) :
+def get_stock_data(app_key,symbol,start_date,end_date) :
 
     url  = f"https://api.stockdio.com/data/financial/prices/v1/GetHistoricalPrices?app-key={app_key}&stockExchange=USA&symbol={symbol}&from={start_date}&to={end_date}"
-
     data = json.loads(ul.urlopen(url).read())
 
-    col = data['data']['prices']['columns'] + ['change','up','down']
-
     rst = data['data']['prices']['values']
-
     rst2 = [ [x[0][:10],float(x[1]),float(x[2]),float(x[3]),float(x[4]),int(x[5]),0.0,0,0] for x in rst]
 
-    for i in range(0,len(rst2)) :
-        rst2[i][6]  = round((rst2[i][4] - clp)/clp,4)
-        rst2[i][7]  = up + 1 if rst2[i][4] >=   clp else 0
-        rst2[i][8]  = dn + 1 if rst2[i][4] <    clp else 0
-    
-    return {'count':len(rst2),'column':col,'data':rst2}
+    # rst2=[data, open, high, low, close, vol, change, up, dn]
+    return(rst2)
+
 
