@@ -144,6 +144,6 @@ def get_stock_data(app_key,symbol,start_date,end_date) :
     rst2 = [ [x[0][:10],float(x[1]),float(x[2]),float(x[3]),float(x[4]),int(x[5]),0.0,0,0] for x in rst]
 
     # rst2=[data, open, high, low, close, vol, change, up, dn]
-    return(rst2)
+    return rst2
 
 

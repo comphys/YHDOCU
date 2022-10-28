@@ -20,7 +20,7 @@ class Stock_update(Control) :
 
             for cdx in codes :
                 self.update_stock(cdx,USER)
-                time.sleep(3)
+                time.sleep(6)
 
         else :  self.update_stock(code,USER)
             
@@ -38,23 +38,32 @@ class Stock_update(Control) :
 
     def update_stock(self,cdx,USER) :
         
-        self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
-        start_b = self.DB.get("max(add0)",many=1,assoc=False) 
-        start_e = ut.timestamp_to_date(opt=7)
-
-        if not start_b : start_b = '2015-01-01'
-        start_b = ut.dayofdate(start_b,delta=1)[0]
-        if start_e < start_b : return
-
         app_key = self.DB.one("SELECT p_data_02 FROM my_keep_data WHERE no=1")
-        data = ut.get_stock_data(app_key,cdx,start_b,start_e)
-        ohlc = data['data']
+        self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
+        b_date = self.DB.get("max(add0)",many=1,assoc=False) 
+        e_date = ut.timestamp_to_date(opt=7)
+        if not b_date : b_date = '2015-01-01'
+
+        the_next_day = ut.dayofdate(b_date,delta=1)[0]
+        self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
+        one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10',many=1,assoc=False)
+        the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
+
+        ohlc = ut.get_stock_data(app_key,cdx,the_next_day,e_date)
         if not ohlc : return
+        ohlc.insert(0,the_first_data)
+
+        for i in range(1,len(ohlc)) :
+            ohlc[i][6]  = round((ohlc[i][4] - ohlc[i-1][4])/ohlc[i-1][4],4)
+            ohlc[i][7]  = ohlc[i-1][7]+1 if ohlc[i][4] >= ohlc[i-1][4] else 0
+            ohlc[i][8]  = ohlc[i-1][8]+1 if ohlc[i][4] <  ohlc[i-1][4] else 0
+
+        rst3 = ohlc[1:]
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
         time_now = ut.now_timestamp()
-        cdx = cdx.upper()
-        for row in ohlc :
+
+        for row in rst3 :
             row2 = list(row)
             row2 += [cdx,cdx,USER['uid'],USER['uname'],time_now,time_now]
             values = str(row2)[1:-1]
