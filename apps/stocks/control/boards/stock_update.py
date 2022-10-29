@@ -14,15 +14,16 @@ class Stock_update(Control) :
         self.DB.tbl, self.DB.wre = ("h_user_list",f"no={session['N_NO']}")
         USER = self.DB.get("*",many=1, assoc=True)
 
-        code = self.parm[0]
-        if code == 'NONE' : 
-            codes = ['SOXX','SOXL','JEPQ','QQQ','TQQQ','JEPI']
-
-            for cdx in codes :
-                self.update_stock(cdx,USER)
+        opt = self.parm[0]
+        codes = ['SOXX','SOXL','JEPQ','QQQ','TQQQ','JEPI']
+        
+        for cdx in codes :
+            if opt == 'stockdio' :
+                self.update_stockdio(cdx,USER)
                 time.sleep(6)
-
-        else :  self.update_stock(code,USER)
+            else :
+                self.update_fdr(cdx,USER)
+                time.sleep(3)
             
         self.set_message("종목 업데이트를 완료하였습니다")
         return self.moveto('board/list/stockHistory/csh=on')
@@ -36,7 +37,7 @@ class Stock_update(Control) :
         return self.moveto('board/list/stockHistory')
         
 
-    def update_stock(self,cdx,USER) :
+    def update_stockdio(self,cdx,USER) :
         
         app_key = self.DB.one("SELECT p_data_02 FROM my_keep_data WHERE no=1")
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
@@ -70,29 +71,42 @@ class Stock_update(Control) :
             sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
             self.DB.exe(sql)
 
-    def update_stock2(self,cdx,USER) :
+    def update_fdr(self,cdx,USER) :
 
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.DB.get("max(add0)",many=1,assoc=False)
         e_date = ut.timestamp_to_date(opt=7)
 
         df = fdr.DataReader(cdx,start=b_date, end=e_date)
-        df = df.astype({'Volume':'int'})
+        Str_Date    = [x.strftime('%Y-%m-%d') for x in df.index]
+        cnt = len(Str_Date)
+        df['Str_Date'] = Str_Date
 
-        Date    = [x.strftime('%Y-%m-%d') for x in df.index]
-        Change  = [round(x,3) for x in df['Change']]
+        df['Change'] = [0.0]*cnt
+        df['Up']     = [0]*cnt
+        df['Dn']     = [0]*cnt
 
-        cnt = len(Date)
-        Up  = [0]*cnt
-        Dn  = [0]*cnt
+        df['Open']  = round(df['Open'],2)
+        df['High']  = round(df['High'],2)
+        df['Low']   = round(df['Low'],2)
+        df['Close'] = round(df['Close'],2)
+
+        df.drop('Adj Close',axis=1,inplace=True)
+        df = df[['Str_Date','Open','High','Low','Close','Volume','Change','Up','Dn']]
+        dflist = df.values.tolist()
+
+        self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
+        one = self.DB.get('add9,add10',many=1,assoc=False)
+
+        dflist[0][7] = int(one[0])
+        dflist[0][8] = int(one[1])
 
         for i in range(1,cnt) :
-            if df['Close'][i] <  df['Close'][i-1] : Dn[i] = Dn[i-1] + 1 
-            if df['Close'][i] >= df['Close'][i-1] : Up[i] = Up[i-1] + 1 
+            dflist[i][6]  = round((dflist[i][4] - dflist[i-1][4])/dflist[i-1][4],4)
+            dflist[i][7]  = dflist[i-1][7]+1 if dflist[i][4] >= dflist[i-1][4] else 0
+            dflist[i][8]  = dflist[i-1][8]+1 if dflist[i][4] <  dflist[i-1][4] else 0
 
-        ohlc = list(zip(Date,df['Open'],df['High'],df['Low'],df['Close'],df['Volume'],Change,Up,Dn))
-
-        self.DB.exe(f"DELETE FROM {self.DB.tbl} WHERE add0 >= '{b_date}' AND add1='{cdx}'")
+        ohlc = dflist[1:]
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
         time_now = ut.now_timestamp()
