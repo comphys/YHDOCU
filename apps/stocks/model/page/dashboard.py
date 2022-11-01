@@ -7,16 +7,11 @@ class M_dashboard(Model) :
         # 조회목록
         self.D['CATEGORY'] = ['현재시즌','전체시즌','분할매수']
 
-        self.D['현재시즌'] = {}
         self.D['전체시즌'] = {}
         self.D['분할매수'] = {}
-        self.D['개인장투'] = {}
-
-        self.D['현재시즌']['공동투자'] = ['h_myJVA_board','VR',1,8292]
-        self.D['현재시즌']['개인장투'] = ['h_myOLT_board','VR',1,0]
-
-        self.D['전체시즌']['공동투자'] = ['h_myJVA_board','VR',1,0]
-        self.D['전체시즌']['개인장투'] = ['h_myOLT_board','VR',1,0]
+ 
+        self.D['전체시즌']['SOXL'] = ['h_myJVA_board','VR',1,17526]
+        self.D['전체시즌']['TQQQ'] = ['h_myOLT_board','VR',1,0]
 
         self.D['분할매수']['가상계좌'] = ['h_daily_virtual_board','IFB',0,8030]
         self.D['분할매수']['첫째계좌'] = ['h_daily_first_board','IFB',1,5377]
