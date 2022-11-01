@@ -6,8 +6,8 @@ class SU :
 
     def __init__(self) :
 
-        self.mydb = DB('stocks')
-        self.skey = self.mydb.one("SELECT p_data_01 FROM my_keep_data WHERE no=1")
+        self.DB = DB('stocks')
+        self.skey = self.DB.one("SELECT p_data_01 FROM my_keep_data WHERE no=1")
 
 
     def stocks_update(self) :
@@ -21,20 +21,23 @@ class SU :
             return
 
         codes = ['SOXX','SOXL','JEPQ','QQQ','TQQQ','JEPI']
+
         for cdx in codes :
             self.update_fdr(cdx)
             time.sleep(3)
 
-        self.mydb.close()
+        self.DB.close()
 
         message = f"[{today}] 주가 정보 업데이트를 완료하였습니다"
         my.post_slack(self.skey,message)
 
     def update_fdr(self,cdx) :
 
-        self.mydb.tbl, self.mydb.wre = ('h_stockHistory_board',f"add1='{cdx}'")
-        b_date = self.mydb.get("max(add0)",many=1,assoc=False)
+        self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
+        b_date = self.DB.get("max(add0)",many=1,assoc=False)
         e_date = my.timestamp_to_date(opt=7)
+
+        self.DB.exe(f"DELETE FROM h_stockHistory_board WHERE add0='{b_date}'")
 
         df = fdr.DataReader(cdx,start=b_date, end=e_date)
         Str_Date    = [x.strftime('%Y-%m-%d') for x in df.index]
@@ -54,8 +57,8 @@ class SU :
         df = df[['Str_Date','Open','High','Low','Close','Volume','Change','Up','Dn']]
         dflist = df.values.tolist()
 
-        self.mydb.wre = f"add0='{b_date}' and add1='{cdx}'"
-        one = self.mydb.get('add9,add10',many=1,assoc=False)
+        self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
+        one = self.DB.get('add9,add10',many=1,assoc=False)
 
         dflist[0][7] = int(one[0])
         dflist[0][8] = int(one[1])
@@ -75,8 +78,8 @@ class SU :
             row2 = list(row)
             row2 += [cdx,cdx,'comphys','정용훈',time_now,time_now]
             values = str(row2)[1:-1]
-            sql = f"INSERT INTO {self.mydb.tbl} ({db_keys}) VALUES({values})"
-            self.mydb.exe(sql)
+            sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
+            self.DB.exe(sql)
 
 
 my_stocks = SU()
