@@ -5,7 +5,7 @@ class M_dashboard(Model) :
     def view(self) :
 
         # 조회목록
-        self.D['CATEGORY'] = ['현재시즌','전체시즌','분할매수']
+        self.D['CATEGORY'] = ['전체시즌','분할매수']
 
         self.D['전체시즌'] = {}
         self.D['분할매수'] = {}
