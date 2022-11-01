@@ -40,20 +40,17 @@ class SU :
         self.DB.exe(f"DELETE FROM h_stockHistory_board WHERE add0='{b_date}'")
 
         df = fdr.DataReader(cdx,start=b_date, end=e_date)
-        Str_Date    = [x.strftime('%Y-%m-%d') for x in df.index]
-        cnt = len(Str_Date)
-        df['Str_Date'] = Str_Date
-    
-        df['Change'] = [0.0]*cnt
-        df['Up']     = [0]*cnt
-        df['Dn']     = [0]*cnt
+        df['Str_Date'] = df.index.strftime('%Y-%m-%d')
+      
+        df['Up']     = 0
+        df['Dn']     = 0
 
         df['Open']  = round(df['Open'],2)
         df['High']  = round(df['High'],2)
         df['Low']   = round(df['Low'],2)
         df['Close'] = round(df['Close'],2)
+        df['Change']= round(df['Close'].diff(periods=1)/df['Close'].shift(1),4)
     
-        df.drop('Adj Close',axis=1,inplace=True)
         df = df[['Str_Date','Open','High','Low','Close','Volume','Change','Up','Dn']]
         dflist = df.values.tolist()
 
@@ -63,8 +60,7 @@ class SU :
         dflist[0][7] = int(one[0])
         dflist[0][8] = int(one[1])
 
-        for i in range(1,cnt) :
-            dflist[i][6]  = round((dflist[i][4] - dflist[i-1][4])/dflist[i-1][4],4)
+        for i in range(1,len(df['Str_Date'])) :
             dflist[i][7]  = dflist[i-1][7]+1 if dflist[i][4] >= dflist[i-1][4] else 0
             dflist[i][8]  = dflist[i-1][8]+1 if dflist[i][4] <  dflist[i-1][4] else 0
 
