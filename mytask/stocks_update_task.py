@@ -71,7 +71,7 @@ class SU :
         ohlc = dflist[1:]       
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
-        time_now = ut.now_timestamp()
+        time_now = my.now_timestamp()
         cdx = cdx.upper()
 
         for row in ohlc :
