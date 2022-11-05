@@ -39,7 +39,7 @@ class Stock_longterm_info(Control) :
             output += "</table></div>"
 
         else : 
-            output  = "<div style='width:200px;max-height:250px;background-color:black;overflow-x:hidden' ondblclick=\"h_dialog.close('POP_INFO')\">"
+            output  = "<div style='width:330px;max-height:250px;background-color:black;overflow-x:hidden' ondblclick=\"h_dialog.close('POP_INFO')\">"
             output += "<div style='background-color:#0A2229;color:#e1e1e1;'>No data</div></div>"
 
         return self.echo(output)

@@ -82,16 +82,15 @@ class Stock_update(Control) :
         cnt = len(Str_Date)
         df['Str_Date'] = Str_Date
 
-        df['Change'] = [0.0]*cnt
-        df['Up']     = [0]*cnt
-        df['Dn']     = [0]*cnt
+        df['Up']     = 0
+        df['Dn']     = 0
 
         df['Open']  = round(df['Open'],2)
         df['High']  = round(df['High'],2)
         df['Low']   = round(df['Low'],2)
         df['Close'] = round(df['Close'],2)
+        df['Change']= round(df['Close'].diff(periods=1)/df['Close'].shift(1),4)
 
-        df.drop('Adj Close',axis=1,inplace=True)
         df = df[['Str_Date','Open','High','Low','Close','Volume','Change','Up','Dn']]
         dflist = df.values.tolist()
 
@@ -101,8 +100,7 @@ class Stock_update(Control) :
         dflist[0][7] = int(one[0])
         dflist[0][8] = int(one[1])
 
-        for i in range(1,cnt) :
-            dflist[i][6]  = round((dflist[i][4] - dflist[i-1][4])/dflist[i-1][4],4)
+        for i in range(1,len(dflist)) :
             dflist[i][7]  = dflist[i-1][7]+1 if dflist[i][4] >= dflist[i-1][4] else 0
             dflist[i][8]  = dflist[i-1][8]+1 if dflist[i][4] <  dflist[i-1][4] else 0
 
@@ -110,7 +108,6 @@ class Stock_update(Control) :
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
         time_now = ut.now_timestamp()
-        cdx = cdx.upper()
         
         for row in ohlc :
             row2 = list(row)    

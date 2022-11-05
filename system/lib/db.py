@@ -37,6 +37,9 @@ class DB :
         self.rst = self.cur.execute(qry)
         return self.rst.fetchone()[0]
 
+    def line(self,qry) :
+        return self.exe(qry,many=1,assoc=True)
+
     def get_one(self,fld) :
         return self.get(fld,many=1,assoc=False)
 
@@ -108,10 +111,6 @@ class DB :
             self.con.commit()
             return "The job you requested is done"
        
-    def line(self,qry) :
-        return self.exe(qry,many=1,assoc=True)
-
-
     def commit_many(self,qry) : 
         qry2 = qry.split(';')
         for x in qry2 :
