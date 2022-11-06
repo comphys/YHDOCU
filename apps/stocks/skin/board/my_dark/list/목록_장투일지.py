@@ -73,7 +73,7 @@ class 목록_장투일지(SKIN) :
             self.D['chart_percent'] = [float(LD['add4']),float(LD['add10']),float(LD['add16'])]
             
             # --------------
-            qry = f"SELECT sum(add1), sum(add2), sum(sub10) FROM {self.DB.tbl}"
+            qry = f"SELECT sum(sub10) FROM {self.DB.tbl}"
             invest = self.DB.exe(qry,many=1,assoc=True)
 
             총투자금 = int(LD['sub27'])
@@ -141,6 +141,8 @@ class 목록_장투일지(SKIN) :
             self.D['매도갯수'] = f"{ 매도금액 / 매도단가 :,.0f}"
             self.D['매수갯수'] = f"{ 매수금액 / 매수단가 :,.0f}"
             self.D['매수금액'] = f"{ 매수금액 + 매수단가 :,.2f}"
+            예상평단 = (매수금액 + float(LD['sub17']) ) / (int(LD['add13']) +int(self.D['매수갯수']) )
+            self.D['예상평단'] = f"{예상평단:,.2f}"  
 
             self.D['info_color']= 'white' 
             if LD['add15'] < LD['add18'] : 
