@@ -458,7 +458,8 @@ function auto_calculate() {
 
 	if(매도금1) {
 		매도누적1 += 매도금1
-		현매수금1 = (평균단가1 * 누적1).toFixed(2);
+		현매수금1 = (평균단가1 * 누적1).toFixed(2)
+		매도누적1 = 매도누적1.toFixed(4)
 	}
 
 	if(매도금2) {
@@ -472,6 +473,7 @@ function auto_calculate() {
 		}
 		
 		기본수량 = 누적2 
+		매도누적2 = 매도누적2.toFixed(4)
 	}
 
 	// 평균단가는 매수할 때만 변동됨
