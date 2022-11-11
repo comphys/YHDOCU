@@ -16,8 +16,8 @@ class Stock_longterm_info(Control) :
         elif  opt == '매도금1'  : qry = f"SELECT add0,add6,sub8,add7,add8 FROM {self.tbl} WHERE add6 != '0' ORDER BY add0 DESC"
         elif  opt == '매수금2'  : qry = f"SELECT add0,add11,sub9,add13,add14 FROM {self.tbl} WHERE add11 != '0' ORDER BY add0 DESC"
         elif  opt == '매도금2'  : qry = f"SELECT add0,add12,sub9,add13,add14 FROM {self.tbl} WHERE add12 != '0' ORDER BY add0 DESC"
-        elif  opt == '종가1'    : qry = f"SELECT add0,add8 FROM {self.tbl} WHERE add8 = (SELECT min(add8) FROM {self.tbl}) OR add8 = (SELECT max(add8) FROM {self.tbl}) ORDER BY add0 ASC"
-        elif  opt == '종가2'    : qry = f"SELECT add0,add14 FROM {self.tbl} WHERE add14 = (SELECT min(add14) FROM {self.tbl}) OR add14 = (SELECT max(add14) FROM {self.tbl}) ORDER BY add0 ASC"
+        elif  opt == '종가1'    : qry = f"SELECT add0,add8 FROM {self.tbl} WHERE add8 = (SELECT min(CAST(add8 as FLOAT)) FROM {self.tbl}) OR add8 = (SELECT max(CAST(add8 as FLOAT)) FROM {self.tbl}) ORDER BY add0 ASC"
+        elif  opt == '종가2'    : qry = f"SELECT add0,add14 FROM {self.tbl} WHERE add14 = (SELECT min(CAST(add14 as FLOAT)) FROM {self.tbl}) OR add14 = (SELECT max(CAST(add14 as FLOAT)) FROM {self.tbl}) ORDER BY add0 ASC"
 
 
 
