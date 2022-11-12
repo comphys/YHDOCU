@@ -22,6 +22,7 @@ class DB :
         self.cur = self.con.cursor() 
 
     def change_db(self,db) :
+        self.close()
         mydb = 'mydb/' + db + '.sqlite'
         self.con = sqlite3.connect(mydb, check_same_thread=True)
         self.cur = self.con.cursor()        
