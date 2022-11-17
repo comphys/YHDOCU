@@ -183,7 +183,7 @@ class M_backtest_GAIN(Model) :
     def normal_buy(self) :
 
         if self.M['당일종가'] < self.M['전일종가'] : 
-            매수수량 = math.ceil(self.M['보유수량'] * 1.6)
+            매수수량 = math.ceil(self.M['보유수량'] * self.M['큰단가치'])
             if 매수수량 > self.M['기초수량'] * 32 : 매수수량 = self.M['기초수량'] 
             self.M['매수수량'] = 매수수량
             self.M['거래코드'] = 'D' + str(self.M['연속하락'])
