@@ -50,8 +50,8 @@ class M_backtest_GAIN(Model) :
         elif self.M['진행상황'] in ('전략매도','부분매도','손절매도') :  
             tx['가용잔액'] = self.M['진행상황'] 
         else : 
-            tx['가용잔액'] = 자금합계
-
+            tx['가용잔액'] = f"{self.M['가용잔액']:,.2f}"
+        
         self.D['TR'].append(tx)
 
     def calculate(self)  :
@@ -82,7 +82,7 @@ class M_backtest_GAIN(Model) :
             self.M['전략가격'] = 0.0
             self.M['위기전략'] = False
             self.M['첫날기록'] = True   
-            if self.M['리밸런싱'] : self.rebalance()   
+            self.rebalance()   
 
         if self.M['날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['날수'] ; self.M['최대날자'] = self.M['day']
         if self.M['수익률'] < self.M['MDD'] : self.M['MDD'] = self.M['수익률'] ; self.M['MDD_DAY'] = self.M['day']
@@ -108,11 +108,10 @@ class M_backtest_GAIN(Model) :
         self.M['첫매가치']  = 1 + float(self.S['add9'])/100
         self.M['둘매가치']  = 1 + float(self.S['add10'])/100
         self.M['거래코드']  = ' '
-        self.M['매도대기']  = int(self.S['add11']) # 매도대기 이전에 매도되는 것을 방지(보다 큰 수익 실현을 위해)
-        self.M['리밸런싱']  = True if self.S['add12'] == 'on' else False  # 리밸런싱 수행 여부
         self.M['최대날자']  = ' '
         self.M['완료일수']  = 0
         self.M['수익누적']  = 0.0
+        self.M['매수금지']  = False
 
         self.M['날수'] = 0
         self.M['진행'] = 0
@@ -133,20 +132,6 @@ class M_backtest_GAIN(Model) :
         self.M['연속상승']  = 0
 
         self.M['추가자본']  = int(self.D['addition'])
-        self.M['전략가격']  = 0
-
-        # 수량확보
-        self.M['수량확보']  = True if self.S['add21'] == 'on' else False  # 추가자본 투입 후 수량확보 선택
-        self.M['매도시점']  = float(self.S['add22'])/100
-        self.M['매수시점']  = float(self.S['add23'])/100
-        self.M['위기전략']  = False
-        self.M['위매비중']  = float(self.S['add25'])/100
-        self.M['위매횟수']  = int(self.S['add24'])
-        self.M['매도횟수']  = 0
-
-        self.M['강매허용']  = True if self.S['add16'] == 'on' else False  # 날수 초과 후 강매선택
-        self.M['강매시작']  = float(self.S['add17'])
-        self.M['강매가치']  = 1 + float(self.S['add18']) / 100
 
         # 리밸런싱
         total = self.M['가용잔액'] + self.M['추가자본'] 
@@ -178,31 +163,38 @@ class M_backtest_GAIN(Model) :
             return True
         else : return False
 
-     
-
     def normal_buy(self) :
-
-        if self.M['당일종가'] < self.M['전일종가'] : 
-            매수수량 = math.ceil(self.M['보유수량'] * self.M['큰단가치'])
-            if 매수수량 > self.M['기초수량'] * 32 : 매수수량 = self.M['기초수량'] 
+        
+        if self.M['매수금지'] : return
+        
+        if self.M['당일종가'] <= self.M['전일종가'] : 
+            매수수량 = math.ceil(self.M['기초수량'] * (self.M['날수']+1))
             self.M['매수수량'] = 매수수량
-            self.M['거래코드'] = 'D' + str(self.M['연속하락'])
+            self.M['거래코드'] = 'B' + str(self.M['날수']+1)
             self.M['진행상황'] = '일반매수'
             self.M['매수금액'] = self.M['매수수량'] * self.M['당일종가']
         
 
     def normal_sell(self) :
 
+        매수수량 = math.ceil(self.M['기초수량'] * (self.M['날수']+1))
         
-        매도가격 = self.M['평균단가']
-
+        매도가격 = self.M['평균단가']*1.02
         self.M['진행상황'] = '매도대기'
+        
+        if (매수수량 * self.M['전일종가']) > self.M['가용잔액'] + self.M['추가자본'] : 
+            self.M['매수금지'] = True
+            self.M['진행상황'] = '매수제한'
+            매도가격 = self.M['평균단가']*0.95
 
-        if  self.M['당일종가'] >  매도가격  : 
+        if self.M['날수'] > 25 : 매도가격 = self.M['평균단가']*0.8
+
+        if  self.M['당일종가'] >=  매도가격  : 
             self.M['매도수량'] =  self.M['보유수량']
             self.M['진행상황'] = '전량매도' 
-            
+            if self.M['당일종가'] < self.M['평균단가'] : self.M['진행상황'] = '전략매도'
             self.M['매도금액'] = self.M['당일종가'] * self.M['매도수량']
+            self.M['매수금지'] = True
 
                
     def test_it(self) :
@@ -222,14 +214,14 @@ class M_backtest_GAIN(Model) :
             self.M['거래코드'] = ' '
 
             if  idx == idxx + 1 or self.M['첫날기록'] : 
-                on_day = self.new_day(); 
-                if on_day : self.print_backtest(); continue
+                if self.new_day() : self.print_backtest(); continue
                 else : 
                     self.M['첫날기록'] = True
                     continue
 
             self.normal_sell()
             self.normal_buy()
+            self.M['매수금지'] = False
 
         #   결과정리 --------------------------------------------------------------------------------------------------
             self.M['연속상승'] = int(BD['add9'])
@@ -292,136 +284,3 @@ class M_backtest_GAIN(Model) :
 
         self.D['init_capital'] = int(self.D['capital'].replace(',',''))
         self.D['addition'] = int(self.D['addition'].replace(',','')) if self.D['addition'] else 0
-
-
-    # [IF THIS DAY] ----------------------------------------------------------------------------
-
-    def this_day(self) :
-        
-        self.M['기록시즌'] += 1
-
-        self.M['연속하락']  = self.M['전속하락']
-        self.M['연속상승']  = self.M['전속상승']
-
-        self.M['progress'] = float(self.D['progress'])
- 
-        총매수금 = int(self.D['init_capital'] * self.M['progress']/100)
-        self.M['평균단가']  = self.M['당일종가']
-        self.M['매수수량']  = math.ceil(총매수금/self.M['전일종가'])
-
-        self.M['보유수량']  = self.M['매수수량'] 
-        self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량']
-        self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
-        self.M['수익현황']  = self.M['수익률'] = 0.0
-        self.M['가용잔액'] -= self.M['매수금액']
-        self.M['체결수량']  = self.M['매수수량']
-        self.M['진행상황']  = '첫날거래'
-        self.M['첫날기록']  = False
-        self.M['구매코드']  = 'ST' 
-        
-        self.M['매수수량'] = 0
-        self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)  
-
-    def test_this_day(self) :
-
-        self.init_value()
-
-        for idx,BD in enumerate(self.B) :
-            if BD['add0'] < self.D['start_date'] : idxx = idx; continue
-            self.M['day'] = BD['add0']
-            self.M['당일종가'] = float(BD['add3'])
-            self.M['당일고가'] = float(BD['add5'])
-            self.M['전일종가'] = float(self.B[idx-1]['add3'])
-            self.M['전속상승'] = int(self.B[idx-1]['add9'])
-            self.M['전속하락'] = int(self.B[idx-1]['add10']) 
-            self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
-            self.M['거래코드'] = ' '
-
-            if  idx == idxx+1 : self.this_day(); continue
-            if  self.M['첫날기록'] : self.D['sell_date'] = self.M['day']; break
-            
-            if self.M['진행'] >= self.M['매도대기']: self.normal_sell()
-            
-            if self.M['위기전략'] and self.M['수량확보'] : self.strategy_sell()
-            else : self.base_buy() if self.M['진행'] < self.M['매도대기'] else self.normal_buy()
-            
-            self.M['연속상승'] = int(BD['add9'])
-            self.M['연속하락'] = int(BD['add10'])
-            self.calculate()
-        self.result_the_day()    
-
-    # [IF THIS DAY] ----------------------------------------------------------------------------
-
-    def test_the_day(self) :
-
-        self.init_value()
-
-        for idx,BD in enumerate(self.B) :
-            if BD['add0'] < self.D['start_date'] : idxx = idx; continue
-            self.M['day'] = BD['add0']
-            self.M['당일종가'] = float(BD['add3'])
-            self.M['당일고가'] = float(BD['add5'])
-            self.M['전일종가'] = float(self.B[idx-1]['add3'])   
-            self.M['전속상승'] = int(self.B[idx-1]['add9'])
-            self.M['전속하락'] = int(self.B[idx-1]['add10']) 
-            self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
-            self.M['거래코드'] = ' '
-
-            if  idx == idxx+1 : self.new_day(); continue
-            if  self.M['첫날기록'] : self.D['sell_date'] = self.M['day']; break
-            
-            if self.M['진행'] >= self.M['매도대기'] : self.normal_sell()
-            
-            if self.M['위기전략'] and self.M['수량확보'] : self.strategy_sell()
-            else : self.base_buy() if self.M['진행'] < self.M['매도대기'] else self.normal_buy()
-
-            self.M['연속상승'] = int(BD['add9'])
-            self.M['연속하락'] = int(BD['add10'])
-            self.calculate()
-        # endfor -----------------------------------------------------------------------------------------------------
-        self.result_the_day()
-
-    def result_the_day(self) :
-
-        # 기간 계산하기
-        self.D['s_day'] = s_day = self.D['start_date']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
-        self.D['e_day'] = e_day = self.M['day'];      d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
-        delta = d1-d0
-        self.D['days_span'] = delta.days        
-
-        self.D['s_capital'] = self.D['init_capital'] + self.D['addition']
-        self.D['e_capital'] = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자본']
-        self.D['ca_profit'] = self.D['e_capital'] - self.D['s_capital'] 
-        self.D['profit_rate'] = (self.D['ca_profit']/self.D['s_capital']) * 100
-
-    
-    def test_with_progress(self) :
-
-        self.init_value()
-
-        for idx,BD in enumerate(self.B) :
-            if BD['add0'] < self.D['start_date'] : idxx = idx; continue
-            self.M['day'] = BD['add0']
-            self.M['당일종가'] = float(BD['add3'])
-            self.M['당일고가'] = float(BD['add5'])
-            self.M['전일종가'] = float(self.B[idx-1]['add3'])  
-            self.M['전속상승'] = int(self.B[idx-1]['add9'])
-            self.M['전속하락'] = int(self.B[idx-1]['add10']) 
-            self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
-            self.M['거래코드'] = ' '
-
-            if  idx == idxx+1 : self.this_day(); continue
-            if  self.M['첫날기록'] : self.D['sell_date'] = self.M['day']; break
-            
-            if self.M['진행'] >= self.M['매도대기'] : self.normal_sell()
-            
-            if self.M['위기전략'] and self.M['수량확보'] : self.strategy_sell()
-            else : self.base_buy() if self.M['진행'] < self.M['매도대기'] else self.normal_buy()
-
-        #   결과정리 --------------------------------------------------------------------------------------------------
-            self.M['연속상승'] = int(BD['add9'])
-            self.M['연속하락'] = int(BD['add10'])
-            self.calculate()
-            self.print_backtest()
-        # endfor -----------------------------------------------------------------------------------------------------
-        self.result()
