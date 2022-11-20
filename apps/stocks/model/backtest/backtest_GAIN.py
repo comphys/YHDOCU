@@ -166,9 +166,13 @@ class M_backtest_GAIN(Model) :
     def normal_buy(self) :
         
         if self.M['매수금지'] : return
+
+        매수수량 = math.ceil(self.M['기초수량'] * (self.M['날수']+1))
+        if (매수수량 * self.M['전일종가']) > self.M['가용잔액'] + self.M['추가자본'] : 매수수량 = self.M['기초수량'] *3
+        if (매수수량 * self.M['전일종가']) > self.M['가용잔액'] + self.M['추가자본'] : return 
         
         if self.M['당일종가'] <= self.M['전일종가'] : 
-            매수수량 = math.ceil(self.M['기초수량'] * (self.M['날수']+1))
+            
             self.M['매수수량'] = 매수수량
             self.M['거래코드'] = 'B' + str(self.M['날수']+1)
             self.M['진행상황'] = '일반매수'
@@ -183,7 +187,7 @@ class M_backtest_GAIN(Model) :
         self.M['진행상황'] = '매도대기'
         
         if (매수수량 * self.M['전일종가']) > self.M['가용잔액'] + self.M['추가자본'] : 
-            self.M['매수금지'] = True
+            매수수량 = self.M['기초수량']
             self.M['진행상황'] = '매수제한'
             매도가격 = self.M['평균단가']*0.95
 
