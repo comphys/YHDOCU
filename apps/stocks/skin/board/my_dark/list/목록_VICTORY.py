@@ -1,4 +1,3 @@
-from contextlib import nullcontext
 import system.core.my_utils as ut
 from system.core.load import SKIN
 """
@@ -29,7 +28,7 @@ class 목록_VICTORY(SKIN) :
         self.DB.tbl = self.D['tbl']
         self.DB.odr = "add0 DESC"
 
-        chart_data = self.DB.get("add0,add3,add9,add11,add14,add15,add17,add18,add19,add20,sub1,sub12,sub17,sub27,sub28",assoc=True)
+        chart_data = self.DB.get("add0,add14,add17,sub16",assoc=True)
         if chart_data :
 
             chart_data.reverse()
@@ -38,30 +37,11 @@ class 목록_VICTORY(SKIN) :
             first_date = self.DB.get_one("min(add0)")
             last_date  = chart_data[-1]['add0']
 
-            self.D['경과일수'] = f"{ut.diff_day(first_date,last_date) + 1:,}"
-
             self.D['chart_date'] = [x['add0'][2:] for x in chart_data]
-            self.D['chart_min'] = [float(x['add18']) for x in chart_data]
-            self.D['chart_target'] = [float(x['add19']) for x in chart_data]
-            self.D['chart_cur'] = [float(x['add15']) for x in chart_data]
-            self.D['chart_max'] = [float(x['add20']) for x in chart_data]
-            self.D['earnings_rate'] = [float(x['sub28']) for x in chart_data]
-            self.D['acc_money'] = [int(x['sub27']) for x in chart_data]
-            self.D['close_price'] = [float(x['add14']) for x in chart_data] ; op_price = self.D['close_price'][0]  
-            self.D['close_change'] = [ (x-op_price) / op_price * 100  for x in self.D['close_price'] ]
-            self.D['chart_total'] = [float(x['add17']) for x in chart_data]
-            self.D['profit_limit'] = [float(x['sub17']) for x in chart_data]
-            self.D['target_value']  = f"{float(self.D['chart_target'][-1]):,.0f}"
+            self.D['close_price'] = [float(x['add14']) for x in chart_data]
+            self.D['total_value'] = [float(x['add17']) for x in chart_data]
+            self.D['soxl_average'] = ['null' if not float(x['sub16']) else float(x['sub16']) for x in chart_data]
             
-            self.D['current_value'] = f"{float(chart_data[-1]['add15']):,.0f}"
-            
-            # check_items = ('chart_cur','chart_dividend','chart_total','chart_cash')
-            # for item in check_items :
-            #     for i, x in enumerate(self.D['chart_max']) :
-            #         if self.D[item][i]  < self.D['chart_min'][i]*0.8 : self.D[item][i] = self.D['chart_min'][i]*0.8
-            #         if self.D[item][i]  > self.D['chart_max'][i]*1.2 : self.D[item][i] = self.D['chart_max'][i]*1.2
-            
-            # ------------------------------------------------------------------------------------
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
@@ -71,13 +51,13 @@ class 목록_VICTORY(SKIN) :
             
             # --------------
 
-            총투자금 = int(LD['sub27'])
-            총수익금 = int(LD['add17']) - 총투자금
+            총투자금 = float(LD['sub27'])
+            총수익금 = float(LD['add17']) - 총투자금
             총수익률 = 총수익금/총투자금 * 100 if 총투자금 else 0
-            self.D['총입금'] = f"{int(LD['sub25']):,}"
-            self.D['총출금'] = f"{int(LD['sub26']):,}"
-            self.D['현재총액'] = f"{int(LD['add17']):,}"
-            self.D['총수익금'] = f"{총수익금:,}"
+            self.D['총입금'] = f"{float(LD['sub25']):,.0f}"
+            self.D['총출금'] = f"{float(LD['sub26']):,.0f}"
+            self.D['현재총액'] = f"{float(LD['add17']):,.0f}"
+            self.D['총수익금'] = f"{총수익금:,.0f}"
             self.D['총수익률'] = f"{총수익률:.2f}"
             
             # -- dividend
@@ -107,21 +87,7 @@ class 목록_VICTORY(SKIN) :
             self.D['매도금2'] = f"{self.D['매도금2']:,.2f}"
 
             # -- extra-info
-            self.D['최소가치'] = f"{int(LD['add18']):,}"
-            self.D['목표가치'] = f"{int(LD['add19']):,}"
-            self.D['최대가치'] = f"{int(LD['add20']):,}"
             self.D['현매수금'] = f"{float(LD['sub17']):,}"
-
-            # self.D['현수익금'] = float(chart_data[-1]['add15']) - float(LD['sub17'])
-            # self.D['현수익률'] = self.D['현수익금'] / float(LD['sub17']) * 100
-            # self.D['현수익금'] = f"{self.D['현수익금']:,.2f}"
-            # self.D['현수익률'] = f"{self.D['현수익률']:,.2f}"
-
-            # self.D['최소가치_단가'] = f"{int(LD['add18'])/int(LD['add13']):,.2f}"
-            # self.D['목표가치_단가'] = f"{int(LD['add19'])/int(LD['add13']):,.2f}"
-            # self.D['현재가치_종가'] = f"{float(LD['add14']):,.2f}"
-            # self.D['최대가치_단가'] = f"{int(LD['add20'])/int(LD['add13']):,.2f}"
-            # self.D['현매수금_단가'] = f"{float(LD['sub17'])/int(LD['add13']):,.2f}"
 
             self.D['현재시즌'] = LD['sub1']
             self.D['경과일수'] = f"{int(LD['sub12']):02d}"
@@ -131,35 +97,6 @@ class 목록_VICTORY(SKIN) :
             self.D['예상금액'] = float(LD['sub18'])
             self.D['매도갯수'] = int(LD['sub3'])
             self.D['매도단가'] = f"{float(LD['sub20']):,.2f}"
-
-            # self.D['매도금액'] = f"{ 매도금액 + 매도단가 :,.2f}"
-            # self.D['매수금액'] = f"{ 매수금액 + 매수단가 :,.2f}"
-            # 예상평단 = (매수금액 + float(LD['sub17']) ) / (int(LD['add13']) +int(self.D['매수갯수']) )
-            # self.D['예상평단'] = f"{예상평단:,.2f}"  
-
-            # self.D['info_color']= 'white' 
-            # if LD['add15'] < LD['add18'] : 
-            #     self.D['need_cash'] = self.D['chart_cur'][-1] - self.D['chart_target'][-1]
-            #     bottom_price = float(LD['add14'])
-            #     self.D['대응전략'] = 'Buy'
-            #     self.D['info_color'] = '#F6CECE' 
-
-            # elif LD['add15'] > LD['add20'] : 
-            #     self.D['need_cash'] =  self.D['chart_cur'][-1] - self.D['chart_target'][-1]
-            #     bottom_price = float(LD['add14'])
-            #     self.D['대응전략'] = 'Sell'
-            #     self.D['info_color'] = '#CEF6F5'
-            
-            # else :
-            #     self.D['need_cash'] =  self.D['chart_cur'][-1] - self.D['chart_target'][-1]
-            #     bottom_price = self.D['chart_min'][-1] / int(LD['add13'])
-            #     self.D['대응전략'] = 'Stay'
-            #     self.D['info_color'] = 'white'  
-
-            # bottom_count = self.D['need_cash'] / bottom_price
-            # self.D['need_cash'] = f"{self.D['need_cash']:,.0f}" 
-            # self.D['bottom_price'] = f"{bottom_price:,.2f}"
-            # self.D['bottom_count'] = f"{bottom_count:,.0f}"
 
 
     def list(self) :

@@ -16,7 +16,7 @@
 				{% if D['Mode'] == 'modify' %}
 				<input type='text' name='add0' disabled style="width:120px;text-align:center" value="{{D['BODY']['add0']}}">
 				{% else %}
-				<input type='text' name='add0' class="i-date" style="width:120px;text-align:center" value="">
+				<input type='text' name='add0' class="i-date" style="width:120px;text-align:center" value="{{D['today']}}">
 				{% endif %}
             </div>
             <button class="btn btn-blue"  onclick="auto_datainput();return false">이전정보</button>&nbsp;&nbsp;
@@ -80,7 +80,7 @@
 				<input type='text' name='add9' class="i-number" style="width:100px;" value="{{D['BODY']['add9']}}">
 			</div>
 			<div class='i-input-div-choice'>
-				<div class='write-input-left' style="background-color:#333F4F;">누적수량</div>
+				<div class='write-input-left' style="background-color:#333F4F;">보유수량</div>
 				<input type='text' name='add7' class="i-number" style="width:110px;" value="{{D['BODY']['add7']}}">
 			</div>
 			<div class='i-input-div-choice'>
@@ -202,10 +202,10 @@
 			</div>
         </td>
     </tr>
-	<tr onclick="$('#config-toggle').toggle()">
+	<tr>
 		<td colspan="2" style="font-size:2px;line-height:12px;background-color: #24272D;">&nbsp;</td>
 	</tr>
-    <tr id='config-toggle'>
+    <tr>
         <td class='write-td-left'>매매전략</td>
 		<td class="write-td-right">
 			<div class='i-input-div-notice'>
@@ -229,7 +229,7 @@
 				<input type='text' name='sub12' class="i-number" style="width:100px;" value="{{D['BODY']['sub12']}}">
 			</div>
 			<div class='i-input-div-notice'>
-				<div class='write-input-left' style="background-color:darkslategray;">예상금액</div>
+				<div class='write-input-left' style="background-color:darkslategray;">기초수량</div>
 				<input type='text' name='sub18' class="i-number" style="width:100px;" value="{{D['BODY']['sub18']}}">
 			</div>
 			<div class='i-input-div-notice'>
@@ -361,17 +361,8 @@ function auto_reset() {
 }
 
 function auto_calculate() {
-	
-	const 현재일  = $("input[name='add0']").val()
-	const 기준일  = 이전날자
-
-	const date1= new Date(현재일)
-	const date2= new Date(기준일)
-	const diffDate = date1.getTime() - date2.getTime()
-	const diffDays = diffDate/(1000*3600*24) 
-	
-	let 입금     = txt_to_num('add1','i');
-    let 출금     = txt_to_num('add2','i');
+	let 입금     = txt_to_num('add1','f');
+    let 출금     = txt_to_num('add2','f');
     let 매수금1  = txt_to_num('add5','f');
     let 매도금1  = txt_to_num('add6','f');
 	let 배당금   = txt_to_num('sub10','f');
@@ -379,61 +370,46 @@ function auto_calculate() {
     let 매도금2  = txt_to_num('add12','f');
     let 종가1    = txt_to_num('add8','f');
     let 수량1    = txt_to_num('sub8','i');
-	let 누적1    = txt_to_num('add7','i');
+	let 누적1    = txt_to_num('add7','i');   // JEPQ 보유수량
     let 종가2    = txt_to_num('add14','f');
     let 수량2    = txt_to_num('sub9','i');
-	let 기초가치 = txt_to_num('sub1','f');
-	let 가중치   = txt_to_num('sub2','f');
-	let 최대임계 = txt_to_num('sub3','f');
-	let 최소임계 = txt_to_num('sub4','f');
-	let 기타수익 = txt_to_num('sub11','f');
-	let 누적2    = txt_to_num('add13','i');
-    let 잔액     = txt_to_num('add3','i');
-	let 기본수량 = txt_to_num('sub12','i');
-	let 매수누적2= txt_to_num('sub14','f');
-	let 매도누적2= txt_to_num('sub15','f');
-	let 평균단가2= txt_to_num('sub16','f');
-	let 현매수금2= txt_to_num('sub17','f');
+	let 누적2    = txt_to_num('add13','i');  // TQQQ 보유수량
+    let 잔액     = txt_to_num('add3','f');
 	let 평균단가1= txt_to_num('sub21','f');
 	let 매도누적1= txt_to_num('sub22','f');
 	let 매수누적1= txt_to_num('sub23','f');
 	let 현매수금1= txt_to_num('sub24','f');
-	let 입금합계 = txt_to_num('sub25','i');
-	let 출금합계 = txt_to_num('sub26','i');
-	let 총투자금 = txt_to_num('sub27','i');
-	let 총수익률 = txt_to_num('sub28','f');
-	let 증가율   = txt_to_num('sub18','f');
-	let 적용전략 = $("input[name='sub19']").val();
-	let 목표가치 = 0.0
+	let 매수누적2= txt_to_num('sub14','f');
+	let 매도누적2= txt_to_num('sub15','f');
+	let 평균단가2= txt_to_num('sub16','f');
+	let 현매수금2= txt_to_num('sub17','f');
+	let 배당합계 = txt_to_num('add18','f');
+	let 입금합계 = txt_to_num('sub25','f');
+	let 출금합계 = txt_to_num('sub26','f');
+	let 현투자금 = txt_to_num('sub27','f');
+	let 현수익률 = txt_to_num('sub28','f');
 
 	누적1 += 수량1; 누적2 += 수량2;
 
-	잔액    = (잔액+입금+매도금1+매도금2+기타수익-출금-매수금1-매수금2+배당금)
+	잔액    = (잔액+입금+매도금1+매도금2+배당금-출금-매수금1-매수금2)
 
-	switch(적용전략) {
-		case '기초변동추종' : 목표가치 = 기초가치 * 가중치; break;
-		case '고정비율상승' : 목표가치 = 이전목표 * (1+ 증가율 )**diffDays; break;
-	}
-    
     let 가치1   = (종가1 * 누적1)
     let 가치2   = (종가2 * 누적2)
     let 현재가치 = (잔액 + 가치1 + 가치2)
 
 	입금합계 = 입금합계 + 입금
 	출금합계 = 출금합계 + 출금
-	총투자금 = 입금합계 - 출금합계
-	총수익률 = ((현재가치 / 총투자금 - 1) * 100).toFixed(1);
+	현투자금 = 입금합계 - 출금합계
+	현수익률 = ((현재가치 / 현투자금 - 1) * 100).toFixed(1);
 
     let 비중1 = (잔액/현재가치*100).toFixed(2);
     let 비중2 = (가치1/현재가치*100).toFixed(2);
     let 비중3 = (가치2/현재가치*100).toFixed(2);
 
-    잔액  = 잔액.toFixed()
+    잔액  = 잔액.toFixed(2)
     가치1 = 가치1.toFixed(2)
     가치2 = 가치2.toFixed(2)
-    현재가치 = 현재가치.toFixed()
-    let 최소가치 = ( 목표가치* 최소임계 ).toFixed();
-    let 최대가치 = ( 목표가치* 최대임계 ).toFixed();
+    현재가치 = 현재가치.toFixed(2)
 	
 	if(매수금1) {
 		매수누적1 += 매수금1
@@ -460,23 +436,15 @@ function auto_calculate() {
 	if(매도금2) {
 		매도누적2 += 매도금2
 		현매수금2 = (평균단가2 * 누적2).toFixed(2);
-
-		실현수익 = (종가2 - 평균단가2) * -수량2
-		
-		if(실현수익 > 0) { 
-			가중치 = ((목표가치 + 실현수익) / 기초가치).toFixed(4)
-		}
-		
-		기본수량 = 누적2 
 		매도누적2 = 매도누적2.toFixed(4)
+		평균단가2 = 0
 	}
 
 	// 평균단가는 매수할 때만 변동됨
 
 	평균단가1= 평균단가1.toFixed(4) ; 평균단가2= 평균단가2.toFixed(4)
-	목표가치 = 목표가치.toFixed();
 
-    $("input[name='add1']").val(입금).comma('init');
+	$("input[name='add1']").val(입금).comma('init');
     $("input[name='add2']").val(출금).comma('init');
     $("input[name='add5']").val(매수금1).comma('init');
     $("input[name='add6']").val(매도금1).comma('init');
@@ -489,17 +457,11 @@ function auto_calculate() {
     $("input[name='add3']").val(잔액).comma('init');
     $("input[name='add9']").val(가치1).comma('init');
     $("input[name='add15']").val(가치2).comma('init');
-    $("input[name='add17']").val(현재가치).comma('init');
-    $("input[name='add18']").val(최소가치).comma('init');
-	$("input[name='add19']").val(목표가치).comma('init');
-    $("input[name='add20']").val(최대가치).comma('init');
     $("input[name='add4']").val(비중1).comma('init');
     $("input[name='add10']").val(비중2).comma('init');
     $("input[name='add16']").val(비중3).comma('init');
-	$("input[name='sub11']").val(기타수익).comma('init');
+	$("input[name='add17']").val(현재가치).comma('init');
 
-	$("input[name='sub2']").val(가중치).comma('init');
-	$("input[name='sub12']").val(기본수량).comma('init');
 	$("input[name='sub14']").val(매수누적2).comma('init');
 	$("input[name='sub15']").val(매도누적2).comma('init');
 	$("input[name='sub16']").val(평균단가2).comma('init');
@@ -511,8 +473,8 @@ function auto_calculate() {
 
 	$("input[name='sub25']").val(입금합계).comma('init');
 	$("input[name='sub26']").val(출금합계).comma('init');
-	$("input[name='sub27']").val(총투자금).comma('init');
-	$("input[name='sub28']").val(총수익률).comma('init');	
+	$("input[name='sub27']").val(현투자금).comma('init');
+	$("input[name='sub28']").val(현수익률).comma('init');	
 }
 
 function txt_to_num(key,opt) {

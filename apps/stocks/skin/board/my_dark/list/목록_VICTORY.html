@@ -9,7 +9,7 @@
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 <div class="clearfix" style="width:100%;background-color:#24272d;padding:20px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
 	<div class="pull-left" style="margin-right:20px">
-		<canvas id="myChart"  style="width:1100px;height:350px;background-color:#24272d;" ondblclick="chart_toggle()"></canvas>
+		<canvas id="myChart"  style="width:1100px;height:350px;background-color:#24272d;" ></canvas>
 	</div>
 	<div class="pull-left">
 		<canvas id="myChart2" style="width:220px;height:350px;background-color:#24272d"></canvas>
@@ -19,7 +19,7 @@
 {% if D['TR'] %}
 <div class="row-row clearfix" style="margin-bottom:-2px;" onclick="$('#extra-info-toggle').toggle()"> 
 	<div class='well' style="color:{{D['info_color']}}">
-		<div style="display:inline-block;width:375px;padding-left:20px" >
+		<div style="display:inline-block;width:420px;padding-left:20px" >
 			<i class="fa fa-sign-in"></i> {{D['총입금']}} &nbsp;
 			<i class="fa fa-sign-out"></i> {{D['총출금']}} &nbsp;
 			<i class="fa fa-signal"></i> {{D['현재총액']}} &nbsp;
@@ -156,63 +156,40 @@ const data1 = {
     labels : labels,
     datasets : [
 		{
-            label:' 최대가치',
-            data : {{D['chart_max']}},
-            pointStyle:'circle', borderWidth:2,pointRadius:0,borderColor:'#f78181',backgroundColor:'#f78181',
-			lineTension:0.2
-
-        },
-        {
-            label:' 현재위치',
-            data : {{D['chart_cur']|safe}},
-            borderColor:'yellow', borderWidth:2,pointRadius:0, pointHoverRadius:24, backgroundColor:'yellow',
-			lineTension:0.2,
-        },
-        {
-            label:' 비교가치',
-            data : {{D['chart_ori']|safe}},
-            borderColor:'YellowGreen', borderWidth:3,borderDash:[3,4],pointRadius:0,
+            label:' 종가변동',
+            data : {{D['close_price']}},
+            borderWidth:2,pointRadius:0,borderColor:'#f78181',backgroundColor:'#f78181',
 			lineTension:0.2
         },
-        {
-            label:' 손익한계',
-            data : {{D['profit_limit']|safe}},
-            borderColor:'cyan', borderWidth:2,borderDash:[2,3],pointRadius:0,
-			lineTension:0.2
-
-        },
-        {
-            label:' 목표가치',
-            data : {{D['chart_target']}},
-            borderColor:'lightgray', borderWidth:1,pointRadius:0,  backgroundColor:'lightgray',
-			lineTension:0.2,
-        },
-        {
-            label:' 최소가치',
-            data : {{D['chart_min']}},
+		{
+            label:' 평균단가',
+            data : {{D['soxl_average']|safe}},
             borderColor:'#58ACFA', borderWidth:2, pointRadius:0,  backgroundColor:'#58ACFA',
+			lineTension:0.2
+        },
+		{
+            label:' 가치합계',
+            data : {{D['total_value']}},
+            borderColor:'yellow', borderWidth:2,pointRadius:0, 
 			lineTension:0.2,
-			fill:true,
-			backgroundColor:'rgba(11,47,58,0.3)'
-        }
+			yAxisID : 'y1',
+        },		
     ]   
 };
 const options1 = {
 	animation : { duration:1000	},
 
-	plugins : { legend: {display:false}, tooltip:{enabled:false},
-				title:{display:true, text:'Current Value : {{D['current_value']}} / {{D['target_value']}}',color:'lightgray',align:'center',font:{size:16}}},
+	plugins : { legend: {display:false}, tooltip:{enabled:false}},
     responsive:false,
     layout:{padding:20},
     scales:{
         x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
-        y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'right'},
-		// y1:{ type:'linear', display:true, position:'left'}
+        y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'left'},
+		y1:{ type:'linear', display:true, position:'right'}
     }
 };
 const config1  = {type:'line',data:data1,options:options1};
 const myChart = new Chart(ctx, config1); 
-let second_chart = false;
 //
 
 
@@ -253,80 +230,6 @@ const config2 = {
 };
 const myChart2 = new Chart(ctx2, config2); 
 
-
-const data3 = {
-    labels : labels,
-    datasets : [
-		{
-            label:' 총투자금',
-            data : {{D['acc_money']}},
-            borderColor:'rgba(255, 205, 86, 0.8)', borderWidth:2,pointRadius:0, borderDash:[2,3], 
-			lineTension:0.2,
-			yAxisID : 'y1',
-        },
-		{
-            label:' 가치합계',
-            data : {{D['chart_total']}},
-            borderColor:'yellow', borderWidth:2,pointRadius:0, 
-			lineTension:0.2,
-			yAxisID : 'y1',
-        },
-        {
-            label:' 수익률',
-            data : {{D['earnings_rate']}},
-            borderColor:'rgba(255, 99, 132, 0.6)', borderWidth:4, pointRadius:0,  
-			lineTension:0.2,
-        },
-        {
-            label:' 주가변화',
-            data : {{D['close_change']}},
-            borderColor:'#58ACFA', borderWidth:2, pointRadius:0,  
-			lineTension:0.2,
-        },
-        {
-            label:' 기본변화',
-            data : {{D['base_change']}},
-            borderColor:'lightgray', borderWidth:2, pointRadius:0,  
-			lineTension:0.2,
-        },
-    ]   
-};
-
-// var check_value = new Array(100,80,60,40,20,0,-20,-40,-60)
-const options3 = {
-	animation : { duration:1000	},
-
-	plugins : { legend: {display:false}, tooltip:{enabled:false},
-				title:{display:true, text:'수익률 / 총투자금',color:'white', font:{size:16}}},
-    responsive:false,
-    layout:{padding:20},
-    scales:{
-        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
-        y: { ticks : {color:'gray'}, 
-		   	
-		   grid:{
-			color:function(context) {if(context.tick.value % 20 == 0 ) { return 'rgba(75, 192, 192, 0.4)'} else return '#272727'},
-			// lineWidth: function(context) {if(context.tick.value % 20 == 0 ) { return 2 } else return 1},
-		   },
-		   position:'left'},
-		y1:{ type:'linear', display:true, position:'right'}
-    }
-};
-
-const config3  = {type:'line',data:data3,options:options3};
-
-
-function chart_toggle() {
-	if(! second_chart ) {
-		myChart.config.data = data3;
-		myChart.config.options = options3;
-	} else {
-		myChart.config.data = data1;
-		myChart.config.options = options1;
-	}
-	myChart.update();
-	second_chart = ! second_chart;
-}
 </script>
 
 

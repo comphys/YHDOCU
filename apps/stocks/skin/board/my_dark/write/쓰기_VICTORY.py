@@ -1,4 +1,5 @@
 from system.core.load import SKIN
+import system.core.my_utils as my
 
 class 쓰기_VICTORY(SKIN) :
 
@@ -13,6 +14,12 @@ class 쓰기_VICTORY(SKIN) :
         self.D['w_width2'] = str(w_width) + 'px'
 
         self.D['ChkField'] = ','.join(self.D['MustCheck'])
+
+        prev_date = self.DB.one("SELECT max(add0) FROM h_VICTORY_board")
+        if  prev_date :
+            prev_day  = my.dayofdate(prev_date)
+            if prev_day == '금' : self.D['today'] = my.dayofdate(prev_date,delta=3)[0]
+            else : self.D['today'] = my.dayofdate(prev_date,delta=1)[0]
 
    
 
