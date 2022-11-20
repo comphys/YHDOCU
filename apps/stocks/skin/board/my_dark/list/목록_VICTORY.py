@@ -126,6 +126,12 @@ class 목록_VICTORY(SKIN) :
                     elif key == 'mdate' : tx[key] = f"<td class='list-mdate'>{txt}</td>"                    
                     elif key == 'hit'   : tx[key] = f"<td class='list-hit'>{txt}</td>" 
                     elif key == 'uname' : tx[key] = f"<td class='list-name'>{txt}</td>"
+                    elif key == 'add12' : 
+                        if txt > '0.00' : tx[key] = f"<td class='list-bulls'>{txt}</td>"
+                        else : tx[key] = f"<td class='list-normal'>0.00</td>"
+                    elif key == 'add11' : 
+                        if txt > '0.00' : tx[key] = f"<td class='list-bears'>{txt}</td>"
+                        else : tx[key] = f"<td class='list-normal'>0.00</td>"
                     
                     elif key == 'add0'  : 
                         if self.D['EXCOLOR']['add0'] : style = f"style='color:{self.D['EXCOLOR']['add0']}'"

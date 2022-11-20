@@ -87,7 +87,7 @@ class Stock_victory(Control) :
     def normal_sell(self) :
 
         매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']+1))
-        매도가격 = self.M['평균단가'] * 1.02
+        매도가격 = self.M['평균단가'] * 1.02 if self.M['평균단가'] else self.M['당일종가']
 
         if (매수수량 * self.M['전일종가']) > self.M['시즌잔액'] + self.M['시즌자금'] : 
             매수수량 = self.M['기초수량']
