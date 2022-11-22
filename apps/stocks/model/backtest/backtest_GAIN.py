@@ -43,8 +43,8 @@ class M_backtest_GAIN(Model) :
         tx['거래코드'] = self.M['거래코드']
 
         tx['일매수금'] = f"{self.M['일매수금']:,}"
-        if  self.M['진행상황'] == '전량매도' :
-            tx['가용잔액'] =  f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>전량매도</span>"
+        if  self.M['진행상황'] in ('전량매도','전략매도') :
+            tx['가용잔액'] =  f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>{self.M['진행상황']}</span>"
             tx['수익현황'] = f"<span style='font-weight:bold;color:#F6CECE'>{tx['수익현황']}</span>"
 
         elif self.M['진행상황'] in ('전략매도','부분매도','손절매도') :  
@@ -96,7 +96,7 @@ class M_backtest_GAIN(Model) :
         매수금액 = 매수수량 * self.M['당일종가'] 
 
         if  매수금액 > self.M['자산총액']   :
-            매수수량 = math.ceil(self.M['기초수량'] * 3)
+            매수수량 = math.ceil(self.M['기초수량'] * self.M['위매비중'])
             매수금액 = 매수수량 * self.M['당일종가']
             self.M['매수단계'] = '매수제한' 
             
@@ -136,6 +136,12 @@ class M_backtest_GAIN(Model) :
         self.M['매도금액']  = 0.0
         self.M['실현수익']  = 0.0
 
+        self.M['첫매가치']  = 1 + float(self.S['add9'])/100
+        self.M['둘매가치']  = 1 + float(self.S['add10'])/100
+        self.M['강매시작']  = int(self.S['add17'])
+        self.M['강매가치']  = 1 + float(self.S['add18']) / 100
+        self.M['위매비중']  = int(self.S['add25'])
+
         self.M['매수단계']  = '일반매수'
 
         self.D['TR'] = []
@@ -159,7 +165,9 @@ class M_backtest_GAIN(Model) :
             self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량']
             self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
             self.M['수익현황']  = self.M['수익률'] = 0.0
+
             self.M['가용잔액'] -= self.M['매수금액']
+            self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자본']
             self.M['진행상황']  = '첫날거래'
             self.M['첫날기록']  = False
             self.M['거래코드']  = 'S' 
@@ -174,25 +182,26 @@ class M_backtest_GAIN(Model) :
         if self.M['매수금지'] : return
 
         매수수량 = math.ceil(self.M['기초수량'] * (self.M['날수']+1)) 
-        if  self.M['매수단계'] == '매수제한': 매수수량 = self.M['기초수량'] *3
+        if  self.M['매수단계'] == '매수제한': 매수수량 = self.M['기초수량'] * self.M['위매비중']
         if  self.M['매수단계'] == '매수중단' : return
         
         if  self.M['당일종가'] <= self.M['전일종가'] : 
             self.M['매수수량'] = 매수수량
-            self.M['거래코드'] = 'B' + str(self.M['날수']+1)
+            거래코드 = 'L' if self.M['매수단계'] is '매수제한' else 'B'
+            self.M['거래코드'] = 거래코드 + str(self.M['날수']+1)
             self.M['매수금액'] = self.M['매수수량'] * self.M['당일종가']
             self.M['진행상황'] = self.M['매수단계']
         
 
     def normal_sell(self) :
 
-        매도가격 = self.M['평균단가']*1.02
+        매도가격 = self.M['평균단가'] * self.M['첫매가치']
         self.M['진행상황'] = '매도대기'
         
         if  self.M['매수단계'] in ('매수제한','매수중단') : 
-            매도가격 = self.M['평균단가']*0.95
+            매도가격 = self.M['평균단가'] * self.M['둘매가치']
 
-        if self.M['날수'] > 25 : 매도가격 = self.M['평균단가']*0.8
+        if self.M['날수'] > self.M['강매시작'] : 매도가격 = self.M['평균단가'] * self.M['강매가치']
 
         if  self.M['당일종가'] >=  매도가격  : 
             self.M['매도수량'] =  self.M['보유수량']
@@ -219,7 +228,10 @@ class M_backtest_GAIN(Model) :
             self.M['거래코드'] = ' '
 
             if  idx == idxx + 1 or self.M['첫날기록'] : 
-                if self.new_day() : self.print_backtest(); continue
+                if  self.new_day() : 
+                    self.buy_step()
+                    self.print_backtest(); 
+                    continue
                 else : 
                     self.M['첫날기록'] = True
                     continue
