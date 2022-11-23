@@ -17,15 +17,24 @@ class Stock_victory(Control) :
         # 종가구하기
         self.DB.clear()
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add0 == '{self.M['진행일자']}'")
-        self.DB.wre = f"add0='{self.M['진행일자']}' and add1='JEPQ'"; self.M['JEPQ']    = self.DB.get_one('add3')
+        # self.DB.wre = f"add0='{self.M['진행일자']}' and add1='JEPQ'"; self.M['JEPQ']    = self.DB.get_one('add3')
         self.DB.wre = f"add0='{self.M['진행일자']}' and add1='SOXL'"; 
         self.M['당일종가'] = float(self.DB.get_one('add3'))
         self.M['전일종가'] = float(self.M['LD']['add14'])
 
     def init_value(self) :
         LD = self.M['LD']
+        
         # 매매전략 가져오기
-        self.M['분할횟수']  = 20
+        self.M['매매전략'] = self.D['post']['add20']
+        self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.M['매매전략']}'")
+        self.S = self.DB.get_line('add2,add9,add10,add17,add18,add25')
+        self.M['분할횟수']  = int(self.S['add2'])
+        self.M['첫매가치']  = 1 + float(self.S['add9'])/100
+        self.M['둘매가치']  = 1 + float(self.S['add10'])/100
+        self.M['강매시작']  = int(self.S['add17'])
+        self.M['강매가치']  = 1 + float(self.S['add18']) / 100
+        self.M['위매비중']  = int(self.S['add25'])
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0
@@ -44,8 +53,8 @@ class Stock_victory(Control) :
         self.M['진행상황'] = '매도대기'
         self.M['보유수량'] = int(LD['add13'])
         self.M['현매수금'] = float(LD['sub17'])
-        self.M['시즌자금'] = float(LD['add19'])
-        self.M['시즌잔액'] = float(LD['add20'])
+        self.M['가용잔액'] = float(LD['add19'])
+        self.M['추가자금'] = float(LD['add20'])
         self.M['진행상황'] = '매도대기'
         self.M['기초수량'] = int(LD['sub18'])
 
@@ -62,9 +71,9 @@ class Stock_victory(Control) :
             self.M['경과일수'] = 0
             
             # 리밸런싱
-            self.M['시즌자금'] += int((self.M['매도금액'] - self.M['현매수금'])/2)
-            self.M['시즌잔액'] = self.M['시즌자금']
-            self.M['일매수금'] = f"{int(self.M['시즌잔액'] / 20):,}"
+            self.M['가용잔액'] = int( self.M['매도금액'] * 0.6 )
+            self.M['추가자금'] = int( self.M['매도금액'] * 0.4 )
+            self.M['일매수금'] = f"{int(self.M['가용잔액'] / self.M['분할횟수']):,}"
             self.M['시즌'] += 1
             self.M['경과일수'] = 0
             self.M['기초수량'] = 0
@@ -75,11 +84,12 @@ class Stock_victory(Control) :
             self.M['변동수량']  = self.M['매수수량']
             self.M['보유수량'] += self.M['매수수량']
             self.M['평균단가']  = (self.M['현매수금'] + self.M['매수금액']) / self.M['보유수량'] 
-            self.info(self.M['현매수금'])
-            self.info(self.M['매수금액'])
-            self.info(self.M['보유수량'])
-            self.info(self.M['평균단가'])
-            self.M['시즌잔액'] -=  self.M['매수금액']
+
+            self.M['가용잔액'] -=  self.M['매수금액']
+            if  self.M['가용잔액'] < 0 : 
+                self.M['추가자금'] += self.M['가용잔액']
+                self.M['가용잔액'] = 0
+                
             self.M['진행상황'] = '일반매수'
 
         if  not self.M['경과일수'] and self.M['매수수량'] : self.M['경과일수'] = 1
@@ -87,14 +97,14 @@ class Stock_victory(Control) :
     def normal_sell(self) :
 
         매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']+1))
-        매도가격 = self.M['평균단가'] * 1.02 if self.M['평균단가'] else self.M['당일종가']
+        매도가격 = self.M['평균단가'] * self.M['첫매가치']  if self.M['평균단가'] else self.M['당일종가']
 
-        if (매수수량 * self.M['전일종가']) > self.M['시즌잔액'] + self.M['시즌자금'] : 
-            매수수량 = self.M['기초수량']
+        if (매수수량 * self.M['전일종가']) > self.M['당일종가'] + self.M['추가자금'] : 
+            매수수량 = self.M['기초수량'] * self.M['위매비중']
             self.M['진행상황'] = '매수제한'
-            매도가격 = self.M['평균단가']*0.95
+            매도가격 = self.M['평균단가']*self.M['둘매가치']
 
-        if self.M['경과일수'] > 25 : 매도가격 = self.M['평균단가']*0.8
+        if self.M['경과일수'] > self.M['강매시작'] : 매도가격 = self.M['평균단가']*self.M['강매가치']
 
         self.M['전매도량'] = self.M['보유수량']
         self.M['전매도가'] = 매도가격
@@ -105,8 +115,8 @@ class Stock_victory(Control) :
         else : 매수단가 = self.M['당일종가']
 
         매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']+1))
-        if  매수수량 * 매수단가 > self.M['시즌잔액'] + self.M['시즌자금'] : 매수수량 = self.M['기초수량'] *3
-        if  매수수량 * 매수단가 > self.M['시즌잔액'] + self.M['시즌자금'] : 
+        if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 매수수량 = self.M['기초수량'] * self.M['위매비중']
+        if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 
             매수수량 = 0
             self.M['진행상황'] = '매수금지'  
 
@@ -123,7 +133,7 @@ class Stock_victory(Control) :
     def check_buy(self) :
         if  not self.M['경과일수'] : 
             if  self.M['당일종가'] <= self.M['전일종가'] :
-                self.M['매수수량'] = self.M['기초수량'] = math.ceil(self.M['일매수금']/self.M['전일종가'])
+                self.M['매수수량']  = self.M['기초수량'] = math.ceil(self.M['일매수금']/self.M['전일종가'])
         else :
             if  self.M['당일종가'] <= float(self.M['LD']['sub19']) : self.M['매수수량']  = int(self.M['LD']['sub2'])
 
@@ -157,7 +167,7 @@ class Stock_victory(Control) :
         ud['add20']=f"{round(float(LD['add20']),4):,.2f}"; 
         ud['sub26']=f"{int(LD['sub26']):,}"; 
         # 종가
-        ud['add8']  = self.M['JEPQ']
+        ud['add8']  = self.M['JEPQ'] = 0.0
         ud['add14'] = self.M['당일종가']
         # 매매결과
         ud['add11'] = f"{round(self.M['매수금액'],4):,.2f}"
@@ -173,6 +183,6 @@ class Stock_victory(Control) :
         ud['sub2'] = self.M['전매수량'];  ud['sub19'] = f"{self.M['전매수가']:,.2f}"
         ud['sub3'] = self.M['전매도량'];  ud['sub20'] = f"{self.M['전매도가']:,.2f}"
         # 자금상황
-        ud['add19'] = f"{round(self.M['시즌자금'],4):,.2f}"
-        ud['add20'] = f"{round(self.M['시즌잔액'],4):,.2f}"
+        ud['add19'] = f"{round(self.M['가용잔액'],4):,.2f}"
+        ud['add20'] = f"{round(self.M['추가자금'],4):,.2f}"
         return self.json(ud)
