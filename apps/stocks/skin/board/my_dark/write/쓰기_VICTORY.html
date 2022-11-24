@@ -14,7 +14,7 @@
 			<div class='i-input-div'>
 				<div class='write-input-left' style="width:80px">진행일자</div>
 				{% if D['Mode'] == 'modify' %}
-				<input type='text' name='add0' disabled style="width:120px;text-align:center" value="{{D['BODY']['add0']}}">
+				<input type='text' name='add0' style="width:120px;text-align:center" value="{{D['BODY']['add0']}}">
 				{% else %}
 				<input type='text' name='add0' class="i-date" style="width:120px;text-align:center" value="{{D['today']}}">
 				{% endif %}
@@ -169,7 +169,7 @@
         <td class='write-td-left'>투자상황</td>
 		<td class="write-td-right">
 			<div class='i-input-div-must'>
-				<div class='write-input-left' style="background-color:darkslategray;">시즌자금</div>
+				<div class='write-input-left' style="background-color:darkslategray;">가용잔액</div>
 				<input type='text' name='add19' class="i-number" style="width:100px;" value="{{D['BODY']['add19']}}">
 			</div>
 			<div class='i-input-div-must'>
@@ -185,7 +185,7 @@
 				<input type='text' name='sub27' class="i-number" style="width:100px;" value="{{D['BODY']['sub27']}}">
 			</div>
 			<div class='i-input-div-must2'>
-				<div class='write-input-left' style="background-color:darkslategray;">시즌잔액</div>
+				<div class='write-input-left' style="background-color:darkslategray;">추가자금</div>
 				<input type='text' name='add20' class="i-number" style="width:100px;" value="{{D['BODY']['add20']}}">
 			</div>
 			<div class='i-input-div-must2'>
@@ -363,6 +363,7 @@ function auto_reset() {
 function auto_calculate() {
 	let 입금     = txt_to_num('add1','f');
     let 출금     = txt_to_num('add2','f');
+	let 일매수금 = txt_to_num('sub4','i');
     let 매수금1  = txt_to_num('add5','f');
     let 매도금1  = txt_to_num('add6','f');
 	let 배당금   = txt_to_num('sub10','f');
@@ -462,6 +463,7 @@ function auto_calculate() {
     $("input[name='add16']").val(비중3).comma('init');
 	$("input[name='add17']").val(현재가치).comma('init');
 
+	$("input[name='sub']").val(일매수금).comma('init');
 	$("input[name='sub14']").val(매수누적2).comma('init');
 	$("input[name='sub15']").val(매도누적2).comma('init');
 	$("input[name='sub16']").val(평균단가2).comma('init');

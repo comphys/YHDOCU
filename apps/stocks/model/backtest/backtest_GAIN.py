@@ -135,6 +135,7 @@ class M_backtest_GAIN(Model) :
         self.M['매도수량']  = 0
         self.M['매도금액']  = 0.0
         self.M['실현수익']  = 0.0
+        self.M['연속하락']  = 0
 
         self.M['첫매가치']  = 1 + float(self.S['add9'])/100
         self.M['둘매가치']  = 1 + float(self.S['add10'])/100
@@ -230,6 +231,7 @@ class M_backtest_GAIN(Model) :
             self.M['매수금지'] = False
 
         #   결과정리 --------------------------------------------------------------------------------------------------
+            self.M['연속하락'] = int(BD['add10'])
             self.calculate()
             self.buy_step()
             self.print_backtest()

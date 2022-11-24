@@ -93,8 +93,8 @@
 		</thead>
 		<tbody>
 			{%- for TR in D['TR'] -%}
-			{% if loop.index0 == D['cno'] %}
-			<tr class="list-current-tr">
+			{% if TR['add12']|striptags != '0.00' %}
+			<tr style="background-color:black;"> 
 			{% else %}
 			<tr> 
 			{% endif %}
@@ -158,19 +158,19 @@ const data1 = {
 		{
             label:' 종가변동',
             data : {{D['close_price']}},
-            borderWidth:2,pointRadius:0,borderColor:'#f78181',backgroundColor:'#f78181',
-			lineTension:0.2
+			borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],
+  			lineTension:0.2
         },
 		{
             label:' 평균단가',
             data : {{D['soxl_average']|safe}},
-            borderColor:'#58ACFA', borderWidth:2, pointRadius:0,  backgroundColor:'#58ACFA',
+			borderColor:'#f78181', borderWidth:3, pointRadius:0,
 			lineTension:0.2
         },
 		{
             label:' 가치합계',
             data : {{D['total_value']}},
-            borderColor:'yellow', borderWidth:2,pointRadius:0, 
+            borderColor:'yellow', borderWidth:3,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1',
         },		

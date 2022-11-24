@@ -17,7 +17,7 @@ class Stock_victory(Control) :
         # 종가구하기
         self.DB.clear()
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add0 == '{self.M['진행일자']}'")
-        # self.DB.wre = f"add0='{self.M['진행일자']}' and add1='JEPQ'"; self.M['JEPQ']    = self.DB.get_one('add3')
+        self.DB.wre = f"add0='{self.M['진행일자']}' and add1='JEPQ'"; self.M['JEPQ']  = self.DB.get_one('add3')
         self.DB.wre = f"add0='{self.M['진행일자']}' and add1='SOXL'"; 
         self.M['당일종가'] = float(self.DB.get_one('add3'))
         self.M['전일종가'] = float(self.M['LD']['add14'])
@@ -26,7 +26,7 @@ class Stock_victory(Control) :
         LD = self.M['LD']
         
         # 매매전략 가져오기
-        self.M['매매전략'] = self.D['post']['add20']
+        self.M['매매전략'] = 'VICTORY'
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.M['매매전략']}'")
         self.S = self.DB.get_line('add2,add9,add10,add17,add18,add25')
         self.M['분할횟수']  = int(self.S['add2'])
@@ -71,9 +71,10 @@ class Stock_victory(Control) :
             self.M['경과일수'] = 0
             
             # 리밸런싱
-            self.M['가용잔액'] = int( self.M['매도금액'] * 0.6 )
-            self.M['추가자금'] = int( self.M['매도금액'] * 0.4 )
-            self.M['일매수금'] = f"{int(self.M['가용잔액'] / self.M['분할횟수']):,}"
+            자산총액 = self.M['매도금액'] + self.M['가용잔액'] + self.M['추가자금']
+            self.M['가용잔액'] = int( 자산총액 * 0.6 )
+            self.M['추가자금'] = int( 자산총액 * 0.4 )
+            self.M['일매수금'] = int(self.M['가용잔액'] / self.M['분할횟수'])
             self.M['시즌'] += 1
             self.M['경과일수'] = 0
             self.M['기초수량'] = 0
@@ -96,6 +97,11 @@ class Stock_victory(Control) :
 
     def normal_sell(self) :
 
+        if  self.M['경과일수'] ==  0 :
+            self.M['전매도량']  =  0
+            self.M['전매도가']  =  self.M['당일종가']
+            return
+
         매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']+1))
         매도가격 = self.M['평균단가'] * self.M['첫매가치']  if self.M['평균단가'] else self.M['당일종가']
 
@@ -110,6 +116,11 @@ class Stock_victory(Control) :
         self.M['전매도가'] = 매도가격
 
     def normal_buy(self)  :
+
+        if  self.M['경과일수'] == 0 :
+            self.M['전매수량'] = math.ceil(self.M['일매수금']/self.M['당일종가'])
+            self.M['전매수가'] = self.M['당일종가']
+            return
 
         if self.M['전매도가'] : 매수단가 = min(self.M['당일종가'],self.M['전매도가'])
         else : 매수단가 = self.M['당일종가']
@@ -167,7 +178,7 @@ class Stock_victory(Control) :
         ud['add20']=f"{round(float(LD['add20']),4):,.2f}"; 
         ud['sub26']=f"{int(LD['sub26']):,}"; 
         # 종가
-        ud['add8']  = self.M['JEPQ'] = 0.0
+        ud['add8']  = self.M['JEPQ'] 
         ud['add14'] = self.M['당일종가']
         # 매매결과
         ud['add11'] = f"{round(self.M['매수금액'],4):,.2f}"

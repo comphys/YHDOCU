@@ -127,7 +127,7 @@ class 목록_VICTORY(SKIN) :
                     elif key == 'hit'   : tx[key] = f"<td class='list-hit'>{txt}</td>" 
                     elif key == 'uname' : tx[key] = f"<td class='list-name'>{txt}</td>"
                     elif key == 'add12' : 
-                        if txt > '0.00' : tx[key] = f"<td class='list-bulls'>{txt}</td>"
+                        if txt > '0.00' : tx[key] = f"<td class='list-bulls'>{float(txt):,.2f}</td>"
                         else : tx[key] = f"<td class='list-normal'>0.00</td>"
                     elif key == 'add11' : 
                         if txt > '0.00' : tx[key] = f"<td class='list-bears'>{txt}</td>"
