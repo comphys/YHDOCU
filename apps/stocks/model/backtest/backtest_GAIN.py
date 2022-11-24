@@ -88,7 +88,6 @@ class M_backtest_GAIN(Model) :
 
         self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)
         self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
-        self.buy_step()
         
     def buy_step(self)   :
         self.M['날수'] += 1
@@ -232,6 +231,7 @@ class M_backtest_GAIN(Model) :
 
         #   결과정리 --------------------------------------------------------------------------------------------------
             self.calculate()
+            self.buy_step()
             self.print_backtest()
         # endfor -----------------------------------------------------------------------------------------------------
         self.result()
