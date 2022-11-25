@@ -74,12 +74,14 @@ class 목록_VICTORY(SKIN) :
             # -- leverage
             self.D['매수금2'] = float(LD['sub14'])
             self.D['매도금2'] = float(LD['sub15'])
-            수익금2 = float(LD['add15']) - self.D['매수금2'] + self.D['매도금2']
+            현재평가 = self.D['매도금2']  +  float(LD['add15'])
+            수익금2 = 현재평가 - self.D['매수금2'] 
             평단가2 = float(LD['sub16'])
-            수익률2 = (float(LD['add14']) - 평단가2) / 평단가2 *100 if 평단가2 else 0
+            수익률2 = (수익금2 / self.D['매수금2'] * 100) if self.D['매수금2'] else 0
             self.D['평단가2'] = f"{평단가2:,.2f}"
             self.D['수익금2'] = f"{수익금2:,.2f}"
             self.D['수익률2'] = f"{수익률2:.2f}"
+            self.D['현재평가'] = f"{현재평가:,.2f}"
 
             self.D['매수금1'] = f"{self.D['매수금1']:,.2f}"
             self.D['매도금1'] = f"{self.D['매도금1']:,.2f}"
@@ -130,7 +132,7 @@ class 목록_VICTORY(SKIN) :
                         if txt > '0.00' : tx[key] = f"<td class='list-bulls'>{float(txt):,.2f}</td>"
                         else : tx[key] = f"<td class='list-normal'>0.00</td>"
                     elif key == 'add11' : 
-                        if txt > '0.00' : tx[key] = f"<td class='list-bears'>{txt}</td>"
+                        if txt > '0.00' : tx[key] = f"<td class='list-bears'>{float(txt):,.2f}</td>"
                         else : tx[key] = f"<td class='list-normal'>0.00</td>"
                     
                     elif key == 'add0'  : 

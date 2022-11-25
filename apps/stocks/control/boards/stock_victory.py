@@ -178,7 +178,7 @@ class Stock_victory(Control) :
         ud['add20']=f"{round(float(LD['add20']),4):,.2f}"; 
         ud['sub26']=f"{int(LD['sub26']):,}"; 
         # 종가
-        ud['add8']  = self.M['JEPQ'] 
+        ud['add8']  = self.M['JEPQ'] if self.M['JEPQ'] else 0
         ud['add14'] = self.M['당일종가']
         # 매매결과
         ud['add11'] = f"{round(self.M['매수금액'],4):,.2f}"
