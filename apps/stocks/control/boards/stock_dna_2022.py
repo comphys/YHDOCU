@@ -139,7 +139,6 @@ class Stock_dna_2022(Control) :
             self.M['날수'] = 0
 
         if self.M['매수수량'] :
-            self.info(self.auto)
             if self.auto : self.M['매수금액']  =  self.M['매수수량'] * self.M['매수단가']
             self.M['가용잔액'] -=  self.M['매수금액']
             self.M['보유수량'] +=  self.M['매수수량']
