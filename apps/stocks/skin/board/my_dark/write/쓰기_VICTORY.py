@@ -17,11 +17,7 @@ class 쓰기_VICTORY(SKIN) :
 
         prev_date = self.DB.one("SELECT max(add0) FROM h_VICTORY_board")
         if  prev_date :
-            prev_day  = my.dayofdate(prev_date)
-            if prev_day == '금' : self.D['today'] = my.dayofdate(prev_date,delta=3)[0]
-            else : self.D['today'] = my.dayofdate(prev_date,delta=1)[0]
-
-   
+            self.D['today'] = self.DB.one(f"SELECT min(add0) FROM h_stockHistory_board WHERE add0 > '{prev_date}'")
 
     def add_all(self,category, exFIDktitle, exFormat, bid, OBODY) :
         CAT_KEY = []

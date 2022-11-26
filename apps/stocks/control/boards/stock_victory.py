@@ -105,10 +105,7 @@ class Stock_victory(Control) :
         매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']+1))
         매도가격 = self.M['평균단가'] * self.M['첫매가치']  if self.M['평균단가'] else self.M['당일종가']
 
-        if (매수수량 * self.M['전일종가']) > self.M['당일종가'] + self.M['추가자금'] : 
-            매수수량 = self.M['기초수량'] * self.M['위매비중']
-            self.M['진행상황'] = '매수제한'
-            매도가격 = self.M['평균단가']*self.M['둘매가치']
+        if (매수수량 * self.M['전일종가']) > self.M['가용잔액'] + self.M['추가자금'] : 매도가격 = self.M['평균단가']*self.M['둘매가치']
 
         if self.M['경과일수'] > self.M['강매시작'] : 매도가격 = self.M['평균단가']*self.M['강매가치']
 
@@ -126,7 +123,9 @@ class Stock_victory(Control) :
         else : 매수단가 = self.M['당일종가']
 
         매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']+1))
-        if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 매수수량 = self.M['기초수량'] * self.M['위매비중']
+        if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 
+            매수수량 = self.M['기초수량'] * self.M['위매비중']
+            self.M['진행상황'] = '매수제한'
         if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 
             매수수량 = 0
             self.M['진행상황'] = '매수금지'  

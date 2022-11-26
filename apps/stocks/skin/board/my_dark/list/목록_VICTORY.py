@@ -102,7 +102,7 @@ class 목록_VICTORY(SKIN) :
             self.D['매도갯수'] = int(LD['sub3'])
             self.D['매도단가'] = f"{float(LD['sub20']):,.2f}"
             self.D['매도예상'] = f"{(int(LD['sub3']) * float(LD['sub20'])):,.2f}"
-            self.D['예상이익'] = f"{(float(self.D['매도예상']) - float(LD['sub17'])):,.2f}"
+            self.D['예상이익'] = f"{(float(self.D['매도예상'].replace(',','')) - float(LD['sub17'].replace(',',''))):,.2f}"
 
 
     def list(self) :
