@@ -93,3 +93,14 @@ class Stock_today_tips(Control) :
         return self.echo(output)
 
 
+    def autoinput_price(self) :
+        # 종가구하기
+        self.info('hhhh')
+        ud = {}
+        self.DB.clear()
+        self.DB.tbl = 'h_stockHistory_board'
+        self.DB.wre = f"add0='{self.D['post']['add0']}' and add1='JEPQ'"; ud['add8']   = self.DB.get_one('add3') 
+        self.DB.wre = f"add0='{self.D['post']['add0']}' and add1='SOXL'"; ud['add14']  = self.DB.get_one('add3')
+        if not ud['add8'] : ud['add8'] = 0
+        return self.json(ud) 
+

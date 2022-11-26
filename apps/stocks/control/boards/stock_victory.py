@@ -16,7 +16,7 @@ class Stock_victory(Control) :
 
         # 종가구하기
         self.DB.clear()
-        self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add0 == '{self.M['진행일자']}'")
+        self.DB.tbl = 'h_stockHistory_board'
         self.DB.wre = f"add0='{self.M['진행일자']}' and add1='JEPQ'"; self.M['JEPQ']  = self.DB.get_one('add3')
         self.DB.wre = f"add0='{self.M['진행일자']}' and add1='SOXL'"; 
         self.M['당일종가'] = float(self.DB.get_one('add3'))
