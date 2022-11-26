@@ -91,4 +91,27 @@ class Action(Control) :
         
         return self.moveto(f"admin/board_sort/tab={tab}")
 
+    def board_copy(self) :
+        cbid = self.D['post']['c_bid']
+        nbid = self.D['post']['n_bid']
+        ntle = self.D['post']['n_tle']
+
+        self.DB.tbl,self.DB.wre = ('h_board_config',f"bid='{cbid}'")
+        config_data = self.DB.get_line("*")
+        config_data.pop('no')
+        config_data['bid']   = nbid
+        config_data['title'] = ntle
+
+        insert_data = {key: value for key, value in config_data.items() if value != None}
+        qry = self.DB.qry_insert('h_board_config',insert_data)
+        self.DB.exe(qry)
+
+        self.DB.clear()
+        self.DB.tbl,self.DB.wre = ('sqlite_master', f"name='h_{cbid}_board'")
+        qry = self.DB.get_one('sql')
+        qry = qry.replace(f"h_{cbid}_board",f"h_{nbid}_board")
+        self.DB.exe(qry)
+        return self.moveto('admin/board')
+
+
    

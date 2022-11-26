@@ -35,6 +35,13 @@ class Admin(Control) :
         self.D['section_list'] = self.DB.exe("SELECT section FROM h_board_config GROUP BY section ORDER BY sposition")
         return self.echo(D)
 
+    def board_copy(self) :
+        if not 'N_NO' in session : return self.moveto('docu/board/login',short=False)
+        D = {'title' : '보드관리자', 'header' : 'YH Admin', 'skin' : 'admin/board_copy.html'}
+        self.model('admin-board')
+        self.D['section_list'] = self.DB.exe("SELECT section FROM h_board_config GROUP BY section ORDER BY sposition")
+        return self.echo(D)
+
     def board_sort(self) :
         if not 'N_NO' in session : return self.moveto('docu/board/login',short=False)
         self.model('admin-board')
