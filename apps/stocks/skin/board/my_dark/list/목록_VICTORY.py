@@ -1,5 +1,6 @@
 import system.core.my_utils as ut
 from system.core.load import SKIN
+
 """
 add0 : 날자
 add18 : 배당금합계
@@ -27,16 +28,17 @@ class 목록_VICTORY(SKIN) :
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
         self.DB.odr = "add0 DESC"
-
+        self.DB.wre = ''
         chart_data = self.DB.get("add0,add14,add17,sub16",assoc=True)
+
         if chart_data :
 
+            first_date = chart_data[-1]['add0']
+            last_date  = chart_data[ 0]['add0']
+            self.D['총경과일'] = ut.diff_day(first_date,day2=last_date)
+
             chart_data.reverse()
-
-            self.DB.wre = ''
-            first_date = self.DB.get_one("min(add0)")
-            last_date  = chart_data[-1]['add0']
-
+        
             self.D['chart_date'] = [x['add0'][2:] for x in chart_data]
             self.D['close_price'] = [float(x['add14']) for x in chart_data]
             self.D['total_value'] = [float(x['add17']) for x in chart_data]
@@ -96,9 +98,11 @@ class 목록_VICTORY(SKIN) :
 
             self.D['매수갯수'] = int(LD['sub2'])
             self.D['매수단가'] = f"{float(LD['sub19']):,.2f}"
-            self.D['예상금액'] = float(LD['sub18'])
+            self.D['매수예상'] = f"{(int(LD['sub2']) * float(LD['sub19'])):,.2f}"
             self.D['매도갯수'] = int(LD['sub3'])
             self.D['매도단가'] = f"{float(LD['sub20']):,.2f}"
+            self.D['매도예상'] = f"{(int(LD['sub3']) * float(LD['sub20'])):,.2f}"
+            self.D['예상이익'] = f"{(float(self.D['매도예상']) - float(LD['sub17'])):,.2f}"
 
 
     def list(self) :
