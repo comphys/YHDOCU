@@ -159,9 +159,9 @@ class M_backtest_GAIN(Model) :
 
         self.M['평균단가']  = self.M['당일종가']
         self.M['매수수량']  = math.ceil(self.M['일매수금']/self.M['전일종가'])
-        self.M['기초수량']  = self.M['매수수량']
+        self.M['기초수량']  = self.M['매수수량'] 
 
-        if  self.M['당일종가'] < self.M['전일종가'] : 
+        if  self.M['당일종가'] <  self.M['전일종가'] : 
             self.M['보유수량']  = self.M['매수수량'] 
             self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량']
             self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
@@ -214,6 +214,7 @@ class M_backtest_GAIN(Model) :
             self.M['day'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
             self.M['전일종가'] = float(self.B[idx-1]['add3'])  
+            self.M['전속하락'] = int(self.B[idx-1]['add10']) 
             self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
             self.M['거래코드'] = ' '
 

@@ -15,7 +15,7 @@ class 쓰기_VICTORY(SKIN) :
 
         self.D['ChkField'] = ','.join(self.D['MustCheck'])
 
-        prev_date = self.DB.one("SELECT max(add0) FROM h_VICTORY_board")
+        prev_date = self.DB.one(f"SELECT max(add0) FROM h_{self.SYS.parm[0]}_board")
         if  prev_date :
             self.D['today'] = self.DB.one(f"SELECT min(add0) FROM h_stockHistory_board WHERE add0 > '{prev_date}'")
 
