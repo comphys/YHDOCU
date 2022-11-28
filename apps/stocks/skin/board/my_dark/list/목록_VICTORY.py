@@ -28,7 +28,19 @@ class 목록_VICTORY(SKIN) :
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
         self.DB.odr = "add0 DESC"
-        self.DB.wre = ''
+
+        s_date = self.SYS.gets.get('s_date','')
+        e_date = self.SYS.gets.get('e_date','')
+
+        if  s_date and e_date : 
+            self.DB.wre = f"add0 >= '{s_date}' and add0 <= '{e_date}'"
+            self.D['s_date'] = s_date
+            self.D['e_date'] = e_date
+        else : 
+            self.DB.wre = ''
+            self.D['s_date'] = ''
+            self.D['e_date'] = ''
+
         chart_data = self.DB.get("add0,add14,add17,sub16",assoc=True)
 
         if chart_data :

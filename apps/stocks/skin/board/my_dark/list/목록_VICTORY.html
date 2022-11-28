@@ -7,6 +7,7 @@
 <!-- 리스트 메인 테이블 시작 -->
 <script src="/sys/chart/chart.min.js"></script>
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
+
 <div class="clearfix" style="width:100%;background-color:#24272d;padding:20px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
 	<div class="pull-left" style="margin-right:20px">
 		<canvas id="myChart"  style="width:1100px;height:350px;background-color:#24272d;" ></canvas>
@@ -41,12 +42,17 @@
 	</div> 
 </div>
 <div id="extra-info-toggle" class="row-row clearfix" style="margin-bottom:-2px;">
-	<div class="well">
-		<div style="padding-left:20px" >
+	<div class="well clearfix">
+		<div class="pull-left" style="padding-left:20px" >
 			<span style="font-weight:bold;color:yellow;font-style:italic">Season {{D['현재시즌']}} {{D['경과일수']}} days </span>&nbsp;
 			<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} ( {{D['매수예상']}} )&nbsp;</span> / &nbsp;
 			<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <i class="fa fa-usd"></i> {{D['매도단가']}} ( {{D['매도예상']}} )&nbsp;</span> / &nbsp;
 			<span style="color:yellow;font-style:italic">EST&nbsp;{{D['예상이익']}} $ </span>&nbsp;
+		</div>
+		<div class="pull-right">
+			<input type='text' name='s_date' class="i-text" style="width:120px;text-align:center" placeholder='시작일자' value="{{D['s_date']}}">
+			<input type='text' name='e_date' class="i-text" style="width:120px;text-align:center" placeholder='종료일자' value="{{D['e_date']}}">
+			<button class='btn btn-small btn-blue' onclick="list_from_to()">구간챠트</button>
 		</div>
 	</div>
 </div>
@@ -120,9 +126,9 @@
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>쓰 기</button></a>&nbsp;
 	</div>
-	<div class='pagination pull-right'><ul>
-		{{D['Pagination']|safe}}
-	</ul></div>
+	<div class='pagination pull-right'>
+		<ul>{{D['Pagination']|safe}}</ul>
+	</div>
 </div>
 
 
@@ -230,6 +236,13 @@ const config2 = {
   },
 };
 const myChart2 = new Chart(ctx2, config2); 
+
+function list_from_to() {
+	var s_date = $("input[name='s_date']").val()
+	var e_date = $("input[name='e_date']").val()
+	if(!s_date || !e_date) return
+	location.href = uri('linkurl') + 'board/list/'+uri(0) + '/s_date=' + s_date + '/e_date=' + e_date
+}
 
 </script>
 

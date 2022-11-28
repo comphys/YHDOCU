@@ -95,7 +95,6 @@ class Stock_today_tips(Control) :
 
     def autoinput_price(self) :
         # 종가구하기
-        self.info('hhhh')
         ud = {}
         self.DB.clear()
         self.DB.tbl = 'h_stockHistory_board'
