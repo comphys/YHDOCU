@@ -280,8 +280,8 @@ class M_backtest_DNA_VR(Model) :
             return
 
         # 기간 계산하기
-        self.D['s_day'] = s_day = self.B[0]['add0']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
-        self.D['e_day'] = e_day = self.B[-1]['add0'] ; d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
+        self.D['s_day'] = s_day = self.D['start_date']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
+        self.D['e_day'] = e_day = self.D['end_date']    ; d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
         delta = d1-d0
         self.D['days_span'] = delta.days
 

@@ -86,12 +86,12 @@ if(uri('method') == 'list')	{ // LIST PART when Document is ready
 // ------------------------------------------------------------------------------------------------
 } else if (uri('method') == 'write' || uri('method') == 'modify' || uri('method') == 'add_body'  ) { // WRITE PART 
 // ------------------------------------------------------------------------------------------------
-	$(".i-date").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0}); 
 	$(".i-number").comma('init');
 	$("#editor-tools-bar").on("contextmenu", function(e) {	e.preventDefault();	$("#contextMenu").css({left:mouse_X-20,top:mouse_Y}).toggle();});	
 // ------------------------------------------------------------------------------------------------
 } // COMMON PART
 // ------------------------------------------------------------------------------------------------
+	$(".i-date").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0});
 	$(".list-mobile").click(function(){	sms_selected = this; $(this).css("backgroundColor","#2d335b").css("font-weight","bold");open_dialog('문자보내기','send_sms','ajax')});
 	$(".list-live-edit").liveEdit();
 	$(".list-subject").on("click", function() {var sc = $(this).attr('data-href');var page=uri('page'), sort = uri('sort'), sort1 = uri('sort1');var search = uri('search'); search_f = uri('search_f');if(page)  sc += '/page='+page; if(sort)  sc += '/sort='+sort; if(sort1) sc += '/sort1='+sort1;if(search) sc += '/search='+search;if(search_f) sc += '/search_f='+search_f;location.href = sc;});
