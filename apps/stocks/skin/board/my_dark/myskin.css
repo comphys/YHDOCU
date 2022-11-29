@@ -31,7 +31,7 @@
 #send-to-mobile-select {display:inline-block;outline:none;margin-right:10px;}
 #send-to-mobile-text {display:inline-block;color:cyan;outline:none;width:600px;white-space:pre-wrap;}
 #send-to-mobile-send {display:inline-block;color:yellow;width:80px;text-align:right;}
-#extra-info-toggle{display:block;}
+#extra-info-toggle{display:none;}
 /* 
   BODY PART
 */

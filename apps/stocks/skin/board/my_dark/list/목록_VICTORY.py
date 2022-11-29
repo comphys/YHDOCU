@@ -47,6 +47,8 @@ class 목록_VICTORY(SKIN) :
 
             first_date = chart_data[-1]['add0']
             last_date  = chart_data[ 0]['add0']
+            if not s_date : self.D['s_date'] = first_date
+            if not e_date : self.D['e_date'] = last_date
             self.D['총경과일'] = ut.diff_day(first_date,day2=last_date)
 
             chart_data.reverse()
