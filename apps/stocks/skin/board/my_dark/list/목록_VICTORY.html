@@ -44,7 +44,7 @@
 <div id="extra-info-toggle" class="row-row clearfix" style="margin-bottom:-2px;">
 	<div class="well clearfix" style="padding:5px 20px 5px 20px">
 		<div class="pull-left">
-			<span style="font-weight:bold;color:yellow;font-style:italic">Season {{D['현재시즌']}} - {{D['경과일수']}} days </span>&nbsp;
+			<span style="font-weight:bold;color:yellow;font-style:italic">Season {{D['현재시즌']}} {{D['경과일수']}} days </span>&nbsp;
 			<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} ( {{D['매수예상']}} )&nbsp;</span> / &nbsp;
 			<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <i class="fa fa-usd"></i> {{D['매도단가']}} ( {{D['매도예상']}} )&nbsp;</span> / &nbsp;
 			<span style="color:yellow;font-style:italic">EST&nbsp;{{D['예상이익']}} $ </span>&nbsp;
@@ -52,8 +52,8 @@
 		<div class="pull-right">
 			<input type='text' name='s_date' class="i-date" style="width:100px;text-align:center" placeholder='시작일자' value="{{D['s_date']}}">
 			<input type='text' name='e_date' class="i-date" style="width:100px;text-align:center" placeholder='종료일자' value="{{D['e_date']}}">&nbsp;
-			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(0)"><i class="fa fa-bars"></i>&nbsp;</span>
-			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(1)"><i class="fa fa-undo"></i>&nbsp;</span>
+			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(1)"><i class="fa fa-bars"></i>&nbsp;</span>
+			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(0)"><i class="fa fa-undo"></i>&nbsp;</span>
 		</div>
 	</div>
 </div>
@@ -243,29 +243,23 @@ const config2 = {
 };
 const myChart2 = new Chart(ctx2, config2); 
 
-function list_from_to() {
-	var s_date = $("input[name='s_date']").val()
-	var e_date = $("input[name='e_date']").val()
-	if(!s_date || !e_date) return
-	location.href = uri('linkurl') + 'board/list/'+uri(0) + '/s_date=' + s_date + '/e_date=' + e_date
-}
-
-var s_odate = "{{D['s_date']}}".slice(2)
-var e_odate = "{{D['e_date']}}".slice(2)
-
 function slice_chart(opt) {
-	if(opt == 1) { new_s=0; new_e = labels.length-1; $("input[name='s_date']").val('20'+s_odate); $("input[name='e_date']").val('20'+e_odate);}
-	else {
-		var s_date = $("input[name='s_date']").val().slice(2); 
-		var e_date = $("input[name='e_date']").val().slice(2); 
-		for(d=0; d<labels.length; d++) {if(labels[d] >= s_date)    {var new_s = d; $("input[name='s_date']").val('20'+labels[d]);break;}} 
-		for(d=labels.length-1; d >=0; d--) {if(labels[d] <= e_date){var new_e = d; $("input[name='e_date']").val('20'+labels[d]);break;}} 
+	var s_date,e_date,new_s,new_e
+	if(opt) { s_date = $("input[name='s_date']").val().slice(2); e_date = $("input[name='e_date']").val().slice(2) 
+		for(d=0; d<labels.length; d++) {if(labels[d] >= s_date)    { new_s = d; $("input[name='s_date']").val('20'+labels[d]);break;}} 
+		for(d=labels.length-1; d >=0; d--) {if(labels[d] <= e_date){ new_e = d; $("input[name='e_date']").val('20'+labels[d]);break;}} 
+	} else {
+		s_date = "{{D['s_date']}}".slice(2); e_date = "{{D['e_date']}}".slice(2)
+		$("input[name='s_date']").val("{{D['s_date']}}"); $("input[name='e_date']").val("{{D['e_date']}}");
+		new_s =0; new_e = labels.length-1
 	}
+
 	myChart.config.data.labels = labels.slice(new_s,new_e);
 	myChart.config.data.datasets[0].data =  close_price.slice(new_s,new_e);
 	myChart.config.data.datasets[1].data =  soxl_average.slice(new_s,new_e);
 	myChart.config.data.datasets[2].data =  total_value.slice(new_s,new_e);
 	myChart.update();
+
 }
 </script>
 
