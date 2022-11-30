@@ -29,26 +29,14 @@ class 목록_VICTORY(SKIN) :
         self.DB.tbl = self.D['tbl']
         self.DB.odr = "add0 DESC"
 
-        s_date = self.SYS.gets.get('s_date','')
-        e_date = self.SYS.gets.get('e_date','')
-
-        if  s_date and e_date : 
-            self.DB.wre = f"add0 >= '{s_date}' and add0 <= '{e_date}'"
-            self.D['s_date'] = s_date
-            self.D['e_date'] = e_date
-        else : 
-            self.DB.wre = ''
-            self.D['s_date'] = ''
-            self.D['e_date'] = ''
-
         chart_data = self.DB.get("add0,add14,add17,sub16",assoc=True)
 
         if chart_data :
 
             first_date = chart_data[-1]['add0']
             last_date  = chart_data[ 0]['add0']
-            if not s_date : self.D['s_date'] = first_date
-            if not e_date : self.D['e_date'] = last_date
+            self.D['s_date'] = first_date
+            self.D['e_date'] = last_date
             self.D['총경과일'] = ut.diff_day(first_date,day2=last_date)
 
             chart_data.reverse()
