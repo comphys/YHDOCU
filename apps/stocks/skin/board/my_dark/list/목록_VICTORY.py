@@ -94,7 +94,7 @@ class 목록_VICTORY(SKIN) :
 
             # -- extra-info
             self.D['현매수금'] = f"{float(LD['sub17']):,}"
-
+            self.D['현이익률'] = f"{(float(LD['add14'])/평단가2 - 1)*100:,}" if 평단가2 else '0.0'
             self.D['현재시즌'] = LD['sub1']
             self.D['경과일수'] = f"{int(LD['sub12']):02d}"
 
@@ -105,6 +105,8 @@ class 목록_VICTORY(SKIN) :
             self.D['매도단가'] = f"{float(LD['sub20']):,.2f}"
             self.D['매도예상'] = f"{(int(LD['sub3']) * float(LD['sub20'])):,.2f}"
             self.D['예상이익'] = f"{(float(self.D['매도예상'].replace(',','')) - float(LD['sub17'].replace(',',''))):,.2f}"
+            self.D['연속상승'] = LD['sub5']
+            self.D['연속하락'] = LD['sub6']
 
 
     def list(self) :

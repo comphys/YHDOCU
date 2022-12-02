@@ -47,6 +47,7 @@
 			<span style="font-weight:bold;color:yellow;font-style:italic">Season {{D['현재시즌']}} - {{D['경과일수']}} days </span>&nbsp;
 			<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} ( {{D['매수예상']}} )&nbsp;</span> / &nbsp;
 			<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <i class="fa fa-usd"></i> {{D['매도단가']}} ( {{D['매도예상']}} )&nbsp;</span> / &nbsp;
+			<i class="fa fa-arrow-up"></i> {{D['연속상승']}} <i class="fa fa-arrow-down"></i> {{D['연속하락']}}&nbsp;&nbsp; <i class="fa fa-bar-chart"></i>&nbsp; {{D['현이익률']}}%&nbsp;</span> / &nbsp;
 			<span style="color:yellow;font-style:italic">EST&nbsp;{{D['예상이익']}} $ </span>&nbsp;
 		</div>
 		<div class="pull-right">
@@ -177,7 +178,7 @@ const data1 = {
 		{
             label:' 평균단가',
             data : soxl_average,
-			borderColor:'#f78181', borderWidth:3, pointRadius:0,
+			borderColor:'#f78181', borderWidth:3, pointRadius:2,pointHoverRadius:24, backgroundColor:'#f78181',
 			lineTension:0.2
         },
 		{

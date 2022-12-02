@@ -21,6 +21,8 @@ class Stock_victory(Control) :
         self.DB.wre = f"add0='{self.M['진행일자']}' and add1='SOXL'"; 
         self.M['당일종가'] = float(self.DB.get_one('add3'))
         self.M['전일종가'] = float(self.M['LD']['add14'])
+        self.M['연속상승'] = self.DB.get_one('add9')
+        self.M['연속하락'] = self.DB.get_one('add10')
 
     def init_value(self) :
         LD = self.M['LD']
@@ -179,6 +181,8 @@ class Stock_victory(Control) :
         # 종가
         ud['add8']  = self.M['JEPQ'] if self.M['JEPQ'] else 0
         ud['add14'] = self.M['당일종가']
+        ud['sub5'] = self.M['연속상승']
+        ud['sub6'] = self.M['연속하락']
         # 매매결과
         ud['add11'] = f"{round(self.M['매수금액'],4):,.2f}"
         ud['add12'] = f"{round(self.M['매도금액'],4):,.2f}"
