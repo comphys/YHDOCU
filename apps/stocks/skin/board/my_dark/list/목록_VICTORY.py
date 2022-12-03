@@ -29,7 +29,7 @@ class 목록_VICTORY(SKIN) :
         self.DB.tbl = self.D['tbl']
         self.DB.odr = "add0 DESC"
 
-        chart_data = self.DB.get("add0,add14,add17,sub16",assoc=True)
+        chart_data = self.DB.get("add0,add14,add17,sub16,sub28,sub30",assoc=True)
 
         if chart_data :
 
@@ -41,17 +41,25 @@ class 목록_VICTORY(SKIN) :
 
             chart_data.reverse()
         
-            self.D['chart_date'] = [x['add0'][2:] for x in chart_data]
-            self.D['close_price'] = [float(x['add14']) for x in chart_data]
-            self.D['total_value'] = [float(x['add17']) for x in chart_data]
+            self.D['chart_date']   = [x['add0'][2:] for x in chart_data]
+            self.D['close_price']  = [float(x['add14']) for x in chart_data]; op_price = self.D['close_price'][0]  
+            self.D['close_change'] = [ (x-op_price) / op_price * 100  for x in self.D['close_price'] ]
+            self.D['total_value']  = [float(x['add17']) for x in chart_data]
             self.D['soxl_average'] = ['null' if not float(x['sub16']) else float(x['sub16']) for x in chart_data]
-            
+
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
             
             LD = self.DB.get_line('*')
             self.D['chart_percent'] = [float(LD['add4']),float(LD['add10']),float(LD['add16'])]
+
+            self.D['target_value'] = [int(x['sub30']) for x in chart_data]
+            target_lmt = float(LD['sub31'])/100
+            up_lmt = 1+target_lmt; dn_lmt = 1-target_lmt
+            self.D['up_target'] = [int(x*up_lmt) for x in self.D['target_value']]
+            self.D['dn_target'] = [int(x*dn_lmt) for x in self.D['target_value']]
+            self.D['profit_rate']=[float(x['sub28']) for x in chart_data]
             
             # --------------
 
@@ -94,7 +102,7 @@ class 목록_VICTORY(SKIN) :
 
             # -- extra-info
             self.D['현매수금'] = f"{float(LD['sub17']):,}"
-            self.D['현이익률'] = f"{(float(LD['add14'])/평단가2 - 1)*100:,}" if 평단가2 else '0.0'
+            self.D['현이익률'] = f"{(float(LD['add14'])/평단가2 - 1)*100:,.2f}" if 평단가2 else '0.0'
             self.D['현재시즌'] = LD['sub1']
             self.D['경과일수'] = f"{int(LD['sub12']):02d}"
 

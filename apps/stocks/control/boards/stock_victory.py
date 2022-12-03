@@ -1,5 +1,5 @@
 from system.core.load import Control
-from datetime import datetime,timedelta
+import system.core.my_utils as my
 import math
 
 class Stock_victory(Control) : 
@@ -199,4 +199,11 @@ class Stock_victory(Control) :
         # 자금상황
         ud['add19'] = f"{round(self.M['가용잔액'],4):,.2f}"
         ud['add20'] = f"{round(self.M['추가자금'],4):,.2f}"
+        # 투자목표
+        ud['sub29'] = LD['sub29']
+        diff_day = my.diff_day(LD['add0'], self.M['진행일자'])
+        target_value = int(int(LD['sub30']) * (1+float(LD['sub29']))**diff_day)
+        ud['sub30'] = f"{target_value:,}"
+        ud['sub31'] = LD['sub31']
+        ud['sub32'] = LD['sub32']
         return self.json(ud)

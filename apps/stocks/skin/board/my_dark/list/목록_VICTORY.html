@@ -10,7 +10,7 @@
 
 <div class="clearfix" style="width:100%;background-color:#24272d;padding:20px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
 	<div class="pull-left" style="margin-right:20px">
-		<canvas id="myChart"  style="width:1100px;height:350px;background-color:#24272d;" ></canvas>
+		<canvas id="myChart"  style="width:1100px;height:350px;background-color:#24272d;" ondblclick="chart_toggle()"></canvas>
 	</div>
 	<div class="pull-left">
 		<canvas id="myChart2" style="width:220px;height:350px;background-color:#24272d"></canvas>
@@ -186,7 +186,7 @@ const data1 = {
             data : total_value,
             borderColor:'yellow', borderWidth:3,pointRadius:0, 
 			lineTension:0.2,
-			yAxisID : 'y1',
+			yAxisID : 'y1'
         },		
     ]   
 };
@@ -244,7 +244,88 @@ const config2 = {
 };
 const myChart2 = new Chart(ctx2, config2); 
 
+const data3 = {
+    labels : labels,
+    datasets : [
+		{
+            label:' 총투자금',
+            data : total_value,
+            borderColor:'yellow', borderWidth:2,pointRadius:0, 
+			lineTension:0.2,
+			yAxisID : 'y1'
+        },
+		{
+            label:' 목표가치',
+            data : {{D['target_value']|safe}},
+			borderColor:'lightgray', borderWidth:2,pointRadius:0,  
+			yAxisID : 'y1'
+        },
+		{
+            label:' 가치상한',
+            data : {{D['up_target']|safe}},
+			borderColor:'#f78181',borderWidth:1,pointRadius:0, 
+			yAxisID : 'y1'
+        },
+		{
+            label:' 가치하한',
+            data : {{D['dn_target']|safe}},
+			borderColor:'#58ACFA', borderWidth:1, pointRadius:0,
+			yAxisID : 'y1'
+        },
+        {
+            label:' 주가변화',
+            data : {{D['close_change']}},
+            borderColor:'cyan', borderWidth:2,borderDash:[2,3],pointRadius:0,  
+			lineTension:0.2,
+        },
+        {
+            label:' 이익변화',
+            data : {{D['profit_rate']}},
+            borderColor:'rgba(255, 205, 86, 0.8)', borderWidth:2,borderDash:[2,3],pointRadius:0,  
+			lineTension:0.2,
+        },
+    ]   
+};
+
+// var check_value = new Array(100,80,60,40,20,0,-20,-40,-60)
+const options3 = {
+	animation : { duration:1000	},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:false} },
+    responsive:false,
+    layout:{padding:20},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'gray'}, 
+		   grid:{
+			color:function(context) {if(context.tick.value % 20 == 0 ) { return 'rgba(75, 192, 192, 0.4)'} else return '#272727'},
+			lineWidth: function(context) {if(context.tick.value % 20 == 0 ) { return 2 } else return 0},
+		   },
+		   position:'left'},
+		y1:{ type:'linear', display:true, position:'right'}
+    }
+};
+
+const config3  = {type:'line',data:data3,options:options3};
+
+
+let second_chart = false;
+
+function chart_toggle() {
+	if(! second_chart ) {
+		myChart.config.data = data3;
+		myChart.config.options = options3;
+	} else {
+		myChart.config.data = data1;
+		myChart.config.options = options1;
+	}
+	myChart.update();
+	second_chart = ! second_chart;
+}
+
+
 function slice_chart(opt) {
+	if(second_chart) return 
 	var s_date,e_date,new_s,new_e
 	if(opt) { s_date = $("input[name='s_date']").val().slice(2); e_date = $("input[name='e_date']").val().slice(2) 
 		for(d=0; d<labels.length; d++) {if(labels[d] >= s_date)    { new_s = d; $("input[name='s_date']").val('20'+labels[d]);break;}} 
@@ -260,7 +341,6 @@ function slice_chart(opt) {
 	myChart.config.data.datasets[1].data =  soxl_average.slice(new_s,new_e);
 	myChart.config.data.datasets[2].data =  total_value.slice(new_s,new_e);
 	myChart.update();
-
 }
 </script>
 
