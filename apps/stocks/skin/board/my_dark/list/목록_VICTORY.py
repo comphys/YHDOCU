@@ -26,7 +26,7 @@ class 목록_VICTORY(SKIN) :
         self.DB.tbl = self.D['tbl']
         self.DB.odr = "add0 DESC"
 
-        chart_data = self.DB.get("add0,add3,add14,add17,sub16,sub28,sub30",assoc=True)
+        chart_data = self.DB.get("add0,add3,add4,add14,add17,sub16,sub28,sub30",assoc=True)
 
         if chart_data :
 
@@ -39,10 +39,13 @@ class 목록_VICTORY(SKIN) :
             chart_data.reverse()
         
             self.D['chart_date']   = [x['add0'][2:] for x in chart_data]
-            self.D['close_price']  = [float(x['add14']) for x in chart_data]
+            self.D['close_price']  = [float(x['add14']) for x in chart_data]; close_base = self.D['close_price'][0]
+            self.D['close_change'] = [(x-close_base) / close_base * 100 for x in self.D['close_price']]
+            self.D['bal_change']   = [float(x['add4']) for x in chart_data]
             self.D['total_value']  = [float(x['add17']) for x in chart_data]
             self.D['soxl_average'] = ['null' if not float(x['sub16']) else float(x['sub16']) for x in chart_data]
-            self.D['cash'] = [float(x['add3']) for x in chart_data]
+
+            self.info(self.D['bal_change']  )
 
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
@@ -113,7 +116,7 @@ class 목록_VICTORY(SKIN) :
             self.D['연속하락'] = LD['sub6']
             self.D['목표가치'] = f"{int(LD['sub30']):,}"
             가치차이 = int(float(LD['add17'])-float(LD['sub30']))
-            self.D['가치차이'] = f"▲{가치차이:,}$" if 가치차이 > 0  else f"▼{가치차이:,}$"
+            self.D['가치차이'] = f"▲ {가치차이:,}$" if 가치차이 > 0  else f"▼ {가치차이:,}$"
 
 
     def list(self) :

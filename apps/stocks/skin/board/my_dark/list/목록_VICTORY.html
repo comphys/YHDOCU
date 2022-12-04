@@ -169,7 +169,8 @@ let total_value = {{D['total_value']|safe}};
 let target_value = {{D['target_value']|safe}};
 let up_target = {{D['up_target']|safe}};
 let dn_target = {{D['dn_target']|safe}};
-let cash = {{D['cash']|safe}};
+let bal_change = {{D['bal_change']|safe}};
+let close_change = {{D['close_change']|safe}};
 
 const data1 = {
     labels : labels,
@@ -279,15 +280,15 @@ const data3 = {
         },
         {
             label:' 종가변동',
-            data : close_price,
+            data : close_change,
             borderColor:'cyan', borderWidth:2,borderDash:[2,3],pointRadius:0,  
 			lineTension:0.2,
         },
 		{
             label:' 현금잔고',
-            data : cash,
+            data : bal_change,
 			borderColor:'#f78181',borderWidth:1,borderDash:[2,3],pointRadius:0, 
-			yAxisID : 'y1'
+			lineTension:0.2,
         }		
     ]   
 };
@@ -346,8 +347,8 @@ function slice_chart(opt) {
 		myChart.config.data.datasets[1].data =  target_value.slice(new_s,new_e);
 		myChart.config.data.datasets[2].data =  up_target.slice(new_s,new_e);
 		myChart.config.data.datasets[3].data =  dn_target.slice(new_s,new_e);
-		myChart.config.data.datasets[4].data =  close_price.slice(new_s,new_e);
-		myChart.config.data.datasets[5].data =  cash.slice(new_s,new_e);
+		myChart.config.data.datasets[4].data =  close_change.slice(new_s,new_e);
+		myChart.config.data.datasets[5].data =  bal_change.slice(new_s,new_e);
 	} else {
 		myChart.config.data.labels = labels.slice(new_s,new_e);
 		myChart.config.data.datasets[0].data =  close_price.slice(new_s,new_e);
