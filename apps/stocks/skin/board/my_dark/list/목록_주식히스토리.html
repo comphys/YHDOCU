@@ -112,7 +112,7 @@
 function add_newstock() { 
 	var new_stock = $("input[name='add_new_stock']").val();
 	if(! new_stock ) return;
-	var url = uri('linkurl') + 'boards-stock_update/update/' + new_stock ;
+	var url = uri('linkurl') + 'boards-stock_update/update_stock/' + new_stock ;
 	location.href = url; 
 }
 
