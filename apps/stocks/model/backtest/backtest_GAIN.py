@@ -162,8 +162,8 @@ class M_backtest_GAIN(Model) :
         self.M['기초수량']  = self.M['매수수량'] 
 
         if  self.M['당일종가'] <  self.M['전일종가'] : 
-            self.M['보유수량']  = self.M['매수수량'] 
-            self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량']
+            self.M['보유수량']  = self.M['매수수량']  
+            self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량'] 
             self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
             self.M['수익현황']  = self.M['수익률'] = 0.0
 

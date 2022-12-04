@@ -48,7 +48,8 @@
 			<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} ( {{D['매수예상']}} )&nbsp;</span> / &nbsp;
 			<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <i class="fa fa-usd"></i> {{D['매도단가']}} ( {{D['매도예상']}} )&nbsp;</span> / &nbsp;
 			<i class="fa fa-arrow-up"></i> {{D['연속상승']}} <i class="fa fa-arrow-down"></i> {{D['연속하락']}}&nbsp;&nbsp; <i class="fa fa-bar-chart"></i>&nbsp; {{D['현이익률']}}%&nbsp;</span> / &nbsp;
-			<span style="color:yellow;font-style:italic">EST&nbsp;{{D['예상이익']}} $ </span>&nbsp;
+			<span style="color:yellow;font-style:italic">EST&nbsp;{{D['예상이익']}} $ </span>&nbsp;/
+			<span style="color:#CEF6F5;font-style:italic">TARGET&nbsp;<b>{{D['목표가치']}}</b>$({{D['가치차이']}}) </span>&nbsp;
 		</div>
 		<div class="pull-right">
 			<input type='text' name='s_date' class="i-date" style="width:100px;text-align:center" placeholder='시작일자' value="{{D['s_date']}}">
@@ -165,6 +166,10 @@ let labels = {{D['chart_date']|safe}};
 let close_price = {{D['close_price']|safe}};
 let soxl_average = {{D['soxl_average']|safe}};
 let total_value = {{D['total_value']|safe}};
+let target_value = {{D['target_value']|safe}};
+let up_target = {{D['up_target']|safe}};
+let dn_target = {{D['dn_target']|safe}};
+let cash = {{D['cash']|safe}};
 
 const data1 = {
     labels : labels,
@@ -178,7 +183,7 @@ const data1 = {
 		{
             label:' 평균단가',
             data : soxl_average,
-			borderColor:'#f78181', borderWidth:3, pointRadius:2,pointHoverRadius:24, backgroundColor:'#f78181',
+			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
 			lineTension:0.2
         },
 		{
@@ -250,40 +255,40 @@ const data3 = {
 		{
             label:' 총투자금',
             data : total_value,
-            borderColor:'yellow', borderWidth:2,pointRadius:0, 
+            borderColor:'yellow', borderWidth:3,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
         },
 		{
             label:' 목표가치',
-            data : {{D['target_value']|safe}},
-			borderColor:'lightgray', borderWidth:2,pointRadius:0,  
+            data : target_value,
+			borderColor:'lightgray', borderWidth:1,pointRadius:0,  
 			yAxisID : 'y1'
         },
 		{
             label:' 가치상한',
-            data : {{D['up_target']|safe}},
+            data : up_target,
 			borderColor:'#f78181',borderWidth:1,pointRadius:0, 
 			yAxisID : 'y1'
         },
 		{
             label:' 가치하한',
-            data : {{D['dn_target']|safe}},
+            data : dn_target,
 			borderColor:'#58ACFA', borderWidth:1, pointRadius:0,
 			yAxisID : 'y1'
         },
         {
-            label:' 주가변화',
-            data : {{D['close_change']}},
+            label:' 종가변동',
+            data : close_price,
             borderColor:'cyan', borderWidth:2,borderDash:[2,3],pointRadius:0,  
 			lineTension:0.2,
         },
-        {
-            label:' 이익변화',
-            data : {{D['profit_rate']}},
-            borderColor:'rgba(255, 205, 86, 0.8)', borderWidth:2,borderDash:[2,3],pointRadius:0,  
-			lineTension:0.2,
-        },
+		{
+            label:' 현금잔고',
+            data : cash,
+			borderColor:'#f78181',borderWidth:1,borderDash:[2,3],pointRadius:0, 
+			yAxisID : 'y1'
+        }		
     ]   
 };
 
@@ -299,7 +304,7 @@ const options3 = {
         y: { ticks : {color:'gray'}, 
 		   grid:{
 			color:function(context) {if(context.tick.value % 20 == 0 ) { return 'rgba(75, 192, 192, 0.4)'} else return '#272727'},
-			lineWidth: function(context) {if(context.tick.value % 20 == 0 ) { return 2 } else return 0},
+			lineWidth: function(context) {if(context.tick.value == 0 ) { return 2 } else return 0},
 		   },
 		   position:'left'},
 		y1:{ type:'linear', display:true, position:'right'}
@@ -325,7 +330,7 @@ function chart_toggle() {
 
 
 function slice_chart(opt) {
-	if(second_chart) return 
+
 	var s_date,e_date,new_s,new_e
 	if(opt) { s_date = $("input[name='s_date']").val().slice(2); e_date = $("input[name='e_date']").val().slice(2) 
 		for(d=0; d<labels.length; d++) {if(labels[d] >= s_date)    { new_s = d; $("input[name='s_date']").val('20'+labels[d]);break;}} 
@@ -335,11 +340,20 @@ function slice_chart(opt) {
 		$("input[name='s_date']").val("{{D['s_date']}}"); $("input[name='e_date']").val("{{D['e_date']}}");
 		new_s =0; new_e = labels.length-1
 	}
-
-	myChart.config.data.labels = labels.slice(new_s,new_e);
-	myChart.config.data.datasets[0].data =  close_price.slice(new_s,new_e);
-	myChart.config.data.datasets[1].data =  soxl_average.slice(new_s,new_e);
-	myChart.config.data.datasets[2].data =  total_value.slice(new_s,new_e);
+	if(second_chart) {
+		myChart.config.data.labels = labels.slice(new_s,new_e);
+		myChart.config.data.datasets[0].data =  total_value.slice(new_s,new_e);
+		myChart.config.data.datasets[1].data =  target_value.slice(new_s,new_e);
+		myChart.config.data.datasets[2].data =  up_target.slice(new_s,new_e);
+		myChart.config.data.datasets[3].data =  dn_target.slice(new_s,new_e);
+		myChart.config.data.datasets[4].data =  close_price.slice(new_s,new_e);
+		myChart.config.data.datasets[5].data =  cash.slice(new_s,new_e);
+	} else {
+		myChart.config.data.labels = labels.slice(new_s,new_e);
+		myChart.config.data.datasets[0].data =  close_price.slice(new_s,new_e);
+		myChart.config.data.datasets[1].data =  soxl_average.slice(new_s,new_e);
+		myChart.config.data.datasets[2].data =  total_value.slice(new_s,new_e);
+	}
 	myChart.update();
 }
 </script>

@@ -70,6 +70,7 @@ class Stock_victory(Control) :
             self.M['매도금액'] = 매도가격 * self.M['매도수량']
             self.M['변동수량'] = -self.M['매도수량'] 
             self.M['진행상황'] = '전량매도' 
+            self.M['진행상황'] = f"{(self.M['매도금액'] - self.M['현매수금']):,.2f}"
             self.M['경과일수'] = 0
             
             # 리밸런싱
@@ -96,6 +97,7 @@ class Stock_victory(Control) :
             self.M['진행상황'] = '일반매수'
 
         if  not self.M['경과일수'] and self.M['매수수량'] : self.M['경과일수'] = 1
+        if  not self.M['보유수량'] : self.M['진행상황'] = '매수대기'
 
     def normal_sell(self) :
 
