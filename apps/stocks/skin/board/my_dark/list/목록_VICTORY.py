@@ -17,10 +17,7 @@ class 목록_VICTORY(SKIN) :
         THX = {}
         TH_title |= self.D['EXTITLE'] ; TH_align |= self.D['EXALIGN']
 
-        for key in self.D['list_order'] :
-            if   key == self.D['Sort']  : THX[key] = f"<th class='list-sort'  onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
-            elif key == self.D['Sort1'] : THX[key] = f"<th class='list-sort1' onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
-            else : THX[key] = f"<th class='list-sort2' onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
+        for key in self.D['list_order'] : THX[key] = f"<th style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
         
         self.D['head_td'] = THX
 
@@ -116,7 +113,7 @@ class 목록_VICTORY(SKIN) :
             self.D['연속하락'] = LD['sub6']
             self.D['목표가치'] = f"{int(LD['sub30']):,}"
             가치차이 = int(float(LD['add17'])-float(LD['sub30']))
-            self.D['가치차이'] = f"↑{가치차이:,}$" if 가치차이 > 0  else f"↓{가치차이:,}$"
+            self.D['가치차이'] = f"▲{가치차이:,}$" if 가치차이 > 0  else f"▼{가치차이:,}$"
 
 
     def list(self) :
