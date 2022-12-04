@@ -45,15 +45,15 @@
 	<div class="well clearfix" style="padding:5px 20px 5px 20px">
 		<div class="pull-left">
 			<span style="font-weight:bold;color:yellow;font-style:italic">Season {{D['현재시즌']}} - {{D['경과일수']}} days </span>&nbsp;
-			<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} ( {{D['매수예상']}} )&nbsp;</span> / &nbsp;
-			<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <i class="fa fa-usd"></i> {{D['매도단가']}} ( {{D['매도예상']}} )&nbsp;</span> / &nbsp;
-			<i class="fa fa-arrow-up"></i> {{D['연속상승']}} <i class="fa fa-arrow-down"></i> {{D['연속하락']}}&nbsp;&nbsp; <i class="fa fa-bar-chart"></i>&nbsp; {{D['현이익률']}}%&nbsp;</span> / &nbsp;
+			<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} ( {{D['매수예상']}} )</span> / 
+			<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <i class="fa fa-usd"></i> {{D['매도단가']}} ( {{D['매도예상']}} )</span> / 
+			<i class="fa fa-arrow-up"></i> {{D['연속상승']}} <i class="fa fa-arrow-down"></i> {{D['연속하락']}}&nbsp;&nbsp; <i class="fa fa-bar-chart"></i>&nbsp; {{D['현이익률']}}%</span> / 
 			<span style="color:yellow;font-style:italic">EST&nbsp;{{D['예상이익']}} $ </span>&nbsp;/
 			<span style="color:#CEF6F5;font-style:italic">TARGET&nbsp;<b>{{D['목표가치']}}</b>$({{D['가치차이']}}) </span>&nbsp;
 		</div>
 		<div class="pull-right">
-			<input type='text' name='s_date' class="i-date" style="width:100px;text-align:center" placeholder='시작일자' value="{{D['s_date']}}">
-			<input type='text' name='e_date' class="i-date" style="width:100px;text-align:center" placeholder='종료일자' value="{{D['e_date']}}">&nbsp;
+			<input type='text' name='s_date' class="i-date" style="width:90px;text-align:center" placeholder='시작일자' value="{{D['s_date']}}">
+			<input type='text' name='e_date' class="i-date" style="width:90px;text-align:center" placeholder='종료일자' value="{{D['e_date']}}">&nbsp;
 			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(1)"><i class="fa fa-bars"></i>&nbsp;</span>
 			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(0)"><i class="fa fa-undo"></i>&nbsp;</span>
 		</div>
@@ -127,7 +127,7 @@
 <div class="row-row clearfix">
 	<div class='pull-left'>
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
-		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>쓰 기</button></a>&nbsp;
+		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>기 록</button></a>&nbsp;
 	</div>
 	<div class='pagination pull-right'>
 		<ul>{{D['Pagination']|safe}}</ul>
