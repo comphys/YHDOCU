@@ -137,10 +137,11 @@ class M_backtest_GAIN(Model) :
         self.M['실현수익']  = 0.0
         self.M['연속하락']  = 0
 
-        self.M['첫매가치']  = 1 + float(self.S['add9'])/100
-        self.M['둘매가치']  = 1 + float(self.S['add10'])/100
-        self.M['강매시작']  = int(self.S['add17'])
-        self.M['강매가치']  = 1 + float(self.S['add18']) / 100
+        self.M['큰단가치']  = 1 + float(self.S['add5'])/100   # 첫날매수 시 가중치
+        self.M['첫매가치']  = 1 + float(self.S['add9'])/100   # 일반매도 시 이율 
+        self.M['둘매가치']  = 1 + float(self.S['add10'])/100  # 매수제한 시 이율 
+        self.M['강매시작']  = int(self.S['add17'])            # 손절경과일 
+        self.M['강매가치']  = 1 + float(self.S['add18'])/100  # 손절가 범위
         self.M['위매비중']  = int(self.S['add25'])
 
         self.M['매수단계']  = '일반매수'
@@ -161,7 +162,7 @@ class M_backtest_GAIN(Model) :
         self.M['매수수량']  = math.ceil(self.M['일매수금']/self.M['전일종가'])
         self.M['기초수량']  = self.M['매수수량'] 
 
-        if  self.M['당일종가'] <  self.M['전일종가'] : 
+        if  self.M['당일종가'] <  self.M['전일종가'] * self.M['큰단가치'] : 
             self.M['보유수량']  = self.M['매수수량']  
             self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량'] 
             self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
