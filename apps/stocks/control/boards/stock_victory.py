@@ -30,7 +30,7 @@ class Stock_victory(Control) :
         # 매매전략 가져오기
         self.M['매매전략'] = 'VICTORY'
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.M['매매전략']}'")
-        self.S = self.DB.get_line('add2,add9,add10,add17,add18,add25')
+        self.S = self.DB.get_line('add2,add5,add9,add10,add17,add18,add25')
         self.M['분할횟수']  = int(self.S['add2'])
         self.M['큰단가치']  = 1 + float(self.S['add5'])/100   # 매수첫날 구매가 범위
         self.M['첫매가치']  = 1 + float(self.S['add9'])/100
