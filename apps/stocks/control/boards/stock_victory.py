@@ -147,8 +147,8 @@ class Stock_victory(Control) :
       
     def check_buy(self) :
         if  not self.M['경과일수'] : 
-            if  self.M['당일종가'] <= self.M['전일종가'] :
-                self.M['매수수량']  = self.M['기초수량'] = math.ceil(self.M['일매수금']/self.M['전일종가'])
+            if  self.M['당일종가'] <= float(self.M['LD']['sub19']) :
+                self.M['매수수량']  = self.M['기초수량'] = math.ceil(self.M['일매수금']/self.M['전일종가'])  # 첫날에만 기초수량 재산정
         else :
             if  self.M['당일종가'] <= float(self.M['LD']['sub19']) : self.M['매수수량']  = int(self.M['LD']['sub2'])
 

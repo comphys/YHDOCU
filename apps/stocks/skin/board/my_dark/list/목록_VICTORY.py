@@ -36,11 +36,15 @@ class 목록_VICTORY(SKIN) :
             self.D['e_date'] = last_date
             self.D['총경과일'] = ut.diff_day(first_date,day2=last_date)
 
+            chart_span = 200
+            chart_slice = len(chart_data)
+            self.D['chart_start'] = chart_slice - chart_span if chart_slice > chart_span else 0
+
             chart_data.reverse()
         
             self.D['chart_date']   = [x['add0'][2:] for x in chart_data]
             self.D['close_price']  = [float(x['add14']) for x in chart_data]; close_base = self.D['close_price'][0]
-            self.D['close_change'] = [(x-close_base) / close_base * 100 for x in self.D['close_price']]
+            self.D['close_change'] = [round((x-close_base) / close_base * 100,2) for x in self.D['close_price']]
             self.D['bal_change']   = [float(x['add4']) for x in chart_data]
             self.D['total_value']  = [float(x['add17']) for x in chart_data]
             self.D['soxl_average'] = ['null' if not float(x['sub16']) else float(x['sub16']) for x in chart_data]
@@ -64,7 +68,7 @@ class 목록_VICTORY(SKIN) :
 
             총투자금 = float(LD['sub27'])
             총수익금 = float(LD['add17']) - 총투자금
-            총수익률 = 총수익금/총투자금 * 100 if 총투자금 else 0
+            총수익률 = (float(LD['add17'])/총투자금) * 100 if 총투자금 else 0
             self.D['총입금'] = f"{float(LD['sub25']):,.0f}"
             self.D['총출금'] = f"{float(LD['sub26']):,.0f}"
             self.D['현재총액'] = f"{float(LD['add17']):,.0f}"

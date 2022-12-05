@@ -172,24 +172,34 @@ let dn_target = {{D['dn_target']|safe}};
 let bal_change = {{D['bal_change']|safe}};
 let close_change = {{D['close_change']|safe}};
 
+let labels_2 = labels.slice({{D['chart_start']}});
+let close_price2 = close_price.slice({{D['chart_start']}});
+let soxl_average2 = soxl_average.slice({{D['chart_start']}});
+let total_value2 = total_value.slice({{D['chart_start']}});
+let target_value2 = target_value.slice({{D['chart_start']}});
+let up_target2 = up_target.slice({{D['chart_start']}});
+let dn_target2 = dn_target.slice({{D['chart_start']}});
+let bal_change2 = bal_change.slice({{D['chart_start']}});
+let close_change2 = close_change.slice({{D['chart_start']}});
+
 const data1 = {
-    labels : labels,
+    labels : labels_2,
     datasets : [
 		{
             label:' 종가변동',
-            data : close_price,
+            data : close_price2,
 			borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],
   			lineTension:0.2
         },
 		{
             label:' 평균단가',
-            data : soxl_average,
+            data : soxl_average2,
 			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
 			lineTension:0.2
         },
 		{
             label:' 가치합계',
-            data : total_value,
+            data : total_value2,
             borderColor:'yellow', borderWidth:3,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
@@ -251,42 +261,42 @@ const config2 = {
 const myChart2 = new Chart(ctx2, config2); 
 
 const data3 = {
-    labels : labels,
+    labels : labels_2,
     datasets : [
 		{
             label:' 총투자금',
-            data : total_value,
+            data : total_value2,
             borderColor:'yellow', borderWidth:3,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
         },
 		{
             label:' 목표가치',
-            data : target_value,
+            data : target_value2,
 			borderColor:'lightgray', borderWidth:1,pointRadius:0,  
 			yAxisID : 'y1'
         },
 		{
             label:' 가치상한',
-            data : up_target,
+            data : up_target2,
 			borderColor:'#f78181',borderWidth:1,pointRadius:0, 
 			yAxisID : 'y1'
         },
 		{
             label:' 가치하한',
-            data : dn_target,
+            data : dn_target2,
 			borderColor:'#58ACFA', borderWidth:1, pointRadius:0,
 			yAxisID : 'y1'
         },
         {
             label:' 종가변동',
-            data : close_change,
+            data : close_change2,
             borderColor:'cyan', borderWidth:2,borderDash:[2,3],pointRadius:0,  
 			lineTension:0.2,
         },
 		{
             label:' 현금잔고',
-            data : bal_change,
+            data : bal_change2,
 			borderColor:'#f78181',borderWidth:1,borderDash:[2,3],pointRadius:0, 
 			lineTension:0.2,
         }		
