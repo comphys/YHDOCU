@@ -177,9 +177,10 @@ class Stock_victory(Control) :
         # SOXL
         ud['add14']=LD['add14']; ud['add13']=LD['add13']; ud['sub16']=LD['sub16']; ud['sub15']=LD['sub15']; ud['sub14']=LD['sub14'];  ud['sub17']=LD['sub17']
         # 투자상황
-        ud['add19']=f"{round(float(LD['add19']),4):,.2f}"; ud['add18']=f"{round(float(LD['add18']),4):,.2f}"; 
+        ud['sub11']=f"{round(float(LD['sub11']),4):,.2f}"
+        ud['add19']=f"{round(float(LD['add19']),4):,.2f}"  
         ud['sub25']=f"{int(LD['sub25']):,}"; ud['sub27']=f"{int(LD['sub27']):,}"
-        ud['add20']=f"{round(float(LD['add20']),4):,.2f}"; 
+        ud['add20']=f"{round(float(LD['add20']),4):,.2f}" 
         ud['sub26']=f"{int(LD['sub26']):,}"; 
         # 종가
         ud['add8']  = self.M['JEPQ'] if self.M['JEPQ'] else 0
@@ -193,7 +194,7 @@ class Stock_victory(Control) :
         if self.M['매수금액'] : ud['sub9'] =  self.M['매수수량']
         if self.M['매도금액'] : ud['sub9'] = -self.M['매도수량']
         # 매매상황
-        ud['sub11'] = self.M['진행상황']
+        ud['add18'] = self.M['진행상황']
         # 매매전략
         ud['sub1'] = self.M['시즌'];      ud['sub12'] = self.M['경과일수']
         ud['sub4'] = self.M['일매수금'];  ud['sub18'] = self.M['기초수량']

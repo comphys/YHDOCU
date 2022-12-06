@@ -2,8 +2,8 @@ import system.core.my_utils as ut
 from system.core.load import SKIN
 
 """
-add0 : 날자
-add18 : 배당금합계
+add0  : 
+sub11 : 배당금합계
 """
 class 목록_VICTORY(SKIN) :
 
@@ -84,7 +84,7 @@ class 목록_VICTORY(SKIN) :
             self.D['평단가1'] = f"{평단가1:,.2f}"
             self.D['수익금1'] = f"{수익금1:,.2f}"
             self.D['수익률1'] = f"{수익률1:.2f}"
-            self.D['배당금'] = f"{float(LD['add18']):,.2f}"
+            self.D['배당금'] = f"{float(LD['sub11']):,.2f}"
 
             # -- leverage
             self.D['매수금2'] = float(LD['sub14'])
@@ -166,10 +166,12 @@ class 목록_VICTORY(SKIN) :
                         else :
                             href  = f"{self.D['_bse']}board/modify/{self.D['bid']}/no={item['no']}/page={self.D['page']}"
                             tmp += f"<span class='list-subject' data-href='{href}' {style}>{txt}</span>"
-
-
                         tmp += '</td>'
                         tx[key] = tmp
+                    elif key == 'add18' : continue
+                    elif key == 'add13' : 
+                        if item['add12'] > '0.00' : tx[key] = f"<td class='list-bulls'>{item['add18']}</td>"
+                        else : tx[key] = f"<td style='text-align:right;' class='list-add'>{txt}</td>"
 
                     else : 
                         if self.D['EXALIGN'][key]  : style   = f"text-align:{self.D['EXALIGN'][key]};"

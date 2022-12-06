@@ -127,7 +127,7 @@
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-left' style="background-color:#333F4F;">매매상황</div>
-				<input type='text' name='sub11' class="i-text" style="width:100px;text-align:right" value="{{D['BODY']['sub11']}}">
+				<input type='text' name='add18' class="i-text" style="width:100px;text-align:right" value="{{D['BODY']['add18']}}">
 			</div>
             <br>
 			<div class='i-input-div-choice'>
@@ -176,7 +176,7 @@
 			</div>
 			<div class='i-input-div-must'>
 				<div class='write-input-left' style="background-color:darkslategray;">배당합계</div>
-				<input type='text' name='add18' class="i-number" style="width:100px;" value="{{D['BODY']['add18']}}">
+				<input type='text' name='sub11' class="i-number" style="width:100px;" value="{{D['BODY']['sub11']}}">
 			</div>
 			<div class='i-input-div-must'>
 				<div class='write-input-left' style="background-color:darkslategray;">입금합계</div>
@@ -414,7 +414,7 @@ function auto_calculate() {
 	let 매도누적2= txt_to_num('sub15','f');
 	let 평균단가2= txt_to_num('sub16','f');
 	let 현매수금2= txt_to_num('sub17','f');
-	let 배당합계 = txt_to_num('add18','f');
+	let 배당합계 = txt_to_num('sub11','f');
 	let 입금합계 = txt_to_num('sub25','f');
 	let 출금합계 = txt_to_num('sub26','f');
 	let 현투자금 = txt_to_num('sub27','f');
