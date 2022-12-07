@@ -30,8 +30,9 @@ class Stock_victory(Control) :
         # 매매전략 가져오기
         self.M['매매전략'] = 'VICTORY'
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.M['매매전략']}'")
-        self.S = self.DB.get_line('add2,add5,add9,add10,add17,add18,add25')
+        self.S = self.DB.get_line('add2,add4,add5,add9,add10,add17,add18,add25')
         self.M['분할횟수']  = int(self.S['add2'])
+        self.M['평단가치']  = 1 + float(self.S['add4'])/100   # 일반매수 구매가 범위
         self.M['큰단가치']  = 1 + float(self.S['add5'])/100   # 매수첫날 구매가 범위
         self.M['첫매가치']  = 1 + float(self.S['add9'])/100
         self.M['둘매가치']  = 1 + float(self.S['add10'])/100
@@ -124,8 +125,8 @@ class Stock_victory(Control) :
             self.M['전매수가'] = self.M['당일종가'] * self.M['큰단가치']
             return
 
-        if self.M['전매도가'] : 매수단가 = min(self.M['당일종가'],self.M['전매도가'])
-        else : 매수단가 = self.M['당일종가']
+        매수단가 = self.M['당일종가'] * self.M['평단가치']
+        if self.M['전매도가'] : 매수단가 = min(매수단가,self.M['전매도가'])
 
         매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']+1))
         if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 

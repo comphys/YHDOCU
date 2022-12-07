@@ -56,7 +56,7 @@ class 목록_VICTORY(SKIN) :
             self.DB.wre = f"add0='{last_date}'"
             
             LD = self.DB.get_line('*')
-            self.D['chart_percent'] = [float(LD['add4']),float(LD['add10']),float(LD['add16'])]
+            self.D['chart_percent'] = [float(LD['add10']),float(LD['add4']),float(LD['add16'])]
 
             self.D['target_value'] = [int(x['sub30']) for x in chart_data]
             target_lmt = float(LD['sub31'])/100
@@ -68,7 +68,7 @@ class 목록_VICTORY(SKIN) :
 
             총투자금 = float(LD['sub27'])
             총수익금 = float(LD['add17']) - 총투자금
-            총수익률 = (float(LD['add17'])/총투자금) * 100 if 총투자금 else 0
+            총수익률 = (float(LD['add17'])/총투자금-1) * 100 if 총투자금 else 0
             self.D['총입금'] = f"{float(LD['sub25']):,.0f}"
             self.D['총출금'] = f"{float(LD['sub26']):,.0f}"
             self.D['현재총액'] = f"{float(LD['add17']):,.0f}"

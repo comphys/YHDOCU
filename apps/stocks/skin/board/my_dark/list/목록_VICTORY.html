@@ -223,14 +223,14 @@ const myChart = new Chart(ctx, config1);
 //
 
 
-const labels2 = ['Cash','Dividend','Leverage'];
+const labels2 = ['Dividend','Cash','Leverage'];
 const data2 = {
   labels: labels2,
   datasets: [{
     label: ' 자산배분비율 ',
     data: {{D['chart_percent']}},
-    backgroundColor: [ 'rgba(75, 192, 192, 0.4)','rgba(255, 99, 132, 0.4)','rgba(255, 205, 86, 0.4)'],
-    borderColor: [ 'rgb(75, 192, 192)','rgb(255, 99, 132)','rgb(255, 205, 86)'],
+    backgroundColor: ['rgba(255, 205, 86, 0.4)','rgba(75, 192, 192, 0.4)','rgba(255, 99, 132, 0.4)'],
+    borderColor: ['rgb(255, 205, 86)','rgb(75, 192, 192)','rgb(255, 99, 132)'],
     borderWidth: 1
   }]
 };

@@ -15,9 +15,9 @@ class M_back_testing(Model) :
 
         # 기본 값
         self.D['code'] = 'SOXL'
-        self.D['strategy'] = '첫째계좌'
-        self.D['capital'] = '20,000'
-        self.D['addition'] = '2,000'
+        self.D['strategy'] = 'VICTORY'
+        self.D['capital'] = '12,000'
+        self.D['addition'] = '8,000'
         self.D['start_date'] = '2017-01-02'
         self.D['end_date'] = '2021-12-27'
         self.D['progress'] =  '0'

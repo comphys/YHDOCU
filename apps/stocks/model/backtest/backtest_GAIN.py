@@ -137,6 +137,7 @@ class M_backtest_GAIN(Model) :
         self.M['실현수익']  = 0.0
         self.M['연속하락']  = 0
 
+        self.M['평단가치']  = 1 + float(self.S['add4'])/100   # 첫날매수 시 가중치
         self.M['큰단가치']  = 1 + float(self.S['add5'])/100   # 첫날매수 시 가중치
         self.M['첫매가치']  = 1 + float(self.S['add9'])/100   # 일반매도 시 이율 
         self.M['둘매가치']  = 1 + float(self.S['add10'])/100  # 매수제한 시 이율 
@@ -181,7 +182,7 @@ class M_backtest_GAIN(Model) :
 
     def normal_buy(self) :
         if  self.M['매수금지'] : return
-        if  self.M['당일종가']<= self.M['전일종가'] : 
+        if  self.M['당일종가']<= self.M['전일종가'] * self.M['평단가치'] : 
             self.M['매수수량'] = self.M['구매수량']
             거래코드 = 'L' if self.M['매수단계'] is '매수제한' else 'B'
             self.M['거래코드'] = 거래코드 + str(self.M['날수']+1) if self.M['구매수량'] else ' '
