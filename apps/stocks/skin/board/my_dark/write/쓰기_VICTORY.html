@@ -432,6 +432,7 @@ function auto_calculate() {
 	출금합계 = 출금합계 + 출금
 	현투자금 = 입금합계 - 출금합계
 	현수익률 = ((현재가치 / 현투자금 - 1) * 100).toFixed(1);
+	배당합계 = 배당합계 + 배당금
 
     let 비중1 = (잔액/현재가치*100).toFixed(2);
     let 비중2 = (가치1/현재가치*100).toFixed(2);
@@ -493,7 +494,8 @@ function auto_calculate() {
     $("input[name='add16']").val(비중3).comma('init');
 	$("input[name='add17']").val(현재가치).comma('init');
 
-	$("input[name='sub']").val(일매수금).comma('init');
+	$("input[name='sub4']").val(일매수금).comma('init');
+	$("input[name='sub11']").val(배당합계).comma('init');
 	$("input[name='sub14']").val(매수누적2).comma('init');
 	$("input[name='sub15']").val(매도누적2).comma('init');
 	$("input[name='sub16']").val(평균단가2).comma('init');
