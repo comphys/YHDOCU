@@ -144,10 +144,6 @@ class 목록_VICTORY(SKIN) :
                         else   : tx[key] = f"<td class='list-no'>{TrCnt}</td>"
                         TrCnt -= 1
 
-                    elif key == 'wdate' : tx[key] = f"<td class='list-wdate'>{txt}</td>"
-                    elif key == 'mdate' : tx[key] = f"<td class='list-mdate'>{txt}</td>"                    
-                    elif key == 'hit'   : tx[key] = f"<td class='list-hit'>{txt}</td>" 
-                    elif key == 'uname' : tx[key] = f"<td class='list-name'>{txt}</td>"
                     elif key == 'add12' : 
                         if txt > '0.00' : tx[key] = f"<td class='list-bulls'>{float(txt):,.2f}</td>"
                         else : tx[key] = f"<td class='list-normal'>0.00</td>"

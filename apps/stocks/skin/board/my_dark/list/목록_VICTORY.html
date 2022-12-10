@@ -345,11 +345,11 @@ function slice_chart(opt) {
 	var s_date,e_date,new_s,new_e
 	if(opt) { s_date = $("input[name='s_date']").val().slice(2); e_date = $("input[name='e_date']").val().slice(2) 
 		for(d=0; d<labels.length; d++) {if(labels[d] >= s_date)    { new_s = d; $("input[name='s_date']").val('20'+labels[d]);break;}} 
-		for(d=labels.length-1; d >=0; d--) {if(labels[d] <= e_date){ new_e = d; $("input[name='e_date']").val('20'+labels[d]);break;}} 
+		for(d=labels.length-1; d >=0; d--) {if(labels[d] <= e_date){ new_e = d+1; $("input[name='e_date']").val('20'+labels[d]);break;}} 
 	} else {
 		s_date = "{{D['s_date']}}".slice(2); e_date = "{{D['e_date']}}".slice(2)
 		$("input[name='s_date']").val("{{D['s_date']}}"); $("input[name='e_date']").val("{{D['e_date']}}");
-		new_s =0; new_e = labels.length-1
+		new_s =0; new_e = labels.length
 	}
 	if(second_chart) {
 		myChart.config.data.labels = labels.slice(new_s,new_e);
