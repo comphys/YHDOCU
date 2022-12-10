@@ -49,8 +49,6 @@ class 목록_VICTORY(SKIN) :
             self.D['total_value']  = [float(x['add17']) for x in chart_data]
             self.D['soxl_average'] = ['null' if not float(x['sub16']) else float(x['sub16']) for x in chart_data]
 
-            self.info(self.D['bal_change']  )
-
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
