@@ -91,7 +91,7 @@ class M_backtest_GAIN(Model) :
         
     def buy_step(self)   :
         self.M['날수'] += 1
-        매수수량 = math.ceil(self.M['기초수량'] * (self.M['날수']+1))
+        매수수량 = math.ceil(self.M['기초수량'] * (self.M['날수']*self.M['비중조절'] + 1))
         매수금액 = 매수수량 * self.M['당일종가'] 
 
         if  매수금액 > self.M['자산총액']   :
@@ -137,7 +137,8 @@ class M_backtest_GAIN(Model) :
         self.M['실현수익']  = 0.0
         self.M['연속하락']  = 0
 
-        self.M['평단가치']  = 1 + float(self.S['add4'])/100   # 첫날매수 시 가중치
+        self.M['비중조절']  = 1 + float(self.S['add3'])/100   # 매매일수 에 따른 구매수량 가중치
+        self.M['평단가치']  = 1 + float(self.S['add4'])/100   # 매수시 가중치
         self.M['큰단가치']  = 1 + float(self.S['add5'])/100   # 첫날매수 시 가중치
         self.M['첫매가치']  = 1 + float(self.S['add9'])/100   # 일반매도 시 이율 
         self.M['둘매가치']  = 1 + float(self.S['add10'])/100  # 매수제한 시 이율 
