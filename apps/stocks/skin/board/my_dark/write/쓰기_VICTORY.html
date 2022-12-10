@@ -21,8 +21,7 @@
 				<input type='text' name='add0' class="i-date" style="width:120px;text-align:center" value="{{D['today']}}">
 				{% endif %}
             </div>
-            <button class="btn btn-blue"  onclick="auto_datainput();return false">이전정보</button>&nbsp;&nbsp;
-            <button class="btn btn-blue-s4" onclick="auto_calculate();return false">자동계산</button>&nbsp;&nbsp;
+            <button class="btn btn-blue" onclick="auto_calculate();return false">자동계산</button>&nbsp;&nbsp;
             <button class="btn btn-blue-s4" onclick="auto_reset();return false">리셋하기</button>&nbsp;&nbsp;
         </td>
     </tr>
@@ -319,6 +318,17 @@
 
 <script>
 JYHEDITOR.start('YHBmainEditor');
+var reset_key = ['add1','add2','add3','add4',
+                 'add5','add6','sub8','sub10','add8','add9','add7','add10','sub21','sub22','sub23','sub24',
+				 'add11','add12','sub9','add18','add14','add15','add13','add16','sub16','sub15','sub14','sub17',
+				 'add19','sub11','sub25','sub27','add20','sub26','add17','sub28',
+				 'sub1','sub4','sub2','sub3','sub12','sub18','sub19','sub20',
+				 'sub29','sub30','sub31','sub32']
+var reset_val = []
+for(i=1;i<reset_key.length;i++) {
+	reset_val[i] = $("input[name='"+reset_key[i]+"']" ).val()
+}
+
 
 let 이전목표 = 0.0
 let 이전날자 = ''
@@ -357,37 +367,10 @@ JYHEDITOR.UserTable = function() {
 	$("#tableMenu").css({left:mouse_X - 20 , top:mouse_Y }).toggle();
 }
 
-function auto_datainput() {
-
-	var dest = "boards-stock_victory/autoinput/{{D['tbl']}}"
-    var posturl = uri('linkurl')+ dest 
-	var postData = {}
-	var ck_date = $("input[name='add0']").val(); 
-	if (!ck_date) { h_dialog.notice("진행일자를 입력해 주세요"); return; }
-    postData['add0'] = ck_date
-    postData['buy']  = $("input[name='add11']").val(); 
-    postData['sell'] = $("input[name='add12']").val(); 
-    postData['soxl'] = $("input[name='sub9']").val(); 
-    $.post( posturl, postData).done(function(data)  {
-        var ans = JSON.parse(data)
-		Object.keys(ans).forEach(function(key){$("input[name='"+key+"']" ).val(ans[key])}) 
-    });
-}
-
 function auto_reset() {
-	var reset_key  = ['add1','add2','add3','add4','add5','add6','add7','add9','add10','add11','add12','add13','add15','add16','add17','add18','add19','add20']
-		reset_key.forEach(function(i){$("input[name='"+i+"']" ).val(0)})
-	var reset_key2  = ['sub1','sub2','sub3','sub4','sub8','sub9','sub10','sub11','sub12','sub14','sub15','sub16','sub17','sub18','sub19','sub20','sub21','sub22','sub23','sub24','sub25','sub26','sub27','sub28']
-		reset_key2.forEach(function(i){$("input[name='"+i+"']" ).val(0)})  
-	var postData = {}
-	var ck_date = $("input[name='add0']").val(); 
-	if (!ck_date) { h_dialog.notice("진행일자를 입력해 주세요"); return; }
-    postData['add0'] = ck_date
-    $.post( uri('linkurl')+ "boards-stock_today_tips/autoinput_price", postData).done(function(data)  {
-        var ans = JSON.parse(data)
-		Object.keys(ans).forEach(function(key){$("input[name='"+key+"']" ).val(ans[key])}) 
-    });	
-
+	for(i=1;i<reset_key.length;i++) {
+		$("input[name='"+reset_key[i]+"']" ).val(reset_val[i])
+	}		
 }
 
 function auto_calculate() {
