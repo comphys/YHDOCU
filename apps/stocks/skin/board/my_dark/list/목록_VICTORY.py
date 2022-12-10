@@ -48,6 +48,7 @@ class 목록_VICTORY(SKIN) :
             self.D['bal_change']   = [float(x['add4']) for x in chart_data]
             self.D['total_value']  = [float(x['add17']) for x in chart_data]
             self.D['soxl_average'] = ['null' if not float(x['sub16']) else float(x['sub16']) for x in chart_data]
+            self.D['value_change'] = [float(x['sub28']) for x in chart_data]
 
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
@@ -56,12 +57,6 @@ class 목록_VICTORY(SKIN) :
             LD = self.DB.get_line('*')
             self.D['chart_percent'] = [float(LD['add10']),float(LD['add4']),float(LD['add16'])]
 
-            self.D['target_value'] = [int(x['sub30']) for x in chart_data]
-            target_lmt = float(LD['sub31'])/100
-            up_lmt = 1+target_lmt; dn_lmt = 1-target_lmt
-            self.D['up_target'] = [int(x*up_lmt) for x in self.D['target_value']]
-            self.D['dn_target'] = [int(x*dn_lmt) for x in self.D['target_value']]
-            
             # --------------
 
             총투자금 = float(LD['sub27'])
