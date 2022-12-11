@@ -318,6 +318,9 @@
 
 <script>
 JYHEDITOR.start('YHBmainEditor');
+
+var AutoCalulated = false
+
 var reset_key = ['add1','add2','add3','add4',
                  'add5','add6','sub8','sub10','add8','add9','add7','add10','sub21','sub22','sub23','sub24',
 				 'add11','add12','sub9','add18','add14','add15','add13','add16','sub16','sub15','sub14','sub17',
@@ -336,8 +339,10 @@ let 이전날자 = ''
 function check_MainWriteForm(f)	{	
 	var wDiv = $id("YHBmainEditor");
 	JYHEDITOR.clearDocuSelect();
+	if( ! AutoCalulated ) auto_calculate()
 	f.content.value = wDiv.innerHTML;
 	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
+
 	return true;
 }
 
@@ -370,7 +375,8 @@ JYHEDITOR.UserTable = function() {
 function auto_reset() {
 	for(i=1;i<reset_key.length;i++) {
 		$("input[name='"+reset_key[i]+"']" ).val(reset_val[i])
-	}		
+	}
+	AutoCalulated = false
 }
 
 function auto_calculate() {
@@ -492,6 +498,7 @@ function auto_calculate() {
 	$("input[name='sub26']").val(출금합계).comma('init');
 	$("input[name='sub27']").val(현투자금).comma('init');
 	$("input[name='sub28']").val(현수익률).comma('init');	
+	AutoCalulated = true
 }
 
 function txt_to_num(key,opt) {

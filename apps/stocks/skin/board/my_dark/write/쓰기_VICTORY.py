@@ -155,9 +155,10 @@ class 쓰기_VICTORY(SKIN) :
             
             # 리밸런싱
             자산총액 = self.M['매도금액'] + self.M['가용잔액'] + self.M['추가자금']
-            self.M['가용잔액'] = int( 자산총액 * 0.6 )
-            self.M['추가자금'] = int( 자산총액 * 0.4 )
-            self.M['일매수금'] = int(self.M['가용잔액'] / self.M['분할횟수'])
+            self.M['가용잔액'] = round(자산총액 * 0.6)
+            self.M['추가자금'] = round(자산총액 - self.M['가용잔액'])
+            self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
+
             self.M['시즌'] += 1
             self.M['경과일수'] = 0
             self.M['기초수량'] = 0
