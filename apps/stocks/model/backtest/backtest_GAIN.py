@@ -183,7 +183,7 @@ class M_backtest_GAIN(Model) :
 
     def normal_buy(self) :
         if  self.M['매수금지'] : return
-        if  self.M['당일종가']<= self.M['전일종가'] * self.M['평단가치'] : 
+        if  self.M['당일종가']<= round(self.M['전일종가'] * self.M['평단가치'],2) : 
             self.M['매수수량'] = self.M['구매수량']
             거래코드 = 'L' if self.M['매수단계'] is '매수제한' else 'B'
             self.M['거래코드'] = 거래코드 + str(self.M['날수']+1) if self.M['구매수량'] else ' '
