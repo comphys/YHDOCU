@@ -25,7 +25,7 @@ class Stock_longterm_info(Control) :
         D = self.DB.exe(qry,assoc=False)
 
         if D and opt in ('입금내역','출금내역','배당내역'):
-            output  = "<div style='width:200px;max-height:250px;background-color:black;overflow-x:hidden' ondblclick=\"h_dialog.close('POP_INFO')\">"
+            output  = "<div style='width:230px;max-height:250px;background-color:black;overflow-x:hidden' ondblclick=\"h_dialog.close('POP_INFO')\">"
             output += "<table class='table table-bordered table-striped;' style='background-color:#0A2229;color:#e1e1e1;'>"
             output += f"<tr style='background-color:#0B2F3A'><td>일자</td><td style='text-align:right'>금액</td></tr>"
             for d in D :
@@ -33,7 +33,7 @@ class Stock_longterm_info(Control) :
             output += "</table></div>"
 
         elif D and opt in ('매수금1','매도금1','매수금2','매도금2'):
-            output  = "<div style='width:330px;max-height:250px;background-color:black;overflow-x:hidden' ondblclick=\"h_dialog.close('POP_INFO')\">"
+            output  = "<div style='width:350px;max-height:250px;background-color:black;overflow-x:hidden' ondblclick=\"h_dialog.close('POP_INFO')\">"
             output += "<table class='table table-bordered table-striped;' style='background-color:#0A2229;color:#e1e1e1;'>"
             output += f"<tr style='background-color:#0B2F3A'><td>일자</td><td style='text-align:right'>금액</td><td style='text-align:right'>수량</td><td style='text-align:right'>누적</td><td style='text-align:right'>종가</td></tr>"
             for d in D :
@@ -41,7 +41,7 @@ class Stock_longterm_info(Control) :
             output += "</table></div>"
 
         elif D and opt in ('종가1','종가2'):
-            output  = "<div style='width:200px;max-height:250px;background-color:black;overflow-x:hidden' ondblclick=\"h_dialog.close('POP_INFO')\">"
+            output  = "<div style='width:230px;max-height:250px;background-color:black;overflow-x:hidden' ondblclick=\"h_dialog.close('POP_INFO')\">"
             output += "<table class='table table-bordered table-striped;' style='background-color:#0A2229;color:#e1e1e1;'>"
             output += f"<tr style='background-color:#0B2F3A'><td>일자</td><td style='text-align:right'>종가</td></tr>"
             for d in D :
@@ -49,7 +49,7 @@ class Stock_longterm_info(Control) :
             output += "</table></div>"
 
         else : 
-            output  = "<div style='width:330px;max-height:250px;background-color:black;overflow-x:hidden' ondblclick=\"h_dialog.close('POP_INFO')\">"
-            output += "<div style='background-color:#0A2229;color:#e1e1e1;'>No data</div></div>"
+            output  = "<div style='width:230px;background-color:black;' ondblclick=\"h_dialog.close('POP_INFO')\">"
+            output += "<div style='width:100%;background-color:#0A2229;color:#e1e1e1;'>&nbsp; No data</div></div>"
 
         return self.echo(output)
