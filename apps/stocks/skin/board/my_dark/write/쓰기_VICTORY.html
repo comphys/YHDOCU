@@ -339,7 +339,7 @@ let 이전날자 = ''
 function check_MainWriteForm(f)	{	
 	var wDiv = $id("YHBmainEditor");
 	JYHEDITOR.clearDocuSelect();
-	if( ! AutoCalulated ) auto_calculate()
+	if( ! AutoCalulated && uri('method') != 'modify' ) auto_calculate()
 	f.content.value = wDiv.innerHTML;
 	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
 
