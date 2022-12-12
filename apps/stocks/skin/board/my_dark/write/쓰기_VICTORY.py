@@ -16,26 +16,27 @@ class 쓰기_VICTORY(SKIN) :
 
         self.D['ChkField'] = ','.join(self.D['MustCheck'])
 
+        self.D['today'] = None
         if not OBODY :
             prev_date = self.DB.one(f"SELECT max(add0) FROM h_{self.SYS.parm[0]}_board")
             if  prev_date :
                 self.D['today'] = self.DB.one(f"SELECT min(add0) FROM h_stockHistory_board WHERE add0 > '{prev_date}'")
 
-            if not self.D['today'] : return
+            if self.D['today'] : 
 
-            self.init_value()
-            # 매도상황 검토
-            self.check_sell()
-            # 매수상황 검토
-            self.check_buy()
-            self.calculate()
-        
-            # 매도전략
-            self.normal_sell()
-            # 매수전략
-            self.normal_buy()
-            AutoInput = self.return_value()
-            self.D['BODY'] = AutoInput
+                self.init_value()
+                # 매도상황 검토
+                self.check_sell()
+                # 매수상황 검토
+                self.check_buy()
+                self.calculate()
+            
+                # 매도전략
+                self.normal_sell()
+                # 매수전략
+                self.normal_buy()
+                AutoInput = self.return_value()
+                self.D['BODY'] = AutoInput
 
     def add_all(self,category, exFIDktitle, exFormat, bid, OBODY) :
         CAT_KEY = []
