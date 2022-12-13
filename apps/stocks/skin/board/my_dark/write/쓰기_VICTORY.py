@@ -206,7 +206,7 @@ class 쓰기_VICTORY(SKIN) :
             return
 
         매수단가 = self.M['당일종가'] * self.M['평단가치']
-        if self.M['전매도가'] : 매수단가 = min(매수단가,self.M['전매도가'])
+        if self.M['전매도가'] : 매수단가 = min(매수단가,self.M['전매도가']) # 매도와 매수가 동시에 이루어지는 것을 방지하기 위함 
 
         매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
         if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 
