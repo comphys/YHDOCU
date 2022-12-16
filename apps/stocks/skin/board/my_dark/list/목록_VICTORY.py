@@ -26,7 +26,7 @@ class 목록_VICTORY(SKIN) :
         self.DB.tbl = self.D['tbl']
         self.DB.odr = "add0 DESC"
 
-        chart_data = self.DB.get("add0,add3,add4,add14,add17,sub16,sub28,sub30",assoc=True)
+        chart_data = self.DB.get("add0,add3,add4,add14,add17,sub16,sub28,sub30,sub33",assoc=True)
 
         if chart_data :
 
@@ -45,10 +45,10 @@ class 목록_VICTORY(SKIN) :
             self.D['chart_date']   = [x['add0'][2:] for x in chart_data]
             self.D['close_price']  = [float(x['add14']) for x in chart_data]; close_base = self.D['close_price'][0]
             self.D['close_change'] = [round((x-close_base) / close_base * 100,2) for x in self.D['close_price']]
-            self.D['bal_change']   = [float(x['add4']) for x in chart_data]
             self.D['total_value']  = [float(x['add17']) for x in chart_data]
             self.D['soxl_average'] = ['null' if not float(x['sub16']) else float(x['sub16']) for x in chart_data]
             self.D['value_change'] = [float(x['sub28']) for x in chart_data]
+            self.D['lever_change'] = [float(x['sub33']) for x in chart_data]
 
             self.DB.clear()
             self.DB.tbl = self.D['tbl']

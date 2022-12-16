@@ -167,17 +167,17 @@ let labels = {{D['chart_date']|safe}};
 let close_price = {{D['close_price']|safe}};
 let soxl_average = {{D['soxl_average']|safe}};
 let total_value = {{D['total_value']|safe}};
-let bal_change = {{D['bal_change']|safe}};
 let close_change = {{D['close_change']|safe}};
 let value_change = {{D['value_change']|safe}};
+let lever_change = {{D['lever_change']|safe}};
 
 let labels_2 = labels.slice({{D['chart_start']}});
 let close_price2 = close_price.slice({{D['chart_start']}});
 let soxl_average2 = soxl_average.slice({{D['chart_start']}});
 let total_value2 = total_value.slice({{D['chart_start']}});
 let value_change2 = value_change.slice({{D['chart_start']}});
-let bal_change2 = bal_change.slice({{D['chart_start']}});
 let close_change2 = close_change.slice({{D['chart_start']}});
+let lever_change2 = lever_change.slice({{D['chart_start']}});
 
 const data1 = {
     labels : labels_2,
@@ -274,15 +274,15 @@ const data3 = {
 			lineTension:0.2,
         },
 		{
-            label:' 현금잔고',
-            data : bal_change2,
-			borderColor:'#f78181',borderWidth:1,borderDash:[3,2],pointRadius:0, 
-			lineTension:0.2,
-        },
-		{
             label:' 가치변동',
             data : value_change2,
 			borderColor:'yellow', borderWidth:1,borderDash:[3,2],pointRadius:0,  
+			lineTension:0.2,
+        },
+		{
+            label:' 레버리지수익률',
+            data : lever_change2,
+			borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0, 
 			lineTension:0.2,
         }
     ]   
@@ -299,7 +299,7 @@ const options3 = {
         x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
         y: { ticks : {color:'gray'}, 
 		   grid:{
-			color:function(context) {if(context.tick.value % 20 == 0 ) { return 'rgba(75, 192, 192, 0.4)'} else return '#272727'},
+			color:function(context) {if(context.tick.value % 20 == 0 ) { return 'black'} else return '#272727'},
 			lineWidth: function(context) {if(context.tick.value == 0 ) { return 2 } else return 0},
 		   },
 		   position:'left'},
@@ -340,8 +340,8 @@ function slice_chart(opt) {
 		myChart.config.data.labels = labels.slice(new_s,new_e);
 		myChart.config.data.datasets[0].data =  total_value.slice(new_s,new_e);
 		myChart.config.data.datasets[1].data =  close_change.slice(new_s,new_e);
-		myChart.config.data.datasets[2].data =  bal_change.slice(new_s,new_e);
-		myChart.config.data.datasets[3].data =  value_change.slice(new_s,new_e);
+		myChart.config.data.datasets[2].data =  value_change.slice(new_s,new_e);
+		myChart.config.data.datasets[3].data =  lever_change.slice(new_s,new_e);
 	} else {
 		myChart.config.data.labels = labels.slice(new_s,new_e);
 		myChart.config.data.datasets[0].data =  close_price.slice(new_s,new_e);

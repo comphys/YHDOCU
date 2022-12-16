@@ -7,6 +7,7 @@
 <input type='hidden' name='uname'	value="{{D['USER']['uname']}}" >
 <input type='hidden' name='sub5'	value="{{D['BODY']['sub5']}}" >
 <input type='hidden' name='sub6'	value="{{D['BODY']['sub6']}}" >
+<input type='hidden' name='add18'	value="{{D['BODY']['add18']}}" >
 <textarea  name='content' style="display:none"></textarea>
 <table class='table' style="border:2px solid black;border-radius:4px;width:{{D['w_width2']}}">
 <tbody>
@@ -125,8 +126,8 @@
 				<input type='text' name='sub9' class="i-number" style="width:110px;" value="{{D['BODY']['sub9']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">매매상황</div>
-				<input type='text' name='add18' class="i-text" style="width:100px;text-align:right" value="{{D['BODY']['add18']}}">
+				<div class='write-input-left' style="background-color:#333F4F;">현수익률</div>
+				<input type='text' name='sub33' class="i-text" style="width:100px;text-align:right" value="{{D['BODY']['sub33']}}">
 			</div>
             <br>
 			<div class='i-input-div-choice'>
@@ -382,6 +383,7 @@ function auto_reset() {
 function auto_calculate() {
 	let 입금     = txt_to_num('add1','f');
     let 출금     = txt_to_num('add2','f');
+	let 잔액     = txt_to_num('add3','f');
 	let 일매수금 = txt_to_num('sub4','i');
     let 매수금1  = txt_to_num('add5','f');
     let 매도금1  = txt_to_num('add6','f');
@@ -394,7 +396,6 @@ function auto_calculate() {
     let 종가2    = txt_to_num('add14','f');
     let 수량2    = txt_to_num('sub9','i');
 	let 누적2    = txt_to_num('add13','i');  // TQQQ 보유수량
-    let 잔액     = txt_to_num('add3','f');
 	let 평균단가1= txt_to_num('sub21','f');
 	let 매도누적1= txt_to_num('sub22','f');
 	let 매수누적1= txt_to_num('sub23','f');
@@ -432,6 +433,11 @@ function auto_calculate() {
     가치2 = 가치2.toFixed(2)
     현재가치 = 현재가치.toFixed(2)
 	
+	현수익률2 = 0
+	if(평균단가2) {	현수익률2  = ((종가2/평균단가2) -1)*100 }
+	else {현수익률2 = 0}
+	현수익률2  = 현수익률2.toFixed(2)
+
 	if(매수금1) {
 		매수누적1 += 매수금1
 		현매수금1 += 매수금1
@@ -458,6 +464,8 @@ function auto_calculate() {
 		매도누적2 += 매도금2
 		현매수금2 = (평균단가2 * 누적2).toFixed(2);
 		매도누적2 = 매도누적2.toFixed(2)
+		현수익률2  = ((종가2/평균단가2) -1)*100
+		현수익률2  = 현수익률2.toFixed(2)
 		평균단가2 = 0
 	}
 
@@ -497,7 +505,9 @@ function auto_calculate() {
 	$("input[name='sub25']").val(입금합계).comma('init');
 	$("input[name='sub26']").val(출금합계).comma('init');
 	$("input[name='sub27']").val(현투자금).comma('init');
-	$("input[name='sub28']").val(현수익률).comma('init');	
+	$("input[name='sub28']").val(현수익률).comma('init');
+	
+	$("input[name='sub33']").val(현수익률2).comma('init');
 	AutoCalulated = true
 }
 
