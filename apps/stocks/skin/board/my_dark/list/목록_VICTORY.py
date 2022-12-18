@@ -28,9 +28,9 @@ class 목록_VICTORY(SKIN) :
 
         date1 = self.SYS.gets.get('date1','')
         date2 = self.SYS.gets.get('date2','')
-        if date1 and date2 : self.DB.wre = f"add0 >='{date1}' and add0 <= '{date2}'"
+        self.DB.wre = f"add0 >='{date1}' and add0 <= '{date2}'" if date1 and date2 else ''
 
-        chart_data = self.DB.get("add0,add3,add4,add14,add17,sub16,sub28,sub30,sub33",assoc=True)
+        chart_data = self.DB.get("add0,add14,add17,sub16,sub33",assoc=True)
 
         if chart_data :
 
