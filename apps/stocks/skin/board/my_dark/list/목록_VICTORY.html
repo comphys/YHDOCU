@@ -292,7 +292,9 @@ const options3 = {
         x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
         y: { ticks : {color:'gray'}, 
 		   grid:{
-			color:function(context) {if(context.tick.value % 10 == 0 ) { return 'black'} },
+			color:function(context) {
+				if( context.tick.value == 0 ) { return 'gray'}
+				else if(context.tick.value % 10 == 0 ) { return 'black'} },
 			lineWidth: function(context) {if(context.tick.value %10 == 0 ) { return 2 } else return 0},
 		   },
 		   position:'left'},
