@@ -248,7 +248,7 @@ class 쓰기_VICTORY(SKIN) :
         # 투자상황
         ud['sub11']=f"{round(float(LD['sub11']),4):,.2f}"
         ud['add19']=f"{round(float(LD['add19']),4):,.2f}"  
-        ud['sub25']=f"{int(LD['sub25']):,}"; ud['sub27']=f"{int(LD['sub27']):,}"
+        ud['sub25']=f"{float(LD['sub25']):,}"; ud['sub27']=f"{float(LD['sub27']):,}"
         ud['add20']=f"{round(float(LD['add20']),4):,.2f}" 
         ud['sub26']=f"{int(LD['sub26']):,}"; 
         # 종가
