@@ -145,6 +145,7 @@ class M_backtest_GAIN(Model) :
         self.M['강매시작']  = int(self.S['add17'])            # 손절경과일 
         self.M['강매가치']  = 1 + float(self.S['add18'])/100  # 손절가 범위
         self.M['위매비중']  = int(self.S['add25'])
+        self.M['회수기한']  = int(self.S['add11'])
         self.M['손실회수'] = False
 
 
@@ -195,11 +196,11 @@ class M_backtest_GAIN(Model) :
     def normal_sell(self) :
         
         self.M['진행상황'] = '매도대기'
-        
-        # 매도가격 결정조건 
+
+        # 매도가격 결정
         매도가격 = self.M['평균단가'] * self.M['첫매가치']
         if self.M['매수단계'] in ('매수제한','매수중단') : 매도가격 = self.M['평균단가'] * self.M['둘매가치']
-        if self.M['손실회수'] : 매도가격 = self.M['평균단가'] * 1.1
+        if self.M['손실회수'] and self.M['날수'] < self.M['회수기한'] : 매도가격 = self.M['평균단가'] * 1.1
         if self.M['날수'] > self.M['강매시작'] : 매도가격 = self.M['평균단가'] * self.M['강매가치']
         
         if  self.M['당일종가'] >=  매도가격  : 

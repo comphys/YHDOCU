@@ -118,6 +118,7 @@ class 쓰기_VICTORY(SKIN) :
         self.M['강매시작']  = int(self.S['add17'])
         self.M['강매가치']  = 1 + float(self.S['add18'])/100
         self.M['위매비중']  = int(self.S['add25'])
+        self.M['회복기한']  = int(self.S['add11'])
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0
@@ -140,6 +141,7 @@ class 쓰기_VICTORY(SKIN) :
         self.M['추가자금'] = float(LD['add20'])
         self.M['진행상황'] = '매도대기'
         self.M['기초수량'] = int(LD['sub18'])
+        self.M['회복전략'] = float(LD['sub7'])
 
     def calculate(self)  :
 
@@ -191,6 +193,7 @@ class 쓰기_VICTORY(SKIN) :
         매도가격 = self.M['평균단가'] * self.M['첫매가치']  if self.M['평균단가'] else self.M['당일종가']
 
         if (매수수량 * self.M['전일종가']) > self.M['가용잔액'] + self.M['추가자금'] : 매도가격 = self.M['평균단가']*self.M['둘매가치']
+        if self.M['회복전략'] and self.M['경과일수'] < self.M['회복기한'] : 매도가격 = self.M['평균단가']* (1+self.M['회복전략']/100)
 
         if self.M['경과일수'] > self.M['강매시작'] : 매도가격 = self.M['평균단가']*self.M['강매가치']
 
@@ -245,6 +248,7 @@ class 쓰기_VICTORY(SKIN) :
         # SOXL
         ud['add14']=LD['add14']; ud['add13']=LD['add13']; ud['sub16']=LD['sub16']; 
         ud['sub15']=f"{float(LD['sub15']):,.2f}";  ud['sub14']=f"{float(LD['sub14']):,.2f}"; ud['sub17']=LD['sub17']
+        ud['sub7'] =LD['add7'] 
         # 투자상황
         ud['sub11']=f"{round(float(LD['sub11']),4):,.2f}"
         ud['add19']=f"{round(float(LD['add19']),4):,.2f}"  
