@@ -248,7 +248,7 @@ class 쓰기_VICTORY(SKIN) :
         # SOXL
         ud['add14']=LD['add14']; ud['add13']=LD['add13']; ud['sub16']=LD['sub16']; 
         ud['sub15']=f"{float(LD['sub15']):,.2f}";  ud['sub14']=f"{float(LD['sub14']):,.2f}"; ud['sub17']=LD['sub17']
-        ud['sub7'] =LD['add7'] 
+        ud['sub7'] =LD['sub7'] 
         # 투자상황
         ud['sub11']=f"{round(float(LD['sub11']),4):,.2f}"
         ud['add19']=f"{round(float(LD['add19']),4):,.2f}"  
