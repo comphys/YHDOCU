@@ -173,10 +173,10 @@
 			</div>
         </td>
     </tr>
-	<tr>
-		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
+	<tr onclick="$('#config-toggle').toggle()">
+		<td colspan="2" style="font-size:2px;line-height:12px;background-color: #010213;">&nbsp;</td>
 	</tr>
-    <tr>
+    <tr id="config-toggle">
         <td class='write-td-left'>투자상황</td>
 		<td class="write-td-right">
 			<div class='i-input-div-must'>
@@ -211,14 +211,7 @@
 				<div class='write-input-left' style="background-color:darkslategray;">현수익률</div>
 				<input type='text' name='sub28' class="i-number" style="width:100px;" value="{{D['BODY']['sub28']}}">
 			</div>
-        </td>
-    </tr>
-	<tr>
-		<td colspan="2" style="font-size:2px;line-height:12px;background-color: #24272D;">&nbsp;</td>
-	</tr>
-    <tr>
-        <td class='write-td-left'>매매전략</td>
-		<td class="write-td-right">
+			<br><br>
 			<div class='i-input-div-notice'>
 				<div class='write-input-left' style="background-color:darkslategray;">현재시즌</div>
 				<input type='text' name='sub1' class="i-number" style="width:100px;" value="{{D['BODY']['sub1']}}">
@@ -228,7 +221,7 @@
 				<input type='text' name='sub4' class="i-number" style="width:100px;" value="{{D['BODY']['sub4']}}">
 			</div>
 			<div class='i-input-div-notice'>
-				<div class='write-input-left' style="background-color:darkslategray;">매수수량</div>
+				<div class='write-input-left' style="background-color:darkslategray;">매수수량&nbsp;&nbsp;<i class="fa fa-calculator" onclick="show_add_info(1)"></i></div>
 				<input type='text' name='sub2' class="i-number" style="width:110px;" value="{{D['BODY']['sub2']}}">
 			</div>
 			<div class='i-input-div-notice'>
@@ -244,18 +237,14 @@
 				<input type='text' name='sub18' class="i-number" style="width:100px;" value="{{D['BODY']['sub18']}}">
 			</div>
 			<div class='i-input-div-notice'>
-				<div class='write-input-left' style="background-color:darkslategray;">매수가격</div>
+				<div class='write-input-left' style="background-color:darkslategray;">매수가격&nbsp;&nbsp;<i class="fa fa-calculator" onclick="show_add_info(2)"></i></div>
 				<input type='text' name='sub19' class="i-text" style="width:110px;text-align:right;" value="{{D['BODY']['sub19']}}">
 			</div>
 			<div class='i-input-div-notice'>
-				<div class='write-input-left' style="background-color:darkslategray;">매도가격</div>
+				<div class='write-input-left' style="background-color:darkslategray;">매도가격&nbsp;&nbsp;<i class="fa fa-calculator" onclick="show_add_info(3)"></i></div>
 				<input type='text' name='sub20' class="i-text" style="width:100px;text-align:right;" value="{{D['BODY']['sub20']}}">
 			</div>
-        </td>
-    </tr>
-    <tr>
-        <td class='write-td-left'>투자목표</td>
-		<td class="write-td-right">
+			<br><br>
 			<div class='i-input-div-choice'>
 				<div class='write-input-left' style="background-color:#333F4F;">일증가율</div>
 				<input type='text' name='sub29' class="i-number" style="width:100px;" value="{{D['BODY']['sub29']}}">
@@ -324,7 +313,11 @@
 	<li onclick="JYHEDITOR.addRowCol('col')">현재컬럼 삭제</li>
 	<li onclick="JYHEDITOR.addRowCol('row')">현재 행 삭제</li>
 </div>
-
+<!-- 참고정보 관련 -->
+<div id="add-info" style="display:none;position:fixed;left:1030px;top:100px;width:180px;height:500px;background-color:#24272D;border:2px solid black">
+<div class="add-info-title"   style="font-weight:bold;padding:10px;text-align:center;color:yellow" onclick="$('#add-info').toggle()">Title</div>
+<div class="add-info-content" style="padding:10px">Content</div>
+</div>
 
 <script>
 JYHEDITOR.start('YHBmainEditor');
@@ -526,6 +519,45 @@ function txt_to_num(key,opt) {
     a = a.replace(/,/g,'');
     if(opt=='i') return parseInt(a);
     else return parseFloat(a);
+}
+
+function show_add_info(opt) {
+	var title=''
+	var content=''
+    
+	if(opt==1) {
+		title = "일자별 매수수량"		
+		bs = txt_to_num('sub18','i') 
+		sum = 0
+		for(i=1;i<15;i++) {
+			tmp = Math.ceil(bs*((i-1)*1.06 +1))
+			sum += tmp
+			content += "<span style='display:inline-block;width:40px;text-align:right'>"+i+"일 :</span>"
+			content += "<span style='display:inline-block;width:50px;text-align:right'>"+tmp.toLocaleString('ko-KR')+" :</span>" 
+			content += "<span style='display:inline-block;width:50px;text-align:right'>"+sum.toLocaleString('ko-KR')+"</span><br>" 
+		}
+	} else if(opt==2) {
+		title = "매수가격 참고표"		
+		bs = txt_to_num('sub16','f') 
+		sum = 0
+		for(i=1;i<21;i++) {
+			tmp = (bs * (1-i/100)).toFixed(2)
+			content += "<span style='display:inline-block;width:50px;text-align:right'>-"+i+"% :</span>"
+			content += "<span style='display:inline-block;width:70px;text-align:right'>"+tmp+"</span><br>" 
+		}
+	} else if(opt==3) {
+		title = "매도가격 참고표"		
+		bs = txt_to_num('sub16','f') 
+		sum = 0
+		for(i=1;i<21;i++) {
+			tmp = (bs * (1+i/100)).toFixed(2)
+			content += "<span style='display:inline-block;width:50px;text-align:right'>"+i+"% :</span>"
+			content += "<span style='display:inline-block;width:70px;text-align:right'>"+tmp+"</span><br>" 
+		}
+	}
+	$("#add-info .add-info-title").html(title);
+	$("#add-info .add-info-content").html(content);
+	$("#add-info").toggle()
 }
 
 </script>
