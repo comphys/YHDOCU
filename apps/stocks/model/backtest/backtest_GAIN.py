@@ -53,6 +53,13 @@ class M_backtest_GAIN(Model) :
             tx['가용잔액'] = f"{self.M['자산총액']:,.2f}"
         
         self.D['TR'].append(tx)
+        # 챠트 기록용
+        self.D['close_price'].append(self.M['당일종가'])
+        if avg_price := round(self.M['평균단가'],2) : self.D['average_price'].append(avg_price)
+        else : self.D['average_price'].append('None')
+        self.D['chart_date'].append(self.M['day'][2:])
+        self.D['total_value'].append(round(self.M['평가총액'],0))
+
 
     def calculate(self)  :
 
@@ -88,6 +95,8 @@ class M_backtest_GAIN(Model) :
 
         self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)
         self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
+        self.M['평가총액'] = self.M['자산총액'] + self.M['평가금액']
+
         
     def buy_step(self)   :
         self.M['날수'] += 1
@@ -159,6 +168,12 @@ class M_backtest_GAIN(Model) :
         self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
         self.M['자본비율'] = self.M['가용잔액'] / self.M['자산총액'] 
 
+        # 챠트작성
+        self.D['close_price'] = []
+        self.D['average_price'] = []
+        self.D['total_value'] = []
+        self.D['chart_date'] = []
+
     def new_day(self) :
         self.M['기록시즌'] += 1
         self.M['수익누적']  = 0.0
@@ -181,6 +196,7 @@ class M_backtest_GAIN(Model) :
             self.M['매수단계'] = '일반매수'
         
             self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)
+            self.M['평가총액'] = self.M['자산총액'] + self.M['평가금액']
             return True
         else : return False
 

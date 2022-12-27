@@ -57,6 +57,11 @@
     </div> <!--pull right-->
     </form>
 </div> <!--well-->
+<div class="clearfix" style="width:100%;background-color:#24272d;padding:10px;border:2px solid black;">
+	<div>
+		<canvas id="myChart2"  style="width:1460px;height:350px;background-color:#24272d;" ondblclick="chart_toggle()"></canvas>
+	</div>
+</div>
 
 {% if D['NOTICE'] %}
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
@@ -93,7 +98,7 @@
 </div> <!--rowrow clearfix-->
 
 {% if D['TR'] %}
-<div class="row-row clearfix" style="margin-top:100px">
+<div class="row-row clearfix" style="margin-top:473px">
 	
 	<table class='table table-striped table-hover' style="border:2px solid black">
 		<colgroup>
@@ -270,7 +275,7 @@ function check_thisForm() {
 }
 
 function show_chart(season) {
-	$('#backTestingChart').css({top:'170px'}).show();
+	$('#backTestingChart').css({top:'130px',left:'60px'}).show();
 	var clsv = [];
 	var avgv = [];
 
@@ -286,6 +291,51 @@ function show_chart(season) {
 	myChart.config.data.datasets[1].data =  avgv;
 	myChart.update();
 }
+
+// 본챠트 그리기
+const ctx2 = $id('myChart2');
+ctx2.style.backgroundColor = '#33363b';
+ctx2.style.border = '2px solid black';
+
+let labels2 = {{D['chart_date']|safe}};
+const data2 = {
+    labels : labels2,
+    datasets : [
+		{
+            label:' 종가변동',
+            data : {{D['close_price']|safe}},
+			borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],
+  			lineTension:0.2
+    	},
+		{
+            label:' 평균단가',
+            data : {{D['average_price']|safe}},
+			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
+			lineTension:0.2
+        },
+		{
+            label:' 가치합계',
+            data : {{D['total_value']|safe}},
+            borderColor:'yellow', borderWidth:3,pointRadius:0, 
+			lineTension:0.2,
+			yAxisID : 'y1'
+        },
+    ]   
+};
+const options2 = {
+	animation : { duration:1000	},
+	plugins : { legend: {display:false}, tooltip:{enabled:false}},
+    responsive:false,
+    layout:{padding:20},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'left'},
+		y1:{ type:'linear', display:true, position:'right'}
+    }
+};
+const config2  = {type:'line',data:data2,options:options2};
+const myChart2 = new Chart(ctx2, config2);
+
 
 //
 </script>
