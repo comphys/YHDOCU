@@ -39,7 +39,7 @@ class SU :
 
         df = fdr.DataReader(cdx,start=b_date, end=e_date)
         df['Str_Date'] = df.index.strftime('%Y-%m-%d')
-      
+
         df['Up']     = 0
         df['Dn']     = 0
 
@@ -48,7 +48,7 @@ class SU :
         df['Low']   = round(df['Low'],2)
         df['Close'] = round(df['Close'],2)
         df['Change']= round(df['Close'].diff(periods=1)/df['Close'].shift(1),4)
-    
+
         df = df[['Str_Date','Open','High','Low','Close','Volume','Change','Up','Dn']]
         dflist = df.values.tolist()
 
@@ -62,10 +62,11 @@ class SU :
             dflist[i][7]  = dflist[i-1][7]+1 if dflist[i][4] >= dflist[i-1][4] else 0
             dflist[i][8]  = dflist[i-1][8]+1 if dflist[i][4] <  dflist[i-1][4] else 0
 
-        ohlc = dflist[1:]       
+        ohlc = dflist[1:]
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
         time_now = my.now_timestamp()
+        cdx = cdx.upper()
 
         for row in ohlc :
             row2 = list(row)
