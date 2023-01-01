@@ -15,15 +15,15 @@ class Stock_update(Control) :
         USER = self.DB.get("*",many=1, assoc=True)
 
         opt = self.parm[0]
-        codes = ['SOXX','SOXL','JEPQ','QQQ','TQQQ','JEPI']
+        codes = ['SOXL','JEPQ']
         
         for cdx in codes :
             if opt == 'stockdio' :
                 self.update_stockdio(cdx,USER)
-                time.sleep(6)
+                time.sleep(5)
             else :
                 self.update_fdr(cdx,USER)
-                time.sleep(3)
+                time.sleep(2)
             
         self.set_message("종목 업데이트를 완료하였습니다")
         return self.moveto('board/list/stockHistory/csh=on')
