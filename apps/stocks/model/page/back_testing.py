@@ -17,7 +17,7 @@ class M_back_testing(Model) :
         self.D['code'] = 'SOXL'
         self.D['strategy'] = 'VICTORY'
         self.D['capital'] = '12,000'
-        self.D['addition'] = '8,000'
+        self.D['addition'] = '6,000'
         self.D['start_date'] = '2017-01-02'
         self.D['end_date'] = '2021-12-27'
         self.D['progress'] =  '0'

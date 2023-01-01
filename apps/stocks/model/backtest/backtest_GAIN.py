@@ -212,7 +212,7 @@ class M_backtest_GAIN(Model) :
     def normal_sell(self) :
         
         self.M['진행상황'] = '매도대기'
-
+        
         # 매도가격 결정
         매도가격 = self.M['평균단가'] * self.M['첫매가치']
         if self.M['매수단계'] in ('매수제한','매수중단') : 매도가격 = self.M['평균단가'] * self.M['둘매가치']
@@ -265,6 +265,9 @@ class M_backtest_GAIN(Model) :
             self.print_backtest()
         # endfor -----------------------------------------------------------------------------------------------------
         self.result()
+    
+    def test_with_progress(self) :
+        self.test_it()
 
     def result(self) :
 
