@@ -10,12 +10,10 @@ class M_backtest_GAIN(Model) :
     def print_backtest(self) :
         tx = {}
         #--------------------------------------------------------
-        self.M['완료일수'] += 1 ; 
         if self.M['진행상황'] == '첫날거래' : self.M['날수'] = 1
         tx['날수'] = self.M['날수']
 
         if self.M['매도수량'] : self.M['날수'] = 0
-        if self.M['진행상황'] == '전량매도' : tx['날수'] = self.M['완료일수']; self.M['완료일수'] = 0
 
         tx['진행'] = self.M['진행']; tx['기록일자'] = self.M['day']
         tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
@@ -128,7 +126,6 @@ class M_backtest_GAIN(Model) :
         self.M['일매수금']  = int(self.M['가용잔액'] / self.M['분할횟수'])
         self.M['거래코드']  = ' '
         self.M['최대날자']  = ' '
-        self.M['완료일수']  = 0
         self.M['수익누적']  = 0.0
         self.M['매수금지']  = False
 
