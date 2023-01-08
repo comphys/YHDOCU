@@ -110,7 +110,7 @@ class 쓰기_VICTORY(SKIN) :
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.M['매매전략']}'")
         self.S = self.DB.get_line('add2,add3,add4,add5,add9,add10,add11,add17,add18,add25')
         self.M['분할횟수']  = int(self.S['add2'])
-        self.M['비중조절']  = 1 + float(self.S['add3'])/100   # 매매일수 에 따른 구매수량 가중치
+        self.D['비중조절']  = 1 + float(self.S['add3'])/100   # 매매일수 에 따른 구매수량 가중치
         self.M['평단가치']  = 1 + float(self.S['add4'])/100   # 일반매수 구매가 범위
         self.M['큰단가치']  = 1 + float(self.S['add5'])/100   # 매수첫날 구매가 범위
         self.M['첫매가치']  = 1 + float(self.S['add9'])/100
@@ -191,16 +191,17 @@ class 쓰기_VICTORY(SKIN) :
             self.M['전매도가']  =  self.M['당일종가']
             return
 
-        매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']+1))
+        매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
         매도가격 = self.M['평균단가'] * self.M['첫매가치']  if self.M['평균단가'] else self.M['당일종가']
 
-        if (매수수량 * self.M['전일종가']) > self.M['가용잔액'] + self.M['추가자금'] : 매도가격 = self.M['평균단가']*self.M['둘매가치']
-        if self.M['회복전략'] and self.M['경과일수'] < self.M['회복기한'] : 매도가격 = self.M['평균단가']* (1+self.M['회복전략']/100)
+        if (매수수량 * self.M['전일종가']) > self.M['가용잔액'] + self.M['추가자금'] : 
+            매도가격 = self.M['평균단가']*self.M['둘매가치']
+        if self.M['회복전략'] and self.M['경과일수'] +1 <= self.M['회복기한'] : 매도가격 = self.M['평균단가']* (1+self.M['회복전략']/100)
 
-        if self.M['경과일수'] > self.M['강매시작'] : 매도가격 = self.M['평균단가']*self.M['강매가치']
+        if self.M['경과일수']+1 >= self.M['강매시작'] : 매도가격 = self.M['평균단가']*self.M['강매가치']
 
         self.M['전매도량'] = self.M['보유수량']
-        self.M['전매도가'] = 매도가격
+        self.M['전매도가'] = round(매도가격,2)
 
     def normal_buy(self)  :
 
@@ -210,9 +211,11 @@ class 쓰기_VICTORY(SKIN) :
             return
 
         매수단가 = self.M['당일종가'] * self.M['평단가치']
+        
+
         if self.M['전매도가'] : 매수단가 = min(매수단가,self.M['전매도가']) # 매도와 매수가 동시에 이루어지는 것을 방지하기 위함 
 
-        매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
+        매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
         if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 
             매수수량 = self.M['기초수량'] * self.M['위매비중']
             self.M['진행상황'] = '매수제한'
@@ -221,7 +224,7 @@ class 쓰기_VICTORY(SKIN) :
             self.M['진행상황'] = '매수금지'  
 
         self.M['전매수량'] = 매수수량
-        self.M['전매수가'] = 매수단가
+        self.M['전매수가'] = round(매수단가,2)
         self.M['예상금액'] = f"{매수수량 * 매수단가 :,.2f}"
        
                 
@@ -248,14 +251,12 @@ class 쓰기_VICTORY(SKIN) :
         ud['sub23']=f"{float(LD['sub23']):,.2f}"; ud['sub24']=f"{float(LD['sub24']):,.2f}"
         ud['sub8'] = 0
         # SOXL
-        ud['add14']=LD['add14']; ud['add13']=LD['add13']; ud['sub16']=LD['sub16']; 
+        ud['add13']=LD['add13']; ud['sub16']=LD['sub16']; 
         ud['sub15']=f"{float(LD['sub15']):,.2f}";  ud['sub14']=f"{float(LD['sub14']):,.2f}"; ud['sub17']=LD['sub17']
         ud['sub7'] =self.M['회복전략'] 
         # 투자상황
         ud['sub11']=f"{round(float(LD['sub11']),4):,.2f}"
-        ud['add19']=f"{round(float(LD['add19']),4):,.2f}"  
         ud['sub25']=f"{float(LD['sub25']):,}"; ud['sub27']=f"{float(LD['sub27']):,}"
-        ud['add20']=f"{round(float(LD['add20']),4):,.2f}" 
         ud['sub26']=f"{int(LD['sub26']):,}"; 
         # 종가
         ud['add8']  = self.M['JEPQ'] if self.M['JEPQ'] else 0
