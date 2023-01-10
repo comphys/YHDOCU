@@ -111,11 +111,11 @@
         <td class='write-td-left' id="second_stock">SOXL</td>
 		<td class="write-td-right" style="padding:12px 8px">
 			<div class='i-input-div'>
-				<div class='write-input-server'>매수금</div>
+				<div class='write-input-server'>매수금&nbsp;&nbsp;<i class="fa fa-calculator" onclick="show_unit_buy(1)"></i></div>
 				<input type='text' name='add11' class="i-number" style="width:100px;" value="{{D['BODY']['add11']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-server'>매도금</div>
+				<div class='write-input-server'>매도금&nbsp;&nbsp;<i class="fa fa-calculator" onclick="show_unit_buy(2)"></i></div>
 				<input type='text' name='add12' class="i-number" style="width:100px;" value="{{D['BODY']['add12']}}">
 			</div>
 			<div class='i-input-div'>
@@ -530,6 +530,7 @@ function show_add_info(opt) {
 	if(opt==1) {
 		title = "일자별 매수수량"		
 		bs = txt_to_num('sub18','i') 
+		if(! bs) bs = txt_to_num('sub2','i')
 		sum = 0
 		for(i=0;i<15;i++) {
 			tmp = Math.ceil(bs*(i*1.25 +1))
@@ -540,7 +541,8 @@ function show_add_info(opt) {
 		}
 	} else if(opt==2) {
 		title = "매수가격 참고표"		
-		bs = txt_to_num('sub16','f') 
+		bs = txt_to_num('sub16','f')
+		if(! bs) bs = txt_to_num('add14','f') 
 		sum = 0
 		for(i=1;i<21;i++) {
 			tmp = (bs * (1-i/100)).toFixed(2)
@@ -549,7 +551,8 @@ function show_add_info(opt) {
 		}
 	} else if(opt==3) {
 		title = "매도가격 참고표"		
-		bs = txt_to_num('sub16','f') 
+		bs = txt_to_num('sub16','f')
+		if(! bs) bs = txt_to_num('add14','f') 
 		sum = 0
 		for(i=1;i<21;i++) {
 			tmp = (bs * (1+i/100)).toFixed(2)
@@ -562,5 +565,12 @@ function show_add_info(opt) {
 	$("#add-info").toggle()
 }
 
+function show_unit_buy(opt) {
+	var n = Math.abs(txt_to_num('sub9','i'))
+	var div = 0
+	if(opt == 1) { div = txt_to_num('add11','f')} else {div = txt_to_num('add12','f')}
+	
+	h_dialog.notice((div/n).toFixed(2))
+}
 </script>
 {% endblock %}
