@@ -55,6 +55,24 @@ class Board(Control) :
         D={'skin': self.skin + '/write/' + self.D['BCONFIG']['sub_write']}
         return self.echo(D)
 
+    def add_body(self) :
+        if not 'N_NO' in session : return self.moveto('board/login')
+        self.D['Mode'] = 'add_body'
+        self.D['No'] = self.gets['no']
+        self.D['Brother']  = int(self.gets.get('brother','0')) 
+        self.D['Form_act'] = self.D['_bse'] + 'boards-action/save/' + self.D['bid']
+        o_no = self.D['Brother'] if self.D['Brother'] > 0 else self.D['No']
+        sql = f"SELECT add0 FROM h_{self.parm[0]}_board WHERE no={o_no}"
+        self.D['B_title'] = self.DB.one(sql)
+        self.D['Form_act'] += "/no=" + self.D['No']
+        self.D['MustCheck'] = "'add0','추가 타이틀'"
+        if self.D['BCONFIG']['width'] : w_width  = int( (self.D['BCONFIG']['width']).replace('px','') )
+        else : w_width = 815
+        self.D['w_width1'] = str(w_width + 80)+'px'
+        self.D['w_width2'] = str(w_width) + 'px'
+        D={'skin': self.skin + '/write/' + self.D['BCONFIG']['sub_write']}
+        return self.echo(D)
+
     def modify(self,mode='modify') :
         if not 'N_NO' in session : return self.moveto('board/login')
         self.D['Mode'] = 'modify'
