@@ -154,7 +154,7 @@ class 쓰기_VICTORY(SKIN) :
             self.M['변동수량'] = -self.M['매도수량'] 
             self.M['진행상황'] = '전량매도' 
             수익금액 = self.M['매도금액'] - self.M['현매수금']
-            self.M['회복전략'] = 0 if 수익금액 > 0 else 10
+            self.M['회복전략'] = 0 if 수익금액 > 0 else 12
             self.M['진행상황'] = f"{수익금액:,.2f}"
             self.M['경과일수'] = 0
             self.M['시즌'] += 1
