@@ -108,7 +108,7 @@ class 쓰기_VICTORY(SKIN) :
         # 매매전략 가져오기
         self.M['매매전략'] = 'VICTORY'
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.M['매매전략']}'")
-        self.S = self.DB.get_line('add2,add3,add4,add5,add9,add10,add11,add17,add18,add25')
+        self.S = self.DB.get_line('add2,add3,add4,add5,add9,add10,add11,add17,add18,add22,add25')
         self.M['분할횟수']  = int(self.S['add2'])
         self.D['비중조절']  = 1 + float(self.S['add3'])/100   # 매매일수 에 따른 구매수량 가중치
         self.M['평단가치']  = 1 + float(self.S['add4'])/100   # 일반매수 구매가 범위
@@ -154,7 +154,7 @@ class 쓰기_VICTORY(SKIN) :
             self.M['변동수량'] = -self.M['매도수량'] 
             self.M['진행상황'] = '전량매도' 
             수익금액 = self.M['매도금액'] - self.M['현매수금']
-            self.M['회복전략'] = 0 if 수익금액 > 0 else 12
+            self.M['회복전략'] = 0 if 수익금액 > 0 else self.S['add22']
             self.M['진행상황'] = f"{수익금액:,.2f}"
             self.M['경과일수'] = 0
             self.M['시즌'] += 1
