@@ -212,10 +212,12 @@ class M_backtest_GAIN(Model) :
         self.M['진행상황'] = '매도대기'
         
         # 매도가격 결정
+        오늘날수 = self.M['날수'] + 1
         매도가격 = self.M['평균단가'] * self.M['첫매가치']
+
         if self.M['매수단계'] in ('매수제한','매수중단') : 매도가격 = self.M['평균단가'] * self.M['둘매가치']
-        if self.M['손실회수'] and self.M['날수'] +1  <= self.M['회수기한'] : 매도가격 = self.M['평균단가'] * self.M['전화위복']
-        if self.M['날수']+1 >= self.M['강매시작'] : 매도가격 = self.M['평균단가'] * self.M['강매가치']
+        if self.M['손실회수'] and 오늘날수 <= self.M['회수기한'] : 매도가격 = self.M['평균단가'] * self.M['전화위복']
+        if 오늘날수 >= self.M['강매시작'] : 매도가격 = self.M['평균단가'] * self.M['강매가치']
         
         if  self.M['당일종가'] >=  매도가격  : 
             self.M['매도수량'] =  self.M['보유수량']
