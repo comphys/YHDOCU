@@ -269,7 +269,7 @@ class 쓰기_VICTORY(SKIN) :
         # 매매상황
         ud['add18'] = self.M['진행상황']
         # 매매전략
-        if self.M['전매수가'] >= self.M['전매도가'] : self.M['전매수가'] = self.M['전매도가'] - 0.01
+        if self.M['경과일수'] !=0 and self.M['전매수가'] >= self.M['전매도가'] : self.M['전매수가'] = self.M['전매도가'] - 0.01
         ud['sub1'] = self.M['시즌'];      ud['sub12'] = self.M['경과일수']
         ud['sub4'] = self.M['일매수금'];  ud['sub18'] = self.M['기초수량']
         ud['sub2'] = self.M['전매수량'];  ud['sub19'] = f"{self.M['전매수가']:,.2f}"

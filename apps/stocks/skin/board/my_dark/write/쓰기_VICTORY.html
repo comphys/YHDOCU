@@ -19,8 +19,10 @@
 				<input type='text' name='add0' class="i-date" style="width:120px;text-align:center" value="{{D['today']}}">
 				{% endif %}
             </div>
-            <button class="btn btn-blue" onclick="auto_calculate();return false">자동계산</button>&nbsp;&nbsp;
-            <button class="btn btn-blue-s4" onclick="auto_reset();return false">리셋하기</button>&nbsp;&nbsp;
+			<div class="btn-group">
+				<a class="btn btn-blue-s2" onclick="auto_calculate();return false"><i class="fa fa-font" title="자동계산하기"></i></a>
+				<a class="btn btn-blue-s2" onclick="auto_reset();return false"><i class="fa fa-undo" title="되돌리기"></i></a>
+			  </div>
         </td>
     </tr>
 	<tr>
