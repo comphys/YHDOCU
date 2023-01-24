@@ -167,7 +167,7 @@ class 목록_VICTORY(SKIN) :
                             if profit > 0 : tx[key] = f"<td class='list-bulls'>{profit:,.2f}</td>"
                             else : tx[key] = f"<td class='list-bears'>{profit:,.2f}</td>"
                         else : tx[key] = f"<td style='text-align:right;' class='list-add'>{txt}</td>"
-                        tx[key] += f"<td style='text-align:right;color:gray'>{item['sub33']}</td>"
+                        tx[key] += f"<td style='text-align:right;color:#BDBDBD'>{item['sub33']}</td>"
                         
                     else : 
                         if self.D['EXALIGN'][key]  : style   = f"text-align:{self.D['EXALIGN'][key]};"
