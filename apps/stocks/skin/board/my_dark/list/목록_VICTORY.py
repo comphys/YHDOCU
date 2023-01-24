@@ -132,7 +132,7 @@ class 목록_VICTORY(SKIN) :
 
                 if int(item['no']) == int(self.D['No']) : self.D['cno'] = idx ; cno = True 
                 else : cno = False
-
+                
                 for key in self.D['list_order'] :
 
                     style=clas=tmp=''
@@ -148,7 +148,7 @@ class 목록_VICTORY(SKIN) :
                     elif key == 'add11' : 
                         if txt > '0' : tx[key] = f"<td class='list-bears'>{float(txt):,.2f}</td>"
                         else : tx[key] = f"<td class='list-normal'>0.00</td>"
-                    
+                        
                     elif key == 'add0'  : 
                         if self.D['EXCOLOR']['add0'] : style = f"style='color:{self.D['EXCOLOR']['add0']}'"
                         
@@ -167,7 +167,8 @@ class 목록_VICTORY(SKIN) :
                             if profit > 0 : tx[key] = f"<td class='list-bulls'>{profit:,.2f}</td>"
                             else : tx[key] = f"<td class='list-bears'>{profit:,.2f}</td>"
                         else : tx[key] = f"<td style='text-align:right;' class='list-add'>{txt}</td>"
-
+                        tx[key] += f"<td style='text-align:right;color:gray'>{item['sub33']}</td>"
+                        
                     else : 
                         if self.D['EXALIGN'][key]  : style   = f"text-align:{self.D['EXALIGN'][key]};"
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"

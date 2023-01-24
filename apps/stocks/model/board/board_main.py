@@ -17,6 +17,7 @@ class M_board_main(Model) :
         self.D['Searchplus'] = searchplus
 
         self.D['list_order'] = self.D['BCONFIG']['list_order'].replace('subject','add0').split('/')
+   
 
         USE_KEY = []
         NOT_KEY = []
@@ -25,7 +26,8 @@ class M_board_main(Model) :
             if self.D['BCONFIG'][key] :  USE_KEY.append(key)
             else : NOT_KEY.append(key)
 
-        self.D['list_full'] = 'no,brother,tle_color,uid,uname,reply,hit,wdate,mdate,'+','.join(USE_KEY)
+        self.D['list_full']  = 'no,brother,tle_color,uid,uname,reply,hit,wdate,mdate,'+','.join(USE_KEY)
+        if self.D['BCONFIG']['list_sub'] : self.D['list_full'] += ','+ self.D['BCONFIG']['list_sub'].replace('/',',') 
 
         self.D['EXTITLE'] = {} ; self.D['EXFTYPE'] = {} ; self.D['EXALIGN'] = {} ; self.D['EXCOLOR'] = {} ; 
         self.D['EXFORMA'] = {} ; self.D['EXWIDTH'] = {} ; self.D['MustCheck'] = []
