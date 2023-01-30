@@ -22,6 +22,7 @@
 			<div class="btn-group">
 				<a class="btn btn-blue-s2" onclick="auto_calculate();return false"><i class="fa fa-font" title="자동계산하기"></i></a>
 				<a class="btn btn-blue-s2" onclick="auto_reset();return false"><i class="fa fa-undo" title="되돌리기"></i></a>
+				<a class="btn btn-blue-s3" onclick="money_inout();return false"><i class="fa fa-money" title="입출금기록"></i></a>
 			  </div>
         </td>
     </tr>
@@ -573,6 +574,39 @@ function show_unit_buy(opt) {
 	if(opt == 1) { div = txt_to_num('add11','f')} else {div = txt_to_num('add12','f')}
 	
 	h_dialog.notice((div/n).toFixed(2))
+}
+
+function money_inout() {
+	let 입금     = txt_to_num('add1','f');
+    let 출금     = txt_to_num('add2','f');
+	let 잔액     = txt_to_num('add3','f');
+	let 가치1    = txt_to_num('add9','f');
+	let 가치2    = txt_to_num('add15','f');
+	let 입금합계 = txt_to_num('sub25','f');
+	let 출금합계 = txt_to_num('sub26','f');
+	let 현투자금 = txt_to_num('sub27','f');
+
+	잔액 = 잔액 + 입금 - 출금
+	입금합계 += 입금
+	출금합계 += 출금
+	현투자금 = 입금합계 - 출금합계
+	현재가치 = 잔액 + 가치1 + 가치2
+    비중1 = (잔액/현재가치*100).toFixed(2);
+    비중2 = (가치1/현재가치*100).toFixed(2);
+    비중3 = (가치2/현재가치*100).toFixed(2);
+	현수익률 = ((현재가치 / 현투자금 - 1) * 100).toFixed(1);
+	현재가치 = 현재가치.toFixed(2);
+	
+	$("input[name='add3']").val(잔액).comma('init');
+	$("input[name='add17']").val(현재가치).comma('init');
+	$("input[name='add4']").val(비중1).comma('init');
+    $("input[name='add10']").val(비중2).comma('init');
+    $("input[name='add16']").val(비중3).comma('init');
+	$("input[name='sub25']").val(입금합계).comma('init');
+	$("input[name='sub26']").val(출금합계).comma('init');
+	$("input[name='sub27']").val(현투자금).comma('init');
+	$("input[name='sub28']").val(현수익률).comma('init');
+	
 }
 </script>
 {% endblock %}
