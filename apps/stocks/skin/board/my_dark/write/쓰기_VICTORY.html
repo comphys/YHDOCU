@@ -22,7 +22,8 @@
 			<div class="btn-group">
 				<a class="btn btn-blue-s2" onclick="auto_calculate();return false"><i class="fa fa-font" title="자동계산하기"></i></a>
 				<a class="btn btn-blue-s2" onclick="auto_reset();return false"><i class="fa fa-undo" title="되돌리기"></i></a>
-				<a class="btn btn-blue-s3" onclick="money_inout();return false"><i class="fa fa-money" title="입출금기록"></i></a>
+				<a class="btn btn-blue-s4" onclick="money_inout();return false"><i class="fa fa-bank" title="입출금기록"></i></a>
+				<a class="btn btn-blue-s4" onclick="money_realloc();return false"><i class="fa fa-handshake-o" title="일매수금 재산정"></i></a>
 			  </div>
         </td>
     </tr>
@@ -608,5 +609,36 @@ function money_inout() {
 	$("input[name='sub28']").val(현수익률).comma('init');
 	
 }
+
+function money_realloc() {
+	let 잔액      = txt_to_num('add3','i');
+	let 배당주    = txt_to_num('add9','i');
+	let 레버리지  = txt_to_num('sub17','i');
+	let 종가2    = txt_to_num('add14','f');
+	
+	합계 = 잔액 + 배당주 + 레버리지
+	가용잔액 = 합계 * 2/3
+	추가자금 = 합계 - 가용잔액
+
+	가용잔액 = Math.floor(가용잔액/10) * 10
+	추가자금 = Math.floor(추가자금/10) * 10
+	일매수금 = Math.round(가용잔액 / 종가2)
+	기초수량 = Math.ceil(일매수금/종가2)
+
+	가용잔액 = 가용잔액 - 배당주 - 레버리지
+	if(가용잔액 < 0) {  추가자금 = 추가자금 + 가용잔액; 가용잔액 = 0}
+
+	가용잔액 = 가용잔액.toFixed(2)
+	추가자금 = 추가자금.toFixed(2)
+	
+	bd = txt_to_num('sub12','i') 
+	매수수량 = Math.ceil(기초수량*(bd*1.25 +1))
+
+ 	$("input[name='add19']").val(가용잔액).comma('init');
+ 	$("input[name='add20']").val(추가자금).comma('init');
+ 	$("input[name='sub4']").val(일매수금).comma('init');
+ 	$("input[name='sub18']").val(기초수량).comma('init');
+	 $("input[name='sub2']").val(매수수량).comma('init');
+ }
 </script>
 {% endblock %}
