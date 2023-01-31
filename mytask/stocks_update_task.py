@@ -18,11 +18,8 @@ class SU :
             my.post_slack(self.skey,message)
             return
 
-        codes = ['SOXL','JEPQ']
-
-        for cdx in codes :
-            self.update_fdr(cdx)
-            time.sleep(3)
+        self.update_fdr('soxl')
+        self.update_fdr('jepq')
 
         self.DB.close()
 
