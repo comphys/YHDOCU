@@ -27,12 +27,11 @@ class SU :
         my.post_slack(self.skey,message)
 
     def update_fdr(self,cdx) :
-
+        cdx = cdx.upper()
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.DB.get("max(add0)",many=1,assoc=False)
-        e_date = my.timestamp_to_date(opt=7)
 
-        df = fdr.DataReader(cdx,start=b_date, end=e_date)
+        df = fdr.DataReader(cdx,start=b_date)
         df['Str_Date'] = df.index.strftime('%Y-%m-%d')
 
         df['Up']     = 0
@@ -61,7 +60,6 @@ class SU :
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
         time_now = my.now_timestamp()
-        cdx = cdx.upper()
 
         for row in ohlc :
             row2 = list(row)
