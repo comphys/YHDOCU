@@ -141,6 +141,19 @@
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(2)}});
 var notice_popup = false;
+
+$(".list-bears2").click(function() {
+	
+	if( notice_popup ) {h_dialog.close("POP_INFO"); notice_popup = null; return;} 
+	else {	
+			notice_popup = true
+			let ckday = $(this).parent().children(":first").text();
+			var url = uri('linkurl') + 'boards-stock_longterm_info/get_exinfo/tbl={{D['tbl']}}/ckday='+ckday;
+			var o = {id:'POP_INFO', width: '320px', x:940, y:mouse_Y-10,header:false,footer:false,drag:true}
+			h_dialog.load(url,o);
+		}	
+});
+
 function popup_notice(option,size) {
 	if( notice_popup ) {
 			h_dialog.close("POP_INFO"); 

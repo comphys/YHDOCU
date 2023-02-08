@@ -19,6 +19,7 @@
 .list-hit  { text-align:center;}
 .list-bulls {text-align:right; font-weight:bold; color:#ffc4c4}
 .list-bears {text-align:right; font-weight:bold; color:#c1e0ff}
+.list-bears2 {text-align:right; font-weight:bold; color:#c1e0ff;cursor:pointer}
 .list-normal {text-align:right}
 #list-sum {font-weight:bold;background-color:darkslategray;text-align:right;color:bisque; }
 #list-filter {font-weight:bold;background-color:#1e2025;text-align:center;color:bisque;}
