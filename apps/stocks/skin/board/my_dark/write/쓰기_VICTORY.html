@@ -172,8 +172,8 @@
 				<input type='text' name='sub6' class="i-number" style="width:100px;" value="{{D['BODY']['sub6']}}">
 			</div>
 			<div class='i-input-div-choice2'>
-				<div class='write-input-server'>진행상황</div>
-				<input type='text' name='add18' class="i-text" style="width:110px;text-align:right" value="{{D['BODY']['add18']}}">
+				<div class='write-input-server'>현재손익</div>
+				<input type='text' name='add18' class="i-number" style="width:110px;text-align:right" value="{{D['BODY']['add18']}}">
 			</div>
 			<div class='i-input-div-choice2'>
 				<div class='write-input-server'>회복전략</div>
@@ -254,15 +254,15 @@
 			</div>
 			<br><br>
 			<div class='i-input-div-choice'>
-				<div class='write-input-server'>일증가율</div>
-				<input type='text' name='sub29' class="i-number" style="width:100px;" value="{{D['BODY']['sub29']}}">
+				<div class='write-input-server'>진행상황</div>
+				<input type='text' name='sub29' class="i-text" style="width:100px;" value="{{D['BODY']['sub29']}}">
 			</div>
 			<div class='i-input-div-choice'>
-				<div class='write-input-server'>목표가치</div>
+				<div class='write-input-server'>추가정보</div>
 				<input type='text' name='sub30' class="i-number" style="width:100px;" value="{{D['BODY']['sub30']}}">
 			</div>
 			<div class='i-input-div-choice'>
-				<div class='write-input-server'>허용범위</div>
+				<div class='write-input-server'>추가정보</div>
 				<input type='text' name='sub31' class="i-number" style="width:110px;" value="{{D['BODY']['sub31']}}">
 			</div>
 			<div class='i-input-div-choice'>
@@ -438,7 +438,7 @@ function auto_calculate() {
     let 비중2 = (가치1/현재가치*100).toFixed(2);
     let 비중3 = (가치2/현재가치*100).toFixed(2);
 
-    잔액  = 잔액.toFixed(2)
+	잔액  = 잔액.toFixed(2)
     가치1 = 가치1.toFixed(2)
     가치2 = 가치2.toFixed(2)
     현재가치 = 현재가치.toFixed(2)
@@ -498,7 +498,7 @@ function auto_calculate() {
     $("input[name='add10']").val(비중2).comma('init');
     $("input[name='add16']").val(비중3).comma('init');
 	$("input[name='add17']").val(현재가치).comma('init');
-
+	if(parseFloat(가치2)) { 현재손익 = parseFloat(가치2) - parseFloat(현매수금2); 현재손익=현재손익.toFixed(2);	$("input[name='add18']").val(현재손익).comma('init');}
 	$("input[name='sub4']").val(일매수금).comma('init');
 	$("input[name='sub11']").val(배당합계).comma('init');
 	$("input[name='sub14']").val(매수누적2).comma('init');

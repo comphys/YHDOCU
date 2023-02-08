@@ -114,9 +114,6 @@ class 목록_VICTORY(SKIN) :
             self.D['예상이익'] = f"{(float(self.D['매도예상'].replace(',','')) - float(LD['sub17'].replace(',',''))):,.2f}"
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
-            self.D['목표가치'] = f"{int(LD['sub30']):,}"
-            가치차이 = int(float(LD['add17'])-float(LD['sub30']))
-            self.D['가치차이'] = f"▲ {가치차이:,}$" if 가치차이 > 0  else f"▼ {가치차이:,}$"
 
 
     def list(self) :

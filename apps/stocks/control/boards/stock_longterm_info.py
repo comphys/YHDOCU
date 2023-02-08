@@ -5,13 +5,13 @@ class Stock_longterm_info(Control) :
     def _auto(self) :
         self.DB = self.db('stocks')
         self.tbl = self.gets['tbl']
+    
     def get_exinfo(self) :
         ckday = self.gets['ckday']
         self.DB.tbl, self.DB.wre = (self.tbl,f"add0='{ckday}'")
-        res = self.DB.get_line('add15,sub17')
-        현재가치 = float(res['add15'])
+        res = self.DB.get_line('add18,sub17')
         현매수금 = float(res['sub17'])
-        현재손익 = 현재가치 - 현매수금
+        현재손익 = float(res['add18'])
         output  = "<div style='text-align:center;font-weight:bold;color:#F7F8E0;background-color:black;padding:10px' ondblclick=\"h_dialog.close('POP_INFO')\">"
         output += f"<div>총매수금 : {현매수금:,.2f} &nbsp; 수익현황 : {현재손익:,.2f}</div>"
         output += "</div>"

@@ -128,6 +128,7 @@ class 쓰기_VICTORY(SKIN) :
         self.M['매도수량'] = 0
         self.M['전매도량'] = 0
         self.M['전매도가'] = 0.0
+        self.M['현재손익'] = 0.0
 
         self.M['시즌'] = int(LD['sub1'])
         self.M['평균단가'] = float(LD['sub16'])
@@ -147,6 +148,7 @@ class 쓰기_VICTORY(SKIN) :
 
         매도가격 = self.M['당일종가']
         매수가격 = self.M['당일종가']
+
         if self.M['보유수량'] : self.M['경과일수'] +=1
 
         if  self.M['매도수량'] :
@@ -155,7 +157,7 @@ class 쓰기_VICTORY(SKIN) :
             self.M['진행상황'] = '전량매도' 
             수익금액 = self.M['매도금액'] - self.M['현매수금']
             self.M['회복전략'] = 0 if 수익금액 > 0 else self.S['add22']
-            self.M['진행상황'] = f"{수익금액:,.2f}"
+            self.M['현재손익'] = f"{수익금액:,.2f}"
             self.M['경과일수'] = 0
             self.M['시즌'] += 1
             self.M['기초수량'] = 0           
@@ -267,7 +269,8 @@ class 쓰기_VICTORY(SKIN) :
         if self.M['매수금액'] : ud['sub9'] =  self.M['매수수량']
         if self.M['매도금액'] : ud['sub9'] = -self.M['매도수량']
         # 매매상황
-        ud['add18'] = self.M['진행상황']
+        ud['add18'] = self.M['현재손익']
+        ud['sub29'] = self.M['진행상황']
         # 매매전략
         if self.M['경과일수'] !=0 and self.M['전매수가'] >= self.M['전매도가'] : self.M['전매수가'] = self.M['전매도가'] - 0.01
         ud['sub1'] = self.M['시즌'];      ud['sub12'] = self.M['경과일수']
@@ -278,11 +281,7 @@ class 쓰기_VICTORY(SKIN) :
         ud['add19'] = f"{round(self.M['가용잔액'],4):,.2f}"
         ud['add20'] = f"{round(self.M['추가자금'],4):,.2f}"
         # 투자목표
-        ud['sub29'] = LD['sub29']
-        diff_day = my.diff_day(LD['add0'], self.M['진행일자'])
-        target_value = math.ceil(int(LD['sub30']) * (1+float(LD['sub29']))**diff_day)
-        ud['sub30'] = f"{target_value:,}"
-        ud['sub31'] = LD['sub31']
+        # ud['sub31'] = LD['sub31']
         ud['sub32'] = LD['sub32']
         return ud
 
