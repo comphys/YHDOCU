@@ -1,6 +1,5 @@
 from system.core.load import SKIN
 import system.core.my_utils as my
-import math
 
 class 쓰기_VICTORY(SKIN) :
 
@@ -193,14 +192,14 @@ class 쓰기_VICTORY(SKIN) :
             self.M['전매도가']  =  self.M['당일종가']
             return
 
-        매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
-        매도단가 = self.M['평균단가'] * self.M['첫매가치']  if self.M['평균단가'] else self.M['당일종가']
+        매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
+        매도단가 = my.round_up(self.M['평균단가'] * self.M['첫매가치'])  if self.M['평균단가'] else self.M['당일종가']
 
         if (매수수량 * self.M['전일종가']) > self.M['가용잔액'] + self.M['추가자금'] : 
-            매도단가 = self.M['평균단가']*self.M['둘매가치']
-        if self.M['회복전략'] and self.M['경과일수'] +1 <= self.M['회복기한'] : 매도단가 = self.M['평균단가']* (1+self.M['회복전략']/100)
+            매도단가 = my.round_up(self.M['평균단가']*self.M['둘매가치'])
+        if self.M['회복전략'] and self.M['경과일수'] +1 <= self.M['회복기한'] : 매도단가 = my.round_up(self.M['평균단가']* (1+self.M['회복전략']/100))
 
-        if self.M['경과일수']+1 >= self.M['강매시작'] : 매도단가 = self.M['평균단가']*self.M['강매가치']
+        if self.M['경과일수']+1 >= self.M['강매시작'] : 매도단가 = my.round_up(self.M['평균단가']*self.M['강매가치'])
 
         self.M['전매도량'] = self.M['보유수량']
         self.M['전매도가'] = round(매도단가,2)
@@ -208,12 +207,12 @@ class 쓰기_VICTORY(SKIN) :
     def normal_buy(self)  :
 
         if  self.M['경과일수'] == 0 :
-            self.M['기초수량'] = self.M['전매수량'] = math.ceil(self.M['일매수금']/self.M['당일종가'])
-            self.M['전매수가'] = self.M['당일종가'] * self.M['큰단가치']
+            self.M['기초수량'] = self.M['전매수량'] = my.ceil(self.M['일매수금']/self.M['당일종가'])
+            self.M['전매수가'] = round(self.M['당일종가'] * self.M['큰단가치'],2)
             return
 
-        매수단가 = self.M['당일종가'] * self.M['평단가치']
-        매수수량 = math.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
+        매수단가 = round(self.M['당일종가'] * self.M['평단가치'],2)
+        매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
 
         if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 
             매수수량 = self.M['기초수량'] * self.M['위매비중']
@@ -235,7 +234,7 @@ class 쓰기_VICTORY(SKIN) :
     def check_buy(self) :
         if  not self.M['경과일수'] : 
             if  self.M['당일종가'] <= float(self.M['LD']['sub19']) :
-                self.M['매수수량']  = self.M['기초수량'] = math.ceil(self.M['일매수금']/self.M['전일종가'])  # 첫날에만 기초수량 재산정
+                self.M['매수수량']  = self.M['기초수량'] = my.ceil(self.M['일매수금']/self.M['전일종가'])  # 첫날에만 기초수량 재산정
         else :
             if  self.M['당일종가'] <= float(self.M['LD']['sub19']) : self.M['매수수량']  = int(self.M['LD']['sub2'])
 

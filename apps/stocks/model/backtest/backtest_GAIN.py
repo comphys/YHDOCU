@@ -1,7 +1,6 @@
 from system.core.load import Model
 from datetime import datetime,date
 import system.core.my_utils as my
-import math
 
 class M_backtest_GAIN(Model) :
 
@@ -98,11 +97,11 @@ class M_backtest_GAIN(Model) :
         
     def buy_step(self)   :
         self.M['날수'] += 1
-        매수수량 = math.ceil(self.M['기초수량'] * (self.M['날수']*self.M['비중조절'] + 1))
+        매수수량 = my.ceil(self.M['기초수량'] * (self.M['날수']*self.M['비중조절'] + 1))
         매수금액 = 매수수량 * self.M['당일종가'] 
 
         if  매수금액 > self.M['자산총액']   :
-            매수수량 = math.ceil(self.M['기초수량'] * self.M['위매비중'])
+            매수수량 = my.ceil(self.M['기초수량'] * self.M['위매비중'])
             매수금액 = 매수수량 * self.M['당일종가']
             self.M['매수단계'] = '매수제한' 
             
@@ -127,7 +126,6 @@ class M_backtest_GAIN(Model) :
         self.M['거래코드']  = ' '
         self.M['최대날자']  = ' '
         self.M['수익누적']  = 0.0
-        self.M['매수금지']  = False
 
         self.M['날수'] = 0
         self.M['진행'] = 0
@@ -167,17 +165,14 @@ class M_backtest_GAIN(Model) :
         self.M['자본비율'] = self.M['가용잔액'] / self.M['자산총액'] 
 
         # 챠트작성
-        self.D['close_price'] = []
-        self.D['average_price'] = []
-        self.D['total_value'] = []
-        self.D['chart_date'] = []
+        self.D['close_price'] = []; self.D['average_price'] = []; self.D['total_value'] = []; self.D['chart_date'] = []
 
     def new_day(self) :
         self.M['기록시즌'] += 1
         self.M['수익누적']  = 0.0
 
         self.M['평균단가']  = self.M['당일종가']
-        self.M['매수수량']  = math.ceil(self.M['일매수금']/self.M['전일종가'])
+        self.M['매수수량']  = my.ceil(self.M['일매수금']/self.M['전일종가'])
         self.M['기초수량']  = self.M['매수수량'] 
 
         if  self.M['당일종가'] <  self.M['전일종가'] * self.M['큰단가치'] : 
@@ -198,12 +193,23 @@ class M_backtest_GAIN(Model) :
             return True
         else : return False
 
+    def set_price(self) :
+        self.days = self.M['날수'] + 1
+        self.buy_price = round(self.M['전일종가']*self.M['평단가치'],2)
+        
+        self.sell_price = my.round_up(self.M['평균단가'] * self.M['첫매가치'])
+        if self.M['매수단계'] in ('매수제한','매수중단') : self.sell_price = my.round_up(self.M['평균단가'] * self.M['둘매가치'])
+        if self.M['손실회수'] and self.days <= self.M['회수기한'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['전화위복'])
+        if self.days >= self.M['강매시작'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['강매가치'])
+
+        if self.buy_price >= self.sell_price : self.buy_price = self.sell_price - 0.01 
+
     def normal_buy(self) :
-        if  self.M['매수금지'] : return
-        if  self.M['당일종가']<= round(self.M['전일종가'] * self.M['평단가치'],2) : 
+
+        if  self.M['당일종가']<= self.buy_price : 
             self.M['매수수량'] = self.M['구매수량']
             거래코드 = 'L' if self.M['매수단계'] is '매수제한' else 'B'
-            self.M['거래코드'] = 거래코드 + str(self.M['날수']+1) if self.M['구매수량'] else ' '
+            self.M['거래코드'] = 거래코드 + str(self.days) if self.M['구매수량'] else ' '
             self.M['매수금액'] = self.M['매수수량'] * self.M['당일종가']
             self.M['진행상황'] = self.M['매수단계']
         
@@ -211,25 +217,18 @@ class M_backtest_GAIN(Model) :
         
         self.M['진행상황'] = '매도대기'
         
-        # 매도가격 결정
-        오늘날수 = self.M['날수'] + 1
-        매도가격 = self.M['평균단가'] * self.M['첫매가치']
-
-        if self.M['매수단계'] in ('매수제한','매수중단') : 매도가격 = self.M['평균단가'] * self.M['둘매가치']
-        if self.M['손실회수'] and 오늘날수 <= self.M['회수기한'] : 매도가격 = self.M['평균단가'] * self.M['전화위복']
-        if 오늘날수 >= self.M['강매시작'] : 매도가격 = self.M['평균단가'] * self.M['강매가치']
-        
-        if  self.M['당일종가'] >=  매도가격  : 
+        if  self.M['당일종가'] >=  self.sell_price  : 
             self.M['매도수량'] =  self.M['보유수량']
             self.M['진행상황'] = '전량매도' 
-            if self.M['당일종가'] < self.M['평균단가'] : 
+
+            if  self.M['당일종가'] < self.M['평균단가'] : 
                 self.M['진행상황'] = '전략매도'
                 self.M['손실회수'] = True
             else :
                 self.M['손실회수'] = False
 
             self.M['매도금액'] = self.M['당일종가'] * self.M['매도수량']
-            self.M['매수금지'] = True
+
                
     def test_it(self) :
 
@@ -242,7 +241,7 @@ class M_backtest_GAIN(Model) :
             self.M['당일종가'] = float(BD['add3'])
             self.M['전일종가'] = float(self.B[idx-1]['add3'])  
             self.M['전속하락'] = int(self.B[idx-1]['add10']) 
-            self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
+            self.set_value(['매도수량','매도금액','매수수량','매수금액'],0)
             self.M['거래코드'] = ' '
 
             if  idx == idxx + 1 or self.M['첫날기록'] : 
@@ -254,9 +253,9 @@ class M_backtest_GAIN(Model) :
                     self.M['첫날기록'] = True
                     continue
             
+            self.set_price()
             self.normal_sell()
             self.normal_buy()
-            self.M['매수금지'] = False
 
         #   결과정리 --------------------------------------------------------------------------------------------------
             self.M['연속하락'] = int(BD['add10'])
@@ -266,6 +265,10 @@ class M_backtest_GAIN(Model) :
         # endfor -----------------------------------------------------------------------------------------------------
         self.result()
     
+    def set_value(self,key,val) :
+        for k in key :
+            self.M[k] = val
+
     def test_with_progress(self) :
         self.test_it()
 
@@ -322,3 +325,4 @@ class M_backtest_GAIN(Model) :
 
         self.D['init_capital'] = int(self.D['capital'].replace(',',''))
         self.D['addition'] = int(self.D['addition'].replace(',','')) if self.D['addition'] else 0
+

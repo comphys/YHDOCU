@@ -1,7 +1,16 @@
 import os, re, json,urllib.request as ul 
-import shutil
+import shutil,math
 from datetime import datetime, timedelta
 from pytz import timezone
+
+# number
+
+def round_up(n,decimals=2) :
+    multiplier = 10 ** decimals
+    return math.ceil(n * multiplier) / multiplier
+
+def ceil(n) :
+    return math.ceil(n)
 
 # 파일조작 관련 함수 
 def file_split(filename) :
