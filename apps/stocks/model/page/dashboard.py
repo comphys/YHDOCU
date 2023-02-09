@@ -5,14 +5,10 @@ class M_dashboard(Model) :
     def view(self) :
 
         # 조회목록
-        self.D['CATEGORY'] = ['전체시즌','분할매수']
+        self.D['CATEGORY'] = ['분할매수']
 
-        self.D['전체시즌'] = {}
         self.D['분할매수'] = {}
  
-        self.D['전체시즌']['SOXL'] = ['h_myJVA_board','VR',1,17526]
-        self.D['전체시즌']['TQQQ'] = ['h_myOLT_board','VR',1,0]
-
         self.D['분할매수']['가상계좌'] = ['h_daily_virtual_board','IFB',1,8030]
         self.D['분할매수']['첫째계좌'] = ['h_daily_first_board','IFB',1,5377]
         self.D['분할매수']['둘째계좌'] = ['h_daily_second_board','IFB',1,5200]

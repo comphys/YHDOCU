@@ -203,9 +203,20 @@ class M_backtest_GAIN2(Model) :
             return True
         else : return False
 
+    def set_price(self) :
+        self.days = self.M['날수'] + 1
+        self.buy_price = round(self.M['전일종가']*self.M['평단가치'],2)
+        
+        self.sell_price = my.round_up(self.M['평균단가'] * self.M['첫매가치'])
+        if self.M['매수단계'] in ('매수제한','매수중단') : self.sell_price = my.round_up(self.M['평균단가'] * self.M['둘매가치'])
+        if self.M['손실회수'] and self.days <= self.M['회수기한'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['전화위복'])
+        if self.days >= self.M['강매시작'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['강매가치'])
+
+        if self.buy_price >= self.sell_price : self.buy_price = self.sell_price - 0.01
+
     def normal_buy(self) :
         if  self.M['매수단계'] == '매수중단' and self.M['중간정산'] :
-            매수금액 = round(self.M['평균단가'] * 0.8,2)
+            매수금액 = round(self.M['평균단가'] * 0.9,2)
             매수수량 = int(self.M['중간정산'] / 매수금액)
             if self.M['당일종가'] <= 매수금액 :
                 self.M['거래코드'] = '전략적매수'
@@ -214,27 +225,18 @@ class M_backtest_GAIN2(Model) :
                 self.M['중간정산'] = 0.0
                 return 
 
-        오늘날수 = self.M['날수']+1
         if  self.M['매수금지'] : return
-        if  self.M['당일종가']<= round(self.M['전일종가'] * self.M['평단가치'],2) : 
+        if  self.M['당일종가']<= self.buy_price : 
             self.M['매수수량'] = self.M['구매수량']
             거래코드 = 'L' if self.M['매수단계'] is '매수제한' else 'B'
-            self.M['거래코드'] = 거래코드 + str(오늘날수) if self.M['구매수량'] else ' '
+            self.M['거래코드'] = 거래코드 + str(self.days) if self.M['구매수량'] else ' '
             self.M['매수금액'] = self.M['매수수량'] * self.M['당일종가']
             self.M['진행상황'] = self.M['매수단계']
-            if self.M['중간가격'] == 0.0 and 오늘날수 >= 6 : self.M['중간가격'] = self.M['당일종가'] 
+            if self.M['중간가격'] == 0.0 and self.days >= 6 : self.M['중간가격'] = self.M['당일종가'] 
         
     def normal_sell(self) :
 
-        # 매도가격 결정
-        오늘날수 = self.M['날수'] + 1
-        매도가격 = self.M['평균단가'] * self.M['첫매가치']
-
-        if self.M['매수단계'] in ('매수제한','매수중단') : 매도가격 = self.M['평균단가'] * self.M['둘매가치']
-        if self.M['손실회수'] and 오늘날수 <= self.M['회수기한'] : 매도가격 = self.M['평균단가'] * self.M['전화위복']
-        if 오늘날수 >= self.M['강매시작'] : 매도가격 = self.M['평균단가'] * self.M['강매가치']
-        
-        if  self.M['당일종가'] >=  매도가격  : 
+        if  self.M['당일종가'] >=  self.sell_price  : 
             self.M['매도수량'] =  self.M['보유수량']
             self.M['진행상황'] = '전량매도' 
             if self.M['당일종가'] < self.M['평균단가'] : 
@@ -274,7 +276,8 @@ class M_backtest_GAIN2(Model) :
                 else : 
                     self.M['첫날기록'] = True
                     continue
-            
+
+            self.set_price()
             self.normal_sell()
             self.normal_buy()
             self.M['매수금지'] = False
