@@ -204,11 +204,11 @@ class M_backtest_GAIN2(Model) :
         else : return False
 
     def normal_buy(self) :
-        if  self.M['진행상황'] == '매수중단' and self.M['중간정산'] :
-            매수금액 = round(self.M['평균단가'] * 0.9,2)
+        if  self.M['매수단계'] == '매수중단' and self.M['중간정산'] :
+            매수금액 = round(self.M['평균단가'] * 0.8,2)
             매수수량 = int(self.M['중간정산'] / 매수금액)
             if self.M['당일종가'] <= 매수금액 :
-                self.M['거래코드'] = 'SBUY'
+                self.M['거래코드'] = '전략적매수'
                 self.M['매수수량'] = 매수수량
                 self.M['매수금액'] = self.M['매수수량'] * self.M['당일종가']
                 self.M['중간정산'] = 0.0
@@ -226,12 +226,6 @@ class M_backtest_GAIN2(Model) :
         
     def normal_sell(self) :
 
-        if  self.M['중간가격'] and self.M['중간정산'] ==0.0 and self.M['당일종가'] >= self.M['평균단가'] :
-            self.M['매도수량'] = int(self.M['보유수량']/2)
-            self.M['중간정산'] = self.M['매도금액'] = self.M['당일종가'] * self.M['매도수량']
-            self.M['매수금지'] = True
-            return
-        
         # 매도가격 결정
         오늘날수 = self.M['날수'] + 1
         매도가격 = self.M['평균단가'] * self.M['첫매가치']
@@ -251,6 +245,12 @@ class M_backtest_GAIN2(Model) :
 
             self.M['매도금액'] = self.M['당일종가'] * self.M['매도수량']
             self.M['매수금지'] = True
+        
+        elif self.M['중간가격'] and self.M['중간정산'] ==0.0 and self.M['당일종가'] > self.M['중간가격'] : 
+            self.M['매도수량'] = int(self.M['보유수량']/2)
+            self.M['중간정산'] = self.M['매도금액'] = self.M['당일종가'] * self.M['매도수량']
+            self.M['매수금지'] = True
+            return            
                
     def test_it(self) :
 
