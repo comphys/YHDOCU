@@ -110,6 +110,8 @@ class M_backtest_GAIN(Model) :
 
         # 챠트작성
         self.D['close_price'] = []; self.D['average_price'] = []; self.D['total_value'] = []; self.D['chart_date'] = []
+        self.D['전량횟수'] = 0
+        self.D['전략횟수'] = 0
 
     def new_day(self) :
         self.M['기록시즌'] += 1
@@ -166,9 +168,11 @@ class M_backtest_GAIN(Model) :
         if  self.M['당일종가'] >=  self.sell_price  : 
             self.M['매도수량'] =  self.M['보유수량']
             self.M['진행상황'] = '전량매도' 
+            self.D['전량횟수'] += 1
 
             if  self.M['당일종가'] < self.M['평균단가'] : 
                 self.M['진행상황'] = '전략매도'
+                self.D['전략횟수'] += 1
                 self.M['손실회수'] = True
             else :
                 self.M['손실회수'] = False
