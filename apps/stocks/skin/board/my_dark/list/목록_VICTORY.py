@@ -144,7 +144,7 @@ class 목록_VICTORY(SKIN) :
                         else : tx[key] = f"<td class='list-normal'>0.00</td>"
                     elif key == 'add11' : 
                         if txt > '0' : tx[key] = f"<td class='list-bears2'>{float(txt):,.2f}</td>"
-                        else : tx[key] = f"<td class='list-normal'>0.00</td>"
+                        else : tx[key] = f"<td class='list-normal2'>0.00</td>"
                         
                     elif key == 'add0'  : 
                         if self.D['EXCOLOR']['add0'] : style = f"style='color:{self.D['EXCOLOR']['add0']}'"

@@ -141,7 +141,7 @@ $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_ico
 $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(2)}});
 var notice_popup = false;
 
-$(".list-bears2").click(function() {
+$(".list-bears2,.list-normal2").click(function() {
 	
 	if( notice_popup ) {h_dialog.close("POP_INFO"); notice_popup = null; return;} 
 	else {	

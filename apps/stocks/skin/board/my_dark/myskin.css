@@ -21,6 +21,7 @@
 .list-bears {text-align:right; font-weight:bold; color:#c1e0ff}
 .list-bears2 {text-align:right; font-weight:bold; color:#c1e0ff;cursor:pointer}
 .list-normal {text-align:right}
+.list-normal2 {text-align:right;cursor:pointer}
 #list-sum {font-weight:bold;background-color:darkslategray;text-align:right;color:bisque; }
 #list-filter {font-weight:bold;background-color:#1e2025;text-align:center;color:bisque;}
 #list-filter-submit {cursor:pointer}
