@@ -317,9 +317,16 @@ const data2 = {
 			lineTension:0.2
         },
 		{
+            label:' 평가밸류',
+            data : {{D['eval_value']|safe}},
+            borderColor:'orange', borderWidth:2,pointRadius:0,borderDash:[2,3], 
+			lineTension:0.2,
+			yAxisID : 'y1'
+        },
+		{
             label:' 가치합계',
             data : {{D['total_value']|safe}},
-            borderColor:'yellow', borderWidth:3,pointRadius:0, 
+			borderColor:'yellow', borderWidth:2,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
         },

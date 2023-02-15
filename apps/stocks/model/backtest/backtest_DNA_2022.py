@@ -46,6 +46,7 @@ class M_backtest_DNA_2022(Model) :
 
     def rebalance(self)  :
         total = self.M['가용잔액'] + self.M['추가자본']
+        self.M['평가밸류'] = total
         self.M['가용잔액'] = round(total * self.M['자본비율'])
         self.M['추가자본'] = round(total - self.M['가용잔액'])
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
@@ -107,9 +108,10 @@ class M_backtest_DNA_2022(Model) :
         self.M['자본비율'] = self.M['가용잔액'] / total
 
         # 챠트작성
-        self.D['close_price'] = []; self.D['average_price'] = []; self.D['total_value'] = []; self.D['chart_date'] = []
+        self.D['close_price'] = []; self.D['average_price'] = []; self.D['total_value'] = []; self.D['chart_date'] = []; self.D['eval_value'] = []
         self.D['전량횟수'] = 0
         self.D['전략횟수'] = 0
+        self.M['평가밸류'] = total
 
     def new_day(self) :
         self.M['기록시즌'] += 1
@@ -498,3 +500,4 @@ class M_backtest_DNA_2022(Model) :
         else : self.D['average_price'].append('None')
         self.D['chart_date'].append(self.M['day'][2:])
         self.D['total_value'].append(round(self.M['평가총액'],0))
+        self.D['eval_value'].append(round(self.M['평가밸류'],0))
