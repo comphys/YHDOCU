@@ -1,58 +1,11 @@
 from system.core.load import Model
 from datetime import datetime,date
 import system.core.my_utils as my
-import math,time
+import math
 
 class M_backtest_DNA_2022(Model) :
 
 # 분할 매수를 통한 수익 극대화 전략
-
-    def print_backtest(self) :
-        tx = {}
-        #--------------------------------------------------------
-        self.M['날수'] += 1; self.M['완료일수'] += 1 ; 
-        if self.M['진행상황'] == '첫날거래' : self.M['날수'] = 1
-        tx['날수'] = self.M['날수']
-
-        if self.M['매도수량'] : self.M['날수'] = 0
-        if self.M['진행상황'] == '전량매도' : tx['날수'] = self.M['완료일수']; self.M['완료일수'] = 0
-
-        tx['진행'] = self.M['진행']; tx['기록일자'] = self.M['day']
-        tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
-        #-----------------------------------------------------------
-        tx['매수수량'] = self.M['매수수량'] if self.M['매수수량'] else ' '
-        tx['매수금액'] = f"{round(self.M['매수금액'],4):,.3f}" if self.M['매수금액'] else ' '
-        tx['평균단가'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.4f}</span>"
-        #-----------------------------------------------------------
-        tx['매도수량'] = f"{self.M['매도수량']:,}" if self.M['매도수량'] else ' '
-        tx['매도금액'] = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['거래코드']
-        
-        if  self.M['매도금액'] : 
-            clr = "#F6CECE" if self.M['실현수익'] > 0 else "#CED8F6"
-            tx['실현수익'] = f"<span style='color:{clr}'>{round(self.M['실현수익'],4):,.2f}</span>"
-        else : tx['실현수익'] = self.M['진행상황']
-
-        tx['보유수량'] = self.M['보유수량']
-        tx['총매수금'] = f"{round(self.M['총매수금'],4):,.2f}"
-        자금합계 = f"{round(self.M['추가자본'] + self.M['가용잔액'],4):,.2f}"
-        tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span style='font-weight:bold;color:#CEF6CE'>{자금합계}</span>" 
-        tx['수익현황'] = f"{round(self.M['수익현황'],4):,.2f}"
-
-        clr = "#F6CECE" if self.M['수익률'] > 0 else "#CED8F6"
-        tx['수익률'] = f"<span style='color:{clr}'>{round(self.M['수익률'],4):,.2f}</span>"
-        tx['거래코드'] = self.M['거래코드']
-
-        tx['일매수금'] = f"{self.M['일매수금']:,}"
-        if  self.M['진행상황'] == '전량매도' :
-            tx['가용잔액'] =  f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>전량매도</span>"
-            tx['수익현황'] = f"<span style='font-weight:bold;color:#F6CECE'>{tx['수익현황']}</span>"
-
-        elif self.M['진행상황'] in ('전략매도','부분매도','손절매도') :  
-            tx['가용잔액'] = self.M['진행상황'] 
-        else : 
-            tx['가용잔액'] = 자금합계
-
-        self.D['TR'].append(tx)
 
     def calculate(self)  :
 
@@ -88,6 +41,7 @@ class M_backtest_DNA_2022(Model) :
         if self.M['수익률'] < self.M['MDD'] : self.M['MDD'] = self.M['수익률'] ; self.M['MDD_DAY'] = self.M['day']
 
         self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)
+        self.M['평가총액'] = self.M['가용잔액'] + self.M['추가자본'] + self.M['평가금액']
         
 
     def rebalance(self)  :
@@ -152,6 +106,11 @@ class M_backtest_DNA_2022(Model) :
         total = self.M['가용잔액'] + self.M['추가자본'] 
         self.M['자본비율'] = self.M['가용잔액'] / total
 
+        # 챠트작성
+        self.D['close_price'] = []; self.D['average_price'] = []; self.D['total_value'] = []; self.D['chart_date'] = []
+        self.D['전량횟수'] = 0
+        self.D['전략횟수'] = 0
+
     def new_day(self) :
         self.M['기록시즌'] += 1
         self.M['연속하락']  = self.M['전속하락']
@@ -174,6 +133,7 @@ class M_backtest_DNA_2022(Model) :
         if self.M['연속하락'] : self.M['거래코드']  += str(self.M['연속하락'])
         
         self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)
+        self.M['평가총액'] = self.M['가용잔액'] + self.M['추가자본'] + self.M['평가금액']
 
     # 매수시 최종 리턴 값은 [매수수량], 체결가격은 종가를 따름 
     def base_buy(self)  :
@@ -239,6 +199,7 @@ class M_backtest_DNA_2022(Model) :
         if  self.M['당일종가'] >= 매도가격 : 
             self.M['매도수량'] = self.M['보유수량']
             self.M['진행상황'] = '전량매도' 
+            self.D['전량횟수'] += 1
             
             self.M['매도금액'] = self.M['당일종가'] * self.M['매도수량']
 
@@ -259,6 +220,7 @@ class M_backtest_DNA_2022(Model) :
             self.M['위기전략'] = False
             self.M['진행상황']  = '전략매도'
             self.M['매도금액'] = self.M['당일종가'] * self.M['매도수량']
+            self.D['전략횟수'] += 1
 
         else : self.M['진행상황'] = f"매도:{매도가격:.2f}"
 
@@ -482,3 +444,57 @@ class M_backtest_DNA_2022(Model) :
             self.print_backtest()
         # endfor -----------------------------------------------------------------------------------------------------
         self.result()
+
+    def print_backtest(self) :
+        tx = {}
+        #--------------------------------------------------------
+        self.M['날수'] += 1; self.M['완료일수'] += 1 ; 
+        if self.M['진행상황'] == '첫날거래' : self.M['날수'] = 1
+        tx['날수'] = self.M['날수']
+
+        if self.M['매도수량'] : self.M['날수'] = 0
+        if self.M['진행상황'] == '전량매도' : tx['날수'] = self.M['완료일수']; self.M['완료일수'] = 0
+
+        tx['진행'] = self.M['진행']; tx['기록일자'] = self.M['day']
+        tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
+        #-----------------------------------------------------------
+        tx['매수수량'] = self.M['매수수량'] if self.M['매수수량'] else ' '
+        tx['매수금액'] = f"{round(self.M['매수금액'],4):,.3f}" if self.M['매수금액'] else ' '
+        tx['평균단가'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.4f}</span>"
+        #-----------------------------------------------------------
+        tx['매도수량'] = f"{self.M['매도수량']:,}" if self.M['매도수량'] else ' '
+        tx['매도금액'] = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['거래코드']
+        
+        if  self.M['매도금액'] : 
+            clr = "#F6CECE" if self.M['실현수익'] > 0 else "#CED8F6"
+            tx['실현수익'] = f"<span style='color:{clr}'>{round(self.M['실현수익'],4):,.2f}</span>"
+        else : tx['실현수익'] = self.M['진행상황']
+
+        tx['보유수량'] = self.M['보유수량']
+        tx['총매수금'] = f"{round(self.M['총매수금'],4):,.2f}"
+        자금합계 = f"{round(self.M['추가자본'] + self.M['가용잔액'],4):,.2f}"
+        tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span style='font-weight:bold;color:#CEF6CE'>{자금합계}</span>" 
+        tx['수익현황'] = f"{round(self.M['수익현황'],4):,.2f}"
+
+        clr = "#F6CECE" if self.M['수익률'] > 0 else "#CED8F6"
+        tx['수익률'] = f"<span style='color:{clr}'>{round(self.M['수익률'],4):,.2f}</span>"
+        tx['거래코드'] = self.M['거래코드']
+
+        tx['일매수금'] = f"{self.M['일매수금']:,}"
+        if  self.M['진행상황'] in ('전량매도') :
+            tx['가용잔액'] =  f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>{self.M['진행상황']}</span>"
+            tx['수익현황'] = f"<span style='font-weight:bold;color:#F6CECE'>{tx['수익현황']}</span>"
+
+        elif self.M['진행상황'] in ('전략매도','부분매도','손절매도') :  
+            tx['가용잔액'] = self.M['진행상황'] 
+        else : 
+            tx['가용잔액'] = 자금합계
+
+        self.D['TR'].append(tx)
+
+        # 챠트 기록용
+        self.D['close_price'].append(self.M['당일종가'])
+        if avg_price := round(self.M['평균단가'],2) : self.D['average_price'].append(avg_price)
+        else : self.D['average_price'].append('None')
+        self.D['chart_date'].append(self.M['day'][2:])
+        self.D['total_value'].append(round(self.M['평가총액'],0))
