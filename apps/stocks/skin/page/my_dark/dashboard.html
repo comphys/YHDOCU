@@ -1,11 +1,17 @@
 {% extends D['_skn'] + 'page/my_dark/main_layout_mobile.html' %}
 
 {% block contents_page  %}
-<div style='margin-left:20px;font-size:24px;color:#f0f0ab;font-weight:bold;margin-bottom:10px'>
+<div style='padding-left:20px;font-size:24px;color:#f0f0ab;font-weight:bold;margin-bottom:10px'>
 {{D['오늘날자']}}({{D['오늘요일']}})
 </div>
-<div style="margin-top:10px;margin-left:20px;font-size:20px;font-weight:bold;line-height:30px;">
+<div style="margin-top:10px;padding-left:20px;font-size:20px;font-weight:bold;line-height:30px;">
 	<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수수량']}} for {{D['매수가격']}} ( {{D['매수가액']}} )</span> <br>
 	<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도수량']}} for {{D['매도가격']}} ( {{D['매도가액']}} )</span> 
+</div>
+<div style="padding-left:20px;color:white;font-size:16px;margin-top:10px" >
+	<i class="fa fa-sign-in"></i> {{D['총입금']}} &nbsp;
+	<i class="fa fa-sign-out"></i> {{D['총출금']}} &nbsp;
+	<i class="fa fa-signal"></i> {{D['현재액']}} &nbsp;
+	<i class="fa fa-usd"></i> {{D['수익금']}} &nbsp; <i class="fa fa-line-chart"></i> {{D['수익률']}}% &nbsp;	
 </div>
 {% endblock %}
