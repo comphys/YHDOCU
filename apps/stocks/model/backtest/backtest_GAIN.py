@@ -47,8 +47,8 @@ class M_backtest_GAIN(Model) :
     def rebalance(self)  :
         total = self.M['가용잔액'] + self.M['추가자금']
         self.M['평가밸류'] = total
-        self.M['가용잔액'] = round(total * self.M['자본비율'])
-        self.M['추가자금'] = round(total - self.M['가용잔액'])
+        self.M['가용잔액'] = int((total * 2)/3)
+        self.M['추가자금'] = int(total - self.M['가용잔액'])
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
         self.M['씨드'] = self.M['가용잔액']
 

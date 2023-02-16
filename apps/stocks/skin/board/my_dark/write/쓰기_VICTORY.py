@@ -181,9 +181,9 @@ class 쓰기_VICTORY(SKIN) :
 
     def rebalance(self)  :
         total = self.M['매도금액'] + self.M['가용잔액'] + self.M['추가자금']
-        self.M['가용잔액'] = round(total * 0.67)
+        self.M['가용잔액'] = int((total * 2)/3)
         self.M['추가자금'] = int(total - self.M['가용잔액'])
-        self.M['일매수금'] = round(self.M['가용잔액']/self.M['분할횟수']) 
+        self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
 
     def normal_sell(self) :
 
