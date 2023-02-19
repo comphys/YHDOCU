@@ -140,10 +140,14 @@ class 목록_VICTORY(SKIN) :
                         TrCnt -= 1
 
                     elif key == 'add12' : 
-                        if txt > '0.00' : tx[key] = f"<td class='list-bulls'>{float(txt):,.2f}</td>"
-                        else : tx[key] = f"<td class='list-normal'>0.00</td>"
+                        if float(txt) != 0 : 
+                            profit = float(item['add18'].replace(',',''))
+                            tx[key] = f"<td class='list-bulls'>{float(txt):,.2f}</td>" if profit > 0  else f"<td class='list-bears'>{float(txt):,.2f}</td>"
+                        else : 
+                            tx[key] = "<td class='list-normal'>0.00</td>"
+
                     elif key == 'add11' : 
-                        if txt > '0' : tx[key] = f"<td class='list-bears2'>{float(txt):,.2f}</td>"
+                        if float(txt) > 0 : tx[key] = f"<td class='list-bears2'>{float(txt):,.2f}</td>"
                         else : tx[key] = f"<td class='list-normal2'>0.00</td>"
                         
                     elif key == 'add0'  : 
@@ -159,10 +163,10 @@ class 목록_VICTORY(SKIN) :
                         tx[key] = tmp
                     elif key == 'add18' : continue
                     elif key == 'add13' : 
-                        if item['add12'] > '0' : 
+                        if item['add13'] == '0' : 
                             profit = float(item['add18'].replace(',',''))
-                            if profit > 0 : tx[key] = f"<td class='list-bulls'>{profit:,.2f}</td>"
-                            else : tx[key] = f"<td class='list-bears'>{profit:,.2f}</td>"
+                            tx[key] = f"<td class='list-bulls'>{profit:,.2f}</td>" if profit > 0 else f"<td class='list-bears'>{profit:,.2f}</td>" 
+                            
                         else : tx[key] = f"<td style='text-align:right;' class='list-add'>{txt}</td>"
                         tx[key] += f"<td style='text-align:right;color:#BDBDBD'>{item['sub33']}</td>"
                         

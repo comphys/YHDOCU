@@ -104,7 +104,7 @@
 		</thead>
 		<tbody>
 			{%- for TR in D['TR'] -%}
-			{% if TR['add12']|striptags != '0.00' %}
+			{% if (TR['add12']|striptags != '0.00') and (TR['add15']|striptags == '0.00') %}
 			<tr style="background-color:black;"> 
 			{% else %}
 			<tr> 

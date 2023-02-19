@@ -115,7 +115,11 @@
         <td class='write-td-left' id="second_stock">SOXL</td>
 		<td class="write-td-right" style="padding:12px 8px">
 			<div class='i-input-div'>
-				<div class='write-input-server'>매수금&nbsp;&nbsp;<i class="fa fa-calculator" onclick="show_unit_buy(1)"></i></div>
+				<div class='write-input-server'>
+					매수금&nbsp;
+					<i class="fa fa-calculator" onclick="show_unit_buy(1)"></i>
+					<i class="fa fa-refresh" style="color:orange" onclick="back_restore()"></i>
+				</div>
 				<input type='text' name='add11' class="i-number" style="width:100px;" value="{{D['BODY']['add11']}}">
 			</div>
 			<div class='i-input-div'>
@@ -391,132 +395,74 @@ function auto_reset() {
 }
 
 function auto_calculate() {
-	let 입금     = txt_to_num('add1','f');
-    let 출금     = txt_to_num('add2','f');
-	let 잔액     = txt_to_num('add3','f');
+
+	let 입금     = txt_to_num('add1','f');  let 출금     = txt_to_num('add2','f'); let 잔액     = txt_to_num('add3','f');
+	let 매수금1  = txt_to_num('add5','f');  let 매도금1  = txt_to_num('add6','f'); let 수량1    = txt_to_num('sub8','i'); let 배당금   = txt_to_num('sub10','f');
+	let 종가1    = txt_to_num('add8','f');  let 누적1    = txt_to_num('add7','i');   
+	let 평균단가1= txt_to_num('sub21','f'); let 매도누적1= txt_to_num('sub22','f'); let 매수누적1= txt_to_num('sub23','f'); let 현매수금1= txt_to_num('sub24','f');
+	let 매수금2  = txt_to_num('add11','f'); let 매도금2  = txt_to_num('add12','f'); let 수량2    = txt_to_num('sub9','i');
+	let 종가2    = txt_to_num('add14','f'); let 누적2    = txt_to_num('add13','i');  
+	let 평균단가2= txt_to_num('sub16','f'); let 매도누적2= txt_to_num('sub15','f'); let 매수누적2= txt_to_num('sub14','f'); let 현매수금2= txt_to_num('sub17','f');
+	let 배당합계 = txt_to_num('sub11','f'); let 입금합계 = txt_to_num('sub25','f'); let 현투자금 = txt_to_num('sub27','f');
+	let 출금합계 = txt_to_num('sub26','f'); let 현수익률 = txt_to_num('sub28','f');
 	let 일매수금 = txt_to_num('sub4','i');
-    let 매수금1  = txt_to_num('add5','f');
-    let 매도금1  = txt_to_num('add6','f');
-	let 배당금   = txt_to_num('sub10','f');
-    let 매수금2  = txt_to_num('add11','f');
-    let 매도금2  = txt_to_num('add12','f');
-    let 종가1    = txt_to_num('add8','f');
-    let 수량1    = txt_to_num('sub8','i');
-	let 누적1    = txt_to_num('add7','i');   // JEPQ 보유수량
-    let 종가2    = txt_to_num('add14','f');
-    let 수량2    = txt_to_num('sub9','i');
-	let 누적2    = txt_to_num('add13','i');  // TQQQ 보유수량
-	let 평균단가1= txt_to_num('sub21','f');
-	let 매도누적1= txt_to_num('sub22','f');
-	let 매수누적1= txt_to_num('sub23','f');
-	let 현매수금1= txt_to_num('sub24','f');
-	let 매수누적2= txt_to_num('sub14','f');
-	let 매도누적2= txt_to_num('sub15','f');
-	let 평균단가2= txt_to_num('sub16','f');
-	let 현매수금2= txt_to_num('sub17','f');
-	let 배당합계 = txt_to_num('sub11','f');
-	let 입금합계 = txt_to_num('sub25','f');
-	let 출금합계 = txt_to_num('sub26','f');
-	let 현투자금 = txt_to_num('sub27','f');
-	let 현수익률 = txt_to_num('sub28','f');
 
-	누적1 += 수량1; 누적2 += 수량2;
+    누적1 += 수량1; 누적2 += 수량2;
+	잔액   = 잔액+입금+매도금1+매도금2+배당금-출금-매수금1-매수금2;
 
-	잔액    = (잔액+입금+매도금1+매도금2+배당금-출금-매수금1-매수금2)
+    가치1 = 종가1 * 누적1; 
+	가치2 = 종가2 * 누적2; 
+	가치합계  = 잔액 + 가치1 + 가치2;
 
-    let 가치1   = (종가1 * 누적1)
-    let 가치2   = (종가2 * 누적2)
-    let 현재가치 = (잔액 + 가치1 + 가치2)
+	입금합계 = 입금합계 + 입금; 출금합계 = 출금합계 + 출금; 현투자금 = 입금합계 - 출금합계;
+	현수익률 = (가치합계 / 현투자금 - 1) * 100;
+	배당합계 = 배당합계 + 배당금;
 
-	입금합계 = 입금합계 + 입금
-	출금합계 = 출금합계 + 출금
-	현투자금 = 입금합계 - 출금합계
-	현수익률 = ((현재가치 / 현투자금 - 1) * 100).toFixed(1);
-	배당합계 = 배당합계 + 배당금
+    비중1 = 잔액/가치합계*100; 비중2 = 가치1/가치합계*100; 비중3 = 가치2/가치합계*100;
 
-    let 비중1 = (잔액/현재가치*100).toFixed(2);
-    let 비중2 = (가치1/현재가치*100).toFixed(2);
-    let 비중3 = (가치2/현재가치*100).toFixed(2);
-
-	잔액  = 잔액.toFixed(2)
-    가치1 = 가치1.toFixed(2)
-    가치2 = 가치2.toFixed(2)
-    현재가치 = 현재가치.toFixed(2)
-	
 	현수익률2 = 0
 
-	if(매수금1) {
-		매수누적1 += 매수금1
-		현매수금1 += 매수금1
-		평균단가1  = (현매수금1 / 누적1)
-		매수누적1  = 매수누적1.toFixed(2)
-		현매수금1  = 현매수금1.toFixed(2)
-	} 
+	if(매수금1) { 매수누적1 += 매수금1; 현매수금1 += 매수금1; 평균단가1 = 현매수금1 / 누적1; } 
 
-	if(매수금2) {
-		매수누적2 += 매수금2
-		현매수금2 += 매수금2
-		평균단가2  = (현매수금2 / 누적2)
-		매수누적2  = 매수누적2.toFixed(2)
-		현매수금2  = 현매수금2.toFixed(2)
-	} 
+	if(매수금2) { 매수누적2 += 매수금2; 현매수금2 += 매수금2; 평균단가2 = 현매수금2 / 누적2; } 
 
-	if(매도금1) {
-		매도누적1 += 매도금1
-		현매수금1 = (평균단가1 * 누적1).toFixed(2)
-		매도누적1 = 매도누적1.toFixed(2)
-	}
+	if(매도금1) { 매도누적1 += 매도금1; 현매수금1 = 평균단가1 * 누적1; }
 
-	if(매도금2) {
-		매도누적2 += 매도금2
-		매도누적2 = 매도누적2.toFixed(2)
-		현수익률2  = (매도금2/현매수금2 -1)*100
-		현수익률2  = 현수익률2.toFixed(2)
-		현매수금2 = (평균단가2 * 누적2).toFixed(2)
-		평균단가2 = 0
-	}
+	if(매도금2) { 매도누적2 += 매도금2; 현매수금2 = 평균단가2 * 누적2; }
 
-	if(평균단가2) {	현수익률2  = ((종가2/평균단가2) -1)*100 ; 현수익률2  = 현수익률2.toFixed(2) }
-	// 평균단가는 매수할 때만 변동됨
+	if(평균단가2) {	현수익률2  = ( 종가2/평균단가2 -1)*100 ; }
+	if(누적2==0)  {	현수익률2  = (매도금2/현매수금2 -1)*100; 평균단가2 = 0; }
 
-	평균단가1= 평균단가1.toFixed(4) ; 평균단가2= 평균단가2.toFixed(4)
+	if(누적2) { 현재손익 = (종가2 - 평균단가2) * 누적2; }
 
-	$("input[name='add1']").val(입금).comma('init');
-    $("input[name='add2']").val(출금).comma('init');
-    $("input[name='add5']").val(매수금1).comma('init');
-    $("input[name='add6']").val(매도금1).comma('init');
-	$("input[name='sub10']").val(배당금).comma('init');
-    $("input[name='add11']").val(매수금2).comma('init');
-    $("input[name='add12']").val(매도금2).comma('init');
-	$("input[name='add7']").val(누적1).comma('init');
-	$("input[name='add13']").val(누적2).comma('init');
+	let vars =[
+		[입금,'add1',2],[출금,'add2',2],[잔액,'add3',2],[비중1,'add4',2],
 
-    $("input[name='add3']").val(잔액).comma('init');
-    $("input[name='add9']").val(가치1).comma('init');
-    $("input[name='add15']").val(가치2).comma('init');
-    $("input[name='add4']").val(비중1).comma('init');
-    $("input[name='add10']").val(비중2).comma('init');
-    $("input[name='add16']").val(비중3).comma('init');
-	$("input[name='add17']").val(현재가치).comma('init');
-	if(parseFloat(가치2)) { 현재손익 = parseFloat(가치2) - parseFloat(현매수금2); 현재손익=현재손익.toFixed(2);	$("input[name='add18']").val(현재손익).comma('init');}
-	$("input[name='sub4']").val(일매수금).comma('init');
-	$("input[name='sub11']").val(배당합계).comma('init');
-	$("input[name='sub14']").val(매수누적2).comma('init');
-	$("input[name='sub15']").val(매도누적2).comma('init');
-	$("input[name='sub16']").val(평균단가2).comma('init');
-	$("input[name='sub17']").val(현매수금2).comma('init');
-	$("input[name='sub21']").val(평균단가1).comma('init');
-	$("input[name='sub22']").val(매도누적1).comma('init');
-	$("input[name='sub23']").val(매수누적1).comma('init');
-	$("input[name='sub24']").val(현매수금1).comma('init');
+		[매수금1,'add5',2],[매도금1,'add6',2],[배당금,'sub10',2],
+		[가치1,'add9',2],[누적1,'add7',0],[비중2,'add10',2],
+		[평균단가1,'sub21',4],[매도누적1,'sub22',2],[매수누적1,'sub23',2],[현매수금1,'sub24',2],
 
-	$("input[name='sub25']").val(입금합계).comma('init');
-	$("input[name='sub26']").val(출금합계).comma('init');
-	$("input[name='sub27']").val(현투자금).comma('init');
-	$("input[name='sub28']").val(현수익률).comma('init');
-	
-	$("input[name='sub33']").val(현수익률2).comma('init');
+		[매수금2,'add11',2],[매도금2,'add12',2],[현수익률2,'sub33',2],
+		[가치2,'add15',2],[누적2,'add13',0],[비중3,'add16',2],
+		[평균단가2,'sub16',4],[매도누적2,'sub15',2],[매수누적2,'sub14',2],[현매수금2,'sub17',2],
+		[현재손익,'add18',2],
+
+		[배당합계,'sub11',0],[입금합계,'sub25',0],[현투자금,'sub27',0],
+		[출금합계,'sub26',0],[가치합계,'add17',2],[현수익률,'sub28',2],
+
+		[일매수금,'sub4',0]
+	]
+	vars.forEach(function(item){ value = item[0].toFixed(item[2]); $("input[name='"+item[1]+"']").val(value).comma('init'); });
+
 	AutoCalulated = true
+}
+
+function back_restore() {
+	let 매수금   = txt_to_num('add11','f');
+	let 가용잔액 = txt_to_num('add19','f');
+	가용잔액 += 매수금; 매수금 = 0.00; 
+	num_to_txt('add11',매수금,2);
+	num_to_txt('add19',가용잔액,2);
 }
 
 function txt_to_num(key,opt) {
@@ -526,6 +472,8 @@ function txt_to_num(key,opt) {
     if(opt=='i') return parseInt(a);
     else return parseFloat(a);
 }
+
+function num_to_txt(pos,num,weigh) {$("input[name='"+pos+"']").val(num.toFixed(weigh)).comma('init');}
 
 function show_add_info(opt) {
 	var title=''
@@ -591,22 +539,21 @@ function money_inout() {
 	입금합계 += 입금
 	출금합계 += 출금
 	현투자금 = 입금합계 - 출금합계
-	현재가치 = 잔액 + 가치1 + 가치2
-    비중1 = (잔액/현재가치*100).toFixed(2);
-    비중2 = (가치1/현재가치*100).toFixed(2);
-    비중3 = (가치2/현재가치*100).toFixed(2);
-	현수익률 = ((현재가치 / 현투자금 - 1) * 100).toFixed(1);
-	현재가치 = 현재가치.toFixed(2);
+	가치합계 = 잔액 + 가치1 + 가치2
+    비중1 = 잔액/가치합계*100;
+    비중2 = 가치1/가치합계*100;
+    비중3 = 가치2/가치합계*100;
+	현수익률 = (가치합계 / 현투자금 - 1) * 100;
 	
-	$("input[name='add3']").val(잔액).comma('init');
-	$("input[name='add17']").val(현재가치).comma('init');
-	$("input[name='add4']").val(비중1).comma('init');
-    $("input[name='add10']").val(비중2).comma('init');
-    $("input[name='add16']").val(비중3).comma('init');
-	$("input[name='sub25']").val(입금합계).comma('init');
-	$("input[name='sub26']").val(출금합계).comma('init');
-	$("input[name='sub27']").val(현투자금).comma('init');
-	$("input[name='sub28']").val(현수익률).comma('init');
+	num_to_txt("add3",잔액,2);
+	num_to_txt("add17",가치합계,2);
+	num_to_txt("add4",비중1,2);
+    num_to_txt("add10",비중2,2);
+    num_to_txt("add16",비중3,2);
+	num_to_txt("sub25",입금합계,2);
+	num_to_txt("sub26",출금합계,2);
+	num_to_txt("sub27",현투자금,2);
+	num_to_txt("sub28",현수익률,2);
 	
 }
 
@@ -628,17 +575,11 @@ function money_realloc() {
 	가용잔액 = 가용잔액 - 배당주 - 레버리지
 	if(가용잔액 < 0) {  추가자금 = 추가자금 + 가용잔액; 가용잔액 = 0}
 
-	가용잔액 = 가용잔액.toFixed(2)
-	추가자금 = 추가자금.toFixed(2)
-	
 	bd = txt_to_num('sub12','i') 
 	매수수량 = Math.ceil(기초수량*(bd*1.25 +1))
 
- 	$("input[name='add19']").val(가용잔액).comma('init');
- 	$("input[name='add20']").val(추가자금).comma('init');
- 	$("input[name='sub4']").val(일매수금).comma('init');
- 	$("input[name='sub18']").val(기초수량).comma('init');
-	 $("input[name='sub2']").val(매수수량).comma('init');
+	num_to_txt("add19",가용잔액,2); num_to_txt("add20",추가자금,2);
+	num_to_txt("sub4",일매수금,0);  num_to_txt("sub18",기초수량,0); num_to_txt("sub2",매수수량,0);
  }
 </script>
 {% endblock %}
