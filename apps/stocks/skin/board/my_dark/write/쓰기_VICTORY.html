@@ -118,7 +118,9 @@
 				<div class='write-input-server'>
 					매수금&nbsp;
 					<i class="fa fa-calculator" onclick="show_unit_buy(1)"></i>
+					{% if D['method'] == 'write' %}
 					<i class="fa fa-refresh" style="color:orange" onclick="back_restore()"></i>
+					{% endif %}
 				</div>
 				<input type='text' name='add11' class="i-number" style="width:100px;" value="{{D['BODY']['add11']}}">
 			</div>
@@ -389,7 +391,7 @@ JYHEDITOR.UserTable = function() {
 
 function auto_reset() {
 	for(i=1;i<reset_key.length;i++) {
-		$("input[name='"+reset_key[i]+"']" ).val(reset_val[i])
+		$("input[name='"+reset_key[i]+"']" ).val(reset_val[i]).comma('init');
 	}
 	AutoCalulated = false
 }

@@ -254,8 +254,8 @@ class 쓰기_VICTORY(SKIN) :
         ud['sub7'] =self.M['회복전략'] 
         # 투자상황
         ud['sub11']=f"{round(float(LD['sub11']),4):,.2f}"
-        ud['sub25']=f"{float(LD['sub25']):,}"; ud['sub27']=f"{float(LD['sub27']):,}"
-        ud['sub26']=f"{int(LD['sub26']):,}"; 
+        ud['sub25']=f"{float(LD['sub25']):,.2f}"; ud['sub27']=f"{float(LD['sub27']):,.2f}"
+        ud['sub26']=f"{int(LD['sub26']):,.2f}"; 
         # 종가
         ud['add8']  = self.M['JEPQ'] if self.M['JEPQ'] else 0
         ud['add14'] = self.M['당일종가']
