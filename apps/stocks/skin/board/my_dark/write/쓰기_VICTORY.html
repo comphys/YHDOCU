@@ -112,7 +112,7 @@
 		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
 	</tr>
     <tr style="border:2px solid #CEE3F6;">
-        <td class='write-td-left' id="second_stock">SOXL</td>
+        <td class='list-code' style="cursor:pointer">SOXL</td>
 		<td class="write-td-right" style="padding:12px 8px">
 			<div class='i-input-div'>
 				<div class='write-input-server'>
@@ -583,5 +583,10 @@ function money_realloc() {
 	num_to_txt("add19",가용잔액,2); num_to_txt("add20",추가자금,2);
 	num_to_txt("sub4",일매수금,0);  num_to_txt("sub18",기초수량,0); num_to_txt("sub2",매수수량,0);
  }
+
+ $(".list-code").click(function(){
+	var code = $(this).text()
+	winopen('winopen/chart2/'+code,820,450,'stock_chart');
+});
 </script>
 {% endblock %}
