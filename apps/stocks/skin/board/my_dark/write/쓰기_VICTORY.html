@@ -264,7 +264,7 @@
 				<input type='text' name='sub29' class="i-text" style="width:100px;" value="{{D['BODY']['sub29']}}">
 			</div>
 			<div class='i-input-div-choice'>
-				<div class='write-input-server'>추가정보</div>
+				<div class='write-input-server'>세금계산</div>
 				<input type='text' name='sub30' class="i-number" style="width:100px;" value="{{D['BODY']['sub30']}}">
 			</div>
 			<div class='i-input-div-choice'>
@@ -391,8 +391,10 @@ JYHEDITOR.UserTable = function() {
 
 function auto_reset() {
 	for(i=1;i<reset_key.length;i++) {
-		$("input[name='"+reset_key[i]+"']" ).val(reset_val[i]).comma('init');
+		if(reset_key[i]=='sub29') {$("input[name='"+reset_key[i]+"']" ).val(reset_val[i]);}
+		else {$("input[name='"+reset_key[i]+"']" ).val(reset_val[i]).comma('init');}	
 	}
+
 	AutoCalulated = false
 }
 
@@ -405,10 +407,12 @@ function auto_calculate() {
 	let 매수금2  = txt_to_num('add11','f'); let 매도금2  = txt_to_num('add12','f'); let 수량2    = txt_to_num('sub9','i');
 	let 종가2    = txt_to_num('add14','f'); let 누적2    = txt_to_num('add13','i');  
 	let 평균단가2= txt_to_num('sub16','f'); let 매도누적2= txt_to_num('sub15','f'); let 매수누적2= txt_to_num('sub14','f'); let 현매수금2= txt_to_num('sub17','f');
+	let 현재손익 = txt_to_num('add18','f');
 	let 배당합계 = txt_to_num('sub11','f'); let 입금합계 = txt_to_num('sub25','f'); let 현투자금 = txt_to_num('sub27','f');
 	let 출금합계 = txt_to_num('sub26','f'); let 현수익률 = txt_to_num('sub28','f');
 	let 일매수금 = txt_to_num('sub4','i');
 
+	세금계산 = 0.0
     누적1 += 수량1; 누적2 += 수량2;
 	잔액   = 잔액+입금+매도금1+매도금2+배당금-출금-매수금1-매수금2;
 
@@ -422,20 +426,21 @@ function auto_calculate() {
 
     비중1 = 잔액/가치합계*100; 비중2 = 가치1/가치합계*100; 비중3 = 가치2/가치합계*100;
 
-	현수익률2 = 0
+	if(매수금1) { 매수누적1 += 매수금1; 현매수금1 += 매수금1; 평균단가1 = 현매수금1 / 누적1; 세금계산 += 매수금1 * 0.0007;} 
 
-	if(매수금1) { 매수누적1 += 매수금1; 현매수금1 += 매수금1; 평균단가1 = 현매수금1 / 누적1; } 
+	if(매수금2) { 매수누적2 += 매수금2; 현매수금2 += 매수금2; 평균단가2 = 현매수금2 / 누적2; 세금계산 += 매수금2 * 0.0007;} 
 
-	if(매수금2) { 매수누적2 += 매수금2; 현매수금2 += 매수금2; 평균단가2 = 현매수금2 / 누적2; } 
+	if(매도금1) { 매도누적1 += 매도금1; 현매수금1 = 평균단가1 * 누적1; 세금계산 += 매도금1 * 0.0007;}
 
-	if(매도금1) { 매도누적1 += 매도금1; 현매수금1 = 평균단가1 * 누적1; }
-
-	if(매도금2) { 매도누적2 += 매도금2; 현매수금2 = 평균단가2 * 누적2; }
+	if(매도금2) { 
+		세금계산 += 매도금2 * 0.0007;
+		if(누적2==0) {현수익률2  = (매도금2/현매수금2 -1)*100; 평균단가2 = 0; }
+		매도누적2 += 매도금2; 현매수금2 = 평균단가2 * 누적2; 
+	}
 
 	if(평균단가2) {	현수익률2  = ( 종가2/평균단가2 -1)*100 ; }
-	if(누적2==0)  {	현수익률2  = (매도금2/현매수금2 -1)*100; 평균단가2 = 0; }
-
 	if(누적2) { 현재손익 = (종가2 - 평균단가2) * 누적2; }
+	
 
 	let vars =[
 		[입금,'add1',2],[출금,'add2',2],[잔액,'add3',2],[비중1,'add4',2],
@@ -452,7 +457,8 @@ function auto_calculate() {
 		[배당합계,'sub11',0],[입금합계,'sub25',0],[현투자금,'sub27',0],
 		[출금합계,'sub26',0],[가치합계,'add17',2],[현수익률,'sub28',2],
 
-		[일매수금,'sub4',0]
+		[일매수금,'sub4',0],
+		[세금계산,'sub30',2]
 	]
 	vars.forEach(function(item){ value = item[0].toFixed(item[2]); $("input[name='"+item[1]+"']").val(value).comma('init'); });
 
