@@ -280,7 +280,7 @@ class 쓰기_VICTORY(SKIN) :
         ud['add19'] = f"{round(self.M['가용잔액'],4):,.2f}"
         ud['add20'] = f"{round(self.M['추가자금'],4):,.2f}"
         # 기타사항
-        ud['sub30'] = LD['sub30']
+        ud['sub30'] = ''
         ud['sub31'] = LD['sub31']
         ud['sub32'] = LD['sub32']
         return ud
