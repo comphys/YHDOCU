@@ -580,12 +580,13 @@ function money_inout() {
 }
 
 function money_realloc() {
-	let 잔액      = txt_to_num('add3','i');
-	let 배당주    = txt_to_num('add9','i');
-	let 레버리지  = txt_to_num('sub17','i');
-	let 종가2    = txt_to_num('add14','f');
+	let 잔액      = txt_to_num('add3','f');
+	let 배당주    = txt_to_num('add9','f');
+	let 레버리지  = txt_to_num('sub17','f');
+	let 종가2     = txt_to_num('add14','f');
 	
 	합계 = 잔액 + 배당주 + 레버리지
+
 	가용잔액 = parseInt((합계 * 2)/3)
 	추가자금 = parseInt(합계 - 가용잔액)
 
