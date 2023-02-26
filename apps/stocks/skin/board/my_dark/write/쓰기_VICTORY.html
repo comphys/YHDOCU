@@ -407,13 +407,13 @@ function auto_reset() {
 
 function auto_calculate() {
 
-	if(AutoCalulated) { h_dialog.notice("계산이 완료된 상태입니다."); return;}
+	if(AutoCalulated || uri('method') == 'modify' ) { h_dialog.notice("계산이 완료된 상태입니다."); return;}
 
 	let 입금     = txt_to_num('add1','f');  let 출금     = txt_to_num('add2','f'); let 잔액     = txt_to_num('add3','f');
 	let 매수금1  = txt_to_num('add5','f');  let 매도금1  = txt_to_num('add6','f'); let 수량1    = txt_to_num('sub8','i'); let 배당금   = txt_to_num('sub10','f');
 	let 종가1    = txt_to_num('add8','f');  let 누적1    = txt_to_num('add7','i');   
 	let 평균단가1= txt_to_num('sub21','f'); let 매도누적1= txt_to_num('sub22','f'); let 매수누적1= txt_to_num('sub23','f'); let 현매수금1= txt_to_num('sub24','f');
-	let 매수금2  = txt_to_num('add11','f'); let 매도금2  = txt_to_num('add12','f'); let 수량2    = txt_to_num('sub9','i');
+	let 매수금2  = txt_to_num('add11','f'); let 매도금2  = txt_to_num('add12','f'); let 수량2    = txt_to_num('sub9','i'); let 현수익률2= txt_to_num('sub33','f');
 	let 종가2    = txt_to_num('add14','f'); let 누적2    = txt_to_num('add13','i');  
 	let 평균단가2= txt_to_num('sub16','f'); let 매도누적2= txt_to_num('sub15','f'); let 매수누적2= txt_to_num('sub14','f'); let 현매수금2= txt_to_num('sub17','f');
 	let 현재손익 = txt_to_num('add18','f');
@@ -586,12 +586,10 @@ function money_realloc() {
 	let 종가2    = txt_to_num('add14','f');
 	
 	합계 = 잔액 + 배당주 + 레버리지
-	가용잔액 = 합계 * 2/3
-	추가자금 = 합계 - 가용잔액
+	가용잔액 = parseInt((합계 * 2)/3)
+	추가자금 = parseInt(합계 - 가용잔액)
 
-	가용잔액 = Math.floor(가용잔액/10) * 10
-	추가자금 = Math.floor(추가자금/10) * 10
-	일매수금 = Math.round(가용잔액 / 22 )
+	일매수금 = parseInt(가용잔액 / 22 )
 	기초수량 = Math.ceil(일매수금/종가2)
 
 	가용잔액 = 가용잔액 - 배당주 - 레버리지
