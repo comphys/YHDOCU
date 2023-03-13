@@ -24,7 +24,7 @@
 	<canvas id="myChart2"  style="width:380px;height:200px;background-color:#24272d;"></canvas>
 </div>
 
-<div style="color:white;font-size:14px;" >
+<div style="margin-top:20px;color:white;font-size:14px;" >
 	현재수량 : &nbsp; {{D['현재수량']}} 주 / 현재수익 : &nbsp; {{D['현재수익']}} $ ( {{D['현수익률']}} % )
 </div>
 
@@ -36,7 +36,7 @@
 const ctx  = $id('myChart');
 const ctx1 = $id('myChart2');
 
-ctx.style.backgroundColor = '#33363b';
+// ctx.style.backgroundColor = '#33363b';
 // ctx.style.border = '2px solid black';
 
 let labels = {{D['chart_date']|safe}};
@@ -80,13 +80,6 @@ const myChart = new Chart(ctx, config1);
 const data3 = {
     labels : labels,
     datasets : [
-		{
-            label:' 총투자금',
-            data : total_value,
-            borderColor:'yellow', borderWidth:3,pointRadius:0, 
-			lineTension:0.2,
-			yAxisID : 'y1'
-        },
         {
             label:' 종가변동',
             data : close_change,
@@ -118,7 +111,6 @@ const options3 = {
 			lineWidth: function(context) {if(context.tick.value %10 == 0 ) { return 2 } else return 0},
 		   },
 		   position:'left'},
-		y1:{ type:'linear', display:true, position:'right'}
     }
 };
 
