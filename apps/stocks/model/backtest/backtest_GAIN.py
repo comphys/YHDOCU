@@ -124,6 +124,8 @@ class M_backtest_GAIN(Model) :
            
             self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)
             self.M['평가총액'] = self.M['자산총액'] + self.M['평가금액']
+
+            self.M['매수스텝'] = 1
             return True
         else : 
             return False
@@ -146,7 +148,7 @@ class M_backtest_GAIN(Model) :
             self.M['매도수량'] =  self.M['보유수량']
             self.M['진행상황'] = '전량매도' 
             self.D['전량횟수'] += 1
-
+            self.M['매수스텝'] = 0
             if  self.M['당일종가'] < self.M['평균단가'] : 
                 self.M['진행상황'] = '전략매도'
                 self.D['전략횟수'] += 1
@@ -165,11 +167,17 @@ class M_backtest_GAIN(Model) :
             self.M['거래코드'] = 거래코드 + str(self.days) if self.M['구매수량'] else ' '
             self.M['매수금액'] = self.M['매수수량'] * self.M['당일종가']
             self.M['진행상황'] = self.M['매수단계']
+            self.M['매수스텝'] += 1
         
     def buy_step(self)   :
 
         self.M['날수'] += 1
         매수수량 = my.ceil(self.M['기초수량'] * (self.M['날수']*self.M['비중조절'] + 1))
+        #------------
+        # step = self.M['매수스텝'] if self.M['매수스텝'] <=3 else 3
+        # 매수량 = [1,2,6,12]
+        # 매수수량 = self.M['기초수량'] * 매수량[step]
+        #------------
         매수금액 = 매수수량 * self.M['당일종가'] 
 
         if  매수금액 > self.M['자산총액']   :

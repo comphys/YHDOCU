@@ -1,17 +1,80 @@
 {% extends D['_skn'] + 'page/my_dark/main_layout_mobile.html' %}
 
 {% block contents_page  %}
-<div style='padding-left:20px;font-size:24px;color:#f0f0ab;font-weight:bold;margin-bottom:10px'>
-{{D['오늘날자']}}({{D['오늘요일']}})
+<div style="width:400px">
+<div style='font-size:14px;color:#f0f0ab;font-weight:bold;'>
+{{D['오늘날자']}}({{D['오늘요일']}}) <span style="font-style:italic">Season {{D['현재시즌']}} - {{D['경과일수']}} Day </span>
 </div>
-<div style="margin-top:10px;padding-left:20px;font-size:20px;font-weight:bold;line-height:30px;">
-	<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수수량']}} for {{D['매수가격']}} ( {{D['매수가액']}} )</span> <br>
-	<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도수량']}} for {{D['매도가격']}} ( {{D['매도가액']}} )</span> 
+<div style="font-size:14px;font-weight:bold;line-height:30px;">
+	<span style="color:#58ACFA"> 매수전략 :  <i class="fa fa-shopping-cart"></i> {{D['매수수량']}} for {{D['매수가격']}} ( {{D['매수가액']}} )</span><br>
+	<span style="color:#f78181"> 매도전략 :  <i class="fa fa-shopping-cart"></i> {{D['매도수량']}} for {{D['매도가격']}} ( {{D['매도가액']}} )</span> 
 </div>
-<div style="padding-left:20px;color:white;font-size:16px;margin-top:10px" >
+<div style="color:white;font-size:14px;" >
+	전체수익 : &nbsp;
 	<i class="fa fa-sign-in"></i> {{D['총입금']}} &nbsp;
 	<i class="fa fa-sign-out"></i> {{D['총출금']}} &nbsp;
 	<i class="fa fa-signal"></i> {{D['현재액']}} &nbsp;
 	<i class="fa fa-usd"></i> {{D['수익금']}} &nbsp; <i class="fa fa-line-chart"></i> {{D['수익률']}}% &nbsp;	
 </div>
+
+<div>
+	<canvas id="myChart"  style="width:400px;height:300px;background-color:#24272d;"></canvas>
+</div>
+
+</div>
+<script src="/sys/chart/chart.min.js"></script>
+
+<script>
+const ctx = $id('myChart');
+
+ctx.style.backgroundColor = '#33363b';
+// ctx.style.border = '2px solid black';
+
+let labels = {{D['chart_date']|safe}};
+let close_price = {{D['close_price']|safe}};
+let soxl_average = {{D['soxl_average']|safe}};
+let total_value = {{D['total_value']|safe}};
+let close_change = {{D['close_change']|safe}};
+let lever_change = {{D['lever_change']|safe}};
+
+const data1 = {
+    labels : labels,
+    datasets : [
+		{
+            label:' 종가변동',
+            data : close_price,
+			borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],
+  			lineTension:0.2
+        },
+		{
+            label:' 평균단가',
+            data : soxl_average,
+			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
+			lineTension:0.2
+        },
+		{
+            label:' 가치합계',
+            data : total_value,
+            borderColor:'yellow', borderWidth:3,pointRadius:0, 
+			lineTension:0.2,
+			yAxisID : 'y1'
+        },		
+    ]   
+};
+const options1 = {
+	animation : { duration:500},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:false}},
+    responsive:false,
+    layout:{padding:0},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'left'},
+		y1:{ type:'linear', display:true, position:'right'}
+    }
+};
+const config1  = {type:'line',data:data1,options:options1};
+const myChart = new Chart(ctx, config1); 
+
+</script>
 {% endblock %}
