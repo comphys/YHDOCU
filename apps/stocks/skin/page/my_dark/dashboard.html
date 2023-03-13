@@ -18,8 +18,15 @@
 </div>
 
 <div>
-	<canvas id="myChart"  style="width:400px;height:300px;background-color:#24272d;"></canvas>
+	<canvas id="myChart"  style="width:390px;height:250px;background-color:#24272d;"></canvas>
 </div>
+
+<div style="color:white;font-size:14px;" >
+	현재수량 : &nbsp; {{D['현재수량']}} 주<br>
+	현재수익 : &nbsp; {{D['현재수익']}} $<br>
+	현수익률 : &nbsp; {{D['현수익률']}} %<br>
+</div>
+
 
 </div>
 <script src="/sys/chart/chart.min.js"></script>
@@ -51,14 +58,7 @@ const data1 = {
             data : soxl_average,
 			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
 			lineTension:0.2
-        },
-		{
-            label:' 가치합계',
-            data : total_value,
-            borderColor:'yellow', borderWidth:3,pointRadius:0, 
-			lineTension:0.2,
-			yAxisID : 'y1'
-        },		
+        }
     ]   
 };
 const options1 = {
@@ -69,8 +69,7 @@ const options1 = {
     layout:{padding:0},
     scales:{
         x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
-        y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'left'},
-		y1:{ type:'linear', display:true, position:'right'}
+        y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'right'}
     }
 };
 const config1  = {type:'line',data:data1,options:options1};

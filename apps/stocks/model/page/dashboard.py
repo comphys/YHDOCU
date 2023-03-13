@@ -12,7 +12,7 @@ class M_dashboard(Model) :
         ckdate = self.DB.get_one("max(add0)")
         self.DB.wre = f"add0='{ckdate}'"
 
-        out = self.DB.get_line("add17,sub1,sub2,sub3,sub12,sub19,sub20,sub25,sub26,sub28")
+        out = self.DB.get_line("add13,add17,add18,sub1,sub2,sub3,sub12,sub19,sub20,sub25,sub26,sub28,sub33")
         매수수량 = int(out['sub2'])
         매수가격 = float(out['sub19']) 
         매수가액 = 매수수량 * 매수가격
@@ -37,6 +37,10 @@ class M_dashboard(Model) :
         self.D['수익금'] = f"{float(out['add17'])-float(out['sub25'])-float(out['sub26']):,.0f}"
         self.D['수익률'] = f"{float(out['sub28']):,.1f}"
 
+        self.D['현재수량'] = out['add13']    
+        self.D['현재수익'] = out['add18']
+        self.D['현수익률'] = out['sub33']
+
         self.chart()
 
     def chart(self) :
@@ -56,7 +60,7 @@ class M_dashboard(Model) :
   
             chart_data.reverse()
         
-            self.D['chart_date']   = [x['add0'][2:] for x in chart_data]
+            self.D['chart_date']   = [x['add0'][5:] for x in chart_data]
             self.D['close_price']  = [float(x['add14']) for x in chart_data]; close_base = self.D['close_price'][0]
             self.D['close_change'] = [round((x-close_base) / close_base * 100,2) for x in self.D['close_price']]
             self.D['total_value']  = [float(x['add17']) for x in chart_data]
