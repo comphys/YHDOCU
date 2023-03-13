@@ -10,7 +10,6 @@
 	<span style="color:#f78181"> 매도전략 :  <i class="fa fa-shopping-cart"></i> {{D['매도수량']}} for {{D['매도가격']}} ( {{D['매도가액']}} )</span> 
 </div>
 <div style="color:white;font-size:14px;" >
-	전체수익 : &nbsp;
 	<i class="fa fa-sign-in"></i> {{D['총입금']}} &nbsp;
 	<i class="fa fa-sign-out"></i> {{D['총출금']}} &nbsp;
 	<i class="fa fa-signal"></i> {{D['현재액']}} &nbsp;
@@ -18,13 +17,15 @@
 </div>
 
 <div>
-	<canvas id="myChart"  style="width:390px;height:250px;background-color:#24272d;"></canvas>
+	<canvas id="myChart"  style="width:380px;height:200px;background-color:#24272d;"></canvas>
+</div>
+
+<div>
+	<canvas id="myChart2"  style="width:380px;height:200px;background-color:#24272d;"></canvas>
 </div>
 
 <div style="color:white;font-size:14px;" >
-	현재수량 : &nbsp; {{D['현재수량']}} 주<br>
-	현재수익 : &nbsp; {{D['현재수익']}} $<br>
-	현수익률 : &nbsp; {{D['현수익률']}} %<br>
+	현재수량 : &nbsp; {{D['현재수량']}} 주 / 현재수익 : &nbsp; {{D['현재수익']}} $ ( {{D['현수익률']}} % )
 </div>
 
 
@@ -32,7 +33,8 @@
 <script src="/sys/chart/chart.min.js"></script>
 
 <script>
-const ctx = $id('myChart');
+const ctx  = $id('myChart');
+const ctx1 = $id('myChart2');
 
 ctx.style.backgroundColor = '#33363b';
 // ctx.style.border = '2px solid black';
@@ -74,6 +76,55 @@ const options1 = {
 };
 const config1  = {type:'line',data:data1,options:options1};
 const myChart = new Chart(ctx, config1); 
+
+const data3 = {
+    labels : labels,
+    datasets : [
+		{
+            label:' 총투자금',
+            data : total_value,
+            borderColor:'yellow', borderWidth:3,pointRadius:0, 
+			lineTension:0.2,
+			yAxisID : 'y1'
+        },
+        {
+            label:' 종가변동',
+            data : close_change,
+            borderColor:'cyan', borderWidth:2,borderDash:[3,2],pointRadius:0,  
+			lineTension:0.2,
+        },
+		{
+            label:' 레버리지수익률',
+            data : lever_change,
+			borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0, 
+			lineTension:0.2,
+        }
+    ]   
+};
+
+const options3 = {
+	animation : { duration:500},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:false} },
+    responsive:false,
+    layout:{padding:0},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'gray'}, 
+		   grid:{
+			color:function(context) {
+				if( context.tick.value == 0 ) { return 'gray'}
+				else if(context.tick.value % 10 == 0 ) { return 'black'} },
+			lineWidth: function(context) {if(context.tick.value %10 == 0 ) { return 2 } else return 0},
+		   },
+		   position:'left'},
+		y1:{ type:'linear', display:true, position:'right'}
+    }
+};
+
+const config3  = {type:'line',data:data3,options:options3};
+const myChart2 = new Chart(ctx1, config3);
+
 
 </script>
 {% endblock %}
