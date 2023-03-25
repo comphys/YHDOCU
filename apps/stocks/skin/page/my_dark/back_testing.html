@@ -69,7 +69,7 @@
 	<div class="pull-left" style="padding:10px;color:lightgray">
 	최대 일수 : <b>{{D['max_days']}}</b> 일 {{D['max_date']}} &nbsp;
 	MDD : <b>{{D['MDD']}}</b> % {{D['MDD_DAY']}} &nbsp;
-	전량매도 {{D['전량횟수']}} &nbsp; 전략매도 {{D['전략횟수']}} &nbsp;
+	일반매도 {{D['전량횟수']}} &nbsp; 전략매도 {{D['전략횟수']}} &nbsp;
 	<i class="fa fa-arrow-up" onclick="chart_up_dn(1)"></i>
 	<i class="fa fa-arrow-down" onclick="chart_up_dn(2)"></i>
 	</div>
@@ -300,32 +300,70 @@ const ctx2 = $id('myChart2');
 ctx2.style.backgroundColor = '#33363b';
 ctx2.style.border = '2px solid black';
 
+let close_price = {{D['close_price']|safe}};
+let average_price = {{D['average_price']|safe}};
+let eval_value = {{D['eval_value']|safe}}
+let total_value = {{D['total_value']|safe}}
+
+// Animation 
+const totalDuration = 20000;
+const delayBetweenPoints = totalDuration / close_price.length;
+const previousY = (ctx) => ctx.index === 0 ? ctx.chart.scales.y.getPixelForValue(100) : ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y;
+const animation = {
+        x: {
+            type: 'number',
+            easing: 'linear',
+            duration: delayBetweenPoints,
+            from: NaN, // the point is initially skipped
+            delay(ctx) {
+                if (ctx.type !== 'data' || ctx.xStarted) {
+                    return 0;
+                }
+                ctx.xStarted = true;
+                return ctx.index * delayBetweenPoints;
+            }
+        },
+        y: {
+            type: 'number',
+            easing: 'linear',
+            duration: delayBetweenPoints,
+            from: previousY,
+            delay(ctx) {
+                if (ctx.type !== 'data' || ctx.yStarted) {
+                    return 0;
+                }
+                ctx.yStarted = true;
+                return ctx.index * delayBetweenPoints;
+            }
+        }
+    };
+
 let labels2 = {{D['chart_date']|safe}};
 const data2 = {
     labels : labels2,
     datasets : [
 		{
             label:' 종가변동',
-            data : {{D['close_price']|safe}},
+            data : close_price,
 			borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],
   			lineTension:0.2
     	},
 		{
             label:' 평균단가',
-            data : {{D['average_price']|safe}},
+            data : average_price,
 			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
 			lineTension:0.2
         },
-		{
-            label:' 평가밸류',
-            data : {{D['eval_value']|safe}},
-            borderColor:'orange', borderWidth:2,pointRadius:0,borderDash:[2,3], 
-			lineTension:0.2,
-			yAxisID : 'y1'
-        },
+		// {
+        //     label:' 평가밸류',
+        //     data : eval_value,
+        //     borderColor:'orange', borderWidth:2,pointRadius:0,borderDash:[2,3], 
+		// 	lineTension:0.2,
+		// 	yAxisID : 'y1'
+        // },
 		{
             label:' 가치합계',
-            data : {{D['total_value']|safe}},
+            data : total_value,
 			borderColor:'yellow', borderWidth:2,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
@@ -333,7 +371,8 @@ const data2 = {
     ]   
 };
 const options2 = {
-	animation : { duration:1000	},
+	// animation : { duration:1000	},
+	animation,
 	plugins : { legend: {display:false}, tooltip:{enabled:false}},
     responsive:false,
     layout:{padding:20},
