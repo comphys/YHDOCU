@@ -354,13 +354,13 @@ const data2 = {
 			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
 			lineTension:0.2
         },
-		// {
-        //     label:' 평가밸류',
-        //     data : eval_value,
-        //     borderColor:'orange', borderWidth:2,pointRadius:0,borderDash:[2,3], 
-		// 	lineTension:0.2,
-		// 	yAxisID : 'y1'
-        // },
+		{
+            label:' 평가밸류',
+            data : eval_value,
+            borderColor:'orange', borderWidth:2,pointRadius:0,borderDash:[2,3], 
+			lineTension:0.2,
+			yAxisID : 'y1'
+        },
 		{
             label:' 가치합계',
             data : total_value,
@@ -371,8 +371,8 @@ const data2 = {
     ]   
 };
 const options2 = {
-	// animation : { duration:1000	},
-	animation,
+	animation : { duration:1000	},
+	// animation,
 	plugins : { legend: {display:false}, tooltip:{enabled:false}},
     responsive:false,
     layout:{padding:20},
