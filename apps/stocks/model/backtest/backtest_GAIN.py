@@ -173,11 +173,6 @@ class M_backtest_GAIN(Model) :
 
         self.M['날수'] += 1
         매수수량 = my.ceil(self.M['기초수량'] * (self.M['날수']*self.M['비중조절'] + 1))
-        #------------
-        # step = self.M['매수스텝'] if self.M['매수스텝'] <=3 else 3
-        # 매수량 = [1,2,6,12]
-        # 매수수량 = self.M['기초수량'] * 매수량[step]
-        #------------
         매수금액 = 매수수량 * self.M['당일종가'] 
 
         if  매수금액 > self.M['자산총액']   :
