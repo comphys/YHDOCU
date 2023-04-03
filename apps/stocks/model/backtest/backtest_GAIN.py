@@ -243,6 +243,7 @@ class M_backtest_GAIN(Model) :
         self.D['cash_avg'] = round(sum(self.M['현금비중']) / len(self.M['현금비중']),2)
         self.D['cash_min'] = min(self.M['현금비중'])
         self.D['cash_max'] = max(self.M['현금비중'])
+        self.info(self.M['현금비중'])
 
     
     def view(self) :
@@ -323,7 +324,7 @@ class M_backtest_GAIN(Model) :
             tx['가용잔액'] = self.M['진행상황'] 
         else : 
             tx['가용잔액'] = f"{self.M['자산총액']:,.2f}"
-            self.M['현금비중'].append(round( (1- self.M['총매수금'] / self.M['자산총액']) *100,2))
+            self.M['현금비중'].append(round(self.M['자산총액'] / (self.M['총매수금']+self.M['자산총액']) *100,2))
          
         self.D['TR'].append(tx)
         
