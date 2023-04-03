@@ -243,7 +243,6 @@ class M_backtest_GAIN(Model) :
         self.D['cash_avg'] = round(sum(self.M['현금비중']) / len(self.M['현금비중']),2)
         self.D['cash_min'] = min(self.M['현금비중'])
         self.D['cash_max'] = max(self.M['현금비중'])
-        self.info(self.M['현금비중'])
 
     
     def view(self) :
