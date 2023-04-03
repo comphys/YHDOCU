@@ -73,6 +73,7 @@ class M_backtest_GAIN(Model) :
         self.M['매도수량']  = 0
         self.M['매도금액']  = 0.0
         self.M['실현수익']  = 0.0
+        self.M['현금비중']  = []
 
         self.M['비중조절']  = 1 + float(self.S['add3'])/100   # 매매일수 에 따른 구매수량 가중치
         self.M['평단가치']  = 1 + float(self.S['add4'])/100   # 매수시 가중치
@@ -125,7 +126,6 @@ class M_backtest_GAIN(Model) :
             self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)
             self.M['평가총액'] = self.M['자산총액'] + self.M['평가금액']
 
-            self.M['매수스텝'] = 1
             return True
         else : 
             return False
@@ -148,7 +148,6 @@ class M_backtest_GAIN(Model) :
             self.M['매도수량'] =  self.M['보유수량']
             self.M['진행상황'] = '전량매도' 
             self.D['전량횟수'] += 1
-            self.M['매수스텝'] = 0
             if  self.M['당일종가'] < self.M['평균단가'] : 
                 self.M['진행상황'] = '전략매도'
                 self.D['전략횟수'] += 1
@@ -167,7 +166,6 @@ class M_backtest_GAIN(Model) :
             self.M['거래코드'] = 거래코드 + str(self.days) if self.M['구매수량'] else ' '
             self.M['매수금액'] = self.M['매수수량'] * self.M['당일종가']
             self.M['진행상황'] = self.M['매수단계']
-            self.M['매수스텝'] += 1
         
     def buy_step(self)   :
 
@@ -241,6 +239,11 @@ class M_backtest_GAIN(Model) :
         self.D['output']  = f"총기간 : {style1}{self.D['days_span']:,}</span>일 "
         self.D['output'] += f"초기자본 {style1}${초기자본:,}</span> 최종자본 {style1}${최종자본:,.2f}</span> 으로 "
         self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 이며 수익률은 {style3}{최종수익률:,.2f}</span>% 입니다"
+        
+        self.D['cash_avg'] = round(sum(self.M['현금비중']) / len(self.M['현금비중']),2)
+        self.D['cash_min'] = min(self.M['현금비중'])
+        self.D['cash_max'] = max(self.M['현금비중'])
+
     
     def view(self) :
         
@@ -320,7 +323,8 @@ class M_backtest_GAIN(Model) :
             tx['가용잔액'] = self.M['진행상황'] 
         else : 
             tx['가용잔액'] = f"{self.M['자산총액']:,.2f}"
-        
+            self.M['현금비중'].append(round( (1- self.M['총매수금'] / self.M['자산총액']) *100,2))
+         
         self.D['TR'].append(tx)
         
         # 챠트 기록용
@@ -330,3 +334,5 @@ class M_backtest_GAIN(Model) :
         self.D['chart_date'].append(self.M['day'][2:])
         self.D['total_value'].append(round(self.M['평가총액'],0))
         self.D['eval_value'].append(round(self.M['평가밸류'],0))
+
+        

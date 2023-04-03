@@ -57,11 +57,22 @@
     </div> <!--pull right-->
     </form>
 </div> <!--well-->
-<div id="myChart2-div" class="clearfix" style="width:100%;background-color:#24272d;padding:10px;border:2px solid black;">
+<!-- <div id="myChart2-div" class="clearfix" style="width:100%;background-color:#24272d;padding:10px;border:2px solid black;">
 	<div>
 		<canvas id="myChart2"  style="width:1460px;height:350px;background-color:#24272d;"></canvas>
 	</div>
+</div> -->
+
+<div class="clearfix" style="width:100%;background-color:#24272d;padding:10px;border:2px solid black;">
+	<div id="myChart2-div" class="pull-left" style="margin-right:20px">
+		<canvas id="myChart2"  style="width:1210px;height:350px;background-color:#24272d;"></canvas>
+	</div>
+	<div class="pull-left">
+		<canvas id="myChart3" style="width:220px;height:350px;background-color:#24272d"></canvas>
+	</div>
 </div>
+
+
 
 {% if D['NOTICE'] %}
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
@@ -168,10 +179,12 @@
 
 
 <script src="/sys/chart/chart.min.js"></script>
+<script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 <script>
 
 // 챠트 객체 생성
 const ctx = $id('mybackTestChart');
+const ctx3= $id('myChart3');
 ctx.style.backgroundColor = '#33363b';
 ctx.style.border = '2px solid black';
 
@@ -208,8 +221,45 @@ const options = {
 const config  = {type:'line',data:backData,options:options};
 const myChart = new Chart(ctx, config);
 // --------------------------------------------------------------------------------------
+const labels3 = ['Max','Average','Min'];
 
+const data3 = {
+  labels: labels3,
+  datasets: [{
+    label: ' 현금비중 ',
+    data: [ {{D['cash_max']}}, {{D['cash_avg']}}, {{D['cash_min']}}],
+    backgroundColor: ['rgba(255, 205, 86, 0.4)','rgba(75, 192, 192, 0.4)','rgba(255, 99, 132, 0.4)'],
+    borderColor: ['rgb(255, 205, 86)','rgb(75, 192, 192)','rgb(255, 99, 132)'],
+    borderWidth: 1
+  }]
+};
 
+const config3 = {
+  type: 'bar',
+  data: data3,
+  plugins:[ChartDataLabels],
+  options: {
+	animation : {duration:500},
+    plugins : { legend: {display:false},
+				tooltip : {enabled:false},
+				datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:14}}			
+	},
+    scales: {
+      y: {
+		grid : {
+			lineWidth:2,
+			color: function(context) {
+				if(context.tick.value == 20 || context.tick.value == 30 || context.tick.value == 50 || context.tick.value == 60 ) { return '#071418'} else return ''
+			}
+		},
+        beginAtZero: true
+      }
+    }
+  },
+};
+const myChart3 = new Chart(ctx3, config3); 
+
+// --------------------------------------------------------------------------------------
 var selected_tr = null
 $(document).ready(function(){ 
 	$('#backTestingChart').bind('dblclick',function(){$(this).hide();}).draggable().hide();
