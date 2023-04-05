@@ -63,8 +63,8 @@
 	</div>
 </div> -->
 
-<div class="clearfix" style="width:100%;background-color:#24272d;padding:10px;border:2px solid black;">
-	<div id="myChart2-div" class="pull-left" style="margin-right:20px">
+<div id="myChart2-div" class="clearfix" style="width:100%;background-color:#24272d;padding:10px;border:2px solid black;">
+	<div class="pull-left" style="margin-right:20px">
 		<canvas id="myChart2"  style="width:1210px;height:350px;background-color:#24272d;"></canvas>
 	</div>
 	<div class="pull-left">
@@ -138,7 +138,7 @@
 		<tbody>
 			{%- for TR in D['TR'] -%}
 			{% if TR['가용잔액']|striptags == '전량매도'  %}
-			<tr style="border-top:2px solid yellow;border-bottom:2px solid yellow;background-color:black;"> 
+			<tr style="border-top:2px solid #F3F781;border-bottom:2px solid #F3F781;background-color:black;"> 
 			{% elif TR['가용잔액'] == '손절매도' %}
 			<tr style="border-top:2px solid #cef6ce;border-bottom:2px solid #cef6ce;background-color:black;"> 
 			{% elif TR['가용잔액'] == '부분매도' %}
