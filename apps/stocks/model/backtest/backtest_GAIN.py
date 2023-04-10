@@ -215,6 +215,29 @@ class M_backtest_GAIN(Model) :
             self.print_backtest()
         # endfor -----------------------------------------------------------------------------------------------------
         self.result()
+        self.nextStep()
+
+    def nextStep(self) :
+        self.M['날수'] -= 1
+        self.M['전일종가'] = self.M['당일종가']
+        self.set_price()
+        self.buy_step()
+
+        self.D['next_process'] = self.M['날수'] + 1
+        self.D['next_base_price'] = self.M['전일종가']
+        self.D['next_base_amount'] = self.M['일매수금']
+        self.D['next_available_money'] = f"{self.M['자산총액']:,.0f}"
+
+        if  self.M['첫날기록'] :
+            self.D['next_buy_qty'] = my.ceil(self.M['일매수금']/self.M['전일종가'])
+            self.D['next_buy']  = round(self.M['전일종가'] * self.M['큰단가치'],2)
+            self.D['next_sell'] = 0.00
+            self.D['next_sell_qty']  = 0
+        else :
+            self.D['next_buy']  = self.buy_price
+            self.D['next_buy_qty']  = self.M['구매수량']
+            self.D['next_sell'] = self.sell_price
+            self.D['next_sell_qty']  = self.M['보유수량']
     
     def set_value(self,key,val) :
         for k in key :

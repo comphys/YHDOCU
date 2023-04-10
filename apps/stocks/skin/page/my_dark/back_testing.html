@@ -56,12 +56,7 @@
     <button class="btn btn-red-s3" style="vertical-align:middle;">테스팅</button>
     </div> <!--pull right-->
     </form>
-</div> <!--well-->
-<!-- <div id="myChart2-div" class="clearfix" style="width:100%;background-color:#24272d;padding:10px;border:2px solid black;">
-	<div>
-		<canvas id="myChart2"  style="width:1460px;height:350px;background-color:#24272d;"></canvas>
-	</div>
-</div> -->
+</div> 
 
 <div id="myChart2-div" class="clearfix" style="width:100%;background-color:#24272d;padding:10px;border:2px solid black;">
 	<div class="pull-left" style="margin-right:20px">
@@ -72,7 +67,18 @@
 	</div>
 </div>
 
-
+<div id="Next-Strategy" style="display:none;opacity:0.7;position:fixed;left:1255px;top:112px;width:230px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px">
+    <span style="font-style: italic"> Next Strategy</span><br><br>
+	<ul style="margin-left:20px">
+		<li>Process : {{D['next_process']}}</li>
+		<li>base price : ${{D['next_base_price']}}</li>
+		<li>base amount : ${{D['next_base_amount']}}</li>
+		<li>available : ${{D['next_available_money']}}</li>
+		<li>--------------------</li>
+		<li>Buy {{D['next_buy_qty']}} for ${{D['next_buy']}}</li>
+		<li>Sell {{D['next_sell_qty']}} for ${{D['next_sell']}}</li>
+	</ul>
+</div>
 
 {% if D['NOTICE'] %}
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
@@ -85,7 +91,7 @@
 	<i class="fa fa-arrow-down" onclick="chart_up_dn(2)"></i>
 	</div>
 	<div class="pull-right" style="padding:10px;color:lightgray">
-	{{D['output']|safe}}
+	{{D['output']|safe}} <i class="fa fa-binoculars" onclick="$('#Next-Strategy').toggle()"></i>
 	</div>
 	<table class='table table-striped table-hover' style="width:{{D['xwidth']}};border:2px solid black;">
 		<tr style="background-color:#393f4a;border-bottom:1px solid black">
