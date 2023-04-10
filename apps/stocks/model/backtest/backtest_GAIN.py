@@ -234,7 +234,7 @@ class M_backtest_GAIN(Model) :
             self.D['next_sell'] = 0.00
             self.D['next_sell_qty']  = 0
         else :
-            self.D['next_buy']  = self.buy_price
+            self.D['next_buy']  = f"{self.buy_price:.2f}"
             self.D['next_buy_qty']  = self.M['구매수량']
             self.D['next_sell'] = self.sell_price
             self.D['next_sell_qty']  = self.M['보유수량']
