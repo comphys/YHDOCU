@@ -130,7 +130,7 @@
 .i-input-div-choice2 {display:inline-block; border: 1px solid lightgreen; margin:-2px 10px 1px 0px}
 .i-input-div-must-2 {border: 1px solid yellow;}
 .strategy-toggle {display:none;}
-/* #config-toggle {display:none;} */
+#config-toggle {display:none;}
 /* ////////////////////////////////////////////////////////////////////////////////////////////////
 // EDITOR PART
 //////////////////////////////////////////////////////////////////////////////////////////////// */
