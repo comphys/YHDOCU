@@ -268,7 +268,7 @@
 				<input type='text' name='sub30' class="i-number" style="width:100px;" value="{{D['BODY']['sub30']}}">
 			</div>
 			<div class='i-input-div-choice'>
-				<div class='write-input-server'>추가정보</div>
+				<div class='write-input-server'>누적수수료</div>
 				<input type='text' name='sub31' class="i-number" style="width:110px;" value="{{D['BODY']['sub31']}}">
 			</div>
 			<div class='i-input-div-choice'>
@@ -417,23 +417,19 @@ function auto_calculate() {
 	let 종가2    = txt_to_num('add14','f'); let 누적2    = txt_to_num('add13','i');  
 	let 평균단가2= txt_to_num('sub16','f'); let 매도누적2= txt_to_num('sub15','f'); let 매수누적2= txt_to_num('sub14','f'); let 현매수금2= txt_to_num('sub17','f');
 	let 현재손익 = txt_to_num('add18','f');
-	let 배당합계 = txt_to_num('sub11','f'); let 입금합계 = txt_to_num('sub25','f'); let 현투자금 = txt_to_num('sub27','f');
+	let 추가자금 = txt_to_num('add20','f'); let 배당합계 = txt_to_num('sub11','f'); let 입금합계 = txt_to_num('sub25','f'); let 현투자금 = txt_to_num('sub27','f');
 	let 출금합계 = txt_to_num('sub26','f'); let 현수익률 = txt_to_num('sub28','f');
 	let 일매수금 = txt_to_num('sub4','i');
 
 	수수료등 = 0.0
-    누적1 += 수량1; 누적2 += 수량2;
-	잔액   = 잔액+입금+매도금1+매도금2+배당금-출금-매수금1-매수금2;
+	누적수수료 = 0.0
+	경과일수 = txt_to_num('sub12','i') 
+	누적수수료 = txt_to_num('sub31','f')
 
-    가치1 = 종가1 * 누적1; 
-	가치2 = 종가2 * 누적2; 
-	가치합계  = 잔액 + 가치1 + 가치2;
+    누적1 += 수량1; 
+	누적2 += 수량2;
+	
 
-	입금합계 = 입금합계 + 입금; 출금합계 = 출금합계 + 출금; 현투자금 = 입금합계 - 출금합계;
-	현수익률 = (가치합계 / 현투자금 - 1) * 100;
-	배당합계 = 배당합계 + 배당금;
-
-    비중1 = 잔액/가치합계*100; 비중2 = 가치1/가치합계*100; 비중3 = 가치2/가치합계*100;
 
 	if(매수금1) { 매수누적1 += 매수금1; 현매수금1 += 매수금1; 평균단가1 = 현매수금1 / 누적1; 수수료등 += commission(매수금1,1);} 
 
@@ -450,6 +446,21 @@ function auto_calculate() {
 	if(평균단가2) {	현수익률2  = ( 종가2/평균단가2 -1)*100 ; }
 	if(누적2) { 현재손익 = (종가2 - 평균단가2) * 누적2; }
 	
+	if(경과일수 != 1) {누적수수료 = 누적수수료 + 수수료등 } else {누적수수료 = 수수료등}
+
+	잔액   = 잔액+입금+매도금1+매도금2+배당금-출금-매수금1-매수금2-누적수수료;
+	추가자금 = 추가자금 - 누적수수료;
+
+	가치1 = 종가1 * 누적1; 
+	가치2 = 종가2 * 누적2; 
+	가치합계  = 잔액 + 가치1 + 가치2;
+
+	입금합계 = 입금합계 + 입금; 출금합계 = 출금합계 + 출금; 현투자금 = 입금합계 - 출금합계;
+	현수익률 = (가치합계 / 현투자금 - 1) * 100;
+	배당합계 = 배당합계 + 배당금;
+
+	비중1 = 잔액/가치합계*100; 비중2 = 가치1/가치합계*100; 비중3 = 가치2/가치합계*100;
+
 
 	let vars =[
 		[입금,'add1',2],[출금,'add2',2],[잔액,'add3',2],[비중1,'add4',2],
@@ -464,10 +475,10 @@ function auto_calculate() {
 		[현재손익,'add18',2],
 
 		[배당합계,'sub11',0],[입금합계,'sub25',0],[현투자금,'sub27',0],
-		[출금합계,'sub26',0],[가치합계,'add17',2],[현수익률,'sub28',2],
+		[추가자금,'add20',2],[출금합계,'sub26',0],[가치합계,'add17',2],[현수익률,'sub28',2],
 
 		[일매수금,'sub4',0],
-		[수수료등,'sub30',2]
+		[수수료등,'sub30',2],[누적수수료,'sub31',2]
 	]
 	vars.forEach(function(item){ value = item[0].toFixed(item[2]); $("input[name='"+item[1]+"']").val(value).comma('init'); });
 
