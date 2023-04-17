@@ -9,11 +9,12 @@ class Stock_longterm_info(Control) :
     def get_exinfo(self) :
         ckday = self.gets['ckday']
         self.DB.tbl, self.DB.wre = (self.tbl,f"add0='{ckday}'")
-        res = self.DB.get_line('add18,sub17')
+        res = self.DB.get_line('add18,sub16,sub17')
         현매수금 = float(res['sub17'])
+        평균단가 = float(res['sub16'])
         현재손익 = float(res['add18'])
         output  = "<div style='text-align:center;font-weight:bold;color:#F7F8E0;background-color:black;padding:10px' ondblclick=\"h_dialog.close('POP_INFO')\">"
-        output += f"<div>총매수금 : {현매수금:,.2f} &nbsp; 수익현황 : {현재손익:,.2f}</div>"
+        output += f"<div>총매수금 : {현매수금:,.2f} &nbsp; 평균단가 : {평균단가:,.2f} &nbsp; 수익현황 : {현재손익:,.2f}%</div>"
         output += "</div>"
         return self.echo(output)
         

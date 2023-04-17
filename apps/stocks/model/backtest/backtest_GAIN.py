@@ -4,7 +4,7 @@ import system.core.my_utils as my
 
 class M_backtest_GAIN(Model) :
 
-# 분할 매수를 통한 수익 극대화 전략
+# 변동성을 이용한 올타임 전략
 
     def calculate(self)  :
 

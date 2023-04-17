@@ -148,7 +148,7 @@ $(".list-bears2,.list-normal2").click(function() {
 			notice_popup = true
 			let ckday = $(this).parent().children(":first").text();
 			var url = uri('linkurl') + 'boards-stock_longterm_info/get_exinfo/tbl={{D['tbl']}}/ckday='+ckday;
-			var o = {id:'POP_INFO', width: '320px', x:940, y:mouse_Y-10,header:false,footer:false,drag:true}
+			var o = {id:'POP_INFO', width: '420px', x:920, y:mouse_Y-10,header:false,footer:false,drag:true}
 			h_dialog.load(url,o);
 		}	
 });
