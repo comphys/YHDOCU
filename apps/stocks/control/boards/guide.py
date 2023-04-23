@@ -7,8 +7,9 @@ class Guide(Control) :
         self.bid   = self.parm[0]
         self.board = 'h_'+self.bid+'_board'
     
-    def empty(self) :
-        qry = f"DELETE FROM {self.board}"
+    def emptyPick(self) :
+        pickDate = self.parm[1]
+        qry = f"DELETE FROM {self.board} WHERE add0 >= '{pickDate}'"
         self.DB.exe(qry)
         return self.moveto('board/list/'+self.bid)
     

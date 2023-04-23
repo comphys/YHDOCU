@@ -131,7 +131,7 @@
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>기 록</button></a>&nbsp;
 		<input type='text' name='g_date' class="i-date_3" style="width:120px;height:22px;text-align:center;border:1px solid gray" placeholder='가이드 일자'>
 		<button class='btn btn-small btn-blue' onclick="insertPick()">가져오기</button>
-		<a href="{{D['_bse']}}boards-guide/empty/{{D['bid']}}"><button class='btn btn-small btn-red'>비우기</button></a>
+		<button class='btn btn-small btn-red' onclick="emptyPick()">비우기</button>
 	</div>
 	<div class='pagination pull-right'>
 		<ul>{{D['Pagination']|safe}}</ul>
@@ -161,6 +161,12 @@ function insertPick() {
 	let pick_date = $("input[name='g_date']").val();
 	if(!pick_date) { h_dialog.notice('날자가 선택되지 않았습니다'); return; }
 	location.href = uri('linkurl') + 'boards-guide/insertPick/' + uri(0) + '/' + pick_date ;
+}
+
+function emptyPick() {
+	let pick_date = $("input[name='g_date']").val();
+	if(!pick_date) { h_dialog.notice('날자가 선택되지 않았습니다'); return; }
+	location.href = uri('linkurl') + 'boards-guide/emptyPick/' + uri(0) + '/' + pick_date ;
 }
 
 function popup_notice(option,size) {
