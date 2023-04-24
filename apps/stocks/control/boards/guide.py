@@ -20,7 +20,10 @@ class Guide(Control) :
 
         line = self.DB.get_line("*")
         del line['no']
-        
+        line['content'] = "<div><p>Copied by Auto</p></div>"
+        for x in line :
+            if line[x] == None : line[x] = ''
+
         qry=self.DB.qry_insert(self.board,line)
         self.DB.exe(qry)
         
@@ -45,6 +48,9 @@ class Guide(Control) :
             # 매수전략
             self.normal_buy()
             self.update_value()
+        
+        else :
+            self.set_message(f"{self.D['prev_date']} 이후 업데이트된 정보가 없습니다")
 
         return self.moveto('board/list/'+self.bid)
 
@@ -90,13 +96,13 @@ class Guide(Control) :
             U['add20'] = self.M['추가자금']
             fee = self.commission(U['add12'],2)
 
-        if U['sub16'] : U['sub33'] = round((self.M['당일종가'] / float(U['sub16']) - 1) * 100,2)  # 현수익률 if 평균단가 != 0
+        if U['sub16'] and float(U['sub16']) : U['sub33'] = round((self.M['당일종가'] / float(U['sub16']) - 1) * 100,2)  # 현수익률 if 평균단가 != 0
         if U['add13'] : U['add18'] = round((self.M['당일종가'] - float(U['sub16'])) * U['add13'],2) # 잔량 존재 시 현재수익 계산
         
         U['add19'] = self.M['가용잔액']
         
         U['add3']   = float(U['add3']) + U['add12'] - U['add11'] - fee   #현금합계
-        U['add9']   = int(U['add7'])  * float(self.M['JEPQ'])  #배당주가치
+        U['add9']   = int(U['add7'])  * float(self.M['JEPQ'])  if self.M['JEPQ'] else 0.00 #배당주가치
         U['add15']  = int(U['add13']) * self.M['당일종가'] #레버가치
         U['add17']  = U['add3'] + U['add9'] + U['add15']  #Total Value
 
@@ -127,7 +133,7 @@ class Guide(Control) :
         U['add19']  = f"{U['add19']:.2f}"
         U['add20']  = f"{float(U['add20']):.2f}"
         U['sub19']  = f"{U['sub19']:.2f}"
-        U['sub33']  = f"{U['sub33']:.2f}"
+        U['sub33']  = f"{float(U['sub33']):.2f}"
 
         qry=self.DB.qry_insert(self.board,U)
         self.DB.exe(qry)
