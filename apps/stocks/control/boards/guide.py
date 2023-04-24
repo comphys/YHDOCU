@@ -77,19 +77,23 @@ class Guide(Control) :
             U['sub17'] = float(U['sub17']) + U['add11'] #현매수금 
             U['sub16'] = round(U['sub17']/U['add13'],4) #평균단가 
             fee = self.commission(U['add11'],1)
+            U['add20'] = self.M['추가자금'] - fee
 
         if  U['add12'] : 
             U['sub15'] = float(U['sub15']) + U['add12'] #매도누적
-            U['sub33'] = (U['add12'] / float(U['sub17']) - 1) * 100
+            U['sub33'] = round((U['add12'] / float(U['sub17']) - 1) * 100,2)
             U['sub17'] = 0.00 #현매수금 
             U['sub16'] = 0.00 #평균단가 
+            U['add18'] = self.M['현재손익']
+            U['sub1']  = self.M['시즌']
+            U['sub4']  = self.M['일매수금']
+            U['sub18'] = my.ceil(self.M['일매수금'] / self.M['당일종가'])
             fee = self.commission(U['add12'],2)
 
         if U['sub16'] : U['sub33'] = round((self.M['당일종가'] / U['sub16'] - 1) * 100,2)  # 현수익률 if 평균단가 != 0
         if U['add13'] : U['add18'] = round((self.M['당일종가'] - U['sub16']) * U['add13'],2) # 잔량 존재 시 현재수익 계산
         
         U['add19'] = self.M['가용잔액']
-        U['add20'] = self.M['추가자금'] - fee
         
         U['add3']   = float(U['add3']) + U['add12'] - U['add11'] - fee   #현금합계
         U['add9']   = int(U['add7'])  * float(self.M['JEPQ'])  #배당주가치
@@ -100,6 +104,7 @@ class Guide(Control) :
         U['add10']  = round(U['add9']  / U['add17'] * 100,2)
         U['add16']  = round(U['add15'] / U['add17'] * 100,2)
 
+        
         U['sub2']   = self.M['전매수량']
         U['sub19']  = self.M['전매수가']
         U['sub3']   = self.M['전매도량']
@@ -107,17 +112,10 @@ class Guide(Control) :
         U['sub29']  = self.M['진행상황']
         U['sub30']  = fee
         U['sub31'] = float(U['sub31']) + fee if self.M['경과일수'] != 1 else fee # 누적수수료
+        U['sub28'] = round((U['add17'] / float(U['sub27']) - 1) * 100,2); # 현수익률
+        U['content'] = "<div><p>written by Auto</p></div>"
 
     # Formatting 
-
-
-
-
-
-
-
-
-
 
         qry=self.DB.qry_insert(self.board,U)
         self.DB.exe(qry)
@@ -283,47 +281,6 @@ class Guide(Control) :
             m1 = int(mm*0.07)/100
             m2=round(mm*0.00229)/100
             return m1+m2
-
-    def return_value(self) :
-        ud = {}
-        LD = self.M['LD']
-
-        # 현금투자
-        ud['add3']=f"{float(LD['add3']):,.2f}"
-        # JEPQ
-        ud['add7']=LD['add7']; ud['sub21']=LD['sub21']; ud['sub22']=LD['sub22'] 
-        ud['sub23']=f"{float(LD['sub23']):,.2f}"; ud['sub24']=f"{float(LD['sub24']):,.2f}"
-        ud['sub8'] = 0
-        # SOXL
-        ud['add13']=LD['add13']; ud['sub16']=LD['sub16']; 
-        ud['sub15']=f"{float(LD['sub15']):,.2f}";  ud['sub14']=f"{float(LD['sub14']):,.2f}"; ud['sub17']=LD['sub17']
-        ud['sub7'] =self.M['회복전략'] 
-        # 투자상황
-        ud['sub11']=f"{round(float(LD['sub11']),4):,.2f}"
-        ud['sub25']=f"{float(LD['sub25']):,.2f}"; ud['sub27']=f"{float(LD['sub27']):,.2f}"
-        ud['sub26']=f"{int(LD['sub26']):,.2f}"; 
-        # 종가
-
-        # 매매결과
-        # if self.M['매수금액'] : ud['sub9'] =  self.M['매수수량']
-        # if self.M['매도금액'] : ud['sub9'] = -self.M['매도수량']
-        # 매매상황
-        ud['add18'] = self.M['현재손익']
-        ud['sub29'] = self.M['진행상황']
-        # 매매전략
-        if self.M['경과일수'] !=0 and self.M['전매수가'] >= self.M['전매도가'] : self.M['전매수가'] = self.M['전매도가'] - 0.01
-        ud['sub1'] = self.M['시즌'];      ud['sub12'] = self.M['경과일수']
-        ud['sub4'] = self.M['일매수금'];  ud['sub18'] = self.M['기초수량']
-        ud['sub2'] = self.M['전매수량'];  ud['sub19'] = f"{self.M['전매수가']:,.2f}"
-        ud['sub3'] = self.M['전매도량'];  ud['sub20'] = f"{self.M['전매도가']:,.2f}"
-        # 자금상황
-        ud['add19'] = f"{round(self.M['가용잔액'],4):,.2f}"
-        ud['add20'] = f"{round(self.M['추가자금'],4):,.2f}"
-        # 기타사항
-        ud['sub30'] = ''
-        ud['sub31'] = LD['sub31']
-        ud['sub32'] = LD['sub32']
-        return ud
 
         # From JavaScript to Python 
 

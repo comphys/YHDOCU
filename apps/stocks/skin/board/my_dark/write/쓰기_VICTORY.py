@@ -180,7 +180,8 @@ class 쓰기_VICTORY(SKIN) :
         if  not self.M['보유수량'] : self.M['진행상황'] = '매수대기'
 
     def rebalance(self)  :
-        total = self.M['매도금액'] + self.M['가용잔액'] + self.M['추가자금']
+        fee = self.commission(self.M['매도금액'],2) 
+        total = self.M['매도금액'] + self.M['가용잔액'] + self.M['추가자금'] - fee
         self.M['가용잔액'] = int((total * 2)/3)
         self.M['추가자금'] = int(total - self.M['가용잔액'])
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
@@ -238,6 +239,12 @@ class 쓰기_VICTORY(SKIN) :
         else :
             if  self.M['당일종가'] <= float(self.M['LD']['sub19']) : self.M['매수수량']  = int(self.M['LD']['sub2'])
 
+    def commission(self,mm,opt) :
+        if  opt==1 :  return int(mm*0.07)/100
+        if  opt==2 :  
+            m1 = int(mm*0.07)/100
+            m2=round(mm*0.00229)/100
+            return m1+m2
 
     def return_value(self) :
         ud = {}
