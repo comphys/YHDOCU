@@ -128,7 +128,8 @@
 <div class="row-row clearfix">
 	<div class='pull-left'>
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
-		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>기 록</button></a>&nbsp;
+		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red-s2'>검 토</button></a>
+		<a href="{{D['_bse']}}boards-guide/oneWrite/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>기 록</button></a>&nbsp;
 		<input type='text' name='g_date' class="i-date_3" style="width:120px;height:22px;text-align:center;border:1px solid gray" placeholder='가이드 일자'>
 		<button class='btn btn-small btn-blue' onclick="insertPick()">가져오기</button>
 		<button class='btn btn-small btn-red' onclick="emptyPick()">비우기</button>
@@ -228,7 +229,7 @@ const data1 = {
 		{
             label:' 가치합계',
             data : total_value2,
-            borderColor:'#24272d', borderWidth:2,pointRadius:0, 
+            borderColor:'black', borderWidth:1,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
         },		
@@ -294,7 +295,7 @@ const data3 = {
 		{
             label:' 총투자금',
             data : total_value2,
-            borderColor:'#24272d', borderWidth:2,pointRadius:0, 
+            borderColor:'black', borderWidth:1,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
         },
@@ -327,7 +328,7 @@ const options3 = {
 			color:function(context) {
 				if( context.tick.value == 0 ) { return 'gray'}
 				else if(context.tick.value % 10 == 0 ) { return 'black'} },
-			lineWidth: function(context) {if(context.tick.value %10 == 0 ) { return 2 } else return 0},
+			lineWidth: function(context) {if(context.tick.value %10 == 0 ) { return 1 } else return 0},
 		   },
 		   position:'left'},
 		y1:{ type:'linear', display:true, position:'right'}

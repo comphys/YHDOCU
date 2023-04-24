@@ -265,8 +265,8 @@ class 쓰기_VICTORY(SKIN) :
         ud['add11'] = f"{round(self.M['매수금액'],4):,.2f}"
         ud['add12'] = f"{round(self.M['매도금액'],4):,.2f}"
         ud['sub9']  = self.M['변동수량']
-        if self.M['매수금액'] : ud['sub9'] =  self.M['매수수량']
-        if self.M['매도금액'] : ud['sub9'] = -self.M['매도수량']
+        # if self.M['매수금액'] : ud['sub9'] =  self.M['매수수량']
+        # if self.M['매도금액'] : ud['sub9'] = -self.M['매도수량']
         # 매매상황
         ud['add18'] = self.M['현재손익']
         ud['sub29'] = self.M['진행상황']
