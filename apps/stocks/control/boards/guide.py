@@ -75,7 +75,7 @@ class Guide(Control) :
         if  U['add11'] : 
             U['sub14'] = float(U['sub14']) + U['add11'] #매수누적
             U['sub17'] = float(U['sub17']) + U['add11'] #현매수금 
-            U['sub16'] = U['sub17'] /U['add13']    #평균단가 
+            U['sub16'] = round(U['sub17']/U['add13'],4) #평균단가 
             fee = self.commission(U['add11'],1)
 
         if  U['add12'] : 
@@ -85,8 +85,8 @@ class Guide(Control) :
             U['sub16'] = 0.00 #평균단가 
             fee = self.commission(U['add12'],2)
 
-        if U['sub16'] : U['sub33'] = ( self.M['당일종가'] / U['sub16'] - 1) * 100  # 현수익률 if 평균단가 != 0
-        if U['add13'] :  U['add18'] = (self.M['당일종가'] - U['sub16']) * U['add13'] # 잔량 존재 시 현재수익 계산
+        if U['sub16'] : U['sub33'] = round((self.M['당일종가'] / U['sub16'] - 1) * 100,2)  # 현수익률 if 평균단가 != 0
+        if U['add13'] : U['add18'] = round((self.M['당일종가'] - U['sub16']) * U['add13'],2) # 잔량 존재 시 현재수익 계산
         
         U['add19'] = self.M['가용잔액']
         U['add20'] = self.M['추가자금'] - fee
@@ -108,7 +108,7 @@ class Guide(Control) :
         U['sub30']  = fee
         U['sub31'] = float(U['sub31']) + fee if self.M['경과일수'] != 1 else fee # 누적수수료
 
-
+    # Formatting 
 
 
 
