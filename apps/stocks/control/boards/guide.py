@@ -56,7 +56,7 @@ class Guide(Control) :
     def update_value(self) :
         U = self.M['LD']
         del U['no']
-
+        fee = 0.0
         U['wdate']   = my.now_timestamp()
         U['mdate']   = U['wdate']
         U['add0']    = self.M['진행일자']
@@ -88,10 +88,11 @@ class Guide(Control) :
             U['sub1']  = self.M['시즌']
             U['sub4']  = self.M['일매수금']
             U['sub18'] = my.ceil(self.M['일매수금'] / self.M['당일종가'])
+            U['add20'] = self.M['추가자금']
             fee = self.commission(U['add12'],2)
 
-        if U['sub16'] : U['sub33'] = round((self.M['당일종가'] / U['sub16'] - 1) * 100,2)  # 현수익률 if 평균단가 != 0
-        if U['add13'] : U['add18'] = round((self.M['당일종가'] - U['sub16']) * U['add13'],2) # 잔량 존재 시 현재수익 계산
+        if U['sub16'] : U['sub33'] = round((self.M['당일종가'] / float(U['sub16']) - 1) * 100,2)  # 현수익률 if 평균단가 != 0
+        if U['add13'] : U['add18'] = round((self.M['당일종가'] - float(U['sub16'])) * U['add13'],2) # 잔량 존재 시 현재수익 계산
         
         U['add19'] = self.M['가용잔액']
         
@@ -104,18 +105,30 @@ class Guide(Control) :
         U['add10']  = round(U['add9']  / U['add17'] * 100,2)
         U['add16']  = round(U['add15'] / U['add17'] * 100,2)
 
-        
+        if self.M['경과일수'] !=0 and self.M['전매수가'] >= self.M['전매도가'] : self.M['전매수가'] = self.M['전매도가'] - 0.01
         U['sub2']   = self.M['전매수량']
         U['sub19']  = self.M['전매수가']
         U['sub3']   = self.M['전매도량']
         U['sub20']  = self.M['전매도가']
         U['sub29']  = self.M['진행상황']
+        U['sub7']   = self.M['회복전략'] 
         U['sub30']  = fee
         U['sub31'] = float(U['sub31']) + fee if self.M['경과일수'] != 1 else fee # 누적수수료
         U['sub28'] = round((U['add17'] / float(U['sub27']) - 1) * 100,2); # 현수익률
-        U['content'] = "<div><p>written by Auto</p></div>"
-
+        U['content'] = "<div><p>Written by Auto</p></div>"
+       
     # Formatting 
+        U['add9']   = f"{U['add9']:.2f}"
+        U['add10']  = f"{U['add10']:.2f}"
+        U['add11']  = f"{U['add11']:.2f}"
+        U['sub16']  = f"{float(U['sub16']):.4f}"
+        U['add15']  = f"{U['add15']:.2f}"
+        U['add16']  = f"{U['add16']:.2f}"
+        U['sub17']  = f"{float(U['sub17']):.2f}"
+        U['add19']  = f"{U['add19']:.2f}"
+        U['add20']  = f"{float(U['add20']):.2f}"
+        U['sub19']  = f"{U['sub19']:.2f}"
+        U['sub33']  = f"{U['sub33']:.2f}"
 
         qry=self.DB.qry_insert(self.board,U)
         self.DB.exe(qry)
@@ -216,7 +229,8 @@ class Guide(Control) :
         if  not self.M['보유수량'] : self.M['진행상황'] = '매수대기'
 
     def rebalance(self)  :
-        total = self.M['매도금액'] + self.M['가용잔액'] + self.M['추가자금']
+        fee = self.commission(self.M['매도금액'],2) 
+        total = self.M['매도금액'] + self.M['가용잔액'] + self.M['추가자금'] - fee
         self.M['가용잔액'] = int((total * 2)/3)
         self.M['추가자금'] = int(total - self.M['가용잔액'])
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
@@ -233,7 +247,7 @@ class Guide(Control) :
 
         if (매수수량 * self.M['전일종가']) > self.M['가용잔액'] + self.M['추가자금'] : 
             매도단가 = my.round_up(self.M['평균단가']*self.M['둘매가치'])
-        if self.M['회복전략'] and self.M['경과일수'] +1 <= self.M['회복기한'] : 매도단가 = my.round_up(self.M['평균단가']* (1+self.M['회복전략']/100))
+        if self.M['회복전략'] and self.M['경과일수'] +1 <= self.M['회복기한'] : 매도단가 = my.round_up(self.M['평균단가']* (1+float(self.M['회복전략'])/100))
 
         if self.M['경과일수']+1 >= self.M['강매시작'] : 매도단가 = my.round_up(self.M['평균단가']*self.M['강매가치'])
 
