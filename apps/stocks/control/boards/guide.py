@@ -44,8 +44,7 @@ class Guide(Control) :
             self.normal_sell()
             # 매수전략
             self.normal_buy()
-            IV = self.update_value()
-            # self.info(AutoInput)
+            self.update_value()
 
         return self.moveto('board/list/'+self.bid)
 
