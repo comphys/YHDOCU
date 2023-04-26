@@ -61,7 +61,6 @@ class Guide(Control) :
     def update_value(self) :
         U = self.M['LD']
         del U['no']
-        fee = 0.0
         U['wdate']   = my.now_timestamp()
         U['mdate']   = U['wdate']
         U['add0']    = self.M['진행일자']
@@ -81,8 +80,7 @@ class Guide(Control) :
             U['sub14'] = float(U['sub14']) + U['add11'] #매수누적
             U['sub17'] = float(U['sub17']) + U['add11'] #현매수금 
             U['sub16'] = round(U['sub17']/U['add13'],4) #평균단가 
-            fee = self.commission(U['add11'],1)
-            U['add20'] = self.M['추가자금'] - fee
+            U['add20'] = self.M['추가자금']
 
         if  U['add12'] : 
             U['sub15'] = float(U['sub15']) + U['add12'] #매도누적
@@ -94,14 +92,13 @@ class Guide(Control) :
             U['sub4']  = self.M['일매수금']
             U['sub18'] = my.ceil(self.M['일매수금'] / self.M['당일종가'])
             U['add20'] = self.M['추가자금']
-            fee = self.commission(U['add12'],2)
 
         if U['sub16'] and float(U['sub16']) : U['sub33'] = round((self.M['당일종가'] / float(U['sub16']) - 1) * 100,2)  # 현수익률 if 평균단가 != 0
         if U['add13'] : U['add18'] = round((self.M['당일종가'] - float(U['sub16'])) * U['add13'],2) # 잔량 존재 시 현재수익 계산
         
         U['add19'] = self.M['가용잔액']
         
-        U['add3']   = float(U['add3']) + U['add12'] - U['add11'] - fee   #현금합계
+        U['add3']   = self.M['현재잔액'] + U['add12'] - U['add11'] #현금합계
         U['add9']   = int(U['add7'])  * float(self.M['JEPQ'])  if self.M['JEPQ'] else 0.00 #배당주가치
         U['add15']  = int(U['add13']) * self.M['당일종가'] #레버가치
         U['add17']  = U['add3'] + U['add9'] + U['add15']  #Total Value
@@ -117,8 +114,8 @@ class Guide(Control) :
         U['sub20']  = self.M['전매도가']
         U['sub29']  = self.M['진행상황']
         U['sub7']   = self.M['회복전략'] 
-        U['sub30']  = fee
-        U['sub31'] = float(U['sub31']) + fee if self.M['경과일수'] != 1 else fee # 누적수수료
+        U['sub30']  = self.M['수수료등']
+        U['sub31'] = float(U['sub31']) + self.M['수수료등'] if self.M['경과일수'] != 1 else self.M['수수료등'] # 누적수수료
         U['sub28'] = round((U['add17'] / float(U['sub27']) - 1) * 100,2); # 현수익률
         U['content'] = "<div><p>Written by Auto</p></div>"
        
@@ -139,14 +136,13 @@ class Guide(Control) :
         self.DB.exe(qry)
 
 
-
-
     def init_value(self) :
         self.M = {}
         self.M['진행일자'] = self.D['today']
         self.DB.tbl, self.DB.wre = (f"h_{self.bid}_board", f"add0 < '{self.M['진행일자']}'")
         self.DB.wre = f"add0='{self.D['prev_date']}'"
         LD = self.M['LD'] = self.DB.get_line('*')
+        self.M['현재잔액'] = float(LD['add3'])
 
         # 종가구하기
         self.DB.clear()
@@ -182,6 +178,7 @@ class Guide(Control) :
         self.M['전매도량'] = 0
         self.M['전매도가'] = 0.0
         self.M['현재손익'] = 0.0
+        self.M['수수료등'] = 0.0
 
         self.M['시즌'] = int(LD['sub1'])
         self.M['평균단가'] = float(LD['sub16'])
@@ -213,7 +210,9 @@ class Guide(Control) :
             self.M['현재손익'] = f"{수익금액:,.2f}"
             self.M['경과일수'] = 0
             self.M['시즌'] += 1
-            self.M['기초수량'] = 0           
+            self.M['기초수량'] = 0   
+            self.commission(self.M['매도금액'],2)
+   
             # 리밸런싱
             self.rebalance()
 
@@ -222,6 +221,7 @@ class Guide(Control) :
             self.M['변동수량']  = self.M['매수수량']
             self.M['보유수량'] += self.M['매수수량']
             self.M['평균단가']  = (self.M['현매수금'] + self.M['매수금액']) / self.M['보유수량'] 
+            self.commission(self.M['매수금액'],1)
 
             self.M['가용잔액'] -=  self.M['매수금액']
             if  self.M['가용잔액'] < 0 : 
@@ -234,8 +234,7 @@ class Guide(Control) :
         if  not self.M['보유수량'] : self.M['진행상황'] = '매수대기'
 
     def rebalance(self)  :
-        fee = self.commission(self.M['매도금액'],2) 
-        total = self.M['매도금액'] + self.M['가용잔액'] + self.M['추가자금'] - fee
+        total = self.M['매도금액'] + self.M['가용잔액'] + self.M['추가자금']
         self.M['가용잔액'] = int((total * 2)/3)
         self.M['추가자금'] = int(total - self.M['가용잔액'])
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
@@ -295,11 +294,14 @@ class Guide(Control) :
 
 
     def commission(self,mm,opt) :
-        if  opt==1 :  return int(mm*0.07)/100
+        if  opt==1 :  fee = int(mm*0.07)/100
         if  opt==2 :  
             m1 = int(mm*0.07)/100
             m2=round(mm*0.00229)/100
-            return m1+m2
+            fee = m1+m2
 
+        self.M['수수료등']  = fee
+        self.M['현재잔액'] -= fee
+        self.M['추가자금'] -= fee
         # From JavaScript to Python 
 

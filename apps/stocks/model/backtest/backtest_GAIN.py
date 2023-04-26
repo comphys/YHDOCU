@@ -13,7 +13,8 @@ class M_backtest_GAIN(Model) :
             self.M['보유수량'] +=  self.M['매수수량']
             self.M['총매수금'] +=  self.M['매수금액']
             self.M['평균단가']  =  self.M['총매수금'] / self.M['보유수량'] 
-
+            if self.M['비용차감'] : self.M['추가자금'] -=  self.commission(self.M['매수금액'],1)
+ 
         if  self.M['매도수량'] :
             self.M['실현수익']  = (self.M['당일종가']-self.M['평균단가'])*self.M['매도수량']   
             self.M['수익누적'] += self.M['실현수익'] 
@@ -21,6 +22,7 @@ class M_backtest_GAIN(Model) :
             self.M['보유수량'] -= self.M['매도수량'] 
             self.M['가용잔액'] += self.M['매도금액']
             self.M['총매수금']  = self.M['보유수량'] * self.M['평균단가']
+            if self.M['비용차감'] : self.M['추가자금'] -=  self.commission(self.M['매도금액'],2)
             
 
         self.M['평가금액']  =  self.M['당일종가'] * self.M['보유수량']
@@ -42,13 +44,18 @@ class M_backtest_GAIN(Model) :
         self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
         self.M['평가총액'] = self.M['자산총액'] + self.M['평가금액']
 
-
+    def commission(self,mm,opt) :
+        if  opt==1 :  return int(mm*0.07)/100
+        if  opt==2 :  
+            m1 = int(mm*0.07)/100
+            m2=round(mm*0.00229)/100
+            return m1+m2
         
     def rebalance(self)  :
         total = self.M['가용잔액'] + self.M['추가자금']
         self.M['평가밸류'] = total
         self.M['가용잔액'] = int(total * self.M['자본비율'])
-        self.M['추가자금'] = int(total - self.M['가용잔액'])
+        self.M['추가자금'] = total - self.M['가용잔액']
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
         self.M['씨드'] = self.M['가용잔액']
 
@@ -85,8 +92,9 @@ class M_backtest_GAIN(Model) :
         self.M['위매비중']  = int(self.S['add25'])
         self.M['회수기한']  = int(self.S['add11'])
         self.M['전화위복']  = 1 + float(self.S['add22'])/100
-        self.M['손실회수'] = False
+        self.M['손실회수']  = False
         self.M['매수단계']  = '일반매수'
+        self.M['비용차감']  = True if self.S['add7'] == 'on' else False  # 수수료 계산날수 초과 후 강매선택
 
         self.D['TR'] = []
 
@@ -116,6 +124,7 @@ class M_backtest_GAIN(Model) :
             self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
             self.M['수익현황']  = self.M['수익률'] = 0.0
 
+            if self.M['비용차감'] : self.M['추가자금'] -=  self.commission(self.M['매수금액'],1)
             self.M['가용잔액'] -= self.M['매수금액']
             self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
             self.M['진행상황']  = '첫날거래'
