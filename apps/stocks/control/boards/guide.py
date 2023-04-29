@@ -92,6 +92,8 @@ class Guide(Control) :
             U['sub4']  = self.M['일매수금']
             U['sub18'] = my.ceil(self.M['일매수금'] / self.M['당일종가'])
             U['add20'] = self.M['추가자금']
+        else : 
+            U['sub33'] = '0.00'
 
         if U['sub16'] and float(U['sub16']) : U['sub33'] = round((self.M['당일종가'] / float(U['sub16']) - 1) * 100,2)  # 현수익률 if 평균단가 != 0
         if U['add13'] : U['add18'] = round((self.M['당일종가'] - float(U['sub16'])) * U['add13'],2) # 잔량 존재 시 현재수익 계산
@@ -236,7 +238,7 @@ class Guide(Control) :
     def rebalance(self)  :
         total = self.M['매도금액'] + self.M['가용잔액'] + self.M['추가자금']
         self.M['가용잔액'] = int((total * 2)/3)
-        self.M['추가자금'] = int(total - self.M['가용잔액'])
+        self.M['추가자금'] = total - self.M['가용잔액']
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
 
     def normal_sell(self) :
@@ -303,5 +305,50 @@ class Guide(Control) :
         self.M['수수료등']  = fee
         self.M['현재잔액'] -= fee
         self.M['추가자금'] -= fee
-        # From JavaScript to Python 
+
+    def initiate_basic(self) :
+        theDay  = self.D['post']['theDay']
+        Balance = float(self.D['post']['Balance'].replace(',',''))
+
+        preDay = self.DB.one(f"SELECT max(add0) FROM h_stockHistory_board WHERE add0 < '{theDay}'")
+        self.B = {}
+        self.M = {}
+
+        self.DB.clear()
+        self.DB.tbl = 'h_stockHistory_board'
+        self.DB.wre = f"add0='{theDay}' and add1='JEPQ'"; JPEQ  = self.DB.get_one('add3')
+        self.DB.wre = f"add0='{theDay}' and add1='SOXL'"; SOXL  = float(self.DB.get_one('add3'))
+        CUP = self.DB.get_one('add9'); CDN = self.DB.get_one('add10'); 
+        self.DB.wre = f"add0='{preDay}' and add1='SOXL'"; OSOX  = float(self.DB.get_one('add3'))
+
+        self.B['add0']  = theDay
+        self.B['add1']  = '0.00';   self.B['add2']  = '0.00';  self.B['add3']  = f"{Balance:,.2f}" ;  self.B['add4'] = '100.0'
+        self.B['add5']  = '0.00';   self.B['add6']  = '0.00';  self.B['sub8']  = '0.00';  self.B['sub10'] = '0.00'
+        self.B['add8']  =  JPEQ ;   self.B['add9']  = '0.00';  self.B['add7']  =  0;      self.B['add10'] = '0.0'
+        self.B['sub21'] ='0.0000';  self.B['sub22'] = '0.00';  self.B['sub23'] =  '0.00'; self.B['sub24'] = '0.00'
+        self.B['sub5']  = CUP;  self.B['sub6'] = CDN; self.B['add18'] = '0.00'; self.B['sub7'] = '0.0'      
+
+        self.M['가용잔액'] = int((Balance * 2)/3)
+        self.M['추가자금'] = Balance - self.M['가용잔액']
+        self.M['일매수금'] = int(self.M['가용잔액']/22) 
+
+        self.M['기초수량'] = my.ceil(self.M['일매수금']/OSOX)
+
+        self.B['add11'] = self.M['기초수량'] * SOXL ;  self.B['add12'] = '0.00' ;  self.B['sub9']  = self.M['기초수량'];  self.B['sub33'] = '0.00'
+        self.B['add14'] = SOXL ; self.B['add15'] = '0.00' ; self.B['add13'] = 0; self.B['add16'] = '0.0'; 
+        self.B['sub16'] = '0.0000'; self.B['sub15'] = '0.00'; self.B['sub14'] = '0.00'; self.B['sub17'] = '0.0'
+
+        self.B['add19'] = f"{self.M['가용잔액']-self.B['add11']:,.2f}"; self.B['sub11'] = '0.00'; self.B['sub25'] = f"{Balance:,.2f}"; self.B['sub27'] = f"{Balance:,.2f}"
+        self.B['add20'] = self.M['추가자금']; self.B['sub26'] = '0.00'; self.B['add17'] = '0.00'; self.B['sub28'] = '0.00'
+
+        self.B['sub1']  = 1; self.B['sub4'] = self.M['일매수금']; 
+        self.B['sub2']  = my.ceil(self.M['기초수량'] * (1 * 1.25 + 1))
+        self.B['sub3']  = self.M['기초수량']
+        self.B['sub12'] = 1; self.B['sub18'] = self.M['기초수량']; 
+        self.B['sub19'] = round(SOXL * 1.022,2)-0.01; 
+        self.B['sub20'] = self.B['sub19']+0.01
+
+        self.B['sub29'] = '일반매수'; self.B['sub30'] = '0.00'; self.B['sub31'] = '0.00'; self.B['sub32'] = '0'
+
+        return self.json(self.B) 
 

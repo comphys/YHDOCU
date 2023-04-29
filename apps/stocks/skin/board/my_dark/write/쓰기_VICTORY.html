@@ -24,6 +24,7 @@
 				<a class="btn btn-blue-s2" onclick="auto_reset();return false"><i class="fa fa-undo" title="되돌리기"></i></a>
 				<a class="btn btn-blue-s4" onclick="money_inout();return false"><i class="fa fa-bank" title="입출금기록"></i></a>
 				<a class="btn btn-blue-s4" onclick="money_realloc();return false"><i class="fa fa-handshake-o" title="일매수금 재산정"></i></a>
+				<a class="btn btn-red-s1"  onclick="initiate_basic();return false"><i class="fa fa-fast-backward" title="투자 초기화"></i></a>
 			  </div>
         </td>
     </tr>
@@ -191,7 +192,7 @@
 		<td colspan="2" style="font-size:2px;line-height:12px;background-color: #010213;">&nbsp;</td>
 	</tr>
     <tr id="config-toggle">
-        <td class='write-td-left'>투자상황</td>
+        <td class='write-td-left'>투자전략</td>
 		<td class="write-td-right">
 			<div class='i-input-div-must'>
 				<div class='write-input-server'>가용잔액</div>
@@ -617,5 +618,24 @@ function money_realloc() {
 	var code = $(this).text()
 	winopen('winopen/chart2/'+code,820,450,'stock_chart');
 });
+
+
+function initiate_basic() {
+	let theDay  = $("input[name='add0']").val();
+	let Balance = $("input[name='add3']").val();
+	if(theDay=='None') {h_dialog.notice('날자를 선택하여 주세요'); return;}
+	if(!Balance) {h_dialog.notice('잔액을 입력하여 주세요'); return;}
+	
+	let posturl = uri('linkurl')+ 'boards-guide/initiate_basic/'+uri(0)
+
+	postData = {theDay:theDay, Balance:Balance}
+	$.post( posturl, postData).done(function(data) {
+		var ans = JSON.parse(data);
+		for(let i in ans) { $("input[name='"+i+"']" ).val(ans[i]); }
+	});
+
+	
+
+}	
 </script>
 {% endblock %}

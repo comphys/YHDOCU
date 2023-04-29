@@ -163,7 +163,7 @@ class 목록_G_VICTORY(SKIN) :
                         tx[key] = tmp
                     elif key == 'add18' : continue
                     elif key == 'add13' : 
-                        if item['add13'] == '0' : 
+                        if float(item['add12']) != 0 : 
                             profit = float(item['add18'].replace(',',''))
                             tx[key] = f"<td class='list-bulls'>{profit:,.2f}</td>" if profit > 0 else f"<td class='list-bears'>{profit:,.2f}</td>" 
                             

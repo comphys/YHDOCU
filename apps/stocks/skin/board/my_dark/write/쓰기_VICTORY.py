@@ -153,15 +153,18 @@ class 쓰기_VICTORY(SKIN) :
         if  self.M['매도수량'] :
             self.M['매도금액'] = 매도가격 * self.M['매도수량']
             self.M['변동수량'] = -self.M['매도수량'] 
+            self.M['보유수량'] -= self.M['매도수량']
             self.M['진행상황'] = '전량매도' 
             수익금액 = self.M['매도금액'] - self.M['현매수금']
             self.M['회복전략'] = 0 if 수익금액 > 0 else self.S['add22']
             self.M['현재손익'] = f"{수익금액:,.2f}"
-            self.M['경과일수'] = 0
-            self.M['시즌'] += 1
-            self.M['기초수량'] = 0           
-            # 리밸런싱
-            self.rebalance()
+            self.M['추가자금']-= self.commission(self.M['매도금액'],2) 
+
+            if  self.M['보유수량'] == 0 :
+                self.M['경과일수'] = 0
+                self.M['시즌'] += 1
+                self.M['기초수량'] = 0           
+                self.rebalance()
 
         if  self.M['매수수량'] :
             self.M['매수금액']  = 매수가격 * self.M['매수수량']
@@ -180,8 +183,7 @@ class 쓰기_VICTORY(SKIN) :
         if  not self.M['보유수량'] : self.M['진행상황'] = '매수대기'
 
     def rebalance(self)  :
-        fee = self.commission(self.M['매도금액'],2) 
-        total = self.M['매도금액'] + self.M['가용잔액'] + self.M['추가자금'] - fee
+        total = self.M['매도금액'] + self.M['가용잔액'] + self.M['추가자금'] 
         self.M['가용잔액'] = int((total * 2)/3)
         self.M['추가자금'] = int(total - self.M['가용잔액'])
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
