@@ -53,7 +53,7 @@
 		<div class="pull-right">
 			<input type='text' name='s_date' class="i-date_1" style="width:90px;text-align:center" placeholder='시작일자' value="{{D['s_date']}}">
 			<input type='text' name='e_date' class="i-date_2" style="width:90px;text-align:center" placeholder='종료일자' value="{{D['e_date']}}">&nbsp;
-			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(1)"><i class="fa fa-bars"></i>&nbsp;</span>
+			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(2)"><i class="fa fa-bars"></i>&nbsp;</span>
 			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(0)"><i class="fa fa-home"></i>&nbsp;</span>
 			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_span()"><i class="fa fa-undo"></i>&nbsp;</span>
 		</div>
@@ -139,7 +139,7 @@
 
 <script>
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
-$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(2)}});
+$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(0)}});
 var notice_popup = false;
 
 $(".list-bears2,.list-normal2").click(function() {
@@ -191,6 +191,8 @@ let soxl_average2 = soxl_average.slice({{D['chart_start']}});
 let total_value2 = total_value.slice({{D['chart_start']}});
 let close_change2 = close_change.slice({{D['chart_start']}});
 let lever_change2 = lever_change.slice({{D['chart_start']}});
+
+let season_first_day = '{{D['시즌첫날']}}';
 
 const data1 = {
     labels : labels_2,
@@ -329,22 +331,28 @@ function chart_toggle() {
 		myChart.config.data = data1;
 		myChart.config.options = options1;
 	}
-	myChart.update();
 	second_chart = ! second_chart;
+	slice_chart(1)
 }
 
 
 function slice_chart(opt) {
 
 	var s_date,e_date,new_s,new_e
-	if(opt) { s_date = $("input[name='s_date']").val().slice(2); e_date = $("input[name='e_date']").val().slice(2) 
+	if(opt==1) { s_date = $("input[name='s_date']").val().slice(2); e_date = $("input[name='e_date']").val().slice(2) 
 		for(d=0; d<labels.length; d++) {if(labels[d] >= s_date)    { new_s = d; $("input[name='s_date']").val('20'+labels[d]);break;}} 
 		for(d=labels.length-1; d >=0; d--) {if(labels[d] <= e_date){ new_e = d+1; $("input[name='e_date']").val('20'+labels[d]);break;}} 
+	} else if(opt==2) { 
+		$("input[name='s_date']").val(season_first_day);
+		s_date = season_first_day.slice(2);
+		new_s = labels.indexOf(s_date) 
+		new_e = labels.length;
 	} else {
 		s_date = "{{D['s_date']}}".slice(2); e_date = "{{D['e_date']}}".slice(2)
 		$("input[name='s_date']").val("{{D['s_date']}}"); $("input[name='e_date']").val("{{D['e_date']}}");
 		new_s =0; new_e = labels.length
 	}
+	
 	if(second_chart) {
 		myChart.config.data.labels = labels.slice(new_s,new_e);
 		myChart.config.data.datasets[0].data =  total_value.slice(new_s,new_e);
