@@ -342,7 +342,7 @@ function show_chart(season) {
 	$(".avgv"+season).each(function() {avgv.push(parseFloat($(this).text()))});
 	
 	var xticks = clsv.length
-	if (xticks < 60 ) { xticks = 60; }
+	if (xticks < 30 ) { xticks = 30; }
 	var new_labels = Array.from(new Array(xticks),(x,i)=> i+1);
 	avgv[avgv.length - 1] = avgv[avgv.length - 2]
 	myChart.config.data.labels = new_labels;

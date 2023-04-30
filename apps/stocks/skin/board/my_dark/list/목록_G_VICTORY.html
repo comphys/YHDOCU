@@ -60,7 +60,7 @@
 	</div>
 </div>
 <div class="row-row clearfix">
-	<table class='table table-bordered table-striped table-hover' style="border:2px solid gray">
+	<table class='table table-bordered table-striped table-hover' style="border:2px solid gold">
 		<thead>
 			<tr>
 				<th style="background-color:#071418;font-style:italic">Progress</th>
@@ -371,7 +371,7 @@ function slice_chart(opt) {
 		$("input[name='s_date']").val("{{D['s_date']}}"); $("input[name='e_date']").val("{{D['e_date']}}");
 		new_s =0; new_e = labels.length
 	}
-	
+
 	if(second_chart) {
 		myChart.config.data.labels = labels.slice(new_s,new_e);
 		myChart.config.data.datasets[0].data =  total_value.slice(new_s,new_e);
