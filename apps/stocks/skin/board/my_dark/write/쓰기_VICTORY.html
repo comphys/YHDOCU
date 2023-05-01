@@ -12,7 +12,7 @@
         <td class='write-td-left'>기본정보</td>
 		<td class="write-td-right" style="background-color:#393e4a">
 			<div class='i-input-div'>
-				<div class='write-input-left' style="width:80px">진행일자</div>
+				<div class='write-input-server' style="width:80px">진행일자</div>
 				{% if D['Mode'] == 'modify' %}
 				<input type='text' name='add0' style="width:120px;text-align:center" value="{{D['BODY']['add0']}}">
 				{% else %}
@@ -34,20 +34,20 @@
     <tr>
         <td class='write-td-left'>현금투자</td>
 		<td class="write-td-right">
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">입금</div>
+			<div class='i-input-div-choice'>
+				<div class='write-input-server'>입금</div>
 				<input type='text' name='add1' class="i-number" style="width:100px;" value="{{D['BODY']['add1']}}">
 			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">출금</div>
+			<div class='i-input-div-choice'>
+				<div class='write-input-server'>출금</div>
 				<input type='text' name='add2' class="i-number" style="width:100px;" value="{{D['BODY']['add2']}}">
 			</div>
-			<div class='i-input-div-choice'>
+			<div class='i-input-div'>
 				<div class='write-input-server'>잔액</div>
 				<input type='text' name='add3' class="i-number" style="width:110px;" value="{{D['BODY']['add3']}}">
 			</div>
-			<div class='i-input-div-choice'>
-				<div class='write-input-left' style="background-color:#333F4F;">비중</div>
+			<div class='i-input-div'>
+				<div class='write-input-server'>비중</div>
 				<input type='text' name='add4' class="i-number" style="width:100px;" value="{{D['BODY']['add4']}}">
 			</div>
         </td>
@@ -58,53 +58,53 @@
     <tr>
         <td class='write-td-left' id="first_stock">JEPQ</td>
 		<td class="write-td-right">
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">매수금</div>
+			<div class='i-input-div-choice'>
+				<div class='write-input-server'>매수금</div>
 				<input type='text' name='add5' class="i-number" style="width:100px;" value="{{D['BODY']['add5']}}">
 			</div>
-			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">매도금</div>
+			<div class='i-input-div-choice'>
+				<div class='write-input-server'>매도금</div>
 				<input type='text' name='add6' class="i-number" style="width:100px;" value="{{D['BODY']['add6']}}">
 			</div>
-			<div class='i-input-div'>
+			<div class='i-input-div-choice'>
 				<div class='write-input-server'>변동수량</div>
 				<input type='text' name='sub8' class="i-number" style="width:110px;" value="{{D['BODY']['sub8']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">배당금</div>
+				<div class='write-input-server'>배당금</div>
 				<input type='text' name='sub10' class="i-number" style="width:100px;" value="{{D['BODY']['sub10']}}">
 			</div>
             <br>
-			<div class='i-input-div-choice'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>종가</div>
 				<input type='text' name='add8' class="i-number" style="width:100px;" value="{{D['BODY']['add8']}}">
 			</div>
-			<div class='i-input-div-choice'>
-				<div class='write-input-left' style="background-color:#333F4F;">가치</div>
+			<div class='i-input-div-2'>
+				<div class='write-input-server'>가치</div>
 				<input type='text' name='add9' class="i-number" style="width:100px;" value="{{D['BODY']['add9']}}">
 			</div>
-			<div class='i-input-div-choice'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>보유수량</div>
 				<input type='text' name='add7' class="i-number" style="width:110px;" value="{{D['BODY']['add7']}}">
 			</div>
-			<div class='i-input-div-choice'>
-				<div class='write-input-left' style="background-color:#333F4F;">비중</div>
+			<div class='i-input-div-2'>
+				<div class='write-input-server'>비중</div>
 				<input type='text' name='add10' class="i-number" style="width:100px;" value="{{D['BODY']['add10']}}">
 			</div>
-			<div class='i-input-div-choice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>평균단가</div>
 				<input type='text' name='sub21' class="i-number" style="width:100px;" value="{{D['BODY']['sub21']}}">
 			</div>
-			<div class='i-input-div-choice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>매도누적</div>
 				<input type='text' name='sub22' class="i-number" style="width:100px;" value="{{D['BODY']['sub22']}}">
 			</div>
-			<div class='i-input-div-choice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>매수누적</div>
 				<input type='text' name='sub23' class="i-number" style="width:110px;" value="{{D['BODY']['sub23']}}">
 			</div>
-			<div class='i-input-div-choice2'>
-				<div class='write-input-left' style="background-color:#333F4F;">현매수금</div>
+			<div class='i-input-div-2'>
+				<div class='write-input-server'>현매수금</div>
 				<input type='text' name='sub24' class="i-number" style="width:100px;" value="{{D['BODY']['sub24']}}">
 			</div>
         </td>
@@ -115,7 +115,7 @@
     <tr style="border:2px solid #CEE3F6;">
         <td class='list-code' style="cursor:pointer">SOXL</td>
 		<td class="write-td-right" style="padding:12px 8px">
-			<div class='i-input-div'>
+			<div class='i-input-div-choice'>
 				<div class='write-input-server'>
 					매수금&nbsp;
 					<i class="fa fa-calculator" onclick="show_unit_buy(1)"></i>
@@ -125,64 +125,64 @@
 				</div>
 				<input type='text' name='add11' class="i-number" style="width:100px;" value="{{D['BODY']['add11']}}">
 			</div>
-			<div class='i-input-div'>
+			<div class='i-input-div-choice'>
 				<div class='write-input-server'>매도금&nbsp;&nbsp;<i class="fa fa-calculator" onclick="show_unit_buy(2)"></i></div>
 				<input type='text' name='add12' class="i-number" style="width:100px;" value="{{D['BODY']['add12']}}">
 			</div>
-			<div class='i-input-div'>
+			<div class='i-input-div-choice'>
 				<div class='write-input-server'>변동수량</div>
 				<input type='text' name='sub9' class="i-number" style="width:110px;" value="{{D['BODY']['sub9']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-left' style="background-color:#333F4F;">현수익률</div>
+				<div class='write-input-server'>현수익률</div>
 				<input type='text' name='sub33' class="i-text" style="width:100px;text-align:right" value="{{D['BODY']['sub33']}}">
 			</div>
             <br>
-			<div class='i-input-div-choice'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>종가</div>
 				<input type='text' name='add14' class="i-number" style="width:100px;" value="{{D['BODY']['add14']}}">
 			</div>
-			<div class='i-input-div-choice'>
-				<div class='write-input-left' style="background-color:#333F4F;">가치</div>
+			<div class='i-input-div-2'>
+				<div class='write-input-server'>가치</div>
 				<input type='text' name='add15' class="i-number" style="width:100px;" value="{{D['BODY']['add15']}}">
 			</div>
-			<div class='i-input-div-choice'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>보유수량</div>
 				<input type='text' name='add13' class="i-number" style="width:110px;" value="{{D['BODY']['add13']}}">
 			</div>
-			<div class='i-input-div-choice'>
-				<div class='write-input-left' style="background-color:#333F4F;">비중</div>
+			<div class='i-input-div-2'>
+				<div class='write-input-server'>비중</div>
 				<input type='text' name='add16' class="i-number" style="width:100px;" value="{{D['BODY']['add16']}}">
 			</div>
-			<div class='i-input-div-choice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>평균단가</div>
 				<input type='text' name='sub16' class="i-number" style="width:100px;" value="{{D['BODY']['sub16']}}">
 			</div>
-			<div class='i-input-div-choice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>매도누적</div>
 				<input type='text' name='sub15' class="i-number" style="width:100px;" value="{{D['BODY']['sub15']}}">
 			</div>
-			<div class='i-input-div-choice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>매수누적</div>
 				<input type='text' name='sub14' class="i-number" style="width:110px;" value="{{D['BODY']['sub14']}}">
 			</div>
-			<div class='i-input-div-choice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>현매수금</div>
 				<input type='text' name='sub17' class="i-number" style="width:100px;" value="{{D['BODY']['sub17']}}">
 			</div>
-			<div class='i-input-div-choice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>연속상승</div>
 				<input type='text' name='sub5' class="i-number" style="width:100px;" value="{{D['BODY']['sub5']}}">
 			</div>
-			<div class='i-input-div-choice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>연속하락</div>
 				<input type='text' name='sub6' class="i-number" style="width:100px;" value="{{D['BODY']['sub6']}}">
 			</div>
-			<div class='i-input-div-choice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>현재손익</div>
 				<input type='text' name='add18' class="i-number" style="width:110px;text-align:right" value="{{D['BODY']['add18']}}">
 			</div>
-			<div class='i-input-div-choice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>회복전략</div>
 				<input type='text' name='sub7' class="i-number" style="width:100px;" value="{{D['BODY']['sub7']}}">
 			</div>
@@ -194,85 +194,85 @@
     <tr id="config-toggle">
         <td class='write-td-left'>투자전략</td>
 		<td class="write-td-right">
-			<div class='i-input-div-must'>
+			<div class='i-input-div'>
 				<div class='write-input-server'>가용잔액</div>
 				<input type='text' name='add19' class="i-number" style="width:100px;" value="{{D['BODY']['add19']}}">
 			</div>
-			<div class='i-input-div-must'>
+			<div class='i-input-div'>
 				<div class='write-input-server'>배당합계</div>
 				<input type='text' name='sub11' class="i-number" style="width:100px;" value="{{D['BODY']['sub11']}}">
 			</div>
-			<div class='i-input-div-must'>
+			<div class='i-input-div'>
 				<div class='write-input-server'>입금합계</div>
 				<input type='text' name='sub25' class="i-number" style="width:110px;" value="{{D['BODY']['sub25']}}">
 			</div>
-			<div class='i-input-div-must'>
-				<div class='write-input-left' style="background-color:darkslategray;">현투자금</div>
+			<div class='i-input-div'>
+				<div class='write-input-server' >현투자금</div>
 				<input type='text' name='sub27' class="i-number" style="width:100px;" value="{{D['BODY']['sub27']}}">
 			</div>
-			<div class='i-input-div-must2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>추가자금</div>
 				<input type='text' name='add20' class="i-number" style="width:100px;" value="{{D['BODY']['add20']}}">
 			</div>
-			<div class='i-input-div-must2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>출금합계</div>
 				<input type='text' name='sub26' class="i-number" style="width:100px;" value="{{D['BODY']['sub26']}}">
 			</div>
-			<div class='i-input-div-must2'>
-				<div class='write-input-left' style="background-color:darkslategray;">가치합계</div>
+			<div class='i-input-div-2'>
+				<div class='write-input-server' >가치합계</div>
 				<input type='text' name='add17' class="i-number" style="width:110px;" value="{{D['BODY']['add17']}}">
 			</div>
-			<div class='i-input-div-must2'>
-				<div class='write-input-left' style="background-color:darkslategray;">현수익률</div>
+			<div class='i-input-div-2'>
+				<div class='write-input-server' >현수익률</div>
 				<input type='text' name='sub28' class="i-number" style="width:100px;" value="{{D['BODY']['sub28']}}">
 			</div>
 			<br><br>
-			<div class='i-input-div-notice'>
+			<div class='i-input-div'>
 				<div class='write-input-server'>현재시즌</div>
 				<input type='text' name='sub1' class="i-number" style="width:100px;" value="{{D['BODY']['sub1']}}">
 			</div>
-			<div class='i-input-div-notice'>
+			<div class='i-input-div'>
 				<div class='write-input-server'>일매수금</div>
 				<input type='text' name='sub4' class="i-number" style="width:100px;" value="{{D['BODY']['sub4']}}">
 			</div>
-			<div class='i-input-div-notice'>
+			<div class='i-input-div'>
 				<div class='write-input-server'>매수수량&nbsp;&nbsp;<i class="fa fa-calculator" onclick="show_add_info(1)"></i></div>
 				<input type='text' name='sub2' class="i-number" style="width:110px;" value="{{D['BODY']['sub2']}}">
 			</div>
-			<div class='i-input-div-notice'>
+			<div class='i-input-div'>
 				<div class='write-input-server'>매도수량</div>
 				<input type='text' name='sub3' class="i-number" style="width:100px;" value="{{D['BODY']['sub3']}}">
 			</div>
-			<div class='i-input-div-notice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>경과일수</div>
 				<input type='text' name='sub12' class="i-number" style="width:100px;" value="{{D['BODY']['sub12']}}">
 			</div>
-			<div class='i-input-div-notice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>기초수량</div>
 				<input type='text' name='sub18' class="i-number" style="width:100px;" value="{{D['BODY']['sub18']}}">
 			</div>
-			<div class='i-input-div-notice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>매수가격&nbsp;&nbsp;<i class="fa fa-calculator" onclick="show_add_info(2)"></i></div>
 				<input type='text' name='sub19' class="i-text" style="width:110px;text-align:right;" value="{{D['BODY']['sub19']}}">
 			</div>
-			<div class='i-input-div-notice2'>
+			<div class='i-input-div-2'>
 				<div class='write-input-server'>매도가격&nbsp;&nbsp;<i class="fa fa-calculator" onclick="show_add_info(3)"></i></div>
 				<input type='text' name='sub20' class="i-text" style="width:100px;text-align:right;" value="{{D['BODY']['sub20']}}">
 			</div>
 			<br><br>
-			<div class='i-input-div-choice'>
+			<div class='i-input-div'>
 				<div class='write-input-server'>진행상황</div>
 				<input type='text' name='sub29' class="i-text" style="width:100px;" value="{{D['BODY']['sub29']}}">
 			</div>
-			<div class='i-input-div-choice'>
+			<div class='i-input-div'>
 				<div class='write-input-server'>수수료등</div>
 				<input type='text' name='sub30' class="i-number" style="width:100px;" value="{{D['BODY']['sub30']}}">
 			</div>
-			<div class='i-input-div-choice'>
+			<div class='i-input-div'>
 				<div class='write-input-server'>누적수수료</div>
 				<input type='text' name='sub31' class="i-number" style="width:110px;" value="{{D['BODY']['sub31']}}">
 			</div>
-			<div class='i-input-div-choice'>
+			<div class='i-input-div'>
 				<div class='write-input-server'>보존금액</div>
 				<input type='text' name='sub32' class="i-number" style="width:100px;" value="{{D['BODY']['sub32']}}">
 			</div>
