@@ -8,7 +8,7 @@
 <textarea  name='content' style="display:none"></textarea>
 <table class='table' style="border:2px solid black;border-radius:4px;width:{{D['w_width2']}}">
 <tbody>
-    <tr>
+    <tr id='first_tr'>
         <td class='write-td-left'>기본정보</td>
 		<td class="write-td-right" style="background-color:#393e4a">
 			<div class='i-input-div'>
@@ -20,16 +20,16 @@
 				{% endif %}
             </div>
 			<div class="btn-group">
-				<a class="btn btn-blue-s2" onclick="auto_calculate();return false"><i class="fa fa-font" title="자동계산하기"></i></a>
-				<a class="btn btn-blue-s2" onclick="auto_reset();return false"><i class="fa fa-undo" title="되돌리기"></i></a>
+				<a class="btn btn-blue-s2" onclick="client_calculate();return false"><i class="fa fa-font" title="자동계산하기"></i></a>
+				<a class="btn btn-blue-s2" onclick="reset_value();return false"><i class="fa fa-undo" title="되돌리기"></i></a>
 				<a class="btn btn-blue-s4" onclick="money_inout();return false"><i class="fa fa-bank" title="입출금기록"></i></a>
 				<a class="btn btn-blue-s4" onclick="money_realloc();return false"><i class="fa fa-handshake-o" title="일매수금 재산정"></i></a>
 				<a class="btn btn-red-s1"  onclick="initiate_basic();return false"><i class="fa fa-fast-backward" title="투자 초기화"></i></a>
 			  </div>
         </td>
     </tr>
-	<tr>
-		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
+	<tr style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">
+		<td id='notice-calculated' colspan="2">&nbsp;</td>
 	</tr>
     <tr>
         <td class='write-td-left'>현금투자</td>
@@ -47,7 +47,7 @@
 				<input type='text' name='add3' class="i-number" style="width:110px;" value="{{D['BODY']['add3']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-server'>비중</div>
+				<div class='write-input-server'>현금비중</div>
 				<input type='text' name='add4' class="i-number" style="width:100px;" value="{{D['BODY']['add4']}}">
 			</div>
         </td>
@@ -88,7 +88,7 @@
 				<input type='text' name='add7' class="i-number" style="width:110px;" value="{{D['BODY']['add7']}}">
 			</div>
 			<div class='i-input-div-2'>
-				<div class='write-input-server'>비중</div>
+				<div class='write-input-server'>배당비중</div>
 				<input type='text' name='add10' class="i-number" style="width:100px;" value="{{D['BODY']['add10']}}">
 			</div>
 			<div class='i-input-div-2'>
@@ -151,7 +151,7 @@
 				<input type='text' name='add13' class="i-number" style="width:110px;" value="{{D['BODY']['add13']}}">
 			</div>
 			<div class='i-input-div-2'>
-				<div class='write-input-server'>비중</div>
+				<div class='write-input-server'>레버비중</div>
 				<input type='text' name='add16' class="i-number" style="width:100px;" value="{{D['BODY']['add16']}}">
 			</div>
 			<div class='i-input-div-2'>
@@ -207,7 +207,7 @@
 				<input type='text' name='sub25' class="i-number" style="width:110px;" value="{{D['BODY']['sub25']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-server' >현투자금</div>
+				<div class='write-input-server' >전투자금</div>
 				<input type='text' name='sub27' class="i-number" style="width:100px;" value="{{D['BODY']['sub27']}}">
 			</div>
 			<div class='i-input-div-2'>
@@ -223,7 +223,7 @@
 				<input type='text' name='add17' class="i-number" style="width:110px;" value="{{D['BODY']['add17']}}">
 			</div>
 			<div class='i-input-div-2'>
-				<div class='write-input-server' >현수익률</div>
+				<div class='write-input-server' >전수익률</div>
 				<input type='text' name='sub28' class="i-number" style="width:100px;" value="{{D['BODY']['sub28']}}">
 			</div>
 			<br><br>
@@ -253,11 +253,11 @@
 			</div>
 			<div class='i-input-div-2'>
 				<div class='write-input-server'>매수가격&nbsp;&nbsp;<i class="fa fa-calculator" onclick="show_add_info(2)"></i></div>
-				<input type='text' name='sub19' class="i-text" style="width:110px;text-align:right;" value="{{D['BODY']['sub19']}}">
+				<input type='text' name='sub19' class="i-number" style="width:110px;text-align:right;" value="{{D['BODY']['sub19']}}">
 			</div>
 			<div class='i-input-div-2'>
 				<div class='write-input-server'>매도가격&nbsp;&nbsp;<i class="fa fa-calculator" onclick="show_add_info(3)"></i></div>
-				<input type='text' name='sub20' class="i-text" style="width:100px;text-align:right;" value="{{D['BODY']['sub20']}}">
+				<input type='text' name='sub20' class="i-number" style="width:100px;text-align:right;" value="{{D['BODY']['sub20']}}">
 			</div>
 			<br><br>
 			<div class='i-input-div'>
@@ -337,27 +337,12 @@
 <script>
 JYHEDITOR.start('YHBmainEditor');
 
-var AutoCalulated = false
-
-var reset_key = ['add1','add2','add3','add4',
-                 'add5','add6','sub8','sub10','add8','add9','add7','add10','sub21','sub22','sub23','sub24',
-				 'add11','add12','sub9','add18','add14','add15','add13','add16','sub16','sub15','sub14','sub17',
-				 'add19','sub11','sub25','sub27','add20','sub26','add17','sub28',
-				 'sub1','sub4','sub2','sub3','sub12','sub18','sub19','sub20',
-				 'sub29','sub30','sub31','sub32']
-var reset_val = []
-for(i=1;i<reset_key.length;i++) {
-	reset_val[i] = $("input[name='"+reset_key[i]+"']" ).val()
-}
-
-
-let 이전목표 = 0.0
-let 이전날자 = ''
+$(".list-code").click(function(){var code = $(this).text();	winopen('winopen/chart2/'+code,820,450,'stock_chart');});
 
 function check_MainWriteForm(f)	{	
 	var wDiv = $id("YHBmainEditor");
 	JYHEDITOR.clearDocuSelect();
-	if( ! AutoCalulated && uri('method') != 'modify' ) auto_calculate()
+	if( ! AutoCalulated && uri('method') != 'modify' ) client_calculate()
 	f.content.value = wDiv.innerHTML;
 	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
 
@@ -390,252 +375,14 @@ JYHEDITOR.UserTable = function() {
 	$("#tableMenu").css({left:mouse_X - 20 , top:mouse_Y }).toggle();
 }
 
-//------------------------------------------------------------------------------------------------------------------------------------
-//
-//------------------------------------------------------------------------------------------------------------------------------------
-
-function auto_reset() {
-
-	if(!AutoCalulated) { h_dialog.notice("초기 상태입니다."); return;}
-
-	for(i=1;i<reset_key.length;i++) {
-		if(reset_key[i]=='sub29') {$("input[name='"+reset_key[i]+"']" ).val(reset_val[i]);}
-		else {$("input[name='"+reset_key[i]+"']" ).val(reset_val[i]).comma('init');}	
-	}
-
-	AutoCalulated = false
-}
-
-function auto_calculate() {
-
-	if(AutoCalulated || uri('method') == 'modify' ) { h_dialog.notice("계산이 완료된 상태입니다."); return;}
-
-	let 입금     = txt_to_num('add1','f');  let 출금     = txt_to_num('add2','f'); let 잔액     = txt_to_num('add3','f');
-	let 매수금1  = txt_to_num('add5','f');  let 매도금1  = txt_to_num('add6','f'); let 수량1    = txt_to_num('sub8','i'); let 배당금   = txt_to_num('sub10','f');
-	let 종가1    = txt_to_num('add8','f');  let 누적1    = txt_to_num('add7','i');   
-	let 평균단가1= txt_to_num('sub21','f'); let 매도누적1= txt_to_num('sub22','f'); let 매수누적1= txt_to_num('sub23','f'); let 현매수금1= txt_to_num('sub24','f');
-	let 매수금2  = txt_to_num('add11','f'); let 매도금2  = txt_to_num('add12','f'); let 수량2    = txt_to_num('sub9','i'); let 현수익률2= txt_to_num('sub33','f');
-	let 종가2    = txt_to_num('add14','f'); let 누적2    = txt_to_num('add13','i');  
-	let 평균단가2= txt_to_num('sub16','f'); let 매도누적2= txt_to_num('sub15','f'); let 매수누적2= txt_to_num('sub14','f'); let 현매수금2= txt_to_num('sub17','f');
-	let 현재손익 = txt_to_num('add18','f');
-	let 추가자금 = txt_to_num('add20','f'); let 배당합계 = txt_to_num('sub11','f'); let 입금합계 = txt_to_num('sub25','f'); let 현투자금 = txt_to_num('sub27','f');
-	let 출금합계 = txt_to_num('sub26','f'); let 현수익률 = txt_to_num('sub28','f');
-	let 일매수금 = txt_to_num('sub4','i');
-
-	수수료등 = 0.0
-	누적수수료 = 0.0
-	경과일수 = txt_to_num('sub12','i') 
-	누적수수료 = txt_to_num('sub31','f')
-
-    누적1 += 수량1; 
-	누적2 += 수량2;
-	
 
 
-	if(매수금1) { 매수누적1 += 매수금1; 현매수금1 += 매수금1; 평균단가1 = 현매수금1 / 누적1; 수수료등 += commission(매수금1,1);} 
-
-	if(매수금2) { 매수누적2 += 매수금2; 현매수금2 += 매수금2; 평균단가2 = 현매수금2 / 누적2; 수수료등 += commission(매수금2,1); 추가자금 = 추가자금 - 수수료등;} 
-
-	if(매도금1) { 매도누적1 += 매도금1; 현매수금1 = 평균단가1 * 누적1; 수수료등 += commission(매도금1,2);}
-
-	if(매도금2) { 
-		수수료등 += commission(매도금2,2);
-		if(누적2==0) {현수익률2  = (매도금2/현매수금2 -1)*100; 평균단가2 = 0; }
-		매도누적2 += 매도금2; 현매수금2 = 평균단가2 * 누적2; 
-	}
-
-	if(평균단가2) {	현수익률2  = ( 종가2/평균단가2 -1)*100 ; }
-	if(누적2) { 현재손익 = (종가2 - 평균단가2) * 누적2; }
-	
-	if(경과일수 != 1) {누적수수료 = 누적수수료 + 수수료등 } else {누적수수료 = 수수료등}
-
-	잔액   = 잔액+입금+매도금1+매도금2+배당금-출금-매수금1-매수금2-수수료등;
-
-	가치1 = 종가1 * 누적1; 
-	가치2 = 종가2 * 누적2; 
-	가치합계  = 잔액 + 가치1 + 가치2;
-
-	입금합계 = 입금합계 + 입금; 출금합계 = 출금합계 + 출금; 현투자금 = 입금합계 - 출금합계;
-	현수익률 = (가치합계 / 현투자금 - 1) * 100;
-	배당합계 = 배당합계 + 배당금;
-
-	비중1 = 잔액/가치합계*100; 비중2 = 가치1/가치합계*100; 비중3 = 가치2/가치합계*100;
+var JBODY = JSON.parse('{{D['JBODY']|safe}}')
+var JSTRG = JSON.parse('{{D['JSTRG']|safe}}')
+var J_DIV = JSON.parse('{{D['J_DIV']|safe}}')
+var J_LEV = JSON.parse('{{D['J_LEV']|safe}}')
 
 
-	let vars =[
-		[입금,'add1',2],[출금,'add2',2],[잔액,'add3',2],[비중1,'add4',2],
-
-		[매수금1,'add5',2],[매도금1,'add6',2],[배당금,'sub10',2],
-		[가치1,'add9',2],[누적1,'add7',0],[비중2,'add10',2],
-		[평균단가1,'sub21',4],[매도누적1,'sub22',2],[매수누적1,'sub23',2],[현매수금1,'sub24',2],
-
-		[매수금2,'add11',2],[매도금2,'add12',2],[현수익률2,'sub33',2],
-		[가치2,'add15',2],[누적2,'add13',0],[비중3,'add16',2],
-		[평균단가2,'sub16',4],[매도누적2,'sub15',2],[매수누적2,'sub14',2],[현매수금2,'sub17',2],
-		[현재손익,'add18',2],
-
-		[배당합계,'sub11',0],[입금합계,'sub25',0],[현투자금,'sub27',0],
-		[추가자금,'add20',2],[출금합계,'sub26',0],[가치합계,'add17',2],[현수익률,'sub28',2],
-
-		[일매수금,'sub4',0],
-		[수수료등,'sub30',2],[누적수수료,'sub31',2]
-	]
-	vars.forEach(function(item){ value = item[0].toFixed(item[2]); $("input[name='"+item[1]+"']").val(value).comma('init'); });
-
-	AutoCalulated = true
-}
-
-function commission(mm,opt) {
-	if(opt==1) { return (parseInt(mm*0.07)/100);}
-	if(opt==2) { m1 = parseInt(mm*0.07)/100; m2=Math.round(mm*0.00229)/100; return m1+m2;}
-}
-
-function back_restore() {
-	let 매수금   = txt_to_num('add11','f');
-	let 가용잔액 = txt_to_num('add19','f');
-	가용잔액 += 매수금; 매수금 = 0.00; 
-	num_to_txt('add11',매수금,2);
-	num_to_txt('add19',가용잔액,2);
-}
-
-function txt_to_num(key,opt) {
-    var a =  $("input[name='"+key+"']").val();
-    if(!a) return 0
-    a = a.replace(/,/g,'');
-    if(opt=='i') return parseInt(a);
-    else return parseFloat(a);
-}
-
-function num_to_txt(pos,num,weigh) {$("input[name='"+pos+"']").val(num.toFixed(weigh)).comma('init');}
-
-function show_add_info(opt) {
-	var title=''
-	var content=''
-    
-	if(opt==1) {
-		title = "일자별 매수수량"		
-		bs = txt_to_num('sub18','i') 
-		if(! bs) bs = txt_to_num('sub2','i')
-		sum = 0
-		for(i=0;i<15;i++) {
-			tmp = Math.ceil(bs*(i*1.25 +1))
-			sum += tmp
-			content += "<span style='display:inline-block;width:40px;text-align:right'>"+(i+1)+"일 :</span>"
-			content += "<span style='display:inline-block;width:50px;text-align:right'>"+tmp.toLocaleString('ko-KR')+" :</span>" 
-			content += "<span style='display:inline-block;width:50px;text-align:right'>"+sum.toLocaleString('ko-KR')+"</span><br>" 
-		}
-	} else if(opt==2) {
-		title = "매수가격 참고표"		
-		bs = txt_to_num('sub16','f')
-		if(! bs) bs = txt_to_num('add14','f') 
-		sum = 0
-		for(i=1;i<21;i++) {
-			tmp = (bs * (1-i/100)).toFixed(2)
-			content += "<span style='display:inline-block;width:50px;text-align:right'>-"+i+"% :</span>"
-			content += "<span style='display:inline-block;width:70px;text-align:right'>"+tmp+"</span><br>" 
-		}
-	} else if(opt==3) {
-		title = "매도가격 참고표"		
-		bs = txt_to_num('sub16','f')
-		if(! bs) bs = txt_to_num('add14','f') 
-		sum = 0
-		for(i=1;i<21;i++) {
-			tmp = (bs * (1+i/100)).toFixed(2)
-			content += "<span style='display:inline-block;width:50px;text-align:right'>"+i+"% :</span>"
-			content += "<span style='display:inline-block;width:70px;text-align:right'>"+tmp+"</span><br>" 
-		}
-	}
-	$("#add-info .add-info-title").html(title);
-	$("#add-info .add-info-content").html(content);
-	$("#add-info").toggle()
-}
-
-function show_unit_buy(opt) {
-	var n = Math.abs(txt_to_num('sub9','i'))
-	var div = 0
-	if(opt == 1) { div = txt_to_num('add11','f')} else {div = txt_to_num('add12','f')}
-	
-	h_dialog.notice((div/n).toFixed(2))
-}
-
-function money_inout() {
-	let 입금     = txt_to_num('add1','f');
-    let 출금     = txt_to_num('add2','f');
-	let 잔액     = txt_to_num('add3','f');
-	let 가치1    = txt_to_num('add9','f');
-	let 가치2    = txt_to_num('add15','f');
-	let 입금합계 = txt_to_num('sub25','f');
-	let 출금합계 = txt_to_num('sub26','f');
-	let 현투자금 = txt_to_num('sub27','f');
-
-	잔액 = 잔액 + 입금 - 출금
-	입금합계 += 입금
-	출금합계 += 출금
-	현투자금 = 입금합계 - 출금합계
-	가치합계 = 잔액 + 가치1 + 가치2
-    비중1 = 잔액/가치합계*100;
-    비중2 = 가치1/가치합계*100;
-    비중3 = 가치2/가치합계*100;
-	현수익률 = (가치합계 / 현투자금 - 1) * 100;
-	
-	num_to_txt("add3",잔액,2);
-	num_to_txt("add17",가치합계,2);
-	num_to_txt("add4",비중1,2);
-    num_to_txt("add10",비중2,2);
-    num_to_txt("add16",비중3,2);
-	num_to_txt("sub25",입금합계,2);
-	num_to_txt("sub26",출금합계,2);
-	num_to_txt("sub27",현투자금,2);
-	num_to_txt("sub28",현수익률,2);
-	
-}
-
-function money_realloc() {
-	let 잔액      = txt_to_num('add3','f');
-	let 배당주    = txt_to_num('add9','f');
-	let 레버리지  = txt_to_num('sub17','f');
-	let 종가2     = txt_to_num('add14','f');
-	
-	합계 = 잔액 + 배당주 + 레버리지
-
-	가용잔액 = parseInt((합계 * 2)/3)
-	추가자금 = parseInt(합계 - 가용잔액)
-
-	일매수금 = parseInt(가용잔액 / 22 )
-	기초수량 = Math.ceil(일매수금/종가2)
-
-	가용잔액 = 가용잔액 - 배당주 - 레버리지
-	if(가용잔액 < 0) {  추가자금 = 추가자금 + 가용잔액; 가용잔액 = 0}
-
-	bd = txt_to_num('sub12','i') 
-	매수수량 = Math.ceil(기초수량*(bd*1.25 +1))
-
-	num_to_txt("add19",가용잔액,2); num_to_txt("add20",추가자금,2);
-	num_to_txt("sub4",일매수금,0);  num_to_txt("sub18",기초수량,0); num_to_txt("sub2",매수수량,0);
- }
-
- $(".list-code").click(function(){
-	var code = $(this).text()
-	winopen('winopen/chart2/'+code,820,450,'stock_chart');
-});
-
-
-function initiate_basic() {
-	let theDay  = $("input[name='add0']").val();
-	let Balance = $("input[name='add3']").val();
-	if(theDay=='None') {h_dialog.notice('날자를 선택하여 주세요'); return;}
-	if(!Balance) {h_dialog.notice('잔액을 입력하여 주세요'); return;}
-	
-	let posturl = uri('linkurl')+ 'boards-guide/initiate_basic/'+uri(0)
-
-	postData = {theDay:theDay, Balance:Balance}
-	$.post( posturl, postData).done(function(data) {
-		var ans = JSON.parse(data);
-		for(let i in ans) { $("input[name='"+i+"']" ).val(ans[i]); }
-	});
-
-	
-
-}	
 </script>
+<script src="/skn/stocks/board/my_dark/write/victory.js"></script>
 {% endblock %}

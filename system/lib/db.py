@@ -87,6 +87,7 @@ class DB :
 
     def fetch_assoc(self, many=0) :
         rst = self.rst.fetchall() if not many else  self.rst.fetchmany(many)
+        if not rst : return None 
         temp_list = []
         col = [x[0] for x in self.rst.description]
         for row in rst : temp_list.append(dict(zip(col,row)))

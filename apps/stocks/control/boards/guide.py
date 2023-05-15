@@ -270,10 +270,10 @@ class Guide(Control) :
         매수단가 = round(self.M['당일종가'] * self.M['평단가치'],2)
         매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
 
-        if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 
+        if  매수수량 * self.M['당일종가'] > self.M['가용잔액'] + self.M['추가자금'] : 
             매수수량 = self.M['기초수량'] * self.M['위매비중']
             self.M['진행상황'] = '매수제한'
-        if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 
+        if  매수수량 * self.M['당일종가'] > self.M['가용잔액'] + self.M['추가자금'] : 
             매수수량 = 0
             self.M['진행상황'] = '매수금지'  
 
@@ -316,15 +316,16 @@ class Guide(Control) :
 
         self.DB.clear()
         self.DB.tbl = 'h_stockHistory_board'
-        self.DB.wre = f"add0='{theDay}' and add1='JEPQ'"; JPEQ  = self.DB.get_one('add3')
+        self.DB.wre = f"add0='{theDay}' and add1='JEPQ'"; JEPQ  = self.DB.get_one('add3'); 
+        
         self.DB.wre = f"add0='{theDay}' and add1='SOXL'"; SOXL  = float(self.DB.get_one('add3'))
         CUP = self.DB.get_one('add9'); CDN = self.DB.get_one('add10'); 
         self.DB.wre = f"add0='{preDay}' and add1='SOXL'"; OSOX  = float(self.DB.get_one('add3'))
 
         self.B['add0']  = theDay
-        self.B['add1']  = '0.00';   self.B['add2']  = '0.00';  self.B['add3']  = f"{Balance:,.2f}" ;  self.B['add4'] = '100.0'
+        self.B['add1']  = '0.00';   self.B['add2']  = '0.00';  
         self.B['add5']  = '0.00';   self.B['add6']  = '0.00';  self.B['sub8']  = '0.00';  self.B['sub10'] = '0.00'
-        self.B['add8']  =  JPEQ ;   self.B['add9']  = '0.00';  self.B['add7']  =  0;      self.B['add10'] = '0.0'
+        self.B['add8']  =  JEPQ ;   self.B['add9']  = '0.00';  self.B['add7']  =  0;      self.B['add10'] = '0.0'
         self.B['sub21'] ='0.0000';  self.B['sub22'] = '0.00';  self.B['sub23'] =  '0.00'; self.B['sub24'] = '0.00'
         self.B['sub5']  = CUP;  self.B['sub6'] = CDN; self.B['add18'] = '0.00'; self.B['sub7'] = '0.0'      
 
@@ -334,12 +335,19 @@ class Guide(Control) :
 
         self.M['기초수량'] = my.ceil(self.M['일매수금']/OSOX)
 
-        self.B['add11'] = self.M['기초수량'] * SOXL ;  self.B['add12'] = '0.00' ;  self.B['sub9']  = self.M['기초수량'];  self.B['sub33'] = '0.00'
-        self.B['add14'] = SOXL ; self.B['add15'] = '0.00' ; self.B['add13'] = 0; self.B['add16'] = '0.0'; 
-        self.B['sub16'] = '0.0000'; self.B['sub15'] = '0.00'; self.B['sub14'] = '0.00'; self.B['sub17'] = '0.0'
+        self.B['add11'] = self.M['기초수량'] * SOXL; 
+        self.B['add16'] = self.B['add11'] / Balance * 100
+        self.B['add4']  = 100 - self.B['add16']
+        fee = int(self.B['add11']*0.07)/100
+        self.M['추가자금'] -= fee
+        self.B['add17'] = Balance - fee
+
+        self.B['add12'] = '0.00' ; self.B['add13'] = self.B['sub9']  = self.M['기초수량'];  self.B['sub33'] = '0.00'
+        self.B['add14'] = SOXL ; self.B['add15'] =  self.B['add11']  
+        self.B['sub16'] = f"{SOXL:,.4f}"; self.B['sub15'] = '0.00'; 
 
         self.B['add19'] = f"{self.M['가용잔액']-self.B['add11']:,.2f}"; self.B['sub11'] = '0.00'; self.B['sub25'] = f"{Balance:,.2f}"; self.B['sub27'] = f"{Balance:,.2f}"
-        self.B['add20'] = self.M['추가자금']; self.B['sub26'] = '0.00'; self.B['add17'] = '0.00'; self.B['sub28'] = '0.00'
+        self.B['add20'] = self.M['추가자금']; self.B['sub26'] = '0.00'; self.B['sub28'] = '0.00'
 
         self.B['sub1']  = 1; self.B['sub4'] = self.M['일매수금']; 
         self.B['sub2']  = my.ceil(self.M['기초수량'] * (1 * 1.25 + 1))
@@ -348,7 +356,18 @@ class Guide(Control) :
         self.B['sub19'] = round(SOXL * 1.022,2)-0.01; 
         self.B['sub20'] = self.B['sub19']+0.01
 
-        self.B['sub29'] = '일반매수'; self.B['sub30'] = '0.00'; self.B['sub31'] = '0.00'; self.B['sub32'] = '0'
+        self.B['sub29'] = '일반매수'; self.B['sub30'] = fee; self.B['sub31'] = fee; self.B['sub32'] = '0'
 
+        # 포맷팅 && return values 
+        self.B['add3']  = f"{Balance-self.B['add11']-fee:,.2f}"
+        self.B['add11'] = f"{self.B['add11']:,.2f}"
+        self.B['add15'] = f"{self.B['add15']:,.2f}"
+        self.B['sub19'] = f"{self.B['sub19']:,.2f}"
+        self.B['add20'] = f"{self.B['add20']:,.2f}"
+        self.B['add4']  = f"{self.B['add4']:.1f}"
+        self.B['add16'] = f"{self.B['add16']:.1f}"
+        self.B['add17'] = f"{self.B['add17']:,.2f}"
+        self.B['sub14'] = self.B['sub17'] = self.B['add11']
+        if not self.B['add8']  : self.B['add8'] = '0.00'
         return self.json(self.B) 
 
