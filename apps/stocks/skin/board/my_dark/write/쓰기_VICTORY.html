@@ -375,13 +375,12 @@ JYHEDITOR.UserTable = function() {
 	$("#tableMenu").css({left:mouse_X - 20 , top:mouse_Y }).toggle();
 }
 
-
-
+{% if D['J_LEV'] -%} 
 var JBODY = JSON.parse('{{D['JBODY']|safe}}')
 var JSTRG = JSON.parse('{{D['JSTRG']|safe}}')
 var J_DIV = JSON.parse('{{D['J_DIV']|safe}}')
 var J_LEV = JSON.parse('{{D['J_LEV']|safe}}')
-
+{% endif %}
 
 </script>
 <script src="/skn/stocks/board/my_dark/write/victory.js"></script>
