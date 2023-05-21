@@ -232,7 +232,9 @@ class Guide(Control) :
                 
             self.M['진행상황'] = '일반매수'
 
-        if  not self.M['경과일수'] and self.M['매수수량'] : self.M['경과일수'] = 1
+        if  not self.M['경과일수'] and self.M['매수수량'] : 
+            self.M['경과일수'] = 1
+            self.M['진행상황'] = '첫날매수'
         if  not self.M['보유수량'] : self.M['진행상황'] = '매수대기'
 
     def rebalance(self)  :

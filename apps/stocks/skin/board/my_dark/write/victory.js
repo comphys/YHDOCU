@@ -63,12 +63,6 @@ function client_calculate() {
 	if(가용잔액 < 0) { 추가자금 += 가용잔액; 가용잔액 = 0.0; }
 	
 	if(보유수량2==0) {
-		진행상황 = '시즌첫날';
-
-		기초수량=매수수량 = Math.ceil(일매수금/종가2);
-		매수가격 = 종가2 * 큰단가치; 
-		매도수량 = 0;
-		매도가격 = 매수가격+0.01; 
 
 		if(매도금2) { 
 			진행상황 = '전량매도'; 
@@ -76,9 +70,17 @@ function client_calculate() {
 			현재시즌 += 1; 경과일수 = 0; 
 			rebalance();
 	    }
-		else { 수수료등 = 0.0; 누적수수료 = 0.0; }
+		else { 수수료등 = 0.0; 누적수수료 = 0.0;}		
 
-	} else { 진행상황='일반매수'; 경과일수 += 1; normal_sell(); normal_buy();}
+		기초수량=매수수량 = Math.ceil(일매수금/종가2);
+		매수가격 = 종가2 * 큰단가치; 
+		매도수량 = 0;
+		매도가격 = 매수가격+0.01; 
+
+	} else { 
+		경과일수 += 1; normal_sell(); normal_buy();
+		진행상황 = (경과일수==1)? '첫날매수' : '일반매수';
+	}
 
 
 //  출력파트
@@ -93,8 +95,8 @@ function client_calculate() {
 	c_print('sub16',평균단가2,4);	c_print('sub15',매도누적2,2);	   c_print('sub14',매수누적2,2);    c_print('sub17',현매수금2,2);
 	v_print('sub5',연속상승,0);	    v_print('sub6',연속하락,0);	       c_print('add18',현재손익,2);     c_print('sub7',회복전략,1);
 
-	c_print('add19',가용잔액,2);    v_print('sub11',배당합계,2);       v_print('sub25',입금합계,2);     v_print('sub27',전투자금,2);
-	c_print('add20',추가자금,2);    v_print('sub26',출금합계,2);       c_print('add17',가치합계,2);     c_print('sub28',전수익률,2);
+	c_print('add19',가용잔액,2);    c_print('sub11',배당합계,2);       c_print('sub25',입금합계,2);     c_print('sub27',전투자금,2);
+	c_print('add20',추가자금,2);    c_print('sub26',출금합계,2);       c_print('add17',가치합계,2);     c_print('sub28',전수익률,2);
 	c_print('sub1',현재시즌,0);     c_print('sub4',일매수금,0);        c_print('sub2',매수수량,0);      c_print('sub3',매도수량,0);
 	c_print('sub12',경과일수,0);    c_print('sub18',기초수량,0);       c_print('sub19',매수가격,2);     c_print('sub20',매도가격,2);
 	v_print('sub29',진행상황,3);    c_print('sub30',수수료등,2);       c_print('sub31',누적수수료,2);   v_print('sub32',보존금액,0);
@@ -161,8 +163,8 @@ function show_add_info(opt) {
     
 	if(opt==1) {
 		title = "일자별 매수수량"		
-		bs = s_load('sub18','i') 
-		if(! bs) bs = s_load('sub2','i')
+		bs = ctv('sub18','i') 
+		if(! bs) bs = ctv('sub2','i')
 		sum = 0
 		for(i=0;i<15;i++) {
 			tmp = Math.ceil(bs*(i*1.25 +1))
@@ -173,8 +175,8 @@ function show_add_info(opt) {
 		}
 	} else if(opt==2) {
 		title = "매수가격 참고표"		
-		bs = s_load('sub16','f')
-		if(! bs) bs = s_load('add14','f') 
+		bs = ctv('sub16','f')
+		if(! bs) bs = ctv('add14','f') 
 		sum = 0
 		for(i=1;i<21;i++) {
 			tmp = (bs * (1-i/100)).toFixed(2)
@@ -183,8 +185,8 @@ function show_add_info(opt) {
 		}
 	} else if(opt==3) {
 		title = "매도가격 참고표"		
-		bs = s_load('sub16','f')
-		if(! bs) bs = s_load('add14','f') 
+		bs = ctv('sub16','f')
+		if(! bs) bs = ctv('add14','f') 
 		sum = 0
 		for(i=1;i<21;i++) {
 			tmp = (bs * (1+i/100)).toFixed(2)
@@ -198,9 +200,9 @@ function show_add_info(opt) {
 }
 
 function show_unit_buy(opt) {
-	var n = Math.abs(s_load('sub9','i'))
+	var n = Math.abs(ctv('sub9','i'))
 	var div = 0
-	if(opt == 1) { div = s_load('add11','f')} else {div = s_load('add12','f')}
+	if(opt == 1) { div = ctv('add11','f')} else {div = ctv('add12','f')}
 	
 	h_dialog.notice((div/n).toFixed(2))
 }
@@ -286,14 +288,14 @@ function load_value() {
 // =========================================================================================================================================================
 
 function money_inout() {
-	let 입금     = s_load('add1','f');
-    let 출금     = s_load('add2','f');
-	let 잔액     = s_load('add3','f');
-	let 배당가치    = s_load('add9','f');
-	let 레버가치    = s_load('add15','f');
-	let 입금합계 = s_load('sub25','f');
-	let 출금합계 = s_load('sub26','f');
-	let 전투자금 = s_load('sub27','f');
+	let 입금     = ctv('add1','f');
+    let 출금     = ctv('add2','f');
+	let 잔액     = ctv('add3','f');
+	let 배당가치 = ctv('add9','f');
+	let 레버가치 = ctv('add15','f');
+	let 입금합계 = ctv('sub25','f');
+	let 출금합계 = ctv('sub26','f');
+	let 전투자금 = ctv('sub27','f');
 
 	잔액 = 잔액 + 입금 - 출금
 	입금합계 += 입금
@@ -314,34 +316,10 @@ function money_inout() {
 	c_print("sub26",출금합계,2);
 	c_print("sub27",전투자금,2);
 	c_print("sub28",현수익률,2);
-	
+	h_dialog.notice("입출금을 재반영 하였습니다");
 }
 
-function money_realloc() {
-	let 잔액      = s_load('add3','f');
-	let 배당주    = s_load('add9','f');
-	let 레버리지  = s_load('sub17','f');
-	let 종가2     = s_load('add14','f');
-	
-	합계 = 잔액 + 배당주 + 레버리지
-
-	가용잔액 = parseInt((합계 * 2)/3)
-	추가자금 = parseInt(합계 - 가용잔액)
-
-	일매수금 = parseInt(가용잔액 / 22 )
-	기초수량 = Math.ceil(일매수금/종가2)
-
-	가용잔액 = 가용잔액 - 배당주 - 레버리지
-	if(가용잔액 < 0) {  추가자금 = 추가자금 + 가용잔액; 가용잔액 = 0}
-
-	bd = s_load('sub12','i') 
-	매수수량 = Math.ceil(기초수량*(bd*1.25 +1))
-
-	c_print("add19",가용잔액,2); c_print("add20",추가자금,2);
-	c_print("sub4",일매수금,0);  c_print("sub18",기초수량,0); c_print("sub2",매수수량,0);
- }
-
- function round_up(n,decimals=2){
-    multiplier = 10 ** decimals
-    return Math.ceil(n * multiplier) / multiplier
+function round_up(n,decimals=2){
+    multiplier = 10 ** decimals;
+    return Math.ceil(n * multiplier) / multiplier;
  }
