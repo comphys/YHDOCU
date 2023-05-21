@@ -2,7 +2,7 @@
 
 {% block contents_page  %}
 <div>
-<div style='font-size:14px;color:#f0f0ab;font-weight:bold;'>
+<div style='font-size:16px;color:#f0f0ab;font-weight:bold;'>
 {{D['오늘날자']}}({{D['오늘요일']}}) <span style="font-style:italic">Season {{D['현재시즌']}} - {{D['경과일수']}} Day </span>
 </div>
 <div style="font-size:14px;font-weight:bold;line-height:30px;">
@@ -16,15 +16,15 @@
 	<i class="fa fa-usd"></i> {{D['수익금']}} &nbsp; <i class="fa fa-line-chart"></i> {{D['수익률']}}% &nbsp;	
 </div>
 
-<div>
+<div style="border:1px solid black">
 	<canvas id="myChart"  style="width:350px;height:200px;background-color:#24272d;"></canvas>
 </div>
-
-<div>
+<div style="border:1px solid black;margin-top:10px;">
 	<canvas id="myChart2"  style="width:350px;height:200px;background-color:#24272d;"></canvas>
 </div>
 
 <div style="margin-top:20px;color:white;font-size:14px;" >
+    현재주가 : &nbsp; {{D['현재주가']}} &nbsp; / 평균주가 : {{D['평균단가']}} <br>
 	현재수량 : &nbsp; {{D['현재수량']}} 주 / 현재수익 : &nbsp; {{D['현재수익']}} $ ( {{D['현수익률']}} % )
 </div>
 

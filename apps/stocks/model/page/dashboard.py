@@ -12,7 +12,7 @@ class M_dashboard(Model) :
         ckdate = self.DB.get_one("max(add0)")
         self.DB.wre = f"add0='{ckdate}'"
 
-        out = self.DB.get_line("add13,add17,add18,sub1,sub2,sub3,sub12,sub19,sub20,sub25,sub26,sub28,sub33")
+        out = self.DB.get_line("add13,add14,add17,add18,sub1,sub2,sub3,sub12,sub16,sub19,sub20,sub25,sub26,sub28,sub33")
         매수수량 = int(out['sub2'])
         매수가격 = float(out['sub19']) 
         매수가액 = 매수수량 * 매수가격
@@ -40,6 +40,8 @@ class M_dashboard(Model) :
         self.D['현재수량'] = out['add13']    
         self.D['현재수익'] = out['add18']
         self.D['현수익률'] = out['sub33']
+        self.D['현재주가'] = out['add14']
+        self.D['평균단가'] = out['sub16']
 
         self.chart()
 
