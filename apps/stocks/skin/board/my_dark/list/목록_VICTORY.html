@@ -184,11 +184,13 @@ let soxl_average = {{D['soxl_average']|safe}};
 let total_value = {{D['total_value']|safe}};
 let close_change = {{D['close_change']|safe}};
 let lever_change = {{D['lever_change']|safe}};
+let total_profit = {{D['total_profit']|safe}};
 
 let labels_2 = labels.slice({{D['chart_start']}});
 let close_price2 = close_price.slice({{D['chart_start']}});
 let soxl_average2 = soxl_average.slice({{D['chart_start']}});
 let total_value2 = total_value.slice({{D['chart_start']}});
+let total_profit2 = total_profit.slice({{D['chart_start']}});
 let close_change2 = close_change.slice({{D['chart_start']}});
 let lever_change2 = lever_change.slice({{D['chart_start']}});
 
@@ -276,11 +278,10 @@ const data3 = {
     labels : labels_2,
     datasets : [
 		{
-            label:' 총투자금',
-            data : total_value2,
+            label:' 총수익률',
+            data : total_profit2,
             borderColor:'yellow', borderWidth:3,pointRadius:0, 
 			lineTension:0.2,
-			yAxisID : 'y1'
         },
         {
             label:' 종가변동',
@@ -313,8 +314,7 @@ const options3 = {
 				else if(context.tick.value % 10 == 0 ) { return 'black'} },
 			lineWidth: function(context) {if(context.tick.value %10 == 0 ) { return 2 } else return 0},
 		   },
-		   position:'left'},
-		y1:{ type:'linear', display:true, position:'right'}
+		   position:'right'}
     }
 };
 
@@ -355,7 +355,7 @@ function slice_chart(opt) {
 	
 	if(second_chart) {
 		myChart.config.data.labels = labels.slice(new_s,new_e);
-		myChart.config.data.datasets[0].data =  total_value.slice(new_s,new_e);
+		myChart.config.data.datasets[0].data =  total_profit.slice(new_s,new_e);
 		myChart.config.data.datasets[1].data =  close_change.slice(new_s,new_e);
 		myChart.config.data.datasets[2].data =  lever_change.slice(new_s,new_e);
 		base = myChart.config.data.datasets[2].data[0]
