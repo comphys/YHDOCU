@@ -21,7 +21,7 @@
 </head>
 <body>
 <div class="navbar navbar-fixed-top">
-	<div class="navbar-inner" style="width:100%;margin-left:-20px;">
+	<div class="navbar-inner" style="width:{{D['xwidth']}};margin-left:-20px;">
 		<ul class="nav">
 		{% for menu in D['MENU_SECTION'] %}
 			<li class='dropdown'>
@@ -46,7 +46,7 @@
 	</div>
 </div>
 
-<div id="content" style="padding:10px;margin-top:50px;width:100%;border:2px solid gray"><!-- 본문 시작 -->
+<div id="content" style="padding:10px;margin-top:50px;width:{{D['xwidth']}};border:2px solid gray"><!-- 본문 시작 -->
 	{% block contents_page  %}{% endblock %}
 </div><!-- 본문 끝 -->
 </body>
