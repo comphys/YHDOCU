@@ -60,7 +60,6 @@ class 목록_VICTORY(SKIN) :
             
             LD = self.DB.get_line('*')
             self.D['chart_percent'] = [float(LD['add10']),float(LD['add4']),float(LD['add16'])]
-            self.info(self.D['total_profit'])
             # --------------
 
             총투자금 = float(LD['sub27'])
