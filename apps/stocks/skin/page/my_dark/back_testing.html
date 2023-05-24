@@ -211,7 +211,15 @@ const backData = {
 			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',
 			lineTension:0.2
 
+		},
+		{
+			label:'추세하향선',
+			data : [4,7,5,3,4],
+			borderWidth:2,borderColor:'white',borderDash: [2,2],backgroundColor:'white',
+			lineTension:0.2
+
 		}
+
 	]   
 };
 const options = {
@@ -337,10 +345,16 @@ function show_chart(season) {
 	$('#backTestingChart').css({top:'130px',left:'50px'}).show();
 	var clsv = [];
 	var avgv = [];
+	var ulne = [];
+	var dlne = [];
 
 	$(".clsv"+season).each(function() {clsv.push(parseFloat($(this).text()))});
 	$(".avgv"+season).each(function() {avgv.push(parseFloat($(this).text()))});
 	
+	const t0 = 0.02;
+	const a0 = clsv[0];	const d0 = 1-t0;
+	for(let x=0; x < clsv.length; x++) { dlne.push(a0 * (d0**x));}
+
 	var xticks = clsv.length
 	if (xticks < 30 ) { xticks = 30; }
 	var new_labels = Array.from(new Array(xticks),(x,i)=> i+1);
@@ -348,6 +362,7 @@ function show_chart(season) {
 	myChart.config.data.labels = new_labels;
 	myChart.config.data.datasets[0].data =  clsv;
 	myChart.config.data.datasets[1].data =  avgv;
+	myChart.config.data.datasets[2].data =  dlne;
 	myChart.update();
 }
 

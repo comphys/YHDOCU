@@ -193,6 +193,14 @@ function show_add_info(opt) {
 			content += "<span style='display:inline-block;width:50px;text-align:right'>"+i+"% :</span>"
 			content += "<span style='display:inline-block;width:70px;text-align:right'>"+tmp+"</span><br>" 
 		}
+	} else if(opt==4) {
+		title = "종가기준 참고표"		
+		bs = ctv('add14','f')
+		for(i=1;i<21;i++) {
+			tmp = (bs * (1-i/100)).toFixed(2)
+			content += "<span style='display:inline-block;width:50px;text-align:right'>-"+i+"% :</span>"
+			content += "<span style='display:inline-block;width:70px;text-align:right'>"+tmp+"</span><br>" 
+		}
 	}
 	$("#add-info .add-info-title").html(title);
 	$("#add-info .add-info-content").html(content);
