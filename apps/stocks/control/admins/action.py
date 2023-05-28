@@ -30,8 +30,8 @@ class Action(Control) :
             self.DB.exe(f"DROP TABLE h_{bid}_reply")
             self.set_message(f"{bid}({DEL['title']}) 보드를 삭제하였습니다.")
         else :
-            self.DB.exe(f"TRUNCATE h_{bid}_board")
-            self.DB.exe(f"TRUNCATE h_{bid}_reply")
+            self.DB.exe(f"DELETE FROM h_{bid}_board")
+            self.DB.exe(f"DELETE FROM h_{bid}_reply")
             self.set_message(f"{bid}({DEL['title']}) 보드를 초기화 하였습니다.")
         
         return self.moveto('admin/board_delete')

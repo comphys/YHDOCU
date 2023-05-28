@@ -113,7 +113,8 @@ class Guide(Control) :
         U['sub2']   = self.M['전매수량']
         U['sub19']  = self.M['전매수가']
         U['sub3']   = self.M['전매도량']
-        U['sub20']  = self.M['전매도가']
+        U['sub20']  = self.M['전매도가'] 
+        if U['sub20'] <= U['sub19'] :  U['sub20'] = U['sub19'] + 0.01
         U['sub29']  = self.M['진행상황']
         U['sub7']   = self.M['회복전략'] 
         U['sub30']  = self.M['수수료등']
@@ -133,6 +134,7 @@ class Guide(Control) :
         U['add20']  = f"{float(U['add20']):.2f}"
         U['sub19']  = f"{U['sub19']:.2f}"
         U['sub33']  = f"{float(U['sub33']):.2f}"
+        U['sub7']   = f"{float(U['sub7']):.1f}"
 
         qry=self.DB.qry_insert(self.board,U)
         self.DB.exe(qry)

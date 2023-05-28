@@ -79,7 +79,7 @@ function client_calculate() {
 
 	} else { 
 		경과일수 += 1; normal_sell(); normal_buy();
-		진행상황 = (경과일수==1)? '첫날매수' : '일반매수';
+		if(경과일수==1) {진행상황 = '첫날매수'; 누적수수료=수수료등;} else {진행상황='일반매수';}
 	}
 
 
@@ -120,7 +120,7 @@ function check_sell() {
     if( 종가2 >= 매도가격 ) {c_print('sub9',-매도수량,0); c_print('add12', 종가2 * 매도수량, 2);}
 }
 
-function rebalance() { total = 가용잔액 + 추가자금; 가용잔액 = parseInt((total * 2)/3); 추가자금 = parseInt(total - 가용잔액); 	일매수금 = parseInt(가용잔액/분할횟수); }
+function rebalance() { total = 가용잔액 + 추가자금; 가용잔액 = parseInt((total * 2)/3); 추가자금 = total - 가용잔액; 	일매수금 = parseInt(가용잔액/분할횟수); }
 
 function normal_sell() {
 	매수수량 = Math.ceil(기초수량 * (경과일수*비중조절 +1));
