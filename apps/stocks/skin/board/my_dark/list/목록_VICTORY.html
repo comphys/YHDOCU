@@ -139,7 +139,7 @@
 
 <script>
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
-$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(0)}});
+$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 var notice_popup = false;
 
 $(".list-bears2,.list-normal2").click(function() {
@@ -344,6 +344,7 @@ function slice_chart(opt) {
 		for(d=labels.length-1; d >=0; d--) {if(labels[d] <= e_date){ new_e = d+1; $("input[name='e_date']").val('20'+labels[d]);break;}} 
 	} else if(opt==2) { 
 		$("input[name='s_date']").val(season_first_day);
+		$("input[name='e_date']").val("{{D['e_date']}}");
 		s_date = season_first_day.slice(2);
 		new_s = labels.indexOf(s_date) 
 		new_e = labels.length;
