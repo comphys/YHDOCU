@@ -331,3 +331,11 @@ function round_up(n,decimals=2){
     multiplier = 10 ** decimals;
     return Math.ceil(n * multiplier) / multiplier;
  }
+
+ function rebalance_by() { 
+	let total = ctv('add3','f'); 
+	let 가용잔액 = parseInt((total * 2)/3); 
+	let 추가자금 = total - 가용잔액;
+	c_print('add19',가용잔액,2);
+	c_print('add20',추가자금,2);
+}
