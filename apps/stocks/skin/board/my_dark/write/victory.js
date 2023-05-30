@@ -84,22 +84,22 @@ function client_calculate() {
 
 
 //  출력파트
-	c_print('add1',입금,2);			c_print('add2',출금,2);		       c_print('add3',잔액,2);			c_print('add4',현금비중,2);      
+	vtc('add1',입금,2);			vtc('add2',출금,2);		       vtc('add3',잔액,2);			vtc('add4',현금비중,2);      
 
-	c_print('add5',매수금1,2);		c_print('add6',매도금1,2);		   c_print('sub8',변동수량1,0);     c_print('sub10',배당금,2);
-	v_print('add8',종가1,2);		c_print('add9',배당가치,2);		  c_print('add7',보유수량1,0);      c_print('add10',배당비중,2);
-	c_print('sub21',평균단가1,4);	c_print('sub22',매도누적1,2);	   c_print('sub23',매수누적1,2);    c_print('sub24',현매수금1,2);
+	vtc('add5',매수금1,2);		vtc('add6',매도금1,2);		   vtc('sub8',변동수량1,0);     vtc('sub10',배당금,2);
+	vtc('add8',종가1,-1);		vtc('add9',배당가치,2);		  vtc('add7',보유수량1,0);      vtc('add10',배당비중,2);
+	vtc('sub21',평균단가1,4);	vtc('sub22',매도누적1,2);	   vtc('sub23',매수누적1,2);    vtc('sub24',현매수금1,2);
 
-	c_print('add11',매수금2,2);		c_print('add12',매도금2,2);		   c_print('sub9',변동수량2,0);     c_print('sub33',현수익률,2);
-	v_print('add14',종가2,2);		c_print('add15',레버가치,2);	   c_print('add13',보유수량2,0);    c_print('add16',레버비중,2);
-	c_print('sub16',평균단가2,4);	c_print('sub15',매도누적2,2);	   c_print('sub14',매수누적2,2);    c_print('sub17',현매수금2,2);
-	v_print('sub5',연속상승,0);	    v_print('sub6',연속하락,0);	       c_print('add18',현재손익,2);     c_print('sub7',회복전략,1);
+	vtc('add11',매수금2,2);		vtc('add12',매도금2,2);		   vtc('sub9',변동수량2,0);     vtc('sub33',현수익률,2);
+	vtc('add14',종가2,-1);		vtc('add15',레버가치,2);	   vtc('add13',보유수량2,0);    vtc('add16',레버비중,2);
+	vtc('sub16',평균단가2,4);	vtc('sub15',매도누적2,2);	   vtc('sub14',매수누적2,2);    vtc('sub17',현매수금2,2);
+	vtc('sub5',연속상승,-1);	vtc('sub6',연속하락,-1);	   vtc('add18',현재손익,2);     vtc('sub7',회복전략,1);
 
-	c_print('add19',가용잔액,2);    c_print('sub11',배당합계,2);       c_print('sub25',입금합계,2);     c_print('sub27',전투자금,2);
-	c_print('add20',추가자금,2);    c_print('sub26',출금합계,2);       c_print('add17',가치합계,2);     c_print('sub28',전수익률,2);
-	c_print('sub1',현재시즌,0);     c_print('sub4',일매수금,0);        c_print('sub2',매수수량,0);      c_print('sub3',매도수량,0);
-	c_print('sub12',경과일수,0);    c_print('sub18',기초수량,0);       c_print('sub19',매수가격,2);     c_print('sub20',매도가격,2);
-	v_print('sub29',진행상황,3);    c_print('sub30',수수료등,2);       c_print('sub31',누적수수료,2);   v_print('sub32',보존금액,0);
+	vtc('add19',가용잔액,2);    vtc('sub11',배당합계,2);       vtc('sub25',입금합계,2);     vtc('sub27',전투자금,2);
+	vtc('add20',추가자금,2);    vtc('sub26',출금합계,2);       vtc('add17',가치합계,2);     vtc('sub28',전수익률,2);
+	vtc('sub1',현재시즌,0);     vtc('sub4',일매수금,0);        vtc('sub2',매수수량,0);      vtc('sub3',매도수량,0);
+	vtc('sub12',경과일수,0);    vtc('sub18',기초수량,0);       vtc('sub19',매수가격,2);     vtc('sub20',매도가격,2);
+	vtc('sub29',진행상황,-2);   vtc('sub30',수수료등,2);       vtc('sub31',누적수수료,2);   vtc('sub32',보존금액,-1);
 
 	h_dialog.notice("변동사항 계산을 완료하였습니다");
 	AutoCalulated = true; $("#notice-calculated").removeClass('notice-calculated');
@@ -108,16 +108,16 @@ function client_calculate() {
 function ctv(key,opt='f') { a = $("input[name='"+key+"']" ).val();   if(!a) return 0 ;  a = a.replace(/,/g,'');  if(opt=='i') return parseInt(a);  else return parseFloat(a);}
 
 function check_buy() {
-    c_print('sub9',0,0); c_print('add11',0, 2);
+    vtc('sub9',0,0); vtc('add11',0, 2);
     if( 경과일수 ==0 ) { 
-        if(종가2 <= 매수가격){ 기초수량 = Math.ceil(일매수금/전일종가);  c_print('sub9',기초수량,0); c_print('add11', 종가2 * 기초수량, 2);  }
-    } else if(종가2 <= 매수가격 ) { c_print('sub9',매수수량,0); c_print('add11', 종가2 * 매수수량, 2); }
+        if(종가2 <= 매수가격){ 기초수량 = Math.ceil(일매수금/전일종가);  vtc('sub9',기초수량,0); vtc('add11', 종가2 * 기초수량, 2);  }
+    } else if(종가2 <= 매수가격 ) { vtc('sub9',매수수량,0); vtc('add11', 종가2 * 매수수량, 2); }
 }
 
 function check_sell() {
-    c_print('add12',0, 2);
+    vtc('add12',0, 2);
     if( 경과일수 == 0 ) return;
-    if( 종가2 >= 매도가격 ) {c_print('sub9',-매도수량,0); c_print('add12', 종가2 * 매도수량, 2);}
+    if( 종가2 >= 매도가격 ) {vtc('sub9',-매도수량,0); vtc('add12', 종가2 * 매도수량, 2);}
 }
 
 function rebalance() { total = 가용잔액 + 추가자금; 가용잔액 = parseInt((total * 2)/3); 추가자금 = total - 가용잔액; 	일매수금 = parseInt(가용잔액/분할횟수); }
@@ -143,17 +143,15 @@ function normal_buy() {
 
 
 function s_load(key,opt,opt2='B') {if(opt2=='B') { a=JBODY[key]} else if(opt2=='S') { a=JSTRG[key] } else if(opt2=='D') { a=J_DIV[key] } else if(opt2=='L') { a=J_LEV[key] }  if(!a) return 0 ;  a = a.replace(/,/g,'');  if(opt=='i') return parseInt(a);  else return parseFloat(a); }
-function c_print(pos,num,weigh) { $("input[name='"+pos+"']").val(num.toFixed(weigh)).comma('init');}
+function vtc(pos,num,weigh) { if(weigh==-1) return;	if(weigh==-2) $("input[name='"+pos+"']").val(num);	else {$("input[name='"+pos+"']").val(num.toFixed(weigh)).comma('init');}}
 function commission(mm,opt) {if(opt==1) { return (parseInt(mm*0.07)/100);}	else if(opt==2) { m1 = parseInt(mm*0.07)/100; m2=Math.round(mm*0.00229)/100; return m1+m2;}}
-function v_print(pos,num,weigh) { if(weigh==3) $("input[name='"+pos+"']").val(num); }
-
 
 function back_restore() {
 	let 매수금   = s_load('add11','f');
 	let 가용잔액 = s_load('add19','f');
 	가용잔액 += 매수금; 매수금 = 0.00; 
-	c_print('add11',매수금,2);
-	c_print('add19',가용잔액,2);
+	vtc('add11',매수금,2);
+	vtc('add19',가용잔액,2);
 }
 
 
@@ -274,23 +272,23 @@ function load_value() {
 		위매시점=s_load('add22','f','S'); 
 
         // 현금투자
-        c_print('add1',0,2); c_print('add2',0,2); c_print('add3',잔액,2);
+        vtc('add1',0,2); vtc('add2',0,2); vtc('add3',잔액,2);
         // 배당투자
-        c_print('add5',0,2); c_print('add6',0,2);  c_print('sub8',0,0); c_print('sub10',0,2);
-        c_print('add8',종가1,2); c_print('add9',종가1 * 보유수량1,2); c_print('add7',보유수량1,0);
-        c_print('sub21',평균단가1,4); c_print('sub22',매도누적1,2); c_print('sub23',매수누적1,2); c_print('sub24',현매수금1,2);
+        vtc('add5',0,2); vtc('add6',0,2);  vtc('sub8',0,0); vtc('sub10',0,2);
+        vtc('add8',종가1,2); vtc('add9',종가1 * 보유수량1,2); vtc('add7',보유수량1,0);
+        vtc('sub21',평균단가1,4); vtc('sub22',매도누적1,2); vtc('sub23',매수누적1,2); vtc('sub24',현매수금1,2);
         // SOXL
         check_buy(); check_sell();
-        c_print('add14',종가2,2);  c_print('add15',종가2*보유수량2,0); c_print('add13',보유수량2,0);
-        c_print('sub16',평균단가2,4); c_print('sub15',매도누적2,2); c_print('sub14',매수누적2,2); c_print('sub17',현매수금2,2);
-        c_print('sub5',연속상승,0); c_print('sub6',연속하락,0); c_print('sub7',회복전략,1);
+        vtc('add14',종가2,2);  vtc('add15',종가2*보유수량2,0); vtc('add13',보유수량2,0);
+        vtc('sub16',평균단가2,4); vtc('sub15',매도누적2,2); vtc('sub14',매수누적2,2); vtc('sub17',현매수금2,2);
+        vtc('sub5',연속상승,0); vtc('sub6',연속하락,0); vtc('sub7',회복전략,1);
     
         // 투자전략
-        c_print('add19',가용잔액,2);  c_print('sub11',배당합계,2); c_print('sub25',입금합계,2);  c_print('sub27',전투자금,2); 
-        c_print('add20',추가자금,2);  c_print('sub26',출금합계,2);
-        c_print('sub1',현재시즌,0);  c_print('sub4',일매수금,0); 
-        c_print('sub12',경과일수,0); c_print('sub18',기초수량,0); 
-        c_print('sub31',누적수수료,2); c_print('sub32',보존금액,0); 
+        vtc('add19',가용잔액,2);  vtc('sub11',배당합계,2); vtc('sub25',입금합계,2);  vtc('sub27',전투자금,2); 
+        vtc('add20',추가자금,2);  vtc('sub26',출금합계,2);
+        vtc('sub1',현재시즌,0);  vtc('sub4',일매수금,0); 
+        vtc('sub12',경과일수,0); vtc('sub18',기초수량,0); 
+        vtc('sub31',누적수수료,2); vtc('sub32',보존금액,0); 
     }
 
 // =========================================================================================================================================================
@@ -315,15 +313,15 @@ function money_inout() {
     비중3 = 레버가치/가치합계*100;
 	현수익률 = (가치합계 / 전투자금 - 1) * 100;
 	
-	c_print("add3",잔액,2);
-	c_print("add17",가치합계,2);
-	c_print("add4",비중1,2);
-    c_print("add10",비중2,2);
-    c_print("add16",비중3,2);
-	c_print("sub25",입금합계,2);
-	c_print("sub26",출금합계,2);
-	c_print("sub27",전투자금,2);
-	c_print("sub28",현수익률,2);
+	vtc("add3",잔액,2);
+	vtc("add17",가치합계,2);
+	vtc("add4",비중1,2);
+    vtc("add10",비중2,2);
+    vtc("add16",비중3,2);
+	vtc("sub25",입금합계,2);
+	vtc("sub26",출금합계,2);
+	vtc("sub27",전투자금,2);
+	vtc("sub28",현수익률,2);
 	h_dialog.notice("입출금을 재반영 하였습니다");
 }
 
@@ -336,6 +334,6 @@ function round_up(n,decimals=2){
 	let total = ctv('add3','f'); 
 	let 가용잔액 = parseInt((total * 2)/3); 
 	let 추가자금 = total - 가용잔액;
-	c_print('add19',가용잔액,2);
-	c_print('add20',추가자금,2);
+	vtc('add19',가용잔액,2);
+	vtc('add20',추가자금,2);
 }
