@@ -1,5 +1,6 @@
 from system.core.load import Model
 from datetime import datetime
+import system.core.my_utils as my
 
 class M_back_testing(Model) :
 
@@ -18,8 +19,8 @@ class M_back_testing(Model) :
         self.D['strategy'] = 'VICTORY'
         self.D['capital'] = '12,000'
         self.D['addition'] = '6,000'
-        self.D['start_date'] = '2017-01-02'
-        self.D['end_date'] = '2021-12-27'
+        self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)
+        self.D['start_date'] = my.dayofdate(self.D['end_date'],delta=-365*2)[0]
         self.D['progress'] =  '0'
 
         
