@@ -117,6 +117,19 @@ class 목록_VICTORY(SKIN) :
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
 
+            # take a chance
+            self.D['현매수금'] = float(LD['sub17'])
+            self.D['보유수량'] = int(LD['add13'])
+            self.D['기회가격'] = self.take_chance(-5)
+            self.D['기회수량'] = self.D['보유수량'] + self.D['매수갯수']
+   
+
+    def take_chance(self,p) :
+        기회값 = 1 + (p/100)
+        분자값 = 기회값 * self.D['현매수금']
+        분모값 = self.D['보유수량'] + self.D['매수갯수'] - 기회값 * self.D['매수갯수']
+        return round(분자값/분모값,2)
+
 
     def list(self) :
         self.head()
