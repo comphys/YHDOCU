@@ -19,9 +19,10 @@ class M_back_testing(Model) :
         self.D['strategy'] = 'VICTORY'
         self.D['capital'] = '12,000'
         self.D['addition'] = '6,000'
+        # 기간 설정(최근 2년간)
         self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)
         self.D['start_date'] = my.dayofdate(self.D['end_date'],delta=-365*2)[0]
         self.D['progress'] =  '0'
-        
+
 
         
