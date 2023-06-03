@@ -22,5 +22,6 @@ class M_back_testing(Model) :
         self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)
         self.D['start_date'] = my.dayofdate(self.D['end_date'],delta=-365*2)[0]
         self.D['progress'] =  '0'
+        
 
         
