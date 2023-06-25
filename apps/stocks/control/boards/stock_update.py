@@ -41,18 +41,18 @@ class Stock_update(Control) :
         
         app_key = self.DB.one("SELECT p_data_02 FROM my_keep_data WHERE no=1")
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
-        b_date = self.DB.get("max(add0)",many=1,assoc=False) 
-        e_date = ut.timestamp_to_date(opt=7)
+        b_date = self.DB.get_one("max(add0)") 
+
         if not b_date : b_date = '2015-01-01'
 
-        the_next_day = ut.dayofdate(b_date,delta=1)[0]
         self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
-        one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10',many=1,assoc=False)
-        the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
+        one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10,add11',many=1,assoc=False)
+        the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8]),one[9]]
 
-        ohlc = ut.get_stock_data(app_key,cdx,the_next_day,e_date)
+        ohlc = ut.get_stock_data(app_key,cdx,b_date,'')
         if not ohlc : return
-        ohlc.insert(0,the_first_data)
+
+        ohlc[0]= the_first_data
 
         for i in range(1,len(ohlc)) :
             ohlc[i][6]  = round((ohlc[i][4] - ohlc[i-1][4])/ohlc[i-1][4],4)
@@ -61,7 +61,7 @@ class Stock_update(Control) :
 
         rst3 = ohlc[1:]
 
-        db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
+        db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add11,add1,add2,uid,uname,wdate,mdate"
         time_now = ut.now_timestamp()
 
         for row in rst3 :
@@ -80,6 +80,11 @@ class Stock_update(Control) :
         df = fdr.DataReader(cdx,start=b_date, end=e_date)
         Str_Date    = [x.strftime('%Y-%m-%d') for x in df.index]
 
+        USD_KRW = []
+        for d in Str_Date : 
+            temp = fdr.DataReader('USD/KRW',d)['Close'].values[0]
+            USD_KRW.append(f"{temp:.2f}")
+
         df['Str_Date'] = Str_Date
 
         df['Up']     = 0
@@ -90,8 +95,9 @@ class Stock_update(Control) :
         df['Low']   = round(df['Low'],2)
         df['Close'] = round(df['Close'],2)
         df['Change']= round(df['Close'].diff(periods=1)/df['Close'].shift(1),4)
+        df['Exrate']= USD_KRW
 
-        df = df[['Str_Date','Open','High','Low','Close','Volume','Change','Up','Dn']]
+        df = df[['Str_Date','Open','High','Low','Close','Volume','Change','Up','Dn','Exrate']]
         dflist = df.values.tolist()
 
         self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
@@ -106,7 +112,7 @@ class Stock_update(Control) :
 
         ohlc = dflist[1:]
 
-        db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
+        db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add11,add1,add2,uid,uname,wdate,mdate"
         time_now = ut.now_timestamp()
         
         for row in ohlc :

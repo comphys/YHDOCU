@@ -1,5 +1,6 @@
 import os, re, json,urllib.request as ul 
 import shutil,math
+import FinanceDataReader as fdr
 from datetime import datetime, timedelta
 from pytz import timezone
 
@@ -151,5 +152,9 @@ def get_stock_data(app_key,symbol,start_date,end_date) :
     # col = data['data']['prices']['columns'] + ['change','up','down']
     rst = data['data']['prices']['values']
     rst2 = [ [x[0][:10],float(x[1]),float(x[2]),float(x[3]),float(x[4]),int(x[5]),0.0,0,0] for x in rst]
+
+    for row in rst2 :
+        temp = fdr.DataReader('USD/KRW',row[0])['Close'].values[0]
+        row.append(f"{temp:.2f}")
 
     return rst2 
