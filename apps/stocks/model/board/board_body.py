@@ -25,10 +25,11 @@ class M_board_body(Model) :
         if self.D['BCONFIG']['type'] == 'yhboard' :
             qry = f"SELECT * FROM h_{self.D['bid']}_reply WHERE parent={self.D['No']} ORDER BY wdate"
             REPLY = self.DB.exe(qry,assoc=True)
-            for rp in REPLY :
-                rp['wdate'] = ut.timestamp_to_date(rp['wdate'],5)
+            if REPLY :
+                for rp in REPLY :
+                    rp['wdate'] = ut.timestamp_to_date(rp['wdate'],5)
 
-            self.D['REPLY'] = REPLY
+                self.D['REPLY'] = REPLY
 
         if self.D['Brother'] :
             qry = f"SELECT no,add0,uname,wdate,mdate,hit,brother,reply FROM h_{self.D['bid']}_board WHERE "
