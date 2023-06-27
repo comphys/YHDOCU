@@ -1,7 +1,7 @@
 from system.core.load import Control
 from flask import session
 import FinanceDataReader as fdr
-import time,system.core.my_utils as ut
+import time,system.core.my_utils as my
 
 class Stock_update(Control) : 
 
@@ -46,10 +46,10 @@ class Stock_update(Control) :
         if not b_date : b_date = '2015-01-01'
 
         self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
-        one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10,add11',many=1,assoc=False)
-        the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8]),one[9]]
+        one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10',many=1,assoc=False)
+        the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
 
-        ohlc = ut.get_stock_data(app_key,cdx,b_date,'')
+        ohlc = my.get_stock_data(app_key,cdx,b_date,'')
         if not ohlc : return
 
         ohlc[0]= the_first_data
@@ -61,8 +61,8 @@ class Stock_update(Control) :
 
         rst3 = ohlc[1:]
 
-        db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add11,add1,add2,uid,uname,wdate,mdate"
-        time_now = ut.now_timestamp()
+        db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
+        time_now = my.now_timestamp()
 
         for row in rst3 :
             row2 = list(row)
@@ -75,7 +75,7 @@ class Stock_update(Control) :
 
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.DB.get("max(add0)",many=1,assoc=False)
-        e_date = ut.timestamp_to_date(opt=7)
+        e_date = my.timestamp_to_date(opt=7)
 
         df = fdr.DataReader(cdx,start=b_date, end=e_date)
         Str_Date    = [x.strftime('%Y-%m-%d') for x in df.index]
@@ -95,9 +95,8 @@ class Stock_update(Control) :
         df['Low']   = round(df['Low'],2)
         df['Close'] = round(df['Close'],2)
         df['Change']= round(df['Close'].diff(periods=1)/df['Close'].shift(1),4)
-        df['Exrate']= USD_KRW
 
-        df = df[['Str_Date','Open','High','Low','Close','Volume','Change','Up','Dn','Exrate']]
+        df = df[['Str_Date','Open','High','Low','Close','Volume','Change','Up','Dn']]
         dflist = df.values.tolist()
 
         self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
@@ -112,8 +111,8 @@ class Stock_update(Control) :
 
         ohlc = dflist[1:]
 
-        db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add11,add1,add2,uid,uname,wdate,mdate"
-        time_now = ut.now_timestamp()
+        db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
+        time_now = my.now_timestamp()
         
         for row in ohlc :
             row2 = list(row)    
@@ -127,7 +126,7 @@ class Stock_update(Control) :
         cdx = self.parm[0]
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = '2016-01-01'
-        e_date = ut.timestamp_to_date(opt=7)
+        e_date = my.timestamp_to_date(opt=7)
 
         df = fdr.DataReader(cdx,start=b_date, end=e_date)
         Str_Date    = [x.strftime('%Y-%m-%d') for x in df.index]
@@ -156,7 +155,7 @@ class Stock_update(Control) :
         ohlc = dflist[1:]
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
-        time_now = ut.now_timestamp()
+        time_now = my.now_timestamp()
         
         for row in ohlc :
             row2 = list(row)    
