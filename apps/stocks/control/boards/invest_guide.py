@@ -435,8 +435,10 @@ class Invest_guide(Control) :
 
 
     def take_chance(self,p,H,n,A) :
-        if N == 0 : return 0
+        if H == 0 : return 0
         N = H + n
-        k = N * (1+p/100)
+        k = N / (1+p/100)
         return round(A/(k-n),2)
+    
+
 

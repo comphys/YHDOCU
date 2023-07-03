@@ -115,10 +115,11 @@ class 목록_INVEST(SKIN) :
    
 
     def take_chance(self,p) :
-        기회값 = 1 + (p/100)
-        분자값 = 기회값 * self.D['현매수금']
-        분모값 = self.D['보유수량'] + self.D['매수갯수'] - 기회값 * self.D['매수갯수']
-        return round(분자값/분모값,2) if 분모값 !=0 else 0
+        if self.D['보유수량'] == 0 : return 0
+        N = self.D['보유수량'] + self.D['매수갯수']
+        k = N / (1+p/100)
+        return round(self.D['현매수금']/(k-self.D['매수갯수']),2)
+
 
 
     def list(self) :
