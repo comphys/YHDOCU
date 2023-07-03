@@ -8,11 +8,11 @@ class M_dashboard(Model) :
         self.D['오늘날자']  = my.timestamp_to_date(opt=7) 
         self.D['오늘요일']  = my.dayofdate(self.D['오늘날자'])
 
-        self.DB.tbl = 'h_VICTORY_board'
+        self.DB.tbl = 'h_INVEST_board'
         ckdate = self.DB.get_one("max(add0)")
         self.DB.wre = f"add0='{ckdate}'"
 
-        out = self.DB.get_line("add13,add14,add17,add18,sub1,sub2,sub3,sub12,sub16,sub19,sub20,sub25,sub26,sub28,sub33")
+        out = self.DB.get_line("add9,add14,add17,add18,sub1,sub2,sub3,sub12,add7,sub19,sub20,sub25,sub26,sub28,add8")
         매수수량 = int(out['sub2'])
         매수가격 = float(out['sub19']) 
         매수가액 = 매수수량 * 매수가격
@@ -37,21 +37,21 @@ class M_dashboard(Model) :
         self.D['수익금'] = f"{float(out['add17'])-float(out['sub25'])-float(out['sub26']):,.0f}"
         self.D['수익률'] = f"{float(out['sub28']):,.1f}"
 
-        self.D['현재수량'] = out['add13']    
+        self.D['현재수량'] = out['add9']    
         self.D['현재수익'] = out['add18']
-        self.D['현수익률'] = out['sub33']
+        self.D['현수익률'] = out['add8']
         self.D['현재주가'] = out['add14']
-        self.D['평균단가'] = out['sub16']
+        self.D['평균단가'] = out['add7']
 
         self.chart()
 
     def chart(self) :
         self.DB.clear()
-        self.DB.tbl = 'h_VICTORY_board'
+        self.DB.tbl = 'h_INVEST_board'
         self.DB.odr = "add0 DESC"
         self.DB.lmt = '20'
 
-        chart_data = self.DB.get("add0,add14,add17,sub16,sub33",assoc=True)
+        chart_data = self.DB.get("add0,add14,add17,add7,add8",assoc=True)
 
         if chart_data :
 
@@ -66,8 +66,8 @@ class M_dashboard(Model) :
             self.D['close_price']  = [float(x['add14']) for x in chart_data]; close_base = self.D['close_price'][0]
             self.D['close_change'] = [round((x-close_base) / close_base * 100,2) for x in self.D['close_price']]
             self.D['total_value']  = [float(x['add17']) for x in chart_data]
-            self.D['soxl_average'] = ['null' if not float(x['sub16']) else float(x['sub16']) for x in chart_data]
-            self.D['lever_change'] = [float(x['sub33']) for x in chart_data]
+            self.D['soxl_average'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
+            self.D['lever_change'] = [float(x['add8']) for x in chart_data]
 
 
 
