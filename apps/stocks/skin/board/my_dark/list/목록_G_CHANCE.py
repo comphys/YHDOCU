@@ -5,7 +5,7 @@ from system.core.load import SKIN
 add0  : 
 sub11 : 배당금합계
 """
-class 목록_G_INVEST(SKIN) :
+class 목록_G_CHANCE(SKIN) :
 
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)
@@ -45,11 +45,7 @@ class 목록_G_INVEST(SKIN) :
         
             self.D['chart_date']   = [x['add0'][2:] for x in chart_data]
             self.D['close_price']  = [float(x['add14']) for x in chart_data]; close_base = self.D['close_price'][0]
-            self.D['close_change'] = [round((x-close_base) / close_base * 100,2) for x in self.D['close_price']]
-            self.D['total_value']  = [float(x['add17']) for x in chart_data]; total_base = self.D['total_value'][0]
-            self.D['total_profit'] = [round((x-total_base) / total_base * 100,2) for x in self.D['total_value']]
             self.D['soxl_average'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
-            self.D['lever_change'] = [float(x['add8']) for x in chart_data]
 
 
             self.DB.clear()
@@ -72,20 +68,7 @@ class 목록_G_INVEST(SKIN) :
             self.D['총수익률'] = f"{총수익률:.2f}"
             
             # -- leverage
-            self.D['매수금'] = float(LD['sub14'])
-            self.D['매도금'] = float(LD['sub15'])
-            현재평가 = self.D['매도금']  +  float(LD['add15'])
-            수익금 = 현재평가 - self.D['매수금'] 
             평단가 = float(LD['add7'])
-            수익률 = (수익금 / self.D['매수금'] * 100) if self.D['매수금'] else 0
-            self.D['평단가'] = f"{평단가:,.4f}"
-            self.D['수익금'] = f"{수익금:,.2f}"
-            self.D['수익률'] = f"{수익률:.2f}"
-            self.D['현재평가'] = f"{현재평가:,.2f}"
-
-            self.D['매수금'] = f"{self.D['매수금']:,.2f}"
-            self.D['매도금'] = f"{self.D['매도금']:,.2f}"
-
             # -- extra-info
             self.D['현매수금'] = f"{float(LD['add6']):,}"
             self.D['현이익률'] = f"{(float(LD['add14'])/평단가 - 1)*100:,.2f}" if 평단가 else '0.0'

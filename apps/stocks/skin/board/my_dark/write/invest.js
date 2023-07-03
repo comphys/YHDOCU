@@ -20,6 +20,7 @@ var 분할횟수, 큰단가치, 비중조절, 첫매가치, 둘매가치, 회수
 
 function client_calculate(opt='1') {
 	if(AutoCalulated) {h_dialog.notice("계산이 완료된 상태입니다."); return; }
+
 //  현금투자 부분 계산
 	입금 = ctv('add1','f'); 출금 = ctv('add2','f'); 
 
@@ -240,7 +241,9 @@ function initiate_chance() {
 		var ans = JSON.parse(data);
 		for(let i in ans) { $("input[name='"+i+"']" ).val(ans[i]); }
 	});
-	client_calculate()
+	vtc('add11',0.00,2); vtc('add5',0,0); vtc('add6',0.00,2);
+	client_calculate(2);
+	
 }
 
 

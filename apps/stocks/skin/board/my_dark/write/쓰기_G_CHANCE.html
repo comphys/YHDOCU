@@ -286,7 +286,7 @@ $(".list-code").click(function(){var code = $(this).text();	winopen('winopen/cha
 function check_MainWriteForm(f)	{	
 	var wDiv = $id("YHBmainEditor");
 	JYHEDITOR.clearDocuSelect();
-	if( ! AutoCalulated && uri('method') != 'modify' ) client_calculate()
+	if( ! AutoCalulated && uri('method') != 'modify' ) client_calculate(2)
 	f.content.value = wDiv.innerHTML;
 	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
 

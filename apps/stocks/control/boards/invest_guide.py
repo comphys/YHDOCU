@@ -139,7 +139,6 @@ class Invest_guide(Control) :
         U.update({k:'' for k,v in U.items() if v == None})
 
         qry=self.DB.qry_insert(self.board,U)
-        self.info(qry)
         self.DB.exe(qry)
 
 
@@ -423,15 +422,10 @@ class Invest_guide(Control) :
         매수수량 = 0    
         for i in range(0,self.B['sub12']+1) :
             매수수량 += my.ceil(self.B['sub18'] *(i*1.25 + 1))
-            self.info(매수수량)
         self.B['sub2'] = 매수수량        
 
 
-        기회값 = 1 + (-5/100)
-        분자값 = 기회값 * float(TD['add6'])
-        분모값 = int(TD['add9']) + int(TD['sub2']) - 기회값 * int(TD['sub2'])
-        self.B['sub19'] = round(분자값/분모값,2) if 분모값 !=0 else 0        
-
+        self.B['sub19'] = self.take_chance(-5,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
 
         # Formatting
         self.B['add19'] = f"{self.B['add19']:,.2f}"
@@ -440,9 +434,9 @@ class Invest_guide(Control) :
         return self.json(self.B) 
 
 
-    def take_chance(self,p) :
-        기회값 = 1 + (p/100)
-        분자값 = 기회값 * self.D['현매수금']
-        분모값 = self.D['보유수량'] + self.D['매수갯수'] - 기회값 * self.D['매수갯수']
-        return round(분자값/분모값,2) if 분모값 !=0 else 0
+    def take_chance(self,p,H,n,A) :
+        if N == 0 : return 0
+        N = H + n
+        k = N * (1+p/100)
+        return round(A/(k-n),2)
 
