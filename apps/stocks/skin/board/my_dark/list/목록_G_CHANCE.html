@@ -6,12 +6,13 @@
 
 <!-- 리스트 메인 테이블 시작 -->
 <script src="/sys/chart/chart.min.js"></script>
+<script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 <div class="clearfix" style="width:100%;background-color:#24272d;padding:20px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
 	<div class="pull-left" style="margin-right:20px">
 		<canvas id="myChart"  style="width:1100px;height:350px;background-color:#24272d;" ondblclick="chart_toggle()"></canvas>
 	</div>
-	<div class="pull-left">
-		<canvas id="myChart2" style="width:220px;height:350px;background-color:#24272d"></canvas>
+	<div class="pull-left" style="margin:15px">
+		<canvas id="myChart2" style="width:200px;height:320px;background-color:#24272d"></canvas>
 	</div>
 </div>
 
@@ -174,7 +175,7 @@ const data1 = {
 		{
             label:' 평균단가',
             data : soxl_average,
-			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
+			borderColor:'#f78181', borderWidth:2, pointRadius:2,pointHoverRadius:24, backgroundColor:'#f78181',
 			lineTension:0.2
         }
 
@@ -183,7 +184,7 @@ const data1 = {
 const options1 = {
 	animation : { duration:500},
 
-	plugins : { legend: {display:false}, tooltip:{enabled:false}},
+	plugins : { legend: {display:false}, tooltip:{enabled:true}},
     responsive:false,
     layout:{padding:20},
     scales:{
@@ -195,7 +196,34 @@ const config1  = {type:'line',data:data1,options:options1};
 const myChart = new Chart(ctx, config1); 
 //
 
+const labels2 = ['MAIN','CHANCE'];
+const data2 = {
+  labels: labels2,
+  datasets: [{
+    label: ' 자산배분비율 ',
+    data: {{D['chart_percent']}},
+    backgroundColor: ['rgba(75, 192, 192, 0.4)','rgba(255, 99, 132, 0.4)'],
+    borderColor: ['rgb(75, 192, 192)','rgb(255, 99, 132)'],
+    borderWidth: 1
+  }]
+};
 
+const config2 = {
+  type: 'bar',
+  data: data2,
+  plugins:[ChartDataLabels],
+  options: {
+	animation : {duration:500},
+    plugins : { legend: {display:false},
+				tooltip : {enabled:false},
+				datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:14}}			
+	},
+    scales: {
+      y: { beginAtZero: true }
+    }
+  },
+};
+const myChart2 = new Chart(ctx2, config2); 
 
 </script>
 

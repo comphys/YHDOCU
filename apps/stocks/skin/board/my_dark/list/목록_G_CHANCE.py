@@ -88,7 +88,9 @@ class 목록_G_CHANCE(SKIN) :
             self.DB.clear()
             self.DB.tbl = f"h_{target}_board"
             self.DB.wre = f"add0 = '{last_date}'"
-            TD = self.DB.get_line("add6,add9,add14,sub2,sub4,sub6,sub12,sub18,sub20")
+            TD = self.DB.get_line("add6,add9,add14,sub2,sub4,sub6,sub12,sub18,sub20,sub28")
+
+            self.D['chart_percent'] = [float(TD['sub28']),float(LD['sub28'])]
 
             if int(TD['add9']) :
 
