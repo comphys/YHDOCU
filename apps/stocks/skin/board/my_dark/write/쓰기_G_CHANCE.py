@@ -33,8 +33,9 @@ class 쓰기_G_CHANCE(SKIN) :
                 JSTRG = { k:v for (k,v) in JSTRG.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
                 JHIST = { k:v for (k,v) in JHIST.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
 
+                target = self.DB.one(f"SELECT extra1 FROM h_board_config WHERE bid='{self.SYS.parm[0]}'")
                 self.DB.clear()
-                self.DB.tbl, self.DB.wre = ('h_INVEST_board',f"add0='{self.D['today']}'")
+                self.DB.tbl, self.DB.wre = (f"h_{target}_board",f"add0='{self.D['today']}'")
                 OD = self.DB.get_line("sub19,sub20")
                 if OD :
                     JBODY['LB'] = OD['sub19']

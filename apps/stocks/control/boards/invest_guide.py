@@ -212,7 +212,7 @@ class Invest_guide(Control) :
             self.M['진행상황'] = '전량매도' 
             수익금액 = self.M['매도금액'] - self.M['현매수금']
             self.M['회복전략'] = 0 if 수익금액 > 0 else self.S['add22']
-            self.M['현재손익'] = f"{수익금액:,.2f}"
+            self.M['현재손익'] = f"{수익금액:.2f}"
             self.M['경과일수'] = 0
             self.M['시즌'] += 1
             self.M['기초수량'] = 0   
@@ -387,9 +387,9 @@ class Invest_guide(Control) :
         Balance = float(self.D['post']['Balance'].replace(',',''))
 
         self.B = {}
-
+        target = self.DB.one(f"SELECT extra1 FROM h_board_config WHERE bid='{self.bid}'")
         self.DB.clear()
-        self.DB.tbl = 'h_INVEST_board'
+        self.DB.tbl = f"h_{target}_board"
         self.DB.wre = f"add0='{theDay}'"
         TD = self.DB.get_line('add6,add9,add14,sub1,sub2,sub4,sub5,sub6,sub12,sub18,sub19,sub20')
 
