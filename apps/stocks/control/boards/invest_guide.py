@@ -6,7 +6,8 @@ class Invest_guide(Control) :
     def _auto(self) :
         self.DB = self.db('stocks')
         self.bid   = self.parm[0]
-        self.snd   = self.parm[1]
+        try : self.snd   =  self.parm[1]
+        except IndexError : self.snd   = None
         self.board = 'h_'+self.bid+'_board'
         self.target = self.DB.one(f"SELECT extra1 FROM h_board_config WHERE bid='{self.bid}'")
     
@@ -280,7 +281,6 @@ class Invest_guide(Control) :
             return
 
         매수단가 = round(self.M['당일종가'] * self.M['평단가치'],2)
-        self.info(self.M['경과일수'])
         매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
 
         if  매수수량 * self.M['당일종가'] > self.M['가용잔액'] + self.M['추가자금'] : 
