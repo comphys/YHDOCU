@@ -18,9 +18,10 @@ class 쓰기_G_CHANCE(SKIN) :
         self.D['today'] = None
         if not OBODY :
             prev_date = self.DB.one(f"SELECT max(add0) FROM h_{self.SYS.parm[0]}_board")
+
             if  prev_date :
                 self.D['today'] = self.DB.one(f"SELECT min(add0) FROM h_stockHistory_board WHERE add0 > '{prev_date}'")
-
+   
             if self.D['today'] : 
 
                 JBODY = self.DB.line(f"SELECT * FROM h_{self.SYS.parm[0]}_board WHERE add0='{prev_date}'")
@@ -35,9 +36,11 @@ class 쓰기_G_CHANCE(SKIN) :
                 self.DB.clear()
                 self.DB.tbl, self.DB.wre = ('h_INVEST_board',f"add0='{self.D['today']}'")
                 OD = self.DB.get_line("sub19,sub20")
-                
-                JBODY['LB'] = OD['sub19']
-                JBODY['LS'] = OD['sub20']
+                if OD :
+                    JBODY['LB'] = OD['sub19']
+                    JBODY['LS'] = OD['sub20']
+                else :
+                    self.SYS.set_message("해당 일자에 매매 데이타가 존재하지 않습니다. 다른 날자를 선택하여 주시기 바랍니다.")
 
                 self.D['JBODY'] = self.SYS.json(JBODY)
                 self.D['JSTRG'] = self.SYS.json(JSTRG)

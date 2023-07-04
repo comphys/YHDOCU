@@ -53,6 +53,7 @@ class Board(Control) :
         M = self.model('board-board_write')
         M.write_main()
         D={'skin': self.skin + '/write/' + self.D['BCONFIG']['sub_write']}
+        self.get_message()
         return self.echo(D)
 
     def add_body(self) :
