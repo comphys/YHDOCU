@@ -1,4 +1,4 @@
-import system.core.my_utils as ut
+import system.core.my_utils as my
 from system.core.load import SKIN
 
 """
@@ -22,8 +22,9 @@ class 목록_G_CHANCE(SKIN) :
         self.D['head_td'] = THX
 
     def chart(self) :
+        target = self.DB.one(f"SELECT extra1 FROM h_board_config WHERE bid='{self.SYS.parm[0]}'")
         self.DB.clear()
-        self.DB.tbl = 'h_INVEST_board'
+        self.DB.tbl = f"h_{target}_board"
         self.DB.odr = "add0 DESC"
         self.DB.lmt = '60'
 
@@ -35,7 +36,7 @@ class 목록_G_CHANCE(SKIN) :
             last_date  = chart_data[ 0]['add0']
             self.D['s_date'] = first_date
             self.D['e_date'] = last_date
-            self.D['총경과일'] = ut.diff_day(first_date,day2=last_date)
+            self.D['총경과일'] = my.diff_day(first_date,day2=last_date)
     
             chart_span = 200
             chart_slice = len(chart_data)
@@ -44,7 +45,7 @@ class 목록_G_CHANCE(SKIN) :
             chart_data.reverse()
         
             self.D['chart_date']   = [x['add0'][2:] for x in chart_data]
-            self.D['close_price']  = [float(x['add14']) for x in chart_data]; close_base = self.D['close_price'][0]
+            self.D['close_price']  = [float(x['add14']) for x in chart_data]; 
             self.D['soxl_average'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
 
 
@@ -82,6 +83,41 @@ class 목록_G_CHANCE(SKIN) :
             self.D['예상이익'] = f"{(float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))):,.2f}"
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
+
+            # ------------- taget data 불러오기
+            self.DB.clear()
+            self.DB.tbl = f"h_{target}_board"
+            self.DB.wre = f"add0 = '{last_date}'"
+            TD = self.DB.get_line("add6,add9,add14,sub2,sub4,sub6,sub12,sub18,sub20")
+
+            if int(TD['add9']) :
+
+                가용잔액 = int( float(LD['add3']) * 2/3)
+                일매수금 = int(가용잔액/22)
+                매수비율 = 일매수금 / int(TD['sub4']) 
+                기초수량 = int(매수비율 * int(TD['sub18']))
+
+                찬스수량 = 0    
+                for i in range(0,int(TD['sub12'])+1) : 
+                    찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
+
+                찬스가격 = self.take_chance(-5,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                self.D['찬스가격'] = f"{찬스가격:,.2f}"
+                self.D['찬스수량'] = f"{찬스수량:,}"
+                self.D['찬스자본'] = f"{찬스가격*찬스수량:,.2f}"
+                self.D['찬스일수'] = TD['sub12']
+                self.D['찬스주가'] = TD['add14']
+                self.D['찬스하강'] = TD['sub6']
+                self.D['찬스근거'] = target
+
+
+
+
+    def take_chance(self,p,H,n,A) :
+        if H == 0 : return 0
+        N = H + n
+        k = N / (1+p/100)
+        return round(A/(k-n),2)
 
 
     def list(self) :
@@ -131,8 +167,8 @@ class 목록_G_CHANCE(SKIN) :
                         if self.D['EXALIGN'][key]  : style   = f"text-align:{self.D['EXALIGN'][key]};"
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
-                        if key =='add4'  : style  += f"border-right:3px solid black;"
-                        if key =='add17' : style  += f"border-left:3px solid black;"
+                        if key =='add4'  : style  += f"border-right:2px solid black;"
+                        if key =='add17' : style  += f"border-left:2px solid black;"
                         
                         txt_format = self.D['EXFORMA'][key] 
                         

@@ -403,7 +403,7 @@ class Invest_guide(Control) :
         self.B['sub5']   = TD['sub5'];      self.B['sub6']   = TD['sub6'];  self.B['add18'] = '0.00'  
         
         # 투자전략
-        self.B['add19'] = int((Balance * 2)/3)
+        self.B['add19'] = int(Balance * 2/3)
         self.B['add20'] = Balance - self.B['add19']
 
         self.B['sub1']  = TD['sub1'];       self.B['sub4'] = int(self.B['add19']/22)
@@ -414,7 +414,7 @@ class Invest_guide(Control) :
         self.B['sub3'] = 0
 
         self.B['sub12'] = int(TD['sub12'])
-        self.B['sub18'] = my.ceil( 매수비율 * int(TD['sub18']) )
+        self.B['sub18'] = int( 매수비율 * int(TD['sub18']) )
         self.B['sub20'] = TD['sub20']
 
         self.B['sub29'] = '시즌설정'

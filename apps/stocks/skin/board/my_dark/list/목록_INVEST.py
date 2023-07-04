@@ -107,20 +107,6 @@ class 목록_INVEST(SKIN) :
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
 
-            # take a chance
-            self.D['현매수금'] = float(LD['add6'])
-            self.D['보유수량'] = int(LD['add9'])
-            self.D['기회가격'] = self.take_chance(-5)
-            self.D['기회수량'] = self.D['보유수량'] + self.D['매수갯수'] if self.D['보유수량'] else 0
-   
-
-    def take_chance(self,p) :
-        if self.D['보유수량'] == 0 : return 0
-        N = self.D['보유수량'] + self.D['매수갯수']
-        k = N / (1+p/100)
-        return round(self.D['현매수금']/(k-self.D['매수갯수']),2)
-
-
 
     def list(self) :
         self.head()
@@ -176,8 +162,8 @@ class 목록_INVEST(SKIN) :
                     else : 
                         if self.D['EXALIGN'][key]  : style   = f"text-align:{self.D['EXALIGN'][key]};"
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
-                        if key =='add4'  : style  += f"border-right:3px solid black;"
-                        if key =='add17' : style  += f"border-left:3px solid black;"
+                        if key =='add4'  : style  += f"border-right:2px solid black;"
+                        if key =='add17' : style  += f"border-left:2px solid black;"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
                         
                         txt_format = self.D['EXFORMA'][key] 
