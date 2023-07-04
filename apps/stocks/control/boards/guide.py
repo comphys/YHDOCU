@@ -143,7 +143,7 @@ class Guide(Control) :
     def init_value(self) :
         self.M = {}
         self.M['진행일자'] = self.D['today']
-        self.DB.tbl, self.DB.wre = (f"h_{self.bid}_board", f"add0 < '{self.M['진행일자']}'")
+        self.DB.tbl = f"h_{self.bid}_board"
         self.DB.wre = f"add0='{self.D['prev_date']}'"
         LD = self.M['LD'] = self.DB.get_line('*')
         self.M['현재잔액'] = float(LD['add3'])

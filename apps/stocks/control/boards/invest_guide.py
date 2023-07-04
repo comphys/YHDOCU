@@ -6,7 +6,9 @@ class Invest_guide(Control) :
     def _auto(self) :
         self.DB = self.db('stocks')
         self.bid   = self.parm[0]
+        self.snd   = self.parm[1]
         self.board = 'h_'+self.bid+'_board'
+        self.target = self.DB.one(f"SELECT extra1 FROM h_board_config WHERE bid='{self.bid}'")
     
     def emptyPick(self) :
         pickDate = self.parm[1]
@@ -136,6 +138,10 @@ class Invest_guide(Control) :
         U['sub19']  = f"{U['sub19']:.2f}"
         U['sub30']  = f"{U['sub30']:.2f}"
 
+        if  self.snd == 'chance' : 
+            U['sub19'] = self.DB.one(f"SELECT sub19 FROM h_{self.target}_board WHERE add0 = '{self.M['진행일자']}'")
+            U['sub20'] = self.DB.one(f"SELECT sub20 FROM h_{self.target}_board WHERE add0 = '{self.M['진행일자']}'")
+
         U.update({k:'' for k,v in U.items() if v == None})
 
         qry=self.DB.qry_insert(self.board,U)
@@ -145,7 +151,7 @@ class Invest_guide(Control) :
     def init_value(self) :
         self.M = {}
         self.M['진행일자'] = self.D['today']
-        self.DB.tbl, self.DB.wre = (f"h_{self.bid}_board", f"add0 < '{self.M['진행일자']}'")
+        self.DB.tbl = f"h_{self.bid}_board"
         self.DB.wre = f"add0='{self.D['prev_date']}'"
         LD = self.M['LD'] = self.DB.get_line('*')
         self.M['현재잔액'] = float(LD['add3'])
@@ -204,7 +210,7 @@ class Invest_guide(Control) :
         매도가격 = self.M['당일종가']
         매수가격 = self.M['당일종가']
 
-        if self.M['보유수량'] : self.M['경과일수'] +=1
+        if self.M['보유수량'] or self.snd == 'chance' : self.M['경과일수'] +=1
 
         if  self.M['매도수량'] :
             self.M['매도금액'] = 매도가격 * self.M['매도수량']
@@ -265,6 +271,7 @@ class Invest_guide(Control) :
         self.M['전매도량'] = self.M['보유수량']
         self.M['전매도가'] = round(매도단가,2)
 
+
     def normal_buy(self)  :
 
         if  self.M['경과일수'] == 0 :
@@ -273,6 +280,7 @@ class Invest_guide(Control) :
             return
 
         매수단가 = round(self.M['당일종가'] * self.M['평단가치'],2)
+        self.info(self.M['경과일수'])
         매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
 
         if  매수수량 * self.M['당일종가'] > self.M['가용잔액'] + self.M['추가자금'] : 
@@ -387,9 +395,8 @@ class Invest_guide(Control) :
         Balance = float(self.D['post']['Balance'].replace(',',''))
 
         self.B = {}
-        target = self.DB.one(f"SELECT extra1 FROM h_board_config WHERE bid='{self.bid}'")
         self.DB.clear()
-        self.DB.tbl = f"h_{target}_board"
+        self.DB.tbl = f"h_{self.target}_board"
         self.DB.wre = f"add0='{theDay}'"
         TD = self.DB.get_line('add6,add9,add14,sub1,sub2,sub4,sub5,sub6,sub12,sub18,sub19,sub20')
 
