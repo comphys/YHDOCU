@@ -211,7 +211,7 @@ class Invest_guide(Control) :
         매도가격 = self.M['당일종가']
         매수가격 = self.M['당일종가']
 
-        if self.M['보유수량'] or self.snd == 'chance' : self.M['경과일수'] +=1
+        if self.M['보유수량']  : self.M['경과일수'] +=1
 
         if  self.M['매도수량'] :
             self.M['매도금액'] = 매도가격 * self.M['매도수량']
@@ -392,7 +392,7 @@ class Invest_guide(Control) :
 
     def initiate_chance(self) :
         theDay  = self.D['post']['theDay']
-        Balance = float(self.D['post']['Balance'].replace(',',''))
+        현재잔액 = float(self.D['post']['Balance'].replace(',',''))
 
         self.B = {}
         self.DB.clear()
@@ -400,43 +400,31 @@ class Invest_guide(Control) :
         self.DB.wre = f"add0='{theDay}'"
         TD = self.DB.get_line('add6,add9,add14,sub1,sub2,sub4,sub5,sub6,sub12,sub18,sub19,sub20')
 
-        # 현금투자
-        self.B['add1']  = '0.00';   self.B['add2']  = '0.00';  self.B['add3'] = f"{Balance:,}"; self.B['add4'] = '100.00'
+        가용잔액 = int(float(현재잔액 * 2/3))
+        추가자금 = 현재잔액 - 가용잔액 
+        일매수금 = int(가용잔액/22)
+        매수비율 = 일매수금 / int(TD['sub4']) 
+        기초수량 = int(매수비율 * int(TD['sub18']))
 
-        # SOXL
-        self.B['add11']  = '0.00';          self.B['add12']  = '0.00';      self.B['add5'] = '0';           self.B['add8']  = '0.00'
-        self.B['add14']  = TD['add14'];     self.B['add15']  = '0.00';      self.B['add9'] = '0';           self.B['add16'] = '0.00'
-        self.B['add7']   = '0.0000';        
-        self.B['sub5']   = TD['sub5'];      self.B['sub6']   = TD['sub6'];  self.B['add18'] = '0.00'  
-        
-        # 투자전략
-        self.B['add19'] = int(Balance * 2/3)
-        self.B['add20'] = Balance - self.B['add19']
+        변동수량 = 0    
+        for i in range(0,int(TD['sub12'])) : 
+            변동수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
-        self.B['sub1']  = TD['sub1'];       self.B['sub4'] = int(self.B['add19']/22)
+        매수금 = float(TD['add14']) * 변동수량
 
-        # 매수수량
-        매수비율 = self.B['sub4'] / float(TD['sub4'])
-
-        self.B['sub3'] = 0
-
-        self.B['sub12'] = int(TD['sub12'])
-        self.B['sub18'] = int( 매수비율 * int(TD['sub18']) )
-        self.B['sub20'] = TD['sub20']
-
-        self.B['sub29'] = '시즌설정'
-
-        매수수량 = 0    
-        for i in range(0,self.B['sub12']+1) :
-            매수수량 += my.ceil(self.B['sub18'] *(i*1.25 + 1))
-        self.B['sub2'] = 매수수량        
-
-
-        self.B['sub19'] = self.take_chance(-5,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+        self.B['add14'] = TD['add14']
+        self.B['sub5']  = TD['sub5'] ; self.B['sub6']  = TD['sub6']
+        self.B['sub1']  = TD['sub1'] ; self.B['sub12'] = int(TD['sub12'])-1
+        self.B['sub19'] = TD['sub19']; self.B['sub20'] = TD['sub20']
 
         # Formatting
-        self.B['add19'] = f"{self.B['add19']:,.2f}"
-        self.B['add20'] = f"{self.B['add20']:,.2f}"
+        self.B['add19'] = f"{가용잔액:,.2f}"
+        self.B['add20'] = f"{추가자금:,.2f}"
+        self.B['sub4']  = f"{일매수금:,}"
+        self.B['sub18'] = f"{기초수량:,}"
+        self.B['add5']  = f"{변동수량:,}"
+        self.B['add11'] = f"{매수금:,.2f}"
+        
         
         return self.json(self.B) 
 

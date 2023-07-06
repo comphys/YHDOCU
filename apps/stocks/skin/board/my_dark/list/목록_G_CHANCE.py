@@ -104,6 +104,7 @@ class 목록_G_CHANCE(SKIN) :
                     찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
                 찬스가격 = self.take_chance(-5,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                self.D['찬스일자'] = last_date
                 self.D['찬스가격'] = f"{찬스가격:,.2f}"
                 self.D['찬스수량'] = f"{찬스수량:,}"
                 self.D['찬스자본'] = f"{찬스가격*찬스수량:,.2f}"

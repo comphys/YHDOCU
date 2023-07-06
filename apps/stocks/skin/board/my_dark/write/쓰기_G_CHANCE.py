@@ -36,12 +36,14 @@ class 쓰기_G_CHANCE(SKIN) :
                 target = self.DB.one(f"SELECT extra1 FROM h_board_config WHERE bid='{self.SYS.parm[0]}'")
                 self.DB.clear()
                 self.DB.tbl, self.DB.wre = (f"h_{target}_board",f"add0='{self.D['today']}'")
+
                 OD = self.DB.get_line("sub19,sub20")
                 if OD :
                     JBODY['LB'] = OD['sub19']
                     JBODY['LS'] = OD['sub20']
+                    
                 else :
-                    self.SYS.set_message("해당 일자에 매매 데이타가 존재하지 않습니다. 다른 날자를 선택하여 주시기 바랍니다.")
+                    self.SYS.set_message(f"{target} 보드에 해당 일자 매매 데이타가 존재하지 않습니다.")
 
                 self.D['JBODY'] = self.SYS.json(JBODY)
                 self.D['JSTRG'] = self.SYS.json(JSTRG)

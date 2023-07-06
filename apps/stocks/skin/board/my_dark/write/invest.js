@@ -18,7 +18,9 @@ var 진행상황, 수수료등, 누적수수료, 보존금액
 
 var 분할횟수, 큰단가치, 비중조절, 첫매가치, 둘매가치, 회수기한, 강매시작, 평단가치, 위매비중, 위매시점
 
-function client_calculate(opt='1') {
+var 찬스설정 = false
+
+function client_calculate(opt=1) {
 	if(AutoCalulated) {h_dialog.notice("계산이 완료된 상태입니다."); return; }
 
 //  현금투자 부분 계산
@@ -27,9 +29,7 @@ function client_calculate(opt='1') {
 	잔액 = 잔액 + 입금 - 출금; 입금합계 += 입금; 출금합계 -= 출금; 전투자금 = 입금합계 - 출금합계;
 
 //  SOXL 부분 계산
-	매수금=ctv('add11','f'); 
-	매도금=ctv('add12','f');  
-	변동수량=ctv('add5','i'); 
+	매수금=ctv('add11','f'); 매도금=ctv('add12','f');  변동수량=ctv('add5','i'); 종가=ctv('add14','f');
 
 	if(-변동수량 == 보유수량) { 현재손익 = 매도금 - 현매수금;}
 	보유수량 += 변동수량; 현매수금 += 매수금;
@@ -49,6 +49,10 @@ function client_calculate(opt='1') {
 	else { 평균단가 = 현매수금/보유수량; 현수익률  = ( 종가/평균단가 -1)*100 ; 현재손익 = (종가 - 평균단가) * 보유수량; }
 
 //  투자전략 부분 계산
+	가용잔액 = ctv('add19','f'); 추가자금 = ctv('add20','f'); 
+	현재시즌 = ctv('sub1','i');  경과일수 = ctv('sub12','i'); 
+	일매수금 = ctv('sub4','i');  기초수량 = ctv('sub18','i');
+
 	가치합계 = 잔액 + 레버가치;
 	전수익률 = (가치합계 / 전투자금 - 1) * 100; 
 	현금비중 = (잔액 / 가치합계)*100; 레버비중 = (레버가치/가치합계)*100; 
@@ -75,7 +79,7 @@ function client_calculate(opt='1') {
 
 	} else { 
 		진행상황 = '일반매수'
-		경과일수 += 1; normal_sell(); normal_buy();
+		경과일수 += 1; normal_sell(opt); normal_buy(opt);
 		if(경과일수==1) {진행상황 = '첫날매수'; 누적수수료=수수료등;} 
 	}
 
@@ -93,12 +97,6 @@ function client_calculate(opt='1') {
 	vtc('sub1',현재시즌,0);     vtc('sub4',일매수금,0);        vtc('sub2',매수수량,0);      vtc('sub3',매도수량,0);
 	vtc('sub12',경과일수,0);    vtc('sub18',기초수량,0);       vtc('sub19',매수가격,2);     vtc('sub20',매도가격,2);
 	vtc('sub29',진행상황,-2);   vtc('sub30',수수료등,2);       vtc('sub31',누적수수료,2);   vtc('sub32',보존금액,-1);
-
-	if(opt==2) {
-		let 매수가 = s_load('LB','f'); 
-		let 매도가 = s_load('LS','f');
-		vtc('sub19',매수가,2);     vtc('sub20',매도가,2);
-	}
 
 	h_dialog.notice("변동사항 계산을 완료하였습니다");
 	AutoCalulated = true; $("#notice-calculated").removeClass('notice-calculated');
@@ -121,7 +119,7 @@ function check_sell() {
 
 function rebalance() { total = 가용잔액 + 추가자금; 가용잔액 = parseInt((total * 2)/3); 추가자금 = total - 가용잔액; 	일매수금 = parseInt(가용잔액/분할횟수); }
 
-function normal_sell() {
+function normal_sell(opt) {
 	매수수량 = Math.ceil(기초수량 * (경과일수*비중조절 +1));
 	매도가격 = 평균단가 * 첫매가치;
 	if(매수수량 * 전일종가 > 가용잔액 + 추가자금) { 매도가격 = 평균단가 * 둘매가치; }
@@ -129,15 +127,19 @@ function normal_sell() {
 	if(경과일수 +1 >= 강매시작) {매도가격 = 평균단가 * 강매가치;}
 	매도가격 = round_up(매도가격);
 	매도수량 = 보유수량;	 
+	if(찬스설정) { 매도가격 = ctv('sub20','f'); }
+	else if(opt==2) { 매도가격 = s_load('LS','f')}
 }
 
-function normal_buy() {
+function normal_buy(opt) {
 	매수가격 = 종가 * 평단가치;
 	매수수량 = Math.ceil(기초수량 * (경과일수*비중조절 +1));
 
 	if(매수수량 * 종가 > 가용잔액 + 추가자금) { 매수수량 = 기초수량 * 위매비중; 진행상황 = '매수제한'; }
 	if(매수수량 * 종가 > 가용잔액 + 추가자금) { 매수수량 = 0; 진행상황 = '매수금지'; }
 	if(매수가격 >= 매도가격) 매수가격 = 매도가격 - 0.01;
+	if(찬스설정) { 매수가격 = ctv('sub19','f'); }
+	else if(opt==2) { 매수가격 = s_load('LB','f')}
 }
 
 
@@ -241,9 +243,7 @@ function initiate_chance() {
 		var ans = JSON.parse(data);
 		for(let i in ans) { $("input[name='"+i+"']" ).val(ans[i]); }
 	});
-	vtc('add11',0.00,2); vtc('add5',0,0); vtc('add6',0.00,2);
-	client_calculate(2);
-	
+	찬스설정 = true
 }
 
 
