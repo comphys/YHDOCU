@@ -1,4 +1,4 @@
-import system.core.my_utils as ut
+import system.core.my_utils as my
 from system.core.load import SKIN
 
 """
@@ -38,7 +38,7 @@ class 목록_INVEST(SKIN) :
             last_date  = chart_data[ 0]['add0']
             self.D['s_date'] = first_date
             self.D['e_date'] = last_date
-            self.D['총경과일'] = ut.diff_day(first_date,day2=last_date)
+            self.D['총경과일'] = my.diff_day(first_date,day2=last_date)
 
             chart_span = 200
             chart_slice = len(chart_data)
@@ -103,9 +103,15 @@ class 목록_INVEST(SKIN) :
             self.D['매도갯수'] = int(LD['sub3'])
             self.D['매도단가'] = f"{float(LD['sub20']):,.2f}"
             self.D['매도예상'] = f"{(int(LD['sub3']) * float(LD['sub20'])):,.2f}"
-            self.D['예상이익'] = f"{(float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))):,.2f}"
+            예상이익 = float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))
+            self.D['예상이익'] = f"{예상이익:,.2f}"
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
+
+            # -- 환율 가져오기
+            usd_krw = self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)")
+            self.D['환율계산'] = f"{예상이익 * float(usd_krw):,.0f}"
+   
 
 
     def list(self) :

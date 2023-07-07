@@ -1,5 +1,5 @@
 import os, re, json,urllib.request as ul 
-import shutil,math
+import shutil,math,requests
 import FinanceDataReader as fdr
 from datetime import datetime, timedelta
 from pytz import timezone
@@ -158,3 +158,10 @@ def get_stock_data(app_key,symbol,start_date,end_date) :
         row.append(f"{temp:.2f}")
 
     return rst2 
+
+
+def get_usd_krw():
+    url = 'https://quotation-api-cdn.dunamu.com/v1/forex/recent?codes=FRX.KRWUSD'
+    exchange =requests.get(url).json()
+    return (exchange[0]['date'],exchange[0]['basePrice'])
+

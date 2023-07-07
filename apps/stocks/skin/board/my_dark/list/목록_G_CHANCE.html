@@ -28,7 +28,7 @@
 			<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} ( {{D['매수예상']}} )</span> / 
 			<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <i class="fa fa-usd"></i> {{D['매도단가']}} ( {{D['매도예상']}} )</span> / 
 			<i class="fa fa-arrow-up"></i> {{D['연속상승']}} <i class="fa fa-arrow-down"></i> {{D['연속하락']}}&nbsp;&nbsp; <i class="fa fa-bar-chart"></i>&nbsp; {{D['현이익률']}}%</span> / 
-			<span style="color:yellow;font-style:italic">EST&nbsp;{{D['예상이익']}} $ </span>&nbsp;
+			<span style="color:yellow;font-style:italic">EST&nbsp;{{D['예상이익']}} ({{D['환율계산']}} ₩)</span>&nbsp;
 		</div>
 	</div>
 </div>
@@ -121,6 +121,7 @@
 		<li>기회가격 : {{D['찬스가격']}} </li>
 		<li>기회수량 : {{D['찬스수량']}} </li>
 		<li>기회자본 : {{D['찬스자본']}} </li>
+		<li>환율적용 : {{D['환율변환']}} </li>
 		<li>----------------------------</li>
 		<li>경과일수 : {{D['찬스일수']}} </li>
 		<li>현재주가 : {{D['찬스주가']}} </li>

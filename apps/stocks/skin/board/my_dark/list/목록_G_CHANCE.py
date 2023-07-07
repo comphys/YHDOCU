@@ -80,9 +80,14 @@ class 목록_G_CHANCE(SKIN) :
             self.D['매도갯수'] = int(LD['sub3'])
             self.D['매도단가'] = f"{float(LD['sub20']):,.2f}"
             self.D['매도예상'] = f"{(int(LD['sub3']) * float(LD['sub20'])):,.2f}"
-            self.D['예상이익'] = f"{(float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))):,.2f}"
+            예상이익 = float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))
+            self.D['예상이익'] = f"{예상이익:,.2f}"
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
+
+            # -- 환율 가져오기
+            usd_krw = self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)")
+            self.D['환율계산'] = f"{예상이익 * float(usd_krw):,.0f}"
 
             # ------------- taget data 불러오기
             self.DB.clear()
@@ -112,8 +117,8 @@ class 목록_G_CHANCE(SKIN) :
                 self.D['찬스주가'] = TD['add14']
                 self.D['찬스하강'] = TD['sub6']
                 self.D['찬스근거'] = target
-
-
+                usd_krw = self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)")
+                self.D['환율변환'] = f"{찬스가격*찬스수량*float(usd_krw):,.0f}"
 
 
     def take_chance(self,p,H,n,A) :
