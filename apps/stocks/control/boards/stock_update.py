@@ -19,10 +19,10 @@ class Stock_update(Control) :
         codes = 'SOXL'
         
         if opt == 'stockdio' :
-            self.update_stockdio(cdx,USER)
+            self.update_stockdio(codes,USER)
             time.sleep(5)
         else :
-            self.update_fdr(cdx,USER)
+            self.update_fdr(codes,USER)
             time.sleep(2)
             
         self.set_message("종목 업데이트를 완료하였습니다")
