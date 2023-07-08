@@ -26,7 +26,7 @@ class 목록_G_CHANCE(SKIN) :
         self.DB.clear()
         self.DB.tbl = f"h_{target}_board"
         self.DB.odr = "add0 DESC"
-        self.DB.lmt = '60'
+        self.DB.lmt = '40'
 
         chart_data = self.DB.get("add0,add14,add17,add7,sub28,add8",assoc=True)
 
@@ -38,9 +38,6 @@ class 목록_G_CHANCE(SKIN) :
             self.D['e_date'] = last_date
             self.D['총경과일'] = my.diff_day(first_date,day2=last_date)
     
-            chart_span = 200
-            chart_slice = len(chart_data)
-            self.D['chart_start'] = chart_slice - chart_span if chart_slice > chart_span else 0
 
             chart_data.reverse()
         
@@ -48,17 +45,13 @@ class 목록_G_CHANCE(SKIN) :
             self.D['close_price']  = [float(x['add14']) for x in chart_data]; 
             self.D['soxl_average'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
 
-
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
             prev_date = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
-            
             self.DB.wre = f"add0='{prev_date}'"
-            
-            LD = self.DB.get_line('*')
-  
+            LD = self.DB.get_line('add3,add6,add7,add14,add17,sub2,sub3,sub5,sub6,sub19,sub20,sub25,sub26,sub27,sub28')
             # --------------
-
+            현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)"))
             총투자금 = float(LD['sub27'])
             총수익금 = float(LD['add17']) - 총투자금
             총수익률 = (float(LD['add17'])/총투자금-1) * 100 if 총투자금 else 0
@@ -84,10 +77,7 @@ class 목록_G_CHANCE(SKIN) :
             self.D['예상이익'] = f"{예상이익:,.2f}"
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
-
-            # -- 환율 가져오기
-            usd_krw = self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)")
-            self.D['환율계산'] = f"{예상이익 * float(usd_krw):,.0f}"
+            self.D['원화예상'] = f"{예상이익 * 현재환율:,.0f}"
 
             # ------------- taget data 불러오기
             self.DB.clear()
@@ -119,6 +109,9 @@ class 목록_G_CHANCE(SKIN) :
                 self.D['찬스근거'] = target
                 usd_krw = self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)")
                 self.D['환율변환'] = f"{찬스가격*찬스수량*float(usd_krw):,.0f}"
+                cmp_date = self.D['chart_date'][-7] 
+                self.D['target_value'] = ['null' if x < cmp_date else TD['sub20'] for x in self.D['chart_date']]
+                self.D['chance_value'] = ['null' if x < cmp_date else self.D['찬스가격'] for x in self.D['chart_date']]
 
 
     def take_chance(self,p,H,n,A) :

@@ -28,7 +28,7 @@
 			<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} ( {{D['매수예상']}} )</span> / 
 			<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <i class="fa fa-usd"></i> {{D['매도단가']}} ( {{D['매도예상']}} )</span> / 
 			<i class="fa fa-arrow-up"></i> {{D['연속상승']}} <i class="fa fa-arrow-down"></i> {{D['연속하락']}}&nbsp;&nbsp; <i class="fa fa-bar-chart"></i>&nbsp; {{D['현이익률']}}%</span> / 
-			<span style="color:yellow;font-style:italic">EST&nbsp;$ {{D['예상이익']}} (₩ {{D['환율계산']}})</span>&nbsp;
+			<span style="color:yellow;font-style:italic">EST&nbsp;$ {{D['예상이익']}} (₩ {{D['원화예상']}})</span>&nbsp;
 		</div>
 	</div>
 </div>
@@ -164,6 +164,8 @@ ctx.style.border = '2px solid black';
 let labels = {{D['chart_date']|safe}};
 let close_price = {{D['close_price']|safe}};
 let soxl_average = {{D['soxl_average']|safe}};
+let target_value = {{D['target_value']|safe}};
+let chance_value = {{D['chance_value']|safe}};
 
 const data1 = {
     labels : labels,
@@ -179,8 +181,19 @@ const data1 = {
             data : soxl_average,
 			borderColor:'#f78181', borderWidth:2, pointRadius:2,pointHoverRadius:24, backgroundColor:'#f78181',
 			lineTension:0.2
-        }
-
+        },
+		{
+            label:' 매도가격',
+            data : target_value,
+			borderColor:'yellow', borderWidth:1, pointRadius:0,borderDash:[2,2],
+  			lineTension:0.2
+        },
+		{
+            label:' 기회가격',
+            data : chance_value,
+			borderColor:'darkgray', borderWidth:1, pointRadius:0,borderDash:[2,2], 
+  			lineTension:0.2
+        },
     ]   
 };
 const options1 = {

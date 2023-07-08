@@ -58,8 +58,13 @@ class 목록_INVEST(SKIN) :
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
             
-            LD = self.DB.get_line('*')
-            self.D['chart_percent'] = [0.0,float(LD['add4']),float(LD['add16'])]
+            LD = self.DB.get_line('add4,add6,add7,add14,add15,add16,add17,sub1,sub2,sub3,sub12,sub14,sub5,sub6,sub15,sub19,sub20,sub25,sub26,sub27,sub32')
+            depositR = round(float(LD['sub32'].replace(',','')) / float(LD['add17'].replace(',',''))  * 100,2)
+            self.D['chart_percent'] = [round(float(LD['add4'])-depositR,2),depositR,float(LD['add16'])]
+
+            # -- 환율 가져오기
+            현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)"))
+            
             # --------------
 
             총투자금 = float(LD['sub27'])
@@ -67,13 +72,13 @@ class 목록_INVEST(SKIN) :
             총수익률 = (float(LD['add17'])/총투자금-1) * 100 if 총투자금 else 0
             self.D['총입금'] = f"{float(LD['sub25']):,.0f}"
             self.D['총출금'] = f"{float(LD['sub26']):,.0f}"
-            self.D['현재총액'] = f"{float(LD['add17']):,.0f}"
+            현재총액 = float(LD['add17'])
+            self.D['현재총액'] = f"{현재총액:,.0f}"
+            self.D['원화총액'] = f"{현재총액 * 현재환율:,.0f}"
             self.D['총수익금'] = f"{총수익금:,.0f}"
+            # self.D['원화수익'] = f"{총수익금 * 현재환율:,.0f}"
             self.D['총수익률'] = f"{총수익률:.2f}"
             
-            # -- dividend
-
-
             # -- leverage
             self.D['매수금'] = float(LD['sub14'])
             self.D['매도금'] = float(LD['sub15'])
@@ -107,12 +112,7 @@ class 목록_INVEST(SKIN) :
             self.D['예상이익'] = f"{예상이익:,.2f}"
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
-
-            # -- 환율 가져오기
-            usd_krw = self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)")
-            self.D['환율계산'] = f"{예상이익 * float(usd_krw):,.0f}"
-   
-
+            self.D['원화예상'] = f"{예상이익 * 현재환율:,.0f}"
 
     def list(self) :
         self.head()
