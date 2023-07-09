@@ -104,8 +104,8 @@ class DB :
         qry = qry.strip()
         try : 
             self.rst = self.cur.execute(qry)
-        except sqlite3.OperationalError :
-            return "SQLITE3 OPERATIONAL ERROR"
+        except sqlite3.Error as err :
+            return err
 
         if qry.upper().startswith(('SELECT','PRAGMA')) : 
             return self.fetch(many) if not assoc else self.fetch_assoc(many)

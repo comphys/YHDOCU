@@ -11,16 +11,6 @@ class 목록_VICTORY(SKIN) :
         self.TrCnt = self.D.get('Tr_cnt',0)
         self.Type = self.D['BCONFIG']['type']
 
-    def head(self) : 
-        TH_title = {'no':'번호','uname':'작성자','wdate':'작성일','mdate':'수정일','hit':'조회','uid':'아이디'}
-        TH_align = {'no':'center','uname':'center','wdate':'center','mdate':'center','hit':'center','uid':'center'}
-        THX = {}
-        TH_title |= self.D['EXTITLE'] ; TH_align |= self.D['EXALIGN']
-
-        for key in self.D['list_order'] : THX[key] = f"<th style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
-        
-        self.D['head_td'] = THX
-
     def chart(self) :
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
@@ -132,7 +122,6 @@ class 목록_VICTORY(SKIN) :
 
 
     def list(self) :
-        self.head()
         self.chart()
 
         TR = [] ; tx = {}
