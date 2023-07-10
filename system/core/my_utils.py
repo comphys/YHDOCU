@@ -1,6 +1,5 @@
-import os, re, json,urllib.request as ul 
-import shutil,math,requests
-import FinanceDataReader as fdr
+import os, re 
+import shutil,math
 from datetime import datetime, timedelta
 from pytz import timezone
 
@@ -12,6 +11,9 @@ def round_up(n,decimals=2) :
 
 def ceil(n) :
     return math.ceil(n)
+
+def sv(v,s='f') :
+    return float(v.replace(',','')) if s=='f' else int(v.replace(',',''))
 
 # 파일조작 관련 함수 
 def file_split(filename) :
@@ -139,29 +141,3 @@ def diff_day(day1,day2='') :
     b = datetime.now() if not day2 else datetime.strptime(day2,'%Y-%m-%d')
     c = b-a
     return c.days 
-
-
-
-# stock
-
-def get_stock_data(app_key,symbol,start_date,end_date) :
-
-    url  = f"https://api.stockdio.com/data/financial/prices/v1/GetHistoricalPrices?app-key={app_key}&stockExchange=USA&symbol={symbol}&from={start_date}&to={end_date}"
-    data = json.loads(ul.urlopen(url).read())
-
-    # col = data['data']['prices']['columns'] + ['change','up','down']
-    rst = data['data']['prices']['values']
-    rst2 = [ [x[0][:10],float(x[1]),float(x[2]),float(x[3]),float(x[4]),int(x[5]),0.0,0,0] for x in rst]
-
-    for row in rst2 :
-        temp = fdr.DataReader('USD/KRW',row[0])['Close'].values[0]
-        row.append(f"{temp:.2f}")
-
-    return rst2 
-
-
-def get_usd_krw():
-    url = 'https://quotation-api-cdn.dunamu.com/v1/forex/recent?codes=FRX.KRWUSD'
-    exchange =requests.get(url).json()
-    return (exchange[0]['date'],exchange[0]['basePrice'])
-
