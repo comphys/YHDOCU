@@ -130,6 +130,9 @@ def timestamp_to_date(ts='now',opt=1) :
 
     return datetime.fromtimestamp(ts,kst).strftime(t_format)
 
+def date_format_change(v,f1,f2) :
+    return datetime.strptime(v,f1).strftime(f2)
+
 def dayofdate(theday,delta=0) :
     dow = ('월','화','수','목','금','토','일')
     a = datetime.strptime(theday,'%Y-%m-%d')

@@ -1,4 +1,4 @@
-import datetime,requests
+import requests
 from bs4 import BeautifulSoup as bs
 import system.core.my_utils as my
 
@@ -20,7 +20,7 @@ class STOCK :
         for trs in html :
             tds = trs.select('td')
             if (len(tds)) < 3 : continue
-            tdate = datetime.datetime.strptime(tds[0].text,"%b %d, %Y").strftime("%Y-%m-%d")
+            tdate = my.date_format_change(tds[0].text,"%b %d, %Y","%Y-%m-%d")
             if tdate >= today    : continue
             if tdate <  minDate  : break
             SH.append([tdate,my.sv(tds[1].text),my.sv(tds[2].text),my.sv(tds[3].text),my.sv(tds[4].text),my.sv(tds[6].text,'i'),0.0,0,0])
