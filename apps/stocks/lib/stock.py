@@ -21,7 +21,8 @@ class STOCK :
             tds = trs.select('td')
             if (len(tds)) < 3 : continue
             tdate = datetime.datetime.strptime(tds[0].text,"%b %d, %Y").strftime("%Y-%m-%d")
-            if tdate <  minDate or tdate >= today : continue
+            if tdate >= today    : continue
+            if tdate <  minDate  : break
             SH.append([tdate,my.sv(tds[1].text),my.sv(tds[2].text),my.sv(tds[3].text),my.sv(tds[4].text),my.sv(tds[6].text,'i'),0.0,0,0])
         
         return(SH[::-1])
