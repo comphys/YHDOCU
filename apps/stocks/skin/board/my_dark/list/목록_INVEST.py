@@ -104,6 +104,7 @@ class 목록_INVEST(SKIN) :
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
             self.D['원화예상'] = f"{예상이익 * 현재환율:,.0f}"
+            self.D['현재환율'] = f"{현재환율:,.2f}"
 
     def list(self) :
         self.chart()
