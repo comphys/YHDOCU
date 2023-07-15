@@ -181,6 +181,8 @@ let total_value = {{D['total_value']|safe}};
 let close_change = {{D['close_change']|safe}};
 let lever_change = {{D['lever_change']|safe}};
 let total_profit = {{D['total_profit']|safe}};
+let sell_price = {{D['sell_price']|safe}};
+let chance_price = {{D['chance_price']|safe}};
 
 let labels_2 = labels.slice({{D['chart_start']}});
 let close_price2 = close_price.slice({{D['chart_start']}});
@@ -189,6 +191,11 @@ let total_value2 = total_value.slice({{D['chart_start']}});
 let total_profit2 = total_profit.slice({{D['chart_start']}});
 let close_change2 = close_change.slice({{D['chart_start']}});
 let lever_change2 = lever_change.slice({{D['chart_start']}});
+let sell_price2 = sell_price.slice({{D['chart_start']}});
+let chance_price2 = chance_price.slice({{D['chart_start']}});
+
+let sellP = {{D['매도단가']}};
+let chanP = {{D['찬스가격']}};
 
 let season_first_day = '{{D['단기첫날']}}';
 
@@ -213,7 +220,17 @@ const data1 = {
             borderColor:'yellow', borderWidth:3,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
-        },		
+        },	
+		{
+            label:' 매도가격',
+            data : sell_price2,
+            borderColor:'yellow', borderWidth:1, pointRadius:0, borderDash:[2,2]
+        },	
+		{
+            label:' 찬스가격',
+            data : chance_price2,
+            borderColor:'darkgray', borderWidth:1, pointRadius:0, borderDash:[2,2]
+        }
     ]   
 };
 const options1 = {
@@ -290,7 +307,8 @@ const data3 = {
             data : lever_change2,
 			borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0, 
 			lineTension:0.2,
-        }
+        },
+
     ]   
 };
 
@@ -363,6 +381,13 @@ function slice_chart(opt) {
 		myChart.config.data.datasets[0].data =  close_price.slice(new_s,new_e);
 		myChart.config.data.datasets[1].data =  soxl_average.slice(new_s,new_e);
 		myChart.config.data.datasets[2].data =  total_value.slice(new_s,new_e);
+		myChart.config.data.datasets[3].data =  sell_price.slice(new_s,new_e);
+		myChart.config.data.datasets[4].data =  chance_price.slice(new_s,new_e);
+		if(myChart.config.data.datasets[3].data.length<=20) {
+		   myChart.config.data.datasets[2].data.fill(null);
+		   myChart.config.data.datasets[3].data.fill(sellP);
+		   myChart.config.data.datasets[4].data.fill(chanP);
+		}
 	}
 	myChart.update();
 }

@@ -43,12 +43,14 @@ class 목록_INVEST(SKIN) :
             self.D['total_profit'] = [round((x-total_base) / total_base * 100,2) for x in self.D['total_value']]
             self.D['soxl_average'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
             self.D['lever_change'] = [float(x['add8']) for x in chart_data]
+            self.D['sell_price']   = ['null'] * len(chart_data)
+            self.D['chance_price'] = ['null'] * len(chart_data)
 
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
             
-            LD = self.DB.get_line('add4,add6,add7,add14,add15,add16,add17,sub1,sub2,sub3,sub12,sub14,sub5,sub6,sub15,sub19,sub20,sub25,sub26,sub27,sub32')
+            LD = self.DB.get_line('add4,add6,add7,add9,add14,add15,add16,add17,sub1,sub2,sub3,sub12,sub14,sub5,sub6,sub15,sub19,sub20,sub25,sub26,sub27,sub32')
             depositR = round(float(LD['sub32'].replace(',','')) / float(LD['add17'].replace(',',''))  * 100,2)
             self.D['chart_percent'] = [round(float(LD['add4'])-depositR,2),depositR,float(LD['add16'])]
 
@@ -105,6 +107,14 @@ class 목록_INVEST(SKIN) :
             self.D['연속하락'] = LD['sub6']
             self.D['원화예상'] = f"{예상이익 * 현재환율:,.0f}"
             self.D['현재환율'] = f"{현재환율:,.2f}"
+            찬스가격 = self.take_chance(-5,int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
+            self.D['찬스가격'] = self.D['매도단가'] if 찬스가격 == 0 else 찬스가격
+    
+    def take_chance(self,p,H,n,A) :
+        if H == 0 : return 0
+        N = H + n
+        k = N / (1+p/100)
+        return round(A/(k-n),2)
 
     def list(self) :
         self.chart()
