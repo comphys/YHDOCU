@@ -50,9 +50,14 @@ class 목록_INVEST(SKIN) :
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
             
-            LD = self.DB.get_line('add4,add6,add7,add9,add14,add15,add16,add17,sub1,sub2,sub3,sub12,sub14,sub5,sub6,sub15,sub19,sub20,sub25,sub26,sub27,sub32')
-            depositR = round(float(LD['sub32'].replace(',','')) / float(LD['add17'].replace(',',''))  * 100,2)
-            self.D['chart_percent'] = [round(float(LD['add4'])-depositR,2),depositR,float(LD['add16'])]
+            LD = self.DB.get_line('add4,add6,add7,add9,add14,add15,add16,add17,add19,add20,sub1,sub2,sub3,sub12,sub14,sub5,sub6,sub15,sub19,sub20,sub25,sub26,sub27,sub32')
+            
+            # 가치 비율 for chart
+            운용자금 = my.sv(LD['add19']) + my.sv(LD['add20'])
+            예치자금 = my.sv(LD['add15'])
+            주식가치 = my.sv()
+            가치합계 = 운용자금 + 예치자금 + 주식가치
+            self.D['chart_percent'] = [round(운용자금/가치합계,2),round(예치자금/가치합계,2),round(주식가치/가치합계,2)]
 
             # -- 환율 가져오기
             현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)"))
