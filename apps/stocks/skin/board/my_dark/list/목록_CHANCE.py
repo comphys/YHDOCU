@@ -1,11 +1,7 @@
 import system.core.my_utils as my
 from system.core.load import SKIN
 
-"""
-add0  : 
-sub11 : 배당금합계
-"""
-class 목록_G_CHANCE(SKIN) :
+class 목록_CHANCE(SKIN) :
 
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)
@@ -52,6 +48,13 @@ class 목록_G_CHANCE(SKIN) :
             prev_date = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
             self.DB.wre = f"add0='{prev_date}'"
             LD = self.DB.get_line('add3,add6,add7,add14,add17,sub2,sub3,sub5,sub6,sub19,sub20,sub25,sub26,sub27,sub28')
+            CD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT) FROM {self.DB.tbl} WHERE CAST(add7 as FLOAT) != 0.0 AND add0 BETWEEN '{first_date}' AND '{last_date}'") 
+            cx = {}
+            self.D['chance_average'] = {}
+            if CD :
+                for c in CD : cx[c[0][2:]] = c[1]
+                for x in self.D['chart_date'] : self.D['chance_average'][x] = cx.get(x,'null')
+                    
             # --------------
             현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)"))
             총투자금 = float(LD['sub27'])
@@ -100,20 +103,26 @@ class 목록_G_CHANCE(SKIN) :
                 for i in range(0,int(TD['sub12'])+1) : 
                     찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
-                찬스가격 = self.take_chance(-5,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                찬스가오 = self.take_chance(-5,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                # 찬스가삼 = self.take_chance(-3,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                 self.D['찬스일자'] = last_date
-                self.D['찬스가격'] = f"{찬스가격:,.2f}"
+                self.D['찬스가오'] = f"{찬스가오:,.2f}"
                 self.D['찬스수량'] = f"{찬스수량:,}"
-                self.D['찬스자본'] = f"{찬스가격*찬스수량:,.2f}"
+                self.D['찬스자본'] = f"{찬스가오*찬스수량:,.2f}"
                 self.D['찬스일수'] = TD['sub12']
                 self.D['찬스주가'] = TD['add14']
+                self.D['찬스변동'] = round((찬스가오/float(TD['add14']) -1) * 100,2)
                 self.D['찬스하강'] = TD['sub6']
                 self.D['찬스근거'] = target
-                usd_krw = self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)")
-                self.D['환율변환'] = f"{찬스가격*찬스수량*float(usd_krw):,.0f}"
-                cmp_date = self.D['chart_date'][-7] 
-                self.D['target_value'] = ['null' if x < cmp_date else TD['sub20'] for x in self.D['chart_date']]
-                self.D['chance_value'] = ['null' if x < cmp_date else self.D['찬스가격'] for x in self.D['chart_date']]
+                기초환율 = self.DB.one("SELECT CAST(usd_krw AS FLOAT) FROM usd_krw ORDER BY rowid DESC LIMIT 1")
+                self.D['환율변환'] = f"{찬스가오*찬스수량* 기초환율:,.0f}"
+                self.D['기초환율'] = f"{기초환율:,.2f}"
+                # cmp_date = self.D['chart_date'][-7] 
+                # self.D['target_value'] = ['null' if x < cmp_date else TD['sub20'] for x in self.D['chart_date']]
+                # self.D['chance_value'] = ['null' if x < cmp_date else self.D['찬스가오'] for x in self.D['chart_date']]
+
+                self.D['target_value'] = [TD['sub20']] * len(self.D['chart_date'])
+                self.D['chance_value'] = [self.D['찬스가오']] * len(self.D['chart_date'])
 
 
     def take_chance(self,p,H,n,A) :

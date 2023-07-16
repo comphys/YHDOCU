@@ -118,7 +118,7 @@
 <div id="Next-Strategy" style="opacity:0.7;position:fixed;left:1160px;top:71px;width:240px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px">
     <span style="font-style: italic"> 기회 투자 전략</span><br><br>
 	<ul style="margin-left:20px">
-		<li>기회가격 : {{D['찬스가격']}} </li>
+		<li>기회가격 : {{D['찬스가오']}} ({{D['찬스변동']}}%) </li>
 		<li>기회수량 : {{D['찬스수량']}} </li>
 		<li>기회자본 : {{D['찬스자본']}} </li>
 		<li>환율적용 : {{D['환율변환']}} </li>
@@ -128,6 +128,7 @@
 		<li>연속하강 : {{D['찬스하강']}} </li>
 		<li>기초지표 : {{D['찬스근거']}} </li>
 		<li>기초일자 : {{D['찬스일자']}} </li>
+		<li>기초환율 : {{D['기초환율']}} </li>
 	</ul>
 </div>
 
@@ -166,6 +167,7 @@ let close_price = {{D['close_price']|safe}};
 let soxl_average = {{D['soxl_average']|safe}};
 let target_value = {{D['target_value']|safe}};
 let chance_value = {{D['chance_value']|safe}};
+let chance_average = {{D['chance_average']|safe}};
 
 const data1 = {
     labels : labels,
@@ -193,6 +195,12 @@ const data1 = {
             data : chance_value,
 			borderColor:'darkgray', borderWidth:1, pointRadius:0,borderDash:[2,2], 
   			lineTension:0.2
+        },
+		{
+            label:' 찬스평균',
+            data : chance_average,
+			borderColor:'yellow', borderWidth:2, pointRadius:2,pointHoverRadius:24, backgroundColor:'yellow',
+			lineTension:0.2
         },
     ]   
 };

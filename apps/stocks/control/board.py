@@ -1,6 +1,5 @@
 from system.core.load import Control
 from flask import session
-import os
 
 class Board(Control) : 
 

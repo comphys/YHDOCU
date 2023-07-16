@@ -4,6 +4,10 @@ import system.core.my_utils as my
 
 class Fedit(Control) : 
 
+    def _auto(self) :
+
+        self.DB = self.db('stocks')
+
     def body_source(self) :
         D = {}
         mode = self.gets['mode']
