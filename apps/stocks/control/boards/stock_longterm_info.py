@@ -22,8 +22,8 @@ class Stock_longterm_info(Control) :
     def get_subinfo(self) :
         opt = self.gets['opt']
 
-        if    opt == '입금내역' : qry = f"SELECT add0,add1 FROM {self.tbl} WHERE add1 != '0' ORDER BY add0 DESC"
-        elif  opt == '출금내역' : qry = f"SELECT add0,add2 FROM {self.tbl} WHERE add2 != '0' ORDER BY add0 DESC"
+        if    opt == '입금내역' : qry = f"SELECT add0,add1 FROM {self.tbl} WHERE CAST(add1 as FLOAT) != '0' ORDER BY add0 DESC"
+        elif  opt == '출금내역' : qry = f"SELECT add0,add2 FROM {self.tbl} WHERE CAST(add2 as FLOAT) != '0' ORDER BY add0 DESC"
         elif  opt == '배당내역' : qry = f"SELECT add0,sub10 FROM {self.tbl} WHERE sub10 != '0' ORDER BY add0 DESC" 
         elif  opt == '매수금1'  : qry = f"SELECT add0,add5,sub8,add7,add8 FROM {self.tbl} WHERE add5 != '0' ORDER BY add0 DESC"
         elif  opt == '매도금1'  : qry = f"SELECT add0,add6,sub8,add7,add8 FROM {self.tbl} WHERE add6 != '0' ORDER BY add0 DESC"
