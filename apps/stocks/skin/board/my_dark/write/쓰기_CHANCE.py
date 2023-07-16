@@ -1,7 +1,7 @@
 from system.core.load import SKIN
 import system.core.my_utils as my
 
-class 쓰기_G_CHANCE(SKIN) :
+class 쓰기_CHANCE(SKIN) :
 
     def write(self) :
         OBODY = self.D.get('OBODY',None)

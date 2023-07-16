@@ -176,3 +176,21 @@ class DB :
         P    = S if S else self.SYS.D['post'] 
         qry  = self.qry_insert(tbl,P)
         self.exe(qry)
+
+    # json 형태처럼 key 값과 value 값으로 데이터를 저장 및 불러오기
+    def store(self,key,val=None) :
+        if  val :
+            qry = f"INSERT INTO STORAGE (key,val) values ('{key}','{val}')"
+            self.exe(qry)
+        else :
+            qry = f"SELECT val FROM STORAGE WHERE key='{key}'"
+            rst = self.cur.execute(qry)
+            return rst.fetchone()[0]
+        
+    def store_update(self,key,val) :
+        qry = f"UPDATE STORAGE SET val='{val}' WHERE key='{key}'"
+        self.exe(qry)
+    
+    def store_delete(self,key) :
+        qry = f"DELETE FROM STORAGE WHERE key='{key}'"
+        self.exe(qry)

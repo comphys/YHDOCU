@@ -19,6 +19,8 @@ class 목록_CHANCE(SKIN) :
             else : THX[key] = f"<th class='list-sort2' onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
         self.D['head_td'] = THX
         
+        
+        
 
     def chart(self) :
         target = self.DB.one(f"SELECT extra1 FROM h_board_config WHERE bid='{self.SYS.parm[0]}'")
