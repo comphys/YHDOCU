@@ -25,21 +25,24 @@
 </div>
 
 {% if D['TR'] %}
-<div class="row-row clearfix" style="margin-bottom:-2px;">
-	<div style="border:2px solid black;background-color:rgb(34, 33, 33)">
-		<div id="INVEST_INFO" style="padding:5px 20px 5px 20px">
-			<span style="font-weight:bold;color:yellow;font-style:italic">{{D['현재시즌']}} - {{D['경과일수']}} days </span>&nbsp;
-			<i class="fa fa-sign-in"></i><span class="exchange">{{D['총입금']}}</span> &nbsp;
-			<i class="fa fa-sign-out"></i> <span class="exchange"></span>{{D['총출금']}}</span> &nbsp;
-			<i class="fa fa-signal"></i> {{D['현재총액']}} (₩ {{D['원화총액']}})&nbsp;
-			<i class="fa fa-usd"></i> {{D['총수익금']}} &nbsp; <span style="color:yellow"><i class="fa fa-line-chart"></i> {{D['총수익률']}}%</span> &nbsp;/&nbsp;
-			<span style="color:#58ACFA"> <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} ( {{D['매수예상']}} )</span> /&nbsp; 
-			<span style="color:#f78181"> <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <i class="fa fa-usd"></i> {{D['매도단가']}}</span> &nbsp;/&nbsp; 
-			<i class="fa fa-arrow-up"></i> {{D['연속상승']}} <i class="fa fa-arrow-down"></i> {{D['연속하락']}}&nbsp;&nbsp; <i class="fa fa-bar-chart"></i>&nbsp; {{D['현이익률']}}%</span> &nbsp;/&nbsp;
-			<span style="color:yellow;font-style:italic">EST&nbsp;$ {{D['예상이익']}} (₩ {{D['원화예상']}})</span>&nbsp;
-		</div>
+
+<div class="clearfix" style="border:2px solid black;background-color:rgb(34, 33, 33);padding:5px 20px;margin-bottom:-2px">
+	<div id="INVEST_INFO" class="pull-left">
+		<span style="font-weight:bold;color:yellow;font-style:italic">{{D['현재시즌']}} - {{D['경과일수']}} days </span>&nbsp;
+		<i class="fa fa-sign-in"></i> <span class="exchange">{{D['총입금']}}</span> &nbsp;
+		<i class="fa fa-sign-out"></i> <span class="exchange">{{D['총출금']}}</span> &nbsp;
+		<i class="fa fa-signal"></i> <span class="exchange">{{D['현재총액']}}</span> &nbsp;
+		<span class="exchange">{{D['총수익금']}}</span> &nbsp; <span style="color:yellow"><i class="fa fa-line-chart"></i> {{D['총수익률']}}%</span> &nbsp;/&nbsp;
+		<span style="color:#58ACFA"> <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <span class="exchange">{{D['매수단가']}}</span> ( <span class="exchange">{{D['매수예상']}}</span> )</span> /&nbsp; 
+		<span style="color:#f78181"> <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <span class="exchange">{{D['매도단가']}}</span></span> &nbsp;/&nbsp; 
+		<i class="fa fa-arrow-up"></i> {{D['연속상승']}} <i class="fa fa-arrow-down"></i> {{D['연속하락']}}&nbsp;&nbsp; <i class="fa fa-bar-chart"></i>&nbsp; {{D['현이익률']}}%</span> &nbsp;/&nbsp;
+		<span style="color:yellow;font-style:italic">EST&nbsp;<span class="exchange">{{D['예상이익']}}</span></span>&nbsp;
+	</div>
+	<div class="pull-right">
+		<span style="font-style:italic;cursor:pointer" onclick="exchange_toggle(this)">₩ {{D['현재환율']}}</span>&nbsp;
 	</div>
 </div>
+
 <div class="row-row clearfix">
 	<table class='table table-bordered table-striped table-hover'>
 		<thead>
@@ -128,8 +131,7 @@
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 var notice_popup = false;
-
-$("#INVEST_INFO > .exchange").each(function(){alert($(this).text());})
+var show_dollar  = true;
 
 $(".list-bears2,.list-normal2").click(function() {
 	
@@ -142,6 +144,14 @@ $(".list-bears2,.list-normal2").click(function() {
 			h_dialog.load(url,o);
 		}	
 });
+
+function ctv(val,opt='f') { a = val.replace(/,/g,'');  if(opt=='i') return parseInt(a);  else return parseFloat(a);}
+
+function exchange_toggle(sel) {
+	let ex_rate = ctv("{{D['현재환율']}}"); 
+	if(show_dollar) {$("#INVEST_INFO .exchange").each(function(){tmp = ctv($(this).text()) * ex_rate;$(this).text(tmp.toLocaleString());});show_dollar = !show_dollar;$(sel).css("color","yellow");}
+	else {$("#INVEST_INFO .exchange").each(function(){tmp = ctv($(this).text())/ex_rate;$(this).text(tmp.toLocaleString());});show_dollar = !show_dollar;$(sel).css("color","");}
+}
 
 function popup_notice(option,size) {
 	if( notice_popup ) {
