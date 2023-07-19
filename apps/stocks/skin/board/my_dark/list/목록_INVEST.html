@@ -27,10 +27,10 @@
 {% if D['TR'] %}
 <div class="row-row clearfix" style="margin-bottom:-2px;">
 	<div style="border:2px solid black;background-color:rgb(34, 33, 33)">
-		<div style="padding:5px 20px 5px 20px">
+		<div id="INVEST_INFO" style="padding:5px 20px 5px 20px">
 			<span style="font-weight:bold;color:yellow;font-style:italic">{{D['현재시즌']}} - {{D['경과일수']}} days </span>&nbsp;
-			<i class="fa fa-sign-in"></i> {{D['총입금']}} &nbsp;
-			<i class="fa fa-sign-out"></i> {{D['총출금']}} &nbsp;
+			<i class="fa fa-sign-in"></i><span class="exchange">{{D['총입금']}}</span> &nbsp;
+			<i class="fa fa-sign-out"></i> <span class="exchange"></span>{{D['총출금']}}</span> &nbsp;
 			<i class="fa fa-signal"></i> {{D['현재총액']}} (₩ {{D['원화총액']}})&nbsp;
 			<i class="fa fa-usd"></i> {{D['총수익금']}} &nbsp; <span style="color:yellow"><i class="fa fa-line-chart"></i> {{D['총수익률']}}%</span> &nbsp;/&nbsp;
 			<span style="color:#58ACFA"> <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} ( {{D['매수예상']}} )</span> /&nbsp; 
@@ -128,6 +128,8 @@
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 var notice_popup = false;
+
+$("#INVEST_INFO > .exchange").each(function(){alert($(this).text());})
 
 $(".list-bears2,.list-normal2").click(function() {
 	
