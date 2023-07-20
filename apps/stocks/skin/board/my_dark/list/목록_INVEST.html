@@ -35,7 +35,7 @@
 		<span class="exchange">{{D['총수익금']}}</span> &nbsp; <span style="color:yellow"><i class="fa fa-line-chart"></i> {{D['총수익률']}}%</span> &nbsp;/&nbsp;
 		<span style="color:#58ACFA"> <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <span class="exchange">{{D['매수단가']}}</span> ( <span class="exchange">{{D['매수예상']}}</span> )</span> /&nbsp; 
 		<span style="color:#f78181"> <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <span class="exchange">{{D['매도단가']}}</span></span> &nbsp;/&nbsp; 
-		<i class="fa fa-arrow-up"></i> {{D['연속상승']}} <i class="fa fa-arrow-down"></i> {{D['연속하락']}}&nbsp;&nbsp; <i class="fa fa-bar-chart"></i>&nbsp; {{D['현이익률']}}%</span> &nbsp;/&nbsp;
+		<i class="fa fa-arrow-up"></i> {{D['연속상승']}} <i class="fa fa-arrow-down"></i> {{D['연속하락']}}&nbsp;&nbsp;/&nbsp;
 		<span style="color:yellow;font-style:italic">EST&nbsp;<span class="exchange">{{D['예상이익']}}</span></span>&nbsp;
 	</div>
 	<div class="pull-right">
@@ -130,8 +130,11 @@
 <script>
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
-var notice_popup = false;
-var show_dollar  = true;
+
+var notice_popup  = false;
+var show_dollar   = true;
+var dollar_notice = [];
+$("#INVEST_INFO .exchange").each(function(){ dollar_notice.push($(this).text());});
 
 $(".list-bears2,.list-normal2").click(function() {
 	
@@ -149,8 +152,8 @@ function ctv(val,opt='f') { a = val.replace(/,/g,'');  if(opt=='i') return parse
 
 function exchange_toggle(sel) {
 	let ex_rate = ctv("{{D['현재환율']}}"); 
-	if(show_dollar) {$("#INVEST_INFO .exchange").each(function(){tmp = ctv($(this).text()) * ex_rate;$(this).text(tmp.toLocaleString());});show_dollar = !show_dollar;$(sel).css("color","yellow");}
-	else {$("#INVEST_INFO .exchange").each(function(){tmp = ctv($(this).text())/ex_rate;$(this).text(tmp.toLocaleString());});show_dollar = !show_dollar;$(sel).css("color","");}
+	if(show_dollar) {$("#INVEST_INFO .exchange").each(function(){tmp = Math.round(ctv($(this).text())*ex_rate);$(this).text(tmp.toLocaleString()+'원');});show_dollar = !show_dollar;$(sel).css("color","yellow");}
+	else { i=0; $("#INVEST_INFO .exchange").each(function(){ $(this).text(dollar_notice[i++]);});show_dollar = !show_dollar;$(sel).css("color","");}
 }
 
 function popup_notice(option,size) {
