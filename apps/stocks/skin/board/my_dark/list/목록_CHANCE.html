@@ -117,6 +117,7 @@
 	</div>
 </div>
 
+{% if D['진행상황'] == '대기상태' %}
 <div id="Next-Strategy" style="opacity:0.7;position:fixed;left:1160px;top:71px;width:240px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px">
     <span style="font-style: italic"> 기회 투자 전략</span><br><br>
 	<ul style="margin-left:20px">
@@ -133,6 +134,7 @@
 		<li>기초환율 : {{D['기초환율']}} </li>
 	</ul>
 </div>
+{% endif %}
 
 
 <script>
