@@ -107,7 +107,7 @@ class 목록_INVEST(SKIN) :
             self.D['현재시즌'] = LD['sub1'] ; 일수 = int(LD['sub12']); 시즌 = int(self.D['현재시즌'])
             if 일수 == 0 : 시즌 -= 1
             # self.D['시즌첫날'] = self.DB.one(f"SELECT add0 FROM {self.D['tbl']} WHERE sub1='{시즌}' and sub12 =='1'")
-            self.D['단기첫날'] = '20'+self.D['chart_date'][-20]
+            self.D['단기첫날'] = '20'+self.D['chart_date'][-40]
             self.D['경과일수'] = f"{int(LD['sub12']):02d}"
 
             self.D['매수갯수'] = int(LD['sub2'])
