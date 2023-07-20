@@ -123,7 +123,7 @@ class 목록_CHANCE(SKIN) :
                 self.D['target_value'] = [TD['sub20']] * len(self.D['chart_date'])
                 self.D['chance_value'] = [self.D['찬스가오']] * len(self.D['chart_date'])
                 
-                self.D['진행현황'] = '현재진행' if int(LD['add9'].replace(',','')) != 0 else '대기상태'
+                self.D['진행상황'] = '현재진행' if int(LD['add9'].replace(',','')) != 0 else '대기상태'
 
 
     def take_chance(self,p,H,n,A) :
