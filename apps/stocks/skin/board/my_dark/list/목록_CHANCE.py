@@ -58,7 +58,7 @@ class 목록_CHANCE(SKIN) :
                 for x in self.D['chart_date'] : self.D['chance_average'][x] = cx.get(x,'null')
                     
             # --------------
-            현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)"))
+            현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
             총투자금 = float(LD['sub27'])
             총수익금 = float(LD['add17']) - 총투자금
             총수익률 = (float(LD['add17'])/총투자금-1) * 100 if 총투자금 else 0
@@ -85,6 +85,7 @@ class 목록_CHANCE(SKIN) :
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
             self.D['원화예상'] = f"{예상이익 * 현재환율:,.0f}"
+            self.D['현재환율'] = f"{현재환율:,.2f}"
 
             # ------------- taget data 불러오기
             self.DB.clear()
