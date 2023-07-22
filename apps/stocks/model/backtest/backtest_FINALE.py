@@ -2,7 +2,7 @@ from system.core.load import Model
 from datetime import datetime,date
 import system.core.my_utils as my
 
-class M_backtest_GAIN(Model) :
+class M_backtest_FINALE(Model) :
 
 # 변동성을 이용한 올타임 전략
 
@@ -150,7 +150,7 @@ class M_backtest_GAIN(Model) :
         if  self.days >= self.M['강매시작'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['강매가치'])
 
         if self.buy_price >= self.sell_price : self.buy_price = self.sell_price - 0.01 
-        # self.buy_price = self.sell_price - 0.01 
+        self.buy_price = max(self.M['평균단가'],self.sell_price)
 
     def normal_sell(self) :
         
