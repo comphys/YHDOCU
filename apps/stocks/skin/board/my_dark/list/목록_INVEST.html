@@ -12,7 +12,7 @@
 	<div class="pull-left" style="margin-right:20px">
 		<canvas id="myChart"  style="width:1100px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
 	</div>
-	<div class="pull-left">
+	<div class="pull-left" onclick="$('#ChanceStrategy').show()">
 		<canvas id="myChart2" style="width:220px;height:308px;background-color:#24272d"></canvas>
 		<div style="margin-top:6px">
 			<input type='text' name='s_date' class="i-date_1" style="width:85px;text-align:center" placeholder='시작일자' value="{{D['s_date']}}">
@@ -131,6 +131,21 @@
 	</div>
 </div>
 
+<div id="ChanceStrategy" style="display:none;opacity:0.7;position:fixed;left:1160px;top:71px;width:240px;height:320px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
+    <span style="font-style: italic"> 기회 투자 전략</span><br><br>
+	<ul style="margin-left:20px">
+		<li>기회가격 : {{D['찬스가오']}} ({{D['찬스변동']}}%) </li>
+		<li>기회수량 : {{D['찬스수량']}} </li>
+		<li>기회자본 : $ {{D['찬스자본']}} </li>
+		<li>환율적용 : {{D['환율변환']}}원 </li>
+		<li>----------------------------</li>
+		<li>경과일수 : {{D['찬스일수']}} </li>
+		<li>현재주가 : {{D['찬스주가']}} </li>
+		<li>연속하강 : {{D['찬스하강']}} </li>
+		<li>기초일자 : {{D['찬스일자']}} </li>
+		<li>기초환율 : {{D['기초환율']}}원 </li>
+	</ul>
+</div>
 
 <script>
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});

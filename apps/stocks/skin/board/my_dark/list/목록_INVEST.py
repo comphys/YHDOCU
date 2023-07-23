@@ -59,7 +59,7 @@ class 목록_INVEST(SKIN) :
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
             
-            LD = self.DB.get_line('add4,add6,add7,add9,add14,add15,add16,add17,add19,add20,sub1,sub2,sub3,sub12,sub14,sub5,sub6,sub15,sub19,sub20,sub25,sub26,sub27,sub32')
+            LD = self.DB.get_line('add4,add6,add7,add9,add14,add15,add16,add17,add19,add20,sub1,sub2,sub3,sub4,sub12,sub14,sub5,sub6,sub15,sub18,sub19,sub20,sub25,sub26,sub27,sub32')
             
             # 가치 비율 for chart
             운용자금 = my.sv(LD['add19']) + my.sv(LD['add20'])
@@ -123,6 +123,31 @@ class 목록_INVEST(SKIN) :
             self.D['현재환율'] = f"{현재환율:,.2f}"
             찬스가격 = self.take_chance(-5,int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
             self.D['찬스가격'] = self.D['매도단가'] if 찬스가격 == 0 else 찬스가격
+            
+            # ------------- 기회 투자 전략 
+
+            if 일수 >= 2 :
+
+                가용잔액 = int( 예치자금 * 2/3)
+                일매수금 = int(가용잔액/22)
+                매수비율 = 일매수금 / int(LD['sub4']) 
+                기초수량 = int(매수비율 * int(LD['sub18']))
+
+                찬스수량 = 0    
+                for i in range(0,일수+1) : 
+                    찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
+
+                self.D['찬스일자'] = last_date
+                self.D['찬스가오'] = f"{찬스가격:,.2f}"
+                self.D['찬스수량'] = f"{찬스수량:,}"
+                self.D['찬스자본'] = f"{찬스가격*찬스수량:,.2f}"
+                self.D['찬스일수'] = 일수
+                self.D['찬스주가'] = LD['add14']
+                self.D['찬스변동'] = round((찬스가격/float(LD['add14']) -1) * 100,2)
+                self.D['찬스하강'] = LD['sub6']
+                self.D['환율변환'] = f"{찬스가격*찬스수량* 현재환율:,.0f}"
+                self.D['기초환율'] = f"{현재환율:,.2f}"
+
     
     def take_chance(self,p,H,n,A) :
         if H == 0 : return 0

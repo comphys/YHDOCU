@@ -150,7 +150,7 @@ class M_backtest_FINALE(Model) :
         if  self.days >= self.M['강매시작'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['강매가치'])
 
         if self.buy_price >= self.sell_price : self.buy_price = self.sell_price - 0.01 
-        self.buy_price = max(self.M['평균단가'],self.sell_price)
+        # self.buy_price = max(self.M['평균단가'],self.sell_price)
 
     def normal_sell(self) :
         
