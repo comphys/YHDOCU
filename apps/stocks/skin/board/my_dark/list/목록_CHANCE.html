@@ -145,6 +145,11 @@ var notice_popup = false;
 var show_dollar   = true;
 var dollar_notice = [];
 $("#extra-info-toggle .exchange").each(function(){ dollar_notice.push($(this).text());});
+$(".list-bears2,.list-bulls2").click(function(){
+	let ex_rate = ctv("{{D['현재환율']}}"); let val = ctv($(this).text()); 
+	let won = Math.round(ex_rate * val);
+	h_dialog.notice(won.toLocaleString()+'원',{x:mouse_X-60,y:mouse_Y-60,width:150});
+});
 
 function ctv(val,opt='f') { a = val.replace(/,/g,'');  if(opt=='i') return parseInt(a);  else return parseFloat(a);}
 

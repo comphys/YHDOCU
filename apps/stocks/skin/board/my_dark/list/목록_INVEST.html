@@ -150,23 +150,16 @@
 <script>
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+$(".list-bears2,.list-bulls2").click(function(){
+	let ex_rate = ctv("{{D['현재환율']}}"); let val = ctv($(this).text()); 
+	let won = Math.round(ex_rate * val);
+	h_dialog.notice(won.toLocaleString()+'원',{x:mouse_X-60,y:mouse_Y-60,width:150});
+});
 
 var notice_popup  = false;
 var show_dollar   = true;
 var dollar_notice = [];
 $("#INVEST_INFO .exchange").each(function(){ dollar_notice.push($(this).text());});
-
-$(".list-bears2,.list-normal2").click(function() {
-	
-	if( notice_popup ) {h_dialog.close("POP_INFO"); notice_popup = null; return;} 
-	else {	
-			notice_popup = true
-			let ckday = $(this).parent().children(":first").text();
-			var url = uri('linkurl') + 'boards-stock_longterm_info/get_exinfo/tbl={{D['tbl']}}/ckday='+ckday;
-			var o = {id:'POP_INFO', width: '450px', x:920, y:mouse_Y-10,header:false,footer:false,drag:true}
-			h_dialog.load(url,o);
-		}	
-});
 
 function ctv(val,opt='f') { a = val.replace(/,/g,'');  if(opt=='i') return parseInt(a);  else return parseFloat(a);}
 

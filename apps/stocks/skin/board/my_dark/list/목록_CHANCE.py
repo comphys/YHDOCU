@@ -170,10 +170,17 @@ class 목록_CHANCE(SKIN) :
                         tmp += '</td>'
                         tx[key] = tmp
 
-                    elif key in ('add18','add8') : 
+                    elif key == 'add8' : 
                         profit = float(txt)
                         if profit != 0 : 
-                            tx[key] = f"<td class='list-bulls'>{float(txt):,.2f}</td>" if profit > 0  else f"<td class='list-bears'>{float(txt):,.2f}</td>"
+                            tx[key] = f"<td class='list-bulls'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bears'>{profit:,.2f}</td>"
+                        else : 
+                            tx[key] = "<td class='list-normal'>0.00</td>"
+
+                    elif key == 'add18' : 
+                        profit = float(txt.replace(',',''))
+                        if profit != 0 : 
+                            tx[key] = f"<td class='list-bulls2'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bears2'>{profit:,.2f}</td>"
                         else : 
                             tx[key] = "<td class='list-normal'>0.00</td>"
                         
