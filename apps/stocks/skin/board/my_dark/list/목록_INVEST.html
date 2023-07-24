@@ -12,8 +12,8 @@
 	<div class="pull-left" style="margin-right:20px">
 		<canvas id="myChart"  style="width:1100px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
 	</div>
-	<div class="pull-left" onclick="$('#ChanceStrategy').show()">
-		<canvas id="myChart2" style="width:220px;height:308px;background-color:#24272d"></canvas>
+	<div class="pull-left">
+		<canvas id="myChart2" style="width:220px;height:308px;background-color:#24272d" onclick="$('#ChanceStrategy').show()"></canvas>
 		<div style="margin-top:6px">
 			<input type='text' name='s_date' class="i-date_1" style="width:85px;text-align:center" placeholder='시작일자' value="{{D['s_date']}}">
 			<input type='text' name='e_date' class="i-date_2" style="width:85px;text-align:center" placeholder='종료일자' value="{{D['e_date']}}">
@@ -52,7 +52,7 @@
 	<table class='table table-bordered table-striped table-hover'>
 		<thead>
 			<tr>
-				<th style="background-color:#071418;font-style:italic">Progress</th>
+				<th style="background-color:#071418;font-style:italic;cursor:pointer" onclick="$('#monthlyProfit').toggle()">Progress</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('입금내역',0)">입금</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('출금내역',0)">출금</th>
 				<th colspan='2' style="background-color:#0A2229;font-style:italic">US dollar</th>
@@ -147,9 +147,14 @@
 	</ul>
 </div>
 
+<div id='monthlyProfit' style="opacity:0.8;position:fixed;left:20px;top:50px;width:1135px;background-color:#24272d;padding:20px 10px 20px 20px;border:2px solid black;">
+	<canvas id="monthlyProfitChart" style="width:100%;height:350px;background-color:#24272d"></canvas>
+</div>
+
 <script>
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+
 $(".list-bears2,.list-bulls2").click(function(){
 	let ex_rate = ctv("{{D['현재환율']}}"); let val = ctv($(this).text()); 
 	let won = Math.round(ex_rate * val);
@@ -417,8 +422,59 @@ function slice_span() {
 	location.href = uri('linkurl') + 'board/list/' + uri(0) + '/date1='+date1+'/date2='+date2
 }
 //
-// slice_chart(2)
+// Montyly Profit Bar Graph
 //
+
+const ctx4= $id('monthlyProfitChart');
+
+ctx4.style.backgroundColor = '#33363b';
+ctx4.style.border = '2px solid black';
+
+let labels4 = {{D['월별구분']|safe}};
+let monthlyProfits = {{D['월별이익']|safe}};
+let backColor = new Array(labels4.length-1);
+let boreColor = new Array(labels4.length-1);
+backColor.fill('rgba(75, 192, 192, 0.4)').push('rgba(255, 99, 132, 0.4)');
+boreColor.fill('rgb(75, 192, 192)').push('rgb(255, 99, 132)');
+
+const data4 = {
+  labels: labels4,
+  datasets: [{
+    label: ' 월별수익금 ',
+    data: monthlyProfits,
+    backgroundColor: backColor,
+    borderColor: boreColor,
+    borderWidth: 1
+  }]
+};
+
+const config4 = {
+  type: 'bar',
+  data: data4,
+  plugins:[ChartDataLabels],
+  options: {
+	animation : {duration:500},
+	layout:{padding:10},
+    plugins : { legend: {display:false},
+				tooltip : {enabled:false},
+				datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:14}}			
+	},
+    scales: {
+	  x: { ticks : {color:'white'}, grid:{color:'#272727'}},
+      y: {
+		grid : {
+			lineWidth:2,
+			color: function(context) {
+				if(context.tick.value == 0 ) { return '#071418'} else { return '#272727' }
+			}
+		},
+        beginAtZero: true
+      }
+    }
+  },
+};
+const myChart4 = new Chart(ctx4, config4); 
+$('#monthlyProfit').hide();
 </script>
 
 {% endblock %}

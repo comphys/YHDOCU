@@ -148,6 +148,19 @@ class 목록_INVEST(SKIN) :
                 self.D['환율변환'] = f"{찬스가격*찬스수량* 현재환율:,.0f}"
                 self.D['기초환율'] = f"{현재환율:,.2f}"
 
+            # 월별 실현손익
+            qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {self.D['tbl']} WHERE CAST(add12 as float) > 0  GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
+            monProfit = self.DB.exe(qry)
+            self.D['월별구분'] = []
+            self.D['월별이익'] = []
+            for mon, profit in monProfit :
+                self.D['월별구분'].append(mon)
+                self.D['월별이익'].append(round(profit,2))
+            
+            self.D['월별구분'].reverse()  
+            self.D['월별이익'].reverse()
+            self.D['월별구분'].append('AVG')
+            self.D['월별이익'].append(round(sum(self.D['월별이익'])/len(self.D['월별이익']),2))
     
     def take_chance(self,p,H,n,A) :
         if H == 0 : return 0
