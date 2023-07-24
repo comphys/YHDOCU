@@ -52,7 +52,7 @@
 	<table class='table table-bordered table-striped table-hover'>
 		<thead>
 			<tr>
-				<th style="background-color:#071418;font-style:italic;cursor:pointer" onclick="$('#monthlyProfit').toggle()">Progress</th>
+				<th style="background-color:#071418;font-style:italic;cursor:pointer" onclick="monthlyProfit_toggle()">Progress</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('입금내역',0)">입금</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('출금내역',0)">출금</th>
 				<th colspan='2' style="background-color:#0A2229;font-style:italic">US dollar</th>
@@ -60,7 +60,7 @@
 				<th style="background-color:#071418;;font-style:italic">Total</th>
 			</tr>
 			<tr>
-				<th style="background-color:#071418;font-style:italic;width:110px">{{D['총경과일']}} days</th>
+				<th style="background-color:#071418;font-style:italic;width:110px;cursor:pointer" onclick="monthlyProfit_toggle()">{{D['총경과일']}} days</th>
 				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총입금']}}</th>
 				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총출금']}}</th>
 				<th style="background-color:#0A2229;text-align:right;;width:90px">잔액</th>
@@ -473,7 +473,8 @@ const config_monthly = {
   },
 };
 const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
-$('#monthlyProfit').hide();
+$('#monthlyProfit').draggable().hide();
+function monthlyProfit_toggle() { $('#monthlyProfit').toggle().css({'left':'20px','top':'50px'});}
 </script>
 
 {% endblock %}
