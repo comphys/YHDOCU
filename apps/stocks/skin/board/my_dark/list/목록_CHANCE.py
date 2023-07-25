@@ -95,6 +95,10 @@ class 목록_CHANCE(SKIN) :
 
             self.D['chart_percent'] = [float(TD['sub28']),float(LD['sub28'])]
 
+            chart_len = len(chart_data)
+            self.D['target_value'] = ['null'] * chart_len
+            self.D['chance_value'] = ['null'] * chart_len                  
+            
             if int(TD['add9']) :
 
                 가용잔액 = int( float(LD['add3']) * 2/3)
@@ -121,8 +125,8 @@ class 목록_CHANCE(SKIN) :
                 self.D['환율변환'] = f"{찬스가오*찬스수량* 기초환율:,.0f}"
                 self.D['기초환율'] = f"{기초환율:,.2f}"
 
-                self.D['target_value'] = [TD['sub20']] * len(self.D['chart_date'])
-                self.D['chance_value'] = [self.D['찬스가오']] * len(self.D['chart_date'])
+                self.D['target_value'] = [TD['sub20']] * chart_len
+                self.D['chance_value'] = [self.D['찬스가오']] * chart_len
                 
                 self.D['진행상황'] = '현재진행' if int(LD['add9'].replace(',','')) != 0 else '대기상태'
 
