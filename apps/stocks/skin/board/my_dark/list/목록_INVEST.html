@@ -222,6 +222,7 @@ let sellP = {{D['매도단가']}};
 let chanP = {{D['찬스가격']}};
 
 let season_first_day = '{{D['단기첫날']}}';
+let the_current_day = $("input[name='e_date']").val();
 
 const data_main = {
     labels : labels_2,
@@ -390,6 +391,7 @@ function slice_chart(opt) {
 		$("input[name='s_date']").val("{{D['s_date']}}"); $("input[name='e_date']").val("{{D['e_date']}}");
 		new_s =0; new_e = labels.length
 	}
+	end_date = $("input[name='e_date']").val().slice(2);
 	
 	let base;
 	if(second_chart) {
@@ -406,7 +408,7 @@ function slice_chart(opt) {
 		myChart.config.data.datasets[2].data =  total_value.slice(new_s,new_e);
 		myChart.config.data.datasets[3].data =  sell_price.slice(new_s,new_e);
 		myChart.config.data.datasets[4].data =  chance_price.slice(new_s,new_e);
-		if(myChart.config.data.datasets[3].data.length<=40) {
+		if(myChart.config.data.datasets[3].data.length<=40 && the_current_day.slice(2) == end_date) {
 		   myChart.config.data.datasets[2].data.fill(null);
 		   myChart.config.data.datasets[3].data.fill(sellP);
 		   myChart.config.data.datasets[4].data.fill(chanP);
@@ -456,7 +458,7 @@ const config_monthly = {
 	layout:{padding:20},
     plugins : { legend: {display:false},
 				tooltip : {enabled:false},
-				datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:14}}			
+				datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:12}}			
 	},
     scales: {
 	  x: { ticks : {color:'white'}, grid:{color:'#272727'}},

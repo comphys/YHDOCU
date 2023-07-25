@@ -52,8 +52,8 @@ class 목록_INVEST(SKIN) :
             self.D['total_profit'] = [round((x-total_base) / total_base * 100,2) for x in self.D['total_value']]
             self.D['soxl_average'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
             self.D['lever_change'] = [float(x['add8']) for x in chart_data]
-            self.D['sell_price']   = ['null'] * len(chart_data)
-            self.D['chance_price'] = ['null'] * len(chart_data)
+            self.D['sell_price']   = ['null'] * chart_slice
+            self.D['chance_price'] = ['null'] * chart_slice
 
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
