@@ -164,6 +164,7 @@ class 목록_INVEST(SKIN) :
             self.D['월별이익'].reverse()
             self.D['월별구분'].append('AVG')
             self.D['월별이익'].append(round(monthly_total/monthly_lenth,2))
+            self.D['손익합계'] = f"$ {monthly_total:,.0f} ({monthly_total*현재환율:,.0f}원)"
     
     def take_chance(self,p,H,n,A) :
         if H == 0 : return 0
