@@ -1,63 +1,10 @@
 from system.core.load import Model
 from datetime import datetime,date
 import system.core.my_utils as my
-import math
 
-class M_backtest_GAIN2(Model) :
+class M_backtest_DEVELOPE(Model) :
 
-# 분할 매수를 통한 수익 극대화 전략
-
-    def print_backtest(self) :
-        tx = {}
-        #--------------------------------------------------------
-        if self.M['진행상황'] == '첫날거래' : self.M['날수'] = 1
-        tx['날수'] = self.M['날수']
-
-        if self.M['보유수량'] == 0 : self.M['날수'] = 0
-
-        tx['진행'] = self.M['진행']; tx['기록일자'] = self.M['day']
-        tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
-        #-----------------------------------------------------------
-        tx['매수수량'] = self.M['매수수량'] if self.M['매수수량'] else ' '
-        tx['매수금액'] = f"{round(self.M['매수금액'],4):,.3f}" if self.M['매수금액'] else ' '
-        tx['평균단가'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.4f}</span>"
-        #-----------------------------------------------------------
-        tx['매도수량'] = f"{self.M['매도수량']:,}" if self.M['매도수량'] else ' '
-        tx['매도금액'] = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['거래코드']
-        
-        if  self.M['매도금액'] : 
-            clr = "#F6CECE" if self.M['실현수익'] > 0 else "#CED8F6"
-            tx['실현수익'] = f"<span style='color:{clr}'>{round(self.M['실현수익'],4):,.2f}</span>"
-        else : tx['실현수익'] = self.M['진행상황']
-
-        tx['보유수량'] = self.M['보유수량']
-        tx['총매수금'] = f"{round(self.M['총매수금'],4):,.2f}"
-        자금합계 = f"{round(self.M['추가자금'] + self.M['가용잔액'],4):,.2f}"
-        tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span style='font-weight:bold;color:#CEF6CE'>{자금합계}</span>" 
-        tx['수익현황'] = f"{round(self.M['수익현황'],4):,.2f}"
-
-        clr = "#F6CECE" if self.M['수익률'] > 0 else "#CED8F6"
-        tx['수익률'] = f"<span style='color:{clr}'>{round(self.M['수익률'],4):,.2f}</span>"
-        tx['거래코드'] = self.M['거래코드']
-
-        tx['일매수금'] = f"{self.M['일매수금']:,}"
-        if  self.M['진행상황'] in ('전량매도','전략매도') :
-            tx['가용잔액'] =  f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>{self.M['진행상황']}</span>"
-            tx['수익현황'] = f"<span style='font-weight:bold;color:#F6CECE'>{tx['수익현황']}</span>"
-
-        elif self.M['진행상황'] in ('전략매도','부분매도','손절매도') :  
-            tx['가용잔액'] = self.M['진행상황'] 
-        else : 
-            tx['가용잔액'] = f"{self.M['자산총액']:,.2f}"
-        
-        self.D['TR'].append(tx)
-        # 챠트 기록용
-        self.D['close_price'].append(self.M['당일종가'])
-        if avg_price := round(self.M['평균단가'],2) : self.D['average_price'].append(avg_price)
-        else : self.D['average_price'].append('None')
-        self.D['chart_date'].append(self.M['day'][2:])
-        self.D['total_value'].append(round(self.M['평가총액'],0))
-
+# 변동성을 이용한 올타임 전략
 
     def calculate(self)  :
 
@@ -66,7 +13,8 @@ class M_backtest_GAIN2(Model) :
             self.M['보유수량'] +=  self.M['매수수량']
             self.M['총매수금'] +=  self.M['매수금액']
             self.M['평균단가']  =  self.M['총매수금'] / self.M['보유수량'] 
-
+            if self.M['비용차감'] : self.M['추가자금'] -=  self.commission(self.M['매수금액'],1)
+ 
         if  self.M['매도수량'] :
             self.M['실현수익']  = (self.M['당일종가']-self.M['평균단가'])*self.M['매도수량']   
             self.M['수익누적'] += self.M['실현수익'] 
@@ -74,6 +22,7 @@ class M_backtest_GAIN2(Model) :
             self.M['보유수량'] -= self.M['매도수량'] 
             self.M['가용잔액'] += self.M['매도금액']
             self.M['총매수금']  = self.M['보유수량'] * self.M['평균단가']
+            if self.M['비용차감'] : self.M['추가자금'] -=  self.commission(self.M['매도금액'],2)
             
 
         self.M['평가금액']  =  self.M['당일종가'] * self.M['보유수량']
@@ -86,8 +35,6 @@ class M_backtest_GAIN2(Model) :
             self.M['평균단가'] = 0.0
             self.M['첫날기록'] = True
             self.M['매수단계'] = '일반매수'
-            self.M['중간정산'] = 0.0
-            self.M['중간가격'] = 0.0
             self.rebalance()   
 
         if self.M['날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['날수'] ; self.M['최대날자'] = self.M['day']
@@ -97,27 +44,18 @@ class M_backtest_GAIN2(Model) :
         self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
         self.M['평가총액'] = self.M['자산총액'] + self.M['평가금액']
 
+    def commission(self,mm,opt) :
+        if  opt==1 :  return int(mm*0.07)/100
+        if  opt==2 :  
+            m1 = int(mm*0.07)/100
+            m2=round(mm*0.00229)/100
+            return m1+m2
         
-    def buy_step(self)   :
-        self.M['날수'] += 1
-        매수수량 = math.ceil(self.M['기초수량'] * (self.M['날수']*self.M['비중조절'] + 1))
-        매수금액 = 매수수량 * self.M['당일종가'] 
-
-        if  매수금액 > self.M['자산총액'] - self.M['중간정산']   :
-            매수수량 = math.ceil(self.M['기초수량'] * self.M['위매비중'])
-            매수금액 = 매수수량 * self.M['당일종가']
-            self.M['매수단계'] = '매수제한' 
-            
-        if  self.M['매수단계'] == '매수제한' and 매수금액 > self.M['자산총액'] - self.M['중간정산']  :
-            self.M['매수단계'] =  '매수중단'
-            매수수량 = 0
-       
-        self.M['구매수량'] = 매수수량
-
     def rebalance(self)  :
         total = self.M['가용잔액'] + self.M['추가자금']
-        self.M['가용잔액'] = round(total * self.M['자본비율'])
-        self.M['추가자금'] = round(total - self.M['가용잔액'])
+        self.M['평가밸류'] = total
+        self.M['가용잔액'] = int(total * self.M['자본비율'])
+        self.M['추가자금'] = total - self.M['가용잔액']
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
         self.M['씨드'] = self.M['가용잔액']
 
@@ -129,10 +67,6 @@ class M_backtest_GAIN2(Model) :
         self.M['거래코드']  = ' '
         self.M['최대날자']  = ' '
         self.M['수익누적']  = 0.0
-        self.M['매수금지']  = False
-        # 중간 실현수익 전략
-        self.M['중간가격']  = 0.0
-        self.M['중간정산']  = 0.0
 
         self.M['날수'] = 0
         self.M['진행'] = 0
@@ -146,7 +80,7 @@ class M_backtest_GAIN2(Model) :
         self.M['매도수량']  = 0
         self.M['매도금액']  = 0.0
         self.M['실현수익']  = 0.0
-        self.M['연속하락']  = 0
+        self.M['현금비중']  = []
 
         self.M['비중조절']  = 1 + float(self.S['add3'])/100   # 매매일수 에 따른 구매수량 가중치
         self.M['평단가치']  = 1 + float(self.S['add4'])/100   # 매수시 가중치
@@ -158,10 +92,9 @@ class M_backtest_GAIN2(Model) :
         self.M['위매비중']  = int(self.S['add25'])
         self.M['회수기한']  = int(self.S['add11'])
         self.M['전화위복']  = 1 + float(self.S['add22'])/100
-        self.M['손실회수'] = False
-
-
+        self.M['손실회수']  = False
         self.M['매수단계']  = '일반매수'
+        self.M['비용차감']  = True if self.S['add7'] == 'on' else False  # 수수료 계산날수 초과 후 강매선택
 
         self.D['TR'] = []
 
@@ -172,88 +105,99 @@ class M_backtest_GAIN2(Model) :
         self.M['자본비율'] = self.M['가용잔액'] / self.M['자산총액'] 
 
         # 챠트작성
-        self.D['close_price'] = []
-        self.D['average_price'] = []
-        self.D['total_value'] = []
-        self.D['chart_date'] = []
+        self.D['close_price'] = []; self.D['average_price'] = []; self.D['total_value'] = []; self.D['chart_date'] = []; self.D['eval_value'] = []
+        self.D['전량횟수'] = 0
+        self.D['전략횟수'] = 0
+        self.M['평가밸류'] = self.M['자산총액']
 
     def new_day(self) :
         self.M['기록시즌'] += 1
         self.M['수익누적']  = 0.0
 
         self.M['평균단가']  = self.M['당일종가']
-        self.M['매수수량']  = math.ceil(self.M['일매수금']/self.M['전일종가'])
+        self.M['매수수량']  = my.ceil(self.M['일매수금']/self.M['전일종가'])
         self.M['기초수량']  = self.M['매수수량'] 
 
-        if  self.M['당일종가'] <  self.M['전일종가'] * self.M['큰단가치'] : 
+        if  self.M['당일종가'] <  round(self.M['전일종가'] * self.M['큰단가치'],2) : 
             self.M['보유수량']  = self.M['매수수량']  
             self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량'] 
             self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
             self.M['수익현황']  = self.M['수익률'] = 0.0
 
+            if self.M['비용차감'] : self.M['추가자금'] -=  self.commission(self.M['매수금액'],1)
             self.M['가용잔액'] -= self.M['매수금액']
             self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
-            self.M['진행상황']  = '첫날거래'
+            self.M['진행상황']  = '첫날매수'
             self.M['첫날기록']  = False
             self.M['거래코드']  = 'S' 
             self.M['매수단계'] = '일반매수'
-        
+           
             self.M['진행'] = round(self.M['총매수금'] / self.M['씨드'] * 100,1)
             self.M['평가총액'] = self.M['자산총액'] + self.M['평가금액']
+
             return True
-        else : return False
+        else : 
+            return False
 
     def set_price(self) :
         self.days = self.M['날수'] + 1
         self.buy_price = round(self.M['전일종가']*self.M['평단가치'],2)
         
         self.sell_price = my.round_up(self.M['평균단가'] * self.M['첫매가치'])
-        if self.M['매수단계'] in ('매수제한','매수중단') : self.sell_price = my.round_up(self.M['평균단가'] * self.M['둘매가치'])
-        if self.M['손실회수'] and self.days <= self.M['회수기한'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['전화위복'])
-        if self.days >= self.M['강매시작'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['강매가치'])
 
-        if self.buy_price >= self.sell_price : self.buy_price = self.sell_price - 0.01
+        if  self.M['매수단계'] in ('매수제한','매수중단') : self.sell_price = my.round_up(self.M['평균단가'] * self.M['둘매가치'])
+        if  self.M['손실회수'] and self.days <= self.M['회수기한'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['전화위복'])
+        if  self.days >= self.M['강매시작'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['강매가치'])
+
+        if self.buy_price >= self.sell_price : self.buy_price = self.sell_price - 0.01 
+        # self.buy_price = max(self.M['평균단가'],self.sell_price)
+
+    def normal_sell(self) :
+        
+        if  self.M['당일종가'] >=  self.sell_price  : 
+            self.M['매도수량'] =  self.M['보유수량']
+            self.M['진행상황'] = '전량매도' 
+            self.D['전량횟수'] += 1
+            if  self.M['당일종가'] < self.M['평균단가'] : 
+                self.M['진행상황'] = '전략매도'
+                self.D['전략횟수'] += 1
+                self.M['손실회수'] = True
+            else :
+                self.M['손실회수'] = False
+
+            self.M['매도금액'] = self.M['당일종가'] * self.M['매도수량']
+            
 
     def normal_buy(self) :
-        if  self.M['매수단계'] == '매수중단' and self.M['중간정산'] :
-            매수금액 = round(self.M['평균단가'] * 0.9,2)
-            매수수량 = int(self.M['중간정산'] / 매수금액)
-            if self.M['당일종가'] <= 매수금액 :
-                self.M['거래코드'] = '전략적매수'
-                self.M['매수수량'] = 매수수량
-                self.M['매수금액'] = self.M['매수수량'] * self.M['당일종가']
-                self.M['중간정산'] = 0.0
-                return 
 
-        if  self.M['매수금지'] : return
         if  self.M['당일종가']<= self.buy_price : 
             self.M['매수수량'] = self.M['구매수량']
             거래코드 = 'L' if self.M['매수단계'] is '매수제한' else 'B'
             self.M['거래코드'] = 거래코드 + str(self.days) if self.M['구매수량'] else ' '
             self.M['매수금액'] = self.M['매수수량'] * self.M['당일종가']
             self.M['진행상황'] = self.M['매수단계']
-            if self.M['중간가격'] == 0.0 and self.days >= 6 : self.M['중간가격'] = self.M['당일종가'] 
         
-    def normal_sell(self) :
+    def buy_step(self)   :
 
-        if  self.M['당일종가'] >=  self.sell_price  : 
-            self.M['매도수량'] =  self.M['보유수량']
-            self.M['진행상황'] = '전량매도' 
-            if self.M['당일종가'] < self.M['평균단가'] : 
-                self.M['진행상황'] = '전략매도'
-                self.M['손실회수'] = True
-            else :
-                self.M['손실회수'] = False
+        self.M['날수'] += 1
+        매수수량 = my.ceil(self.M['기초수량'] * (self.M['날수']*self.M['비중조절'] + 1))
+        매수금액 = 매수수량 * self.M['당일종가'] 
 
-            self.M['매도금액'] = self.M['당일종가'] * self.M['매도수량']
-            self.M['매수금지'] = True
-        
-        elif self.M['중간가격'] and self.M['중간정산'] ==0.0 and self.M['당일종가'] > self.M['중간가격'] : 
-            self.M['매도수량'] = int(self.M['보유수량']/2)
-            self.M['중간정산'] = self.M['매도금액'] = self.M['당일종가'] * self.M['매도수량']
-            self.M['매수금지'] = True
-            return            
-               
+        if  매수금액 > self.M['자산총액']   :
+            매수수량 = my.ceil(self.M['기초수량'] * self.M['위매비중'])
+            매수금액 = 매수수량 * self.M['당일종가']
+            self.M['매수단계'] = '매수제한' 
+            
+            if  매수금액 > self.M['자산총액']  :  self.M['매수단계'] =  '매수중단'; 매수수량 = 0
+       
+        self.M['구매수량'] = 매수수량
+
+    def take_chance(self,p,H,n,A) :
+        if H == 0 : return 0
+        N = H + n
+        k = N / (1+p/100)
+        return round(A/(k-n),2)
+    
     def test_it(self) :
 
         self.init_value()
@@ -264,10 +208,9 @@ class M_backtest_GAIN2(Model) :
             self.M['day'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
             self.M['전일종가'] = float(self.B[idx-1]['add3'])  
-            self.M['전속하락'] = int(self.B[idx-1]['add10']) 
-            self.M['매도금액'] = self.M['매수수량'] = self.M['매도수량'] = self.M['매수금액']=0
             self.M['거래코드'] = ' '
-
+            self.set_value(['매도수량','매도금액','매수수량','매수금액'],0)
+            
             if  idx == idxx + 1 or self.M['첫날기록'] : 
                 if  self.new_day() : 
                     self.buy_step()
@@ -276,20 +219,45 @@ class M_backtest_GAIN2(Model) :
                 else : 
                     self.M['첫날기록'] = True
                     continue
-
+            
             self.set_price()
             self.normal_sell()
             self.normal_buy()
-            self.M['매수금지'] = False
 
         #   결과정리 --------------------------------------------------------------------------------------------------
-            self.M['연속하락'] = int(BD['add10'])
             self.calculate()
             self.buy_step()
             self.print_backtest()
         # endfor -----------------------------------------------------------------------------------------------------
         self.result()
+        self.nextStep()
+
+    def nextStep(self) :
+        self.M['날수'] -= 1
+        self.M['전일종가'] = self.M['당일종가']
+        self.set_price()
+        self.buy_step()
+
+        self.D['next_process'] = self.M['날수'] + 1
+        self.D['next_base_price'] = self.M['전일종가']
+        self.D['next_base_amount'] = self.M['일매수금']
+        self.D['next_available_money'] = f"{self.M['자산총액']:,.0f}"
+
+        if  self.M['첫날기록'] :
+            self.D['next_buy_qty'] = my.ceil(self.M['일매수금']/self.M['전일종가'])
+            self.D['next_buy']  = round(self.M['전일종가'] * self.M['큰단가치'],2)
+            self.D['next_sell'] = 0.00
+            self.D['next_sell_qty']  = 0
+        else :
+            self.D['next_buy']  = f"{self.buy_price:.2f}"
+            self.D['next_buy_qty']  = self.M['구매수량']
+            self.D['next_sell'] = self.sell_price
+            self.D['next_sell_qty']  = self.M['보유수량']
     
+    def set_value(self,key,val) :
+        for k in key :
+            self.M[k] = val
+
     def test_with_progress(self) :
         self.test_it()
 
@@ -309,6 +277,11 @@ class M_backtest_GAIN2(Model) :
         self.D['output']  = f"총기간 : {style1}{self.D['days_span']:,}</span>일 "
         self.D['output'] += f"초기자본 {style1}${초기자본:,}</span> 최종자본 {style1}${최종자본:,.2f}</span> 으로 "
         self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 이며 수익률은 {style3}{최종수익률:,.2f}</span>% 입니다"
+        
+        self.D['cash_avg'] = round(sum(self.M['현금비중']) / len(self.M['현금비중']),2)
+        self.D['cash_min'] = min(self.M['현금비중'])
+        self.D['cash_max'] = max(self.M['현금비중'])
+
     
     def view(self) :
         
@@ -346,3 +319,58 @@ class M_backtest_GAIN2(Model) :
 
         self.D['init_capital'] = int(self.D['capital'].replace(',',''))
         self.D['addition'] = int(self.D['addition'].replace(',','')) if self.D['addition'] else 0
+
+    def print_backtest(self) :
+        tx = {}
+        #--------------------------------------------------------
+        if self.M['거래코드'] == 'S' : self.M['날수'] = 1; 
+        tx['날수'] = self.M['날수']; 
+        if self.M['매도수량'] : self.M['날수'] = 0
+
+        tx['진행'] = self.M['진행']; tx['기록일자'] = self.M['day']
+        tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
+        #-----------------------------------------------------------
+        tx['매수수량'] = self.M['매수수량'] if self.M['매수수량'] else ' '
+        tx['매수금액'] = f"{round(self.M['매수금액'],4):,.3f}" if self.M['매수금액'] else ' '
+        tx['평균단가'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.4f}</span>"
+        #-----------------------------------------------------------
+        tx['매도수량'] = f"{self.M['매도수량']:,}" if self.M['매도수량'] else ' '
+        tx['매도금액'] = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['거래코드']
+        
+        if  self.M['매도금액'] : 
+            clr = "#F6CECE" if self.M['실현수익'] > 0 else "#CED8F6"
+            tx['실현수익'] = f"<span style='color:{clr}'>{round(self.M['실현수익'],4):,.2f}</span>"
+        else : tx['실현수익'] = self.M['진행상황']
+
+        tx['보유수량'] = self.M['보유수량']
+        tx['총매수금'] = f"{round(self.M['총매수금'],4):,.2f}"
+        자금합계 = f"{round(self.M['추가자금'] + self.M['가용잔액'],4):,.2f}"
+        tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span style='font-weight:bold;color:#CEF6CE'>{자금합계}</span>" 
+        tx['수익현황'] = f"{round(self.M['수익현황'],4):,.2f}"
+
+        clr = "#F6CECE" if self.M['수익률'] > 0 else "#CED8F6"
+        tx['수익률'] = f"<span style='color:{clr}'>{round(self.M['수익률'],4):,.2f}</span>"
+        tx['거래코드'] = self.M['거래코드']
+
+        tx['일매수금'] = f"{self.M['일매수금']:,}"
+        if  self.M['진행상황'] in ('전량매도','전략매도') :
+            tx['가용잔액'] =  f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>{self.M['진행상황']}</span>"
+            tx['수익현황'] = f"<span style='font-weight:bold;color:#F6CECE'>{tx['수익현황']}</span>"
+
+        elif self.M['진행상황'] in ('전략매도','부분매도','손절매도') :  
+            tx['가용잔액'] = self.M['진행상황'] 
+        else : 
+            tx['가용잔액'] = f"{self.M['자산총액']:,.2f}"
+            self.M['현금비중'].append(round(self.M['자산총액'] / (self.M['총매수금']+self.M['자산총액']) *100,2))
+         
+        self.D['TR'].append(tx)
+        
+        # 챠트 기록용
+        self.D['close_price'].append(self.M['당일종가'])
+        if avg_price := round(self.M['평균단가'],2) : self.D['average_price'].append(avg_price)
+        else : self.D['average_price'].append('None')
+        self.D['chart_date'].append(self.M['day'][2:])
+        self.D['total_value'].append(round(self.M['평가총액'],0))
+        self.D['eval_value'].append(round(self.M['평가밸류'],0))
+
+        

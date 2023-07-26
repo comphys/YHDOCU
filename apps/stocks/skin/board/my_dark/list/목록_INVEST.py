@@ -59,7 +59,7 @@ class 목록_INVEST(SKIN) :
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
             
-            LD = self.DB.get_line('add4,add6,add7,add9,add14,add15,add16,add17,add19,add20,sub1,sub2,sub3,sub4,sub12,sub14,sub5,sub6,sub15,sub18,sub19,sub20,sub25,sub26,sub27,sub32')
+            LD = self.DB.get_line('add4,add6,add7,add9,add14,add15,add16,add17,add18,add19,add20,sub1,sub2,sub3,sub4,sub12,sub14,sub5,sub6,sub15,sub18,sub19,sub20,sub25,sub26,sub27,sub32')
             
             # 가치 비율 for chart
             운용자금 = my.sv(LD['add19']) + my.sv(LD['add20'])
@@ -157,10 +157,13 @@ class 목록_INVEST(SKIN) :
                 self.D['월별구분'].append(mon)
                 self.D['월별이익'].append(round(profit,2))
             
+            monthly_total = sum(self.D['월별이익'])
+            monthly_lenth = len(self.D['월별이익'])
+            
             self.D['월별구분'].reverse()  
             self.D['월별이익'].reverse()
             self.D['월별구분'].append('AVG')
-            self.D['월별이익'].append(round(sum(self.D['월별이익'])/len(self.D['월별이익']),2))
+            self.D['월별이익'].append(round(monthly_total/monthly_lenth,2))
     
     def take_chance(self,p,H,n,A) :
         if H == 0 : return 0
