@@ -48,7 +48,7 @@ class M_backtest_FINALE(Model) :
         if  opt==1 :  return int(mm*0.07)/100
         if  opt==2 :  
             m1 = int(mm*0.07)/100
-            m2=round(mm*0.00229)/100
+            m2=round(mm*0.0008)/100
             return m1+m2
         
     def rebalance(self)  :

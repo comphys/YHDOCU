@@ -145,7 +145,7 @@ function normal_buy(opt) {
 
 function s_load(key,opt,opt2='B') {if(opt2=='B') { a=JBODY[key]} else if(opt2=='S') { a=JSTRG[key] }  else if(opt2=='H') { a=JHIST[key] }  if(!a) return 0 ;  a = a.replace(/,/g,'');  if(opt=='i') return parseInt(a);  else return parseFloat(a); }
 function vtc(pos,num,weigh) { if(weigh==-1) return;	if(weigh==-2) $("input[name='"+pos+"']").val(num);	else {$("input[name='"+pos+"']").val(num.toFixed(weigh)).comma('init');}}
-function commission(mm,opt) {if(opt==1) { return (parseInt(mm*0.07)/100);}	else if(opt==2) { m1 = parseInt(mm*0.07)/100; m2=Math.round(mm*0.00229)/100; return m1+m2;}}
+function commission(mm,opt) {if(opt==1) { return (parseInt(mm*0.07)/100);}	else if(opt==2) { m1 = parseInt(mm*0.07)/100; m2=Math.round(mm*0.0008)/100; return m1+m2;}}
 
 function back_restore() {
 	let 매수금   = s_load('add11','f');
