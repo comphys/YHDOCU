@@ -103,6 +103,8 @@ class Invest_guide(Control) :
         
         U['add19'] = self.M['가용잔액']
         
+        U['add1']   = '0.00'
+        U['add2']   = '0.00'
         U['add3']   = self.M['현재잔액'] + U['add12'] - U['add11'] #현금합계
         U['add15']  = int(U['add9']) * self.M['당일종가'] #레버가치
         U['add17']  = U['add3'] + U['add15']  #Total Value
@@ -312,7 +314,7 @@ class Invest_guide(Control) :
         if  opt==1 :  fee = int(mm*0.07)/100
         if  opt==2 :  
             m1 = int(mm*0.07)/100
-            m2=round(mm*0.00229)/100
+            m2=round(mm*0.0008)/100
             fee = m1+m2
 
         self.M['수수료등']  = fee
