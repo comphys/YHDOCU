@@ -8,7 +8,7 @@ class Stock_update(Control) :
         self.DB = self.db('stocks')
         self.stock = self.load_app_lib('stock')
 
-    def update(self) :
+    def update_stock(self) :
 
         self.DB.tbl, self.DB.wre = ("h_user_list",f"no={session['N_NO']}")
         USER = self.DB.get("*",many=1, assoc=True)
@@ -46,6 +46,15 @@ class Stock_update(Control) :
             self.DB.exe(sql)
         
         self.set_message("종목 업데이트를 완료하였습니다")
+        return self.moveto('board/list/stockHistory/csh=on')
+
+    def update_krw(self) :
+        getdate, usdkrw = self.stock.get_usd_krw()
+        w_time = my.timestamp_to_date()
+        qry = f"INSERT INTO usd_krw (date,usd_krw,wtime) VALUES('{getdate}','{usdkrw}','{w_time}')"
+        self.DB.exe(qry)
+       
+        self.set_message("환율 업데이트를 완료하였습니다")
         return self.moveto('board/list/stockHistory/csh=on')
 
     def delete(self) :
