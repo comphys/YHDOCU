@@ -10,14 +10,14 @@
 
 <div class="clearfix" style="background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
 	<div class="pull-left" style="margin-right:20px">
-		<canvas id="myChart"  style="width:1115px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
+		<canvas id="myChart"  style="width:1125px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
 	</div>
 	<div class="pull-left">
-		<canvas id="myChart_side" style="width:220px;height:308px;background-color:#24272d" onclick="$('#ChanceStrategy').show()"></canvas>
+		<canvas id="myChart_side" style="width:210px;height:308px;background-color:#24272d" onclick="$('#ChanceStrategy').show()"></canvas>
 		<div style="margin-top:6px">
 			<input type='text' name='s_date' class="i-date_1" style="width:85px;text-align:center;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}"> -
 			<input type='text' name='e_date' class="i-date_2" style="width:85px;text-align:center;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}">
-			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(2)" title="현재시즌"><i class="fa fa-bars"></i></span>&nbsp;
+			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(2)" title="현재시즌"><i class="fa fa-bars"></i></span>
 			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(0)" title="전체시즌"><i class="fa fa-home"></i></span>
 		</div>
 	</div>
@@ -146,8 +146,8 @@
 	</ul>
 </div>
 
-<div id='monthlyProfit' style="opacity:0.9;position:fixed;left:20px;top:536px;background-color:#24272d;padding:5px 10px 5px 10px;border:2px solid black;">
-	<canvas id="monthlyProfitChart" style="width:1115px;height:338px;background-color:#24272d"></canvas>
+<div id='monthlyProfit' style="opacity:0.9;position:absolute;left:20px;top:536px;padding:5px 10px 5px 10px;">
+	<canvas id="monthlyProfitChart" style="width:1125px;height:345px;background-color:#24272d"></canvas>
 </div>
 
 <script>
