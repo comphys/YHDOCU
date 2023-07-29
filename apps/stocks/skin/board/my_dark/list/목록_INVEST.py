@@ -25,9 +25,8 @@ class 목록_INVEST(SKIN) :
         self.DB.tbl = self.D['tbl']
         self.DB.odr = "add0 DESC"
 
-        date1 = self.SYS.gets.get('date1','')
-        date2 = self.SYS.gets.get('date2','')
-        self.DB.wre = f"add0 >='{date1}' and add0 <= '{date2}'" if date1 and date2 else ''
+        current_date = self.D['LIST'][0]['add0']
+        self.DB.wre = f"add0 <= '{current_date}'"
 
         chart_data = self.DB.get("add0,add14,add17,add7,sub28,add8",assoc=True)
 
@@ -105,9 +104,9 @@ class 목록_INVEST(SKIN) :
             self.D['현매수금'] = f"{float(LD['add6']):,}"
             self.D['현이익률'] = f"{(float(LD['add14'])/평단가2 - 1)*100:,.2f}" if 평단가2 else '0.0'
             self.D['현재시즌'] = LD['sub1'] ; 일수 = int(LD['sub12']); 시즌 = int(self.D['현재시즌'])
-            if 일수 == 0 : 시즌 -= 1
-            # self.D['시즌첫날'] = self.DB.one(f"SELECT add0 FROM {self.D['tbl']} WHERE sub1='{시즌}' and sub12 =='1'")
-            self.D['단기첫날'] = '20'+self.D['chart_date'][-40]
+            
+            slice_first = -40 if chart_slice > 40 else 0
+            self.D['단기첫날'] = '20'+self.D['chart_date'][slice_first]
             self.D['경과일수'] = f"{int(LD['sub12']):02d}"
 
             self.D['매수갯수'] = int(LD['sub2'])
@@ -131,7 +130,7 @@ class 목록_INVEST(SKIN) :
                 가용잔액 = int( 예치자금 * 2/3)
                 일매수금 = int(가용잔액/22)
                 매수비율 = 일매수금 / int(LD['sub4']) 
-                기초수량 = int(매수비율 * int(LD['sub18']))
+                기초수량 = my.ceil(매수비율 * int(LD['sub18']))
 
                 찬스수량 = 0    
                 for i in range(0,일수+1) : 
@@ -149,7 +148,7 @@ class 목록_INVEST(SKIN) :
                 self.D['기초환율'] = f"{현재환율:,.2f}"
 
             # 월별 실현손익
-            qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {self.D['tbl']} WHERE CAST(add12 as float) > 0  GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
+            qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {self.D['tbl']} WHERE CAST(add12 as float) > 0 and add0 <='{current_date}' GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
             monProfit = self.DB.exe(qry)
             self.D['월별구분'] = []
             self.D['월별이익'] = []

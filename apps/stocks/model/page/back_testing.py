@@ -17,8 +17,9 @@ class M_back_testing(Model) :
         # 기본 값
         self.D['code'] = 'SOXL'
         self.D['strategy'] = 'VICTORY'
-        self.D['capital'] = '12,000'
-        self.D['addition'] = '6,000'
+        self.D['capital'] = '24,000'
+        self.D['addition'] = '12,000'
+        self.D['chanceCapital'] = '7,200'
         # 기간 설정(최근 2년간)
         # self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)
         self.D['end_date'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")

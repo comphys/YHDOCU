@@ -104,7 +104,7 @@ class 목록_CHANCE(SKIN) :
                 가용잔액 = int( float(LD['add3']) * 2/3)
                 일매수금 = int(가용잔액/22)
                 매수비율 = 일매수금 / int(TD['sub4']) 
-                기초수량 = int(매수비율 * int(TD['sub18']))
+                기초수량 = my.ceil(매수비율 * int(TD['sub18']))
 
                 찬스수량 = 0    
                 for i in range(0,int(TD['sub12'])+1) : 

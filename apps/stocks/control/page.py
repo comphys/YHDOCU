@@ -39,13 +39,15 @@ class Page(Control) :
     def backtest(self) :
         self.M = {}
         
-        self.D['code']       = self.D['post']['code']
-        self.D['strategy']   = self.D['post']['strategy']
-        self.D['capital']    = self.D['post']['capital']
-        self.D['addition']   = self.D['post']['addition']
-        self.D['start_date'] = self.D['post']['start_date']
-        self.D['end_date']   = self.D['post']['end_date']
-        self.D['progress']   = float(self.D['post']['progress'])
+        self.D['code']          = self.D['post']['code']
+        self.D['strategy']      = self.D['post']['strategy']
+        self.D['capital']       = self.D['post']['capital']
+        self.D['addition']      = self.D['post']['addition']
+        self.D['start_date']    = self.D['post']['start_date']
+        self.D['end_date']      = self.D['post']['end_date']
+        # -------------------
+        self.D['progress']      = self.D['post'].get('progress','')
+        self.D['chanceCapital'] = self.D['post'].get('chanceCapital','7,200')
 
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.D['strategy']}'")
         s_code = self.DB.get_one('add1')
@@ -54,7 +56,7 @@ class Page(Control) :
         M.get_start()
         if self.D['progress'] : M.test_with_progress()
         else : M.test_it()
-        D={'skin':f"{self.skin}/{self.D['bid']}.html"}
+        D={'skin':f"{self.skin}/{self.D['bid']}_{self.D['strategy']}.html"}
         return self.echo(D)
 
     def backtest2(self) :
