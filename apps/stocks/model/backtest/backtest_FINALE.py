@@ -339,8 +339,7 @@ class M_backtest_FINALE(Model) :
 
         tx['보유수량'] = self.M['보유수량']
         tx['총매수금'] = f"{round(self.M['총매수금'],4):,.2f}"
-        자금합계 = f"{round(self.M['추가자금'] + self.M['가용잔액'],4):,.2f}"
-        tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span style='font-weight:bold;color:#CEF6CE'>{자금합계}</span>" 
+        tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>{self.M['진행상황']}</span>"
         tx['수익현황'] = f"{round(self.M['수익현황'],4):,.2f}"
 
         clr = "#F6CECE" if self.M['수익률'] > 0 else "#CED8F6"
@@ -349,7 +348,8 @@ class M_backtest_FINALE(Model) :
 
         tx['일매수금'] = f"{self.M['일매수금']:,}"
         if  self.M['진행상황'] in ('전량매도','전략매도') :
-            tx['가용잔액'] =  f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>{self.M['진행상황']}</span>"
+            자금합계 = f"{round(self.M['추가자금'] + self.M['가용잔액'],4):,.2f}"
+            tx['가용잔액'] = f"<span style='font-weight:bold'>{자금합계}</span>"
             tx['수익현황'] = f"<span style='font-weight:bold;color:#F6CECE'>{tx['수익현황']}</span>"
 
         elif self.M['진행상황'] in ('전략매도','부분매도','손절매도') :  
@@ -367,5 +367,4 @@ class M_backtest_FINALE(Model) :
         self.D['chart_date'].append(self.M['day'][2:])
         self.D['total_value'].append(round(self.M['평가총액'],0))
         self.D['eval_value'].append(round(self.M['평가밸류'],0))
-
         

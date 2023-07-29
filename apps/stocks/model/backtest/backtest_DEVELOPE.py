@@ -24,7 +24,8 @@ class M_backtest_DEVELOPE(Model) :
             self.M['실현수익']  = (self.M['당일종가']-self.M['평균단가'])*self.M['매도수량']  
             self.R['실현수익']  = (self.M['당일종가']-self.R['평균단가'])*self.R['매도수량'] 
             self.M['수익누적'] += self.M['실현수익']; self.R['수익누적'] += self.R['실현수익'] 
-            self.M['매수익률']  = (self.M['당일종가']/self.T['평균단가'] -1 ) * 100
+            self.M['매수익률']  = (self.M['당일종가']/self.M['평균단가'] -1 ) * 100
+            self.R['매수익률']  = (self.M['당일종가']/self.R['평균단가'] -1 ) * 100 if self.R['평균단가'] else 0.00
             self.M['보유수량'] -= self.M['매도수량']; self.R['보유수량'] -= self.R['매도수량']
             self.M['가용잔액'] += self.M['매도금액']; self.R['기회자금'] += self.R['매도금액']
             self.M['총매수금']  = 0.00; self.R['총매수금']  = 0.00 
@@ -36,11 +37,14 @@ class M_backtest_DEVELOPE(Model) :
 
         self.M['평가금액']  =  self.M['당일종가'] * self.M['보유수량']; self.R['평가금액']  =  self.M['당일종가'] * self.R['보유수량']
         self.M['수익현황']  =  self.M['평가금액'] - self.M['총매수금']; self.R['수익현황']  =  self.R['평가금액'] - self.R['총매수금']
-        self.M['수익률']    = (self.M['당일종가']/self.T['평균단가'] -1) * 100 
+        self.M['수익률']    = (self.M['당일종가']/self.M['평균단가'] -1) * 100 
+        self.R['수익률']    = (self.M['당일종가']/self.R['평균단가'] -1) * 100  if self.R['평균단가'] else 0.00
+        self.T['수익률']    = (self.M['당일종가']/self.T['평균단가'] -1) * 100  if self.T['평균단가'] else 0.00
         
 
         if  self.M['보유수량'] == 0 : 
             self.M['수익률']   = self.M['매수익률']
+            self.R['수익률']   = self.R['매수익률']
             self.M['수익현황'] = self.M['수익누적']; self.R['수익현황'] = self.R['수익누적']
             self.M['평균단가'] = 0.0; self.R['평균단가'] = 0.0; self.T['평균단가'] = 0.0
             self.M['첫날기록'] = True
@@ -302,20 +306,25 @@ class M_backtest_DEVELOPE(Model) :
 
         tx['보유수량'] = self.M['보유수량'] + self.R['보유수량']
         tx['총매수금'] = f"{round(self.M['총매수금']+self.R['총매수금'],4):,.2f}"
-        자금합계 = f"{round(self.M['추가자금'] + self.M['가용잔액'] + self.R['기회자금'],4):,.2f}"
         
-        tx['평가금액'] = f"{round(self.M['평가금액']+self.R['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span style='font-weight:bold;color:#CEF6CE'>{자금합계}</span>" 
+        
+        tx['평가금액'] = f"{round(self.M['평가금액']+self.R['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>{self.M['진행상황']}</span>"
         tx['수익현황'] = f"{round(self.M['수익현황'],4):,.2f}"
-        tx['기회수익'] = f"{round(self.R['수익현황'],4):,.2f}"
+        tx['기회수익'] = f"{round(self.R['수익현황'],4):,.2f}" 
         
         clr = "#F6CECE" if self.M['수익률'] > 0 else "#CED8F6"
-        tx['수익률'] = f"<span style='color:{clr}'>{round(self.M['수익률'],4):,.2f}</span>"
+        tx['수익률1'] = f"<span style='color:{clr}'>{round(self.M['수익률'],4):,.2f}</span>"
+        
+        clr = "#F6CECE" if self.R['수익률'] > 0 else "#CED8F6"
+        tx['수익률2'] = f"<span style='color:{clr}'>{round(self.R['수익률'],4):,.2f}</span>" if self.R['수익률'] else '0.00'
+        
         tx['거래코드'] = self.M['거래코드']
 
         tx['일매수금'] = f"{self.M['일매수금']:,}"
         
         if  self.M['진행상황'] in ('전량매도','전략매도') :
-            tx['가용잔액'] =  f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>{self.M['진행상황']}</span>"
+            자금합계 = f"{round(self.M['추가자금'] + self.M['가용잔액'],4):,.2f}"
+            tx['가용잔액'] = f"<span style='font-weight:bold'>{자금합계}</span>"
             tx['수익현황'] = f"<span style='font-weight:bold;color:#F6CECE'>{tx['수익현황']}</span>"
             tx['기회수익'] = f"<span style='font-weight:bold;color:#F6CECE'>{tx['기회수익']}</span>"
 
