@@ -35,7 +35,9 @@ class M_backtest_DEVELOPE(Model) :
                 self.R['기회자금'] -=  self.commission(self.R['매도금액'],2)
             
 
-        self.M['평가금액']  =  self.M['당일종가'] * self.M['보유수량']; self.R['평가금액']  =  self.M['당일종가'] * self.R['보유수량']
+        self.M['평가금액']  =  self.M['당일종가'] * self.M['보유수량'] 
+        self.R['평가금액']  =  self.M['당일종가'] * self.R['보유수량']
+        
         self.M['수익현황']  =  self.M['평가금액'] - self.M['총매수금']; self.R['수익현황']  =  self.R['평가금액'] - self.R['총매수금']
         self.M['수익률']    = (self.M['당일종가']/self.M['평균단가'] -1) * 100 
         self.R['수익률']    = (self.M['당일종가']/self.R['평균단가'] -1) * 100  if self.R['평균단가'] else 0.00
@@ -177,7 +179,7 @@ class M_backtest_DEVELOPE(Model) :
             self.R['구매수량'] = 매수수량R
         
         else : 
-            self.R['기회가격'] = self.take_chance(-5,self.M['보유수량'],매수수량,self.M['총매수금'])
+            self.R['기회가격'] = self.take_chance(-4,self.M['보유수량'],매수수량,self.M['총매수금'])
         
         
     # ---------------------------------------------------------------------------------------------------------------------
@@ -237,16 +239,28 @@ class M_backtest_DEVELOPE(Model) :
         self.D['max_date'] = self.M['최대날자']
         self.D['MDD'] = f"{self.M['MDD']:.2f}"
         self.D['MDD_DAY'] = self.M['MDD_DAY']
-        초기자본 = self.D['init_capital'] + self.D['addition'] + float(self.D['chanceCapital'].replace(',',''))
-        최종자본 = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자금'] + self.R['기회자금']
+        
+        초기자본1 = self.D['init_capital'] + self.D['addition'] 
+        최종자본1 = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자금'] 
+        최종수익1 = 최종자본1 - 초기자본1 
+        최종수익률1 = (최종수익1/초기자본1) * 100      
+        
+        초기자본2 = float(self.D['chanceCapital'].replace(',',''))
+        최종자본2 = self.R['평가금액'] + self.R['기회자금'] 
+        최종수익2 = 최종자본2 - 초기자본2 
+        최종수익률2 = (최종수익2/초기자본2) * 100  
+        
+        초기자본 = 초기자본1 + 초기자본2 
+        최종자본 = 최종자본1 + 최종자본2 
         최종수익 = 최종자본 - 초기자본 
-        최종수익률 = (최종수익/초기자본) * 100 
+        최종수익률 = (최종수익/초기자본) * 100
+        
         style1 = "<span style='font-weight:bold;color:white'>"
         style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
         style3 = "<span style='font-weight:bold;color:#F6CECE'>"
         self.D['output']  = f"총기간 : {style1}{self.D['days_span']:,}</span>일 "
-        self.D['output'] += f"초기자본 {style1}${초기자본:,.0f}</span> 최종자본 {style1}${최종자본:,.2f}</span> 으로 "
-        self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 이며 수익률은 {style3}{최종수익률:,.2f}</span>% 입니다"
+        self.D['output'] += f"초기자본 {style1}${초기자본:,.0f}</span> 최종 {style1}${최종자본:,.2f}</span> 으로 "
+        self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 이며 수익률은 {style3}{최종수익률:,.2f}( {최종수익률1:,.2f} / {최종수익률2:,.2f} )</span>% 입니다"
         
         self.D['cash_avg'] = round(sum(self.M['현금비중']) / len(self.M['현금비중']),2)
         self.D['cash_min'] = min(self.M['현금비중'])
