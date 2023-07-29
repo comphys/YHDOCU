@@ -2,7 +2,7 @@ from system.core.load import Model
 from datetime import datetime,date
 import system.core.my_utils as my
 
-class M_backtest_FINALE(Model) :
+class M_backtest_VICTORY(Model) :
 
 # 변동성을 이용한 올타임 전략
 
