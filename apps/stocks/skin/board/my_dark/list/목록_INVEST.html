@@ -50,7 +50,7 @@
 <div class="row-row clearfix">
 	<table class='table table-bordered table-striped table-hover'>
 		<thead>
-			<tr>
+			<tr style="height:27px">
 				<th style="background-color:#071418;font-style:italic;cursor:pointer" onclick="monthlyProfit_toggle()">Progress</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('입금내역',0)">입금</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('출금내역',0)">출금</th>
@@ -58,7 +58,7 @@
 				<th colspan='11' style="background-color:#0B2F3A;font-style:italic;cursor:pointer;" onclick="winopen('winopen/chart2/soxl',820,450,'stock_chart');">Leverage Stock {{D['적용종목']}}</th>
 				<th style="background-color:#071418;;font-style:italic">Total</th>
 			</tr>
-			<tr>
+			<tr style="height:27px">
 				<th style="background-color:#071418;font-style:italic;width:110px;cursor:pointer" onclick="monthlyProfit_toggle()">{{D['총경과일']}} days</th>
 				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총입금']}}</th>
 				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총출금']}}</th>
@@ -83,9 +83,9 @@
 		<tbody>
 			{%- for TR in D['TR'] -%}
 			{% if (TR['add12']|striptags != '0.00') and (TR['add15']|striptags == '0.00') %}
-			<tr style="background-color:black;"> 
+			<tr style="background-color:black;height:27px"> 
 			{% else %}
-			<tr> 
+			<tr style="height:27px"> 
 			{% endif %}
 			{{TR['add0']|safe}}
 			{{TR['add1']|safe}}
@@ -146,7 +146,7 @@
 	</ul>
 </div>
 
-<div id='monthlyProfit' style="opacity:0.9;position:absolute;left:20px;top:536px;padding:5px 10px 5px 10px;">
+<div id='monthlyProfit' style="opacity:0.9;position:absolute;left:20px;top:538px;padding:5px 10px 5px 10px;">
 	<canvas id="monthlyProfitChart" style="width:1125px;height:345px;background-color:#24272d"></canvas>
 </div>
 
@@ -476,7 +476,7 @@ const config_monthly = {
 const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
 $('#monthlyProfit').draggable();
 slice_chart(2);
-function monthlyProfit_toggle() { $('#monthlyProfit').toggle().css({'left':'20px','top':'536px'});}
+function monthlyProfit_toggle() { $('#monthlyProfit').toggle().css({'left':'20px','top':'538px'});}
 </script>
 
 {% endblock %}

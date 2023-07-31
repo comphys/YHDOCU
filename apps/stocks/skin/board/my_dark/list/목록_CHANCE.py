@@ -110,23 +110,22 @@ class 목록_CHANCE(SKIN) :
                 for i in range(0,int(TD['sub12'])+1) : 
                     찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
-                찬스가오 = self.take_chance(-5,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
-                # 찬스가삼 = self.take_chance(-3,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                찬스가격 = self.take_chance(-4,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                 self.D['찬스일자'] = last_date
-                self.D['찬스가오'] = f"{찬스가오:,.2f}"
+                self.D['찬스가격'] = f"{찬스가격:,.2f}"
                 self.D['찬스수량'] = f"{찬스수량:,}"
-                self.D['찬스자본'] = f"{찬스가오*찬스수량:,.2f}"
+                self.D['찬스자본'] = f"{찬스가격*찬스수량:,.2f}"
                 self.D['찬스일수'] = TD['sub12']
                 self.D['찬스주가'] = TD['add14']
-                self.D['찬스변동'] = round((찬스가오/float(TD['add14']) -1) * 100,2)
+                self.D['찬스변동'] = round((찬스가격/float(TD['add14']) -1) * 100,2)
                 self.D['찬스하강'] = TD['sub6']
                 self.D['찬스근거'] = target
                 기초환율 = self.DB.one("SELECT CAST(usd_krw AS FLOAT) FROM usd_krw ORDER BY rowid DESC LIMIT 1")
-                self.D['환율변환'] = f"{찬스가오*찬스수량* 기초환율:,.0f}"
+                self.D['환율변환'] = f"{찬스가격*찬스수량* 기초환율:,.0f}"
                 self.D['기초환율'] = f"{기초환율:,.2f}"
 
                 self.D['target_value'] = [TD['sub20']] * chart_len
-                self.D['chance_value'] = [self.D['찬스가오']] * chart_len
+                self.D['chance_value'] = [self.D['찬스가격']] * chart_len
                 
                 self.D['진행상황'] = '현재진행' if int(LD['add9'].replace(',','')) != 0 else '대기상태'
 

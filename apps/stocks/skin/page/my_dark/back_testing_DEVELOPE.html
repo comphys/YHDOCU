@@ -265,42 +265,6 @@ $(document).ready(function(){
 		var progress=$(this).prev().text(); $("input[name='progress']").val(progress);
 	});
 
-	$(".if-this-day").click(function(){
-		if( selected_tr ) {	
-			$(selected_tr).css("backgroundColor",'')
-			h_dialog.close("TEST_DAY");
-			h_dialog.close("TEST_IF25");
-			h_dialog.close("TEST_IF50");
-			h_dialog.close("TEST_IF75");
-			selected_tr = null
-		} else 
-		{
-			selected_tr = $(this).parent()
-			$(selected_tr).css("backgroundColor","black")
-			var date = $(this).next().text();
-			var ypos= mouse_Y
-			if(ypos > 800) ypos = ypos-280
-
-			url = uri('linkurl') + 'page/test_theday/back_testing/date=' + date;
-			o = {id:'TEST_DAY', width:'200px', x:240, y:ypos,header:false,footer:false,drag:false}
-			h_dialog.load(url,o)
-
-			var url = uri('linkurl') + 'page/test_if/back_testing/progress=25.0/date=' + date;
-			var o = {id:'TEST_IF25', width:'260px', x:450, y:ypos,header:false,footer:false,drag:false}
-			h_dialog.load(url,o);
-
-			var url = uri('linkurl') + 'page/test_if/back_testing/progress=50.0/date=' + date;
-			var o = {id:'TEST_IF50', width:'260px', x:720, y:ypos,header:false,footer:false,drag:false}
-			h_dialog.load(url,o);
-
-			var url = uri('linkurl') + 'page/test_if/back_testing/progress=75.0/date=' + date;
-			var o = {id:'TEST_IF75', width:'260px', x:990, y:ypos,header:false,footer:false,drag:false}
-			h_dialog.load(url,o);
-
-		}
-	});
-
-
 	$(".ohlc-price").click(function(){
 		if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
 		var code = $("input[name='code']").val()
@@ -328,7 +292,6 @@ function show_chart(season) {
 	$('#backTestingChart').css({top:'130px',left:'50px'}).show();
 	var clsv = [];
 	var avgv = [];
-	var ulne = [];
 	var dlne = [];
 
 	$(".clsv"+season).each(function() {clsv.push(parseFloat($(this).text()))});
