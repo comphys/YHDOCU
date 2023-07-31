@@ -51,10 +51,15 @@ class M_backtest_DEVELOPE(Model) :
             self.M['평균단가'] = 0.0; self.R['평균단가'] = 0.0; self.T['평균단가'] = 0.0
             self.M['첫날기록'] = True
             self.M['매수단계'] = '일반매수'
+            
+            if self.R['수익률'] > 0 : self.D['기회전량'] += 1
+            if self.R['수익률'] < 0 : self.D['기회전략'] += 1
+            
             self.rebalance()   
 
         if self.M['날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['날수'] ; self.M['최대날자'] = self.M['day']
-        if self.M['수익률'] < self.M['MDD'] : self.M['MDD'] = self.M['수익률'] ; self.M['MDD_DAY'] = self.M['day']
+        if self.M['수익률'] < self.M['MDD1'] : self.M['MDD1'] = self.M['수익률'] ; self.M['MDD_DAY1'] = self.M['day']
+        if self.R['수익률'] < self.M['MDD2'] : self.M['MDD2'] = self.R['수익률'] ; self.M['MDD_DAY2'] = self.M['day']
 
         self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
 
@@ -237,8 +242,10 @@ class M_backtest_DEVELOPE(Model) :
 
         self.D['max_days'] = self.M['최대일수']
         self.D['max_date'] = self.M['최대날자']
-        self.D['MDD'] = f"{self.M['MDD']:.2f}"
-        self.D['MDD_DAY'] = self.M['MDD_DAY']
+        self.D['MDD1'] = f"{self.M['MDD1']:.2f}"
+        self.D['MDD_DAY1'] = self.M['MDD_DAY1']
+        self.D['MDD2'] = f"{self.M['MDD2']:.2f}"
+        self.D['MDD_DAY2'] = self.M['MDD_DAY2']
         
         초기자본1 = self.D['init_capital'] + self.D['addition'] 
         최종자본1 = self.M['평가금액'] + self.M['가용잔액'] + self.M['추가자금'] 
@@ -258,9 +265,9 @@ class M_backtest_DEVELOPE(Model) :
         style1 = "<span style='font-weight:bold;color:white'>"
         style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
         style3 = "<span style='font-weight:bold;color:#F6CECE'>"
-        self.D['output']  = f"총기간 : {style1}{self.D['days_span']:,}</span>일 "
-        self.D['output'] += f"초기자본 {style1}${초기자본:,.0f}</span> 최종 {style1}${최종자본:,.2f}</span> 으로 "
-        self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 이며 수익률은 {style3}{최종수익률:,.2f}( {최종수익률1:,.2f} / {최종수익률2:,.2f} )</span>% 입니다"
+        self.D['output']  = f"총 {style1}{self.D['days_span']:,}</span>일 "
+        self.D['output'] += f"초기 {style1}${초기자본:,.0f}</span> 최종 {style1}${최종자본:,.2f}</span> "
+        self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 수익률은 {style3}{최종수익률:,.2f}( {최종수익률1:,.2f} / {최종수익률2:,.2f} ) %</span>"
         
         self.D['cash_avg'] = round(sum(self.M['현금비중']) / len(self.M['현금비중']),2)
         self.D['cash_min'] = min(self.M['현금비중'])
@@ -308,10 +315,12 @@ class M_backtest_DEVELOPE(Model) :
         #-----------------------------------------------------------
         tx['매수수량'] = self.M['매수수량'] + self.R['매수수량'] if self.M['매수수량'] else ' '
         tx['매수금액'] = f"{round(self.M['매수금액']+self.R['매수금액'],4):,.3f}" if self.M['매수금액'] else ' '
-        tx['평균단가'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.T['평균단가'],4):,.4f}</span>"
+        tx['종합평균'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.T['평균단가'],4):,.4f}</span>"
+        tx['일반평균'] = f"<span class='avgn{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.4f}</span>"
+        tx['기회평균'] = f"<span class='avgc{self.M['기록시즌']}'>{round(self.R['평균단가'],4):,.4f}</span>"
         #-----------------------------------------------------------
         tx['매도수량'] = f"{self.M['매도수량']+self.R['매도수량']:,}" if self.M['매도수량'] else ' '
-        tx['매도금액'] = f"{round(self.M['매도금액']+self.R['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['거래코드']
+        tx['진행현황'] = f"{round(self.M['매도금액']+self.R['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['거래코드']
         
         if  self.M['매도금액'] : 
             clr = "#F6CECE" if self.M['실현수익'] > 0 else "#CED8F6"
@@ -323,7 +332,7 @@ class M_backtest_DEVELOPE(Model) :
         
         
         tx['평가금액'] = f"{round(self.M['평가금액']+self.R['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>{self.M['진행상황']}</span>"
-        tx['수익현황'] = f"{round(self.M['수익현황'],4):,.2f}"
+        tx['일반수익'] = f"{round(self.M['수익현황'],4):,.2f}"
         tx['기회수익'] = f"{round(self.R['수익현황'],4):,.2f}" 
         
         clr = "#F6CECE" if self.M['수익률'] > 0 else "#CED8F6"
@@ -339,7 +348,7 @@ class M_backtest_DEVELOPE(Model) :
         if  self.M['진행상황'] in ('전량매도','전략매도') :
             자금합계 = f"{round(self.M['추가자금'] + self.M['가용잔액'],4):,.2f}"
             tx['가용잔액'] = f"<span style='font-weight:bold'>{자금합계}</span>"
-            tx['수익현황'] = f"<span style='font-weight:bold;color:#F6CECE'>{tx['수익현황']}</span>"
+            tx['일반수익'] = f"<span style='font-weight:bold;color:#F6CECE'>{tx['일반수익']}</span>"
             tx['기회수익'] = f"<span style='font-weight:bold;color:#F6CECE'>{tx['기회수익']}</span>"
 
         else : 
@@ -373,8 +382,10 @@ class M_backtest_DEVELOPE(Model) :
         self.M['날수'] = 0
         self.M['씨드'] = self.D['init_capital']
         self.M['최대일수']  = 0   # 최고 오래 지속된 시즌의 일수
-        self.M['MDD']  = -5      # 최고 MDD
-        self.M['MDD_DAY']  = ' ' # 최고 오래 지속된 시즌의 일수
+        self.M['MDD1']  = 0      # 최고 MDD
+        self.M['MDD_DAY1']  = ' ' # 최고 오래 지속된 시즌의 일수
+        self.M['MDD2']  = 0      # 최고 MDD
+        self.M['MDD_DAY2']  = ' ' # 최고 오래 지속된 시즌의 일수
         self.M['첫날기록']  = False
         self.M['전일종가']  = 0.0
         self.M['매수수량']  = 0
@@ -424,6 +435,8 @@ class M_backtest_DEVELOPE(Model) :
         self.D['close_price'] = []; self.D['average_price'] = []; self.D['total_value'] = []; self.D['chart_date'] = []; self.D['eval_value'] = []
         self.D['전량횟수'] = 0
         self.D['전략횟수'] = 0
+        self.D['기회전량'] = 0
+        self.D['기회전략'] = 0
         self.T['평가밸류'] = self.M['자산총액'] + self.R['기회자금']
 
     def new_day(self) :

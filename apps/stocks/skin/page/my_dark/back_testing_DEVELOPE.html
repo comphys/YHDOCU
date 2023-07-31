@@ -58,12 +58,12 @@
     </form>
 </div> 
 
-<div id="myChart2-div" class="clearfix" style="width:100%;background-color:#24272d;padding:10px;border:2px solid black;">
+<div id="myChart_main-div" class="clearfix" style="width:100%;background-color:#24272d;padding:10px;border:2px solid black;">
 	<div class="pull-left" style="margin-right:20px">
-		<canvas id="myChart2"  style="width:1210px;height:350px;background-color:#24272d;"></canvas>
+		<canvas id="myChart_main"  style="width:1210px;height:350px;background-color:#24272d;"></canvas>
 	</div>
 	<div class="pull-left">
-		<canvas id="myChart3" style="width:220px;height:350px;background-color:#24272d"></canvas>
+		<canvas id="myChart_side" style="width:220px;height:350px;background-color:#24272d"></canvas>
 	</div>
 </div>
 
@@ -71,9 +71,9 @@
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
 {% else %}
 	<div class="pull-left" style="padding:10px;color:lightgray">
-	최대 : <b>{{D['max_days']}}</b> 일 {{D['max_date']}} &nbsp;
-	MDD : <b>{{D['MDD']}}</b> % {{D['MDD_DAY']}} &nbsp;
-	일반 {{D['전량횟수']}} &nbsp; 전략 {{D['전략횟수']}} &nbsp;
+	최장 : <b>{{D['max_days']}}</b> 일 {{D['max_date']}} &nbsp;
+	MDD : <b>{{D['MDD1']}}</b> % {{D['MDD_DAY1']}} (<b>{{D['MDD2']}}</b> % {{D['MDD_DAY2']}}) 
+	일반 {{D['전량횟수']}}({{D['기회전량']}}) &nbsp; 전략 {{D['전략횟수']}}({{D['기회전략']}}) &nbsp;
 	<i class="fa fa-arrow-up" onclick="chart_up_dn(1)"></i>
 	<i class="fa fa-arrow-down" onclick="chart_up_dn(2)"></i>
 	</div>
@@ -85,20 +85,20 @@
 			<th style='text-align:center;width:50px'>날수</th>
 			<th style='text-align:center;width:100px'>기록일자</th>
 			<th style='text-align:right;width:70px'>종가</th>
-			<th style='text-align:right;width:60px'>매수</th> 
+			<th style='text-align:right;width:60px'>매수</th>
+			<th style='text-align:right;width:100px'>진행현황</th>
 			<th style='text-align:right;;width:100px'>매수금액</th>
-			<th style='text-align:right;width:80px'>평균단가</th>
-			<th style='text-align:right;width:70px'>매도</th>
-			<th style='text-align:right;width:100px'>매도금액</th>
-			<th style='text-align:right;width:80px'>보유수량</th>
 			<th style='text-align:right;width:100px'>총매수금</th>
 			<th style='text-align:right;width:100px'>평가금액</th>
-			<th style='text-align:right;width:90px'>수익현황</th>
-			<th style='text-align:right;width:90px'>기회수익</th>
-			<th style='text-align:right;width:90px'>수익률1</th>
-			<th style='text-align:right;width:90px'>수익률2</th>
+			<th style='text-align:right;width:80px'>종합평균</th>
+			<th style='text-align:right;width:80px'>일반평균</th>
+			<th style='text-align:right;width:90px'>일반수익</th>
+			<th style='text-align:right;width:90px'>일반(%)</th>
 			<th style='text-align:right;width:100px'>가용잔액</th>
-			<th style='text-align:right;'>기회자금</th>
+			<th style='text-align:right;width:80px'>기회평균</th>
+			<th style='text-align:right;width:90px'>기회수익</th>
+			<th style='text-align:right;width:90px'>기회(%)</th>
+			<th style='text-align:right;'>기회잔액</th>
 		</tr>
 	</table>
 </div> <!--postion:fixed-->
@@ -113,18 +113,18 @@
 			<col style="width:100px;"> <!-- 일자 -->
 			<col style="width:70px;background-color:#24272d;border:2px solid black;"> <!-- 당일종가 -->
 			<col style="width:60px"> <!-- 매수 -->
+			<col style="width:100px"> <!-- 진행현황 -->
 			<col style="width:100px"> <!-- 매수금액 -->
-			<col style="width:80px;background-color:#24272d;border:2px solid black;"> <!-- 평균단가 -->
-			<col style="width:70px"> <!-- 매도 -->
-			<col style="width:100px"> <!-- 거래코드 / 매도금액 -->
-			<col style="width:80px"> <!-- 보유수량 -->
 			<col style="width:100px"> <!-- 총매수금 -->
 			<col style="width:100px"> <!-- 평가금액 -->
-			<col style="width:90px"> <!-- 수익현황 -->
+			<col style="width:80px;border-right:2px solid gray"> <!-- 종합평균 -->
+			<col style="width:80px"> <!-- 일반평균 -->
+			<col style="width:90px"> <!-- 일반수익 -->
+			<col style="width:90px"> <!-- 일반(%) -->
+			<col style="width:100px;border-right:2px solid gray"> <!-- 가용잔액 -->
+			<col style="width:80px"> <!-- 기회평균 -->
 			<col style="width:90px"> <!-- 기회수익 -->
-			<col style="width:90px"> <!-- 수익률1 -->
-			<col style="width:90px"> <!-- 수익률2 -->
-			<col style="width:100px"> <!-- 가용잔액 -->
+			<col style="width:90px"> <!-- 기회(%) -->
 			<col>
 		</colgroup>
 
@@ -141,18 +141,20 @@
 				<td class='if-the-day'>{{TR['기록일자']}}</td>
 				<td class='ohlc-price' style='text-align:right;cursor:pointer'>{{TR['당일종가']|safe}}</td>
 				<td style='text-align:right'>{{TR['매수수량']}}</td>
+				<td style='text-align:right;color:#F6CECE'>{{TR['진행현황']}}</td>
 				<td style='text-align:right'>{{TR['매수금액']}}</td>
-				<td style='text-align:right;color:#F5F6CE'>{{TR['평균단가']|safe}}</td>
-				<td style='text-align:right'>{{TR['매도수량']}}</td>
-				<td style='text-align:right;color:#F6CECE'>{{TR['매도금액']}}</td>
-				<td style='text-align:right;color:#E6F8E0'>{{TR['보유수량']}}</td>
 				<td style='text-align:right;color:#E0F8F7'>{{TR['총매수금']}}</td>
 				<td style='text-align:right;color:#F8E6E0'>{{TR['평가금액']|safe}}</td>
-				<td style='text-align:right'>{{TR['수익현황']|safe}}</td>
-				<td style='text-align:right'>{{TR['기회수익']|safe}}</td>
+				<td style='text-align:right;color:#F5F6CE'>{{TR['종합평균']|safe}}</td>
+				<td style='text-align:right'>{{TR['일반평균']|safe}}</td>
+				<td style='text-align:right'>{{TR['일반수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['수익률1']|safe}}</td>
-				<td style='text-align:right;font-weight:bold'>{{TR['수익률2']|safe}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['가용잔액']|safe}}</td>
+				<td style='text-align:right;color:#E6F8E0'>{{TR['기회평균']|safe}}</td>
+				<td style='text-align:right'>{{TR['기회수익']|safe}}</td>
+				
+				<td style='text-align:right;font-weight:bold'>{{TR['수익률2']|safe}}</td>
+				
 				<td style='text-align:right;color:#CEF6CE'>{{TR['기회자금']|safe}}</td>
 			</tr>
 			{%- endfor %}
@@ -172,14 +174,13 @@
 <script>
 
 // 챠트 객체 생성
-const ctx = $id('mybackTestChart');
-const ctx3= $id('myChart3');
-ctx.style.backgroundColor = '#33363b';
-ctx.style.border = '2px solid black';
+const ctx_season = $id('mybackTestChart');
+ctx_season.style.backgroundColor = '#33363b';
+ctx_season.style.border = '2px solid black';
 
-const labels = Array.from(new Array(10),(x,i)=> i+1);
-const backData = {
-	labels : labels,
+const labels_season = Array.from(new Array(10),(x,i)=> i+1);
+const data_season = {
+	labels : labels_season,
 	datasets : [
 		{
 			label:'당일종가',
@@ -189,9 +190,16 @@ const backData = {
 
 		},
 		{
-			label:'평균단가',
+			label:'일반평균',
 			data : [3,6,7,8,5],
 			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',
+			lineTension:0.2
+
+		},
+		{
+			label:'기회평균',
+			data : [3,6,7,8,5],
+			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'yellow',backgroundColor:'yellow',
 			lineTension:0.2
 
 		},
@@ -205,7 +213,7 @@ const backData = {
 
 	]   
 };
-const options = {
+const options_season = {
 	animation : {duration:0},
 	plugins : { legend: {display:false} },
 	responsive:false,
@@ -215,13 +223,14 @@ const options = {
 		y:{ ticks : {color:'lightgray'}, grid:{color:'#272727'}}
 	}
 };
-const config  = {type:'line',data:backData,options:options};
-const myChart = new Chart(ctx, config);
+const config_season  = {type:'line',data:data_season,options:options_season};
+const myChart_season = new Chart(ctx_season, config_season);
 // --------------------------------------------------------------------------------------
-const labels3 = ['Max','Average','Min'];
+const ctx_side= $id('myChart_side');
+const labels_side = ['Max','Average','Min'];
 
-const data3 = {
-  labels: labels3,
+const data_side = {
+  labels: labels_side,
   datasets: [{
     label: ' 현금비중 ',
     data: [ {{D['cash_max']}}, {{D['cash_avg']}}, {{D['cash_min']}}],
@@ -231,9 +240,9 @@ const data3 = {
   }]
 };
 
-const config3 = {
+const config_side = {
   type: 'bar',
-  data: data3,
+  data: data_side,
   plugins:[ChartDataLabels],
   options: {
 	animation : {duration:500},
@@ -254,7 +263,7 @@ const config3 = {
     }
   },
 };
-const myChart3 = new Chart(ctx3, config3); 
+const myChart_side = new Chart(ctx_side, config_side); 
 
 // --------------------------------------------------------------------------------------
 var selected_tr = null
@@ -291,11 +300,16 @@ function check_thisForm() {
 function show_chart(season) {
 	$('#backTestingChart').css({top:'130px',left:'50px'}).show();
 	var clsv = [];
-	var avgv = [];
+	var avgn = [];
+	var avgc = [];
 	var dlne = [];
 
 	$(".clsv"+season).each(function() {clsv.push(parseFloat($(this).text()))});
-	$(".avgv"+season).each(function() {avgv.push(parseFloat($(this).text()))});
+	$(".avgn"+season).each(function() {avgn.push(parseFloat($(this).text()))});
+	$(".avgc"+season).each(function() {
+		tmpv = parseFloat($(this).text());
+		tmpv = (tmpv)? avgc.push(tmpv) : avgc.push(null); 
+	});
 	
 	const t0 = 0.02;
 	const a0 = clsv[0];	const d0 = 1-t0;
@@ -304,59 +318,29 @@ function show_chart(season) {
 	var xticks = clsv.length
 	if (xticks < 30 ) { xticks = 30; }
 	var new_labels = Array.from(new Array(xticks),(x,i)=> i+1);
-	avgv[avgv.length - 1] = avgv[avgv.length - 2]
-	myChart.config.data.labels = new_labels;
-	myChart.config.data.datasets[0].data =  clsv;
-	myChart.config.data.datasets[1].data =  avgv;
-	myChart.config.data.datasets[2].data =  dlne;
-	myChart.update();
+	avgn[avgn.length - 1] = avgn[avgn.length - 2]
+	avgc[avgc.length - 1] = avgc[avgc.length - 2]
+
+	myChart_season.config.data.labels = new_labels;
+	myChart_season.config.data.datasets[0].data =  clsv;
+	myChart_season.config.data.datasets[1].data =  avgn;
+	myChart_season.config.data.datasets[2].data =  avgc;
+	myChart_season.config.data.datasets[3].data =  dlne;
+	myChart_season.update();
 }
 
 // 본챠트 그리기
-const ctx2 = $id('myChart2');
-ctx2.style.backgroundColor = '#33363b';
-ctx2.style.border = '2px solid black';
+const ctx_main = $id('myChart_main');
+ctx_main.style.backgroundColor = '#33363b';
+ctx_main.style.border = '2px solid black';
 
 let close_price = {{D['close_price']|safe}};
 let average_price = {{D['average_price']|safe}};
 let eval_value = {{D['eval_value']|safe}}
 
-// Animation 
-const totalDuration = 20000;
-const delayBetweenPoints = totalDuration / close_price.length;
-const previousY = (ctx) => ctx.index === 0 ? ctx.chart.scales.y.getPixelForValue(100) : ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y;
-const animation = {
-        x: {
-            type: 'number',
-            easing: 'linear',
-            duration: delayBetweenPoints,
-            from: NaN, // the point is initially skipped
-            delay(ctx) {
-                if (ctx.type !== 'data' || ctx.xStarted) {
-                    return 0;
-                }
-                ctx.xStarted = true;
-                return ctx.index * delayBetweenPoints;
-            }
-        },
-        y: {
-            type: 'number',
-            easing: 'linear',
-            duration: delayBetweenPoints,
-            from: previousY,
-            delay(ctx) {
-                if (ctx.type !== 'data' || ctx.yStarted) {
-                    return 0;
-                }
-                ctx.yStarted = true;
-                return ctx.index * delayBetweenPoints;
-            }
-        }
-    };
-
-let labels2 = {{D['chart_date']|safe}};
-const data2 = {
-    labels : labels2,
+let labels_main = {{D['chart_date']|safe}};
+const data_main = {
+    labels : labels_main,
     datasets : [
 		{
             label:' 종가변동',
@@ -379,7 +363,7 @@ const data2 = {
         },
     ]   
 };
-const options2 = {
+const options_main = {
 	animation : { duration:1000	},
 	// animation,
 	plugins : { legend: {display:false}, tooltip:{enabled:false}},
@@ -391,13 +375,13 @@ const options2 = {
 		y1:{ type:'linear', display:true, position:'right'}
     }
 };
-const config2  = {type:'line',data:data2,options:options2};
-const myChart2 = new Chart(ctx2, config2);
+const config_main  = {type:'line',data:data_main,options:options_main};
+const myChart_main = new Chart(ctx_main, config_main);
 
 
 function chart_up_dn(opt) {
-	if(opt==1) { $("#myChart2-div").hide(); $("#backTesting-table").css("marginTop",'100px'); }
-	else {$("#myChart2-div").show(); $("#backTesting-table").css("marginTop",'473px');}
+	if(opt==1) { $("#myChart_main-div").hide(); $("#backTesting-table").css("marginTop",'100px'); }
+	else {$("#myChart_main-div").show(); $("#backTesting-table").css("marginTop",'473px');}
 	// "margin-top:473px"
 }
 //
