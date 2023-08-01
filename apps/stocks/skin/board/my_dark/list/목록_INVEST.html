@@ -13,7 +13,7 @@
 		<canvas id="myChart"  style="width:1125px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
 	</div>
 	<div class="pull-left">
-		<canvas id="myChart_side" style="width:210px;height:308px;background-color:#24272d" onclick="$('#ChanceStrategy').show()"></canvas>
+		<canvas id="myChart_side" style="width:210px;height:305px;background-color:#24272d" onclick="$('#ChanceStrategy').show()"></canvas>
 		<div style="margin-top:6px">
 			<input type='text' name='s_date' class="i-date_1" style="width:85px;text-align:center;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}"> -
 			<input type='text' name='e_date' class="i-date_2" style="width:85px;text-align:center;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}">
@@ -146,7 +146,7 @@
 	</ul>
 </div>
 
-<div id='monthlyProfit' style="opacity:0.9;position:absolute;left:20px;top:538px;padding:5px 10px 5px 10px;">
+<div id='monthlyProfit' style="opacity:0.9;position:absolute;left:20px;top:535px;padding:5px 10px 5px 10px;">
 	<canvas id="monthlyProfitChart" style="width:1125px;height:345px;background-color:#24272d"></canvas>
 </div>
 
@@ -476,7 +476,7 @@ const config_monthly = {
 const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
 $('#monthlyProfit').draggable();
 slice_chart(2);
-function monthlyProfit_toggle() { $('#monthlyProfit').toggle().css({'left':'20px','top':'538px'});}
+function monthlyProfit_toggle() { $('#monthlyProfit').toggle().css({'left':'20px','top':'535px'});}
 </script>
 
 {% endblock %}
