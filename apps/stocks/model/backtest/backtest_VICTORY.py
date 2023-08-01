@@ -322,6 +322,7 @@ class M_backtest_VICTORY(Model) :
         tx['날수'] = self.M['날수']; 
         if self.M['매도수량'] : self.M['날수'] = 0
 
+        tx['기록시즌'] = self.M['기록시즌']
         tx['진행'] = self.M['진행']; tx['기록일자'] = self.M['day']
         tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
         #-----------------------------------------------------------
@@ -339,7 +340,7 @@ class M_backtest_VICTORY(Model) :
 
         tx['보유수량'] = self.M['보유수량']
         tx['총매수금'] = f"{round(self.M['총매수금'],4):,.2f}"
-        tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>{self.M['진행상황']}</span>"
+        tx['평가금액'] = f"{round(self.M['평가금액'],4):,.2f}" if self.M['평가금액'] else f"{self.M['진행상황']}"
         tx['수익현황'] = f"{round(self.M['수익현황'],4):,.2f}"
 
         clr = "#F6CECE" if self.M['수익률'] > 0 else "#CED8F6"

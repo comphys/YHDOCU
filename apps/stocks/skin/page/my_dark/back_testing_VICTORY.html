@@ -144,14 +144,9 @@
 		<tbody>
 			{%- for TR in D['TR'] -%}
 			{% if TR['평가금액']|striptags == '전량매도'  %}
-			<tr style="border-top:2px solid #F3F781;border-bottom:2px solid #F3F781;background-color:black;"> 
+			<tr style="border-top:2px solid #F3F781;border-bottom:2px solid #F3F781;background-color:black;" onclick="show_chart({{TR['기록시즌']}})"> 
 			{% elif TR['평가금액']|striptags == '전략매도' %}
-			<tr style="border-top:2px solid #A9D0F5;border-bottom:2px solid #A9D0F5;background-color:black;">
-			{% elif TR['평가금액']|striptags == '손절매도' %}
-			<tr style="border-top:2px solid #cef6ce;border-bottom:2px solid #cef6ce;background-color:black;"> 
-			{% elif TR['평가금액']|striptags == '부분매도' %}
-			<tr style="border-top:2px solid orange;border-bottom:2px solid orange;background-color:black;"> 
-
+			<tr style="border-top:2px solid #A9D0F5;border-bottom:2px solid #A9D0F5;background-color:black;" onclick="show_chart({{TR['기록시즌']}})">
 			{% else %}
 			<tr>
 			{% endif %}

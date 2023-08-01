@@ -8,7 +8,7 @@ class M_backtest_DEVELOPE(Model) :
 
     def calculate(self)  :
 
-        if  self.M['매수수량'] : 
+        if  self.M['매수수량'] or self.R['매수수량'] : 
             self.M['가용잔액'] -=  self.M['매수금액'];  self.R['기회자금'] -= self.R['매수금액']
             self.M['보유수량'] +=  self.M['매수수량'];  self.R['보유수량'] += self.R['매수수량']
             self.M['총매수금'] +=  self.M['매수금액'];  self.R['총매수금'] += self.R['매수금액']
@@ -19,6 +19,7 @@ class M_backtest_DEVELOPE(Model) :
             if  self.M['비용차감'] : 
                 self.M['추가자금'] -=  self.commission(self.M['매수금액'],1)
                 self.R['기회자금'] -=  self.commission(self.R['매수금액'],1)
+                
  
         if  self.M['매도수량'] :
             self.M['실현수익']  = (self.M['당일종가']-self.M['평균단가'])*self.M['매도수량']  
@@ -119,21 +120,27 @@ class M_backtest_DEVELOPE(Model) :
         if  self.M['당일종가']<= self.buy_price : 
             self.M['매수수량'] = self.M['구매수량']
             거래코드 = 'L' if self.M['매수단계'] is '매수제한' else 'B'
-            self.M['거래코드'] = 거래코드 + str(self.days) if self.M['구매수량'] else ' '
+            self.M['거래코드'] = 거래코드 + str(self.M['매수수량']) if self.M['구매수량'] else ' '
             self.M['매수금액'] = self.M['매수수량'] * self.M['당일종가']
             self.M['진행상황'] = self.M['매수단계']
             
-            if self.R['기회진행'] :
+            if  self.R['기회진행'] :
                 self.R['매수수량'] = self.R['구매수량'] 
                 self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']   
-                self.M['거래코드']+= f"/R({self.R['매수수량']})" if self.M['매수수량'] and self.R['매수수량'] else ' '  
+                self.M['거래코드']+= f"/R{self.R['매수수량']}" if self.M['매수수량'] and self.R['매수수량'] else ' '  
      
             
-        if  not self.R['기회진행'] and self.R['기회가격'] and self.M['날수'] >= 2 and self.M['날수'] <= 6 and self.M['당일종가']<= self.R['기회가격'] :
+        if  not self.R['기회진행'] and self.R['기회가격'] and self.M['날수'] >= 2 and self.M['당일종가']<= self.R['기회가격'] :
             self.R['기회진행'] = True
             self.chance_init()
-            self.M['거래코드'] += f"/R({self.R['찬스수량']})"
-            self.R['매수수량'] = self.R['찬스수량']
+            매수수량R = self.R['찬스수량']
+            매수금액R = 매수수량R * self.M['당일종가']
+            
+            if 매수금액R > self.R['기회자금'] :
+                매수수량R = int(self.R['기회자금']/self.M['당일종가'])
+            
+            self.M['거래코드'] += f"/R{매수수량R}" 
+            self.R['매수수량'] = 매수수량R
             self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']
             
     
@@ -147,8 +154,6 @@ class M_backtest_DEVELOPE(Model) :
             for i in range(0,self.M['날수']+1) : 
                 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
             
-            self.R['가용잔액'] = 가용잔액
-            self.R['추가자금'] = self.R['기회자금'] - 가용잔액
             self.R['기초수량'] = 기초수량
             self.R['찬스수량'] = 찬스수량
             
@@ -177,14 +182,14 @@ class M_backtest_DEVELOPE(Model) :
 
             if  매수금액R > self.R['기회자금']   :
                 매수수량R = my.ceil(self.R['기초수량'] * self.M['위매비중'])
-                매수금액R = 매수수량 * self.M['당일종가']
+                매수금액R = 매수수량R * self.M['당일종가']
                 
                 if  매수금액R > self.R['기회자금']  :  매수수량R = 0        
                 
             self.R['구매수량'] = 매수수량R
         
         else : 
-            self.R['기회가격'] = self.take_chance(-4,self.M['보유수량'],매수수량,self.M['총매수금'])
+            self.R['기회가격'] = self.take_chance(self.M['보유수량'],매수수량,self.M['총매수금'])
         
         
     # ---------------------------------------------------------------------------------------------------------------------
@@ -192,8 +197,9 @@ class M_backtest_DEVELOPE(Model) :
     #
     #
     # ---------------------------------------------------------------------------------------------------------------------
-    def take_chance(self,p,H,n,A) :
+    def take_chance(self,H,n,A) :
         if H == 0 : return 0
+        p = self.R['기회시점']
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)
@@ -234,6 +240,7 @@ class M_backtest_DEVELOPE(Model) :
     def set_value(self,key,val) :
         for k in key :
             self.M[k] = val
+            self.R[k] = val
 
     def test_with_progress(self) :
         self.test_it()
@@ -309,7 +316,7 @@ class M_backtest_DEVELOPE(Model) :
         if self.M['거래코드'] == 'S' : self.M['날수'] = 1; 
         tx['날수'] = self.M['날수']; 
         if self.M['매도수량'] : self.M['날수'] = 0
-
+        tx['기록시즌'] = self.M['기록시즌']
         tx['기록일자'] = self.M['day']
         tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
         #-----------------------------------------------------------
@@ -331,7 +338,7 @@ class M_backtest_DEVELOPE(Model) :
         tx['총매수금'] = f"{round(self.M['총매수금']+self.R['총매수금'],4):,.2f}"
         
         
-        tx['평가금액'] = f"{round(self.M['평가금액']+self.R['평가금액'],4):,.2f}" if self.M['평가금액'] else f"<span onclick='show_chart({self.M['기록시즌']})' style='cursor:pointer'>{self.M['진행상황']}</span>"
+        tx['평가금액'] = f"{round(self.M['평가금액']+self.R['평가금액'],4):,.2f}" if self.M['평가금액'] else f"{self.M['진행상황']}"
         tx['일반수익'] = f"{round(self.M['수익현황'],4):,.2f}"
         tx['기회수익'] = f"{round(self.R['수익현황'],4):,.2f}" 
         
@@ -418,6 +425,7 @@ class M_backtest_DEVELOPE(Model) :
         
         # 리밸런싱 2차 전략
         self.R['기회자금'] = float(self.D['chanceCapital'].replace(',',''))
+        self.R['기회시점'] = float(self.D['chancePoint'])
         self.R['기회가격'] = 0.0
         self.R['기회진행'] = False
         self.R['매수수량'] = 0
@@ -458,7 +466,7 @@ class M_backtest_DEVELOPE(Model) :
             self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
             self.M['진행상황']  = '첫날매수'
             self.M['첫날기록']  = False
-            self.M['거래코드']  = 'S' 
+            self.M['거래코드']  = f"S{self.M['매수수량']}" 
             self.M['매수단계'] = '일반매수'
            
 
