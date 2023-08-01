@@ -99,7 +99,6 @@ class Invest_guide(Control) :
             U['add8'] = '0.00'
 
         if U['add7'] and float(U['add7']) : U['add8'] = round((self.M['당일종가'] / float(U['add7']) - 1) * 100,2)  # 현수익률 if 평균단가 != 0
-        if U['add9'] : U['add18'] = round((self.M['당일종가'] - float(U['add7'])) * U['add9'],2) # 잔량 존재 시 현재수익 계산
         
         U['add19'] = self.M['가용잔액']
         
@@ -107,6 +106,7 @@ class Invest_guide(Control) :
         U['add2']   = '0.00'
         U['add3']   = self.M['현재잔액'] + U['add12'] - U['add11'] #현금합계
         U['add15']  = int(U['add9']) * self.M['당일종가'] #레버가치
+        U['add18']  = round(U['add15']-U['add6'],2) if U['add9'] else 0 # 잔량 존재 시 현재수익 계산
         U['add17']  = U['add3'] + U['add15']  #Total Value
 
         U['add4']   = round(U['add3']  / U['add17'] * 100,2)
