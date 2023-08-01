@@ -54,7 +54,7 @@ class Stock_update(Control) :
         qry = f"INSERT INTO usd_krw (date,usd_krw,wtime) VALUES('{getdate}','{usdkrw}','{w_time}')"
         self.DB.exe(qry)
        
-        self.set_message("환율 업데이트를 완료하였습니다")
+        self.set_message(f"환율 업데이트를 완료하였습니다. {getdate}일 현재 {usdkrw}원 / 1$ 입니다.")
         return self.moveto('board/list/stockHistory/csh=on')
 
     def delete(self) :
