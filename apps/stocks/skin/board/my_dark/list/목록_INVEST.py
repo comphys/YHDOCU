@@ -201,6 +201,9 @@ class 목록_INVEST(SKIN) :
                             tx[key] = f"<td class='list-bulls'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bears'>{profit:,.2f}</td>"
                         else : 
                             tx[key] = "<td class='list-normal'>0.00</td>"
+                            
+                    elif key == 'add14' :
+                        tx[key] = f"<td class='ohlc-price' style='text-align:right;color:#E0F8E0;cursor:pointer'>{txt}</td>"
 
                     elif key == 'add18' : 
                         profit = float(txt.replace(',',''))

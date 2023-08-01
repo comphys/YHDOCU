@@ -165,6 +165,16 @@ var show_dollar   = true;
 var dollar_notice = [];
 $("#INVEST_INFO .exchange").each(function(){ dollar_notice.push($(this).text());});
 
+$(".ohlc-price").click(function(){
+	if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
+	var date = $(this).parent().children(':first-child').text();
+	var url = uri('linkurl') + 'page/get_ohlc/back_testing/date=' + date + '/code=SOXL';
+	var ypos= mouse_Y-100;
+	if(ypos > 800) ypos = ypos-200
+	var o = {id:'OHLC_DAY', width:'430px', x:323, y:ypos,header:false,footer:false,drag:false}
+	h_dialog.load(url,o)		
+});
+
 function ctv(val,opt='f') { a = val.replace(/,/g,'');  if(opt=='i') return parseInt(a);  else return parseFloat(a);}
 
 function exchange_toggle(sel) {
