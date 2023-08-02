@@ -324,7 +324,7 @@ class M_backtest_DEVELOPE(Model) :
         tx['매수금액'] = f"{round(self.M['매수금액']+self.R['매수금액'],4):,.3f}" if self.M['매수금액'] else ' '
         tx['종합평균'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.T['평균단가'],4):,.4f}</span>"
         tx['일반평균'] = f"<span class='avgn{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.4f}</span>"
-        tx['기회평균'] = f"<span class='avgc{self.M['기록시즌']}'>{round(self.R['평균단가'],4):,.4f}</span>"
+        tx['기회평균'] = f"<span class='avgc{self.M['기록시즌']}'>{round(self.R['평균단가'],4):,.4f}</span>" if self.R['평균단가'] else f"<span class='avgc{self.M['기록시즌']}'> </span>"
         #-----------------------------------------------------------
         tx['매도수량'] = f"{self.M['매도수량']+self.R['매도수량']:,}" if self.M['매도수량'] else ' '
         tx['진행현황'] = f"{round(self.M['매도금액']+self.R['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['거래코드']
