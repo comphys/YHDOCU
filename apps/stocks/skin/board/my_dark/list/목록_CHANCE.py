@@ -115,9 +115,6 @@ class 목록_CHANCE(SKIN) :
                     cp = self.take_chance(p,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                     self.D['cp'].append(cp)
                 
-                self.info(self.D['cp'])
-                self.info(self.D['cc'])
-                
                 찬스가격 = self.D['cp'][4]
                 self.D['찬스일자'] = last_date
                 self.D['찬스가격'] = f"{찬스가격:,.2f}"
