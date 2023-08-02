@@ -58,7 +58,7 @@ class 목록_CHANCE(SKIN) :
                 for x in self.D['chart_date'] : self.D['chance_average'][x] = cx.get(x,'null')
                     
             # --------------
-            현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
+            현재환율 = self.DB.one("SELECT CAST(usd_krw AS FLOAT) FROM usd_krw ORDER BY rowid DESC LIMIT 1")
             총투자금 = float(LD['sub27'])
             총수익금 = float(LD['add17']) - 총투자금
             총수익률 = (float(LD['add17'])/총투자금-1) * 100 if 총투자금 else 0
@@ -110,7 +110,17 @@ class 목록_CHANCE(SKIN) :
                 for i in range(0,int(TD['sub12'])+1) : 
                     찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
-                찬스가격 = self.take_chance(-4,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                self.D['cp'] = []
+                self.D['cc'] = []
+                for p in range(0,-11,-1) :
+                    cp = self.take_chance(p,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                    self.D['cp'].append(cp)
+                    self.D['cc'].append(f"{cp*찬스수량:,.2f}")
+                
+                self.info(self.D['cp'])
+                self.info(self.D['cc'])
+                
+                찬스가격 = self.D['cp'][4]
                 self.D['찬스일자'] = last_date
                 self.D['찬스가격'] = f"{찬스가격:,.2f}"
                 self.D['찬스수량'] = f"{찬스수량:,}"
@@ -120,10 +130,8 @@ class 목록_CHANCE(SKIN) :
                 self.D['찬스변동'] = round((찬스가격/float(TD['add14']) -1) * 100,2)
                 self.D['찬스하강'] = TD['sub6']
                 self.D['찬스근거'] = target
-                기초환율 = self.DB.one("SELECT CAST(usd_krw AS FLOAT) FROM usd_krw ORDER BY rowid DESC LIMIT 1")
-                self.D['환율변환'] = f"{찬스가격*찬스수량* 기초환율:,.0f}"
-                self.D['기초환율'] = f"{기초환율:,.2f}"
-
+                self.D['환율변환'] = f"{찬스가격*찬스수량* 현재환율:,.0f}"
+   
                 self.D['target_value'] = [TD['sub20']] * chart_len
                 self.D['chance_value'] = [self.D['찬스가격']] * chart_len
                 

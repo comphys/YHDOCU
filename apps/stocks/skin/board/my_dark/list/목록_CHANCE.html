@@ -120,21 +120,33 @@
 </div>
 
 {% if D['진행상황'] == '대기상태' %}
-<div id="Next-Strategy" style="opacity:0.7;position:fixed;left:1160px;top:71px;width:240px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px">
-    <span style="font-style: italic"> 기회 투자 전략</span><br><br>
+<div id="Next-Strategy" style="opacity:0.9;position:fixed;left:1155px;top:71px;width:250px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px">
+    <span style="font-style: italic"> 기회 투자 전략 <span id="cpoint">4</span> % point</span><br><br>
 	<ul style="margin-left:20px">
-		<li>기회가격 : {{D['찬스가격']}} ({{D['찬스변동']}}%) </li>
+		<li>기회가격 : <span id="cp_p">{{D['찬스가격']}}</span> (<span id="cp_d">{{D['찬스변동']}}</span>%)</li>
 		<li>기회수량 : {{D['찬스수량']}} </li>
-		<li>기회자본 : {{D['찬스자본']}} </li>
-		<li>환율적용 : {{D['환율변환']}} </li>
+		<li>기회자본 : $ <span id="cp_u">{{D['찬스자본']}}</span> </li>
+		<li>환율적용 : <span id="cp_k">{{D['환율변환']}} </span>원 </li>
 		<li>----------------------------</li>
 		<li>경과일수 : {{D['찬스일수']}} </li>
 		<li>현재주가 : {{D['찬스주가']}} </li>
 		<li>연속하강 : {{D['찬스하강']}} </li>
 		<li>기초지표 : {{D['찬스근거']}} </li>
 		<li>기초일자 : {{D['찬스일자']}} </li>
-		<li>기초환율 : {{D['기초환율']}} </li>
+		<li>기초환율 : {{D['현재환율']}} </li>
 	</ul>
+	<br>
+	<span class="cp">0</span>
+	<span class="cp">1</span>
+	<span class="cp">2</span>
+	<span class="cp">3</span>
+	<span class="cp">4</span>
+	<span class="cp">5</span>
+	<span class="cp">6</span>
+	<span class="cp">7</span>
+	<span class="cp">8</span>
+	<span class="cp">9</span>
+	<span class="cp">10</span>
 </div>
 {% endif %}
 
@@ -150,6 +162,34 @@ $(".list-bears2,.list-bulls2").click(function(){
 	let won = Math.round(ex_rate * val);
 	h_dialog.notice(won.toLocaleString()+'원',{x:mouse_X-60,y:mouse_Y-60,width:150});
 });
+
+$(".cp").click(function(){
+	let cp_point = {{D['cp']}};
+	let cp_amount = ctv("{{D['찬스수량']}}",'i');
+	let ex_rate  = ctv("{{D['현재환율']}}");
+	let cur_price  = ctv("{{D['찬스주가']}}");
+	let position = ctv($(this).text(),'i');
+	
+	let cp_price  = cp_point[position];
+	let cp_uprice = round_up(cp_amount * cp_price,2);
+	let cp_kprice = Math.round(cp_uprice * ex_rate); 
+	let cp_drate  = round_up((cp_price/cur_price -1)*100,2)
+
+
+	$("#cpoint").text(position);
+	$("#cp_p").text(cp_price.toLocaleString('ko-KR'));
+	$("#cp_u").text(cp_uprice.toLocaleString('ko-KR'));
+	$("#cp_k").text(cp_kprice.toLocaleString('ko-KR'));
+	$("#cp_d").text(cp_drate);
+
+	myChart.config.data.datasets[3].data.fill(cp_price);
+	myChart.update();
+}).mouseover(function(){$(this).addClass('cp-over')}).mouseout(function(){$(this).removeClass('cp-over')});
+
+function round_up(n,decimals=2){
+    multiplier = 10 ** decimals;
+    return Math.ceil(n * multiplier) / multiplier;
+ }
 
 function ctv(val,opt='f') { a = val.replace(/,/g,'');  if(opt=='i') return parseInt(a);  else return parseFloat(a);}
 
