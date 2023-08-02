@@ -111,11 +111,9 @@ class 목록_CHANCE(SKIN) :
                     찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
                 self.D['cp'] = []
-                self.D['cc'] = []
                 for p in range(0,-11,-1) :
                     cp = self.take_chance(p,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                     self.D['cp'].append(cp)
-                    self.D['cc'].append(f"{cp*찬스수량:,.2f}")
                 
                 self.info(self.D['cp'])
                 self.info(self.D['cc'])
