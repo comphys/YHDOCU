@@ -26,6 +26,8 @@ class 목록_INVEST(SKIN) :
         self.DB.odr = "add0 DESC"
 
         current_date = self.D['LIST'][0]['add0']
+        self.D['limit_date'] = self.SYS.gets.get('date2','')
+        
         self.DB.wre = f"add0 <= '{current_date}'"
 
         chart_data = self.DB.get("add0,add14,add17,add7,sub28,add8",assoc=True)

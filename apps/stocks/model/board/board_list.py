@@ -32,6 +32,9 @@ class M_board_list(Model) :
         else : session['CSH'].clear()
 
     def list_main(self) :
+        
+        self.date1 = self.gets.get('date1','')
+        self.date2 = self.gets.get('date2','')
 
         C_search = ['brother <= 0']
 
@@ -49,6 +52,9 @@ class M_board_list(Model) :
                 if val and 'csh' in key : C_search.append(f"{key.replace('csh_','')} = '{val}' ")
 
         tbl = f"h_{self.D['bid']}_board"
+        
+        if self.date1 : C_search.append(f"add0 >='{self.date1}'")
+        if self.date2 : C_search.append(f"add0 <='{self.date2}'")
 
         Cond = 'WHERE '+ ' AND '.join(C_search) 
 
@@ -94,17 +100,21 @@ class M_board_list(Model) :
         if self.D['Sort']  : pagelist += '/sort=' + self.D["Sort"]
         if self.D['Sort1'] : pagelist += '/sort1=' + self.D["Sort1"]
 
+        append = ''
+        if self.date1 : append += f"/date1={self.date1}" 
+        if self.date2 : append += f"/date2={self.date2}"
+
         page_number_list =''
         if page_start > 1 :
-            page_number_list += f"<li><a href='{pagelist}/page=1'>1</a></li>"
-            page_number_list += f"<li><a href='{pagelist}/page={page_start-1}'>«</a></li>"
+            page_number_list += f"<li><a href='{pagelist}/page=1{append}'>1</a></li>"
+            page_number_list += f"<li><a href='{pagelist}/page={page_start-1}{append}'>«</a></li>"
         
         for i in range(page_start,page_end+1) :
             active = "class='active'" if this_page == i else ''
-            page_number_list += f"<li {active}><a href='{pagelist}/page={i}'>{i}</a></li>"
+            page_number_list += f"<li {active}><a href='{pagelist}/page={i}{append}'>{i}</a></li>"
 
         if page_end < page_total :
-            page_number_list += f"<li><a href='{pagelist}/page={page_end+1}'>»</a></li>"
-            page_number_list += f"<li><a href='{pagelist}/page={page_total}'>{page_total}</a></li>"
+            page_number_list += f"<li><a href='{pagelist}/page={page_end+1}{append}'>»</a></li>"
+            page_number_list += f"<li><a href='{pagelist}/page={page_total}{append}'>{page_total}</a></li>"
         
         self.D['Pagination'] =page_number_list

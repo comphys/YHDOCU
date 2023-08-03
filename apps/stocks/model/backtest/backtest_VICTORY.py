@@ -142,7 +142,7 @@ class M_backtest_VICTORY(Model) :
     def set_price(self) :
         self.days = self.M['날수'] + 1
         self.buy_price = round(self.M['전일종가']*self.M['평단가치'],2)
-        
+       
         self.sell_price = my.round_up(self.M['평균단가'] * self.M['첫매가치'])
 
         if  self.M['매수단계'] in ('매수제한','매수중단') : self.sell_price = my.round_up(self.M['평균단가'] * self.M['둘매가치'])

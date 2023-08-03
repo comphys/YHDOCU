@@ -28,13 +28,14 @@ function uri(parameter){
 	if(typeof parameter == 'number' && parameter % 1 == 0) { var seg = parameter + 3; return (segment[seg])? segment[seg]: false;}
 	
 	switch(parameter){
-		case 'app': return segment[0];
-		case 'control': return segment[1];
+		case 'app': return segment[0]; 
+		case 'control': return segment[1]; 
 		case 'method':return (segment[2])? segment[2]:'index';
 		case 'gets':return segment
 		case 'base' : return location.protocol+'//'+location.hostname; 
 		case 'linkurl' : return '/'+ segment[0] + '/';
 		case 'last' : return segment[cnt-1];
+		case 'page' : return '/'+ segment[0] + '/' + segment[1] + '/' + segment[2] + '/';
 		default: 
 			if (parameter in qry) return qry[parameter];
 			else return '';

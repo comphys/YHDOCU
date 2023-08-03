@@ -126,6 +126,7 @@
 		<a href="{{D['_bse']}}boards-invest_guide/oneWrite/{{D['bid']}}"><button class='btn btn-small btn-red'>기 록</button></a>&nbsp;
 	</div>
 	<div class='pagination pull-right'>
+		<input id="the-last-date" type='text' style='height:26px;text-align:center;vertical-align:top;width:100px' value="{{D['limit_date']}}" />
 		<ul>{{D['Pagination']|safe}}</ul>
 	</div>
 </div>
@@ -153,6 +154,7 @@
 <script>
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+$("#the-last-date").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, direction:false,onSelect:function(){limt_period()}});
 
 $(".list-bears2,.list-bulls2").click(function(){
 	let ex_rate = ctv("{{D['현재환율']}}"); let val = ctv($(this).text()); 
@@ -487,6 +489,13 @@ const myChart_monthly = new Chart(ctx_monthly, config_monthly);
 $('#monthlyProfit').draggable();
 slice_chart(2);
 function monthlyProfit_toggle() { $('#monthlyProfit').toggle().css({'left':'20px','top':'535px'});}
+
+function limt_period() {
+	let lday = $("#the-last-date").val();
+	let url  = uri('page') + uri(0) + '/date2=' + lday;
+	location.href = url;
+}
+
 </script>
 
 {% endblock %}
