@@ -131,7 +131,7 @@
 </div>
 
 <div id="ChanceStrategy" style="display:none;opacity:0.7;position:absolute;left:1167px;top:62px;width:240px;height:320px;background-color: #393f4a;border:2px solid black;padding:10px" onclick="$(this).hide()">
-    <span style="font-style: italic"> 기회 투자 전략</span><br><br>
+    <span style="font-style: italic"> 기회 투자 전략 <span id="cpoint">4</span> % point</span><br><br>
 	<ul style="margin-left:20px">
 		<li>기회가격 : {{D['찬스가오']}} ({{D['찬스변동']}}%) </li>
 		<li>기회수량 : {{D['찬스수량']}} </li>
@@ -465,7 +465,7 @@ const config_monthly = {
 	animation : {duration:500},
 	layout:{padding:10},
     plugins : { legend: {display:false},
-				title:{display:true,color:'gray',align:'end',font:{size:14,style:'italic',weight:'normal'},text:"{{D['손익합계']}}"},
+				title:{display:true,color:'#F7F8E0',align:'end',font:{size:14,style:'italic',weight:'normal'},text:"{{D['손익합계']}}"},
 				tooltip : {enabled:false},
 				datalabels : {color:'white', anchor:'end', align:'end', offset: 3, font:{size:12}}			
 	},
