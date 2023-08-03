@@ -419,7 +419,7 @@ function slice_chart(opt) {
 		myChart.config.data.datasets[2].data =  total_value.slice(new_s,new_e);
 		myChart.config.data.datasets[3].data =  sell_price.slice(new_s,new_e);
 		myChart.config.data.datasets[4].data =  chance_price.slice(new_s,new_e);
-		if(myChart.config.data.datasets[3].data.length<=40 && the_current_day.slice(2) == end_date) {
+		if(myChart.config.data.datasets[3].data.length<=42 && the_current_day.slice(2) == end_date) {
 		   myChart.config.data.datasets[2].data.fill(null);
 		   myChart.config.data.datasets[3].data.fill(sellP);
 		   myChart.config.data.datasets[4].data.fill(chanP);

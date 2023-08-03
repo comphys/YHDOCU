@@ -107,7 +107,7 @@ class 목록_INVEST(SKIN) :
             self.D['현이익률'] = f"{(float(LD['add14'])/평단가2 - 1)*100:,.2f}" if 평단가2 else '0.0'
             self.D['현재시즌'] = LD['sub1'] ; 일수 = int(LD['sub12']); 시즌 = int(self.D['현재시즌'])
             
-            slice_first = -40 if chart_slice > 40 else 0
+            slice_first = -42 if chart_slice > 42 else 0
             self.D['단기첫날'] = '20'+self.D['chart_date'][slice_first]
             self.D['경과일수'] = f"{int(LD['sub12']):02d}"
 
