@@ -52,10 +52,10 @@ class 목록_CHANCE(SKIN) :
             LD = self.DB.get_line('add3,add6,add7,add9,add14,add17,sub2,sub3,sub5,sub6,sub19,sub20,sub25,sub26,sub27,sub28')
             CD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT) FROM {self.DB.tbl} WHERE CAST(add7 as FLOAT) != 0.0 AND add0 BETWEEN '{first_date}' AND '{last_date}'") 
             cx = {}
-            self.D['chance_average'] = {}
+            self.D['chance_average'] = []
             if CD :
                 for c in CD : cx[c[0][2:]] = c[1]
-                for x in self.D['chart_date'] : self.D['chance_average'][x] = cx.get(x,'null')
+                for x in self.D['chart_date'] : self.D['chance_average'].append(cx.get(x,'null'))
                     
             # --------------
             현재환율 = self.DB.one("SELECT CAST(usd_krw AS FLOAT) FROM usd_krw ORDER BY rowid DESC LIMIT 1")
@@ -130,7 +130,14 @@ class 목록_CHANCE(SKIN) :
                 self.D['target_value'] = [TD['sub20']] * chart_len
                 self.D['chance_value'] = [self.D['찬스가격']] * chart_len
                 
-                self.D['진행상황'] = '현재진행' if int(LD['add9'].replace(',','')) != 0 else '대기상태'
+                self.D['타겟상태'] = [int(TD['add9']),int(TD['sub2']),float(TD['add6'])]
+                if int(LD['add9'].replace(',','')) != 0 :
+                    self.D['진행상황'] = 'true'
+                    self.D['기회상태'] = [int(LD['add9']),int(LD['sub2']),float(LD['add6'])]
+                    self.D['찬스수량'] = f"{int(LD['sub2']):,}"
+                else :
+                    self.D['진행상황'] = 'false'
+                    self.D['기회상태'] = [0,찬스수량,0.0]
 
 
     def take_chance(self,p,H,n,A) :

@@ -16,6 +16,7 @@
 	</div>
 </div>
 
+<div style="position:absolute;left:1072px;top:72px;width:71px;height:350px;border:2px solid black;background-color:lightgreen;opacity:0.1" onclick="chart_update(1)"></div>
 {% if D['TR'] %}
 
 
@@ -119,13 +120,13 @@
 	</div>
 </div>
 
-{% if D['진행상황'] == '대기상태' %}
-<div id="Next-Strategy" style="opacity:0.9;position:fixed;left:1155px;top:71px;width:250px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px">
+
+<div id="Next-Strategy" style="opacity:0.8;position:absolute;left:1155px;top:71px;width:250px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px">
     <span style="font-style: italic"> 기회 투자 전략 <span id="cpoint">4</span> % point</span><br><br>
 	<ul style="margin-left:20px">
 		<li>기회가격 : <span id="cp_p">{{D['찬스가격']}}</span> (<span id="cp_d">{{D['찬스변동']}}</span>%)</li>
-		<li>기회수량 : {{D['찬스수량']}} </li>
-		<li>기회자본 : $<span id="cp_u">{{D['찬스자본']}}</span> </li>
+		<li>기회수량 : <span id="cp_n">{{D['찬스수량']}}</span></li>
+		<li>기회자본 : $ <span id="cp_u">{{D['찬스자본']}}</span> </li>
 		<li>환율적용 : <span id="cp_k">{{D['환율변환']}}</span>원 </li>
 		<li>----------------------------</li>
 		<li>경과일수 : {{D['찬스일수']}} </li>
@@ -148,7 +149,7 @@
 	<span class="cp">9</span>
 	<span class="cp">10</span>
 </div>
-{% endif %}
+
 
 
 <script>
@@ -163,28 +164,46 @@ $(".list-bears2,.list-bulls2").click(function(){
 	h_dialog.notice(won.toLocaleString()+'원',{x:mouse_X-60,y:mouse_Y-60,width:150});
 });
 
-$(".cp").click(function(){
+$(".cp").click(chart_update).mouseover(function(){$(this).addClass('cp-over')}).mouseout(function(){$(this).removeClass('cp-over')});
+
+function chart_update(opt=0) {
+
 	let cp_point = {{D['cp']}};
+	let state = {{D['진행상황']}};
+	let target = {{D['타겟상태']}};
+	let chance = {{D['기회상태']}};
+
 	let cp_amount = ctv("{{D['찬스수량']}}",'i');
 	let ex_rate  = ctv("{{D['현재환율']}}");
 	let cur_price  = ctv("{{D['찬스주가']}}");
-	let position = ctv($(this).text(),'i');
-	
-	let cp_price  = cp_point[position];
-	let cp_uprice = round_up(cp_amount * cp_price,2);
-	let cp_kprice = Math.round(cp_uprice * ex_rate); 
-	let cp_drate  = round_up((cp_price/cur_price -1)*100,2)
+	let position = -ctv($(this).text(),'i');
+	let cp_price  = cp_point[-position];
 
+	if(opt==1) { cp_price  = {{D['target_value'][0]}}; position='V'; cp_amount = 0;}
+
+	let arr_len = myChart.config.data.labels.length
+	let cp_drate  = round_up((cp_price/cur_price -1)*100,2);
+	if(cp_drate > 2.2) {target[1]=0, chance[1]=0; cp_amount = 0;}
+	let cp_uprice = round_up(cp_amount * cp_price,2);
+	let cp_kprice = Math.round(cp_uprice * ex_rate);
 
 	$("#cpoint").text(position);
-	$("#cp_p").text(cp_price.toLocaleString('ko-KR'));
-	$("#cp_u").text(cp_uprice.toLocaleString('ko-KR'));
-	$("#cp_k").text(cp_kprice.toLocaleString('ko-KR'));
+	$("#cp_p").text(cp_price.toLocaleString());
+	$("#cp_n").text(cp_amount.toLocaleString());
+	$("#cp_u").text(cp_uprice.toLocaleString());
+	$("#cp_k").text(cp_kprice.toLocaleString());
 	$("#cp_d").text(cp_drate);
 
+	n_t_avg = (target[2]+ (target[1] * cp_price)) /(target[0]+target[1]);
+	n_c_avg = (chance[2]+ (chance[1] * cp_price)) /(chance[0]+chance[1]);
+
+	myChart.config.data.datasets[0].data[arr_len-1] = cp_price;
+	myChart.config.data.datasets[1].data[arr_len-1] = n_t_avg;
+	myChart.config.data.datasets[2].data.fill(n_t_avg * 1.022);
 	myChart.config.data.datasets[3].data.fill(cp_price);
+	myChart.config.data.datasets[4].data[arr_len-1] = n_c_avg;
 	myChart.update();
-}).mouseover(function(){$(this).addClass('cp-over')}).mouseout(function(){$(this).removeClass('cp-over')});
+}
 
 function round_up(n,decimals=2){
     multiplier = 10 ** decimals;
@@ -224,12 +243,12 @@ const ctx2= $id('myChart2');
 ctx.style.backgroundColor = '#33363b';
 ctx.style.border = '2px solid black';
 
-let labels = {{D['chart_date']|safe}};
-let close_price = {{D['close_price']|safe}};
-let soxl_average = {{D['soxl_average']|safe}};
-let target_value = {{D['target_value']|safe}};
-let chance_value = {{D['chance_value']|safe}};
-let chance_average = {{D['chance_average']|safe}};
+let labels = {{D['chart_date']|safe}};				labels.push('NEXT');
+let close_price = {{D['close_price']|safe}}; 		close_price.push(null);
+let soxl_average = {{D['soxl_average']|safe}};		soxl_average.push(null);
+let target_value = {{D['target_value']|safe}};		target_value.push(null);
+let chance_value = {{D['chance_value']|safe}};		chance_value.push(null);
+let chance_average = {{D['chance_average']|safe}};	chance_average.push(null);
 
 const data1 = {
     labels : labels,
@@ -309,7 +328,7 @@ const config2 = {
   },
 };
 const myChart2 = new Chart(ctx2, config2); 
-
+chart_update(1);
 </script>
 
 {% endblock %}
