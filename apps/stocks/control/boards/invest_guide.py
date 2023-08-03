@@ -407,12 +407,12 @@ class Invest_guide(Control) :
         self.DB.wre = f"add0='{theDay}'"
         TD = self.DB.get_line('add6,add9,add14,sub1,sub2,sub4,sub5,sub6,sub12,sub18,sub19,sub20')
 
-        가용잔액 = int(float(현재잔액 * 2/3))
+        가용잔액 = int(현재잔액 * 2/3)
         추가자금 = 현재잔액 - 가용잔액 
         일매수금 = int(가용잔액/22)
         매수비율 = 일매수금 / int(TD['sub4']) 
-        기초수량 = int(매수비율 * int(TD['sub18']))
-
+        기초수량 = my.ceil(매수비율 * int(TD['sub18']))
+        
         변동수량 = 0    
         for i in range(0,int(TD['sub12'])) : 
             변동수량 += my.ceil(기초수량 *(i*1.25 + 1))
