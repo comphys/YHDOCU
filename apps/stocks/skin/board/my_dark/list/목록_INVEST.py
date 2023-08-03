@@ -25,10 +25,8 @@ class 목록_INVEST(SKIN) :
         self.DB.tbl = self.D['tbl']
         self.DB.odr = "add0 DESC"
 
-        current_date = self.D['LIST'][0]['add0']
         self.D['limit_date'] = self.SYS.gets.get('date2','')
-        
-        self.DB.wre = f"add0 <= '{current_date}'"
+        if self.D['limit_date'] : self.DB.wre = f"add0 <='{self.D['limit_date']}'"
 
         chart_data = self.DB.get("add0,add14,add17,add7,sub28,add8",assoc=True)
 
@@ -150,7 +148,9 @@ class 목록_INVEST(SKIN) :
                 self.D['기초환율'] = f"{현재환율:,.2f}"
 
             # 월별 실현손익
-            qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {self.D['tbl']} WHERE CAST(add12 as float) > 0 and add0 <='{current_date}' GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
+            qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {self.D['tbl']} WHERE CAST(add12 as float) > 0 "
+            if self.D['limit_date'] : qry += f"and add0 <='{self.D['limit_date']}' " 
+            qry += "GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
             monProfit = self.DB.exe(qry)
             self.D['월별구분'] = []
             self.D['월별이익'] = []
