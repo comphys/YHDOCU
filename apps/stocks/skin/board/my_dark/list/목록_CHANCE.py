@@ -49,7 +49,7 @@ class 목록_CHANCE(SKIN) :
             self.DB.tbl = self.D['tbl']
             prev_date = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
             self.DB.wre = f"add0='{prev_date}'"
-            LD = self.DB.get_line('add3,add6,add7,add9,add14,add17,sub2,sub3,sub5,sub6,sub19,sub20,sub25,sub26,sub27,sub28')
+            LD = self.DB.get_line('add3,add4,add6,add7,add9,add14,add16,add17,sub2,sub3,sub5,sub6,sub19,sub20,sub25,sub26,sub27,sub28')
             CD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT) FROM {self.DB.tbl} WHERE CAST(add7 as FLOAT) != 0.0 AND add0 BETWEEN '{first_date}' AND '{last_date}'") 
             cx = {}
             self.D['chance_average'] = []
@@ -93,7 +93,7 @@ class 목록_CHANCE(SKIN) :
             self.DB.wre = f"add0 = '{last_date}'"
             TD = self.DB.get_line("add6,add9,add14,sub2,sub4,sub6,sub12,sub18,sub20,sub28")
 
-            self.D['chart_percent'] = [float(TD['sub28']),float(LD['sub28'])]
+            self.D['chart_percent'] = [float(LD['add4']),float(LD['add16'])]
 
             chart_len = len(chart_data)
             self.D['target_value'] = ['null'] * chart_len
@@ -115,7 +115,8 @@ class 목록_CHANCE(SKIN) :
                     cp = self.take_chance(p,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                     self.D['cp'].append(cp)
                 
-                찬스가격 = self.D['cp'][4]
+                # 찬스가격은 타겟 데이타의 -2% 지점
+                찬스가격 = self.D['cp'][2]
                 self.D['찬스일자'] = last_date
                 self.D['찬스가격'] = f"{찬스가격:,.2f}"
                 self.D['찬스수량'] = f"{찬스수량:,}"

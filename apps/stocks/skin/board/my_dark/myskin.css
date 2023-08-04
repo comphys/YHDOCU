@@ -34,7 +34,7 @@
 #send-to-mobile-text {display:inline-block;color:cyan;outline:none;width:600px;white-space:pre-wrap;}
 #send-to-mobile-send {display:inline-block;color:yellow;width:80px;text-align:right;}
 #extra-info-toggle{display:block;}
-.cp {font-weight:bold;color:gray;cursor:pointer;display:inline-block;width:14px;text-align:center;}
+.cp {font-weight:bold;color:gray;cursor:pointer;display:inline-block;width:15px;text-align:center;}
 .cp-over {color:yellow;font-size:16px;}
 #cpoint {font-weight:bold;color:yellow;font-size:16px;}
 /* 

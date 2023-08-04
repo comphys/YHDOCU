@@ -120,7 +120,9 @@ class 목록_INVEST(SKIN) :
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
             self.D['현재환율'] = f"{현재환율:,.2f}"
-            찬스가격 = self.take_chance(-4,int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
+            
+            # 찬스가격은 -2% 지점 
+            찬스가격 = self.take_chance(-2,int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
             self.D['찬스가격'] = self.D['매도단가'] if 찬스가격 == 0 else 찬스가격
             
             # ------------- 기회 투자 전략 
