@@ -4,7 +4,7 @@
 <div class="row-row">
 <div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
 <br>
-<div class="well clearfix">
+<div class="well clearfix" style="border-radius:0px">
     <form method='post' name='stock_back_testing' action="{{D['_bse']}}page/backtest/{{D['bid']}}" onsubmit='return check_thisForm()'>
     <div class="pull-left">
     <div class='select' style='margin-right:10px;vertical-align:bottom'>
@@ -151,7 +151,7 @@
 			<tr>
 			{% endif %}
 				<td style='text-align:center'>{{TR['날수']}}</td>
-				<td class='if-this-day'>{{TR['진행']}}</td>
+				<td>{{TR['진행']}}</td>
 				<td class='if-the-day'>{{TR['기록일자']}}</td>
 				<td class='ohlc-price' style='text-align:right;cursor:pointer'>{{TR['당일종가']|safe}}</td>
 				<td style='text-align:right'>{{TR['매수수량']}}</td>
@@ -175,8 +175,8 @@
 {% endif %}
 {% endif %}
 
-<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1420px;background-color:#24272d;padding:20px;border:2px solid black;">
-	<canvas id="mybackTestChart" style="width:100%;height:280px;background-color:#24272d"></canvas>
+<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1450px;background-color:#24272d;padding:20px;border:2px solid black;">
+	<canvas id="mybackTestChart" style="width:100%;height:310px;background-color:#24272d"></canvas>
 </div>
 
 
@@ -278,42 +278,6 @@ $(document).ready(function(){
 		var progress=$(this).prev().text(); $("input[name='progress']").val(progress);
 	});
 
-	$(".if-this-day").click(function(){
-		if( selected_tr ) {	
-			$(selected_tr).css("backgroundColor",'')
-			h_dialog.close("TEST_DAY");
-			h_dialog.close("TEST_IF25");
-			h_dialog.close("TEST_IF50");
-			h_dialog.close("TEST_IF75");
-			selected_tr = null
-		} else 
-		{
-			selected_tr = $(this).parent()
-			$(selected_tr).css("backgroundColor","black")
-			var date = $(this).next().text();
-			var ypos= mouse_Y
-			if(ypos > 800) ypos = ypos-280
-
-			url = uri('linkurl') + 'page/test_theday/back_testing/date=' + date;
-			o = {id:'TEST_DAY', width:'200px', x:240, y:ypos,header:false,footer:false,drag:false}
-			h_dialog.load(url,o)
-
-			var url = uri('linkurl') + 'page/test_if/back_testing/progress=25.0/date=' + date;
-			var o = {id:'TEST_IF25', width:'260px', x:450, y:ypos,header:false,footer:false,drag:false}
-			h_dialog.load(url,o);
-
-			var url = uri('linkurl') + 'page/test_if/back_testing/progress=50.0/date=' + date;
-			var o = {id:'TEST_IF50', width:'260px', x:720, y:ypos,header:false,footer:false,drag:false}
-			h_dialog.load(url,o);
-
-			var url = uri('linkurl') + 'page/test_if/back_testing/progress=75.0/date=' + date;
-			var o = {id:'TEST_IF75', width:'260px', x:990, y:ypos,header:false,footer:false,drag:false}
-			h_dialog.load(url,o);
-
-		}
-	});
-
-
 	$(".ohlc-price").click(function(){
 		if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
 		var code = $("input[name='code']").val()
@@ -338,7 +302,7 @@ function check_thisForm() {
 }
 
 function show_chart(season) {
-	$('#backTestingChart').css({top:'130px',left:'50px'}).show();
+	$('#backTestingChart').css({top:'110px',left:'32px'}).show();
 	var clsv = [];
 	var avgv = [];
 	var ulne = [];
