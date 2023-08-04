@@ -148,9 +148,8 @@ class M_backtest_VICTORY(Model) :
         if  self.M['매수단계'] in ('매수제한','매수중단') : self.sell_price = my.round_up(self.M['평균단가'] * self.M['둘매가치'])
         if  self.M['손실회수'] and self.days <= self.M['회수기한'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['전화위복'])
         if  self.days >= self.M['강매시작'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['강매가치'])
-
         if self.buy_price >= self.sell_price : self.buy_price = self.sell_price - 0.01 
-        # self.buy_price = max(self.M['평균단가'],self.sell_price)
+        
 
     def normal_sell(self) :
         
