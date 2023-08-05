@@ -23,7 +23,7 @@ class 목록_CHANCE(SKIN) :
         
 
     def chart(self) :
-        target = self.DB.one(f"SELECT extra1 FROM h_board_config WHERE bid='{self.SYS.parm[0]}'")
+        target,cp_point = self.DB.oneline(f"SELECT extra1,extra2 FROM h_board_config WHERE bid='{self.SYS.parm[0]}'")
         self.DB.clear()
         self.DB.tbl = f"h_{target}_board"
         self.DB.odr = "add0 DESC"
@@ -116,7 +116,7 @@ class 목록_CHANCE(SKIN) :
                     self.D['cp'].append(cp)
                 
                 # 찬스가격은 타겟 데이타의 -2% 지점
-                찬스가격 = self.D['cp'][2]
+                찬스가격 = self.D['cp'][int(cp_point)]
                 self.D['찬스일자'] = last_date
                 self.D['찬스가격'] = f"{찬스가격:,.2f}"
                 self.D['찬스수량'] = f"{찬스수량:,}"

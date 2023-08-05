@@ -16,7 +16,7 @@
 	</div>
 </div>
 
-<div style="position:absolute;left:1072px;top:72px;width:71px;height:350px;border:2px solid black;background-color:lightgreen;opacity:0.1" onclick="chart_update(1)"></div>
+<div style="position:absolute;left:1072px;top:72px;width:71px;height:350px;border:2px solid black;background-color:lightgreen;opacity:0.1" onclick="chart_update('V')"></div>
 {% if D['TR'] %}
 
 
@@ -130,8 +130,8 @@
 		<li>기회자본 : $ <span id="cp_u">{{D['찬스자본']}}</span> </li>
 		<li>환율적용 : <span id="cp_k">{{D['환율변환']}}</span>원 </li>
 		<li>----------------------------</li>
-		<li>경과일수 : {{D['찬스일수']}} </li>
 		<li>현재주가 : {{D['찬스주가']}} </li>
+		<li>경과일수 : {{D['찬스일수']}} </li>
 		<li>연속하강 : {{D['찬스하강']}} </li>
 		<li>기초지표 : {{D['찬스근거']}} </li>
 		<li>기초일자 : {{D['찬스일자']}} </li>
@@ -289,7 +289,7 @@ const data1 = {
     ]   
 };
 const options1 = {
-	animation : { duration:500},
+	animation : { duration:0},
 
 	plugins : { legend: {display:false}, tooltip:{enabled:true}},
     responsive:false,

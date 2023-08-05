@@ -41,6 +41,9 @@ class DB :
     def line(self,qry) :
         return self.exe(qry,many=1,assoc=True)
 
+    def oneline(self,qry,assoc=False) :
+        return self.exe(qry,many=1,assoc=assoc)
+
     def get_one(self,fld) :
         return self.get(fld,many=1,assoc=False)
 
