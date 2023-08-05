@@ -104,12 +104,13 @@ class 목록_INVEST(SKIN) :
             self.D['연속하락'] = LD['sub6']
             self.D['현재환율'] = f"{현재환율:,.2f}"
             
+            self.D['필요상승'] = f"({round((float(LD['sub20'])/float(LD['add14']) -1)*100,2)}%)" if int(LD['add9']) else ''
+            
+            # ------------- 기회 투자 전략 
             self.D['현수익률'] = float(LD['add8'])
             self.D['손실회수'] = float(LD['sub7'])
             찬스가격 = self.take_chance(int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
             self.D['찬스가격'] = self.D['매도단가'] if 찬스가격 == 0 else 찬스가격
-            
-            # ------------- 기회 투자 전략 
 
             if 일수 >= 2 :
 
