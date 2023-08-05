@@ -58,7 +58,7 @@ class 목록_INVEST(SKIN) :
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
             
-            LD = self.DB.get_line('add4,add6,add7,add9,add14,add15,add16,add17,add18,add19,add20,sub1,sub2,sub3,sub4,sub12,sub14,sub5,sub6,sub15,sub18,sub19,sub20,sub25,sub26,sub27,sub32')
+            LD = self.DB.get_line('add6,add8,add9,add14,add15,add17,add18,add19,add20,sub1,sub2,sub3,sub4,sub7,sub12,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub32')
             
             # 가치 비율 for chart
             운용자금 = my.sv(LD['add19']) + my.sv(LD['add20'])
@@ -85,24 +85,7 @@ class 목록_INVEST(SKIN) :
             # self.D['원화수익'] = f"{총수익금 * 현재환율:,.0f}"
             self.D['총수익률'] = f"{총수익률:.2f}"
             
-            # -- leverage
-            self.D['매수금'] = float(LD['sub14'])
-            self.D['매도금'] = float(LD['sub15'])
-            현재평가 = self.D['매도금']  +  float(LD['add15'])
-            수익금2 = 현재평가 - self.D['매수금'] 
-            평단가2 = float(LD['add7'])
-            수익률2 = (수익금2 / self.D['매수금'] * 100) if self.D['매수금'] else 0
-            self.D['평단가2'] = f"{평단가2:,.4f}"
-            self.D['수익금2'] = f"{수익금2:,.2f}"
-            self.D['수익률2'] = f"{수익률2:.2f}"
-            self.D['현재평가'] = f"{현재평가:,.2f}"
-
-            self.D['매수금'] = f"{self.D['매수금']:,.2f}"
-            self.D['매도금'] = f"{self.D['매도금']:,.2f}"
-
-            # -- extra-info
-            self.D['현매수금'] = f"{float(LD['add6']):,}"
-            self.D['현이익률'] = f"{(float(LD['add14'])/평단가2 - 1)*100:,.2f}" if 평단가2 else '0.0'
+            # # -- extra-info
             self.D['현재시즌'] = LD['sub1'] ; 일수 = int(LD['sub12']); 시즌 = int(self.D['현재시즌'])
             
             slice_first = -42 if chart_slice > 42 else 0
@@ -121,8 +104,9 @@ class 목록_INVEST(SKIN) :
             self.D['연속하락'] = LD['sub6']
             self.D['현재환율'] = f"{현재환율:,.2f}"
             
-            # 찬스가격은 -2% 지점 
-            찬스가격 = self.take_chance(-2,int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
+            self.D['현수익률'] = float(LD['add8'])
+            self.D['손실회수'] = float(LD['sub7'])
+            찬스가격 = self.take_chance(int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
             self.D['찬스가격'] = self.D['매도단가'] if 찬스가격 == 0 else 찬스가격
             
             # ------------- 기회 투자 전략 
@@ -139,7 +123,7 @@ class 목록_INVEST(SKIN) :
                     찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
                 self.D['찬스일자'] = last_date
-                self.D['찬스가오'] = f"{찬스가격:,.2f}"
+                self.D['찬스가격'] = f"{찬스가격:,.2f}"
                 self.D['찬스수량'] = f"{찬스수량:,}"
                 self.D['찬스자본'] = f"{찬스가격*찬스수량:,.2f}"
                 self.D['찬스일수'] = 일수
@@ -169,11 +153,16 @@ class 목록_INVEST(SKIN) :
             self.D['월별이익'].append(round(monthly_total/monthly_lenth,2))
             self.D['손익합계'] = f"$ {monthly_total:,.0f} ({monthly_total*현재환율:,.0f}원)"
     
-    def take_chance(self,p,H,n,A) :
+
+    def take_chance(self,H,n,A) :
         if H == 0 : return 0
+        기회시점 = -2.2
+        p = 0 if (self.D['현수익률'] < 기회시점 or self.D['손실회수']) else 기회시점
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)
+
+
 
     def list(self) :
         self.head()

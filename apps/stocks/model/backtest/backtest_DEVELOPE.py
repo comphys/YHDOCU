@@ -91,7 +91,6 @@ class M_backtest_DEVELOPE(Model) :
         if  self.days >= self.M['강매시작'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['강매가치'])
 
         if self.buy_price >= self.sell_price : self.buy_price = self.sell_price - 0.01 
-        # self.buy_price = max(self.M['평균단가'],self.sell_price)
 
     def normal_sell(self) :
         
@@ -199,7 +198,8 @@ class M_backtest_DEVELOPE(Model) :
     # ---------------------------------------------------------------------------------------------------------------------
     def take_chance(self,H,n,A) :
         if H == 0 : return 0
-        p = self.R['기회시점']
+        p = 0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
+        # p = 0 if self.M['손실회수'] else self.R['기회시점']
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)

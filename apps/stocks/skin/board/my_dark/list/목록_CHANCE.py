@@ -19,11 +19,9 @@ class 목록_CHANCE(SKIN) :
             else : THX[key] = f"<th class='list-sort2' onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
         self.D['head_td'] = THX
         
-        
-        
 
     def chart(self) :
-        target,cp_point = self.DB.oneline(f"SELECT extra1,extra2 FROM h_board_config WHERE bid='{self.SYS.parm[0]}'")
+        target = self.DB.one(f"SELECT extra1,extra2 FROM h_board_config WHERE bid='{self.SYS.parm[0]}'")
         self.DB.clear()
         self.DB.tbl = f"h_{target}_board"
         self.DB.odr = "add0 DESC"
@@ -68,12 +66,7 @@ class 목록_CHANCE(SKIN) :
             self.D['총수익금'] = f"{총수익금:,.0f}"
             self.D['총수익률'] = f"{총수익률:.2f}"
             
-            # -- leverage
-            평단가 = float(LD['add7'])
             # -- extra-info
-            self.D['현매수금'] = f"{float(LD['add6']):,}"
-            self.D['현이익률'] = f"{(float(LD['add14'])/평단가 - 1)*100:,.2f}" if 평단가 else '0.0'
-
             self.D['매수갯수'] = int(LD['sub2'])
             self.D['매수단가'] = f"{float(LD['sub19']):,.2f}"
             self.D['매수예상'] = f"{(int(LD['sub2']) * float(LD['sub19'])):,.2f}"
@@ -91,7 +84,7 @@ class 목록_CHANCE(SKIN) :
             self.DB.clear()
             self.DB.tbl = f"h_{target}_board"
             self.DB.wre = f"add0 = '{last_date}'"
-            TD = self.DB.get_line("add6,add9,add14,sub2,sub4,sub6,sub12,sub18,sub20,sub28")
+            TD = self.DB.get_line("add6,add8,add9,add14,sub2,sub4,sub6,sub7,sub12,sub18,sub20,sub28")
 
             self.D['chart_percent'] = [float(LD['add4']),float(LD['add16'])]
 
@@ -111,12 +104,12 @@ class 목록_CHANCE(SKIN) :
                     찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
                 self.D['cp'] = []
-                for p in range(0,-11,-1) :
+                for p in [0,-1.1,-2.2,-3.3,-4.4,-5.5] :
                     cp = self.take_chance(p,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                     self.D['cp'].append(cp)
                 
-                # 찬스가격은 타겟 데이타의 -2% 지점
-                찬스가격 = self.D['cp'][int(cp_point)]
+                # 찬스가격은 타겟 데이타의 -2.2% 지점
+                찬스가격 = self.D['cp'][0]  if (float(TD['add8']) < self.D['cp'][2]or float(TD['sub7'])) else self.D['cp'][2]
                 self.D['찬스일자'] = last_date
                 self.D['찬스가격'] = f"{찬스가격:,.2f}"
                 self.D['찬스수량'] = f"{찬스수량:,}"
