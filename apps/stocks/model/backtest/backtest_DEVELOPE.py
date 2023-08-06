@@ -115,7 +115,7 @@ class M_backtest_DEVELOPE(Model) :
             
 
     def normal_buy(self) :
-
+        self.M['거래코드'] = ''
         if  self.M['당일종가']<= self.buy_price : 
             self.M['매수수량'] = self.M['구매수량']
             거래코드 = 'L' if self.M['매수단계'] is '매수제한' else 'B'
@@ -126,7 +126,7 @@ class M_backtest_DEVELOPE(Model) :
             if  self.R['기회진행'] :
                 self.R['매수수량'] = self.R['구매수량'] 
                 self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']   
-                self.M['거래코드']+= f"/R{self.R['매수수량']}" if self.M['매수수량'] and self.R['매수수량'] else ' '  
+                self.M['거래코드']+= f"/R{self.R['매수수량']}" if self.R['매수수량'] else ' '  
      
             
         if  not self.R['기회진행'] and self.R['기회가격'] and self.M['날수'] >= 2 and self.M['당일종가']<= self.R['기회가격'] :
@@ -191,15 +191,11 @@ class M_backtest_DEVELOPE(Model) :
             self.R['기회가격'] = self.take_chance(self.M['보유수량'],매수수량,self.M['총매수금'])
         
         
-    # ---------------------------------------------------------------------------------------------------------------------
-    #
-    #
-    #
+    
     # ---------------------------------------------------------------------------------------------------------------------
     def take_chance(self,H,n,A) :
         if H == 0 : return 0
         p = 0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
-        # p = 0 if self.M['손실회수'] else self.R['기회시점']
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)
@@ -320,8 +316,8 @@ class M_backtest_DEVELOPE(Model) :
         tx['기록일자'] = self.M['day']
         tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
         #-----------------------------------------------------------
-        tx['매수수량'] = self.M['매수수량'] + self.R['매수수량'] if self.M['매수수량'] else ' '
-        tx['매수금액'] = f"{round(self.M['매수금액']+self.R['매수금액'],4):,.3f}" if self.M['매수금액'] else ' '
+        tx['매수수량'] = self.M['매수수량'] + self.R['매수수량'] if self.M['매수수량'] + self.R['매수수량'] else ' '
+        tx['매수금액'] = f"{round(self.M['매수금액']+self.R['매수금액'],4):,.3f}" if self.M['매수금액']+self.R['매수금액'] else ' '
         tx['종합평균'] = f"{round(self.T['평균단가'],4):,.4f}"
         tx['일반평균'] = f"<span class='avgn{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.4f}</span>"
         tx['기회평균'] = f"<span class='avgc{self.M['기록시즌']}'>{round(self.R['평균단가'],4):,.4f}</span>" if self.R['평균단가'] else f"<span class='avgc{self.M['기록시즌']}'> </span>"
@@ -348,8 +344,6 @@ class M_backtest_DEVELOPE(Model) :
         clr = "#F6CECE" if self.R['수익률'] > 0 else "#CED8F6"
         tx['수익률2'] = f"<span style='color:{clr}'>{round(self.R['수익률'],4):,.2f}</span>" if self.R['수익률'] else '0.00'
         
-        tx['거래코드'] = self.M['거래코드']
-
         tx['일매수금'] = f"{self.M['일매수금']:,}"
         
         if  self.M['진행상황'] in ('전량매도','전략매도') :
