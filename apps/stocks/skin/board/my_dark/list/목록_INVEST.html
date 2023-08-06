@@ -8,13 +8,13 @@
 <script src="/sys/chart/chart.min.js"></script>
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 
-<div class="clearfix" style="background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
-	<div class="pull-left" style="margin-right:20px">
+<div style="height:370px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
+	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
 		<canvas id="myChart"  style="width:1125px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
 	</div>
-	<div class="pull-left">
+	<div style="position:absolute;left:1170px;top:62px;">
 		<canvas id="myChart_side" style="width:210px;height:305px;background-color:#24272d" onclick="$('#ChanceStrategy').show()"></canvas>
-		<div style="margin-top:6px">
+		<div style="margin-top:4px">
 			<input type='text' name='s_date' class="i-date_1" style="width:85px;text-align:center;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}"> -
 			<input type='text' name='e_date' class="i-date_2" style="width:85px;text-align:center;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}">
 			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(2)" title="현재시즌"><i class="fa fa-bars"></i></span>
@@ -147,8 +147,8 @@
 	</ul>
 </div>
 
-<div id='monthlyProfit' style="opacity:0.9;position:absolute;left:20px;top:535px;padding:5px 10px 5px 10px;">
-	<canvas id="monthlyProfitChart" style="width:1125px;height:345px;background-color:#24272d"></canvas>
+<div id='monthlyProfit' style="position:absolute;left:20px;top:55px;padding:5px 10px 5px 10px;opacity:0.9;z-index:3;">
+	<canvas id="monthlyProfitChart" style="width:1125px;height:350px;background-color:#24272d"></canvas>
 </div>
 
 <script>
@@ -241,13 +241,13 @@ const data_main = {
 		{
             label:' 종가변동',
             data : close_price2,
-			borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],
+			borderColor:'#58ACFA', borderWidth:3, pointRadius:0, borderDash:[2,3],
   			lineTension:0.2
         },
 		{
             label:' 평균단가',
             data : soxl_average2,
-			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
+			borderColor:'#f78181', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
 			lineTension:0.2
         },
 		{
@@ -276,9 +276,9 @@ const options_main = {
     responsive:false,
     layout:{padding:20},
     scales:{
-        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
-		y:{ type:'linear', display:true, position:'right'},
-		y1:{ ticks : {color:'gray'}, grid:{color:'#272727'},position:'left'},
+        x: { ticks : {color:'gray'}},
+		y:{  ticks : {color:'lightgray'}, position:'right'},
+		y1:{ ticks : {color:'gray'}, position:'left'},
     }
 };
 const config_main  = {type:'line',data:data_main,options:options_main};
@@ -363,7 +363,7 @@ const options_sub = {
 			color:function(context) {
 				if( context.tick.value == 0 ) { return 'gray'}
 				else if(context.tick.value % 10 == 0 ) { return 'black'} },
-			lineWidth: function(context) {if(context.tick.value %10 == 0 ) { return 2 } else return 0},
+			lineWidth: function(context) {if(context.tick.value %10 == 0 ) { return 1 } else return 0},
 		   },
 		   position:'right'}
     }
@@ -486,9 +486,14 @@ const config_monthly = {
   },
 };
 const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
-$('#monthlyProfit').draggable();
+
 slice_chart(2);
-function monthlyProfit_toggle() { $('#monthlyProfit').toggle().css({'left':'20px','top':'535px'});}
+
+let monthlyProfit_show = false;
+function monthlyProfit_toggle() { 
+	monthlyProfit_show = !monthlyProfit_show;
+	if(monthlyProfit_show) $('#monthlyProfit').css('zIndex',7); else $('#monthlyProfit').css('zIndex',3);
+}
 
 function limt_period() {
 	let lday = $("#the-last-date").val();
