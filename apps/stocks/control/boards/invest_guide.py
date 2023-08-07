@@ -19,7 +19,7 @@ class Invest_guide(Control) :
     
     def insertPick(self) :
         pickDate = self.parm[1]
-        self.DB.tbl, self.DB.wre = ('h_VICTORY_board',f"add0='{pickDate}'")
+        self.DB.tbl, self.DB.wre = ('h_INVEST_board',f"add0='{pickDate}'")
 
         line = self.DB.get_line("*")
         del line['no']
