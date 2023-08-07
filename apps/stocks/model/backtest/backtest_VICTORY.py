@@ -7,7 +7,7 @@ class M_backtest_VICTORY(Model) :
 # 변동성을 이용한 올타임 전략
 
     def calculate(self)  :
-
+        if not self.M['보유수량'] and not self.M['매도수량']: return
         if  self.M['매수수량'] : 
             self.M['가용잔액'] -=  self.M['매수금액']
             self.M['보유수량'] +=  self.M['매수수량']
@@ -310,6 +310,7 @@ class M_backtest_VICTORY(Model) :
         self.D['addition'] = int(self.D['addition'].replace(',','')) if self.D['addition'] else 0
 
     def print_backtest(self) :
+        if not self.M['보유수량'] and not self.M['매도수량']: return
         tx = {}
         #--------------------------------------------------------
         tx['날수'] = self.M['날수']; 
