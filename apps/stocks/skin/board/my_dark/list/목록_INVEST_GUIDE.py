@@ -119,8 +119,9 @@ class 목록_INVEST_GUIDE(SKIN) :
                 매수비율 = 일매수금 / int(LD['sub4']) 
                 기초수량 = my.ceil(매수비율 * int(LD['sub18']))
 
-                찬스수량 = 0    
-                for i in range(0,일수+1) : 
+                찬스수량 = 0  
+                # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))  
+                for i in range(0,일수+2) : 
                     찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
                 self.D['찬스일자'] = last_date

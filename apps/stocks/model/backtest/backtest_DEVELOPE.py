@@ -152,6 +152,7 @@ class M_backtest_DEVELOPE(Model) :
             기초수량 = my.ceil(매수비율 * self.M['기초수량'])
 
             찬스수량 = 0    
+            # 기회찬스에서는 수량을 하루분 더 사는 것이 수익률이 높게 나옴
             for i in range(0,self.M['날수']+1) : 
                 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
             
@@ -198,6 +199,7 @@ class M_backtest_DEVELOPE(Model) :
     def take_chance(self,H,n,A) :
         if H == 0 : return 0
         p = 0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
+        # p = self.R['기회시점']
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)

@@ -414,7 +414,8 @@ class Invest_guide(Control) :
         기초수량 = my.ceil(매수비율 * int(TD['sub18']))
         
         변동수량 = 0    
-        for i in range(0,int(TD['sub12'])) : 
+        # 여기서의 일수는 오늘 일수임, 타겟데이타의 작성 완료 후 찬스데이타를 초기화 하는 것임
+        for i in range(0,int(TD['sub12'])+1) : 
             변동수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
         매수금 = float(TD['add14']) * 변동수량

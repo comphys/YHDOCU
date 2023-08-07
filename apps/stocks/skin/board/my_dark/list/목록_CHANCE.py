@@ -100,7 +100,8 @@ class 목록_CHANCE(SKIN) :
                 기초수량 = my.ceil(매수비율 * int(TD['sub18']))
 
                 찬스수량 = 0    
-                for i in range(0,int(TD['sub12'])+1) : 
+                # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
+                for i in range(0,int(TD['sub12'])+2) : 
                     찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
                 self.D['cp'] = []
