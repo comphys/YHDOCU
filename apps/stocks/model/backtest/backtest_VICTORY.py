@@ -7,7 +7,6 @@ class M_backtest_VICTORY(Model) :
 # 변동성을 이용한 올타임 전략
 
     def calculate(self)  :
-        if not self.M['보유수량'] and not self.M['매도수량']: return
         if  self.M['매수수량'] : 
             self.M['가용잔액'] -=  self.M['매수금액']
             self.M['보유수량'] +=  self.M['매수수량']
@@ -197,9 +196,7 @@ class M_backtest_VICTORY(Model) :
         self.init_value()
 
         for idx,BD in enumerate(self.B) :
-            if BD['add0'] < self.D['start_date'] : 
-                idxx = idx; 
-                continue
+            if BD['add0'] < self.D['start_date'] : idxx = idx; continue
 
             self.M['day'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
@@ -207,16 +204,17 @@ class M_backtest_VICTORY(Model) :
             self.M['거래코드'] = ' '
             self.set_value(['매도수량','매도금액','매수수량','매수금액'],0)
             
-            if  idx == idxx + 1 or self.M['첫날기록'] : self.new_day()  
-            else :
-                self.today_price()
-                self.normal_sell()
-                self.normal_buy()
-                self.calculate()
-                
+            # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정(12%)값 이상으로 상승 시 건너뛰기 위함
+            if  idx == idxx + 1 or self.M['첫날기록'] : 
+                if  self.new_day() : self.tomorrow_step(); self.print_backtest(); continue
+                else : self.M['첫날기록'] = True; continue
+
+            self.today_price()
+            self.normal_sell()
+            self.normal_buy()
+            self.calculate()
             self.tomorrow_step()
             self.print_backtest()
-            self.M['날수'] +=1
         # endfor -----------------------------------------------------------------------------------------------------
         
         self.result()
@@ -310,12 +308,10 @@ class M_backtest_VICTORY(Model) :
         self.D['addition'] = int(self.D['addition'].replace(',','')) if self.D['addition'] else 0
 
     def print_backtest(self) :
-        if not self.M['보유수량'] and not self.M['매도수량']: return
+        
         tx = {}
-        #--------------------------------------------------------
-        tx['날수'] = self.M['날수']; 
-        # if self.M['매도수량'] : self.M['날수'] = 1
-
+        
+        tx['날수'] = self.M['날수']
         tx['기록시즌'] = self.M['기록시즌']
         tx['진행'] = self.M['진행']; tx['기록일자'] = self.M['day']
         tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
@@ -362,4 +358,6 @@ class M_backtest_VICTORY(Model) :
         self.D['chart_date'].append(self.M['day'][2:])
         self.D['total_value'].append(round(self.M['평가총액'],0))
         self.D['eval_value'].append(round(self.M['평가밸류'],0))
+        
+        self.M['날수'] +=1
         

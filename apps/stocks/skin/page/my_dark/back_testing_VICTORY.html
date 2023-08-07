@@ -186,6 +186,11 @@
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 <script>
 
+$(".if-the-day").click(function(){
+	var date=$(this).text(); $("input[name='start_date']").val(date);}).contextmenu(function(e){  e.preventDefault();
+	var date=$(this).text(); $("input[name='end_date']").val(date); $("form[name='stock_back_testing']").submit();
+});
+
 // 챠트 객체 생성
 const ctx = $id('mybackTestChart');
 const ctx3= $id('myChart3');

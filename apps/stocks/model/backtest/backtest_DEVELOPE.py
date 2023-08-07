@@ -75,6 +75,8 @@ class M_backtest_DEVELOPE(Model) :
     def rebalance(self)  :
         total = self.M['가용잔액'] + self.M['추가자금'] 
         self.T['평가밸류'] = total + self.R['기회자금']
+        self.M['평가밸류'] = total 
+        self.R['평가밸류'] = self.R['기회자금']
         self.M['가용잔액'] = int(total * self.M['자본비율'])
         self.M['추가자금'] = total - self.M['가용잔액']
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
@@ -129,7 +131,7 @@ class M_backtest_DEVELOPE(Model) :
                 self.M['거래코드']+= f"/R{self.R['매수수량']}" if self.R['매수수량'] else ' '  
      
             
-        if  not self.R['기회진행'] and self.R['기회가격'] and self.M['날수'] >= 2 and self.M['당일종가']<= self.R['기회가격'] :
+        if  not self.R['기회진행'] and self.R['기회가격'] and self.M['날수'] >= 3 and self.M['당일종가']<= self.R['기회가격'] :
             self.R['기회진행'] = True
             self.chance_init()
             매수수량R = self.R['찬스수량']
@@ -204,10 +206,8 @@ class M_backtest_DEVELOPE(Model) :
 
         self.init_value()
 
-        for idx,BD in enumerate(self.B) :
-            if BD['add0'] < self.D['start_date'] : 
-                idxx = idx; 
-                continue
+        for idx,BD in enumerate(self.B) : 
+            if BD['add0'] < self.D['start_date'] : idxx = idx; continue
 
             self.M['day'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
@@ -215,16 +215,17 @@ class M_backtest_DEVELOPE(Model) :
             self.M['거래코드'] = ' '
             self.set_value(['매도수량','매도금액','매수수량','매수금액'],0)
             
-            if  idx == idxx + 1 or self.M['첫날기록'] : self.new_day()
-            else : 
-                self.today_price()
-                self.normal_sell()
-                self.normal_buy()
-                self.calculate()
-    
+            # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정(12%)값 이상으로 상승 시 건너뛰기 위함
+            if  idx == idxx + 1 or self.M['첫날기록'] : 
+                if  self.new_day() : self.tomorrow_step(); self.print_backtest(); continue
+                else : self.M['첫날기록'] = True; continue
+
+            self.today_price()
+            self.normal_sell()
+            self.normal_buy()
+            self.calculate()
             self.tomorrow_step()
             self.print_backtest()
-            self.M['날수'] +=1
         # endfor -----------------------------------------------------------------------------------------------------
         self.result()
     
@@ -305,7 +306,7 @@ class M_backtest_DEVELOPE(Model) :
         if not self.M['보유수량'] and not self.M['매도수량']: return
         tx = {}
         #--------------------------------------------------------
-        tx['날수'] = self.M['날수']; 
+        tx['날수'] = self.M['날수'] 
         tx['기록시즌'] = self.M['기록시즌']
         tx['기록일자'] = self.M['day']
         tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
@@ -357,10 +358,17 @@ class M_backtest_DEVELOPE(Model) :
         
         # 챠트 기록용
         self.D['close_price'].append(self.M['당일종가'])
-        if avg_price := round(self.T['평균단가'],2) : self.D['average_price'].append(avg_price)
-        else : self.D['average_price'].append('None')
+        # if avg_tprice := round(self.T['평균단가'],2) : self.D['average_price_t'].append(avg_tprice)
+        # else : self.D['average_price_t'].append('null')
+        if avg_mprice := round(self.M['평균단가'],2) : self.D['average_price_m'].append(avg_mprice)
+        else : self.D['average_price_m'].append('null')
+        if avg_cprice := round(self.R['평균단가'],2) : self.D['average_price_c'].append(avg_cprice)
+        else : self.D['average_price_c'].append('null')
         self.D['chart_date'].append(self.M['day'][2:])
-        self.D['eval_value'].append(round(self.T['평가밸류'],0))
+        self.D['eval_mvalue'].append(round(self.M['평가밸류'],0))
+        self.D['eval_cvalue'].append(round(self.R['평가밸류'],0))
+        
+        self.M['날수'] +=1
 
 
     def init_value(self) :
@@ -428,12 +436,15 @@ class M_backtest_DEVELOPE(Model) :
         self.R['수익누적'] = 0.0
 
         # 챠트작성
-        self.D['close_price'] = []; self.D['average_price'] = []; self.D['total_value'] = []; self.D['chart_date'] = []; self.D['eval_value'] = []
+        self.D['close_price'] = []; self.D['total_value'] = []; self.D['chart_date'] = []; self.D['eval_mvalue'] = []; self.D['eval_cvalue'] = []
+        self.D['average_price_t'] = []; self.D['average_price_m'] = []; self.D['average_price_c'] = []
         self.D['전량횟수'] = 0
         self.D['전략횟수'] = 0
         self.D['기회전량'] = 0
         self.D['기회전략'] = 0
         self.T['평가밸류'] = self.M['자산총액'] + self.R['기회자금']
+        self.M['평가밸류'] = self.M['자산총액'] 
+        self.R['평가밸류'] = self.R['기회자금']
 
     def new_day(self) :
         self.M['기록시즌'] += 1
@@ -457,9 +468,8 @@ class M_backtest_DEVELOPE(Model) :
             self.M['첫날기록']  = False
             self.M['거래코드']  = f"S{self.M['매수수량']}" 
             self.M['매수단계'] = '일반매수'
-           
-
             return True
+
         else : 
             return False
 

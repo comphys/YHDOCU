@@ -179,6 +179,12 @@
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 <script>
 
+$(".if-the-day").click(function(){
+	var date=$(this).text(); $("input[name='start_date']").val(date);}).contextmenu(function(e){  e.preventDefault();
+	var date=$(this).text(); $("input[name='end_date']").val(date); $("form[name='stock_back_testing']").submit();
+});
+
+
 // 챠트 객체 생성
 const ctx_season = $id('mybackTestChart');
 ctx_season.style.backgroundColor = '#33363b';
@@ -337,8 +343,11 @@ ctx_main.style.backgroundColor = '#33363b';
 ctx_main.style.border = '2px solid black';
 
 let close_price = {{D['close_price']|safe}};
-let average_price = {{D['average_price']|safe}};
-let eval_value = {{D['eval_value']|safe}}
+// let avg_tprice = {{D['average_price_t']|safe}};
+let avg_mprice = {{D['average_price_m']|safe}};
+let avg_cprice = {{D['average_price_c']|safe}};
+let eval_mvalue = {{D['eval_mvalue']|safe}};
+let eval_cvalue = {{D['eval_cvalue']|safe}};
 
 let labels_main = {{D['chart_date']|safe}};
 const data_main = {
@@ -351,15 +360,28 @@ const data_main = {
   			lineTension:0.2
     	},
 		{
-            label:' 평균단가',
-            data : average_price,
+            label:' 평균단가M',
+            data : avg_mprice,
 			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
 			lineTension:0.2
         },
 		{
-            label:' 평가밸류',
-            data : eval_value,
-			borderColor:'yellow', borderWidth:2,pointRadius:0, 
+            label:' 평균단가C',
+            data : avg_cprice,
+			borderColor:'yellow', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',
+			lineTension:0.2
+        },
+		{
+            label:' 평가밸류M',
+            data : eval_mvalue,
+			borderColor:'rgba(201, 149, 34, 0.6)', borderWidth:2,pointRadius:0, 
+			lineTension:0.2,
+			yAxisID : 'y1'
+        },
+		{
+            label:' 평가밸류C',
+            data : eval_cvalue,
+			borderColor:'rgba(255, 255, 0, 0.6)', borderWidth:2,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
         },
