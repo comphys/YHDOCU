@@ -139,20 +139,21 @@ class 목록_INVEST(SKIN) :
             if self.D['limit_date'] : qry += f"and add0 <='{self.D['limit_date']}' " 
             qry += "GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
             monProfit = self.DB.exe(qry)
-            self.D['월별구분'] = []
-            self.D['월별이익'] = []
-            for mon, profit in monProfit :
-                self.D['월별구분'].append(mon)
-                self.D['월별이익'].append(round(profit,2))
-            
-            monthly_total = sum(self.D['월별이익'])
-            monthly_lenth = len(self.D['월별이익'])
-            
-            self.D['월별구분'].reverse()  
-            self.D['월별이익'].reverse()
-            self.D['월별구분'].append('AVG')
-            self.D['월별이익'].append(round(monthly_total/monthly_lenth,2))
-            self.D['손익합계'] = f"$ {monthly_total:,.0f} ({monthly_total*현재환율:,.0f}원)"
+            if monProfit :
+                self.D['월별구분'] = []
+                self.D['월별이익'] = []
+                for mon, profit in monProfit :
+                    self.D['월별구분'].append(mon)
+                    self.D['월별이익'].append(round(profit,2))
+                
+                monthly_total = sum(self.D['월별이익'])
+                monthly_lenth = len(self.D['월별이익'])
+                
+                self.D['월별구분'].reverse()  
+                self.D['월별이익'].reverse()
+                self.D['월별구분'].append('AVG')
+                self.D['월별이익'].append(round(monthly_total/monthly_lenth,2))
+                self.D['손익합계'] = f"$ {monthly_total:,.0f} ({monthly_total*현재환율:,.0f}원)"
     
 
     def take_chance(self,H,n,A) :

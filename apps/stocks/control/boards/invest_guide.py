@@ -110,7 +110,7 @@ class Invest_guide(Control) :
         if  U['add12'] : 
             U['add18'] = self.M['현재손익']
         else :
-            U['add18']  = round(U['add15']-U['add6'],2) if U['add9'] else 0 # 잔량 존재 시 현재수익 계산
+            U['add18']  = round(U['add15']-float(U['add6']),2) if U['add9'] else 0 # 잔량 존재 시 현재수익 계산
             
         U['add17']  = U['add3'] + U['add15']  #Total Value
 

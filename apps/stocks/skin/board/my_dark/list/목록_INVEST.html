@@ -431,7 +431,7 @@ function slice_chart(opt) {
 //
 // Montyly Profit Bar Graph
 //
-
+{% if D['월별이익'] %}
 const ctx_monthly= $id('monthlyProfitChart');
 
 ctx_monthly.style.backgroundColor = '#33363b';
@@ -486,7 +486,7 @@ const config_monthly = {
   },
 };
 const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
-
+{% endif %}
 slice_chart(2);
 
 let monthlyProfit_show = false;

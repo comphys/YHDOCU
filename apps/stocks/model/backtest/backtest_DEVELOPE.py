@@ -80,15 +80,14 @@ class M_backtest_DEVELOPE(Model) :
         self.M['씨드'] = self.M['가용잔액']
 
 
-    def set_price(self) :
-        self.days = self.M['날수'] + 1
+    def today_price(self) :
+        # today_price 는 오늘(당일) 기준의 가격을 제시하고, tomorrow_step 에서 내일 가격기준을 제시함.
         self.buy_price = round(self.M['전일종가']*self.M['평단가치'],2)
-        
         self.sell_price = my.round_up(self.M['평균단가'] * self.M['첫매가치'])
 
         if  self.M['매수단계'] in ('매수제한','매수중단') : self.sell_price = my.round_up(self.M['평균단가'] * self.M['둘매가치'])
-        if  self.M['손실회수'] and self.days <= self.M['회수기한'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['전화위복'])
-        if  self.days >= self.M['강매시작'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['강매가치'])
+        if  self.M['손실회수'] and self.M['날수'] <= self.M['회수기한'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['전화위복'])
+        if  self.M['날수'] >= self.M['강매시작'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['강매가치'])
 
         if self.buy_price >= self.sell_price : self.buy_price = self.sell_price - 0.01 
 
@@ -158,15 +157,15 @@ class M_backtest_DEVELOPE(Model) :
             
             
         
-    def buy_step(self)   :
+    def tomorrow_step(self)   :
 
-        self.M['날수'] += 1
         매수수량 = my.ceil(self.M['기초수량'] * (self.M['날수']*self.M['비중조절'] + 1))
-        매수금액 = 매수수량 * self.M['당일종가'] 
+        매수단가 = round(self.M['당일종가']*self.M['평단가치'],2)
+        매수금액 = 매수수량 * 매수단가 
 
         if  매수금액 > self.M['자산총액']   :
             매수수량 = my.ceil(self.M['기초수량'] * self.M['위매비중'])
-            매수금액 = 매수수량 * self.M['당일종가']
+            매수금액 = 매수수량 * 매수단가
             self.M['매수단계'] = '매수제한' 
             
             if  매수금액 > self.M['자산총액']  :  
@@ -177,11 +176,11 @@ class M_backtest_DEVELOPE(Model) :
         
         if  self.R['기회진행'] :
             매수수량R = my.ceil(self.R['기초수량'] * (self.M['날수']*self.M['비중조절'] + 1))
-            매수금액R = 매수수량R * self.M['당일종가'] 
+            매수금액R = 매수수량R * 매수단가 
 
             if  매수금액R > self.R['기회자금']   :
                 매수수량R = my.ceil(self.R['기초수량'] * self.M['위매비중'])
-                매수금액R = 매수수량R * self.M['당일종가']
+                매수금액R = 매수수량R * 매수단가
                 
                 if  매수금액R > self.R['기회자금']  :  매수수량R = 0        
                 
@@ -205,7 +204,9 @@ class M_backtest_DEVELOPE(Model) :
         self.init_value()
 
         for idx,BD in enumerate(self.B) :
-            if BD['add0'] < self.D['start_date'] : idxx = idx; continue
+            if BD['add0'] < self.D['start_date'] : 
+                idxx = idx; 
+                continue
 
             self.M['day'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
@@ -213,23 +214,16 @@ class M_backtest_DEVELOPE(Model) :
             self.M['거래코드'] = ' '
             self.set_value(['매도수량','매도금액','매수수량','매수금액'],0)
             
-            if  idx == idxx + 1 or self.M['첫날기록'] : 
-                if  self.new_day() : 
-                    self.buy_step()
-                    self.print_backtest(); 
-                    continue
-                else : 
-                    self.M['첫날기록'] = True
-                    continue
-            
-            self.set_price()
-            self.normal_sell()
-            self.normal_buy()
-
-        #   결과정리 --------------------------------------------------------------------------------------------------
-            self.calculate()
-            self.buy_step()
+            if  idx == idxx + 1 or self.M['첫날기록'] : self.new_day()
+            else : 
+                self.today_price()
+                self.normal_sell()
+                self.normal_buy()
+                self.calculate()
+    
+            self.tomorrow_step()
             self.print_backtest()
+            self.M['날수'] +=1
         # endfor -----------------------------------------------------------------------------------------------------
         self.result()
     
@@ -309,9 +303,7 @@ class M_backtest_DEVELOPE(Model) :
     def print_backtest(self) :
         tx = {}
         #--------------------------------------------------------
-        if self.M['거래코드'] == 'S' : self.M['날수'] = 1; 
         tx['날수'] = self.M['날수']; 
-        if self.M['매도수량'] : self.M['날수'] = 0
         tx['기록시즌'] = self.M['기록시즌']
         tx['기록일자'] = self.M['day']
         tx['당일종가'] = f"<span class='clsv{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
@@ -380,7 +372,7 @@ class M_backtest_DEVELOPE(Model) :
         self.M['최대날자']  = ' '
         self.M['수익누적']  = 0.0
 
-        self.M['날수'] = 0
+        self.M['날수'] = 1
         self.M['씨드'] = self.D['init_capital']
         self.M['최대일수']  = 0   # 최고 오래 지속된 시즌의 일수
         self.M['MDD1']  = 0      # 최고 MDD
@@ -443,6 +435,7 @@ class M_backtest_DEVELOPE(Model) :
 
     def new_day(self) :
         self.M['기록시즌'] += 1
+        self.M['날수'] = 1
         self.M['수익누적']  = 0.0; self.R['수익누적']  = 0.0
 
         self.M['평균단가']  = self.M['당일종가']; self.T['평균단가']  = self.M['당일종가']
