@@ -101,7 +101,7 @@ class M_backtest_DEVELOPE(Model) :
             
 
     def normal_buy(self) :
-        self.M['거래코드'] = ''
+
         if  self.M['당일종가']<= self.b_price : 
             self.M['매수수량'] = self.M['구매수량']
             거래코드 = 'L' if self.M['매수단계'] is '매수제한' else 'B'
@@ -112,7 +112,7 @@ class M_backtest_DEVELOPE(Model) :
             if  self.R['기회진행'] :
                 self.R['매수수량'] = self.R['구매수량'] 
                 self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']   
-                self.M['거래코드']+= f"/R{self.R['매수수량']}" if self.R['매수수량'] else ' '  
+                self.R['거래코드'] = f"R{self.R['매수수량']}" if self.R['매수수량'] else ' '  
      
         # 기회매수 첫 날 처리    
         if  not self.R['기회진행'] and self.R['기회가격'] and self.M['날수'] >= 3 and self.M['당일종가']<= self.R['기회가격'] :
@@ -124,7 +124,7 @@ class M_backtest_DEVELOPE(Model) :
             if 매수금액R > self.R['기회자금'] :
                 매수수량R = int(self.R['기회자금']/self.R['기회가격'])
             
-            self.M['거래코드'] += f"/R{매수수량R}" 
+            self.R['거래코드'] = f"S{self.R['기초수량']}/{매수수량R}" 
             self.R['매수수량'] = 매수수량R
             self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']
             
@@ -201,7 +201,7 @@ class M_backtest_DEVELOPE(Model) :
             self.M['day'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
             self.M['전일종가'] = float(self.B[idx-1]['add3'])  
-            self.M['거래코드'] = ' '
+            self.M['거래코드'] = ' '; self.R['거래코드'] = ' '
             self.set_value(['매도수량','매도금액','매수수량','매수금액'],0)
             
             # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정(12%)값 이상으로 상승 시 건너뛰기 위함
@@ -303,7 +303,8 @@ class M_backtest_DEVELOPE(Model) :
         tx['기회평균'] = f"<span class='avgc{self.M['기록시즌']}'>{round(self.R['평균단가'],4):,.4f}</span>" if self.R['평균단가'] else f"<span class='avgc{self.M['기록시즌']}'> </span>"
         #-----------------------------------------------------------
         tx['매도수량'] = f"{self.M['매도수량']+self.R['매도수량']:,}" if self.M['매도수량'] else ' '
-        tx['진행현황'] = f"{round(self.M['매도금액']+self.R['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['거래코드']
+        tx['일반진행'] = f"{round(self.M['매도금액'],4):,.2f}" if self.M['매도금액'] else self.M['거래코드']
+        tx['기회진행'] = f"{round(self.R['매도금액'],4):,.2f}" if self.R['매도금액'] else self.R['거래코드']
         
         if  self.M['매도금액'] : 
             clr = "#F6CECE" if self.M['실현수익'] > 0 else "#CED8F6"
@@ -416,6 +417,7 @@ class M_backtest_DEVELOPE(Model) :
         self.R['수익현황'] = 0.0
         self.R['실현수익'] = 0.0
         self.R['평균단가'] = 0.0; self.T['평균단가'] = 0.0
+        self.R['거래코드']  = ' '
 
         # 챠트작성
         self.D['close_price'] = []; self.D['total_value'] = []; self.D['chart_date'] = []; self.D['eval_mvalue'] = []; self.D['eval_cvalue'] = []

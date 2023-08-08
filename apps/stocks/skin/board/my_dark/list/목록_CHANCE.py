@@ -89,7 +89,7 @@ class 목록_CHANCE(SKIN) :
             self.D['chart_percent'] = [float(LD['add4']),float(LD['add16'])]
 
             chart_len = len(chart_data)
-            self.D['target_value'] = ['null'] * chart_len
+            self.D['target_value'] = [TD['sub20']] * chart_len 
             self.D['chance_value'] = ['null'] * chart_len                  
             
             if int(TD['add9']) :
@@ -122,7 +122,6 @@ class 목록_CHANCE(SKIN) :
                 self.D['찬스근거'] = target
                 self.D['환율변환'] = f"{찬스가격*찬스수량* 현재환율:,.0f}"
    
-                self.D['target_value'] = [TD['sub20']] * chart_len
                 self.D['chance_value'] = [self.D['찬스가격']] * chart_len
                 
                 self.D['타겟상태'] = [int(TD['add9']),int(TD['sub2']),float(TD['add6'])]

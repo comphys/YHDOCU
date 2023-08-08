@@ -91,16 +91,16 @@
 		<th style='text-align:center;width:50px'>날수</th>
 		<th style='text-align:center;width:100px'>기록일자</th>
 		<th style='text-align:right;width:70px'>종가</th>
-		<th style='text-align:right;width:100px'>진행현황</th>
 		<th style='text-align:right;width:70px'>총수량</th>
-		<th style='text-align:right;;width:100px'>매수금액</th>
 		<th style='text-align:right;width:100px'>총매수금</th>
 		<th style='text-align:right;width:100px'>평가금액</th>
 		<th style='text-align:right;width:80px'>종합평균</th>
+		<th style='text-align:right;width:80px'>일반진행</th>
 		<th style='text-align:right;width:80px'>일반평균</th>
 		<th style='text-align:right;width:90px'>일반수익</th>
 		<th style='text-align:right;width:90px'>일반(%)</th>
 		<th style='text-align:right;width:100px'>가용잔액</th>
+		<th style='text-align:right;width:80px'>기회진행</th>
 		<th style='text-align:right;width:80px'>기회평균</th>
 		<th style='text-align:right;width:90px'>기회수익</th>
 		<th style='text-align:right;width:90px'>기회(%)</th>
@@ -118,16 +118,16 @@
 			<col style="width:50px;"> <!-- 날수 -->
 			<col style="width:100px;"> <!-- 일자 -->
 			<col style="width:70px;background-color:#24272d;"> <!-- 당일종가 -->
-			<col style="width:100px"> <!-- 진행현황 -->
 			<col style="width:70px">  <!-- 총수량 -->
-			<col style="width:100px"> <!-- 매수금액 -->
 			<col style="width:100px"> <!-- 총매수금 -->
 			<col style="width:100px"> <!-- 평가금액 -->
 			<col style="width:80px;border-right:2px solid gray"> <!-- 종합평균 -->
+			<col style="width:80px"> <!-- 일반진행 -->
 			<col style="width:80px"> <!-- 일반평균 -->
 			<col style="width:90px"> <!-- 일반수익 -->
 			<col style="width:90px"> <!-- 일반(%) -->
 			<col style="width:100px;border-right:2px solid gray"> <!-- 가용잔액 -->
+			<col style="width:80px"> <!-- 기회진행 -->
 			<col style="width:80px"> <!-- 기회평균 -->
 			<col style="width:90px"> <!-- 기회수익 -->
 			<col style="width:90px"> <!-- 기회(%) -->
@@ -146,21 +146,19 @@
 				<td style='text-align:center'>{{TR['날수']}}</td>
 				<td class='if-the-day'>{{TR['기록일자']}}</td>
 				<td class='ohlc-price' style='text-align:right;cursor:pointer'>{{TR['당일종가']|safe}}</td>
-				<td style='text-align:right;color:#F6CECE'>{{TR['진행현황']}}</td>
 				<td style='text-align:right'>{{TR['보유수량']}}</td>
-				<td style='text-align:right'>{{TR['매수금액']}}</td>
 				<td style='text-align:right;color:#E0F8F7'>{{TR['총매수금']}}</td>
 				<td style='text-align:right;color:#F8E6E0'>{{TR['평가금액']|safe}}</td>
 				<td style='text-align:right;color:#F5F6CE'>{{TR['종합평균']|safe}}</td>
+				<td style='text-align:right;color:#F6CECE'>{{TR['일반진행']}}</td>
 				<td style='text-align:right'>{{TR['일반평균']|safe}}</td>
 				<td style='text-align:right'>{{TR['일반수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['수익률1']|safe}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['가용잔액']|safe}}</td>
+				<td style='text-align:right;color:#F6CECE'>{{TR['기회진행']}}</td>
 				<td style='text-align:right;color:#E6F8E0'>{{TR['기회평균']|safe}}</td>
 				<td style='text-align:right'>{{TR['기회수익']|safe}}</td>
-				
 				<td style='text-align:right;font-weight:bold'>{{TR['수익률2']|safe}}</td>
-				
 				<td style='text-align:right;color:#CEF6CE'>{{TR['기회자금']|safe}}</td>
 			</tr>
 			{%- endfor %}
@@ -233,7 +231,7 @@ const data_season = {
 		{
 			label:'추세하향선',
 			data : [4,7,5,3,4],
-			borderWidth:2,borderColor:'darkgray',borderDash: [2,5],backgroundColor:'white',pointRadius:0,pointHoverRadius:0,
+			borderWidth:2,borderColor:'darkgray',borderDash: [2,5],backgroundColor:'white',pointRadius:2,pointHoverRadius:15,
 			lineTension:0.2
 
 		}
@@ -336,7 +334,8 @@ function show_chart(season) {
 	
 	const t0 = 0.02;
 	const a0 = clsv[0];	const d0 = 1-t0;
-	for(let x=0; x < clsv.length; x++) { dlne.push(a0 * (d0**x));}
+//	for(let x=0; x < clsv.length; x++) { dlne.push(a0 * (d0**x));}
+	for(let x=0; x < clsv.length; x++) { dlne.push(a0*(1-x*t0));}
 
 	var xticks = clsv.length
 	if (xticks < 30 ) { xticks = 30; }

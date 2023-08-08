@@ -120,9 +120,8 @@
 	</div>
 </div>
 
-
 <div id="Next-Strategy" style="opacity:0.7;position:absolute;left:1155px;top:71px;width:250px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px">
-    <span style="font-style: italic"> 기회 투자 전략 <span id="cpoint">4</span> % point</span><br><br>
+    <span style="font-style: italic"> 기회 투자 전략 <span id="cpoint">2.2</span> % point</span><br><br>
 	<ul style="margin-left:20px">
 		<li>목표가격 : <span id="cp_t">{{D['target_value'][0]}}</span></li>
 		<li>기회가격 : <span id="cp_p">{{D['찬스가격']}}</span> (<span id="cp_d">{{D['찬스변동']}}</span>%)</li>
@@ -147,7 +146,7 @@
 var notice_popup = false;
 var show_dollar   = true;
 var dollar_notice = [];
-const state = {{D['진행상황']}};
+
 
 $("#extra-info .exchange").each(function(){ dollar_notice.push($(this).text());});
 $(".list-bears2,.list-bulls2").click(function(){
@@ -158,6 +157,8 @@ $(".list-bears2,.list-bulls2").click(function(){
 
 $(".cp").click(function(){chart_update($(this).text())}).mouseover(function(){$(this).addClass('cp-over')}).mouseout(function(){$(this).removeClass('cp-over')});
 
+{% if D['찬스수량'] %}
+const state = {{D['진행상황']}};
 function chart_update(pos='V') {
 
 	let arr_len = myChart.config.data.labels.length;
@@ -207,7 +208,7 @@ function chart_update(pos='V') {
 	}
 	myChart.update();
 }
-
+{% endif %}
 function round_up(n,decimals=2){
     multiplier = 10 ** decimals;
     return Math.ceil(n * multiplier) / multiplier;

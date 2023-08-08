@@ -41,15 +41,15 @@ class Invest_guide(Control) :
 
             self.init_value()
             # 매도상황 검토
-            self.check_sell()
+            self.today_sell()
             # 매수상황 검토
-            self.check_buy()
+            self.today_buy()
             self.calculate()
 
             # 매도전략
-            self.normal_sell()
+            self.tomorrow_sell()
             # 매수전략
-            self.normal_buy()
+            self.tomorrow_buy()
             self.update_value()
         
         else :
@@ -260,7 +260,7 @@ class Invest_guide(Control) :
         self.M['추가자금'] = total - self.M['가용잔액']
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
 
-    def normal_sell(self) :
+    def tomorrow_sell(self) :
 
         if  self.M['경과일수'] ==  0 :
             self.M['전매도량']  =  0
@@ -280,7 +280,7 @@ class Invest_guide(Control) :
         self.M['전매도가'] = round(매도단가,2)
 
 
-    def normal_buy(self)  :
+    def tomorrow_buy(self)  :
 
         if  self.M['경과일수'] == 0 :
             self.M['기초수량'] = self.M['전매수량'] = my.ceil(self.M['일매수금']/self.M['당일종가'])
@@ -302,12 +302,12 @@ class Invest_guide(Control) :
         self.M['예상금액'] = f"{매수수량 * 매수단가 :,.2f}"
        
                 
-    def check_sell(self) :
+    def today_sell(self) :
         if  not self.M['경과일수'] : return
         if  self.M['당일종가'] >= float(self.M['LD']['sub20']) : 
             self.M['매도수량']  = int(self.M['LD']['sub3'])
       
-    def check_buy(self) :
+    def today_buy(self) :
         if  not self.M['경과일수'] : 
             if  self.M['당일종가'] <= float(self.M['LD']['sub19']) :
                 self.M['매수수량']  = self.M['기초수량'] = my.ceil(self.M['일매수금']/self.M['전일종가'])  # 첫날에만 기초수량 재산정

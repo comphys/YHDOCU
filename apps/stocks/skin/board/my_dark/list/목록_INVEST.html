@@ -12,11 +12,11 @@
 	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
 		<canvas id="myChart"  style="width:1125px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
 	</div>
-	<div style="position:absolute;left:1170px;top:62px;">
-		<canvas id="myChart_side" style="width:210px;height:305px;background-color:#24272d" onclick="$('#ChanceStrategy').show()"></canvas>
-		<div style="margin-top:4px">
-			<input type='text' name='s_date' class="i-date_1" style="width:85px;text-align:center;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}"> -
-			<input type='text' name='e_date' class="i-date_2" style="width:85px;text-align:center;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}">
+	<div style="position:absolute;left:1170px;top:62px;width:230px">
+		<canvas id="myChart_side" style="width:200px;height:280px;" onclick="$('#ChanceStrategy').show()"></canvas>
+		<div style="margin-top:2px;text-align:center;">
+			<input type='text' name='s_date' class="i-date_1" style="width:83px;text-align:center;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}"> -
+			<input type='text' name='e_date' class="i-date_2" style="width:83px;text-align:center;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}">
 			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(2)" title="현재시즌"><i class="fa fa-bars"></i></span>
 			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(0)" title="전체시즌"><i class="fa fa-home"></i></span>
 		</div>
