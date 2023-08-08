@@ -98,7 +98,7 @@ class M_backtest_VICTORY(Model) :
 
         self.D['TR'] = []
 
-        self.M['추가자금']  = int(self.D['addition'])
+        self.M['추가자금']  = self.D['addition']
 
         # 리밸런싱
         self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
@@ -218,17 +218,19 @@ class M_backtest_VICTORY(Model) :
         # endfor -----------------------------------------------------------------------------------------------------
         
         self.result()
-        # self.nextStep()
+        self.nextStep()
 
     def nextStep(self) :
         self.M['전일종가'] = self.M['당일종가']
         self.today_price()
         self.tomorrow_step()
 
-        self.D['next_process'] = self.M['날수'] + 1
+        self.D['next_process'] = self.M['날수']
         self.D['next_base_price'] = self.M['전일종가']
         self.D['next_base_amount'] = self.M['일매수금']
         self.D['next_available_money'] = f"{self.M['자산총액']:,.0f}"
+        self.D['next_status'] = self.M['매수단계']
+        self.D['next_base_qty'] = self.M['기초수량']
 
         if  self.M['첫날기록'] :
             self.D['next_buy_qty'] = my.ceil(self.M['일매수금']/self.M['전일종가'])
@@ -304,8 +306,8 @@ class M_backtest_VICTORY(Model) :
         delta = d1-d0
         self.D['days_span'] = delta.days
 
-        self.D['init_capital'] = int(self.D['capital'].replace(',',''))
-        self.D['addition'] = int(self.D['addition'].replace(',','')) if self.D['addition'] else 0
+        self.D['init_capital'] = my.sv(self.D['capital'])
+        self.D['addition'] = my.sv(self.D['addition']) if self.D['addition'] else 0.0
 
     def print_backtest(self) :
         

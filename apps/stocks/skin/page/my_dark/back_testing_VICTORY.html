@@ -39,12 +39,9 @@
         <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 추가 자본금</div>
         <input type='text' class="i-number" name="addition" style="width:80px;text-align:center;" value="{{D['addition']}}">
     </div>
-    <div class='i-input-div'>
-        <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 초기 진행률</div>
-        <input type='text' name="progress" style="width:60px;text-align:center;" value="{{D['progress']}}">
-    </div>
     </div> <!--pull left-->
-    <div class="pull-right">
+
+	<div class="pull-right">
     <div class='i-input-div'>
         <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 시작일자</div>
         <input type='text' name='start_date' class="i-date" value="{{D['start_date']}}" style="width:110px;text-align:center;">
@@ -69,14 +66,16 @@
 
 <div id="Next-Strategy" style="display:none;opacity:0.7;position:fixed;left:1255px;top:112px;width:230px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px">
     <span style="font-style: italic"> Next Strategy</span><br><br>
-	<ul style="margin-left:20px">
-		<li>Process : {{D['next_process']}}</li>
-		<li>base price : ${{D['next_base_price']}}</li>
-		<li>base amount : ${{D['next_base_amount']}}</li>
-		<li>available : ${{D['next_available_money']}}</li>
+	<ul style="margin-left:10px">
+		<li>진행일자 : {{D['next_process']}}</li>
+		<li>전일종가 : $ {{D['next_base_price']}}</li>
+		<li>현재잔액 : $ {{D['next_available_money']}}</li>
 		<li>--------------------</li>
-		<li>Buy {{D['next_buy_qty']}} for ${{D['next_buy']}}</li>
-		<li>Sell {{D['next_sell_qty']}} for ${{D['next_sell']}}</li>
+		<li>현재단계 : {{D['next_status']}}</li>
+		<li>일매수금 : $ {{D['next_base_amount']}}</li>
+		<li>기초수량 : {{D['next_base_qty']}}</li>
+		<li>매수전략 : {{D['next_buy_qty']}}(${{D['next_buy']}})</li>
+		<li>매도전략 : {{D['next_sell_qty']}}(${{D['next_sell']}})</li>
 	</ul>
 </div>
 

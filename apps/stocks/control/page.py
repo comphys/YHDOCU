@@ -46,7 +46,6 @@ class Page(Control) :
         self.D['start_date']    = self.D['post']['start_date']
         self.D['end_date']      = self.D['post']['end_date']
         # -------------------
-        self.D['progress']      = self.D['post'].get('progress','')
         self.D['chanceCapital'] = self.D['post'].get('chanceCapital','36,000')
         self.D['chancePoint']   = self.D['post'].get('chancePoint','-2.2')
 
@@ -55,8 +54,7 @@ class Page(Control) :
         M = self.model('backtest-backtest_'+s_code)
         M.view()
         M.get_start()
-        if self.D['progress'] : M.test_with_progress()
-        else : M.test_it()
+        M.test_it()
         D={'skin':f"{self.skin}/{self.D['bid']}_{self.D['strategy']}.html"}
         return self.echo(D)
 

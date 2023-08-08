@@ -66,7 +66,7 @@
 	<div class="pull-left" style="margin-right:20px">
 		<canvas id="myChart_main"  style="width:1210px;height:350px;background-color:#24272d;"></canvas>
 	</div>
-	<div class="pull-left">
+	<div class="pull-left" onclick="$('#Next-Strategy').show()">
 		<canvas id="myChart_side" style="width:220px;height:350px;background-color:#24272d"></canvas>
 	</div>
 </div>
@@ -172,6 +172,21 @@
 
 <div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1450px;background-color:#24272d;padding:20px;border:2px solid black;opacity:0.9">
 	<canvas id="mybackTestChart" style="width:100%;height:310px;background-color:#24272d"></canvas>
+</div>
+
+<div id="Next-Strategy" style="display:none;opacity:0.7;position:fixed;left:1255px;top:112px;width:230px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
+    <span style="font-style: italic"> Next Strategy</span><br><br>
+	<ul style="margin-left:10px">
+		<li>진행일자 : {{D['next_process']}}</li>
+		<li>전일종가 : $ {{D['next_base_price']}}</li>
+		<li>현재잔액 : $ {{D['next_available_money']}}</li>
+		<li>--------------------</li>
+		<li>현재단계 : {{D['next_status']}}</li>
+		<li>일매수금 : $ {{D['next_base_amount']}}</li>
+		<li>기초수량 : {{D['next_base_qty']}}</li>
+		<li>매수전략 : {{D['next_buy_qty']}}(${{D['next_buy']}})</li>
+		<li>매도전략 : {{D['next_sell_qty']}}(${{D['next_sell']}})</li>
+	</ul>
 </div>
 
 
