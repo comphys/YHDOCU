@@ -28,7 +28,8 @@ class M_backtest_DEVELOPE(Model) :
             self.M['보유수량'] -= self.M['매도수량']; self.R['보유수량'] -= self.R['매도수량']
             self.M['가용잔액'] += self.M['매도금액']; self.R['기회자금'] += self.R['매도금액']
             self.M['총매수금']  = 0.00; self.R['총매수금']  = 0.00 
-            self.M['수익률']   = self.M['매수익률']; self.R['수익률']   = self.R['매수익률']
+            self.M['수익률']   = self.M['매수익률']; 
+            self.R['수익률']   = self.R['매수익률']
             self.M['평균단가'] = 0.0; self.R['평균단가'] = 0.0; self.T['평균단가'] = 0.0
             self.M['첫날기록'] = True
             self.M['매수단계'] = '일반매수'
@@ -45,13 +46,18 @@ class M_backtest_DEVELOPE(Model) :
         self.M['평가금액']  =  self.M['당일종가'] * self.M['보유수량']; self.R['평가금액']  =  self.M['당일종가'] * self.R['보유수량']
         self.M['수익현황']  =  self.M['평가금액'] - self.M['총매수금']; self.R['수익현황']  =  self.R['평가금액'] - self.R['총매수금']
         
-        self.M['수익률']    = (self.M['당일종가']/self.M['평균단가'] -1) * 100  if self.M['평균단가'] else 0.00
-        self.R['수익률']    = (self.M['당일종가']/self.R['평균단가'] -1) * 100  if self.R['평균단가'] else 0.00
-        self.T['수익률']    = (self.M['당일종가']/self.T['평균단가'] -1) * 100  if self.T['평균단가'] else 0.00
+        if  self.M['보유수량'] == 0 and self.M['매도수량']:
+            self.M['수익률']   = self.M['매수익률']
+            self.R['수익률']   = self.R['매수익률'] 
+            self.M['수익현황'] = self.M['실현수익']
+            self.R['수익현황'] = self.R['실현수익']
+        else :
+            self.M['수익률']    = (self.M['당일종가']/self.M['평균단가'] -1) * 100  if self.M['평균단가'] else 0.00
+            self.R['수익률']    = (self.M['당일종가']/self.R['평균단가'] -1) * 100  if self.R['평균단가'] else 0.00        
         
-        if self.M['날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['날수'] ; self.M['최대날자'] = self.M['day']
-        if self.M['수익률'] < self.M['MDD1'] : self.M['MDD1'] = self.M['수익률'] ; self.M['MDD_DAY1'] = self.M['day']
-        if self.R['수익률'] < self.M['MDD2'] : self.M['MDD2'] = self.R['수익률'] ; self.M['MDD_DAY2'] = self.M['day']
+        if self.M['날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['날수']; self.M['최대날자'] = self.M['day']
+        if self.M['수익률'] < self.M['MDD1']  : self.M['MDD1'] = self.M['수익률'];   self.M['MDD_DAY1'] = self.M['day']
+        if self.R['수익률'] < self.M['MDD2']  : self.M['MDD2'] = self.R['수익률'];   self.M['MDD_DAY2'] = self.M['day']
 
         self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
 
@@ -124,6 +130,7 @@ class M_backtest_DEVELOPE(Model) :
             
     
     def chance_init(self) :
+        
             가용잔액 = int(self.R['기회자금'] * self.M['자본비율'])
             일매수금 = int(가용잔액/self.M['분할횟수'])
             매수비율 = 일매수금 / self.M['일매수금'] 
@@ -292,7 +299,7 @@ class M_backtest_DEVELOPE(Model) :
         tx['매수수량'] = self.M['매수수량'] + self.R['매수수량'] if self.M['매수수량'] + self.R['매수수량'] else ' '
         tx['매수금액'] = f"{round(self.M['매수금액']+self.R['매수금액'],4):,.3f}" if self.M['매수금액']+self.R['매수금액'] else ' '
         tx['종합평균'] = f"{round(self.T['평균단가'],4):,.4f}"
-        tx['일반평균'] = f"<span class='avgn{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.4f}</span>"
+        tx['일반평균'] = f"<span class='avgn{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.4f}</span>" if self.M['평균단가'] else f"<span class='avgn{self.M['기록시즌']}'> </span>"
         tx['기회평균'] = f"<span class='avgc{self.M['기록시즌']}'>{round(self.R['평균단가'],4):,.4f}</span>" if self.R['평균단가'] else f"<span class='avgc{self.M['기록시즌']}'> </span>"
         #-----------------------------------------------------------
         tx['매도수량'] = f"{self.M['매도수량']+self.R['매도수량']:,}" if self.M['매도수량'] else ' '
