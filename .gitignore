@@ -7,4 +7,5 @@ test*.py
 mydb/
 mytest/
 ipynb/
+apps/jbk/
 __pycache__/
