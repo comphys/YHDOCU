@@ -103,7 +103,7 @@
 </div>
 {% else %}
 <div class="row-row clearfix"> 
-	<div class='well'><strong>안내사항 :</strong> 현재 작성된 글이 없거나 검색결과에 일치하는 데이타가 없습니다.  </div> 
+	<div class='well' style="border-radius:0px;"><strong>안내사항 :</strong> 현재 작성된 글이 없거나 검색결과에 일치하는 데이타가 없습니다.  </div> 
 </div>
 {% endif %}
 <!-- 리스트 메인 테이블 종료 -->
@@ -120,6 +120,7 @@
 	</div>
 </div>
 
+{% if D['찬스수량'] %}
 <div id="Next-Strategy" style="opacity:0.7;position:absolute;left:1155px;top:71px;width:250px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px">
     <span style="font-style: italic"> 기회 투자 전략 <span id="cpoint">2.2</span> % point</span><br><br>
 	<ul style="margin-left:20px">
@@ -139,7 +140,7 @@
 		<span class="cp">N</span><span class="cp">V</span><span class="cp">0</span><span class="cp">1.1</span><span class="cp">2.2</span><span class="cp">3.3</span><span class="cp">4.4</span><span class="cp">5.5</span>
 	</div>
 </div>
-
+{% endif %}
 
 
 <script>

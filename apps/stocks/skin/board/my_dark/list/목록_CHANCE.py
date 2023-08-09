@@ -143,11 +143,11 @@ class 목록_CHANCE(SKIN) :
 
     def list(self) :
         self.head()
-        self.chart()
 
         TR = [] ; tx = {}
 
         if self.TrCnt :
+            self.chart()
             self.D['cno'] = -1 ; TrCnt = self.TrCnt
 
             for idx,item in enumerate(self.D['LIST']) :
