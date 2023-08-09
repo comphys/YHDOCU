@@ -1,0 +1,36 @@
+@charset "utf-8";
+body			{margin:0; padding:0; background-color:#acacac }
+/*/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/ 문서 내 설정
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+#tool-bar		 {position:fixed;width:100%; height:30px; padding:2px 0 0 10px; background-color:#000000; opacity:0.7; top:0; z-index:1000;text-align:center;display:none}
+#tool-bar-on-off {position:fixed;width:50px;height:100%;}
+#bottom-bar		{position:fixed;bottom:0;width:100%;height:25px;left:0;opacity:0.7;background-color:black;z-index:20;text-align:right}
+/* A4 가로형 사용을 위해 mark 좌 우를 바꾸어 설정   */
+#A4DOCS {position:absolute;left:15mm;margin-top:12mm;z-index:3;}
+#selectedMarkL, #selectedMarkR, #choicedMark	{position:absolute;width:10mm;background-color:#191919;color:yellow;margin-top:12mm;font-weight:bold;cursor:pointer;display:none}
+#selectedMarkL	{margin-left:5mm;z-index:2;border-radius:6px 0 0 6px;padding-left:5px}	
+#selectedMarkR, #choicedMark {margin-left:12mm;width:223mm;z-index:1;text-align:right;border-radius:0 6px 6px 0;padding-right:5px}	
+#choicedMark { background-color: #ffff00; color: black; z-index:2; }
+.A4w-Mark {width:310mm}
+
+.hover_SPAN { border-bottom:2px solid red;  }
+
+.rightClickMenu  { position: fixed; top: 15px; left: 650px; z-index: 1015; float: left;	padding: 5px 0px 5px 0px;  margin: 2px 0 0; list-style: none; background-color: #ffffff; border: 1px solid #7b7b7b; border-radius: 6px; box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8); background-clip: padding-box;text-align:left;}
+.rightClickMenu .divider {  height: 1px;  margin: 3px 1px 0px 1px;  overflow: hidden;  background-color: #e5e5e5;  border-bottom: 1px solid #ffffff;}
+.rightClickMenu > li { display: block;  padding: 2px 10px;  clear: both;  font-weight: normal;  line-height: 20px; white-space: nowrap; }
+.rightClickMenu > li:hover { cursor:pointer; color: #ffffff; text-decoration: none; background-color: #00007d; }
+
+.body-myfile, .body-myimage { border-bottom:3px solid red;cursor:pointer; color:#000000}
+/*/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/ 프린트 시 설정
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+@media print {  
+	#tool-bar, #selectedMarkL, #selectedMarkR, #contextMenu, #bottom-bar {display:none;}
+	#A4DOCS { position:absolute;left:0;top:0;margin:0;}
+}
+
+/*/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/ 기타 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+#editor-sign td { padding:0px 2px }

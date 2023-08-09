@@ -1,0 +1,231 @@
+{% extends D['_skn'] + 'page/my_dark/main_layout.html' %}
+
+{% block contents_page  %}
+<div class="row-row">
+<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
+<br>
+<div class="well clearfix">
+    <form method='post' name='stock_back_testing' action="{{D['_bse']}}page/backtest2/{{D['bid']}}" onsubmit='return check_thisForm()'>
+    <div class="pull-left">
+    <div class='select' style='margin-right:10px;vertical-align:bottom'>
+        <input placeholder='종목코드' name='code' type='text' value="{{D['code']}}">
+            <div class='btn-group'>
+                <button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>
+                    <ul class='dropdown-menu'>
+                        <li><a>종목코드</a></li>
+                        <li><a href='#'>TQQQ</a></li>
+						<li><a href='#'>SOXL</a></li>
+                    </ul>
+            </div>
+    </div>
+    <div class='select' style='margin-right:10px;vertical-align:bottom'>
+        <input placeholder='매매전략' name='strategy' type='text' value="{{D['strategy']}}" style="width:170px">
+            <div class='btn-group'>
+                <button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>
+                    <ul class='dropdown-menu'>
+                        <li><a>매매전략</a></li>
+                        <li><a href='#'>변동리밸런싱_기본</a></li>
+						<li><a href='#'>변동리밸런싱_매수</a></li>
+						<li><a href='#'>고정리밸런싱_기본</a></li>
+						<li><a href='#'>고정리밸런싱_증가</a></li>
+                    </ul>
+            </div>
+    </div>
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 최초 투자금</div>
+        <input type='text' name='leverage' class="i-number" style="width:80px;text-align:center;" value="{{D['leverage']}}">
+    </div>
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 예비 자본금</div>
+        <input type='text' class="i-number" name="cash" style="width:80px;text-align:center;" value="{{D['cash']}}">
+    </div>
+
+    </div> <!--pull left-->
+    <div class="pull-right">
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 시작일자</div>
+        <input type='text' name='start_date' class="i-date" value="{{D['start_date']}}" style="width:110px;text-align:center;">
+    </div>
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;"> 종료일자</div>
+        <input type='text' name='end_date' class="i-date" value="{{D['end_date']}}" style="width:110px;text-align:center;">
+    </div>
+    <button class="btn btn-red-s3" style="vertical-align:middle;">테스팅</button>
+    </div> <!--pull right-->
+    </form>
+</div> <!--well-->
+
+<script src="/sys/chart/chart.min.js"></script>
+<script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
+<div style="width:100%;background-color:#24272d;padding:20px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
+	<canvas id="myChart"  style="width:1460px;height:360px;background-color:#24272d;"></canvas>
+</div>
+
+
+{% if D['NOTICE'] %}
+<div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
+{% else %}
+	<div class="pull-left" style="padding:10px;color:lightgray">
+	{{D['output_l']|safe}}
+	</div>
+	<div class="pull-right" style="padding:10px;color:lightgray">
+	{{D['output_r']|safe}}
+	</div>
+	<table class='table table-striped table-hover' style="width:{{D['xwidth']}};border:2px solid black;">
+		<tr style="background-color:#393f4a;border-bottom:1px solid black">
+			<th style='text-align:center;width:50px'>날수</th>
+			<th style='text-align:center;width:110px'>기록일자</th>
+			<th style='text-align:right;width:80px'>{{D['기본코드']}}</th>
+			<th style='text-align:right;width:80px'>{{D['code']}}</th>
+			<th style='text-align:right;width:80px'>매수</th>
+			<th style='text-align:right;width:80px'>매도</th> 
+			<th style='text-align:right;;width:100px'>거래금액</th>
+			<th style='text-align:right;width:80px'>보유수량</th>
+			<th style='text-align:right;width:100px'>최소가치</th>
+			<th style='text-align:right;width:100px'>목표가치</th>
+			<th style='text-align:right;width:100px'>현재가치</th>
+			<th style='text-align:right;width:100px'>최대가치</th>
+			<th style='text-align:right;width:80px'>주식비중</th>
+			<th style='text-align:right;width:80px'>현금비중</th>
+			<th style='text-align:right;width:80px'>수익률</th>
+			<th style='text-align:right;'>가용잔액</th>
+		</tr>
+	</table>
+</div> <!--postion:fixed-->
+</div> <!--rowrow clearfix-->
+
+{% if D['TR'] %}
+<div class="row-row clearfix" style="margin-top:500px">
+	
+	<table class='table table-striped table-hover' style="border:2px solid black">
+		<colgroup>
+			<col style="width:50px;"> <!-- 날수 -->
+			<col style="width:110px;"> <!-- 기록일자 -->
+			<col style="width:80px"> <!-- 기본코드 -->
+			<col style="width:80px;background-color:#24272d;border:2px solid black;"> <!-- 종가 -->
+			<col style="width:80px"> <!-- 매수 -->
+			<col style="width:80px"> <!-- 매도 -->
+			<col style="width:100px"> <!-- 거래금액 -->
+			<col style="width:80px"> <!-- 보유수량 -->
+			<col style="width:100px"> <!-- 최소가치 -->
+			<col style="width:100px"> <!-- 목표가치 -->
+			<col style="width:100px"> <!-- 현재가치 -->
+			<col style="width:100px">  <!-- 최대가치 -->
+			<col style="width:80px">  <!-- 주식비중 -->
+			<col style="width:80px">  <!-- 현금비중 -->
+			<col style="width:80px">  <!-- 수익률 -->
+			<col>  <!-- 가용잔액 -->
+		</colgroup>
+
+		<tbody>
+			{%- for TR in D['TR'] -%}
+			{% if TR['진행상황'] == '매도'  %}
+			<tr style="border-top:2px solid yellow;border-bottom:2px solid yellow;background-color:black;"> 
+			{% else %}
+			<tr>
+			{% endif %}
+				<td style='text-align:center'>{{TR['날수']}}</td>
+				<td class='if-the-day'>{{TR['기록일자']}}</td>
+				<td class='if-the-day'>{{TR['기본종가']}}</td>
+				<td class='ohlc-price' style='text-align:right;cursor:pointer'>{{TR['당일종가']|safe}}</td>
+				<td style='text-align:right'>{{TR['당일매수']}}</td>
+				<td style='text-align:right'>{{TR['당일매도']}}</td>
+				<td style='text-align:right'>{{TR['거래금액']}}</td>
+				<td style='text-align:right;color:#E6F8E0'>{{TR['보유수량']}}</td>
+				<td style='text-align:right;color:#E0F8F7'>{{TR['최소가치']}}</td>
+				<td style='text-align:right;color:#E0F8F7'>{{TR['목표가치']}}</td>
+				<td style='text-align:right;color:#E0F8F7'>{{TR['현재가치']}}</td>
+				<td style='text-align:right;color:#E0F8F7'>{{TR['최대가치']}}</td>
+				<td style='text-align:right;color:#E0F8F7'>{{TR['주식비중']}}</td>
+				<td style='text-align:right;color:#E0F8F7'>{{TR['현금비중']}}</td>
+				<td style='text-align:right;color:#E0F8F7'>{{TR['수익률']}}</td>
+				<td style='text-align:right;color:#CEF6CE'>{{TR['가용잔액']|safe}}</td>
+			</tr>
+			{%- endfor %}
+		</tbody>
+	</table>
+</div>
+{% endif %}
+{% endif %}
+
+
+<script src="/sys/chart/chart.min.js"></script>
+<script>
+
+// 챠트 그리기
+const ctx = $id('myChart');
+
+ctx.style.backgroundColor = '#33363b';
+ctx.style.border = '2px solid black';
+
+let labels = {{D['chart_date']|safe}};
+const data = {
+    labels : labels,
+    datasets : [
+		{
+            label:' 최대가치',
+            data : {{D['chart_max']}},
+            pointStyle:'circle', borderWidth:2,pointRadius:0,borderColor:'#f78181',backgroundColor:'#f78181',
+			lineTension:0.2
+
+        },
+        {
+            label:' 현재가치',
+            data : {{D['chart_cur']|safe}},
+            borderColor:'yellow', borderWidth:3,pointRadius:0, pointHoverRadius:24, backgroundColor:'yellow',
+			lineTension:0.2
+
+        },
+        {
+            label:' 목표가치',
+            data : {{D['chart_target']}},
+            borderColor:'lightgray', borderWidth:1,pointRadius:0,  backgroundColor:'lightgray',
+			lineTension:0.2
+
+        },
+        {
+            label:' 최소가치',
+            data : {{D['chart_min']}},
+            borderColor:'#58ACFA', borderWidth:2, pointRadius:0,  backgroundColor:'#58ACFA',
+			lineTension:0.2,
+			fill:true,
+			backgroundColor:'rgba(11,47,58,0.3)'
+        },
+
+    ]   
+};
+const options = {
+	animation : { duration:1000	},
+	plugins : { legend: {display:false}, tooltip:{enabled:false}},
+    responsive:false,
+    layout:{padding:20},
+    scales:{
+        x:{ ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y:{ ticks : {color:'lightgray'}, grid:{color:'#272727'} }
+    }
+};
+const config  = {type:'line',data:data,options:options};
+const myChart = new Chart(ctx, config); 
+//
+
+// --------------------------------------------------------------------------------------
+
+
+var selected_tr = null
+$(document).ready(function(){ 
+
+});	
+
+function check_thisForm() {
+    if(! $("input[name='code']").val() ) { h_dialog.notice("코드 입력은 필수입니다"); return false; }
+    if(! $("input[name='capital']").val() ) { $("input[name='capital']").val('21,000') }  
+	if(! $("input[name='addition']").val() ) { $("input[name='addition']").val('14,000') } 
+    if(! $("input[name='start_date']").val() ) { h_dialog.notice("시작 일자가 입력되지않았습니다"); return false; }  
+    if(! $("input[name='end_date']").val() ) { h_dialog.notice("종료 일자가 입력되지않았습니다"); return false; }  
+    if($("input[name='start_date']").val() > $("input[name='end_date']").val() ) { h_dialog.notice("시작 일자는 종료일보다 커야 합니다"); return false; }
+}
+
+
+//
+</script>
+{% endblock %}

@@ -1,0 +1,339 @@
+{% extends D['_skn'] + 'board/my_dark/main_layout.html' %}
+
+{% block contents_list %}
+<!-- 리스트 상부 카테고리 시작 -->
+<!-- 리스트 상부 카테고리 종료 -->
+
+<!-- 리스트 메인 테이블 시작 -->
+<script src="/sys/chart/chart.min.js"></script>
+<script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
+<div class="clearfix" style="width:100%;background-color:#24272d;padding:20px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
+	<div class="pull-left" style="margin-right:20px">
+		<canvas id="myChart"  style="width:1100px;height:350px;background-color:#24272d;" ondblclick="chart_toggle()"></canvas>
+	</div>
+	<div class="pull-left" style="margin:15px">
+		<canvas id="myChart2" style="width:200px;height:320px;background-color:#24272d"></canvas>
+	</div>
+</div>
+
+<div style="position:absolute;left:1072px;top:72px;width:71px;height:350px;border:2px solid black;background-color:lightgreen;opacity:0.1" onclick="chart_update('V')"></div>
+{% if D['TR'] %}
+
+
+<div id="extra-info" class="clearfix" style="border:2px solid black;background-color:rgb(34, 33, 33);padding:5px 20px;margin-bottom:-2px">
+	<div class="pull-left">
+		<i class="fa fa-sign-in"></i> <span class="exchange">{{D['총입금']}}</span> &nbsp;
+		<i class="fa fa-sign-out"></i> <span class="exchange">{{D['총출금']}}</span> &nbsp;
+		<i class="fa fa-usd"></i> <span class="exchange">{{D['현재총액']}}</span> &nbsp;
+		<i class="fa fa-signal"></i> <span class="exchange">{{D['총수익금']}}</span> &nbsp; 
+		<i class="fa fa-line-chart"></i> {{D['총수익률']}}% &nbsp;
+		<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} ( <span class="exchange">{{D['매수예상']}}</span> )</span> / 
+		<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <i class="fa fa-usd"></i> {{D['매도단가']}} ( {{D['매도예상']}} )</span> / 
+		<i class="fa fa-arrow-up"></i> {{D['연속상승']}} <i class="fa fa-arrow-down"></i> {{D['연속하락']}}&nbsp;/&nbsp; 
+		<span style="color:yellow;font-style:italic">EST&nbsp;$ {{D['예상이익']}} (₩ {{D['원화예상']}})</span>&nbsp;
+	</div>
+	<div class="pull-right">
+		<span style="font-style:italic;cursor:pointer" onclick="exchange_toggle(this)">₩ {{D['현재환율']}}</span>&nbsp;
+	</div>
+</div>
+
+<div class="row-row clearfix">
+	<table class='table table-bordered table-striped table-hover'>
+		<thead>
+			<tr>
+				<th style="background-color:#071418;font-style:italic">Progress</th>
+				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('입금내역',0)">입금</th>
+				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('출금내역',0)">출금</th>
+				<th colspan='2' style="background-color:#0A2229;font-style:italic">US dollar</th>
+				<th colspan='11' style="background-color:#0B2F3A;font-style:italic;cursor:pointer;" onclick="winopen('winopen/chart2/soxl',820,450,'stock_chart');">Leverage Stock {{D['적용종목']}}</th>
+				<th style="background-color:#071418;;font-style:italic">Total</th>
+			</tr>
+			<tr>
+				<th style="background-color:#071418;font-style:italic;width:110px">{{D['총경과일']}} days</th>
+				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총입금']}}</th>
+				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총출금']}}</th>
+				<th style="background-color:#0A2229;text-align:right;;width:90px">잔액</th>
+				<th style="background-color:#0A2229;text-align:right;;width:65px">비중</th>
+
+				<th style="background-color:#0B2F3A;text-align:right;cursor:pointer;width:70px" onclick="popup_notice('종가2',0)">종가</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:60px">수량</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:84px">매수금</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:84px">평균단가</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:80px">보유수량</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:84px">총매수금</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:84px">평가금액</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:84px">매도금</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:84px">현수익</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:84px">수익률</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:70px;">비중</th>
+
+				<th style="background-color:#071418;font-style:italic">Value</th>
+			</tr>
+		</thead>
+		<tbody>
+			{%- for TR in D['TR'] -%}
+			{% if (TR['add12']|striptags != '0.00') and (TR['add15']|striptags == '0.00') %}
+			<tr style="background-color:black;"> 
+			{% else %}
+			<tr> 
+			{% endif %}
+			{{TR['add0']|safe}}
+			{{TR['add1']|safe}}
+			{{TR['add2']|safe}}
+			{{TR['add3']|safe}}
+			{{TR['add4']|safe}}
+
+			{{TR['add14']|safe}}
+			{{TR['add5']|safe}}
+			{{TR['add11']|safe}}
+			{{TR['add7']|safe}}
+			{{TR['add9']|safe}}
+			{{TR['add6']|safe}}
+			{{TR['add15']|safe}}
+			{{TR['add12']|safe}}
+			{{TR['add18']|safe}}
+			{{TR['add8']|safe}}
+			{{TR['add16']|safe}}
+
+			{{TR['add17']|safe}}
+			</tr>
+			{%- endfor %}
+		</tbody>
+	</table>
+</div>
+{% else %}
+<div class="row-row clearfix"> 
+	<div class='well' style="border-radius:0px;"><strong>안내사항 :</strong> 현재 작성된 글이 없거나 검색결과에 일치하는 데이타가 없습니다.  </div> 
+</div>
+{% endif %}
+<!-- 리스트 메인 테이블 종료 -->
+
+<!-- 하단 버튼 [ 목록 쓰기] [페이지네이션]-->
+<div class="row-row clearfix">
+	<div class='pull-left'>
+		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
+		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red-s2'>검 토</button></a>
+		<a href="{{D['_bse']}}boards-invest_guide/oneWrite/{{D['bid']}}/chance"><button class='btn btn-small btn-red'>기 록</button></a>&nbsp;
+	</div>
+	<div class='pagination pull-right'>
+		<ul>{{D['Pagination']|safe}}</ul>
+	</div>
+</div>
+
+{% if D['찬스수량'] %}
+<div id="Next-Strategy" style="opacity:0.7;position:absolute;left:1155px;top:71px;width:250px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px">
+    <span style="font-style: italic"> 기회 투자 전략 <span id="cpoint">2.2</span> % point</span><br><br>
+	<ul style="margin-left:20px">
+		<li>목표가격 : <span id="cp_t">{{D['target_value'][0]}}</span></li>
+		<li>기회가격 : <span id="cp_p">{{D['찬스가격']}}</span> (<span id="cp_d">{{D['찬스변동']}}</span>%)</li>
+		<li>기회수량 : <span id="cp_n">{{D['찬스수량']}}</span></li>
+		<li>기회자본 : $ <span id="cp_u">{{D['찬스자본']}}</span> </li>
+		<li>환율적용 : <span id="cp_k">{{D['환율변환']}}</span>원 </li>
+		<li>----------------------------</li>
+		<li>현재주가 : {{D['찬스주가']}} </li>
+		<li>경과일수 : {{D['찬스일수']}} </li>
+		<li>연속하강 : {{D['찬스하강']}} </li>
+		<li>기초지표 : {{D['찬스근거']}} </li>
+		<li>기초일자 : {{D['찬스일자']}} </li>
+	</ul>
+	<div style="margin-top:35px">
+		<span class="cp">N</span><span class="cp">V</span><span class="cp">0</span><span class="cp">1.1</span><span class="cp">2.2</span><span class="cp">3.3</span><span class="cp">4.4</span><span class="cp">5.5</span>
+	</div>
+</div>
+{% endif %}
+
+
+<script>
+var notice_popup = false;
+var show_dollar   = true;
+var dollar_notice = [];
+
+
+$("#extra-info .exchange").each(function(){ dollar_notice.push($(this).text());});
+$(".list-bears2,.list-bulls2").click(function(){
+	let ex_rate = ctv("{{D['현재환율']}}"); let val = ctv($(this).text()); 
+	let won = Math.round(ex_rate * val);
+	h_dialog.notice(won.toLocaleString()+'원',{x:mouse_X-60,y:mouse_Y-60,width:150});
+});
+
+$(".cp").click(function(){chart_update($(this).text())}).mouseover(function(){$(this).addClass('cp-over')}).mouseout(function(){$(this).removeClass('cp-over')});
+
+{% if D['찬스수량'] %}
+const state = {{D['진행상황']}};
+function chart_update(pos='V') {
+
+	let arr_len = myChart.config.data.labels.length;
+
+	if(pos != 'N') {
+		let cp_point = {{D['cp']}}; 	//기회가격들
+		
+		let target = {{D['타겟상태']}};
+		let chance = {{D['기회상태']}};
+		let cp_amount = ctv("{{D['찬스수량']}}",'i');
+		let ex_rate  = ctv("{{D['현재환율']}}");
+		let cur_price  = ctv("{{D['찬스주가']}}");
+
+		if(pos=='V') { cp_price  = {{D['target_value'][0]}}; position='V'; cp_amount = 0;} 
+		else { cp_price = cp_point[parseInt(pos)]; position = '-'+pos;}
+
+		let cp_drate  = round_up((cp_price/cur_price -1)*100,2);
+		if(cp_drate > 2.2) {target[1]=0, chance[1]=0; cp_amount = 0;}
+		let cp_uprice = round_up(cp_amount * cp_price,2);
+		let cp_kprice = Math.round(cp_uprice * ex_rate);
+
+		n_t_avg = (target[2]+ (target[1] * cp_price)) /(target[0]+target[1]);
+		n_c_avg = (chance[2]+ (chance[1] * cp_price)) /(chance[0]+chance[1]);
+		cp_t = round_up(n_t_avg * 1.022,2);
+
+		$("#cpoint").text(position);
+		$("#cp_t").text(cp_t);
+		$("#cp_p").text(cp_price);
+		$("#cp_n").text(cp_amount.toLocaleString('ko-KR'));
+		$("#cp_u").text(cp_uprice.toLocaleString('ko-KR'));
+		$("#cp_k").text(cp_kprice.toLocaleString('ko-KR'));
+		$("#cp_d").text(cp_drate);
+
+		myChart.config.data.datasets[0].data[arr_len-1] = cp_price;
+		myChart.config.data.datasets[1].data[arr_len-1] = n_t_avg;
+		myChart.config.data.datasets[2].data.fill(cp_t);
+		myChart.config.data.datasets[3].data.fill(cp_price);
+		myChart.config.data.datasets[4].data[arr_len-1] = n_c_avg;
+	}
+	else {
+		chart_update('V')
+		myChart.config.data.datasets[0].data[arr_len-1] = null;
+		myChart.config.data.datasets[1].data[arr_len-1] = null;
+		myChart.config.data.datasets[2].data[arr_len-1] = null;
+		myChart.config.data.datasets[3].data[arr_len-1] = null;
+		myChart.config.data.datasets[4].data[arr_len-1] = null;
+	}
+	myChart.update();
+}
+{% endif %}
+function round_up(n,decimals=2){
+    multiplier = 10 ** decimals;
+    return Math.ceil(n * multiplier) / multiplier;
+ }
+
+function ctv(val,opt='f') { a = val.replace(/,/g,'');  if(opt=='i') return parseInt(a);  else return parseFloat(a);}
+
+function exchange_toggle(sel) {
+	let ex_rate = ctv("{{D['현재환율']}}"); 
+	if(show_dollar) {$("#extra-info .exchange").each(function(){tmp = Math.round(ctv($(this).text())*ex_rate);$(this).text(tmp.toLocaleString()+'원');});show_dollar = !show_dollar;$(sel).css("color","yellow");}
+	else { i=0; $("#extra-info .exchange").each(function(){ $(this).text(dollar_notice[i++]);});show_dollar = !show_dollar;$(sel).css("color","");}
+}
+
+function popup_notice(option,size) {
+	if( notice_popup ) {
+			h_dialog.close("POP_INFO"); 
+			notice_popup = null
+			return;
+		} else 
+		{	
+			if(size) width = '350px' ; else width = '230px' 
+			notice_popup = true
+			var url = uri('linkurl') + 'boards-stock_longterm_info/get_subinfo/tbl={{D['tbl']}}/opt='+option;
+			var ypos = mouse_Y
+			// if(ypos > 400) ypos = ypos-250
+			var o = {id:'POP_INFO', width: width, x:mouse_X+10, y:mouse_Y,header:false,footer:false,drag:true}
+			h_dialog.load(url,o);
+		}
+}
+
+
+// 챠트 그리기
+const ctx = $id('myChart');
+const ctx2= $id('myChart2');
+
+ctx.style.backgroundColor = '#33363b';
+ctx.style.border = '2px solid black';
+
+let labels = {{D['chart_date']|safe}};				labels.push('NEXT');
+let close_price = {{D['close_price']|safe}}; 		close_price.push(null);
+let soxl_average = {{D['soxl_average']|safe}};		soxl_average.push(null);
+let target_value = {{D['target_value']|safe}};		target_value.push(null);
+let chance_value = {{D['chance_value']|safe}};		chance_value.push(null);
+let chance_average = {{D['chance_average']|safe}};	chance_average.push(null);
+
+const data1 = {
+    labels : labels,
+    datasets : [
+		{
+            label:' 종가변동',
+            data : close_price,
+			borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],
+  			lineTension:0.2
+        },
+		{
+            label:' 평균단가',
+            data : soxl_average,
+			borderColor:'#f78181', borderWidth:2, pointRadius:2,pointHoverRadius:24, backgroundColor:'#f78181',
+			lineTension:0.2
+        },
+		{
+            label:' 매도가격',
+            data : target_value,
+			borderColor:'yellow', borderWidth:1, pointRadius:0,borderDash:[2,2],
+  			lineTension:0.2
+        },
+		{
+            label:' 기회가격',
+            data : chance_value,
+			borderColor:'darkgray', borderWidth:1, pointRadius:0,borderDash:[2,2], 
+  			lineTension:0.2
+        },
+		{
+            label:' 찬스평균',
+            data : chance_average,
+			borderColor:'yellow', borderWidth:2, pointRadius:2,pointHoverRadius:24, backgroundColor:'yellow',
+			lineTension:0.2
+        },
+    ]   
+};
+const options1 = {
+	animation : { duration:0},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:true}},
+    responsive:false,
+    layout:{padding:20},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'right'},
+    }
+};
+const config1  = {type:'line',data:data1,options:options1};
+const myChart = new Chart(ctx, config1); 
+//
+
+const labels2 = ['',''];
+const data2 = {
+  labels: labels2,
+  datasets: [{
+    label: ' 자산배분비율 ',
+    data: {{D['chart_percent']}},
+    backgroundColor: ['rgba(75, 192, 192, 0.4)','rgba(255, 99, 132, 0.4)'],
+    borderColor: ['rgb(75, 192, 192)','rgb(255, 99, 132)'],
+    borderWidth: 1
+  }]
+};
+
+const config2 = {
+  type: 'bar',
+  data: data2,
+  plugins:[ChartDataLabels],
+  options: {
+	animation : {duration:500},
+    plugins : { legend: {display:false},
+				tooltip : {enabled:false},
+				datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:14}}			
+	},
+    scales: {
+      y: { beginAtZero: true }
+    }
+  },
+};
+const myChart2 = new Chart(ctx2, config2); 
+if(state) {chart_update('N');} else {chart_update('2');}
+</script>
+
+{% endblock %}

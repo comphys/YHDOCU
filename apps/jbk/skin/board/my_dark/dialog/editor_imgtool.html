@@ -1,0 +1,108 @@
+<div style="background-color:black;border:5px solid gray;color:white;padding:10px">
+	<div id="imgTool_body" style="text-align:center;"></div>
+	<div style="text-align:center;color:cadetblue;">
+		원본 : 가로 <span id='real_X' style="color:orange;"></span> 세로 <span id='real_Y' style="color:orange;"></span>&nbsp;/
+		화면 : 가로 <span id='scrx_X' style="color:orange;"></span> 세로 <span id='scrx_Y' style="color:orange;"></span>&nbsp;
+	</div>
+	<div style="text-align:center;"><span id="thumb_msg"></span> 썸네일( 가로 <span id='thum_X' style="color:yellowgreen;"></span> 세로 <span id='thum_Y' style="color:yellowgreen;"></span>) <input type="checkbox" name="thumb_use" style="margin-top:3px"> </div>
+	<div style="margin-top:10px;text-align:center;">
+		<i class="fa fa-camera" title="썸네일 생성" onclick="make_thumbnail()" style="cursor:pointer;color:rgb(247, 167, 167)"></i>&nbsp;
+		가로 : <input type="text" name='xxx' value="178" style="border:none;width:45px;margin-top:-3px;color:yellow;background-color:rgb(3, 1, 31);" />
+		세로 : <input type="text" name='yyy' value="100" style="border:none;width:45px;margin-top:-3px;color:yellow;background-color:rgb(3, 1, 31);" />
+		클래스 : <input type="text" name='cls' value="img-thumbs" style="border:none;width:100px;margin-top:-3px;color:yellow;background-color:rgb(3, 1, 31);" />
+		<i class="fa fa-undo" title="사이즈 변경" onclick="switch_size()" style="cursor:pointer;color:cyan"></i>&nbsp;
+		<i class="fa fa-undo" title="태그 전환" onclick="switch_tag()"  style="cursor:pointer;color:rgb(255, 153, 0)"></i>
+	</div>
+</div>
+
+<script>
+var imgTool_type
+var imgTool_path
+var imgTool_name
+var imgTool_prev 
+
+function make_thumbnail() {
+	var xxx = $("input[name='xxx']").val();
+	var yyy = $("input[name='yyy']").val();
+	var posturl = uri('linkurl') + 'boards-ajax/thumb_make';
+	$.post( posturl, { path : imgTool_path, name : imgTool_name, xxx : xxx, yyy : yyy }).done(function(){h_dialog.notice("썸즈네일이 생성되었습니다.");});
+}
+
+function switch_tag() {
+	var imgTool_src = imgTool_path.replace(DOCU_ROOT,'/DOCU_ROOT') + '/썸즈네일/' + imgTool_name;
+	if( $("input[name='thumb_use']").is(":checked") == false) imgTool_src = imgTool_src.replace('/썸즈네일/','/');
+
+	var html = '';	var width = ''; var height = '';
+
+	if (imgTool_type=='SPAN') {
+		var cls  = $("input[name='cls']").val();
+		var xxx = parseInt($("input[name='xxx']").val());
+		var yyy = parseInt($("input[name='yyy']").val());
+		var width = (xxx)?  " width='"+$("input[name='xxx']").val()+"' " : ''; 
+		var height= (yyy)? " height='"+$("input[name='yyy']").val()+"' " : '';
+		html = "<img src='"+imgTool_src+"' "+width+height+" class='"+cls+"'>";
+	} else if (imgTool_type=='IMG') {
+		html = "<span data-myimage='"+imgTool_path+"'>"+imgTool_name+"</span>"
+	} 
+	$(docuSelected).replaceWith(html);
+}
+
+function switch_size() {
+	if(imgTool_type != 'IMG' ) return;
+	var imgTool_src = imgTool_path.replace(DOCU_ROOT,'/DOCU_ROOT') + '/썸즈네일/' + imgTool_name;
+	if( $("input[name='thumb_use']").is(":checked") == false) imgTool_src = imgTool_src.replace('/썸즈네일/','/');
+
+	var cls  = $("input[name='cls']").val();
+	var xxx = parseInt($("input[name='xxx']").val());
+	var yyy = parseInt($("input[name='yyy']").val());
+	var width = (xxx)?  " width='"+$("input[name='xxx']").val()+"' " : ''; 
+	var height= (yyy)? " height='"+$("input[name='yyy']").val()+"' " : '';
+	var html = "<img src='"+imgTool_src+"' "+width+height+" class='"+cls+"'>";
+	$(docuSelected).replaceWith(html);
+}
+
+function editorImgtool_refresh() {
+	var tag = docuSelected.tagName;
+	var sel = $(docuSelected);
+
+	if(tag == 'IMG') {
+		imgTool_type = 'IMG';
+		var temp  = sel.attr("src").split('/');
+		imgTool_name = temp.pop()
+		imgTool_path = temp.join('/').replace('/DOCU_ROOT',DOCU_ROOT).replace('/썸즈네일','');
+		imgTool_prev = imgTool_path.replace(DOCU_ROOT,'/DOCU_ROOT') + '/' + imgTool_name; 
+	}
+
+	else if (tag == 'SPAN' || sel.attr("data-myimage") ){
+		imgTool_type = 'SPAN';
+		imgTool_name = sel.text();
+		imgTool_path = sel.attr("data-myimage");
+		imgTool_prev = imgTool_path.replace(DOCU_ROOT,'/DOCU_ROOT') + '/' + imgTool_name;
+	}
+
+	else h_dialog.close('editor_imgtool');
+
+	var html  = "<img src='"+imgTool_prev+"' width='420'>";
+	$("#imgTool_body").html(html);
+	html='';
+
+	var posturl = uri('linkurl') + 'boards-ajax/thumb_check';
+	var thumb_url  = imgTool_path + '/썸즈네일/' + imgTool_name;
+
+	$.post( posturl, { url : thumb_url }).done(function(data) {
+		var aa = JSON.parse(data);
+		html = aa.rst;
+		$("#thumb_msg").html(html);
+		$("#thum_X").text(aa.thx);
+		$("#thum_Y").text(aa.thy);
+		$("#real_X").text(aa.reX);
+		$("#real_Y").text(aa.reY);
+		$("#scrx_X").text(sel.width());
+		$("#scrx_Y").text(sel.height());
+		if(aa.thm == "DONE") $("input[name='thumb_use']").attr('checked',true);
+		else $("input[name='thumb_use']").attr('checked',false);
+	});
+}
+
+editorImgtool_refresh();
+</script>

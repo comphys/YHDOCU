@@ -1,0 +1,122 @@
+{% extends D['_skn'] + 'page/my_dark/main_layout_mobile.html' %}
+
+{% block contents_page  %}
+<div>
+<div style='font-size:16px;color:#f0f0ab;font-weight:bold;margin-bottom:10px;'>
+{{D['오늘날자']}}({{D['오늘요일']}}) &nbsp; <span style="font-style:italic">Season {{D['현재시즌']}} - {{D['경과일수']}} Day </span>
+</div>
+<div style="color:white;font-size:14px;margin-bottom:5px;" >
+	<i class="fa fa-sign-in"></i> {{D['총입금']}} &nbsp;
+	<i class="fa fa-sign-out"></i> {{D['총출금']}} &nbsp;
+	<i class="fa fa-signal"></i> {{D['현재액']}} &nbsp;
+	<i class="fa fa-usd"></i> {{D['수익금']}} &nbsp; <i class="fa fa-line-chart"></i> {{D['수익률']}}% &nbsp;	
+</div>
+<div style="font-size:16px;font-weight:bold;line-height:30px;border:2px solid black;padding:5px;background-color:black;">
+	<span style="color:#58ACFA"> 매수전략 :  <i class="fa fa-shopping-cart"></i> {{D['매수수량']}} for {{D['매수가격']}} ( {{D['매수가액']}} )</span><br>
+	<span style="color:#f78181"> 매도전략 :  <i class="fa fa-shopping-cart"></i> {{D['매도수량']}} for {{D['매도가격']}} ( {{D['매도가액']}} )</span> 
+</div>
+
+<div style="border:2px solid black;margin-top:10px;">
+	<canvas id="myChart"  style="width:357px;height:200px;background-color:#24272d;"></canvas>
+</div>
+<div style="border:2px solid black;margin-top:10px;">
+	<canvas id="myChart2"  style="width:357px;height:200px;background-color:#24272d;"></canvas>
+</div>
+
+<div style="margin-top:20px;color:white;font-size:14px;" >
+    현재주가 : &nbsp; {{D['현재주가']}} &nbsp; / 평균주가 : {{D['평균단가']}} <br>
+	현재수량 : &nbsp; {{D['현재수량']}} 주 / 현재수익 : &nbsp; {{D['현재수익']}} $ ( {{D['현수익률']}} % )
+</div>
+
+
+</div>
+<script src="/sys/chart/chart.min.js"></script>
+
+<script>
+const ctx  = $id('myChart');
+const ctx1 = $id('myChart2');
+
+ctx.style.backgroundColor = '#33363b';
+// ctx.style.border = '2px solid black';
+
+let labels = {{D['chart_date']|safe}};
+let close_price = {{D['close_price']|safe}};
+let soxl_average = {{D['soxl_average']|safe}};
+let total_value = {{D['total_value']|safe}};
+let close_change = {{D['close_change']|safe}};
+let lever_change = {{D['lever_change']|safe}};
+
+const data1 = {
+    labels : labels,
+    datasets : [
+		{
+            label:' 종가변동',
+            data : close_price,
+			borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],
+  			lineTension:0.2
+        },
+		{
+            label:' 평균단가',
+            data : soxl_average,
+			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
+			lineTension:0.2
+        }
+    ]   
+};
+const options1 = {
+	animation : { duration:500},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:false}},
+    responsive:false,
+    layout:{padding:0},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'right'}
+    }
+};
+const config1  = {type:'line',data:data1,options:options1};
+const myChart = new Chart(ctx, config1); 
+
+const data3 = {
+    labels : labels,
+    datasets : [
+        {
+            label:' 종가변동',
+            data : close_change,
+            borderColor:'cyan', borderWidth:2,borderDash:[3,2],pointRadius:0,  
+			lineTension:0.2,
+        },
+		{
+            label:' 레버리지수익률',
+            data : lever_change,
+			borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0, 
+			lineTension:0.2,
+        }
+    ]   
+};
+
+const options3 = {
+	animation : { duration:500},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:false} },
+    responsive:false,
+    layout:{padding:0},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'gray'}, 
+		   grid:{
+			color:function(context) {
+				if( context.tick.value == 0 ) { return 'gray'}
+				else if(context.tick.value % 10 == 0 ) { return 'black'} },
+			lineWidth: function(context) {if(context.tick.value %10 == 0 ) { return 2 } else return 0},
+		   },
+		   position:'left'},
+    }
+};
+
+const config3  = {type:'line',data:data3,options:options3};
+const myChart2 = new Chart(ctx1, config3);
+
+
+</script>
+{% endblock %}

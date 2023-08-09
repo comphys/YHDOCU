@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8" >
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" >
+<title> {{D['BCONFIG']['title']}} </title>
+<link href="/sys/mycss/mycss_dark.css"  rel="stylesheet" >
+<link href="/sys/fontawesome/css/font-awesome.css" rel="stylesheet">
+<link href="/sys/jyh/yhutils.css" rel="stylesheet">
+<link href="/skn/stocks/page/my_dark/myskin.css"  rel="stylesheet" >
+<link href="/sys/zebra_datepicker/zebra_datepicker.css"  rel="stylesheet" >
+
+<script src="/sys/jyh/jquery-yh-2107.js"></script>
+<script src="/sys/mycss/mycss_dark.js"></script>
+<script src="/sys/jyh/yhutils.js"></script>
+<script src="/skn/stocks/page/my_dark/skin.js"></script>
+<script src="/sys/zebra_datepicker/zebra_datepicker.min.js"></script>
+<style>
+	html{height:100%}
+	body{margin:0px;height:100%;width:100%}
+</style>
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner" style="width:{{D['xwidth']}};margin-left:-20px;">
+		<ul class="nav">
+		{% for menu in D['MENU_SECTION'] %}
+			<li class='dropdown'>
+				{% if menu[0] == D['BCONFIG']['section'] %}
+				<a  class='dropdown-toggle' data-toggle='dropdown' style="font-weight:bold;cursor:pointer;background-color:black;color:rgb(240, 240, 171)"> 
+					{{D['BCONFIG']['title']}} <b class='caret'></b>
+				</a>
+				{% else %}
+				<a  class='dropdown-toggle' data-toggle='dropdown' style="cursor:pointer"> {{ menu[0] }} <b class='caret'></b></a>
+				{% endif %}
+				<ul class='dropdown-menu'>
+				{% for val in D[menu[0]] %}
+					<li><a href="/stocks/{{ val['bid'] }}">{{ val['title'] }}</a></li> 
+				{% endfor %}
+				</ul>
+			</li>
+		{% endfor %}
+		</ul>
+		<ul class='nav pull-right'>
+			<li><a href="{{D['_bse']}}board/logout"><i class='fa fa-user fa-lg' title="{{D['USER']['uname']}}({{D['USER']['uid']}})>로그아웃"></i></a></li>
+		</ul>
+	</div>
+</div>
+
+<div id="content" style="padding:10px;margin-top:50px;width:{{D['xwidth']}};border:2px solid gray"><!-- 본문 시작 -->
+	{% block contents_page  %}{% endblock %}
+</div><!-- 본문 끝 -->
+</body>
+</html>

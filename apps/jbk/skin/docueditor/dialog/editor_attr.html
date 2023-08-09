@@ -1,0 +1,36 @@
+<style>
+	#attr-editor b {font-weight:bold;color:red}
+</style>
+<div id="attr-editor" class="white-div" style="height:173px;padding:5px;overflow:auto">
+</div>
+<div class="white-div">
+<input id="attr-name"  type='text' style="width:100px" name='attr_name'  placeholder='속성명' value=''>
+<input id="attr-value" type='text' style="width:317px" name='attr_value' placeholder='적용 속성값' value=''>
+</div>
+<button onclick="apply_new_attr()" class="btn btn-blue-s1" style="border-radius:0;width:100%"> 새로운 속성 적용 </button>
+<script type='text/javascript'>
+	
+	var attrText = '';
+	if(docuSelected === null){ h_dialog.alert("선택된 태그가 없습니다"); h_dialog.close('editor_attr');}
+	else show_attrs();
+
+	function show_attrs() {
+		attrText = '';
+
+			$.each(docuSelected.attributes, function() {
+				if(this.specified) {
+					attrText += '<b>'+ this.name + '</b> : ' + this.value + '<br>';
+				}
+			});
+
+		$("#attr-editor").html( attrText ); 	
+	}
+
+	function apply_new_attr() {
+		var attr_name  = $("#attr-name").val();
+		var attr_value = $("#attr-value").val();
+		if(attr_name && attr_value)    $(docuSelected).attr(attr_name, attr_value);
+		if(attr_name && ! attr_value ) $(docuSelected).removeAttr(attr_name);
+		show_attrs();
+	}
+</script>

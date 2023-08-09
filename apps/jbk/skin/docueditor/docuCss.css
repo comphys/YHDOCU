@@ -1,0 +1,33 @@
+@charset "utf-8";
+/* 기본설정 시작*/
+.page		{padding:2cm 1cm 1cm 1cm;margin-bottom:20px;background-color:white;box-shadow: 0 0 0.5cm rgba(0,0,0,0.6);border-radius:6px;opacity:0.96}
+.page-print {background-color:white;margin:0;padding:2cm 1cm 1cm 1cm;border:none;box-shadow:none;opacity:1.0;}
+.A4h		{width:210mm; height:297mm }
+.A4w		{width:297mm; height:210mm }
+.A4hx		{width:210mm; min-height:100mm }
+.A4wx		{width:297mm; min-height:100mm }
+
+/* 기본설정 마침*/
+.a4p {border:1px solid gray; padding:10px;margin-bottom:10px;border-radius:4px}
+.a4p-title {font-weight:bold; color:blue}
+.a4p-body {background-color:#f2f2f2; padding:5px;border-radius:4px;margin-top:5px}
+
+.img-thumbs   { border-radius:4px; border: 1px solid black; max-width:19cm;}
+.img-body-h   { border-radius:6px; border: 1px solid black; width:19cm;}
+.img-body-w   { border-radius:6px; border: 1px solid black; width:27.7cm;}
+.img-body-169 { border-radius:6px; border: 1px solid black; width:19cm; height:10.7cm}
+
+.myli {margin-left:5px; padding-left:15px; border-left:7px solid #D8D8D8; }
+.myli li {list-style:none; font-size:16px; line-height:24px}
+.myli li + li {margin-top:3px }
+
+.p-h1 {font-size: 30px; font-weight: 700; text-align: center; margin-bottom: 50px;line-height: 52px; background-color:#ffffe1; border:1px solid black;border-radius:4px}
+.p-h4 {margin: 20px 0px 10px;font-weight: 700;font-size: 18px;color:#004080;line-height: 28px; font-size:26px}
+
+/* 나무위키 */
+.nm-p  { padding-left:14px; margin-top:10px; text-align:justify;text-indent:-12px }
+.nm-p:before{ content:'•  '}
+.nm-h2 {font-size:20px;font-weight:bold;line-height:40px;border-bottom:2px solid gray;margin-bottom:5px}
+
+/* 테이블 */
+.table-th {background-color:#0B2161; color:white; font-weight:bold }
