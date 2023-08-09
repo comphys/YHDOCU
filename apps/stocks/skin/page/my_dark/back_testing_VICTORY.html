@@ -217,7 +217,7 @@ const backData = {
 		{
 			label:'추세하향선',
 			data : [4,7,5,3,4],
-			borderWidth:2,borderColor:'darkgray',borderDash: [2,5],backgroundColor:'white',pointRadius:0,pointHoverRadius:0,
+			borderWidth:2,borderColor:'darkgray',borderDash: [2,5],backgroundColor:'white',pointRadius:2,pointHoverRadius:15,
 			lineTension:0.2
 
 		}
@@ -319,7 +319,7 @@ function show_chart(season) {
 	
 	const t0 = 0.02;
 	const a0 = clsv[0];	const d0 = 1-t0;
-	for(let x=0; x < clsv.length; x++) { dlne.push(a0 * (d0**x));}
+	for(let x=0; x < clsv.length; x++) { dlne.push(a0*(1-x*t0));}
 
 	var xticks = clsv.length
 	if (xticks < 30 ) { xticks = 30; }
