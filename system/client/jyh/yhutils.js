@@ -35,7 +35,7 @@ function uri(parameter){
 		case 'base' : return location.protocol+'//'+location.hostname; 
 		case 'linkurl' : return '/'+ segment[0] + '/';
 		case 'last' : return segment[cnt-1];
-		case 'page' : return '/'+ segment[0] + '/' + segment[1] + '/' + segment[2] + '/';
+		case 'thispage' : return '/'+ segment[0] + '/' + segment[1] + '/' + segment[2] + '/';
 		default: 
 			if (parameter in qry) return qry[parameter];
 			else return '';
