@@ -120,10 +120,11 @@
 	</div>
 </div>
 
-{% if D['찬스수량'] %}
+
 <div id="Next-Strategy" style="opacity:0.7;position:absolute;left:1155px;top:71px;width:250px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px">
     <span style="font-style: italic"> 기회 투자 전략 <span id="cpoint">2.2</span> % point</span><br><br>
 	<ul style="margin-left:20px">
+		<li>현재상태 : {{D['찬스상황']}}</li>
 		<li>목표가격 : <span id="cp_t">{{D['target_value'][0]}}</span></li>
 		<li>기회가격 : <span id="cp_p">{{D['찬스가격']}}</span> (<span id="cp_d">{{D['찬스변동']}}</span>%)</li>
 		<li>기회수량 : <span id="cp_n">{{D['찬스수량']}}</span></li>
@@ -136,11 +137,11 @@
 		<li>기초지표 : {{D['찬스근거']}} </li>
 		<li>기초일자 : {{D['찬스일자']}} </li>
 	</ul>
-	<div style="margin-top:35px">
+	<div style="margin-top:20px">
 		<span class="cp">N</span><span class="cp">V</span><span class="cp">0</span><span class="cp">1.1</span><span class="cp">2.2</span><span class="cp">3.3</span><span class="cp">4.4</span><span class="cp">5.5</span>
 	</div>
 </div>
-{% endif %}
+
 
 
 <script>
@@ -333,7 +334,7 @@ const config2 = {
   },
 };
 const myChart2 = new Chart(ctx2, config2); 
-if(state) {chart_update('N');} else {chart_update('2');}
+// if(state) {chart_update('N');} else {chart_update('2');}
 </script>
 
 {% endblock %}

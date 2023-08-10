@@ -92,7 +92,16 @@ class 목록_CHANCE(SKIN) :
             self.D['target_value'] = [TD['sub20']] * chart_len 
             self.D['chance_value'] = ['null'] * chart_len                  
             
-            if int(TD['add9']) :
+            
+            self.D['찬스상황'] = '대기상태'
+            self.D['찬스주가'] = TD['add14']
+            self.D['찬스일수'] = TD['sub12']
+            self.D['찬스일자'] = last_date
+            self.D['찬스하강'] = TD['sub6']
+            self.D['찬스근거'] = target
+            
+            
+            if int(TD['sub12']) >=2 :
 
                 가용잔액 = int( float(LD['add3']) * 2/3)
                 일매수금 = int(가용잔액/22)
@@ -101,7 +110,8 @@ class 목록_CHANCE(SKIN) :
 
                 찬스수량 = 0    
                 # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
-                for i in range(0,int(TD['sub12'])+2) : 
+                day_count = min(int(TD['sub12'])+2,6)
+                for i in range(0,day_count) : 
                     찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
                 self.D['cp'] = []
@@ -111,27 +121,25 @@ class 목록_CHANCE(SKIN) :
                 
                 # 찬스가격은 타겟 데이타의 -2.2% 지점
                 찬스가격 = self.D['cp'][0]  if (float(TD['add8']) < self.D['cp'][2]or float(TD['sub7'])) else self.D['cp'][2]
-                self.D['찬스일자'] = last_date
+                
                 self.D['찬스가격'] = f"{찬스가격:,.2f}"
                 self.D['찬스수량'] = f"{찬스수량:,}"
                 self.D['찬스자본'] = f"{찬스가격*찬스수량:,.2f}"
-                self.D['찬스일수'] = TD['sub12']
-                self.D['찬스주가'] = TD['add14']
                 self.D['찬스변동'] = round((찬스가격/float(TD['add14']) -1) * 100,2)
-                self.D['찬스하강'] = TD['sub6']
-                self.D['찬스근거'] = target
                 self.D['환율변환'] = f"{찬스가격*찬스수량* 현재환율:,.0f}"
    
                 self.D['chance_value'] = [self.D['찬스가격']] * chart_len
                 
                 self.D['타겟상태'] = [int(TD['add9']),int(TD['sub2']),float(TD['add6'])]
+                
                 if int(LD['add9'].replace(',','')) != 0 :
-                    self.D['진행상황'] = 'true'
+                    self.D['찬스상황'] = '현재진행'
                     self.D['기회상태'] = [int(LD['add9']),int(LD['sub2']),float(LD['add6'])]
                     self.D['찬스수량'] = f"{int(LD['sub2']):,}"
                 else :
-                    self.D['진행상황'] = 'false'
+                    self.D['찬스상황'] = '예약상태'
                     self.D['기회상태'] = [0,찬스수량,0.0]
+
 
 
     def take_chance(self,p,H,n,A) :

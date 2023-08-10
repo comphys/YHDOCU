@@ -115,7 +115,7 @@ class M_backtest_DEVELOPE(Model) :
                 self.R['거래코드'] = f"R{self.R['매수수량']}" if self.R['매수수량'] else ' '  
      
         # 기회매수 첫 날 처리    
-        if  not self.R['기회진행'] and self.R['기회가격'] and self.M['날수'] >= 3 and self.M['당일종가']<= self.R['기회가격'] :
+        if  not self.R['기회진행'] and self.R['기회가격'] and self.M['날수'] > 2 and self.M['당일종가']<= self.R['기회가격'] :
             self.R['기회진행'] = True
             self.chance_init()
             매수수량R = self.R['찬스수량']
@@ -138,7 +138,10 @@ class M_backtest_DEVELOPE(Model) :
 
             찬스수량 = 0    
             # 기회찬스에서는 수량을 하루분 더 사는 것이 수익률이 높게 나옴
-            for i in range(0,self.M['날수']+1) : 
+
+            day_count = min(self.M['날수']+1,6)
+            
+            for i in range(0,day_count) : 
                 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
             
             self.R['기초수량'] = 기초수량
