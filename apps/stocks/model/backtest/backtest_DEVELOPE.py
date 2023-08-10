@@ -114,7 +114,13 @@ class M_backtest_DEVELOPE(Model) :
                 self.R['매수수량'] = self.R['구매수량'] 
                 self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']   
                 self.R['거래코드'] = f"R{self.R['매수수량']}" if self.R['매수수량'] else ' '  
-     
+
+        
+        if  self.M['날수'] == 2 and self.M['당일종가'] <= self.M['전일종가'] :
+            self.R['거래코드'] = f"RS{self.R['기초수량']}"
+            self.R['매수수량'] = self.R['기초수량']
+            self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가'] 
+        
         # 기회매수 첫 날 처리    
         if  not self.R['기회진행'] and self.M['날수'] > 2 and self.M['당일종가'] <= min(self.b_price, self.R['기회가격']) :
             self.R['기회진행'] = True
@@ -435,30 +441,21 @@ class M_backtest_DEVELOPE(Model) :
         self.R['평가밸류'] = self.R['기회자금']
 
     def new_day(self) :
-        self.M['기록시즌'] += 1
-        self.M['날수'] = 1
 
-        self.M['평균단가']  = self.M['당일종가']; self.T['평균단가']  = self.M['당일종가']; self.R['평균단가']  = self.M['당일종가']
-        self.M['매수수량']  = my.ceil(self.M['일매수금']/self.M['전일종가'])
-        self.M['기초수량']  = self.M['매수수량'] 
-        self.chance_init()
-        self.R['매수수량']  = self.R['기초수량']
-
-        if  self.M['당일종가'] <  round(self.M['전일종가'] * self.M['큰단가치'],2) : 
+        if  self.M['당일종가'] <  round(self.M['전일종가'] * self.M['큰단가치'],2) :
+            
+            self.M['기록시즌'] += 1
+            self.M['날수'] = 1
+            self.M['평균단가']  = self.M['당일종가']; self.T['평균단가']  = self.M['당일종가']
+            self.M['매수수량']  = my.ceil(self.M['일매수금']/self.M['전일종가'])
+            self.M['기초수량']  = self.M['매수수량']
+            self.M['수익현황']  = self.M['수익률'] = 0.0; self.R['수익현황']  = self.R['수익률'] = 0.0
+            self.chance_init()
+            
             self.M['보유수량']  = self.M['매수수량']
             self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량'] 
             self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
-            
-            self.R['보유수량']  = self.R['매수수량']
-            self.R['매수금액']  = self.M['당일종가'] * self.R['매수수량'] 
-            self.R['총매수금']  = self.R['평가금액'] = self.R['매수금액']
-            
-            self.M['수익현황']  = self.M['수익률'] = 0.0; self.R['수익현황']  = self.R['수익률'] = 0.0
 
-            if  self.M['비용차감'] : 
-                self.M['추가자금'] -=  self.commission(self.M['매수금액'],1)
-                self.R['기회자금'] -=  self.commission(self.R['매수금액'],1)
-                
             self.M['가용잔액'] -= self.M['매수금액']
             self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
             self.M['진행상황']  = '첫날매수'
@@ -466,9 +463,19 @@ class M_backtest_DEVELOPE(Model) :
             self.M['거래코드']  = f"S{self.M['매수수량']}" 
             self.M['매수단계'] = '일반매수'
 
-            self.R['기회자금'] -= self.R['매수금액']
-            self.R['거래코드']  = f"S{self.R['매수수량']}" 
-
+            if  self.M['비용차감'] : self.M['추가자금'] -=  self.commission(self.M['매수금액'],1)
+            # ------------------------------------------------------------------------------------
+            # self.R['평균단가']  = self.M['당일종가']
+            # self.R['매수수량']  = self.R['기초수량']
+            # self.R['보유수량']  = self.R['매수수량']
+            # self.R['매수금액']  = self.M['당일종가'] * self.R['매수수량'] 
+            # self.R['총매수금']  = self.R['평가금액'] = self.R['매수금액']
+            # self.R['기회자금'] -= self.R['매수금액']
+            # self.R['거래코드']  = f"S{self.R['매수수량']}"
+            
+            # if  self.M['비용차감'] : self.R['기회자금'] -=  self.commission(self.R['매수금액'],1)
+            # --------------------------------------------------------------------------------------
+            
             return True
 
         else : 
