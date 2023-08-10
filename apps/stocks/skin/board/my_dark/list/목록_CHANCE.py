@@ -84,7 +84,7 @@ class 목록_CHANCE(SKIN) :
             self.DB.clear()
             self.DB.tbl = f"h_{target}_board"
             self.DB.wre = f"add0 = '{last_date}'"
-            TD = self.DB.get_line("add6,add8,add9,add14,sub2,sub4,sub6,sub7,sub12,sub18,sub20,sub28")
+            TD = self.DB.get_line("add6,add8,add9,add14,sub2,sub4,sub6,sub7,sub12,sub18,sub19,sub20,sub28")
 
             self.D['chart_percent'] = [float(LD['add4']),float(LD['add16'])]
 
@@ -121,7 +121,7 @@ class 목록_CHANCE(SKIN) :
                 
                 # 찬스가격은 타겟 데이타의 -2.2% 지점
                 찬스가격 = self.D['cp'][0]  if (float(TD['add8']) < self.D['cp'][2]or float(TD['sub7'])) else self.D['cp'][2]
-                
+                찬스가격 = min(float(TD['sub19']),찬스가격)
                 self.D['찬스가격'] = f"{찬스가격:,.2f}"
                 self.D['찬스수량'] = f"{찬스수량:,}"
                 self.D['찬스자본'] = f"{찬스가격*찬스수량:,.2f}"

@@ -78,7 +78,7 @@ class M_backtest_DEVELOPE(Model) :
         self.M['일매수금'] = int(self.M['가용잔액']/self.M['분할횟수']) 
 
 
-    def normal_sell(self) :
+    def today_sell(self) :
         
         if  self.M['당일종가'] >=  self.s_price  : 
             self.M['매도수량'] =  self.M['보유수량']; self.R['매도수량'] = self.R['보유수량']
@@ -100,7 +100,7 @@ class M_backtest_DEVELOPE(Model) :
             self.R['매수수량'] = 0
             
 
-    def normal_buy(self) :
+    def today_buy(self) :
 
         if  self.M['당일종가']<= self.b_price : 
             self.M['매수수량'] = self.M['구매수량']
@@ -115,7 +115,7 @@ class M_backtest_DEVELOPE(Model) :
                 self.R['거래코드'] = f"R{self.R['매수수량']}" if self.R['매수수량'] else ' '  
      
         # 기회매수 첫 날 처리    
-        if  not self.R['기회진행'] and self.R['기회가격'] and self.M['날수'] > 2 and self.M['당일종가']<= self.R['기회가격'] :
+        if  not self.R['기회진행'] and self.M['날수'] > 2 and self.M['당일종가'] <= min(self.b_price, self.R['기회가격']) :
             self.R['기회진행'] = True
             self.chance_init()
             매수수량R = self.R['찬스수량']
@@ -212,8 +212,8 @@ class M_backtest_DEVELOPE(Model) :
                 if  self.new_day() : self.tomorrow_step(); self.print_backtest(); continue
                 else : self.M['첫날기록'] = True; continue
 
-            self.normal_sell()
-            self.normal_buy()
+            self.today_sell()
+            self.today_buy()
             self.calculate()
             self.tomorrow_step()
             self.print_backtest()
