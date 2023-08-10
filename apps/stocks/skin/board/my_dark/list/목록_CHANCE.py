@@ -93,7 +93,7 @@ class 목록_CHANCE(SKIN) :
             
             elif 타겟일수 == 1 :
                 self.D['매수갯수'] = 기초수량; self.D['매수단가'] = TD['add14']; self.D['매수예상'] = f"{기초수량 * float(TD['add14']):,.2f}"
-                self.D['매도갯수'] = '0'; self.D['매도단가'] = '0.00'; self.D['매도예상'] = '0.00'
+                self.D['매도갯수'] = '0'; self.D['매도단가'] = TD['sub20']; self.D['매도예상'] = '0.00'
                 self.D['예상이익'] = '0.00' 
                 self.D['원화예상'] = '0'
                 self.D['target_value'] = [TD['sub20']] * chart_len 

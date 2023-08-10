@@ -7,19 +7,24 @@
 <!-- 리스트 메인 테이블 시작 -->
 <script src="/sys/chart/chart.min.js"></script>
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
-<div class="clearfix" style="width:100%;background-color:#24272d;padding:20px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
-	<div class="pull-left" style="margin-right:20px">
-		<canvas id="myChart"  style="width:1100px;height:350px;background-color:#24272d;" ondblclick="chart_toggle()"></canvas>
-	</div>
-	<div class="pull-left" style="margin:15px">
-		<canvas id="myChart2" style="width:200px;height:320px;background-color:#24272d"></canvas>
+
+<div style="height:370px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
+	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
+		<canvas id="myChart"  style="width:1125px;height:350px;background-color:#24272d;"></canvas>
+	</div>>
+	<div style="position:absolute;left:1170px;top:62px;width:230px">
+		<canvas id="myChart2" style="width:200px;height:280px;background-color:#24272d"></canvas>
+		<div style="margin-top:2px;text-align:center;">
+			<input type='text' name='s_date' class="i-date_1" style="width:83px;text-align:center;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}"> -
+			<input type='text' name='e_date' class="i-date_2" style="width:83px;text-align:center;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}">
+			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" title="현재시즌"><i class="fa fa-bars"></i></span>
+			<span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" title="전체시즌"><i class="fa fa-home"></i></span>
+		</div>
 	</div>
 </div>
+<div style="position:absolute;left:1085px;top:60px;width:71px;height:350px;border:2px solid black;background-color:lightgreen;opacity:0.1;z-index:20"></div>
 
-<div style="position:absolute;left:1072px;top:72px;width:71px;height:350px;border:2px solid black;background-color:lightgreen;opacity:0.1" onclick="chart_update('V')"></div>
 {% if D['TR'] %}
-
-
 <div id="extra-info" class="clearfix" style="border:2px solid black;background-color:rgb(34, 33, 33);padding:5px 20px;margin-bottom:-2px">
 	<div class="pull-left">
 		<i class="fa fa-sign-in"></i> <span class="exchange">{{D['총입금']}}</span> &nbsp;
@@ -220,7 +225,7 @@ const options1 = {
     layout:{padding:20},
     scales:{
         x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
-        y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'right'},
+        y: { ticks : {color:'lightgray'}, grid:{color:'#272727'},position:'right'},
     }
 };
 const config1  = {type:'line',data:data1,options:options1};
@@ -260,7 +265,6 @@ const config2 = {
 	},
 };
 const myChart2 = new Chart(ctx2, config2); 
-// if(state) {chart_update('N');} else {chart_update('2');}
 </script>
 
 {% endblock %}
