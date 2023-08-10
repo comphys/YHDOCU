@@ -124,18 +124,19 @@
 <div id="Next-Strategy" style="opacity:0.7;position:absolute;left:1155px;top:71px;width:250px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px">
     <span style="font-style: italic"> 기회 투자 전략 <span id="cpoint">2.2</span> % point</span><br><br>
 	<ul style="margin-left:20px">
-		<li>현재상태 : {{D['찬스상황']}}</li>
+		
 		<li>목표가격 : <span id="cp_t">{{D['target_value'][0]}}</span></li>
 		<li>기회가격 : <span id="cp_p">{{D['찬스가격']}}</span> (<span id="cp_d">{{D['찬스변동']}}</span>%)</li>
+		<li>기초수량 : <span id="cp_n">{{D['기초수량']}}</span></li>
 		<li>기회수량 : <span id="cp_n">{{D['찬스수량']}}</span></li>
 		<li>기회자본 : $ <span id="cp_u">{{D['찬스자본']}}</span> </li>
 		<li>환율적용 : <span id="cp_k">{{D['환율변환']}}</span>원 </li>
 		<li>----------------------------</li>
 		<li>현재주가 : {{D['찬스주가']}} </li>
-		<li>경과일수 : {{D['찬스일수']}} </li>
-		<li>연속하강 : {{D['찬스하강']}} </li>
+		<li>경과일수 : {{D['찬스일수']}}(CDN{{D['찬스하강']}}) </li>
 		<li>기초지표 : {{D['찬스근거']}} </li>
 		<li>기초일자 : {{D['찬스일자']}} </li>
+		<li>현재상태 : {{D['찬스상황']}}</li>
 	</ul>
 	<div style="margin-top:20px">
 		<span class="cp">N</span><span class="cp">V</span><span class="cp">0</span><span class="cp">1.1</span><span class="cp">2.2</span><span class="cp">3.3</span><span class="cp">4.4</span><span class="cp">5.5</span>
@@ -160,7 +161,7 @@ $(".list-bears2,.list-bulls2").click(function(){
 $(".cp").click(function(){chart_update($(this).text())}).mouseover(function(){$(this).addClass('cp-over')}).mouseout(function(){$(this).removeClass('cp-over')});
 
 {% if D['찬스수량'] %}
-const state = {{D['진행상황']}};
+const state = "{{D['찬스상황']}}";
 function chart_update(pos='V') {
 
 	let arr_len = myChart.config.data.labels.length;

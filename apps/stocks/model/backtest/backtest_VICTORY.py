@@ -7,35 +7,44 @@ class M_backtest_VICTORY(Model) :
 # 변동성을 이용한 올타임 전략
 
     def calculate(self)  :
+        
         if  self.M['매수수량'] : 
             self.M['가용잔액'] -=  self.M['매수금액']
             self.M['보유수량'] +=  self.M['매수수량']
             self.M['총매수금'] +=  self.M['매수금액']
             self.M['평균단가']  =  self.M['총매수금'] / self.M['보유수량'] 
-            if self.M['비용차감'] : self.M['추가자금'] -=  self.commission(self.M['매수금액'],1)
- 
+
+            if  self.M['비용차감'] : 
+                self.M['추가자금'] -=  self.commission(self.M['매수금액'],1)
+                
         if  self.M['매도수량'] :
-            self.M['실현수익']  = (self.M['당일종가']-self.M['평균단가'])*self.M['매도수량']   
-            self.M['수익누적'] += self.M['실현수익'] 
+            self.M['실현수익']  = (self.M['당일종가']-self.M['평균단가'])*self.M['매도수량']  
             self.M['매수익률']  = (self.M['당일종가']/self.M['평균단가'] -1 ) * 100
-            self.M['보유수량'] -= self.M['매도수량'] 
+            self.M['보유수량'] -= self.M['매도수량']
             self.M['가용잔액'] += self.M['매도금액']
-            self.M['총매수금']  = self.M['보유수량'] * self.M['평균단가']
-            if self.M['비용차감'] : self.M['추가자금'] -=  self.commission(self.M['매도금액'],2)
-            
-
-        self.M['평가금액']  =  self.M['당일종가'] * self.M['보유수량']
-        self.M['수익현황']  =  self.M['평가금액'] - self.M['총매수금']
-        self.M['수익률']    = (self.M['당일종가']/self.M['평균단가'] -1) * 100 
-
-        if  self.M['보유수량'] == 0 : 
-            self.M['수익률']   = self.M['매수익률']
-            self.M['수익현황'] = self.M['수익누적']
+            self.M['총매수금']  = 0.00 
+            self.M['수익률']   = self.M['매수익률']; 
             self.M['평균단가'] = 0.0
             self.M['첫날기록'] = True
             self.M['매수단계'] = '일반매수'
-            self.rebalance()   
-
+            
+            if self.M['수익률'] > 0 : self.D['일반횟수'] += 1
+            if self.M['수익률'] < 0 : self.D['전략횟수'] += 1
+            
+            if  self.M['비용차감'] : 
+                self.M['추가자금'] -=  self.commission(self.M['매도금액'],2)
+                
+            self.rebalance() 
+            
+        self.M['평가금액']  =  self.M['당일종가'] * self.M['보유수량']
+        self.M['수익현황']  =  self.M['평가금액'] - self.M['총매수금']
+        
+        if  self.M['보유수량'] == 0 and self.M['매도수량']:
+            self.M['수익률']   = self.M['매수익률']
+            self.M['수익현황'] = self.M['실현수익']
+        else :
+            self.M['수익률']    = (self.M['당일종가']/self.M['평균단가'] -1) * 100  if self.M['평균단가'] else 0.00
+        
         if self.M['날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['날수'] ; self.M['최대날자'] = self.M['day']
         if self.M['수익률'] < self.M['MDD'] : self.M['MDD'] = self.M['수익률'] ; self.M['MDD_DAY'] = self.M['day']
 
@@ -106,7 +115,7 @@ class M_backtest_VICTORY(Model) :
 
         # 챠트작성
         self.D['close_price'] = []; self.D['average_price'] = []; self.D['total_value'] = []; self.D['chart_date'] = []; self.D['eval_value'] = []
-        self.D['전량횟수'] = 0
+        self.D['일반횟수'] = 0
         self.D['전략횟수'] = 0
         self.M['평가밸류'] = self.M['자산총액']
 
@@ -155,10 +164,9 @@ class M_backtest_VICTORY(Model) :
         if  self.M['당일종가'] >=  self.sell_price  : 
             self.M['매도수량'] =  self.M['보유수량']
             self.M['진행상황'] = '전량매도' 
-            self.D['전량횟수'] += 1
+            
             if  self.M['당일종가'] < self.M['평균단가'] : 
                 self.M['진행상황'] = '전략매도'
-                self.D['전략횟수'] += 1
                 self.M['손실회수'] = True
             else :
                 self.M['손실회수'] = False

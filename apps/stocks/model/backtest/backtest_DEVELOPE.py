@@ -34,6 +34,8 @@ class M_backtest_DEVELOPE(Model) :
             self.M['첫날기록'] = True
             self.M['매수단계'] = '일반매수'
             
+            if self.M['수익률'] > 0 : self.D['일반횟수'] += 1
+            if self.M['수익률'] < 0 : self.D['전략횟수'] += 1
             if self.R['수익률'] > 0 : self.D['기회전량'] += 1
             if self.R['수익률'] < 0 : self.D['기회전략'] += 1
             
@@ -83,10 +85,9 @@ class M_backtest_DEVELOPE(Model) :
         if  self.M['당일종가'] >=  self.s_price  : 
             self.M['매도수량'] =  self.M['보유수량']; self.R['매도수량'] = self.R['보유수량']
             self.M['진행상황'] = '전량매도' 
-            self.D['전량횟수'] += 1
+            
             if  self.M['당일종가'] < self.M['평균단가'] : 
                 self.M['진행상황'] = '전략매도'
-                self.D['전략횟수'] += 1
                 self.M['손실회수'] = True
             else :
                 self.M['손실회수'] = False
@@ -117,7 +118,7 @@ class M_backtest_DEVELOPE(Model) :
         # 기회매수 첫 날 처리    
         if  not self.R['기회진행'] and self.M['날수'] > 2 and self.M['당일종가'] <= min(self.b_price, self.R['기회가격']) :
             self.R['기회진행'] = True
-            self.chance_init()
+            self.chance_qty()
             매수수량R = self.R['찬스수량']
             매수금액R = 매수수량R * self.R['기회가격']
             
@@ -135,18 +136,18 @@ class M_backtest_DEVELOPE(Model) :
             일매수금 = int(가용잔액/self.M['분할횟수'])
             매수비율 = 일매수금 / self.M['일매수금'] 
             기초수량 = my.ceil(매수비율 * self.M['기초수량'])
+            self.R['기초수량'] = 기초수량
+
+    
+    def chance_qty(self) :
 
             찬스수량 = 0    
             # 기회찬스에서는 수량을 하루분 더 사는 것이 수익률이 높게 나옴
 
             day_count = min(self.M['날수']+1,6)
-            
             for i in range(0,day_count) : 
-                찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
-            
-            self.R['기초수량'] = 기초수량
-            self.R['찬스수량'] = 찬스수량
-            
+                찬스수량 += my.ceil(self.R['기초수량'] *(i*1.25 + 1))
+            self.R['찬스수량'] = 찬스수량   
         
     def tomorrow_step(self)   :
 
@@ -425,7 +426,7 @@ class M_backtest_DEVELOPE(Model) :
         # 챠트작성
         self.D['close_price'] = []; self.D['total_value'] = []; self.D['chart_date'] = []; self.D['eval_mvalue'] = []; self.D['eval_cvalue'] = []
         self.D['average_price_t'] = []; self.D['average_price_m'] = []; self.D['average_price_c'] = []
-        self.D['전량횟수'] = 0
+        self.D['일반횟수'] = 0
         self.D['전략횟수'] = 0
         self.D['기회전량'] = 0
         self.D['기회전략'] = 0
@@ -437,23 +438,37 @@ class M_backtest_DEVELOPE(Model) :
         self.M['기록시즌'] += 1
         self.M['날수'] = 1
 
-        self.M['평균단가']  = self.M['당일종가']; self.T['평균단가']  = self.M['당일종가']
+        self.M['평균단가']  = self.M['당일종가']; self.T['평균단가']  = self.M['당일종가']; self.R['평균단가']  = self.M['당일종가']
         self.M['매수수량']  = my.ceil(self.M['일매수금']/self.M['전일종가'])
         self.M['기초수량']  = self.M['매수수량'] 
+        self.chance_init()
+        self.R['매수수량']  = self.R['기초수량']
 
         if  self.M['당일종가'] <  round(self.M['전일종가'] * self.M['큰단가치'],2) : 
-            self.M['보유수량']  = self.M['매수수량']  
+            self.M['보유수량']  = self.M['매수수량']
             self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량'] 
             self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
+            
+            self.R['보유수량']  = self.R['매수수량']
+            self.R['매수금액']  = self.M['당일종가'] * self.R['매수수량'] 
+            self.R['총매수금']  = self.R['평가금액'] = self.R['매수금액']
+            
             self.M['수익현황']  = self.M['수익률'] = 0.0; self.R['수익현황']  = self.R['수익률'] = 0.0
 
-            if self.M['비용차감'] : self.M['추가자금'] -=  self.commission(self.M['매수금액'],1)
+            if  self.M['비용차감'] : 
+                self.M['추가자금'] -=  self.commission(self.M['매수금액'],1)
+                self.R['기회자금'] -=  self.commission(self.R['매수금액'],1)
+                
             self.M['가용잔액'] -= self.M['매수금액']
             self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
             self.M['진행상황']  = '첫날매수'
             self.M['첫날기록']  = False
             self.M['거래코드']  = f"S{self.M['매수수량']}" 
             self.M['매수단계'] = '일반매수'
+
+            self.R['기회자금'] -= self.R['매수금액']
+            self.R['거래코드']  = f"S{self.R['매수수량']}" 
+
             return True
 
         else : 

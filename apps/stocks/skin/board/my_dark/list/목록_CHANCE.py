@@ -92,7 +92,6 @@ class 목록_CHANCE(SKIN) :
             self.D['target_value'] = [TD['sub20']] * chart_len 
             self.D['chance_value'] = ['null'] * chart_len                  
             
-            
             self.D['찬스상황'] = '대기상태'
             self.D['찬스주가'] = TD['add14']
             self.D['찬스일수'] = TD['sub12']
@@ -101,7 +100,7 @@ class 목록_CHANCE(SKIN) :
             self.D['찬스근거'] = target
             
             
-            if int(TD['sub12']) >=2 :
+            if int(TD['sub12']) > 0 :
 
                 가용잔액 = int( float(LD['add3']) * 2/3)
                 일매수금 = int(가용잔액/22)
@@ -127,6 +126,7 @@ class 목록_CHANCE(SKIN) :
                 self.D['찬스자본'] = f"{찬스가격*찬스수량:,.2f}"
                 self.D['찬스변동'] = round((찬스가격/float(TD['add14']) -1) * 100,2)
                 self.D['환율변환'] = f"{찬스가격*찬스수량* 현재환율:,.0f}"
+                self.D['기초수량'] = 기초수량
    
                 self.D['chance_value'] = [self.D['찬스가격']] * chart_len
                 
