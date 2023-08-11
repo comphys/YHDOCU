@@ -46,7 +46,7 @@ class 목록_CHANCE(SKIN) :
             self.DB.tbl = self.D['tbl']
             prev_date = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
             self.DB.wre = f"add0='{prev_date}'"
-            LD = self.DB.get_line('add3,add4,add6,add7,add9,add14,add16,add17,sub2,sub3,sub5,sub6,sub19,sub20,sub25,sub26,sub27,sub28')
+            LD = self.DB.get_line('add3,add4,add6,add7,add9,add14,add16,add17,sub2,sub3,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub28')
             CD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT) FROM {self.DB.tbl} WHERE CAST(add7 as FLOAT) != 0.0 AND add0 BETWEEN '{first_date}' AND '{last_date}'") 
             
             cx = {}
@@ -64,8 +64,6 @@ class 목록_CHANCE(SKIN) :
             TD = self.DB.get_line("add6,add8,add9,add14,sub2,sub4,sub5,sub6,sub7,sub12,sub18,sub19,sub20,sub28")
 
             chart_len = len(chart_data)
-            
-                    
             # --------------
             현재환율 = self.DB.one("SELECT CAST(usd_krw AS FLOAT) FROM usd_krw ORDER BY rowid DESC LIMIT 1")
             총투자금 = float(LD['sub27'])
@@ -79,10 +77,7 @@ class 목록_CHANCE(SKIN) :
 
             # -- extra-info by invest guide
             타겟일수 = int(TD['sub12']) 
-            # -- 기초수량 구하기
-            가용잔액 = int( float(LD['add3']) * 2/3); 일매수금 = int(가용잔액/22); 매수비율 = 일매수금 / int(TD['sub4']) 
-            기초수량 = my.ceil(매수비율 * int(TD['sub18']))
-            
+ 
             if  타겟일수 == 0 :
                 self.D['매수갯수'] = '0'; self.D['매수단가'] = '0.00'; self.D['매수예상'] = '0.00'
                 self.D['매도갯수'] = '0'; self.D['매도단가'] = '0.00'; self.D['매도예상'] = '0.00'
@@ -92,6 +87,7 @@ class 목록_CHANCE(SKIN) :
                 self.D['chance_value'] = ['null'] * chart_len 
             
             elif 타겟일수 == 1 :
+                기초수량 = self.chance_init(float(LD['add3']),float(TD['sub4']),int(TD['sub18']))
                 self.D['매수갯수'] = 기초수량; self.D['매수단가'] = TD['add14']; self.D['매수예상'] = f"{기초수량 * float(TD['add14']):,.2f}"
                 self.D['매도갯수'] = '0'; self.D['매도단가'] = TD['sub20']; self.D['매도예상'] = '0.00'
                 self.D['예상이익'] = '0.00' 
@@ -99,14 +95,14 @@ class 목록_CHANCE(SKIN) :
                 self.D['target_value'] = [TD['sub20']] * chart_len 
                 self.D['chance_value'] = [TD['add14']] * chart_len                
             
-            elif 타겟일수 > 1 and int(LD['add9']) == 0 :
-                    
+            elif 타겟일수 >= 2 and int(LD['add9']) <= int(LD['sub18']): 
+                기초수량 = int(LD['sub18']) if int(LD['add9']) else self.chance_init(float(LD['add3']),float(TD['sub4']),int(TD['sub18']))
                 # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
                 찬스수량 = 0
                 day_count = min(int(TD['sub12'])+2,6)
                 for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
                     
-                cp00 = self.take_chance(0,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                cp00 = self.take_chance( 0,  int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                 cp22 = self.take_chance(-2.2,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                 
                 찬스가격 = cp00 if (float(TD['add8']) < cp22 or float(TD['sub7'])) else cp22
@@ -115,13 +111,15 @@ class 목록_CHANCE(SKIN) :
                 self.D['매수갯수'] = f"{찬스수량:,}"
                 self.D['매수단가'] = f"{찬스가격:,.2f}"
                 self.D['매수예상'] = f"{찬스수량 * 찬스가격:,.2f}"
-                self.D['매도갯수'] = '0'; self.D['매도단가'] = '0.00'; self.D['매도예상'] = '0.00'
-                self.D['예상이익'] = '0.00'
-                self.D['원화예상'] = '0'
+                self.D['매도갯수'] = LD['add9']; self.D['매도단가'] = TD['sub20']; 
+                self.D['매도예상'] = f"{(int(LD['add9']) * float(TD['sub20'])):,.2f}"
+                예상이익 = float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))
+                self.D['예상이익'] = f"{예상이익:,.2f}"
+                self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"
                 self.D['target_value'] = [TD['sub20']] * chart_len
                 self.D['chance_value'] = [찬스가격] * chart_len
                 
-            elif 타겟일수 > 1 and int(LD['add9']) : # 가이드 및 투자가 진행 중일 때
+            else : # 가이드 및 투자가 진행 중일 때
                 self.D['매수갯수'] = int(LD['sub2'])
                 self.D['매수단가'] = f"{float(LD['sub19']):,.2f}"
                 self.D['매수예상'] = f"{(int(LD['sub2']) * float(LD['sub19'])):,.2f}"
@@ -130,12 +128,20 @@ class 목록_CHANCE(SKIN) :
                 self.D['매도예상'] = f"{(int(LD['sub3']) * float(LD['sub20'])):,.2f}"
                 예상이익 = float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))
                 self.D['예상이익'] = f"{예상이익:,.2f}"
+                self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"
                 self.D['target_value'] = [TD['sub20']] * chart_len
                 self.D['chance_value'] = ['null'] * chart_len
             
             self.D['연속상승'] = TD['sub5']
             self.D['연속하락'] = TD['sub6']
             self.D['현재환율'] = f"{현재환율:,.2f}"
+
+
+    def chance_init(self,balance,t_day_amount,t_basic_qty) :
+        # -- 기초수량 구하기
+        가용잔액 = int( balance * 2/3); 일매수금 = int(가용잔액/22); 
+        매수비율 = 일매수금 / int(t_day_amount) 
+        return my.ceil(매수비율 * t_basic_qty)
 
     def take_chance(self,p,H,n,A) :
         if H == 0 : return 0

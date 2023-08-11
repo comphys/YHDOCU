@@ -356,9 +356,9 @@ class Invest_guide(Control) :
 
         self.M['기초수량'] = my.ceil(self.M['일매수금']/OSOX)
 
-        self.B['add11'] = self.M['기초수량'] * SOXL; 
-        self.B['add16'] = self.B['add11'] / Balance * 100
-        self.B['add4']  = 100 - self.B['add16']
+        self.B['add11'] = self.M['기초수량'] * SOXL; # 매수금액
+        self.B['add16'] = self.B['add11'] / Balance * 100 # 레버비중
+        self.B['add4']  = 100 - self.B['add16'] # 현금비중
         fee = int(self.B['add11']*0.07)/100
         self.M['추가자금'] -= fee
         self.B['add17'] = Balance - fee
@@ -398,41 +398,71 @@ class Invest_guide(Control) :
 # -----------------------------------------------------------------------------------------------------------------------
 
     def initiate_chance(self) :
-        theDay  = self.D['post']['theDay']
-        현재잔액 = float(self.D['post']['Balance'].replace(',',''))
-
         self.B = {}
-        self.DB.clear()
-        self.DB.tbl = f"h_{self.target}_board"
-        self.DB.wre = f"add0='{theDay}'"
-        TD = self.DB.get_line('add6,add9,add14,sub1,sub2,sub4,sub5,sub6,sub12,sub18,sub19,sub20')
 
-        가용잔액 = int(현재잔액 * 2/3)
-        추가자금 = 현재잔액 - 가용잔액 
-        일매수금 = int(가용잔액/22)
-        매수비율 = 일매수금 / int(TD['sub4']) 
-        기초수량 = my.ceil(매수비율 * int(TD['sub18']))
+        theDay  = self.D['post']['theDay']
+        preDay = self.DB.one(f"SELECT max(add0) FROM h_stockHistory_board WHERE add0 < '{theDay}'")
+        현재잔액 = my.sv(self.D['post']['Balance'])
+        현재수량 = my.sv(self.D['post']['curQty'],'i')
+        기초수량 = my.sv(self.D['post']['bseQty'],'i')
         
-        변동수량 = 0    
-        # 여기서의 일수는 오늘 일수임, 타겟데이타의 작성 완료 후 찬스데이타를 초기화 하는 것임
-        for i in range(0,int(TD['sub12'])+1) : 
-            변동수량 += my.ceil(기초수량 *(i*1.25 + 1))
+        self.DB.clear()
+        self.DB.tbl, self.DB.wre = (f"h_{self.target}_board",f"add0='{theDay}'")
+        TD = self.DB.get_line('add6,add8,add9,add14,sub1,sub2,sub4,sub5,sub6,sub12,sub18,sub19,sub20')
+        
+        오늘종가 = float(TD['add14'])
+        어제종가 = self.DB.one(f"SELECT CAST(add3 as FLOAT) FROM h_stockHistory_board WHERE add0 = '{preDay}'")
+        타겟일수 = int(TD['sub12'])
+        
+        if  not 현재수량 : 
+            가용잔액 = int(현재잔액 * 2/3)
+            일매수금 = int(가용잔액/22)
+            매수비율 = 일매수금 / int(TD['sub4']) 
+            기초수량 = my.ceil(매수비율 * int(TD['sub18']))     
 
-        매수금 = float(TD['add14']) * 변동수량
+        # 실제적 로직 시작 ------------------------------------------------------------------------------------------
+        if  타겟일수 < 2 :
+            self.B['rsp'] = 0
+            self.B['msg'] = f"현재 일 수는 {타겟일수}일 이며 필요 일 수(2일 이상)가 충족되지 않았습니다."
+            return self.json(self.B)
+        
 
-        self.B['add14'] = TD['add14']
-        self.B['sub5']  = TD['sub5'] ; self.B['sub6']  = TD['sub6']
-        self.B['sub1']  = TD['sub1'] ; self.B['sub12'] = int(TD['sub12'])-1
-        self.B['sub19'] = TD['sub19']; self.B['sub20'] = TD['sub20']
+        elif 타겟일수 == 2 :
+            if  오늘종가 <= 어제종가 :
+                변동수량  = 기초수량
+                매수금액  = 오늘종가 * 기초수량
+                
+                내일수량 = 0    
+                # 여기서의 일수는 오늘 일수임, 타겟데이타의 작성 완료 후 찬스데이타를 초기화 하는 것임
+                for i in range(0,타겟일수+2) : 내일수량 += my.ceil(기초수량 *(i*1.25 + 1))
+                
+                cp00 = self.take_chance( 0,  int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                cp22 = self.take_chance(-2.2,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                내일가격 = cp00 if (float(TD['add8']) < cp22 or float(TD['sub7'])) else cp22
+                내일가격 = min(float(TD['sub19']),내일가격)                               
+                
+            else :
+                self.B['rsp'] = 0
+                self.B['msg'] = f"종가 기준이 조건을 만족 하지 못하였습니다."
+                return self.json(self.B)                
 
-        # Formatting
-        self.B['add19'] = f"{가용잔액:,.2f}"
-        self.B['add20'] = f"{추가자금:,.2f}"
-        self.B['sub4']  = f"{일매수금:,}"
+        elif 타겟일수 >= 3 :
+            if  현재수량 > 기초수량  :
+                pass
+            else :
+                pass
+                
+
+        # 공통 데이타 및 Formatting
+        self.B['rsp'] = 1
+        self.B['sub5']  = TD['sub5'] ; self.B['sub6']  = TD['sub6'] # 연속상승, 연속하강
+        self.B['sub1']  = TD['sub1'] ; self.B['sub12'] = int(TD['sub12'])-1 # 현재시즌, 경과일수
+        self.B['sub19'] = 내일가격 
+        self.B['sub20'] = TD['sub20'] #매도가격
+        self.B['sub2']  = 내일수량
         self.B['sub18'] = f"{기초수량:,}"
         self.B['add5']  = f"{변동수량:,}"
-        self.B['add11'] = f"{매수금:,.2f}"
-        
+        self.B['add11'] = f"{매수금액:,.2f}"
         
         return self.json(self.B) 
 

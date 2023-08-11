@@ -140,7 +140,7 @@ function normal_buy(opt) {
 	if(매수수량 * 종가 > 가용잔액 + 추가자금) { 매수수량 = 기초수량 * 위매비중; 진행상황 = '매수제한'; }
 	if(매수수량 * 종가 > 가용잔액 + 추가자금) { 매수수량 = 0; 진행상황 = '매수금지'; }
 	if(매수가격 >= 매도가격) 매수가격 = 매도가격 - 0.01;
-	if(찬스설정) { 매수가격 = ctv('sub19','f'); }
+	if(찬스설정) { 매수가격 = ctv('sub19','f'); 매수수량 = ctv('sub2','i'); }
 	else if(opt==2) { 매수가격 = s_load('LB','f')}
 }
 
@@ -235,15 +235,20 @@ function initiate_invest() {
 function initiate_chance() {
 	let theDay  = $("input[name='add0']").val();
 	let Balance = $("input[name='add3']").val();
+	let curQty  = $("input[name='add9']").val();
+	let bseQty  = $("input[name='sub18']").val();
+
 	if(theDay=='None') {h_dialog.notice('날자를 선택하여 주세요'); return;}
 	if(!Balance) {h_dialog.notice('잔액을 입력하여 주세요'); return;}	
 
 	let posturl = uri('linkurl')+ 'boards-invest_guide/initiate_chance/'+uri(0)
-
-	postData = {theDay:theDay, Balance:Balance}
+	postData = {theDay:theDay, Balance:Balance,curQty:curQty,bseQty:bseQty}
 	$.post( posturl, postData).done(function(data) {
 		var ans = JSON.parse(data);
-		for(let i in ans) { $("input[name='"+i+"']" ).val(ans[i]); }
+		if(ans['rsp']) { for(let i in ans) { $("input[name='"+i+"']" ).val(ans[i]); } }
+		else {
+			h_dialog.alert(ans['msg'])
+		}
 	});
 	찬스설정 = true
 }
