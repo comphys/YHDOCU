@@ -130,7 +130,7 @@ class 목록_CHANCE(SKIN) :
                 self.D['예상이익'] = f"{예상이익:,.2f}"
                 self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"
                 self.D['target_value'] = [TD['sub20']] * chart_len
-                self.D['chance_value'] = ['null'] * chart_len
+                self.D['chance_value'] = [TD['sub19']] * chart_len
             
             self.D['연속상승'] = TD['sub5']
             self.D['연속하락'] = TD['sub6']

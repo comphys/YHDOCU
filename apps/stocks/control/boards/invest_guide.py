@@ -409,9 +409,13 @@ class Invest_guide(Control) :
         self.DB.clear()
         self.DB.tbl, self.DB.wre = (f"h_{self.target}_board",f"add0='{theDay}'")
         TD = self.DB.get_line('add6,add8,add9,add14,sub1,sub2,sub4,sub5,sub6,sub12,sub18,sub19,sub20')
+        self.DB.wre = f"add0='{preDay}'"
+        TO = self.DB.get_line('add14, sub19')
         
-        오늘종가 = float(TD['add14'])
-        어제종가 = self.DB.one(f"SELECT CAST(add3 as FLOAT) FROM h_stockHistory_board WHERE add0 = '{preDay}'")
+        오늘종가 = my.sv(TD['add14'])
+        어제종가 = my.sv(TO['add14'])
+        어제매가 = my.sv(TO['sub19'])
+        
         타겟일수 = int(TD['sub12'])
         
         if  not 현재수량 : 
@@ -439,8 +443,10 @@ class Invest_guide(Control) :
                 cp00 = self.take_chance( 0,  int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                 cp22 = self.take_chance(-2.2,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                 내일가격 = cp00 if (float(TD['add8']) < cp22 or float(TD['sub7'])) else cp22
-                내일가격 = min(float(TD['sub19']),내일가격)                               
                 
+                self.B['sub19'] = min(float(TD['sub19']),내일가격) 
+                self.B['sub2']  = 내일수량                              
+
             else :
                 self.B['rsp'] = 0
                 self.B['msg'] = f"종가 기준이 조건을 만족 하지 못하였습니다."
@@ -448,18 +454,28 @@ class Invest_guide(Control) :
 
         elif 타겟일수 >= 3 :
             if  현재수량 > 기초수량  :
-                pass
+                self.B['rsp'] = 0
+                self.B['msg'] = f"이미 정상 진행 중으로 초기화 작업이 완료된 상태입니다."
+                return self.json(self.B) 
             else :
-                pass
+                오늘수량 = 0
+                for i in range(0,타겟일수+1) : 오늘수량 += my.ceil(기초수량 *(i*1.25 + 1))
+                cp00 = self.take_chance( 0,  int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                cp22 = self.take_chance(-2.2,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                오늘가격 = cp00 if (float(TD['add8']) < cp22 or float(TD['sub7'])) else cp22
+                오늘가격 = min(float(어제매가,오늘가격))
+                
+                if  오늘종가 <= 오늘가격 :
+                    변동수량  = 오늘수량
+                    매수금액  = 오늘종가 * 변동수량
+                    self.B['sub19'] = TD['sub19'] # 내일 매수 가격, 내일수량은 클라이엔트에서 계산
                 
 
         # 공통 데이타 및 Formatting
         self.B['rsp'] = 1
         self.B['sub5']  = TD['sub5'] ; self.B['sub6']  = TD['sub6'] # 연속상승, 연속하강
         self.B['sub1']  = TD['sub1'] ; self.B['sub12'] = int(TD['sub12'])-1 # 현재시즌, 경과일수
-        self.B['sub19'] = 내일가격 
         self.B['sub20'] = TD['sub20'] #매도가격
-        self.B['sub2']  = 내일수량
         self.B['sub18'] = f"{기초수량:,}"
         self.B['add5']  = f"{변동수량:,}"
         self.B['add11'] = f"{매수금액:,.2f}"
