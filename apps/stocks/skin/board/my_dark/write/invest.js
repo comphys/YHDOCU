@@ -55,8 +55,8 @@ function client_calculate(opt=1) {if(AutoCalulated) {h_dialog.notice("계산이 
 		현매수금=0.0; 
 	} else {  
 		평균단가 = 현매수금/보유수량; 
-		현수익률 = (종가/평균단가 -1)*100 ; 
-		현재손익 =  레버가치 - 현매수금; 
+		현수익률 =(마감금액/평균단가 -1)*100 ; 
+		현재손익 = 레버가치 - 현매수금; 
 	}
 
 	//  do the Math : INVEST Strategy
@@ -87,8 +87,8 @@ function client_calculate(opt=1) {if(AutoCalulated) {h_dialog.notice("계산이 
 	    }
 		else { 수수료등 = 0.0; 누적수료 = 0.0;}		
 
-		기초수량 = 매수수량 = Math.ceil(일매수금/종가);
-		매수가격 = 종가 * 큰단가치; 
+		기초수량 = 매수수량 = Math.ceil(일매수금/마감금액);
+		매수가격 = 마감금액 * 큰단가치; 
 		매도수량 = 0;
 		매도가격 = 매수가격+0.01; 
 
@@ -124,11 +124,11 @@ function check_buy() {
     vtc('add5',0,0); 
 	vtc('add11',0,2);
     if( 경과일수 == 0 ) { 
-        if(종가 <= 매수가격){ 
+        if(마감금액 <= 매수가격){ 
 			기초수량 = Math.ceil(일매수금/전일종가);  
 			vtc('add5', 기초수량,0); 
 			vtc('add11',마감금액 * 기초수량, 2);  }
-    } else if(종가 <= 매수가격 ) { 
+    } else if(마감금액 <= 매수가격 ) { 
 		vtc('add5', 매수수량,0); 
 		vtc('add11',마감금액 * 매수수량, 2); 
 	}
@@ -137,7 +137,7 @@ function check_buy() {
 function check_sell() {
     vtc('add12',0, 2);
     if( 경과일수 == 0 ) return;
-    if( 종가 >= 매도가격 ) {
+    if( 마감금액 >= 매도가격 ) {
 		vtc('add5', -매도수량,0); 
 		vtc('add12', 마감금액 * 매도수량, 2);}
 }
@@ -304,25 +304,25 @@ function load_value() {
         현재잔액= s_load('add3','f');
               
         // SOXL - 변수선언
-        종가=s_load('add3','f','H');  보유수량 = s_load('add9','i');  전일종가 = s_load('add14','f')
-        평균단가=s_load('add7','f');  매도누적 = s_load('sub15','f');  매수누적 = s_load('sub14','f');  현매수금= s_load('add6','f');
-        연속상승= s_load('add9','i','H');  연속하락= s_load('add10','i','H'); 회복전략 = s_load('sub7','f');
+        마감금액= s_load('add3','f','H');  보유수량 = s_load('add9','i');      전일종가 = s_load('add14','f')
+        평균단가= s_load('add7','f');      매도누적 = s_load('sub15','f');     매수누적 = s_load('sub14','f');  현매수금= s_load('add6','f');
+        연속상승= s_load('add9','i','H');  연속하락 = s_load('add10','i','H'); 회복전략 = s_load('sub7','f');
         // 투자전략 - 변수선언
-        가용잔액=s_load('add19','f');  배당합계 = s_load('sub11','f');  입금합계=s_load('sub25','f');  전투자금=s_load('sub27','f');  
-        추가자금=s_load('add20','f');  출금합계 = s_load('sub26','f');   
-        현재시즌=s_load('sub1','i');   일매수금 = s_load('sub4','i');  매수수량 = s_load('sub2','i');  매도수량 = s_load('sub3','i'); 
-        경과일수=s_load('sub12','i');  기초수량 = s_load('sub18','i');  매수가격 = s_load('sub19','f');  매도가격 = s_load('sub20','f'); 
-        누적수수료 = s_load('sub31','f');  보존금액 = s_load('sub32','f');
+        가용잔액= s_load('add19','f');     배당합계 = s_load('sub11','f');     입금합계=s_load('sub25','f');    전투자금=s_load('sub27','f');  
+        추가자금= s_load('add20','f');     출금합계 = s_load('sub26','f');   
+        현재시즌= s_load('sub1','i');      일매수금 = s_load('sub4','i');      매수수량 = s_load('sub2','i');   매도수량 = s_load('sub3','i'); 
+        경과일수= s_load('sub12','i');     기초수량 = s_load('sub18','i');     매수가격 = s_load('sub19','f');  매도가격 = s_load('sub20','f'); 
+        누적수료= s_load('sub31','f');     보존금액 = s_load('sub32','f');
 		// 전략변수
 		분할횟수=s_load('add2','i','S');  
-		큰단가치=s_load('add5','f','S');  큰단가치 = 1 + 큰단가치/100;
-		비중조절=s_load('add3','f','S');  비중조절 = 1 + 비중조절/100; 
-		첫매가치=s_load('add9','f','S');  첫매가치 = 1 + 첫매가치/100;
-		둘매가치=s_load('add10','f','S'); 둘매가치 = 1 + 둘매가치/100;
+		큰단가치=s_load('add5','f','S');   큰단가치 = 1 + 큰단가치/100;
+		비중조절=s_load('add3','f','S');   비중조절 = 1 + 비중조절/100; 
+		첫매가치=s_load('add9','f','S');   첫매가치 = 1 + 첫매가치/100;
+		둘매가치=s_load('add10','f','S');  둘매가치 = 1 + 둘매가치/100;
 		회수기한=s_load('add11','i','S');
 		강매시작=s_load('add17','i','S');
-		강매가치=s_load('add18','f','S'); 강매가치 = 1 + 강매가치/100;
-		평단가치=s_load('add4','f','S');  평단가치 = 1 + 평단가치/100;
+		강매가치=s_load('add18','f','S');  강매가치 = 1 + 강매가치/100;
+		평단가치=s_load('add4','f','S');   평단가치 = 1 + 평단가치/100;
 		위매비중=s_load('add25','f','S');
 		위매시점=s_load('add22','f','S'); 
 
@@ -331,24 +331,24 @@ function load_value() {
           
         // SOXL
         check_buy(); check_sell();
-        vtc('add14',종가,2);    vtc('add15',종가*보유수량,0); vtc('add9',보유수량,0);
-        vtc('add7',평균단가,4); vtc('sub15',매도누적,2); vtc('sub14',매수누적,2); vtc('add6',현매수금,2);
-        vtc('sub5',연속상승,0); vtc('sub6',연속하락,0); vtc('sub7',회복전략,1);
+        vtc('add14',마감금액,2);    vtc('add15',마감금액*보유수량,0);    vtc('add9',보유수량,0);
+        vtc('add7',평균단가,4);     vtc('sub15',매도누적,2);            vtc('sub14',매수누적,2);    vtc('add6',현매수금,2);
+        vtc('sub5',연속상승,0);     vtc('sub6',연속하락,0);             vtc('sub7',회복전략,1);
     
         // 투자전략
-        vtc('add19',가용잔액,2);  vtc('sub11',배당합계,2); vtc('sub25',입금합계,2);  vtc('sub27',전투자금,2); 
-        vtc('add20',추가자금,2);  vtc('sub26',출금합계,2);
-        vtc('sub1',현재시즌,0);  vtc('sub4',일매수금,0); 
-        vtc('sub12',경과일수,0); vtc('sub18',기초수량,0); 
-        vtc('sub31',누적수수료,2); vtc('sub32',보존금액,0); 
+        vtc('add19',가용잔액,2);    vtc('sub11',배당합계,2);            vtc('sub25',입금합계,2);   vtc('sub27',전투자금,2); 
+        vtc('add20',추가자금,2);    vtc('sub26',출금합계,2);
+        vtc('sub1',현재시즌,0);     vtc('sub4',일매수금,0); 
+        vtc('sub12',경과일수,0);    vtc('sub18',기초수량,0); 
+        vtc('sub31',누적수료,2);    vtc('sub32',보존금액,0); 
     }
 
 // =========================================================================================================================================================
 
 function money_inout() {
-	let 입금액수     = ctv('add1','f');
-    let 출금액수     = ctv('add2','f');
-	let 현재잔액     = ctv('add3','f');
+	let 입금액수 = ctv('add1','f');
+    let 출금액수 = ctv('add2','f');
+	let 현재잔액 = ctv('add3','f');
 	let 레버가치 = ctv('add15','f');
 	let 입금합계 = ctv('sub25','f');
 	let 출금합계 = ctv('sub26','f');
@@ -380,10 +380,16 @@ function round_up(n,decimals=2){
  }
 
  function hedge_bets(){
-	현재잔액 = ctv('add3','f'); 보존금액 = ctv('sub32','f'); 종가 = ctv('add14','f')
+	현재잔액 = ctv('add3','f'); 
+	보존금액 = ctv('sub32','f'); 
+	마감금액 = ctv('add14','f')
 	투자금액 = 현재잔액 - 보존금액;
 	가용잔액 = parseInt((투자금액 * 2)/3); 추가자금 = 투자금액 - 가용잔액; 	일매수금 = parseInt(가용잔액/22);
-	기초수량= Math.ceil(일매수금/종가);
+	기초수량 = Math.ceil(일매수금/마감금액);
 
-	vtc("add19",가용잔액,2); vtc("add20",추가자금,2); vtc("sub4",일매수금,0); vtc("sub2",기초수량,0); vtc("sub18",기초수량,0);
+	vtc("add19",가용잔액,2); 
+	vtc("add20",추가자금,2); 
+	vtc("sub4",일매수금,0); 
+	vtc("sub2",기초수량,0); 
+	vtc("sub18",기초수량,0);
  }
