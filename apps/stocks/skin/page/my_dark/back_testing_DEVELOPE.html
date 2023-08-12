@@ -117,7 +117,7 @@
 		<colgroup>
 			<col style="width:50px;"> <!-- 날수 -->
 			<col style="width:100px;"> <!-- 일자 -->
-			<col style="width:70px;background-color:#24272d;"> <!-- 당일종가 -->
+			<col style="width:70px;"> <!-- 당일종가 -->
 			<col style="width:70px">  <!-- 총수량 -->
 			<col style="width:100px"> <!-- 총매수금 -->
 			<col style="width:100px"> <!-- 평가금액 -->
@@ -145,7 +145,7 @@
 			{% endif %}
 				<td style='text-align:center'>{{TR['날수']}}</td>
 				<td class='if-the-day'>{{TR['기록일자']}}</td>
-				<td class='ohlc-price' style='text-align:right;cursor:pointer'>{{TR['당일종가']|safe}}</td>
+				<td class='ohlc-price' style='text-align:right;cursor:pointer;font-weight:bold;'>{{TR['당일종가']|safe}}</td>
 				<td style='text-align:right'>{{TR['보유수량']}}</td>
 				<td style='text-align:right;color:#E0F8F7'>{{TR['총매수금']}}</td>
 				<td style='text-align:right;color:#F8E6E0'>{{TR['평가금액']|safe}}</td>
@@ -302,7 +302,7 @@ $(document).ready(function(){
 		var url = uri('linkurl') + 'page/get_ohlc/back_testing/date=' + date + '/code=' + code;
 		var ypos= mouse_Y
 		if(ypos > 800) ypos = ypos-280
-		var o = {id:'OHLC_DAY', width:'430px', x:323, y:ypos,header:false,footer:false,drag:false}
+		var o = {id:'OHLC_DAY', width:'430px', x:240, y:ypos,header:false,footer:false,drag:false}
 		h_dialog.load(url,o)		
 	});
 

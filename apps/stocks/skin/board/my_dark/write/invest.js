@@ -40,7 +40,7 @@ function client_calculate(opt=1) {if(AutoCalulated) {h_dialog.notice("계산이 
 	
 	보유수량 += 변동수량; 
 	현매수금 += 매수금액;
-	매도누적 += 매도금; 매수누적 += 매수금액;
+	매도누적 += 매도금액; 매수누적 += 매수금액;
 
 	수수료등  = commission(매수금액,1); 
 	수수료등 += commission(매도금액,2); 
@@ -51,7 +51,7 @@ function client_calculate(opt=1) {if(AutoCalulated) {h_dialog.notice("계산이 
 
 	if( 보유수량 == 0) {
 	   	평균단가 = 0.0; 
-	    현수익률 = (매도금*현매수금)? (매도금/현매수금 -1)*100 : 0.0; 
+	    현수익률 = (매도금액*현매수금)? (매도금액/현매수금 -1)*100 : 0.0; 
 		현매수금=0.0; 
 	} else {  
 		평균단가 = 현매수금/보유수량; 
@@ -71,7 +71,7 @@ function client_calculate(opt=1) {if(AutoCalulated) {h_dialog.notice("계산이 
 	전수익률 = (가치합계 / 전투자금 - 1) * 100; 
 	현금비중 = (현재잔액 / 가치합계)*100; 
 	레버비중 = (레버가치/가치합계)*100; 
-	가용잔액 = 가용잔액 + 매도금 - 매수금액;
+	가용잔액 = 가용잔액 + 매도금액 - 매수금액;
 	추가자금 = 추가자금 - 출금액수 - 수수료등;
 
 	if(가용잔액 < 0) { 추가자금 += 가용잔액; 가용잔액 = 0.0; }
@@ -95,8 +95,8 @@ function client_calculate(opt=1) {if(AutoCalulated) {h_dialog.notice("계산이 
 	} else { 
 		진행상황 = '일반매수'
 		경과일수+= 1; 
-		normal_sell(opt); 
-		normal_buy(opt);
+		tomorrow_sell(opt); 
+		tomorrow_buy(opt);
 		if(경과일수==1) {진행상황 = '첫날매수'; 누적수료=수수료등;} 
 	}
 
@@ -142,7 +142,7 @@ function check_sell() {
 		vtc('add12', 마감금액 * 매도수량, 2);}
 }
 
-function normal_sell(opt) {
+function tomorrow_sell(opt) {
 	
 	매수수량 = Math.ceil(기초수량 * (경과일수*비중조절 +1));
 	매도가격 = 평균단가 * 첫매가치;
@@ -158,16 +158,12 @@ function normal_sell(opt) {
 
 	매도가격 = round_up(매도가격);
 	매도수량 = 보유수량;	 
-	
-	if(찬스설정) { 
-		매도가격 = ctv('sub20','f'); 
-	}
-	
-	else if(opt==2) { 매도가격 = s_load('LS','f')}
+	// LS JBODY['LS'] from 쓰기_CHANCE.py 
+	if(opt==2) { 매도가격 = s_load('LS','f')}
 }
 
-function normal_buy() {
-	
+function tomorrow_buy(opt) {
+
 	매수가격 = 마감금액 * 평단가치; 
 	매수수량 = Math.ceil(기초수량 * (경과일수*비중조절 +1));
 
@@ -178,8 +174,13 @@ function normal_buy() {
 		매수수량 = 0; 
 		진행상황 = '매수금지'; }
 	if(매수가격 >= 매도가격) 매수가격 = 매도가격 - 0.01;
-	if(찬스설정) { 매수가격 = ctv('sub19','f'); 매수수량 = ctv('sub2','i'); }
-}
+	if(찬스설정) { 
+		매수가격 = ctv('sub19','f'); 
+		매수수량 = ctv('sub2','i'); 
+	} else if(opt==2) {
+		매수가격 = s_load('LB','f'); // LS JBODY['LB'] from 쓰기_CHANCE.py 
+	}
+}   
 
 
 function s_load(key,opt,opt2='B') {if(opt2=='B') { a=JBODY[key]} else if(opt2=='S') { a=JSTRG[key] }  else if(opt2=='H') { a=JHIST[key] }  if(!a) return 0 ;  a = a.replace(/,/g,'');  if(opt=='i') return parseInt(a);  else return parseFloat(a); }

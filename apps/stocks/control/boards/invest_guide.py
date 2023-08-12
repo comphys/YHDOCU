@@ -432,7 +432,7 @@ class Invest_guide(Control) :
         
 
         elif 타겟일수 == 2 :
-            if  오늘종가 <= 어제종가 :
+            if  오늘종가 <= 어제매가 :
                 변동수량  = 기초수량
                 매수금액  = 오늘종가 * 기초수량
                 
@@ -463,16 +463,18 @@ class Invest_guide(Control) :
                 cp00 = self.take_chance( 0,  int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                 cp22 = self.take_chance(-2.2,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                 오늘가격 = cp00 if (float(TD['add8']) < cp22 or float(TD['sub7'])) else cp22
-                오늘가격 = min(float(어제매가,오늘가격))
+                오늘가격 = min(어제매가,오늘가격)
                 
                 if  오늘종가 <= 오늘가격 :
                     변동수량  = 오늘수량
                     매수금액  = 오늘종가 * 변동수량
-                    self.B['sub19'] = TD['sub19'] # 내일 매수 가격, 내일수량은 클라이엔트에서 계산
+                    self.B['sub19'] = TD['sub19'] # 내일 매수 가격
+                    self.B['sub2']  = my.ceil(기초수량 *(타겟일수*1.25 + 1))
                 
 
         # 공통 데이타 및 Formatting
         self.B['rsp'] = 1
+        self.B['add14'] = TD['add14'] #오늘종가 
         self.B['sub5']  = TD['sub5'] ; self.B['sub6']  = TD['sub6'] # 연속상승, 연속하강
         self.B['sub1']  = TD['sub1'] ; self.B['sub12'] = int(TD['sub12'])-1 # 현재시즌, 경과일수
         self.B['sub20'] = TD['sub20'] #매도가격
