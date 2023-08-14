@@ -1,0 +1,492 @@
+{% include D['_skn'] + 'admin/common_head.html' %}
+
+<div id='sidebar'>
+	<ul>
+		<li class='active'><a href="{{D['_bse']}}admin/board"><i class='fa fa-edit'></i> <span> 보드관리메인 </span></a></li>
+        {% for val in D['bgrp'] %}
+            <li class="{{'active submenu open' if val['sec'] == D['sec'] else 'submenu'}}">
+            <a href='#'><i class='fa fa-th-list'></i> <span> {{val['sec']}} </span> <span class='label'> {{val['cnt']}} </span></a>
+            <ul>
+            {% for b_list in D[val['sec']] %}
+                <li class="{{'active' if b_list['bid'] == D['bid'] else ''}}">
+                    <a href="{{D['_bse']}}admin/board_edit/bid={{b_list['bid']}}/sec={{b_list['section']}}"> {{b_list['title']}} </a>
+                </li> 
+            {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+	</ul>
+</div>
+
+<div id='content'>
+	<div id='content-header'>
+		<h1> Add A New Board </h1>
+
+		<div class='btn-group'>
+			<a href="{{D['_bse']}}admin/board" class='btn btn-large' title='보드 추가하기'><i class='fa fa-plus'></i></a>
+			<a href="{{D['_bse']}}admin/board_delete" class='btn btn-large' title='보드 삭제하기'><i class='fa fa-minus'></i></a>
+			<a href="{{D['_bse']}}admin/board_copy" class='btn btn-large' title='보드 복제하기'><i class='fa fa-clone'></i></a>
+			<a href="{{D['_bse']}}admin/board_sort" class='btn btn-large' title='메뉴 순서 설정'><i class='fa fa-list-ol'></i></a>
+		</div>
+	</div>
+
+	<div id='breadcrumb'>
+		<a href='#' title='HOME' class='tip-bottom'><i class='fa fa-home'></i> Home</a>
+		<a href='#' > ADMIN </a>
+		<a href='#' > BOARD </a>
+		<a href='#' class='current'> BOARD EDIT </a>
+	</div>
+
+	<div id='style-switcher'>
+		<span>Style : </span>
+		<a href="" style="background-color: #555555;"></a>
+		<a href="" style="background-color: #2D2F57;"></a>
+		<a href="" style="background-color: #673232;"></a>
+	</div>
+
+	<div class='container'>
+<!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+		<div class="widget-box">
+			<div class="widget-title">
+				<ul class="nav nav-tabs">
+					<li class="{{D['active_tab'][0]}}"><a data-toggle="tab" href="#adminBoardB_editTab0">기본설정</a></li>
+					<li class="{{D['active_tab'][1]}}"><a data-toggle="tab" href="#adminBoardB_editTab1">권한설정</a></li>
+					<li class="{{D['active_tab'][2]}}"><a data-toggle="tab" href="#adminBoardB_editTab2">추가필드</a></li>
+					<li class="{{D['active_tab'][3]}}"><a data-toggle="tab" href="#adminBoardB_editTab3">출력필드</a></li>
+					<li class="{{D['active_tab'][4]}}"><a data-toggle="tab" href="#adminBoardB_editTab4">엑셀설정</a></li>
+				</ul>
+			</div>
+			<div class="widget-content tab-content">
+<!-- 기본설정 -->
+				<div id="adminBoardB_editTab0" class="tab-pane {{D['active_tab'][0]}}">
+					<form id='adminBoardB_edit01' action="{{D['_bse']}}admins-action/board_edit_basic" method="post" class="form-horizontal" >
+						<div class='control-group'>
+							<label class='control-label'>보드명칭 : </label>
+							<div class='controls'>
+								<input type='text' name='title' value="{{D['bconfig']['title']}}" style='width:164px' />
+								<span class='control-right-label'>: 보드에 대한 한글 명칭입니다</span>
+								<input type='hidden' name='bid' value="{{D['bconfig']['bid']}}" />
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'>보드타입 : </label>
+							<div class='controls'>
+								<input type='text' name='type' style='width:164px' value="{{D['bconfig']['type']}}" readonly='readonly' />
+								<span class='control-right-label'>: 보드타입은 보드 생성시 결정됩니다</span>
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'>섹션선택 : </label>
+							<div class='controls'>
+								<input type='text' name='section' value="{{D['bconfig']['section']}}" style='width:164px' />
+								<select  style='background:#CCFFFF;display:inline-block;width:180px;' onchange="selectC(this,'section');" >
+									<option selected='selected' value=''> 섹션선택 </option>
+									{% for section in D['section_list'] %}
+									<option value="{{section[0]}}"> {{section[0]}} </option>
+									{% endfor %}
+								</select>
+								<span class='control-right-label'>: 보드관리를 위한 카테고리(섹션)을 지정합니다</span>
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'>메인스킨선택 : </label>
+							<div class='controls'>
+								<input type='text' name='skin' value="{{D['bconfig']['skin']}}" style='width:164px' />
+								<select  style='background:#ffecef;display:inline-block;width:180px;' onchange="selectC(this,'skin');" >
+									<option selected='selected' value=''> 스킨선택 </option>
+									{% for skin in D['skin_list'] %}
+									<option value="{{skin}}"> {{skin}} </option>
+									{% endfor %}
+								</select>
+								<span class='control-right-label'>: 메인스킨 변경 시 서브스킨도 변경시켜야 합니다</span>
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'>목록스킨선택 : </label>
+							<div class='controls'>
+								<input type='text' name='sub_list' value="{{D['bconfig']['sub_list']}}" style='width:164px' />
+								<select  style='background:#ffecef;display:inline-block;width:180px;' onchange="selectC(this,'sub_list');" >
+									<option selected='selected' value=''> 목록스킨선택 </option>
+									{% for skin in D['sub_list'] %}
+									<option value="{{skin}}"> {{skin}} </option>
+									{% endfor %}
+								</select>
+								<span class='control-right-label'>: 글목록 출력을 위한 개별 스킨입니다</span>
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'>본문스킨선택 : </label>
+							<div class='controls'>
+								<input type='text' name='sub_body' value="{{D['bconfig']['sub_body']}}" style='width:164px' />
+								<select  style='background:#ffecef;display:inline-block;width:180px;' onchange="selectC(this,'sub_body');" >
+									<option selected='selected' value=''> 본문스킨선택 </option>
+									{% for skin in D['sub_body'] %}
+									<option value="{{skin}}"> {{skin}} </option>
+									{% endfor %}
+								</select>
+								<span class='control-right-label'>: 글본문 출력을 위한 개별 스킨입니다</span>
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'>쓰기스킨선택 : </label>
+							<div class='controls'>
+								<input type='text' name='sub_write' value="{{D['bconfig']['sub_write']}}" style='width:164px' />
+								<select  style='background:#ffecef;display:inline-block;width:180px;' onchange="selectC(this,'sub_write');" >
+									<option selected='selected' value=''> 쓰기스킨선택 </option>
+									{% for skin in D['sub_write'] %}
+									<option value="{{skin}}"> {{skin}} </option>
+									{% endfor %}
+								</select>
+								<span class='control-right-label'>: 글쓰기 출력을 위한 개별 스킨입니다</span>
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'>페이지당목록수 : </label>
+							<div class='controls'>
+								<input type='text' name='row_per_page' value="{{D['bconfig']['row_per_page']}}" style='width:164px' />
+								<span class='control-right-label'>: 페이지당 표현 할 글 목록 수 입니다</span>
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'>제목글자수제한 : </label>
+							<div class='controls'>
+								<input type='text' name='subject_len' value="{{D['bconfig']['subject_len']}}" style='width:164px' />
+								<span class='control-right-label'>: 글제목의 최대 글자수를 설정합니다</span>
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'>레이아웃 넓이 : </label>
+							<div class='controls'>
+								<input type='text' name='width' value="{{D['bconfig']['width']}}" style='width:164px' />
+								<span class='control-right-label'>: 레이아웃 폭을 별도로 정할 수 있습니다</span>
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'>기타추가설정1 : </label>
+							<div class='controls'>
+								<input type='text' name='extra1' value="{{D['bconfig']['extra1']}}" style='width:164px' />
+								<span class='control-right-label'>: 기타 추가 설정에 사용됩니다</span>
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'>기타추가설정2 : </label>
+							<div class='controls'>
+								<input type='text' name='extra2' value="{{D['bconfig']['extra2']}}" style='width:164px' />
+								<span class='control-right-label'>: 기타 추가 설정에 사용됩니다</span>
+							</div>
+						</div>
+
+						<div class="form-actions" style='margin:0;padding:0px 170px;'>
+							<button type="submit" class="btn btn-primary" style='width:165px;'><i class='fa fa-check'></i>&nbsp;EDIT THIS BOARD</button>
+						</div>
+					</form>
+				</div><!-- end of tab1 -->
+
+<!-- 권한설정 -->
+				<div id="adminBoardB_editTab1" class="tab-pane {{D['active_tab'][1]}}">
+					<form id='adminBoardB_edit02' action="{{D['_bse']}}admins-action/board_edit_access" method="post" class="form-horizontal" >
+						<div class='control-group'>
+							<label class='control-label'> 글목록 요구권한 : </label>
+							<div class='controls'>
+								<input type='range' min='0' max='100' step='1' name='acc_list' style='width:200px' value="{{D['bconfig']['acc_list']}}" />
+								<span class='range-value'>{{D['bconfig']['acc_list']}}</span>
+								<span class='control-right-label'>: 글목록에 대한 접근 권한입니다(100일 경우 본인만 접근 가능) </span>
+								<input type='hidden' name='bid' value="{{D['bconfig']['bid']}}" />
+								<input type='hidden' name='sec' value="{{D['bconfig']['section']}}" />
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'> 글본문 요구권한 : </label>
+							<div class='controls'>
+								<input type='range' min='0' max='100' step='1' name='acc_body' value="{{D['bconfig']['acc_body']}}" style='width:200px' />
+								<span class='range-value'>{{D['bconfig']['acc_body']}}</span>
+								<span class='control-right-label'>: 글본문에 대한 접근 권한입니다 </span>
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'> 글쓰기 요구권한 : </label>
+							<div class='controls'>
+								<input type='range' min='0' max='100' step='1' name='acc_write' value="{{D['bconfig']['acc_write']}}" style='width:200px' />
+								<span class='range-value'>{{D['bconfig']['acc_write']}}</span>
+								<span class='control-right-label'>: 글쓰기에 대한 접근 권한입니다 </span>
+							</div>
+						</div>
+						<div class="form-actions" style='margin:0;padding:0px 170px;'>
+							<button type="submit" class="btn btn-primary" style='width:210px;'><i class='fa fa-check'></i>&nbsp;EDIT THIS BOARD</button>
+						</div>
+					</form>	  
+				</div><!-- end of tab2 -->
+<!-- 추가필드 -->
+				<div id="adminBoardB_editTab2" class="tab-pane {{D['active_tab'][2]}}">
+					<table class="table table-bordered table-striped">
+						<thead>
+							<tr><th>필드명</th><th>타이틀</th><th>유형</th><th>정렬</th><th>색깔</th><th>형식</th><th>넓이</th><th>필수</th><th>수정</th><th>삭제</th></tr>
+						</thead>
+						<tbody>
+						{% for key in D['use_key'] %}
+							<tr>
+								<td> {{key}} </td>
+								<td><input type='text' name="ftitle{{key}}" value="{{D['extitle'][key]}}" style='background-color:#e1ffe1;width:120px;' /></td>
+								<td>
+									<select name="ftype{{key}}" style="width:95px">
+										<option value=''>유형선택</option>
+										<option value='text' {{ 'selected' if D['extype'][key] == 'text' else '' }} >문자</option>
+										<option value='int'  {{ 'selected' if D['extype'][key] == 'int'  else '' }} >정수</option>
+										<option value='float' {{ 'selected' if D['extype'][key] == 'float'  else '' }} >실수</option>
+									</select>
+								</td>
+								<td>
+								<select name="falign{{key}}" style="width:115px">
+									<option value=''>정렬선택</option>
+									<option value='left' 	{{ 'selected' if D['exalign'][key] == 'left' else '' }} >왼쪽정렬</option>
+									<option value='center'  {{ 'selected' if D['exalign'][key] == 'center'  else '' }} >중앙정렬</option>
+									<option value='right' 	{{ 'selected' if D['exalign'][key] == 'right'  else '' }} >오른쪽정렬</option>
+								</select>
+								</td>
+								<td><input class='colorpicker form-inline input-sm' type='text' name="fcolor{{key}}" value="{{D['excolor'][key]}}" {{ D['excolor_style'][key] |safe }} ></td>
+								<td>
+								<select name="fformat{{key}}" style="width:95px">
+									<option value=''>형식선택</option>
+									<option value='text' 	{{ 'selected' if D['exformat'][key] == 'text' else '' }} >문자</option>
+									<option value='number'  {{ 'selected' if D['exformat'][key] == 'number'  else '' }} >숫자</option>
+									<option value='date' 	{{ 'selected' if D['exformat'][key] == 'date'  else '' }} >날자</option>
+									<option value='mobile' 	{{ 'selected' if D['exformat'][key] == 'mobile'  else '' }} >휴대폰</option>
+									<option value='edit' 	{{ 'selected' if D['exformat'][key] == 'edit'  else '' }} >직접수정</option>
+									<option value='n_edit' 	{{ 'selected' if D['exformat'][key] == 'n_edit'  else '' }} >숫자수정</option>
+								</select>
+								</td>
+								<td><input type='text' name="fwidth{{key}}" value="{{D['exwidth'][key]}}" style='text-align:center;width:70px' /></td>
+								<td>
+									<input type='checkbox' name="fmust{{key}}" {{ 'checked' if D['exmust'][key] =='true' else '' }} />
+								</td>
+								<td><i class='fa fa-edit fa-2x' style='cursor:pointer' onclick="update_extField('{{key}}')" ></i></td>
+								<td>
+									<i class='fa fa-times-circle fa-2x' style='cursor:pointer' onclick="delete_extField('{{key}}',this)" ></i>
+								</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>	
+		
+					<form id='adminBoardB_edit03' action="{{D['_bse']}}admins-action/add_exfield" method="post" >
+						<table class="table table-bordered table-striped">
+							<thead>
+								<tr><th> 추가필드 </th> <th> 타이틀 </th> <th> 유 형</th><th> 정 렬 </th> <th> 필드추가 </th></tr>
+							</thead>
+							<tbody>
+								<tr style='background-color:#afafaf;'>
+									<td>
+										<select name='addFieldKey' style='width:100px;' >
+											{%- for key in D['not_key'] -%}
+											<option value="{{key}}">{{key}}</option>
+											{% endfor %}
+										</select>
+									</td>
+									<td><input type='text' name='addFieldTitle' style='width:164px' value='추가필드' /></td>
+									<td>
+										<select name='addFieldType' style='width:100px'>
+											<option value='text'>문자</option>
+											<option value='int'>정수</option>
+											<option value='float'>실수</option>
+										</select>
+									</td>
+									<td>
+										<select name='addFieldAlign' style='width:100px'>
+											<option value='center'>중앙</option>
+											<option value='left'>왼쪽</option>
+											<option value='right'>오른쪽</option>
+										</select>
+									</td>
+									<td><button type='submit' class='btn btn-primary' style='width:200px;'><i class='icon-ok'></i>&nbsp;INSERT A NEW FIELD</button></td>
+								</tr>
+							</tbody>
+						</table>
+						<input type='hidden' name='bid' value="{{D['bconfig']['bid']}}" />
+						<input type='hidden' name='sec' value="{{D['bconfig']['section']}}" />
+					</form>
+				</div>
+<!-- 출력필드  -->
+				<div id="adminBoardB_editTab3" class="tab-pane {{D['active_tab'][3]}}">
+					<form id='adminBoardB_edit04' action="{{D['_bse']}}admins-action/board_edit_output" method="post" >
+						<table class="table table-bordered table-striped">
+							<thead>
+								<tr><th width='110px'> 구분 </th> <th> 설정사항 </th></tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td style='vertical-align:middle;'>기본필드목록</td>
+									<td style='line-height:35px'> 
+										<button class='btn btn-danger'> no : 번호 </button>
+										<button class='btn btn-danger'> subject : 제목 </button>
+										<button class='btn btn-primary'> uid : 아이디 </button>
+										<button class='btn btn-primary'> uname : 이름 </button>
+										<button class='btn btn-primary'> hit : 조회수 </button>
+										<button class='btn btn-primary'> wdate : 작성일 </button>
+										<button class='btn btn-primary'> mdate : 수정일 </button>
+									</td>
+								</tr>
+								<tr>
+									<td style='vertical-align:middle;'>추가필드목록</td>
+									<td style='line-height:35px'> 
+										{% for key in D['use_key'] %}
+										{% if key != 'add0' %}
+										<button class='btn'> {{key}} : {{D['extitle'][key]}} </button>
+										{% endif %}
+										{% endfor %}
+									</td>
+								</tr>
+								<tr>
+									<td> 출력필드선택 </td>
+									<td> <input type='text' name='list_order' value="{{D['bconfig']['list_order']}}" style='width:500px' /> 글목록 출력필드 선택(구분자 : /)  </td>
+								</tr>
+								<tr>
+									<td> 서브필드선택 </td>
+									<td> <input type='text' name='list_sub' value="{{D['bconfig']['list_sub']}}" style='width:500px' /> 글목록 서브필드 선택(구분자 : /)  </td>
+								</tr>
+								<tr>
+									<td> 카테고리선택 </td>
+									<td> <input type='text' name='category' value="{{D['bconfig']['category']}}" style='width:500px' /> 글목록 상단 카테고리(구분자 : /)  </td>
+								</tr>
+								<tr>
+									<td> 목록정렬순서 </td>
+									<td> <input type='text' name='sort_order' value="{{D['bconfig']['sort_order']}}" style='width:500px'/> ASC : 오름차순, DESC 내림차순 </td>
+								</tr>
+								<tr>
+									<td> 쿼리 조건 </td>
+									<td> <input type='text' name='user_query' value="{{D['bconfig']['user_query']}}" style='width:500px'/> 사용자 쿼리 </td>
+								</tr>
+								<tr>
+									<td> 추가 요소 </td>
+									<td> 
+										<input type='checkbox' name='row_sum' style="margin-top:-3px" {{ 'checked' if D['bconfig']['row_sum'] =='on' else '' }} > 필드합계 표시 
+										<input type='checkbox' name='row_flt' style="margin-top:-3px" {{ 'checked' if D['bconfig']['row_flt'] =='on' else '' }} > 필드필터 표시
+										<input type='checkbox' name='stayfom' style="margin-top:-3px" {{ 'checked' if D['bconfig']['stayfom'] =='on' else '' }} > 수정작업 유지
+									</td>
+								</tr>
+								<tr>
+									<td> 현재설정저장 </td>
+									<td> <button type="submit" class="btn btn-inverse" style='width:100%;'><i class='fa fa-pencil'></i>&nbsp;&nbsp;현재의 설정을 서버에 저장합니다</button>  </td>
+								</tr>
+							</tbody>
+						</table>
+						<input type='hidden' name='bid' value="{{D['bconfig']['bid']}}" />
+						<input type='hidden' name='sec' value="{{D['bconfig']['section']}}" />
+					</form>
+				</div><!-- end of tab4 -->
+<!-- 엑셀 설정 -->
+				<div id="adminBoardB_editTab4" class="tab-pane {{D['active_tab'][4]}}">
+					<div class="alert alert-danger">엑셀 출력 조건을 지정해주시기 바랍니다</div>
+					<form id='adminBoardB_edit05' action="{{D['_bse']}}admins-action/board_edit_excel" method="post" class="form-horizontal" >
+						<table class="table table-bordered table-striped">
+							<thead>
+								<tr><th> 구분 </th> <th> 엑셀출력 설정사항 </th></tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td style='width:112px;vertical-align:middle;'>기본필드목록</td>
+									<td style='line-height:35px'> 
+										<button class='btn btn-inverse'> no : 번호 </button>
+										<button class='btn btn-inverse'> subject : 제목 </button>
+										<button class='btn btn-inverse'> uid : 아이디 </button>
+										<button class='btn btn-inverse'> uname : 이름 </button>
+										<button class='btn btn-inverse'> hit : 조회수 </button>
+										<button class='btn btn-inverse'> wdate : 작성일 </button>
+										<button class='btn btn-inverse'> mdate : 수정일 </button>
+									</td>
+								</tr>
+								<tr>
+									<td style='width:60px;vertical-align:middle;'>추가필드목록</td>
+									<td style='line-height:35px'> 
+										{% for key in D['use_key'] %}
+										{% if key != 'add0' %}
+										<button class='btn btn-primary'> {{key}} : {{D['extitle'][key]}} </button>
+										{% endif %}
+										{% endfor %}
+									</td>
+								</tr>
+								<tr>
+									<td> 출력필드선택 </td>
+									<td> <input type='text' name='excel_order' value='' style='width:500px' /> 글목록 출력필드 선택(구분자 : /)  </td>
+								</tr>
+								<tr>
+									<td> 쿼리 조건 </td>
+									<td> <input type='text' name='excel_condition' value='' style='width:500px'/> 목록 나열 조건 </td>
+								</tr>
+								<tr>
+									<td> 목록정렬순서 </td>
+									<td> <input type='text' name='excel_sort' value='' style='width:500px'/> ASC : 오름차순, DESC 내림차순 </td>
+								</tr>
+								<tr>
+									<td> 현재설정저장 </td>
+									<td> <button type="submit" class="btn btn-inverse" style='width:100%;'><i class='fa fa-pencil'></i>&nbsp;&nbsp;현재의 설정을 서버에 저장합니다</button>  </td>
+								</tr>
+							</tbody>
+						</table>
+						<input type='hidden' name='bid' value="{{D['bconfig']['bid']}}" />
+						<input type='hidden' name='sec' value="{{D['bconfig']['section']}}" />
+						<input type='hidden' name='excel_insert' value='' />
+					</form>	  
+				</div><!-- end of tab 엑셀 설정 -->
+			</div><!-- tab-content -->
+		</div><!-- widget-box -->
+	</div><!-- container -->
+
+<script type='text/javascript'>
+
+	$("input[type='range']").on('input',function(){
+		var num = $(this).val();
+		var target = $(this).next(); 
+		$(target).html(num)
+	});
+
+	function delete_extField(f,sel)
+	{
+		var fid  = f ;
+		var bid  = $("input[name='bid']").val();
+		var posturl = uri('linkurl') + 'admins-ajax/delete_exfields';
+		var update_query  = "fid=" + fid + "&bid=" + bid ;
+		h_dialog.confirm( "<span style='color:red;font-weight:bold'>" +fid + "</span> 필드를 정말로 삭제하시겠습니까? ", 
+			{
+				h_title			: '다시 한번 더 확인해 주세요',
+				pos				: 'LT', x : mouse_X - 230, y : mouse_Y -100,
+				buttons			: [
+									{text:'삭제하기',
+									 call:	function(idx) {
+												$.post(posturl, update_query ,	function(data) {
+													$(sel).parent().parent().remove();
+													$('<option/>').attr('value',fid).text(fid).appendTo("select[name='addFieldKey']");
+												});
+												h_dialog.close(idx);
+											}
+									},
+									h_dialog.close_button
+								  ]
+		});	
+	}
+
+	function update_extField(f)
+	{
+		var fid = f ;
+		var bid = $("input[name='bid']").val();
+		var posturl = uri('linkurl') + 'admins-ajax/update_exfields';
+		var FieldInput = new Array();
+		FieldInput[0] = { x : "FieldTitle",		y : $("input[name='ftitle"	 + f + "']").val() };
+		FieldInput[1] = { x : "FieldType",		y : $("select[name='ftype"	 + f + "']").val() };
+		FieldInput[2] = { x : "FieldAlign",		y : $("select[name='falign"	 + f + "']").val() };
+		FieldInput[3] = { x : "FieldColor",		y : $("input[name='fcolor"	 + f + "']").val() };
+		FieldInput[4] = { x : "FieldFormat",	y : $("select[name='fformat" + f + "']").val() };
+		FieldInput[5] = { x : "FieldWidth",		y : $("input[name='fwidth"	 + f + "']").val() };
+		FieldInput[6] = { x : "FieldMust",		y : $("input[name='fmust"	 + f + "']").is(':checked') };
+
+		var update_query =''; 
+		for(i=0; i<FieldInput.length; i++) update_query += FieldInput[i].x + "=" + FieldInput[i].y + "&" ;	
+		update_query += "bid=" + bid + "&fid=" + fid;
+		
+		$.post( posturl, update_query, function() {
+			h_dialog.alert( "<span style='color:red;font-weight:bold'>" +fid + "</span> 필드를 수정 하였습니다"); 
+		});
+	}
+
+</script>
+
+{% include D['_skn'] + 'admin/common_tail.html' %}

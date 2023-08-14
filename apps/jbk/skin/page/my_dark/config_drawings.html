@@ -1,0 +1,30 @@
+{% extends D['_skn'] + 'page/my_dark/main_layout.html' %}
+
+{% block contents_page  %}
+<div class="white-div" style="padding:20px;border:2px solid black;border-radius:6px">
+    <div class="alert alert-danger" style='margin-top:15px'>
+        <strong> 외주업체설정 : </strong> 이미지(도면)파일이 저장되는 경로는 최상위 폴더 {{D['DOCU_ROOT']}} 하위 폴더이어야 합니다.
+    </div>
+
+    <div class="white-div">
+        <form action="/jbk/page/save_imgdown/{{D['bid']}}" method="post" >
+            <div style="margin-top:20px">
+                <div style="display:inline-block;width:200px">도면(이미지) 파일 저장 위치</div>
+                <input type="text" name="save_img_dir" value="{{D['save_img_dir']}}"  style="color:black;width:400px;border:1px solid black;" />
+            </div>
+            <div style="margin-top:20px">
+                <div style="display:inline-block;width:200px">썸네일(이미지) 저장 위치</div>
+                <input type="text" name="save_img_dir2" value="{{D['save_img_dir2']}}"  style="color:black;width:400px;border:1px solid black;" />
+            </div>
+            <div style="margin-top:20px">
+                <button type="submit" class="btn btn-black" style='width:100%;'><i class='fa fa-pencil'></i> 상기의 내용을 저장합니다.</button>
+            </div>
+        </form>
+    </div><!-- white-div -->
+</div><!-- container -->
+
+<script type='text/javascript'>
+{% if D['output'] %}h_dialog.notice("{{D['output']}}");{% endif %}
+</script>
+
+{% endblock %}

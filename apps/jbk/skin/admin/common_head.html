@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" >
+<meta name="viewport" content="width=1200">
+<title> {{D['title']}} </title>
+<link href="/sys/bootstrap/bootstrap-old.css" rel="stylesheet">
+<link href="/skn/jbk/admin/unicorn-main.css" rel="stylesheet">
+<link href="/skn/jbk/admin/unicorn-blue.css" rel="stylesheet">
+<link href="/sys/fontawesome/css/font-awesome.css" rel="stylesheet">
+<link href="/sys/jyh/yhutils.css" rel="stylesheet">
+
+<script src="/sys/jyh/jquery-yh-2307.js"></script>
+<script src="/sys/bootstrap/bootstrap-old.js"></script>
+<script src="/sys/jyh/yhutils.js"></script>
+<script src="/skn/jbk/admin/unicorn.js"></script>
+</head>
+<body>
+<div id='header'>
+	<h1>{{D['header']}}</h1>
+</div>
+
+<div id='user-nav' class='navbar' style='float:right'>
+	<ul class='nav btn-group'>
+		<li class='btn btn-inverse'>
+			<a title='보드관리' href='#'>
+				<i class='fa fa-pencil'></i> <span class='text'>Board</span><span class='label label-important'> {{D['board_cnt']}} </span>
+			</a>
+		</li>
+		<li class='btn btn-inverse'>
+			<a title='유저관리' href='#'>
+				<i class='fa fa-user'></i> <span class='text'>User</span><span class='label label-important'> {{D['user_cnt']}} </span>
+			</a>
+		</li>
+		<li class='btn btn-inverse'><a title='디비설정' href='#'><i class='fa fa-cog'></i> <span class='text'>Sqlite</span></a></li>
+		<li class='btn btn-inverse'><a title='파일관리' href='#'><i class='fa fa-folder'></i> <span class='text'>Explorer</span></a></li>
+		<li class='btn btn-inverse'><a title='로그아웃' href='#'><i class='fa fa-share'></i> <span class='text'>Logout</span></a></li>
+	</ul>
+</div>
+{{D['act_msg']|safe}}

@@ -1,0 +1,25 @@
+{% extends D['_skn'] + 'page/my_dark/main_layout.html' %}
+
+{% block contents_page  %}
+<div class="white-div" style="padding:20px;border:2px solid black;border-radius:6px">
+    <div class="alert alert-danger" style='margin-top:15px'>
+        <strong> 외주업체설정 : </strong> 외주업체를 입력하세요. 업체별 구분은 각 행(엔터키) 입니다. 
+    </div>
+
+    <div class="white-div">
+        <form action="/jbk/page/save_outsourcing/{{D['bid']}}" method="post" >
+            <div style="margin-top:20px">
+               <textarea type="text" name="out_co_list" value=""  style="color:black;width:200px;height:350px;background-color:white;border:1px solid black;padding:10px;">{{D['out_co_list'] }}</textarea>
+            </div>
+            <div style="margin-top:20px">
+                <button type="submit" class="btn btn-black" style='width:100%;'><i class='fa fa-pencil'></i> 상기 외주업체 리스트를 저장합니다</button>
+            </div>
+        </form>
+    </div><!-- white-div -->
+</div><!-- container -->
+
+<script type='text/javascript'>
+{% if D['output'] %}h_dialog.notice("{{D['output']}}");{% endif %}
+</script>
+
+{% endblock %}

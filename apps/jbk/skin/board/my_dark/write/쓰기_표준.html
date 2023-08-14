@@ -1,0 +1,174 @@
+{% extends D['_skn'] + 'board/my_dark/main_layout.html' %}
+
+{% block contents_write %}
+<form id='YHBmainEditorForm' method="POST" action="{{D['Form_act']}}" onsubmit='return check_MainWriteForm(this)' >
+<input type='hidden' name='mode'	value="{{D['Mode']}}" >
+<input type='hidden' name='uid'		value="{{D['USER']['uid']}}" >
+<input type='hidden' name='uname'	value="{{D['USER']['uname']}}" >
+{%- if D['BCONFIG']['type'] == 'yhboard' %}
+<input type='hidden' name='brother'	value="{{D['Brother']}}" >
+{% endif -%}
+<input type='hidden' name='tle_color' value="{{D['w_tleClr']}}" >
+<textarea  name='content' style="display:none"></textarea>
+<table class='table' style="border:2px solid black;border-radius:4px">
+	<tbody>
+	<!-- 상단 요소====================================================================================== -->
+	<tr>
+		{%- if D['Mode'] == 'add_body' or D['Brother']|int > 0  %}
+		<td class='write-td-left'>기존제목</td> 
+		<td class='write-td-right' style="font-weight:bold;color:grey">&nbsp;{{D['B_title']}}</td>
+		</tr>
+		<tr>
+		<td class='write-td-left'>추가자료</td>
+		<td class='write-td-right'>
+			<input type='text' name='add0' style="width:100%;border:none" value="{{D['w_title']}}" >
+		</td>
+
+		{%- else %}
+		<!-- <td class='write_td_left'> <?=$EXTITLE['add0']?> </td> -->
+		<td class='write-td-left' id="tle_title_color">{{D['EXTITLE']['add0']}}</td>
+		<td class='write-td-right'>
+			&nbsp;<i class='fa fa-spin fa-circle-thin' style="font-weight:bold;color:#f95100"></i>&nbsp;
+			{% if D['w_tleClr'] %}
+			<input type='text' name='add0' class="w-i-title" style="font-weight:bold;color:{{D['w_tleClr']}}" value="{{D['w_title']}}">
+			{% else %}
+			<input type='text' name='add0' class="w-i-title" value="{{D['w_title']}}">
+			{% endif %}
+		</td>
+		{%- endif %}
+	</tr>
+	{%- if D['TR_cat'] -%}
+	<tr>
+		<td class='write-td-left'>카테고리</td>
+		<td class='write-td-right'>
+		{%- for tr in D['TR_cat']  -%}
+			{{tr|safe}}
+		{%- endfor -%}
+		</td>
+	</tr>
+	{%- endif -%}
+	{%- if D['TR_add'] -%}
+	<tr>
+		<td class='write-td-left'>추가필드</td>
+		<td class='write-td-right'>
+		{%- for tr in D['TR_add']  -%}
+			{{tr|safe}}
+		{%- endfor -%}
+		</td>
+	</tr>
+	{%- endif -%}
+	</tbody>
+</table>
+{% include D['_skn'] + 'board/my_dark/write/basic_editor_tools.htm' %}
+<!-- BEGIN ====================================================================================== -->
+<div style="position:relative;width:{{D['w_width1']}}">
+<div id="selectedMarkL"></div>	
+<div id="write-wrap" style="float:left;width:{{D['w_width2']}};z-index:3">
+<div id="YHBmainEditor">
+{% if D['Mode'] == 'modify' -%} 
+{{D['OBODY']['content']|safe}}
+{% else %} 
+<div><p>#</p></div>
+{%- endif %}
+</div><!-- YHBmainEditor  -->
+<!-- 하단 요소====================================================================================== -->
+		<div class="clearfix" style="padding:0px;border-top:1px solid black;background-color:#393E4A">
+			<div id="TAG_STRUCTURE" class="pull-left" style="padding:0px 15px"></div>
+			<div class="pull-right">
+				<span class="btn-transparent" onclick="$('#YHBmainEditorForm').submit()"><i class="fa fa-circle-o" style="font-size:20px;color:#0099ff;margin:2px 0" title="저장"></i></span>
+				<a href="{{D['_bse']}}board/list/{{D['bid']}}/csh=on"><i class="fa fa-circle-o" style="font-size:20px;color:#a66c39;margin:2px 0" title="취소"></i></a>&nbsp;&nbsp;
+			</div>
+		</div>
+	</div><!-- write-wrap  -->
+<div id="choicedMark"   style="left:{{D['w_width2']}}"></div>
+<div id="selectedMarkR" style="left:{{D['w_width2']}}"></div>	
+
+</div>
+<!-- END ====================================================================================== -->
+</form>
+{% include D['_skn'] + 'board/my_dark/write/side_editor_tools.htm' %}
+
+<!-- 표관련 메뉴 -->
+<div id='tableMenu' class="rightClickMenu" style='display:none;'>
+	<li onclick="$('#tableMenu').hide()"> 메뉴감추기 </li>
+	<li class='divider'></li>
+	<li onclick="JYHEDITOR.addRowCol('left')">좌측컬럼 추가</li>
+	<li onclick="JYHEDITOR.addRowCol('right')">우측컬럼 추가</li>
+	<li class='divider'></li>
+	<li onclick="JYHEDITOR.addRowCol('up')">위쪽행 추가</li>
+	<li onclick="JYHEDITOR.addRowCol('down')">아래행 추가</li>
+	<li class='divider'></li>
+	<li onclick="JYHEDITOR.addRowCol('col')">현재컬럼 삭제</li>
+	<li onclick="JYHEDITOR.addRowCol('row')">현재 행 삭제</li>
+</div>
+
+
+<script>
+JYHEDITOR.start('YHBmainEditor');
+$("#tle_title_color").click(function() { open_dialog('제목색깔','editor_tcolor','ajax'); });
+
+function check_MainWriteForm(f)	{	
+	var wDiv = $id("YHBmainEditor");
+	JYHEDITOR.clearDocuSelect();
+	f.content.value = wDiv.innerHTML;
+	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
+	return true;
+}
+
+function open_style_edit() {
+	var furl = uri('linkurl')+"filemanagers-fedit/open/bodyCss.css"; 
+	var specs = "height=700,width=1200,status=no,menubar=no,location=no,titlebar=no,scrollbars=yes";
+	window.open(furl,'css_editor', specs);
+}
+
+function form_basic(opt) {
+	var html;
+	$('#contextMenu').hide()
+	switch (opt){
+		case  'A1'  : html= '\n<div class="pbox">\n<p>글입력</p>\n</div>\n'; break;	
+		case  'A2'  : html= '\n<div class="pbox">\n<p class="p-title">타이틀</p>\n<p class="sbox">\n글내용\n</p>\n</div>\n'; break;
+		case  'B1'  : html= '\n<p class="p-title">타이틀</p>\n<p class="sbox">\n글내용\n</p>\n'; break;
+		case  'A4h' : html= '\n<div class="A4h">\n<p>글내용</p>\n</div>\n'; break;
+		case  'A4w' : html= '\n<div class="A4w">\n글내용\n</div>\n'; break;
+	}
+	if(docuSelected != null) { $(docuSelected).before(html); JYHEDITOR.selectedMark();} 
+	else $("#YHBmainEditor").append(html); 
+	
+}
+
+JYHEDITOR.UserAlt = function() {
+
+	if(! docuSelected) return;
+	var _fol=$(docuSelected).attr("data-myfile").replace(DOCU_ROOT+'/','');
+	if(! _fol) return;
+	var _fname = $(docuSelected).text();
+	var url = uri('linkurl')+'filemanager/move/'+_fol+'/fname='+_fname
+	winopen2(url,1200,640);
+}
+
+JYHEDITOR.UserCtrl = function() {
+
+	if(! docuSelected) return;
+	var _fol=$(docuSelected).attr("data-myfile");
+	if(! _fol) return;
+	var _fname = $(docuSelected).text();
+	var posturl = uri('linkurl') + 'boards-ajax/win_exe';
+	var exe_file = _fol + '/' + _fname;
+	$.post( posturl, { exe_file : _fol+'/'+_fname });
+}
+
+// Ctrl-s Key 
+JYHEDITOR.UserFunc2 = function() {
+	var f_path = $(docuSelected).attr("data-myfile");
+	var f_root = (f_path)? f_path : DOCU_ROOT ;
+	var posturl = uri('linkurl') + 'boards-ajax/file_attach';
+	$.post( posturl, { f_path : f_root}).done( function(data) { JYHEDITOR.ihtml(data); });	
+}
+
+JYHEDITOR.UserTable = function() {
+	if(docuSelectedType != 'TD') return;
+	$("#tableMenu").css({left:mouse_X - 20 , top:mouse_Y }).toggle();
+}
+
+</script>
+{% endblock %}

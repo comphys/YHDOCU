@@ -1,0 +1,160 @@
+{% include D['_skn'] + 'admin/common_head.html' %}
+
+<div id='sidebar'>
+	<ul>
+		<li class='active'><a href="{{D['_bse']}}admin/board"><i class='fa fa-edit'></i> <span> 보드관리메인 </span></a></li>
+        {% for val in D['bgrp'] %}
+            <li class="{{'active submenu open' if val['sec'] == D['sec'] else 'submenu'}}">
+            <a href='#'><i class='fa fa-th-list'></i> <span> {{val['sec']}} </span> <span class='label'> {{val['cnt']}} </span></a>
+            <ul>
+            {% for b_list in D[val['sec']] %}
+                <li class="{{'active' if b_list['bid'] == D['bid'] else ''}}">
+                    <a href="{{D['_bse']}}admin/board_edit/bid={{b_list['bid']}}/sec={{b_list['section']}}"> {{b_list['title']}} </a>
+                </li> 
+            {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+	</ul>
+</div>
+
+<div id='content'>
+	<div id='content-header'>
+		<h1> Set the order of Section and Board </h1>
+
+		<div class='btn-group'>
+			<a href="{{D['_bse']}}admin/board" class='btn btn-large' title='보드 추가하기'><i class='fa fa-plus'></i></a>
+			<a href="{{D['_bse']}}admin/board_delete" class='btn btn-large' title='보드 삭제하기'><i class='fa fa-minus'></i></a>
+			<a href="{{D['_bse']}}admin/board_copy" class='btn btn-large' title='보드 복제하기'><i class='fa fa-clone'></i></a>
+			<a href="{{D['_bse']}}admin/board_sort" class='btn btn-large' title='메뉴 순서 설정'><i class='fa fa-list-ol'></i></a>
+		</div>
+	</div>
+	<div id='breadcrumb'>
+		<a href='#' title='HOME' class='tip-bottom'><i class='fa fa-home'></i> Home</a>
+		<a href='#' > ADMIN </a>
+		<a href='#' > BOARD </a>
+		<a href='#' class='current'> BOARD SORT </a>
+	</div>
+
+	<div id='style-switcher'>
+		<a href="" style="background-color: #555555;"></a>
+		<a href="" style="background-color: #2D2F57;"></a>
+		<a href="" style="background-color: #673232;"></a>
+	</div>
+
+	<div class='container'>
+
+		<div class="alert alert-info" style='margin-top:15px'>
+			<strong> 섹션및보드순서정렬 : </strong> 섹션 및 섹션에 따른 보드의 순서와 권한을 변경합니다. 
+		</div>
+
+		<div class="widget-box">
+			<div class="widget-title">
+				<ul class="nav nav-tabs">
+					<li class="{{ D['active_tab'][0] }}" ><a data-toggle='tab' href='#adminBoard_sortTab0'> 섹션순서 </a></li>
+					{% for val in D['bgrp'] %} 
+					<li class="{{ D['active_tab'][loop.index]}}" ><a data-toggle='tab' href='#adminBoard_sortTab{{loop.index}}'> {{val['sec']}} </a></li>
+					{% endfor %}
+				</ul>
+			</div>
+
+<!-- SECTION PART : TAB0 -->
+			<div class="widget-content tab-content" style='background-color:#fff8f7'>
+				<div id="adminBoard_sortTab0" class="tab-pane {{ D['active_tab'][0] }}" >
+	  				<form action="{{D['_bse']}}admins-action/section_sort/tab=0" method="post" >
+						<table class="table table-bordered table-striped change_order">
+							<thead> <tr><th> 섹션명칭 </th> <th> 접근권한 </th> <th> Up </th> <th> Down </th></tr></thead>
+							<tbody class='sorting'>
+								{% for val in D['bgrp'] %}
+								<tr id="{{val['sec']}}">
+									<td style='width:250px'> {{val['sec']}} </td>
+									<td style='width:350px'><input type='text' name ="{{val['sec']}}_acc_" value="{{val['acc']}}" /> </td>
+									<td style='width:120px'> <i class='fa fa-arrow-circle-up fa-2x' onclick="sectMoveUp('{{val['sec']}}')"></i> </td>
+									<td style='width:120px'> 
+										<i class='fa fa-arrow-circle-down fa-2x' onclick="sectMoveDn('{{val['sec']}}')"></i>
+										<input type='hidden' name="{{val['sec']}}" value="{{loop.index0}}" class='sortorder' />
+									</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+						<div>
+							<button type="submit" class="btn btn-inverse" style='width:100%;'><i class='fa fa-pencil'></i> 현재의 순서를 서버에 저장합니다</button>
+						</div>
+					</form>
+				</div>
+
+<!-- BOARD PART : TAB1~~~ -->
+				{% for val in D['bgrp'] %}
+				<div id='adminBoard_sortTab{{loop.index}}' class="tab-pane {{ D['active_tab'][loop.index] }}" >
+	  				<form action="{{D['_bse']}}admins-action/board_sort/{{loop.index}}" method="post" >
+						<table class="table table-bordered table-striped change_order" id='tr_sort'>
+							<thead> <tr><th> 보드아이디 </th> <th> 보드타이틀 </th><th> 접근권한 </th> <th> Up </th> <th> Down </th></tr></thead>
+							<tbody class='sorting'>
+								{% for b in D[val['sec']]  %}
+								<tr id="{{b['bid']}}">
+									<td style='width:150px'> {{b['bid']}} </td>
+									<td style='width:200px'> {{b['title']}} </td>
+									<td style='width:250px'> <input type='text' name ="{{b['bid']}}_acc_" value="{{b['acc']}}" /> </td>
+									<td style='width:120px'> <i class='fa fa-arrow-circle-up fa-2x' onclick="sectMoveUp('{{b['bid']}}')"></i> </td>
+									<td style='width:120px'> 
+										<i class='fa fa-arrow-circle-down fa-2x' onclick="sectMoveDn('{{b['bid']}}')"></i>
+										<input type='hidden' name="{{b['bid']}}" value="{{loop.index}}" class='sortorder' />
+									</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+						<div>
+							<button type="submit" class="btn btn-inverse" style='width:100%;'><i class='icon-pencil'></i> 현재의 순서를 서버에 저장합니다</button>
+						</div>
+					</form>
+				</div>
+				{% endfor %}
+			</div><!-- widget-content -->
+		</div><!-- widget-box -->
+	</div><!-- container -->
+
+<script type='text/javascript'>
+	$(function() {
+		$(".sorting").sortable({ axis:'y', 
+			update:function(event,ui){ h_dialog.notice("리스트 순서가 변경되었습니다");$(".sorting .sortorder").each(function(i,el) { $(el).val(i);});}
+		});
+	});
+
+	function sectMoveUp(Mark) {    
+ 		var idStr='#' + Mark; var idStrOdr="input[name='"+Mark+"']";	var idStrAcc="input[name='"+Mark+"_acc_']";
+		var prevHtml=$(idStr).prev().html(); if( prevHtml == null){   h_dialog.notice("현재 최상위 리스트입니다!");   return;  }
+
+		var prevMark=$(idStr).prev().attr("id");
+		var previdStrOdr = "input[name='"+prevMark+"']";
+		var previdStrAcc = "input[name='"+prevMark+"_acc_']";
+		var nowHtml=$(idStr).html();	var nowAcc  = $(idStrAcc).val();	var prevAcc = $(previdStrAcc).val();
+		var nowOdr  = Number($(idStrOdr).val()) - 1;	var prevOdr = Number($(previdStrOdr).val()) + 1;
+ 
+		//값 변경
+		$(idStr).html(prevHtml);  $(idStr).prev().html(nowHtml); 	$(idStrAcc).val(nowAcc); $(previdStrAcc).val(prevAcc); 
+		$(idStrOdr).val(nowOdr); $(previdStrOdr).val(prevOdr);
+
+ 		//id 값도 변경
+		$(idStr).prev().attr("id","TEMP_TR");	$(idStr).attr("id",prevMark);	$("#TEMP_TR").attr("id",Mark);
+	}
+
+	function sectMoveDn(Mark) {    
+		var idStr='#' + Mark; var idStrOdr="input[name='"+Mark+"']"; var idStrAcc="input[name='"+Mark+"_acc_']";
+		var nextHtml=$(idStr).next().html(); if( nextHtml == null){   h_dialog.notice("현재 최하위 리스트입니다!");   return;  }
+
+		var nextMark=$(idStr).next().attr("id"); var nextidStrOdr = "input[name='"+nextMark+"']"; var nextidStrAcc = "input[name='"+nextMark+"_acc_']";
+		var nowHtml=$(idStr).html(); var nowAcc  = $(idStrAcc).val(); var nextAcc = $(nextidStrAcc).val();
+		var nowOdr  = Number($(idStrOdr).val()) + 1; var nextOdr = Number($(nextidStrOdr).val()) - 1;
+
+		//값 변경
+		$(idStr).next().html(nowHtml);	$(idStr).html(nextHtml);	$(nextidStrAcc).val(nextAcc);
+		$(idStrAcc).val(nowAcc); $(idStrOdr).val(nowOdr);	$(nextidStrOdr).val(nextOdr);
+
+		//id 값도 변경
+		$(idStr).next().attr("id","TEMP_TR"); $(idStr).attr("id",nextMark);	$("#TEMP_TR").attr("id",Mark);
+ 	}
+</script>
+
+{% include D['_skn'] + 'admin/common_tail.html' %}

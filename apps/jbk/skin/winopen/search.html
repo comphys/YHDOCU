@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" >
+<meta name="viewport" content="width=1200">
+<title> 종합검색 </title>
+<link href="/sys/bootstrap/bootstrap.css"  rel="stylesheet" >
+<link href="/sys/fontawesome/css/font-awesome.css"  rel="stylesheet" >
+<link href="/sys/jyh/yhutils.css"  rel="stylesheet" >
+<script src="/sys/jyh/jquery-yh-2107.js"></script>
+<script src="/sys/jyh/yhutils.js"></script>
+<style type="text/css">
+	.list-search:hover { cursor:pointer }
+	.search { font-weight:bold; color:red }
+</style>
+</head>
+<body>
+<form method='post' name='all_search' action="{{D['_bse']}}winopen/search">
+<div id="exp_title" style="border-bottom:1px solid grey;color:black;font-weight:bold;background-color:yellow;position:fixed;left:0;top:0;padding:5px;width:100%">
+게시판 종합 검색
+
+<select name='search_cata' style="width:120px">
+	<option value="subject" {{ D['cata_s']['subject'] }}>제목만 검색</option>
+	<option value='content' {{ D['cata_s']['content'] }}>본문만 검색</option>
+	<option value='all' {{ D['cata_s']['all'] }}>제목과 본문</option>
+</select>
+<input type='text' name='search_word' value="{{D['SearchWord']}}" />
+<input type='submit' class="btn btn-primary" value="검색하기" />
+</div>
+<!-- 마우스 우측 메뉴 -->
+
+<table class='table table-condensed table-bordered table-hover' style='width:100%;margin-top:40px;margin-bottom:0'>
+	<tbody>
+		<tr>
+			<th style='width:200px' >게시판</th>
+			<th style='text-align:center' >제목</th>
+		</tr>
+
+{% if D['SLIST'] %}
+{% for sx in D['SLIST'] %}
+<tr>
+<td>{{sx['title']}}</td>
+<td  class='list-search' data-href="/docu/board/body/{{sx['bid']}}/no={{sx['no']}}/brother={{sx['brother']}}">{{sx['add0']|safe}}</td>
+</tr>	
+{% endfor %}
+{% endif %}
+</tbody>
+</table>
+</form>
+
+<script type='text/javascript'>
+$(document).ready(function(){
+	$("input[name='search_word']").click(function(){ $(this).val('');}); 
+
+	$(".list-search").on("click", function() {
+			var sc = $(this).attr('data-href');
+			window.opener.document.location.href = sc; 
+	});
+});
+
+</script>
+</body>
+</html>

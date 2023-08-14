@@ -1,0 +1,246 @@
+{% extends D['_skn'] + 'board/my_dark/main_layout.html' %}
+
+{% block contents_body %}
+
+<!-- 본문헤드 -->
+<div class='row-row clearfix'>
+	<table class='table table-bordered table-body'>
+		<tbody>
+			<tr>
+				<td colspan='2' class='title_only' style="padding-left:12px;">{{D['subject']}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<!-- 본문내용 -->
+<div class="row-row clearfix">
+	<div id="body-content">
+		{{D['content']|safe}}
+	</div>
+</div>
+
+<!-- 본문하단 버튼 -->
+<div class="row-row clearfix">
+	<div class='pull-left'>
+		{% if D['BCONFIG']['type'] =='yhboard' %}
+		<button class="btn btn-blue-s2 btn-small" id="toggle_reply">댓글</button>
+		<a href="{{D['_bse']}}board/add_body/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}/brother={{D['Brother']}}">
+			<button class='btn btn-blue-s2 btn-small'>추가</button>
+		</a>
+		{% endif %}
+		<button class="btn btn-blue-s3 btn-small" onclick="open_editor()">코드</button>
+		<div class='btn-group'>
+			<button class='btn btn-blue-s3 btn-small dropdown-toggle' data-toggle='dropdown'>수정</button>
+				<ul class='dropdown-menu' style='margin-top:-3px;opacity:0.85;'>
+					<li><a href="{{D['_bse']}}board/modify/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}/brother={{D['Brother']}}{{D['Searchplus']}}">수정하기</a></li>
+					<li onclick="delete_chk('{{D['_bse']}}boards-action/delete/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}')" style="cursor:pointer"><a>삭제하기</a></li>
+				</ul>
+		</div>
+	</div>
+	<div class='pull-right'>
+		<a href="{{D['_bse']}}board/list/{{D['bid']}}/page={{D['page']}}">
+			<button class='btn btn-blue btn-small'>목록</button>
+		</a>
+	</div>
+</div>
+
+<!-- 댓글 리스트 FORM -->
+{% if D['BCONFIG']['type'] =='yhboard' %}
+<script src="/sys/jyh/jyheditor.js"></script>
+<div id='YHBreplyDiv'>
+	<div class='clearfix'>
+		<div class='btn-group pull-right' style='margin-right:10px;'>
+			<button class='btn-transparent' title='하이퍼링크' onclick="JYHEDITOR.link()"><i class='fa fa-link'></i></button>
+			<button class="btn-transparent" title='HTML 보기' onclick="JYHEDITOR.viewSource()"><i class="fa fa-edit"></i></button>
+			<button class="btn-transparent" title='태그 지우기' onclick="JYHEDITOR.cmd('removeformat')"><i class="fa fa-undo"></i></button>
+			<button class="btn-transparent" title='내용 지우기' onclick="JYHEDITOR.clearDocu()"><i class="fa fa-square-o"></i></button>
+			<button class="btn-transparent" title='저장하기' onclick="submitReply('wysiwygYHBreplyEditor','{{D['USER']['uname']}}')"><i class="fa fa-hdd-o" style='color:#FF6F6F'></i></button>
+		</div>
+		<div class='btn-group pull-right' style='margin-right:10px;'>
+			<button class="btn-transparent" title='글자 굵게' onclick="JYHEDITOR.cmd('bold')"><i class='fa fa-bold'></i></button>
+			<button class="btn-transparent" title='이탤릭체'  onclick="JYHEDITOR.cmd('italic')"><i class='fa fa-italic'></i></button>
+			<button class="btn-transparent" title='글자 밑줄'  onclick="JYHEDITOR.cmd('underline')"><i class='fa fa-underline'></i></button>
+			<button class="btn-transparent" title='중간선긋기' onclick="JYHEDITOR.cmd('strikethrough')"><i class='fa fa-strikethrough'></i></button>
+		</div>
+		<div class='btn-group pull-right' style='margin-right:10px;'>
+			<button class="btn-transparent" title='글자색변경' onclick="JYHEDITOR.rangeControl();JYHEDITOR.dialog('글자색깔 변경','editor_color','ajax')" ><i class="fa fa-pencil"></i></button>
+			<button class="btn-transparent" title='글자배경색변경' onclick="JYHEDITOR.rangeControl();JYHEDITOR.dialog('글자배경색깔 변경','editor_bcolor','ajax')" ><i class="fa fa-tint"></i></button>
+		</div>
+	</div>
+	<div>
+			<div class="replyInnerT"><i class="icon-user"></i>{{D['cur_time']}}</div>
+			<div style='background-color:#1E2025'><div id="wysiwygYHBreplyEditor" contenteditable></div></div>
+	</div>
+</div>
+{% endif %}
+
+<!-- 댓글 리스트 -->
+{% if D['REPLY']  %}
+<div id='replyOuterBody'>
+	{% for rp in D['REPLY'] %}
+	<div class='replyInnerBody clearfix'>
+		<div class='replyInnerL'><i class='fa fa-user'></i>&nbsp;{{ rp['wdate'] }}</div>
+		<div id="reply_{{rp['no']}}" class='replyInnerR'>{{rp['content']|safe}}</div>
+		<div class='replyInnerE'><span class='fa fa-edit' onclick="editReply({{rp['no']}})"></span></div>
+	</div>
+	{% endfor %}
+</div>
+{% endif %}
+
+<!-- 추가글 리스트 -->
+{% if D['APPEND'] %}
+<div class='row-row clearfix'>
+	<table class='table table-bordered table-hover'>
+		<tbody>
+			{% for append in D['APPEND'] %}
+			{% if append['no'] == D['Ano'] %} 
+			<tr style="background-color:#000">
+			{% else %}
+			<tr>
+			{% endif %}
+				{% if append['brother'] < 0 %}
+				<td class='text-center' style='width:30px;'> <span class='label label-important'>토픽글</span> </td>	
+				{% else %}
+				<td class='text-center' style='width:30px;'> <span class='label label-info'>추가글</span> </td>
+				{% endif %}
+				<td class='text-left' style="width:500px" > 
+					<a href="{{D['_bse']}}board/body/{{D['bid']}}/page={{D['page']}}/no={{append['no']}}/brother={{append['brother']}}" style='color:#b9b9b9;'> {{append['add0']}} </a>
+		            {% if append['reply'] %} 
+					<span class='list-reply'>{{append['reply']}}</span>
+					{% endif %} 
+				</td>
+				<td class='text-center list-mdate'>{{append['mdate']}}</td>
+				<td class='text-center list-hit'>{{append['hit']}}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block contents_list %}
+<!-- 리스트 상부 카테고리 시작 -->
+<div class="clearfix" style='margin:10px 0px 5px 0px'>
+{% if D['Cat_use'] %}
+	<div class="pull-left">
+		<form method='post' name='category_search' action="{{D['_bse']}}board/body/{{D['bid']}}/no={{D['No']}}" style='display:inline;'>
+			{%- for cats in D['CAT_LIST'] %}
+			<div class='myselect' style='margin-right:5px;'>
+				{%- if cats['chked'] %}
+				<input placeholder="{{cats['title']}}" name="csh_{{cats['fkey']}}" id="{{cats['id']}}" type="text" style="color:black;width:100px;background-color:#b5daff" value="{{cats['value']}}" />
+				{%- else %}
+				<input placeholder="{{cats['title']}}" name="csh_{{cats['fkey']}}" id="{{cats['id']}}" type="text" style="width:100px" value="{{cats['value']}}" />
+				{%- endif %}
+				<div class='btn-group'>
+					<button class="btn btn-select dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+					<ul class='dropdown-menu'>
+						<li><a> {{cats['title']}} </a></li>
+						{%- for li in cats['lists'] -%}
+						<li><a href="#"> {{li[0]}} </a></li>
+						{%- endfor %}
+					</ul>
+				</div>
+			</div>
+			{%- endfor -%}
+			<input type="hidden" name="list_filter" value="{{D['list_filter']}}" >
+		</form>
+	</div>
+{% endif -%}
+	<div class='pull-right'>
+		<span id="cell-sum"></span>
+		<div class='select' style='margin-right:5px;'>
+			<input placeholder="검색항목" name="search_field" type="text" style="width:100px" value="{{D['search_f']}}" />
+			<div class='btn-group'>
+				<button class="btn btn-select dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+				<ul class='dropdown-menu'>
+					<li><a> 검색항목 </a></li>
+					{% for key, val in D['EXTITLE'].items() -%}
+					<li><a href="#"> {{val}}</a></li>
+                    {% endfor -%}
+					<li><a href="#"> 본 문 </a></li>
+				</ul>
+			</div>
+		</div>
+
+		<input  id="search_input2" type='text' name='search_value' value="{{D['search']}}" style='height:24px;vertical-align:baseline' />
+		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="list_search2()">검색</button>
+		<button class='btn btn-black btn-small' style="height:25px;vertical-align:top;" onclick="location.href='{{D['_bse']}}board/list/{{D['bid']}}/csh=on'" >취소</button>
+	</div>
+</div>
+<!-- 리스트 상부 카테고리 종료 -->
+
+<!-- 리스트 메인 테이블 시작 -->
+{% if D['TR'] %}
+<div class="row-row clearfix"> 
+	<table class='table table-bordered table-striped table-hover'>
+		<thead>
+			<tr>
+				{% for key,val in D['head_td'].items() %}
+				{{val|safe}}
+				{% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+			{% if D['BCONFIG']['row_flt'] == 'on' %}
+			<tr id="list-filter" {{ "" if D['list_filter'] else "style='display:none'"|safe }}>{{D['row_flt']|safe}}</tr>
+			{% endif %}
+			{% if D['BCONFIG']['row_sum'] == 'on' %}
+			<tr id="list-sum">{{D['row_sum']|safe}}</tr>
+			{% endif %}
+			{%- for TR in D['TR'] -%}
+			{% if loop.index0 == D['cno'] %}
+			<tr class="list-current-tr" >
+			{% else %}
+			<tr> 
+			{% endif %}
+			{% for key,val in TR.items() %}
+			{{val|safe}}
+			{% endfor %}
+			</tr>
+			{%- endfor %}
+		</tbody>
+	</table>
+</div>
+{% else %}
+<div class="row-row clearfix"> 
+	<div class='well'><strong>안내사항 :</strong> 현재 작성된 글이 없거나 검색결과에 일치하는 데이타가 없습니다.  </div> 
+</div>
+{% endif %}
+<!-- 리스트 메인 테이블 종료 -->
+
+<!-- 하단 버튼 [ 목록 쓰기] [페이지네이션]-->
+<div class="row-row clearfix">
+	<div class='pull-left'>
+		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
+		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>쓰 기</button></a>&nbsp;
+	</div>
+	<div class='pagination pull-right'><ul>
+		{{D['Pagination']|safe}}
+	</ul></div>
+</div>
+
+{% if D['BCONFIG']['row_flt']=='on' %}
+<script>
+$(document).ready(function(){ 
+	if("{{D['list_filter']}}") $("#list-filter").show();
+	$(document).on('keydown',null,'f1',function(){ $("#list-filter").toggle(); return false; })
+	$("#filter-qry").on('keydown',function(e){if(e.which==13){var txt = $("#filter-qry").text(); $("input[name='list_filter']").val(txt);document.category_search.submit();}});
+	$("#filter-reset").click(function(){$("#filter-qry").text('');});
+	$("#list-filter-submit").click(function(){var txt = $("#filter-qry").text(); $("input[name='list_filter']").val(txt);document.category_search.submit();});
+});
+</script>
+{% else %}
+<script>	
+function delete_chk(url) {
+	if(uri('brother') < 0) h_dialog.notice("추가글이 존재합니다."); 
+	else delete_confirm(url);
+}
+</script>
+{% endif %}
+
+{% endblock %}
+
+
