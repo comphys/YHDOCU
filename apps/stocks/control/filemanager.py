@@ -139,6 +139,7 @@ class Filemanager(Control) :
     def file_dropUp(self) :
         f = request.files['drop_file']
         save_dir = request.form["save_dir"]
+        self.info(save_dir+'/'+f.filename)
         f.save(save_dir+'/'+f.filename)
         return self.echo('OK')
     
