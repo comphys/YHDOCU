@@ -23,6 +23,8 @@ class 쓰기_견적관리(SKIN) :
         co_list = self.DB.one("SELECT out_co_list FROM h_estimate_config WHERE no=1")
         self.D['out_co_list'] = self.user_custom_select(co_list)
         self.D['save_img_dir'], self.D['save_img_dir2'] = self.DB.oneline("SELECT save_img_dir,save_img_dir2 FROM h_estimate_config WHERE no=1")
+        
+        self.D['upload_dir'] = self.D['DOCU_ROOT'] + '/'+ self.D['save_img_dir']
    
     def user_custom_select(self,co_list) :
         tmp =''
