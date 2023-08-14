@@ -11,7 +11,7 @@ class Board(Control) :
 
         self.DB = self.db('jbk')
         
-        self.D['bid']     = self.parm[0] if self.parm else self.C['init_board']
+        self.D['bid']     = self.parm[0] if self.parm else 'estimate'
         self.D['tbl']     = 'h_'+self.D['bid']+'_board'
         self.DB.tbl, self.DB.wre = ("h_board_config",f"bid='{self.D['bid']}'")
         self.D['BCONFIG'] = self.DB.get("*",many=1,assoc=True)
