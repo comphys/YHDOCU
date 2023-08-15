@@ -106,7 +106,11 @@ class M_board_list(Model) :
 
         append = ''
         if self.date1 : append += f"/date1={self.date1}" 
+        elif self.D['s_date_1'] : append += f"/date1={self.D['s_date_1']}" 
+            
         if self.date2 : append += f"/date2={self.date2}"
+        elif self.D['s_date_2'] : append += f"/date2={self.D['s_date_2']}" 
+     
 
         page_number_list =''
         if page_start > 1 :
