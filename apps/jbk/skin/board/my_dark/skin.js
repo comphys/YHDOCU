@@ -105,7 +105,6 @@
 			var fid = $(this).attr('data-fid');	
 			var val = $(this).text(); 
 			var posturl = uri('linkurl') + 'boards-ajax/live_edit'; 
-			h_dialog.alert(posturl+'/bid='+bid+'/no='+no+'/fid='+fid+'/'+val)
 			$.post(posturl, { bid : bid, no : no, fid : fid, val: val});}
 			if(e.which==27) { 
 				$(this).text(liveEdit_ori_val); $(this).attr('contenteditable',false); 
