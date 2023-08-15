@@ -39,9 +39,7 @@ class Filemanager(Control) :
         f = request.files['drop_file']
         save_dir = request.form["save_dir"]
         file_full_name = save_dir+'/'+f.filename
-        self.info(file_full_name)
         file_path_name = file_full_name.replace(self.C['DOCU_ROOT'],'/DOCU_ROOT')
-        # self.info(file_path_name)
         f.save(save_dir+'/'+f.filename)
         return self.echo(file_path_name)
     

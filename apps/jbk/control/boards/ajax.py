@@ -8,40 +8,6 @@ class Ajax(Control) :
     def _auto(self) :
         self.DB = self.db('jbk')
         
-    def reply_save(self) :
-
-        qry     = f"SELECT uid, uname FROM h_user_list WHERE no={session['N_NO']}"
-        USER    = self.DB.line(qry)
-
-        bid     = self.D['post'].pop('bid')
-        tbl     = 'h_'+bid+'_reply'
-        parent  = self.D['post'].pop('no')
-        replyTxt= self.D['post'].pop('replyTxt')
-
-        self.D['post']['parent'] = parent
-        self.D['post']['uid'] = USER['uid']
-        self.D['post']['wdate'] = ut.now_timestamp()
-        self.D['post']['content'] = replyTxt
-
-        self.DB.exe(f"UPDATE h_{bid}_board SET reply = reply + 1 WHERE no = {parent}") 
-        qry = self.DB.qry_insert(tbl,self.D['post']) 
-        self.DB.exe(qry)
-        return False
-
-    def reply_modify(self) :
-        replyTxt= self.D['post']['replyTxt']
-        qry     = f"UPDATE h_{self.D['post']['bid']}_reply SET content='{replyTxt}' WHERE no = {self.D['post']['rno']}"
-        self.DB.exe(qry)
-        return False
-
-    def reply_delete(self) :
-        no      = self.D['post']['no']
-        bid     = self.D['post']['bid']
-        rno     = self.D['post']['rno']
-        qry     = f"DELETE FROM h_{bid}_reply WHERE no={rno}"
-        self.DB.exe(qry)
-        self.DB.exe(f"UPDATE h_{bid}_board SET reply = reply - 1 WHERE no ={no}")
-        return False
 
     def checkdir(self,d=True) :
         check = self.D['post']['check']
@@ -135,5 +101,6 @@ class Ajax(Control) :
     
     def live_edit(self) :
         qry     = f"UPDATE h_{self.D['post']['bid']}_board SET {self.D['post']['fid']}='{self.D['post']['val']}' WHERE no = {self.D['post']['no']}"
+        self.info(qry)
         self.DB.exe(qry)
         return False

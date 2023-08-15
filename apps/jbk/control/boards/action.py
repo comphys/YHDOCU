@@ -71,8 +71,6 @@ class Action(Control) :
         con     = f"no={no}"
         # 업데이트 항목 외에는 pop 시킨다.
         self.D['post'].pop('mode')
-        self.D['post'].pop('uid')
-        self.D['post'].pop('uname')
         # 
         self.D['post']['mdate'] = ut.now_timestamp()
         self.D['post']['content'] = self.html_encode(self.D['post']['content'])

@@ -93,7 +93,27 @@
 
 
 // JYH JQUERY PLUGIN :: liveEdit { init : bind click and keydown, clear : unbind all event }
-(function($){ var YH_liveEdit={ init:function(){ return this.each(function(){ $(this).on('dblclick', function() { liveEdit_ori_val = $(this).text(); $(this).attr('contenteditable',true); $(this).addClass('list-edit-on');});$(this).on('keydown', function(e) { if(e.which == 13) { $(this).attr('contenteditable',false); $(this).removeClass('list-edit-on'); var bid = uri(0); var no  = $(this).attr('data-no'); var fid = $(this).attr('data-fid');	var val = $(this).text(); var posturl = uri('linkurl') + 'boards-ajax/live_edit'; $.post(posturl, { bid : bid, no : no, fid : fid, val: val});}if(e.which==27) { $(this).text(liveEdit_ori_val); $(this).attr('contenteditable',false); $(this).removeClass('list-edit-on'); }});});}, clear:function(){ return this.each(function(){ $(this).off(); });}}; $.fn.liveEdit =function(method) {if(YH_liveEdit[method]) { return YH_liveEdit[method].apply(this,Array.prototype.slice.call(arguments,1));} else if(typeof method === 'object' || ! method){ return YH_liveEdit.init.apply( this,arguments);} else { $.error( 'Method ' +method+' does not exist on jQuery.comma');}};})(jQuery);
+(function($){ var YH_liveEdit={ init:function(){ 
+	return this.each(function(){ $(this).on('dblclick', function() { 
+		liveEdit_ori_val = $(this).text(); $(this).attr('contenteditable',true); 
+		$(this).addClass('list-edit-on');});
+		$(this).on('keydown', function(e) { if(e.which == 13) { 
+			$(this).attr('contenteditable',false); 
+			$(this).removeClass('list-edit-on'); 
+			var bid = uri(0); 
+			var no  = $(this).attr('data-no'); 
+			var fid = $(this).attr('data-fid');	
+			var val = $(this).text(); 
+			var posturl = uri('linkurl') + 'boards-ajax/live_edit'; 
+			$.post(posturl, { bid : bid, no : no, fid : fid, val: val});}
+			if(e.which==27) { 
+				$(this).text(liveEdit_ori_val); $(this).attr('contenteditable',false); 
+				$(this).removeClass('list-edit-on'); }});});}, 
+				clear:function(){ return this.each(function(){ $(this).off(); });}}; 
+				$.fn.liveEdit =function(method) {if(YH_liveEdit[method]) { 
+					return YH_liveEdit[method].apply(this,Array.prototype.slice.call(arguments,1));} 
+					else if(typeof method === 'object' || ! method){ return YH_liveEdit.init.apply( this,arguments);} 
+					else { $.error( 'Method ' +method+' does not exist on jQuery.comma');}};})(jQuery);
 
 var sms_selected
 
