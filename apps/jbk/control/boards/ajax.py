@@ -1,5 +1,4 @@
 from system.core.load import Control
-from flask import session
 import easygui,json,os,system.core.my_utils as ut
 from PIL import Image
 

@@ -84,13 +84,10 @@
 <!-- 본문하단 버튼 -->
 <div class="row-row clearfix" style="margin-top:10px">
 	<div class='pull-left'>
-		<div class='btn-group'>
-			<button class='btn btn-blue-s3 btn-small dropdown-toggle' data-toggle='dropdown'>수정</button>
-				<ul class='dropdown-menu' style='margin-top:-3px;opacity:0.85;'>
-					<li><a href="{{D['_bse']}}board/modify/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}/brother={{D['Brother']}}{{D['Searchplus']}}">수정하기</a></li>
-					<li onclick="delete_chk('{{D['_bse']}}boards-action/delete/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}')" style="cursor:pointer"><a>삭제하기</a></li>
-				</ul>
-		</div>
+		<a href="{{D['_bse']}}board/modify/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}/{{D['Searchplus']}}">
+		<button class='btn btn-blue btn-small'>수정</button>
+		</a>
+		<button class='btn btn-small btn-red' onclick="delete_chk('{{D['_bse']}}boards-action/delete/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}')">삭 제</button>
 	</div>
 	<div class='pull-right'>
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}/page={{D['page']}}">
