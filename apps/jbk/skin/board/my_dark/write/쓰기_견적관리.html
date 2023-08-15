@@ -146,7 +146,7 @@ $(document).ready(function() {
 	$(".list-input-number").on('keydown',null,'up',	function(e){  var inputs = $(this).closest('tbody').find('input');inputs.eq( inputs.index(this)-6 ).focus();});
 	$(".list-input-number").on('keydown',null,'down',function(e){ var inputs = $(this).closest('tbody').find('input');inputs.eq( inputs.index(this)+6 ).focus();});
 	$("#i-date-due").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:true });
-	$(".file-thumb").click(function(){ var sel = $(this).parent().next(); image_view(this); });
+	$(".file-thumb").click(function(){ image_view(this); });
 
 	if( uri('method') == 'modify' ) { v_to_tbl(); }
 	fileDropDown();
@@ -238,6 +238,7 @@ function insert_img_to(data) {
 	var html = "<img src='"+data+"' width='594' height='420' class='file-thumb'>";
 	$("#imgDropZone").html(html);
 	$("input[name=add6]").val(data);
+	$(".file-thumb").click(function(){ image_view(this); });
 }
 
 function image_view(sel) {
