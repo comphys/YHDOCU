@@ -96,8 +96,8 @@
 <!-- 하단 버튼 [ 목록 쓰기] [페이지네이션]-->
 <div class="row-row clearfix">
 	<div class='pull-left'>
-		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>검색하기</button></a>
-		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>새로작성</button></a>&nbsp;
+		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue' style="height:25px">검색하기</button></a>
+		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red' style="height:25px">새로작성</button></a>&nbsp;
 	</div>
 	<div class='pagination pull-right'><ul>
 		{{D['Pagination']|safe}}
@@ -106,8 +106,8 @@
 
 <script>
 $(document).ready(function(){ 
-	$(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){$("form[name=category_search]").submit();}});
-	$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){$("form[name=category_search]").submit();}});
+	$(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, show_clear_date:1,onSelect:function(){$("form[name=category_search]").submit();}});
+	$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, show_clear_date:1,onSelect:function(){$("form[name=category_search]").submit();}});
 });
 </script>
 {% endblock %}

@@ -13,7 +13,7 @@ class M_board_list(Model) :
         self.D['Title'] = self.D['BCONFIG']['title']
 
         if self.D['Cat_use'] :
-            self.info('Cat USe')
+            
             if  not self.D['No'] and not self.D['search'] and not self.D['csh'] and not self.D['Page'] : session['CSH'].clear()
 
             if  self.D['post'] :
