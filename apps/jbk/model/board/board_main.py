@@ -1,9 +1,10 @@
 from system.core.load import Model
+import copy
 
 class M_board_main(Model) :
 
     def _auto(self) :
-
+        
         self.D['search'] =   self.gets.get('search','') 
         self.D['search_f'] = self.gets.get('search_f','') 
         self.D['page'] = self.gets.get('page','1')
@@ -17,17 +18,15 @@ class M_board_main(Model) :
         self.D['Searchplus'] = searchplus
 
         self.D['list_order'] = self.D['BCONFIG']['list_order'].replace('subject','add0').split('/')
-   
 
         USE_KEY = []
         NOT_KEY = []
-        for i in range(21) :
+        for i in range(16) :
             key = f'add{i}' 
             if self.D['BCONFIG'][key] :  USE_KEY.append(key)
             else : NOT_KEY.append(key)
 
-        self.D['list_full']  = 'no,brother,tle_color,uid,uname,reply,hit,wdate,mdate,'+','.join(USE_KEY)
-        if self.D['BCONFIG']['list_sub'] : self.D['list_full'] += ','+ self.D['BCONFIG']['list_sub'].replace('/',',') 
+        self.D['list_full'] = 'no,brother,tle_color,uid,uname,reply,hit,wdate,mdate,'+','.join(USE_KEY)
 
         self.D['EXTITLE'] = {} ; self.D['EXFTYPE'] = {} ; self.D['EXALIGN'] = {} ; self.D['EXCOLOR'] = {} ; 
         self.D['EXFORMA'] = {} ; self.D['EXWIDTH'] = {} ; self.D['MustCheck'] = []

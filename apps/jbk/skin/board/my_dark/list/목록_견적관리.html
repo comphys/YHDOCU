@@ -26,8 +26,8 @@
 			{% endfor -%}
 	</div>
 	<div class="pull-left" style="margin-left:10px">
-		<input type="text" name="s_date_1" style="width:110px;text-align:center;color:#CEF6CE" value="{{D['s_date_1']}}" class="i-date_1" placeholder="이날부터">
-		<input type="text" name="s_date_2" style="width:110px;text-align:center;color:#CEF6CE" value="{{D['s_date_2']}}" class="i-date_2" placeholder="이날까지">
+		<input type="text" name="csh_date1" style="width:100px;text-align:center;color:#CEF6CE" value="{{D['csh_date1']}}" class="i-date_1" placeholder="이날부터">
+		<input type="text" name="csh_date2" style="width:100px;text-align:center;color:#CEF6CE" value="{{D['csh_date2']}}" class="i-date_2" placeholder="이날까지">
 	</div>
 </form>
 {% endif -%}
@@ -106,8 +106,8 @@
 
 <script>
 $(document).ready(function(){ 
-	$(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:true, onSelect:function(){$("form[name=category_search]").submit();}});
-	$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:true, onSelect:function(){$("form[name=category_search]").submit();}});
+	$(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){$("form[name=category_search]").submit();}});
+	$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){$("form[name=category_search]").submit();}});
 });
 </script>
 {% endblock %}
