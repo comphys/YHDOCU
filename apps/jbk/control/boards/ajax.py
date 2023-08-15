@@ -100,6 +100,5 @@ class Ajax(Control) :
     
     def live_edit(self) :
         qry     = f"UPDATE h_{self.D['post']['bid']}_board SET {self.D['post']['fid']}='{self.D['post']['val']}' WHERE no = {self.D['post']['no']}"
-        self.info(qry)
         self.DB.exe(qry)
         return False
