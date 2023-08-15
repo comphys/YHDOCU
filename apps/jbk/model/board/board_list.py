@@ -27,9 +27,12 @@ class M_board_list(Model) :
         else : session['CSH'].clear()
 
     def list_main(self) :
+
+        self.date1 = self.gets.get('date1','')
+        self.date2 = self.gets.get('date2','')        
         
-        self.date1 = self.D['post'].get('s_date_1','')
-        self.date2 = self.D['post'].get('s_date_2','')
+        self.date1 = self.D['post'].get('s_date_1',self.date1)
+        self.date2 = self.D['post'].get('s_date_2',self.date2)
 
         C_search = ['brother <= 0']
 
