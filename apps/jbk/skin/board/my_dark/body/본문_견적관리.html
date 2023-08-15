@@ -31,76 +31,75 @@
 				<div class="i-text-div" style="width:240px;">{{D['BODY']['add3']}}</div>
 			</div>
 			<div class='i-input-div-choice' style="margin-top:10px">
-				<div class='write-input-server'>모델명</div>
+				<div class='write-input-server'>도면NO</div>
 				<div class="i-text-div" style="width:240px;">{{D['BODY']['add0']}}</div>
 			</div>
 			<div class='i-input-div' style="margin-top:10px">
 				<div class='write-input-server'>간단메모</div>
 				<div class="i-text-div" style="width:240px;">{{D['BODY']['add5']}}</div>
 			</div>
-			<div style="margin-top:10px;font-style:italic;text-align:left;color:#a5a5a5">
-			
-			</div>
-			<div style="width:340px;height:180px;margin-top:10px;border:2px solid black;padding:10px;line-height:25px;color:lightgray;">{{D['BODY']['content']|safe}}</div>	
+			<div style="margin-top:10px;font-style:italic;text-align:left;color:#a5a5a5"></div>
+			<div style="width:340px;height:180px;margin-top:10px;border:2px solid black;border-radius:4px;padding:10px;line-height:25px;color:lightgray;background-color:#2b2b2b;">{{D['BODY']['content']|safe}}</div>	
+		</div>
+	</div>
+	<div style="margin-top:10px;">
+		<table class="table table-bordered table-striped table-hover">
+			<thead>
+				<tr style="border-bottom:1px solid black;border-top:2px solid black;background-color:#0B2F3A;">
+					<th style="font-style:italic;width:60px">No</th>
+					<th style="width:100px;text-align:right">회사단가</th>
+					<th style="width:100px;text-align:left;">외주업체</th>
+					<th style="width:100px;text-align:right">재료비</th>
+					<th style="width:100px;text-align:right">용접비</th>
+					<th style="width:100px;text-align:right">가공비</th>
+					<th style="width:100px;text-align:right">후처리</th>
+					<th style="width:100px;text-align:right">단  가</th>
+					<th style="width:60px;text-align:right">수  량</th>
+					<th style="width:100px;text-align:right">총금액</th>
+					<th style="font-style:italic">비 고</th>
+				</tr>
+			</thead>
+			<tbody id="table-excel">
+				<tr style="background-color:#071418;"> 
+					<td class='text-center'>합 계</td>
+					<td class="c-total" style="padding-right:12px;"></td>
+					<td></td>
+					<td class="c-total" style="padding-right:12px;"></td>
+					<td class="c-total" style="padding-right:12px;"></td>
+					<td class="c-total" style="padding-right:12px;"></td>
+					<td class="c-total" style="padding-right:12px;"></td>
+					<td class="c-total"></td>
+					<td></td>
+					<td class="c-total"></td>
+					<td>&nbsp;</td>
+				</tr>
+			</tbody>
+		</table>
+		</div>
+	<!-- 본문하단 버튼 -->
+	<div class="row-row clearfix" style="margin-top:10px">
+		<div class='pull-left'>
+			<a href="{{D['_bse']}}board/modify/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}/{{D['Searchplus']}}">
+			<button class='btn btn-blue btn-small'>내용수정</button>
+			</a>
+			<button class='btn btn-small btn-red' onclick="delete_chk('{{D['_bse']}}boards-action/delete/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}')">삭제하기</button>
+		</div>
+		<div class='pull-right'>
+			<a href="{{D['_bse']}}board/list/{{D['bid']}}/page={{D['page']}}">
+				<button class='btn btn-blue btn-small'>검색하기</button>
+			</a>
 		</div>
 	</div>
 </div>
-
-<div style="margin-top:10px;">
-<table class="table table-bordered table-striped table-hover">
-	<thead>
-		<tr style="border-bottom:1px solid black;border-top:2px solid black;background-color:#0B2F3A;">
-			<th style="font-style:italic;width:60px">No</th>
-			<th style="width:100px;text-align:right">회사단가</th>
-			<th style="width:100px;text-align:left;">외주업체</th>
-			<th style="width:100px;text-align:right">재료비</th>
-			<th style="width:100px;text-align:right">용접비</th>
-			<th style="width:100px;text-align:right">가공비</th>
-			<th style="width:100px;text-align:right">후처리</th>
-			<th style="width:100px;text-align:right">단  가</th>
-			<th style="width:60px;text-align:right">수  량</th>
-			<th style="width:100px;text-align:right">총금액</th>
-			<th style="font-style:italic">비 고</th>
-		</tr>
-	</thead>
-	<tbody id="table-excel">
-		<tr style="background-color:#071418;"> 
-			<td class='text-center'>합 계</td>
-			<td class="c-total" style="padding-right:12px;"></td>
-			<td></td>
-			<td class="c-total" style="padding-right:12px;"></td>
-			<td class="c-total" style="padding-right:12px;"></td>
-			<td class="c-total" style="padding-right:12px;"></td>
-			<td class="c-total" style="padding-right:12px;"></td>
-			<td class="c-total"></td>
-			<td></td>
-			<td class="c-total"></td>
-			<td>&nbsp;</td>
-		</tr>
-	</tbody>
-</table>
-</div>
-
-<!-- 본문하단 버튼 -->
-<div class="row-row clearfix" style="margin-top:10px">
-	<div class='pull-left'>
-		<a href="{{D['_bse']}}board/modify/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}/{{D['Searchplus']}}">
-		<button class='btn btn-blue btn-small'>수정</button>
-		</a>
-		<button class='btn btn-small btn-red' onclick="delete_chk('{{D['_bse']}}boards-action/delete/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}')">삭 제</button>
-	</div>
-	<div class='pull-right'>
-		<a href="{{D['_bse']}}board/list/{{D['bid']}}/page={{D['page']}}">
-			<button class='btn btn-blue btn-small'>목록</button>
-		</a>
-	</div>
-</div>
-
 {% endblock %}
+
+
+
 
 {% block contents_list %}
 <!-- 리스트 상부 카테고리 시작 -->
-<div class="clearfix" style='margin:10px 0px 5px 0px'>
+<div style="padding:10px">
+<div class="clearfix" style='margin:10px 0px 5px 0px;'>
 {% if D['Cat_use'] %}
 <form method='post' name='category_search' action="{{D['_bse']}}board/list/{{D['bid']}}" style='display:inline;'>
 	<div class="pull-left">
@@ -188,14 +187,14 @@
 <!-- 하단 버튼 [ 목록 쓰기] [페이지네이션]-->
 <div class="row-row clearfix">
 	<div class='pull-left'>
-		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
-		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>쓰 기</button></a>&nbsp;
+		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>검색하기</button></a>
+		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>새로작성</button></a>&nbsp;
 	</div>
 	<div class='pagination pull-right'><ul>
 		{{D['Pagination']|safe}}
 	</ul></div>
 </div>
-
+</div>
 
 <script>
 $(document).ready(function(){ 

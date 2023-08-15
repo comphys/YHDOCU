@@ -16,7 +16,7 @@
 <input type='hidden' name='add18'	value="{{D['BODY']['add18']}}" >
 <input type='hidden' name='tle_color' value="" >
 <!-- END ====================================================================================== -->
-<div class="clearfix" style="background-color:#24272d;padding:10px;border:1px solid black;border-top-left-radius:6px;border-top-right-radius:6px">
+<div class="clearfix" style="background-color:#24272d;padding:10px;border:1px solid black;border-radius:6px;">
 	<div class="pull-left" style="padding:10px">
 		<div id="imgDropZone" style="width:596px;height:422px;border:2px solid black;border-radius:4px;background-color:#585858">
 			{% if D['BODY']['add6'] %}<img src="{{D['BODY']['add6']}}" width='594' height='420' class='file-thumb' />{% endif %}
@@ -43,7 +43,7 @@
 				<input type='text' name='add3' id="i-date-due" style="width:240px;" value="{{D['BODY']['add3']}}">
 			</div>
 			<div class='i-input-div-choice' style="margin-top:10px">
-				<div class='write-input-server'>모델명</div>
+				<div class='write-input-server'>도면NO</div>
 				<input type='text' name='add0' class="i-text" style="width:240px;" value="{{D['BODY']['add0']}}">
 			</div>
 			<div class='i-input-div' style="margin-top:10px">
@@ -59,11 +59,9 @@
 		</div>
 	</div>
 </div>
+</form>
 
-<div class="well" style="border-radius:0px; padding:5px 20px">&nbsp;</div>
-
-
-<div style="border:1px solid gold;border-radius:4px">
+<div style="border:1px solid gold;border-radius:4px;margin-top:10px;">
 <table class="table table-bordered table-striped table-hover">
 	<thead>
 		<tr style="border-bottom:1px solid black;border-top:2px solid black">
@@ -120,18 +118,16 @@
 <!-- 하단 요소====================================================================================== -->
 <div class="clearfix" style="padding:0px;margin-top:10px">
 	<div class="pull-left">
-		<a href="{{D['_bse']}}board/list/{{D['bid']}}/csh=on"><span class="btn btn-small btn-blue" style="height:30px;">목록</span> </a>
+		<button class="btn btn-small btn-blue" onclick="location.href='{{D['_bse']}}board/list/{{D['bid']}}/csh=on'" style="height:25px">검색하기</button>
 		{%- if D['Mode'] == 'modify' -%}
-		<a onclick="delete_confirm('{{D['_bse']}}boards-action/delete/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}')">
-			<span class="btn btn-small btn-red-s4" style="height:30px">삭제</span>
-		</a>
+		<button class="btn btn-small btn-red-s4" onclick="delete_confirm('{{D['_bse']}}boards-action/delete/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}')" style="height:25px">삭제하기</button>
 		{%- endif -%}
 	</div>
 	<div class="pull-right">
-		<button class="btn btn-small btn-red-s3" style="height:30px">저장</button>
+		<button class="btn btn-small btn-red-s3" onclick="$('#YHBmainEditorForm').submit()" style="height:25px">저장하기</button>
 	</div>
 </div>
-</form>
+
 <!-- END ====================================================================================== -->
 <script>
 
@@ -145,6 +141,7 @@ $(document).ready(function() {
 	$(".list-input-number").on('keydown',null,'right',function(e){var inputs = $(this).closest('tbody').find('input');inputs.eq( inputs.index(this)+1 ).focus();});
 	$(".list-input-number").on('keydown',null,'up',	function(e){  var inputs = $(this).closest('tbody').find('input');inputs.eq( inputs.index(this)-6 ).focus();});
 	$(".list-input-number").on('keydown',null,'down',function(e){ var inputs = $(this).closest('tbody').find('input');inputs.eq( inputs.index(this)+6 ).focus();});
+	$(".list-input-number").on('keydown',null,'return',function(e){ var inputs = $(this).closest('tbody').find('input');inputs.eq( inputs.index(this)+1 ).focus();});
 	$("#i-date-due").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:true });
 	$(".file-thumb").click(function(){ image_view(this); });
 
