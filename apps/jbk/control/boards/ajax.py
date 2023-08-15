@@ -1,5 +1,5 @@
 from system.core.load import Control
-import easygui,json,os,system.core.my_utils as ut
+import easygui,json,os,system.core.my_utils as my
 from PIL import Image
 
 
@@ -17,6 +17,10 @@ class Ajax(Control) :
             if os.path.isfile(check) : return 'OK'
             else : return 'NFND'
 
+    def erase_image(self) :
+        img_name = self.D['post']['img_name']
+        my.delete_file(img_name)
+        return "OK"
 
     def win_exe(self) :
         f_in = self.D['post']['exe_file']
@@ -41,18 +45,6 @@ class Ajax(Control) :
         f_in = easygui.fileopenbox("파일을 선택하세요",title="Open",default=docu_root+'/',filetypes=["*.*"])
         f_xx = f_in.replace("\\","/")
         return f_xx
-
-    def file_attach(self) :
-        # D:/JYHDOCU/htdocs/YH문서함
-        docu_root = self.D['post']['f_path']
-        f_in = easygui.fileopenbox("파일을 선택하세요",title="Open",default=docu_root+'/',filetypes=["*.*"])
-        f_xx = ut.file_split(f_in.replace("\\","/"))
-        if f_xx[2].lower() in ['jpg','png','jpeg','gif'] :
-            f_path = f_xx[0].replace(docu_root,'')
-            f_attach = f"<span data-myimage='{f_path}'>{f_xx[1]}</span>"
-        else :
-            f_attach = f"<span data-myfile='{f_xx[0]}'>{f_xx[1]}</span>"
-        return f_attach
 
     def thumb_check(self) :
         thumb_file = self.D['post']['url']

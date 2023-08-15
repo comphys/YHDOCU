@@ -5,6 +5,7 @@
 <input type='hidden' name='mode'	value="{{D['Mode']}}" >
 <input type='hidden' name='add4'	value="{{D['BODY']['add4']}}" >
 <input type='hidden' name='add6'	value="{{D['BODY']['add6']}}" >
+<input type='hidden' name='add7'	value="{{D['BODY']['add7']}}" >
 <input type='hidden' name='add10'	value="{{D['BODY']['add10']}}" >
 <input type='hidden' name='add11'	value="{{D['BODY']['add11']}}" >
 <input type='hidden' name='add12'	value="{{D['BODY']['add12']}}" >
@@ -18,15 +19,17 @@
 <!-- END ====================================================================================== -->
 <div class="clearfix" style="background-color:#24272d;padding:10px;border:1px solid black;border-radius:6px;">
 	<div class="pull-left" style="padding:10px">
-		<div id="imgDropZone" style="width:596px;height:422px;border:2px solid black;border-radius:4px;background-color:#585858">
+		<div id="imgDropZone" style="width:596px;height:422px;border:2px solid black;border-radius:4px;background-color:#585858;border-right:none">
 			{% if D['BODY']['add6'] %}<img src="{{D['BODY']['add6']}}" width='594' height='418' class='file-thumb' />{% endif %}
 		</div>
 	</div>
-	<div class="pull-left" style="padding:10px 5px;margin-left:-22px">
-		<div style="width:72px;height:422px;border:2px solid black;border-radius:4px;background-color:#505050">
-			&nbsp;
+	<div class="pull-left" style="padding:10px 5px;margin-left:-16px">
+		<div id="img-title-div">
+			<div id="img-title-name" style="height:370px">{{D['BODY']['add7']}}</div>
+			<div style="text-align:center"><i class="fa fa-scissors" style="font-size:24px;cursor:pointer" onclick="erase_image()" title="도면 이미지 삭제"></i></div>
 		</div>
 	</div>
+
 	<div class="pull-left" style="padding:10px">
 		<div style="width:380px;height:422px;padding:20px 0px 20px 20px;border:2px solid black;border-radius:4px;background-color:#2f2f2f">
 
@@ -50,10 +53,10 @@
 				<div class='write-input-server'>간단메모</div>
 				<input type='text' name='add5' class="i-text" style="width:240px;" value="{{D['BODY']['add5']}}">
 			</div>
-			<div style="margin-top:10px;font-style:italic;text-align:left;color:#a5a5a5">
-			본문내용을 기재하시기 바랍니다()
+			<div style="margin-top:20px;font-style:italic;text-align:left;color:#a5a5a5">
+			
 			</div>
-			<div class="A4drawingUpload" style="width:340px;height:150px;margin-top:10px;">
+			<div class="A4drawingUpload" style="width:340px;height:170px;margin-top:10px;">
 				<textarea  name='content' style="border:2px solid black;width:100%;height:100%;padding:10px;line-height:25px;color:lightgray;">{% if D['Mode'] == 'modify' -%}{{D['BODY']['content']|safe}}{%- endif %}</textarea>
 			</div>	
 		</div>
@@ -229,7 +232,7 @@ function uploadFile(files){
 			}
 			return xhr;
 		},
-		error  :function(){ h_dialog.closeCover(); h_dialog.alert('파일전송오류로 전송이 되지 않았습니다(ex 개별파일용량 초과)');},
+		error  :function(){ h_dialog.closeCover(); h_dialog.alert('파일전송오류로 전송이 되지 않았습니다');},
 		success:function(data){ h_dialog.closeCover(); insert_img_to(data);}});
 }
 
@@ -237,6 +240,9 @@ function insert_img_to(data) {
 	var html = "<img src='"+data+"' width='594' height='420' class='file-thumb'>";
 	$("#imgDropZone").html(html);
 	$("input[name=add6]").val(data);
+	var img_name = data.split('/').reverse()[0]
+	if(img_name) $("input[name=add7]").val(img_name);
+	$("#img-title-name").text(img_name);
 	$(".file-thumb").click(function(){ image_view(this); });
 }
 
@@ -248,6 +254,23 @@ function image_view(sel) {
 		if($("#"+iid)) h_dialog.close(iid);
 		h_dialog.image(url,{id:iid,overlay:false});
 	}
+}
+
+function erase_image() {
+	var img_name = $("input[name=add7]").val();
+	if(! img_name) return;
+	if(! confirm("현재의 도면 이미지를 삭제합니다")) return;
+	var img_full_name = upload_dir+'/'+img_name;
+	var posturl = uri('linkurl') + 'boards-ajax/erase_image';
+
+	$.post(posturl, { img_name : img_full_name }).done(function(data){
+		if(data=='OK') h_dialog.notice("해당 파일을 삭제하였습니다");
+		$("#imgDropZone").html('&nbsp;');
+		$("input[name=add6]").val('');
+		$("input[name=add7]").val('');
+		$("#img-title-name").text('')
+	});
+
 }
 // ---------------------------------------------------------------------------------------------------------------------
 </script>
