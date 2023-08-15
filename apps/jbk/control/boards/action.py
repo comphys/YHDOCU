@@ -57,9 +57,18 @@ class Action(Control) :
             qry = f"DELETE FROM h_{bid}_reply WHERE parent={no}"
             self.DB.exe(qry)
         
+        # 견적관리 전용
+        if  bid=='estimate' :
+            img_name = self.DB.one(f"SELECT add6 FROM h_estimate_board WHERE no={no}")
+            if  img_name :
+                img_name = img_name.replace("/DOCU_ROOT",self.C['DOCU_ROOT'])
+                ut.delete_file(img_name)
+        
         qry = f"DELETE FROM h_{bid}_board WHERE no={no}"
         self.DB.exe(qry)
+        
 
+        
         return self.moveto(f"board/list/{bid}/page={page}")
 
     def modify(self) :

@@ -36,6 +36,7 @@
 			var $unit = $(this).parent().parent();
 			var rsum = YH_comma.vx($unit,4) + YH_comma.vx($unit,5) + YH_comma.vx($unit,6) + YH_comma.vx($unit,7);
 			var rtot = rsum * YH_comma.vx($unit,9);
+			if(rsum==0) rsum=''; if(rtot==0) rtot=''
 			$unit.children("td:nth-child(8)").text(rsum.toLocaleString("ko-kr")); 
 			$unit.children("td:nth-child(10)").text(rtot.toLocaleString("ko-kr")); 
 		},
@@ -50,8 +51,9 @@
 				cunt += YH_comma.ty($unit,i,8);
 				ctot += YH_comma.ty($unit,i,10);
 			}
-			if(isNaN(cunt)) cunt=''; 
-			if(isNaN(ctot)) ctot='';
+			if(isNaN(csum) || csum==0) csum=''; 
+			if(isNaN(cunt) || cunt==0) cunt=''; 
+			if(isNaN(ctot) || ctot==0) ctot='';
 
 			$unit.children("tr:nth-child(9)").children("td:nth-child("+colIndex+")").text(csum.toLocaleString("ko-kr"));
 			$unit.children("tr:nth-child(9)").children("td:nth-child(8)").text(cunt.toLocaleString("ko-kr"));	
