@@ -87,8 +87,11 @@
 
 .my-span-title   { display:inline-block; background-color:#3c3c3c }
 .my-span-content { border:1px solid #373737 }
-#img-title-div {width:68px;height:422px;border:2px solid black;border-radius:0px;background-color:#505050;padding:10px 20px;opacity:0.4;}
-#img-title-name {writing-mode:vertical-rl;text-orientation:sideways;font-size:16px;font-weight:bold;font-style:italic;}
+
+
+#imgDropZone {width:596px;height:422px;border-right:1px solid black}
+#img-title-div {width:60px;height:422px;background-color:#454545;padding:10px 20px;}
+#img-title-name {writing-mode:vertical-rl;text-orientation:sideways;font-size:16px;font-weight:bold;font-style:italic;color:#808080;}
 /* ////////////////////////////////////////////////////////////////////////////////////////////////
 // WRITE PART
 //////////////////////////////////////////////////////////////////////////////////////////////// */

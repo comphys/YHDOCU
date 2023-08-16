@@ -17,21 +17,20 @@
 <input type='hidden' name='add18'	value="{{D['BODY']['add18']}}" >
 <input type='hidden' name='tle_color' value="" >
 <!-- END ====================================================================================== -->
-<div class="clearfix" style="background-color:#24272d;padding:10px;border:1px solid black;border-radius:6px;">
-	<div class="pull-left" style="padding:10px">
-		<div id="imgDropZone" style="width:596px;height:422px;border:2px solid black;border-radius:4px;background-color:#585858;border-right:none">
-			{% if D['BODY']['add6'] %}<img src="{{D['BODY']['add6']}}" width='594' height='418' class='file-thumb' />{% endif %}
+<div class="clearfix" style="background-color:#24272d;padding:20px 20px 0px 20px;border:1px solid black;border-radius:6px;">
+	<div class="pull-left" style="border:2px solid black;border-radius:4px;background-color:#585858;">
+		<div class="pull-left" id="imgDropZone">
+			{% if D['BODY']['add6'] %}<img src="{{D['BODY']['add6']}}" width='596' height='422' class='file-thumb' />{% endif %}
 		</div>
-	</div>
-	<div class="pull-left" style="padding:10px 5px;margin-left:-16px">
-		<div id="img-title-div">
+		<div class="pull-left" id="img-title-div">
 			<div id="img-title-name" style="height:370px">{{D['BODY']['add7']}}</div>
-			<div style="text-align:center"><i class="fa fa-scissors" style="font-size:24px;cursor:pointer" onclick="erase_image()" title="도면 이미지 삭제"></i></div>
+			<div><i class="fa fa-scissors" style="color:#8e8e8e;font-size:24px;cursor:pointer" onclick="erase_image()" title="도면 이미지 삭제"></i></div>
 		</div>
 	</div>
 
-	<div class="pull-left" style="padding:10px">
-		<div style="width:380px;height:422px;padding:20px 0px 20px 20px;border:2px solid black;border-radius:4px;background-color:#2f2f2f">
+
+	<div class="pull-left" style="margin-left:18px;">
+		<div style="width:380px;height:425px;padding:20px 0px 20px 20px;border:2px solid black;border-radius:4px;background-color:#2f2f2f">
 
 			<div class='i-input-div' style="margin-top:10px">
 				<div class='write-input-server'>회사명</div>
