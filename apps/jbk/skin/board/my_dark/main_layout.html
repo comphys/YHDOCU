@@ -39,42 +39,18 @@
 		{% endfor %}
 		</ul>
 		<ul class='nav pull-right'>
-			<li><a href=""><i class='fa fa-folder fa-lg' title="폴더관리"></i></a></li>
+			<li><a href="/download/jbk_mydata"><i class='fa fa-folder fa-lg' title="데이타백업"></i></a></li>
 			<li style='margin-right:20px;'>
 				<a href="{{D['_bse']}}admin/board" target='blank'><i class='fa fa-wrench fa-lg' style='color:#ff6f6f;'></i></a>
 			</li>
 		</ul>
 	</div>
 </div>
-<div class="row-body" id="content" style="width:{{D['xwidth']}}"><!-- 본문 시작 -->
-	<div id="send-to-mobile-div" class='row-row clearfix' style="width:{{D['xwidth']}}">
-		<div class="pull-left">
-			<span id="send-to-mobile-select">
-				<select name="send-to-mobile-channel" style="margin-top:-3px;width:90px">
-					<option style="color:lightgreen">채널선택</option>
-					<option value="일반">일반채널</option>
-					<option value="잡담" selected>잡담채널</option>
-					<option style="color:darkgray" value="업무">업무채널</option>
-					<option style="color:darkgray" value="가족">가족채널</option>
-					<option style="color:darkgray" value="주식">주식채널</option>
-					<option style="color:darkgray" value="메모">메모채널</option>
-				</select>
-			</span>
-			<span id="send-to-mobile-text" contenteditable="true" onclick="$(this).text('')">Sending Message to Mobile</span>
-		</div>
-		<div class="pull-right">
-			<span id="send-to-mobile-send">
-			<i class='fa fa-rss fa-lg' onclick="send_to_mobile()" style="cursor:pointer" title="모바일 전송"></i>&nbsp;
-			<i class='fa fa-edit fa-lg' onclick="$('#send-to-mobile-text').html('')" style="cursor:pointer" title="내용 지우기"></i>&nbsp;
-			<i class='fa fa-folder fa-lg' onclick="send_to_mobile_file()" style="cursor:pointer" title="파일 전송"></i>
-			</span>
-		</div>
-	</div>
 
+<div class="row-body" id="content" style="width:{{D['xwidth']}}"><!-- 본문 시작 -->
 	{% block contents_body  %}{% endblock %}
 	{% block contents_list  %}{% endblock %} 
 	{% block contents_write %}{% endblock %}
-
 	<div class='row-row clearfix'>
 		<div class="pull-left" style="color:#6a6a6a">
 			&nbsp;
