@@ -74,7 +74,30 @@
 
 				<th style="background-color:#071418;font-style:italic">Value</th>
 			</tr>
+			<tr><td colspan="17" style="height:2px;background-color:cadetblue;padding:0px;"></td></tr>
 		</thead>
+			<tr style="background-color:#071418;">
+				<td class='text-center'><span style='color:#CEF6F5'>GUIDER</span></td>
+				<td style='text-align:right;color:#F3F781;'>{{D['GD']['sub1']}}-{{D['GD']['sub12']}}</td>
+				<td style='text-align:right;color:#F3F781;'>{{D['GD']['sub29']}}</td>
+				<td style='text-align:right;'>{{D['GD']['add3']}}</td>
+				<td style='text-align:right;border-right:2px solid black;' class='list-add'>{{D['GD']['add4']}}</td>
+	
+				<td style='text-align:right;'>{{D['GD']['add14']}}</td>
+				<td style='text-align:right;'>{{D['GD']['add5']}}</td>
+				<td style='text-align:right;'>{{D['GD']['add11']}}</td>
+				<td style='text-align:right;'>{{D['GD']['add7']}}</td>
+				<td style='text-align:right;'>{{D['GD']['add9']}}</td>
+				<td style='text-align:right;'>{{D['GD']['add6']}}</td>
+				<td style='text-align:right;'>{{D['GD']['add15']}}</td>
+				<td style='text-align:right;'>{{D['GD']['add12']}}</td>
+				<td style='text-align:right;'>{{D['GD']['add18']}}</td>
+				<td style='text-align:right;'>{{D['GD']['add8']}}</td>
+				<td style='text-align:right;'>{{D['GD']['add16']}}</td>
+	
+				<td style='text-align:right;border-left:2px solid black;'>{{D['GD']['add17']}}</td>
+			</tr>
+			<tr><td colspan="17" style="height:2px;background-color:cadetblue;padding:0px;"></td></tr>
 		<tbody>
 			{%- for TR in D['TR'] -%}
 			{% if (TR['add12']|striptags != '0.00') and (TR['add15']|striptags == '0.00') %}

@@ -62,6 +62,16 @@ class 목록_CHANCE(SKIN) :
             self.DB.tbl = f"h_{target}_board"
             self.DB.wre = f"add0 = '{last_date}'"
             TD = self.DB.get_line("add6,add8,add9,add14,sub2,sub4,sub5,sub6,sub7,sub12,sub18,sub19,sub20,sub28")
+            
+            self.D['GD'] = self.DB.get_line("add0,add1,add2,add3,add4,add14,add5,add11,add7,add9,add6,add15,add12,add18,add8,add16,add17,sub1,sub12,sub29")
+            self.D['GD']['add3'] = f"{float(self.D['GD']['add3']):,.2f}"
+            self.D['GD']['add6'] = f"{float(self.D['GD']['add6']):,.2f}"
+            self.D['GD']['add7'] = f"{float(self.D['GD']['add7']):,.2f}"
+            self.D['GD']['add9'] = f"{int(self.D['GD']['add9']):,}"
+            self.D['GD']['add11'] = f"{float(self.D['GD']['add11']):,.2f}"
+            self.D['GD']['add15'] = f"{float(self.D['GD']['add15']):,.2f}"
+            self.D['GD']['add17'] = f"{float(self.D['GD']['add17']):,.2f}"
+            self.D['GD']['add18'] = f"{float(self.D['GD']['add18']):,.2f}"
 
             chart_len = len(chart_data)
             # --------------
