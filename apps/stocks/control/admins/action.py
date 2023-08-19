@@ -48,6 +48,7 @@ class Action(Control) :
         wre = f"bid = '{bid}'"
         qry = self.DB.qry_update('h_board_config', self.D['post'], wre)
         self.DB.exe(qry)
+        self.set_message("현재 설정을 저장하였습니다",typ="notice")
         return self.moveto(f"admin/board_edit/bid={bid}/sec={self.D['post']['section']}/tab=0")
 
     def board_edit_access(self) :
