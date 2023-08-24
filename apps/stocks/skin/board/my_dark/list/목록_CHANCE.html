@@ -10,10 +10,10 @@
 
 <div style="height:370px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
 	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
-		<canvas id="myChart"  style="width:1125px;height:350px;background-color:#24272d;"></canvas>
+		<canvas id="myChart_main"  style="width:1125px;height:350px;background-color:#24272d;"></canvas>
 	</div>>
 	<div style="position:absolute;left:1170px;top:62px;width:230px">
-		<canvas id="myChart2" style="width:200px;height:280px;background-color:#24272d"></canvas>
+		<canvas id="myChart_side" style="width:200px;height:280px;background-color:#24272d"></canvas>
 		<div style="margin-top:2px;text-align:center;">
 			<input type='text' name='s_date' class="i-date_1" style="width:83px;text-align:center;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}"> -
 			<input type='text' name='e_date' class="i-date_2" style="width:83px;text-align:center;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}">
@@ -22,7 +22,7 @@
 		</div>
 	</div>
 </div>
-<div style="position:absolute;left:1085px;top:60px;width:71px;height:350px;border:2px solid black;background-color:lightgreen;opacity:0.1;z-index:20"></div>
+<!-- <div style="position:absolute;left:1085px;top:60px;width:71px;height:350px;border:2px solid black;background-color:lightgreen;opacity:0.1;z-index:20"></div> -->
 
 {% if D['TR'] %}
 <div id="extra-info" class="clearfix" style="border:2px solid black;background-color:rgb(34, 33, 33);padding:5px 20px;margin-bottom:-2px">
@@ -191,21 +191,21 @@ function popup_notice(option,size) {
 
 
 // 챠트 그리기
-const ctx = $id('myChart');
-const ctx2= $id('myChart2');
+const ctx_main = $id('myChart_main');
+const ctx_side = $id('myChart_side');
 
-ctx.style.backgroundColor = '#33363b';
-ctx.style.border = '2px solid black';
+ctx_main.style.backgroundColor = '#33363b';
+ctx_main.style.border = '2px solid black';
 
-let labels = {{D['chart_date']|safe}};				
+let labels_main = {{D['chart_date']|safe}};				
 let close_price = {{D['close_price']|safe}}; 		
 let soxl_average = {{D['soxl_average']|safe}};		
 let target_value = {{D['target_value']|safe}};		
 let chance_value = {{D['chance_value']|safe}};		
 let chance_average = {{D['chance_average']|safe}};	
 
-const data1 = {
-    labels : labels,
+const data_main = {
+    labels : labels_main,
     datasets : [
 		{
             label:' 종가변동',
@@ -239,7 +239,7 @@ const data1 = {
         },
     ]   
 };
-const options1 = {
+const options_main = {
 	animation : { duration:0},
 
 	plugins : { legend: {display:false}, tooltip:{enabled:true}},
@@ -250,13 +250,12 @@ const options1 = {
         y: { ticks : {color:'lightgray'}, grid:{color:'#272727'},position:'right'},
     }
 };
-const config1  = {type:'line',data:data1,options:options1};
-const myChart = new Chart(ctx, config1); 
+const config_main  = {type:'line',data:data_main,options:options_main};
+const myChart_main = new Chart(ctx_main, config_main); 
 //
 
-const labels2 = ['Cash','Leverage'];
-const data2 = {
-  labels: labels2,
+const data_side = {
+  labels: ['Cash','Leverage'],
   datasets: [{
     label: ' 자산배분비율 ',
     data: {{D['chart_percent']}},
@@ -266,9 +265,9 @@ const data2 = {
   }]
 };
 
-const config2 = {
+const config_side = {
   type: 'bar',
-  data: data2,
+  data: data_side,
   plugins:[ChartDataLabels],
   options: {
 	animation : {duration:500},
@@ -286,7 +285,7 @@ const config2 = {
 		}
 	},
 };
-const myChart2 = new Chart(ctx2, config2); 
+const myChart_side = new Chart(ctx_side, config_side); 
 </script>
 
 {% endblock %}
