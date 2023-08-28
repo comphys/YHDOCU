@@ -20,18 +20,15 @@ class 쓰기_표준(SKIN) :
             self.D['w_title'] = OBODY['add0'] ; self.D['w_tleClr']= OBODY['tle_color']
 
         if self.D['Mode'] != 'add_body' and int(self.D['Brother']) <= 0 :
-            self.add_all(self.D['BCONFIG']['category'], self.D['EXTITLE'], self.D['EXFORMA'], self.D['bid'], OBODY) 
+            self.add_all(self.D['BCONFIG']['category'], self.D['EXTITLE'], self.D['EXCLASS'], OBODY) 
     
 
-    def add_all(self,category, exFIDktitle, exFormat, bid, OBODY) :
+    def add_all(self,category, exFIDktitle, exClass,OBODY) :
         CAT_KEY = []
         if category : CAT_KEY = category.split('/')
         if exFIDktitle :
             for key, val in exFIDktitle.items() :
-                if   exFormat[key] == 'number' : clss="class='i-number'" 
-                elif exFormat[key] == 'n_edit' : clss="class='i-number'" 
-                elif exFormat[key] == 'date'   : clss="class='i-date'" 
-                else : clss="class='i-text'"
+                clss=f"class='{exClass[key]}'"
                 if key in CAT_KEY : self.user_cat(val,key,'132px',clss,self.D['bid'],OBODY) 
                 else : self.user_add(val,key,clss,OBODY)
     
