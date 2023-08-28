@@ -46,7 +46,7 @@ class 목록_CHANCE(SKIN) :
             self.DB.tbl = self.D['tbl']
             prev_date = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
             self.DB.wre = f"add0='{prev_date}'"
-            LD = self.DB.get_line('add3,add4,add6,add7,add9,add14,add16,add17,sub2,sub3,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub28')
+            LD = self.DB.get_line('add3,add4,add6,add7,add9,add10,add14,add16,add17,sub2,sub3,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub28')
             CD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT) FROM {self.DB.tbl} WHERE CAST(add7 as FLOAT) != 0.0 AND add0 BETWEEN '{first_date}' AND '{last_date}'") 
             
             cx = {}
@@ -61,17 +61,18 @@ class 목록_CHANCE(SKIN) :
             self.DB.clear()
             self.DB.tbl = f"h_{target}_board"
             self.DB.wre = f"add0 = '{last_date}'"
-            TD = self.DB.get_line("add6,add8,add9,add14,sub2,sub4,sub5,sub6,sub7,sub12,sub18,sub19,sub20,sub28")
+            TD = self.DB.get_line("add0,add1,add2,add3,add4,add5,add6,add7,add8,add9,add11,add12,add14,add15,add16,add17,add18,sub1,sub2,sub4,sub5,sub6,sub7,sub12,sub18,sub19,sub20,sub28,sub29")
             
-            self.D['GD'] = self.DB.get_line("add0,add1,add2,add3,add4,add14,add5,add11,add7,add9,add6,add15,add12,add18,add8,add16,add17,sub1,sub12,sub29")
-            self.D['GD']['add3'] = f"{float(self.D['GD']['add3']):,.2f}"
-            self.D['GD']['add6'] = f"{float(self.D['GD']['add6']):,.2f}"
-            self.D['GD']['add7'] = f"{float(self.D['GD']['add7']):,.2f}"
-            self.D['GD']['add9'] = f"{int(self.D['GD']['add9']):,}"
-            self.D['GD']['add11'] = f"{float(self.D['GD']['add11']):,.2f}"
-            self.D['GD']['add15'] = f"{float(self.D['GD']['add15']):,.2f}"
-            self.D['GD']['add17'] = f"{float(self.D['GD']['add17']):,.2f}"
-            self.D['GD']['add18'] = f"{float(self.D['GD']['add18']):,.2f}"
+            # GD : Guide Data
+            self.D['GD'] = TD 
+            self.D['GD']['add3']  = f"{float(TD['add3']):,.2f}"
+            self.D['GD']['add6']  = f"{float(TD['add6']):,.2f}"
+            self.D['GD']['add7']  = f"{float(TD['add7']):,.2f}"
+            self.D['GD']['add9']  = f"{int(TD['add9']):,}"
+            self.D['GD']['add11'] = f"{float(TD['add11']):,.2f}"
+            self.D['GD']['add15'] = f"{float(TD['add15']):,.2f}"
+            self.D['GD']['add17'] = f"{float(TD['add17']):,.2f}"
+            self.D['GD']['add18'] = f"{float(TD['add18']):,.2f}"
 
             chart_len = len(chart_data)
             # --------------
@@ -147,6 +148,8 @@ class 목록_CHANCE(SKIN) :
             self.D['연속상승'] = TD['sub5']
             self.D['연속하락'] = TD['sub6']
             self.D['현재환율'] = f"{현재환율:,.2f}"
+            self.D['자산배분'] = LD['add10']
+            self.D['가치합계'] = round(float(LD['add17']))
 
 
     def chance_init(self,balance,t_day_amount,t_basic_qty) :
@@ -218,16 +221,6 @@ class 목록_CHANCE(SKIN) :
                         if key =='add4'  : style  += f"border-right:2px solid black;"
                         if key =='add17' : style  += f"border-left:2px solid black;"
                         
-                        txt_format = self.D['EXFORMA'][key] 
-                        
-                        if   txt_format == 'number' : clas = "class='list-add'"
-                        elif txt_format == 'edit'   : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
-                        elif txt_format == 'n_edit' : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
-                        elif txt_format == 'mobile' : clas= f"class='list-mobile'" 
-                        else : clas=f"class='list-add'"
-                        
-                    #   if (self.D['EXFTYPE'][key] == 'int') or (txt_format == 'number') or (txt_format == 'n_edit'): txt = f"{int(txt):,}"
-
                         if (txt and self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
                         if (txt and self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,.2f}"
 

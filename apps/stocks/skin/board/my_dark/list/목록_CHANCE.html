@@ -254,13 +254,23 @@ const config_main  = {type:'line',data:data_main,options:options_main};
 const myChart_main = new Chart(ctx_main, config_main); 
 //
 
+
+{% if D['자산배분'] %}
+var allot = {{D['자산배분']}};
+var cur_total = {{D['가치합계']}}; 
+var allot_key = Object.keys(allot);
+var allot_val = Object.values(allot);
+var allot_sum = allot_val.reduce((acc,cur) => acc+cur,0);
+allot_val.forEach((val,idx,arr)=>{arr[idx]=Math.floor(val/allot_sum*cur_total);});
+{% endif %}
+
 const data_side = {
-  labels: ['Cash','Leverage'],
+  labels: allot_key,
   datasets: [{
     label: ' 자산배분비율 ',
-    data: {{D['chart_percent']}},
-    backgroundColor: ['rgba(75, 192, 192, 0.4)','rgba(255, 99, 132, 0.4)'],
-    borderColor: ['rgb(75, 192, 192)','rgb(255, 99, 132)'],
+    data: allot_val,
+    backgroundColor: ['rgba(75, 192, 192, 0.4)','rgba(75, 192, 192, 0.4)','rgba(75, 192, 192, 0.4)','rgba(75, 192, 192, 0.4)','rgba(75, 192, 192, 0.4)','rgba(75, 192, 192, 0.4)'],
+    borderColor: ['rgb(75, 192, 192)','rgb(75, 192, 192)','rgb(75, 192, 192)','rgb(75, 192, 192)','rgb(75, 192, 192)','rgb(75, 192, 192)'],
     borderWidth: 1
   }]
 };
@@ -273,7 +283,7 @@ const config_side = {
 	animation : {duration:500},
     plugins : { legend: {display:false},
 				tooltip : {enabled:false},
-				datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:14}}			
+				datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:10}}			
 	},
     scales: {
 		y: {

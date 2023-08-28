@@ -74,16 +74,6 @@ class 목록_매매전략(SKIN) :
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
                         
-                        txt_format = self.D['EXFORMA'][key] 
-                        
-                        if   txt_format == 'number' : clas = "class='list-add'"
-                        elif txt_format == 'edit'   : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
-                        elif txt_format == 'n_edit' : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
-                        elif txt_format == 'mobile' : clas= f"class='list-mobile'" 
-                        else : clas=f"class='list-add'"
-                        
-                    #   if (self.D['EXFTYPE'][key] == 'int') or (txt_format == 'number') or (txt_format == 'n_edit'): txt = f"{int(txt):,}"
-
                         if (self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
                         if (self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,}"
 
@@ -94,17 +84,3 @@ class 목록_매매전략(SKIN) :
 
             self.D['TR'] = TR
 
-
-            if self.D['BCONFIG']['row_sum'] == 'on' :
-                list_order_cnt = len(self.D['list_order'])
-                td2 =['<td>&nbsp;</td>' for x in range(list_order_cnt)]
-                
-                for k in self.D['EXFORMA'].keys() : 
-                    if self.D['RS'][k] : td2[self.D['list_order'].index(k)] = f"<td>{self.D['RS'][k]:,}</td>" 
-
-                td2[0] = "<td class='list-no'>합 계</td>"
-                self.D['row_sum'] = ''.join(td2)
-
-
-            if self.D['BCONFIG']['row_flt'] == 'on' :
-                self.D['row_flt'] = f"<td id='filter-reset'>필 터</td><td id='filter-qry' contenteditable colspan='{list_order_cnt-2}'>{self.D['list_filter']}</td><td id='list-filter-submit'>전송</td>"

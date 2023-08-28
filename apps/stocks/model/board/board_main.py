@@ -30,7 +30,7 @@ class M_board_main(Model) :
         if self.D['BCONFIG']['list_sub'] : self.D['list_full'] += ','+ self.D['BCONFIG']['list_sub'].replace('/',',') 
 
         self.D['EXTITLE'] = {} ; self.D['EXFTYPE'] = {} ; self.D['EXALIGN'] = {} ; self.D['EXCOLOR'] = {} ; 
-        self.D['EXFORMA'] = {} ; self.D['EXWIDTH'] = {} ; self.D['MustCheck'] = []
+        self.D['EXWIDTH'] = {} ; self.D['EXCLASS'] = {} ; self.D['MustCheck'] = []
 
 
         for i in USE_KEY :
@@ -39,8 +39,8 @@ class M_board_main(Model) :
             self.D['EXFTYPE'][i] = exConf[1]
             self.D['EXALIGN'][i] = exConf[2]
             self.D['EXCOLOR'][i] = exConf[3]
-            self.D['EXFORMA'][i] = exConf[4]
-            self.D['EXWIDTH'][i] = exConf[5]
+            self.D['EXWIDTH'][i] = exConf[4]
+            self.D['EXCLASS'][i] = exConf[5]
             if exConf[6] == 'true' : 
                 self.D['MustCheck'].append("'"+ i + "'")
                 self.D['MustCheck'].append("'"+ exConf[0] + "'")

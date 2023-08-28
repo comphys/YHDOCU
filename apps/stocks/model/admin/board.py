@@ -35,8 +35,8 @@ class M_board(Model) :
         self.D['exalign']  = {}
         self.D['excolor']  = {}
         self.D['excolor_style']  = {}
-        self.D['exformat'] = {}
         self.D['exwidth']  = {}
+        self.D['exclass']  = {}
         self.D['exmust']   = {}
         self.D['use_key']  = []
         self.D['not_key']  = []
@@ -53,8 +53,8 @@ class M_board(Model) :
                     self.D['excolor_style'][add_index] =  "style='background-color:" + exConf[3] + ";text-align:center; width:85px'"
                 else :
                     self.D['excolor_style'][add_index] =  "style='text-align:center; width:85px'"
-                self.D['exformat'][add_index]= exConf[4]
-                self.D['exwidth'][add_index] = exConf[5]
+                self.D['exwidth'][add_index] = exConf[4]
+                self.D['exclass'][add_index] = exConf[5]
                 self.D['exmust'][add_index]  = exConf[6]
                 self.D['use_key'].append(add_index)
             else :

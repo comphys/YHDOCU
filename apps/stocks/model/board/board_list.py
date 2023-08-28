@@ -65,11 +65,6 @@ class M_board_list(Model) :
 
         if total_cnt :
 
-            if self.D['BCONFIG']['type'] == 'yhtable' :
-                self.D['RS'] = {}
-                for k,v in self.D['EXFORMA'].items() : 
-                    self.D['RS'][k] = self.DB.one(f"SELECT sum({k}) FROM {tbl} {Cond}") if v in ('number','n_edit') else ''
-
             rp = self.D['BCONFIG']['row_per_page']
             rStart = rp * (page-1)
             page_set = 10

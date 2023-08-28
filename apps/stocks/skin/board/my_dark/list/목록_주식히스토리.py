@@ -100,14 +100,6 @@ class 목록_주식히스토리(SKIN) :
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
                         
-                        txt_format = self.D['EXFORMA'][key] 
-                        
-                        if   txt_format == 'number' : clas = "class='list-add'"
-                        elif txt_format == 'edit'   : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
-                        elif txt_format == 'n_edit' : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
-                        elif txt_format == 'mobile' : clas= f"class='list-mobile'" 
-                        else : clas=f"class='list-{key}'"
-                        
                         if (self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
                         if (self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,.2f}"
 

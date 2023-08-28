@@ -228,16 +228,6 @@ class 목록_INVEST(SKIN) :
                         if key =='add17' : style  += f"border-left:2px solid black;"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
                         
-                        txt_format = self.D['EXFORMA'][key] 
-                        
-                        if   txt_format == 'number' : clas = "class='list-add'"
-                        elif txt_format == 'edit'   : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
-                        elif txt_format == 'n_edit' : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
-                        elif txt_format == 'mobile' : clas= f"class='list-mobile'" 
-                        else : clas=f"class='list-add'"
-                        
-                    #   if (self.D['EXFTYPE'][key] == 'int') or (txt_format == 'number') or (txt_format == 'n_edit'): txt = f"{int(txt):,}"
-
                         if (txt and self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
                         if (txt and self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,.2f}"
 

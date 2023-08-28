@@ -32,7 +32,7 @@ class Ajax(Control) :
 
     def update_exfields(self) :
         P=self.D['post']
-        dbset=f"{P['FieldTitle']}/{P['FieldType']}/{P['FieldAlign']}/{P['FieldColor']}/{P['FieldFormat']}/{P['FieldWidth']}/{P['FieldMust']}"
+        dbset=f"{P['FieldTitle']}/{P['FieldType']}/{P['FieldAlign']}/{P['FieldColor']}/{P['FieldWidth']}/{P['FieldClass']}/{P['FieldMust']}"
         qry=f"UPDATE h_board_config SET {P['fid']} = '{dbset}' WHERE bid='{P['bid']}'"
         self.DB.exe(qry)
         return self.echo('')

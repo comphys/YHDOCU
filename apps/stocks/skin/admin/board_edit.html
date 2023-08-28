@@ -220,7 +220,7 @@
 				<div id="adminBoardB_editTab2" class="tab-pane {{D['active_tab'][2]}}">
 					<table class="table table-bordered table-striped">
 						<thead>
-							<tr><th>필드명</th><th>타이틀</th><th>유형</th><th>정렬</th><th>색깔</th><th>형식</th><th>넓이</th><th>필수</th><th>수정</th><th>삭제</th></tr>
+							<tr><th>필드명</th><th>타이틀</th><th>유형</th><th>정렬</th><th>색깔</th><th>넓이</th><th>클래스</th><th>필수</th><th>수정</th><th>삭제</th></tr>
 						</thead>
 						<tbody>
 						{% for key in D['use_key'] %}
@@ -244,18 +244,8 @@
 								</select>
 								</td>
 								<td><input class='colorpicker form-inline input-sm' type='text' name="fcolor{{key}}" value="{{D['excolor'][key]}}" {{ D['excolor_style'][key] |safe }} ></td>
-								<td>
-								<select name="fformat{{key}}" style="width:95px">
-									<option value=''>형식선택</option>
-									<option value='text' 	{{ 'selected' if D['exformat'][key] == 'text' else '' }} >문자</option>
-									<option value='number'  {{ 'selected' if D['exformat'][key] == 'number'  else '' }} >숫자</option>
-									<option value='date' 	{{ 'selected' if D['exformat'][key] == 'date'  else '' }} >날자</option>
-									<option value='mobile' 	{{ 'selected' if D['exformat'][key] == 'mobile'  else '' }} >휴대폰</option>
-									<option value='edit' 	{{ 'selected' if D['exformat'][key] == 'edit'  else '' }} >직접수정</option>
-									<option value='n_edit' 	{{ 'selected' if D['exformat'][key] == 'n_edit'  else '' }} >숫자수정</option>
-								</select>
-								</td>
 								<td><input type='text' name="fwidth{{key}}" value="{{D['exwidth'][key]}}" style='text-align:center;width:70px' /></td>
+								<td><input type='text' name="fclass{{key}}" value="{{D['exclass'][key]}}" style='text-align:left;width:120px' /></td>
 								<td>
 									<input type='checkbox' name="fmust{{key}}" {{ 'checked' if D['exmust'][key] =='true' else '' }} />
 								</td>
@@ -474,8 +464,8 @@
 		FieldInput[1] = { x : "FieldType",		y : $("select[name='ftype"	 + f + "']").val() };
 		FieldInput[2] = { x : "FieldAlign",		y : $("select[name='falign"	 + f + "']").val() };
 		FieldInput[3] = { x : "FieldColor",		y : $("input[name='fcolor"	 + f + "']").val() };
-		FieldInput[4] = { x : "FieldFormat",	y : $("select[name='fformat" + f + "']").val() };
-		FieldInput[5] = { x : "FieldWidth",		y : $("input[name='fwidth"	 + f + "']").val() };
+		FieldInput[4] = { x : "FieldWidth",		y : $("input[name='fwidth"	 + f + "']").val() };
+		FieldInput[5] = { x : "FieldClass",	    y : $("input[name='fclass"   + f + "']").val() };
 		FieldInput[6] = { x : "FieldMust",		y : $("input[name='fmust"	 + f + "']").is(':checked') };
 
 		var update_query =''; 
