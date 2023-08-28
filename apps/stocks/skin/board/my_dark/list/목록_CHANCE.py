@@ -63,17 +63,6 @@ class 목록_CHANCE(SKIN) :
             self.DB.wre = f"add0 = '{last_date}'"
             TD = self.DB.get_line("add0,add1,add2,add3,add4,add5,add6,add7,add8,add9,add11,add12,add14,add15,add16,add17,add18,sub1,sub2,sub4,sub5,sub6,sub7,sub12,sub18,sub19,sub20,sub28,sub29")
             
-            # GD : Guide Data
-            self.D['GD'] = TD 
-            self.D['GD']['add3']  = f"{float(TD['add3']):,.2f}"
-            self.D['GD']['add6']  = f"{float(TD['add6']):,.2f}"
-            self.D['GD']['add7']  = f"{float(TD['add7']):,.2f}"
-            self.D['GD']['add9']  = f"{int(TD['add9']):,}"
-            self.D['GD']['add11'] = f"{float(TD['add11']):,.2f}"
-            self.D['GD']['add15'] = f"{float(TD['add15']):,.2f}"
-            self.D['GD']['add17'] = f"{float(TD['add17']):,.2f}"
-            self.D['GD']['add18'] = f"{float(TD['add18']):,.2f}"
-
             chart_len = len(chart_data)
             # --------------
             현재환율 = self.DB.one("SELECT CAST(usd_krw AS FLOAT) FROM usd_krw ORDER BY rowid DESC LIMIT 1")
@@ -150,6 +139,18 @@ class 목록_CHANCE(SKIN) :
             self.D['현재환율'] = f"{현재환율:,.2f}"
             self.D['자산배분'] = LD['add10']
             self.D['가치합계'] = round(float(LD['add17']))
+
+            # GD : Guide Data
+            self.D['GD'] = TD 
+            self.D['GD']['add3']  = f"{float(TD['add3']):,.2f}"
+            self.D['GD']['add6']  = f"{float(TD['add6']):,.2f}"
+            self.D['GD']['add7']  = f"{float(TD['add7']):,.2f}"
+            self.D['GD']['add9']  = f"{int(TD['add9']):,}"
+            self.D['GD']['add11'] = f"{float(TD['add11']):,.2f}"
+            self.D['GD']['add15'] = f"{float(TD['add15']):,.2f}"
+            self.D['GD']['add17'] = f"{float(TD['add17']):,.2f}"
+            self.D['GD']['add18'] = f"{float(TD['add18']):,.2f}"
+
 
 
     def chance_init(self,balance,t_day_amount,t_basic_qty) :
