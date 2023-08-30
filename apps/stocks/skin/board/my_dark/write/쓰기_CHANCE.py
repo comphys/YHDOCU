@@ -28,7 +28,6 @@ class 쓰기_CHANCE(SKIN) :
                 JSTRG = self.DB.line(f"SELECT * FROM h_stock_strategy_board WHERE add0='VICTORY'")
                 JHIST = self.DB.line(f"SELECT * FROM h_stockHistory_board WHERE add0='{self.D['today']}' and add1='SOXL'")
 
-                self.info(JBODY['add10'])
                 JBODY = { k:v for (k,v) in JBODY.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
                 JSTRG = { k:v for (k,v) in JSTRG.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
                 JHIST = { k:v for (k,v) in JHIST.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
