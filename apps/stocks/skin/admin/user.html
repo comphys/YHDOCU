@@ -1,0 +1,131 @@
+{% include D['_skn'] + 'admin/common_head.html' %}
+
+<div id='sidebar'>
+	<ul>
+		<li class='active'><a href="{{ D['_bse']}}admin/user"><i class='fa fa-user'></i> <span> 사용자추가하기 </span></a></li>
+        {% for val in D['ugrp'] %}
+            <li class="{{'active submenu open' if val['grp'] == D['grp'] else 'submenu'}}">
+            <a href='#'><i class='fa fa-th-list'></i> <span> {{ val['grp'] }} </span> <span class='label'> {{val['cnt']}} </span></a>
+            <ul>
+            {% for u_list in D[val['grp']] %}
+                <li class="{{'active' if u_list['uid'] == D['uid'] else ''}}">
+                    <a href="{{D['_bse']}}admin/user_edit/uid={{u_list['uid']}}/grp={{u_list['ugroup']}}"> {{u_list['uid']}} </a>
+                </li> 
+            {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+	</ul>
+</div>
+
+<div id='content'>
+	<div id='content-header'>
+		<h1> Add A New User </h1>
+	</div>
+	<div id='breadcrumb'>
+		<a href='#' title='HOME' class='tip-bottom'><i class='fa fa-home'></i> Home</a>
+		<a href='#' > ADMIN </a>
+		<a href='#' > USER </a>
+		<a href='#' class='current'> NEW USER </a>
+	</div>
+
+	<div id='style-switcher'>
+		<span>Style : </span>
+			<a href="{{D['_bse']}}admin/theme/board/grey" style="background-color: #555555;"></a>
+			<a href="{{D['_bse']}}admin/theme/board/blue" style="background-color: #2D2F57;"></a>
+			<a href="{{D['_bse']}}admin/theme/board/red"  style="background-color: #673232;"></a>
+	</div>
+
+	<div class='container'>
+		<div class='row'>
+			<div class='span12'>
+				<div class='widget-box'>
+					<div class='widget-title'><span class='icon'><i class='fa fa-th-list'></i></span><h5>사용자 추가</h5></div>
+					<div class='widget-content nopadding'>
+						<form id='adminBoardB_add' action="{{D['_bse']}}admins-action/user_add" method="post" class="form-horizontal" onsubmit="return UserAddFormCheck(this)">
+							<div class='control-group'>
+								<label class='control-label'>유저아이디 : </label>
+								<div class='controls'>
+									<input type='text' name='uid' style='width:150px' />
+									<span class='control-right-label'>: 영문과 숫자로 작성(첫글자는 영문)하여 주시기 바랍니다</span>
+								</div>
+							</div>
+							<div class='control-group'>
+								<label class='control-label'>유저네임 : </label>
+								<div class='controls'>
+									<input type='text' name='uname' style='width:150px' />
+									<span class='control-right-label'>: 이름을 입력하여 주시기 바랍니다</span>
+								</div>
+							</div>
+							<div class='control-group'>
+								<label class='control-label'>유저그룹선택 : </label>
+								<div class='controls'>
+									<input type='text' name='ugroup' style='width:150px' readonly='readonly' />
+									<select  style='background:#CCFFFF;display:inline-block;width:180px;' onchange="selectC(this,'ugroup')" >
+										<option selected='selected' value=''> 유저그룹선택 </option>
+										{% for val in D['ugrp'] %}
+										<option value="{{val['grp']}}">{{val['grp']}}</option>
+										{% endfor %}
+									</select>		
+								</div>
+							</div>
+							<div class='control-group'>
+								<label class='control-label'> 패스워드 : </label>
+								<div class='controls'>
+									<input type='text' name='upass' style='width:150px' />
+									<span class='control-right-label'>: 패스워드를 입력하세요 </span>
+								</div>
+							</div>
+							<div class='control-group'>
+								<label class='control-label'> 유저등급 : </label>
+								<div class='controls'>
+									<input type='text' name='level' style='width:150px' />
+									<span class='control-right-label'>: 유저권한 레벨을 입력하여 주시기 바랍니다(0 to 255) </span>
+								</div>
+							</div>
+							<div class='control-group'>
+								<label class='control-label'> 영문명칭 : </label>
+								<div class='controls'>
+									<input type='text' name='eng' style='width:150px' />
+									<span class='control-right-label'>: 이름의 영문명칭을 입력하여 주세요(선택사항) </span>
+								</div>
+							</div>
+							<div class='control-group'>
+								<label class='control-label'> 이메일 : </label>
+								<div class='controls'>
+									<input type='text' name='email' style='width:150px' />
+									<span class='control-right-label'>: 이메일을 입력하여 주세요(선택사항) </span>
+								</div>
+							</div>
+							<div class='control-group'>
+								<label class='control-label'> 타이틀 : </label>
+								<div class='controls'>
+									<input type='text' name='title' style='width:335px' />
+									<span class='control-right-label'>: 간략한 타이틀을 입력하여 주세요(선택사항) </span>
+								</div>
+							</div>
+							<div class="form-actions" style='margin:0;padding:0px 170px;'>
+								<button type="submit" class="btn btn-primary" style='width:165px;'><i class='fa fa-check'></i>&nbsp;ADD NEW BOARD</button>
+							</div>
+						</form>
+					</div><!-- widget-content -->
+				</div><!-- widget-box -->
+			</div><!-- span12 -->
+		</div><!-- row -->
+	</div><!-- container -->
+
+<script type='text/javascript'>
+	$(document).ready(function(){$("input[name='bid']").focus();}); 
+	function boardAddFormCheck(f){
+			var str = f.bid.value; 
+			var re = new RegExp("^[a-z][a-z0-9_]+[a-z0-9]$","i");
+			var msg=''; 
+			if(!f.skin.value) msg = '스킨을 선택하여 주세요';
+			if(!f.title.value) msg = '보드 타이틀을 기재하여 주시기 바랍니다';
+			if(!re.test(str))  msg = '보드명이 형식에 맞지 않습니다'; 
+			if(!str) msg ='보드명을 기재하여 주시기 바랍니다'; 
+			if(msg){ h_dialog.alert( msg ); return false; }
+	}
+</script>
+
+{% include D['_skn'] + 'admin/common_tail.html' %}

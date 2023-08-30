@@ -17,7 +17,6 @@ class Admin(Control) :
         if not 'N_NO' in session : return self.moveto('docu/board/login',short=False)
         D = {'title' : '보드관리자', 'header' : 'YH Admin', 'skin' : 'admin/board.html'}
         self.model('admin-board')
-        D['skins'] = hf.get_dirs(self.skin_dir,'board')
         return self.echo(D)
 
 
@@ -51,6 +50,12 @@ class Admin(Control) :
         D = {'title' : '보드관리자', 'header' : 'YH Admin', 'skin' : 'admin/board_sort.html'}
         return self.echo(D)
 
+    def user(self) : 
+        if not 'N_NO' in session : return self.moveto('docu/board/login',short=False)
+        self.model('admin-user')
+        D = {'title' : '유저관리자', 'header' : 'YH Admin', 'skin' : 'admin/user.html'}
+        return self.echo(D)
+        
 
 
 
