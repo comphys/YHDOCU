@@ -13,6 +13,7 @@
 .list-no {text-align:center; width:60px}
 .list-current-tr {background-color:#464646;}
 .list-current-tr2 {background-color:#464646;border:1px solid yellow;}
+.list-bold {font-weight:700;}
 
 .list-wdate { text-align:center; color:gray;}
 .list-mdate { text-align:center; color:#ffeaea;}
