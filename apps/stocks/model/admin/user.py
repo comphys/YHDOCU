@@ -17,7 +17,8 @@ class M_user(Model) :
         self.D['uid'] = self.gets.get('uid',None)
 
     def user_edit(self) :
-        self.D['user'] = self.DB.one(f"SELECT * FROM h_user_list WHERE uid='{self.D['uid']}'")
+        self.D['user'] = self.DB.line(f"SELECT * FROM h_user_list WHERE uid='{self.D['uid']}'")
+
         
 
 

@@ -113,6 +113,41 @@ class Action(Control) :
         qry = qry.replace(f"h_{cbid}_board",f"h_{nbid}_board")
         self.DB.exe(qry)
         return self.moveto('admin/board')
+    
+    #------------------------------------------------------------------------------------------------
+    # User Part
+    #------------------------------------------------------------------------------------------------
+    def user_add(self) :
+        SAVE = self.D['post']
+  
+        # 무결성 확인
+        tbl = 'h_user_list'
+        uid = SAVE['uid']
+        if  self.DB.cnt(f"SELECT uid FROM {tbl} WHERE uid='{uid}'") : 
+            self.set_message(f"동일한 아이디:{uid} 가 존재합니다",typ="notice")
+            return self.moveto(f"admin/user_add")
+
+        qry = self.DB.qry_insert('h_user_list',SAVE)
+        self.DB.exe(qry)        
+        self.set_message(f"아이디:{uid} 사용자를 추가하였습니다",typ="notice")
+        return self.moveto(f"admin/user")            
+
+
+    def user_edit(self) :
+        uid = self.D['post'].pop('uid')
+        grp = self.D['post']['ugroup']
+        wre = f"uid = '{uid}'"
+        qry = self.DB.qry_update('h_user_list', self.D['post'], wre)
+        self.DB.exe(qry)
+        self.set_message(f"아이디:{uid} 사용자의 정보를 변경하였습니다",typ="notice")
+        return self.moveto(f"admin/user_edit/uid={uid}/grp={grp}")        
+    
+  
+    def user_delete(self) :
+        uid = self.D['post']['uid']
+        self.DB.exe(f"DELETE FROM h_user_list WHERE uid='{uid}'")
+        self.set_message(f"아이디:{uid} 사용자를 삭제하였습니다",typ="notice")
+        return self.moveto("admin/user")
 
 
    

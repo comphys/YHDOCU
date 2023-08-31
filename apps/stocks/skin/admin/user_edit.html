@@ -40,27 +40,27 @@
 		<div class='row'>
 			<div class='span12'>
 				<div class='widget-box'>
-					<div class='widget-title'><span class='icon'><i class='fa fa-th-list'></i></span><h5>사용자 추가</h5></div>
+					<div class='widget-title'><span class='icon'><i class='fa fa-th-list'></i></span><h5>사용자 정보 변경</h5></div>
 					<div class='widget-content nopadding'>
-						<form id='adminBoardB_add' action="{{D['_bse']}}admins-action/user_add" method="post" class="form-horizontal" onsubmit="return UserAddFormCheck(this)">
+						<form id='adminBoardB_add' action="{{D['_bse']}}admins-action/user_edit" method="post" class="form-horizontal" onsubmit="return UserEditFormCheck(this)">
 							<div class='control-group'>
 								<label class='control-label'>유저아이디 : </label>
 								<div class='controls'>
-									<input type='text' name='uid' style='width:150px' />
+									<input type='text' name='uid' value="{{D['user']['uid']}}" style='width:150px' readonly />
 									<span class='control-right-label'>: 영문과 숫자로 작성(첫글자는 영문)하여 주시기 바랍니다</span>
 								</div>
 							</div>
 							<div class='control-group'>
 								<label class='control-label'>유저네임 : </label>
 								<div class='controls'>
-									<input type='text' name='uname' style='width:150px' />
+									<input type='text' name='uname' value="{{D['user']['uname']}}" style='width:150px' />
 									<span class='control-right-label'>: 이름을 입력하여 주시기 바랍니다</span>
 								</div>
 							</div>
 							<div class='control-group'>
 								<label class='control-label'>유저그룹선택 : </label>
 								<div class='controls'>
-									<input type='text' name='ugroup' style='width:150px' />
+									<input type='text' name='ugroup' style='width:150px' value="{{D['user']['ugroup']}}" />
 									<select  style='background:#CCFFFF;display:inline-block;width:180px;' onchange="selectC(this,'ugroup')" >
 										<option selected='selected' value=''> 유저그룹선택 </option>
 										{% for val in D['ugrp'] %}
@@ -72,40 +72,47 @@
 							<div class='control-group'>
 								<label class='control-label'> 패스워드 : </label>
 								<div class='controls'>
-									<input type='text' name='upass' style='width:150px' />
+									<input type='text' name='upass' value="{{D['user']['upass']}}" style='width:150px' />
 									<span class='control-right-label'>: 패스워드를 입력하세요 </span>
 								</div>
 							</div>
 							<div class='control-group'>
 								<label class='control-label'> 유저등급 : </label>
 								<div class='controls'>
-									<input type='text' name='level' style='width:150px' />
+									<input type='text' name='level' value="{{D['user']['level']}}" style='width:150px' />
 									<span class='control-right-label'>: 유저권한 레벨을 입력하여 주시기 바랍니다(0 to 255) </span>
 								</div>
 							</div>
 							<div class='control-group'>
 								<label class='control-label'> 영문명칭 : </label>
 								<div class='controls'>
-									<input type='text' name='eng' style='width:150px' />
+									<input type='text' name='eng' value="{{D['user']['eng']}}" style='width:150px' />
 									<span class='control-right-label'>: 이름의 영문명칭을 입력하여 주세요(선택사항) </span>
 								</div>
 							</div>
 							<div class='control-group'>
 								<label class='control-label'> 이메일 : </label>
 								<div class='controls'>
-									<input type='text' name='email' style='width:150px' />
+									<input type='text' name='email' value="{{D['user']['email']}}" style='width:150px' />
 									<span class='control-right-label'>: 이메일을 입력하여 주세요(선택사항) </span>
 								</div>
 							</div>
 							<div class='control-group'>
 								<label class='control-label'> 타이틀 : </label>
 								<div class='controls'>
-									<input type='text' name='title' style='width:335px' />
+									<input type='text' name='title' value="{{D['user']['title']}}" style='width:335px' />
 									<span class='control-right-label'>: 간략한 타이틀을 입력하여 주세요(선택사항) </span>
 								</div>
 							</div>
 							<div class="form-actions" style='margin:0;padding:0px 170px;'>
-								<button type="submit" class="btn btn-primary" style='width:165px;'><i class='fa fa-check'></i>&nbsp;ADD NEW BOARD</button>
+								<button type="submit" class="btn btn-primary" style='width:200px;'><i class='fa fa-check'></i>&nbsp;UPDATE THIS USER</button>
+							</div>
+						</form>
+						<form action="{{D['_bse']}}admins-action/user_delete" method="post" class="form-horizontal" onsubmit="return UserDeleteFormCheck(this)" >
+							<input type='hidden' name='uid' value="{{D['user']['uid']}}" />
+							<input type='hidden' name='ugroup' value="{{D['user']['ugroup']}}" />
+							<div class="form-actions" style='margin:10px 0 0 0;padding:0 170px;'>
+								<button type="submit" class="btn btn-danger" style='width:200px;'><i class='fa fa-check'></i>&nbsp;DELETE THIS USER</button>
 							</div>
 						</form>
 					</div><!-- widget-content -->
@@ -114,11 +121,22 @@
 		</div><!-- row -->
 	</div><!-- container -->
 
-	<script type="text/javascript">
-		function UserAddFormCheck(f)
-		{
-			if(check_FormInput(f,'uid','아이디','uname','이름','ugroup','유저그룹','upass','패스워드','유저등급','level')) return false;
-		}
-	</script>
+<script type='text/javascript'>
+	function UserEditFormCheck(f)
+	{
+		if(check_FormInput(f,'uid','아이디','uname','이름','ugroup','유저그룹','upass','패스워드')) return false;
+	}
+	function UserDeleteFormCheck(f){
+		    var uid = f.uid.value;
+			h_dialog.confirm('아이디[<span style="color:red">'+ uid + '</span>] 사용자를 정말로 삭제하시겠습니까?', 
+				{ h_title : '재확인 사항',
+				  buttons :  [
+                    { text: '삭제하기', call: function(a) { f.submit();  h_dialog.close(a); }},
+                    { text: '취소하기', call: function(a) { h_dialog.close(a); return false; }}
+                ]
+			});
+			return false; 
+	}
+</script>
 
 {% include D['_skn'] + 'admin/common_tail.html' %}

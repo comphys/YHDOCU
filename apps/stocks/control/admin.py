@@ -56,6 +56,13 @@ class Admin(Control) :
         D = {'title' : '유저관리자', 'header' : 'YH Admin', 'skin' : 'admin/user.html'}
         return self.echo(D)
         
+    def user_edit(self) :
+        if not 'N_NO' in session : return self.moveto('docu/board/login',short=False)
+        M = self.model('admin-user')
+        M.user_edit()
+        D = {'title' : '유저관리자', 'header' : 'YH Admin', 'skin' : 'admin/user_edit.html'}
+        return self.echo(D)
+        
 
 
 
