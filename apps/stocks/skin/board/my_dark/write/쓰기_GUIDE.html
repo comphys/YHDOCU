@@ -22,9 +22,11 @@
 			<div class="btn-group">
 				<a class="btn btn-blue-s2" onclick="client_calculate();return false"><i class="fa fa-font" title="자동계산하기"></i></a>
 				<a class="btn btn-blue-s2" onclick="reset_value();return false"><i class="fa fa-undo" title="되돌리기"></i></a>
-				<a class="btn btn-blue-s4" onclick="money_inout();return false"><i class="fa fa-bank" title="입출금기록"></i></a>
-				<a class="btn btn-red-s1"  onclick="initiate_basic();return false"><i class="fa fa-fast-backward" title="투자 초기화"></i></a>
-			  </div>
+				<a class="btn btn-red-s1"  onclick="initiate_invest();return false"><i class="fa fa-hand-o-right" title="투자 초기화"></i></a>
+			</div>
+			<div class="btn-group">
+				<a class="btn btn-red-s2"  onclick="hedge_bets();return false"><i class="fa  fa-quote-left" title="투자금액 재설정"></i></a>
+			</div>
         </td>
     </tr>
 	<tr style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">
@@ -54,63 +56,6 @@
 	<tr>
 		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
 	</tr>
-    <tr>
-        <td class='write-td-left' id="first_stock">JEPQ</td>
-		<td class="write-td-right">
-			<div class='i-input-div-choice'>
-				<div class='write-input-server'>매수금</div>
-				<input type='text' name='add5' class="i-number" style="width:100px;" value="{{D['BODY']['add5']}}">
-			</div>
-			<div class='i-input-div-choice'>
-				<div class='write-input-server'>매도금</div>
-				<input type='text' name='add6' class="i-number" style="width:100px;" value="{{D['BODY']['add6']}}">
-			</div>
-			<div class='i-input-div-choice'>
-				<div class='write-input-server'>변동수량</div>
-				<input type='text' name='sub8' class="i-number" style="width:110px;" value="{{D['BODY']['sub8']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-server'>배당금</div>
-				<input type='text' name='sub10' class="i-number" style="width:100px;" value="{{D['BODY']['sub10']}}">
-			</div>
-            <br>
-			<div class='i-input-div-2'>
-				<div class='write-input-server'>종가</div>
-				<input type='text' name='add8' class="i-number" style="width:100px;" value="{{D['BODY']['add8']}}">
-			</div>
-			<div class='i-input-div-2'>
-				<div class='write-input-server'>가치</div>
-				<input type='text' name='add9' class="i-number" style="width:100px;" value="{{D['BODY']['add9']}}">
-			</div>
-			<div class='i-input-div-2'>
-				<div class='write-input-server'>보유수량</div>
-				<input type='text' name='add7' class="i-number" style="width:110px;" value="{{D['BODY']['add7']}}">
-			</div>
-			<div class='i-input-div-2'>
-				<div class='write-input-server'>배당비중</div>
-				<input type='text' name='add10' class="i-number" style="width:100px;" value="{{D['BODY']['add10']}}">
-			</div>
-			<div class='i-input-div-2'>
-				<div class='write-input-server'>평균단가</div>
-				<input type='text' name='sub21' class="i-number" style="width:100px;" value="{{D['BODY']['sub21']}}">
-			</div>
-			<div class='i-input-div-2'>
-				<div class='write-input-server'>매도누적</div>
-				<input type='text' name='sub22' class="i-number" style="width:100px;" value="{{D['BODY']['sub22']}}">
-			</div>
-			<div class='i-input-div-2'>
-				<div class='write-input-server'>매수누적</div>
-				<input type='text' name='sub23' class="i-number" style="width:110px;" value="{{D['BODY']['sub23']}}">
-			</div>
-			<div class='i-input-div-2'>
-				<div class='write-input-server'>현매수금</div>
-				<input type='text' name='sub24' class="i-number" style="width:100px;" value="{{D['BODY']['sub24']}}">
-			</div>
-        </td>
-    </tr>
-	<tr>
-		<td colspan="2" style="font-size:2px;line-height:2px;background-color: rgb(1, 2, 19);">&nbsp;</td>
-	</tr>
     <tr style="border:2px solid #CEE3F6;">
         <td class='list-code' style="cursor:pointer">SOXL</td>
 		<td class="write-td-right" style="padding:12px 8px">
@@ -130,11 +75,11 @@
 			</div>
 			<div class='i-input-div-choice'>
 				<div class='write-input-server'>변동수량</div>
-				<input type='text' name='sub9' class="i-number" style="width:110px;" value="{{D['BODY']['sub9']}}">
+				<input type='text' name='add5' class="i-number" style="width:110px;" value="{{D['BODY']['add5']}}">
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-server'>현수익률</div>
-				<input type='text' name='sub33' class="i-text" style="width:100px;text-align:right" value="{{D['BODY']['sub33']}}">
+				<input type='text' name='add8' class="i-text" style="width:100px;text-align:right" value="{{D['BODY']['add8']}}">
 			</div>
             <br>
 			<div class='i-input-div-2'>
@@ -147,7 +92,7 @@
 			</div>
 			<div class='i-input-div-2'>
 				<div class='write-input-server'>보유수량</div>
-				<input type='text' name='add13' class="i-number" style="width:110px;" value="{{D['BODY']['add13']}}">
+				<input type='text' name='add9' class="i-number" style="width:110px;" value="{{D['BODY']['add9']}}">
 			</div>
 			<div class='i-input-div-2'>
 				<div class='write-input-server'>레버비중</div>
@@ -155,7 +100,7 @@
 			</div>
 			<div class='i-input-div-2'>
 				<div class='write-input-server'>평균단가</div>
-				<input type='text' name='sub16' class="i-number" style="width:100px;" value="{{D['BODY']['sub16']}}">
+				<input type='text' name='add7' class="i-number" style="width:100px;" value="{{D['BODY']['add7']}}">
 			</div>
 			<div class='i-input-div-2'>
 				<div class='write-input-server'>매도누적</div>
@@ -167,7 +112,7 @@
 			</div>
 			<div class='i-input-div-2'>
 				<div class='write-input-server'>현매수금</div>
-				<input type='text' name='sub17' class="i-number" style="width:100px;" value="{{D['BODY']['sub17']}}">
+				<input type='text' name='add6' class="i-number" style="width:100px;" value="{{D['BODY']['add6']}}">
 			</div>
 			<div class='i-input-div-2'>
 				<div class='write-input-server'>연속상승</div>
@@ -198,7 +143,7 @@
 				<input type='text' name='add19' class="i-number" style="width:100px;" value="{{D['BODY']['add19']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-server'>배당합계</div>
+				<div class='write-input-server'>양도세금</div>
 				<input type='text' name='sub11' class="i-number" style="width:100px;" value="{{D['BODY']['sub11']}}">
 			</div>
 			<div class='i-input-div'>
@@ -374,13 +319,12 @@ JYHEDITOR.UserTable = function() {
 	$("#tableMenu").css({left:mouse_X - 20 , top:mouse_Y }).toggle();
 }
 
-{% if D['J_LEV'] -%} 
+{% if D['JHIST'] -%} 
 var JBODY = JSON.parse('{{D['JBODY']|safe}}')
 var JSTRG = JSON.parse('{{D['JSTRG']|safe}}')
-var J_DIV = JSON.parse('{{D['J_DIV']|safe}}')
-var J_LEV = JSON.parse('{{D['J_LEV']|safe}}')
+var JHIST = JSON.parse('{{D['JHIST']|safe}}')
 {% endif %}
 
 </script>
-<script src="/skn/stocks/board/my_dark/write/victory.js"></script>
+<script src="/skn/stocks/board/my_dark/write/invest.js"></script>
 {% endblock %}

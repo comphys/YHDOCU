@@ -1,7 +1,7 @@
 from system.core.load import SKIN
 import system.core.my_utils as my
 
-class 쓰기_VICTORY(SKIN) :
+class 쓰기_GUIDE(SKIN) :
 
     def write(self) :
         OBODY = self.D.get('OBODY',None)
@@ -26,20 +26,16 @@ class 쓰기_VICTORY(SKIN) :
 
                 JBODY = self.DB.line(f"SELECT * FROM h_{self.SYS.parm[0]}_board WHERE add0='{prev_date}'")
                 JSTRG = self.DB.line(f"SELECT * FROM h_stock_strategy_board WHERE add0='VICTORY'")
-                J_DIV = self.DB.line(f"SELECT * FROM h_stockHistory_board WHERE add0='{self.D['today']}' and add1='JEPQ'")
-                J_LEV = self.DB.line(f"SELECT * FROM h_stockHistory_board WHERE add0='{self.D['today']}' and add1='SOXL'")
+                JHIST = self.DB.line(f"SELECT * FROM h_stockHistory_board WHERE add0='{self.D['today']}' and add1='SOXL'")
 
 
                 JBODY = { k:v for (k,v) in JBODY.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
                 JSTRG = { k:v for (k,v) in JSTRG.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
-                if     J_DIV : J_DIV = { k:v for (k,v) in J_DIV.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
-                else : J_DIV = {"add3": "0.00"}    
-                J_LEV = { k:v for (k,v) in J_LEV.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
+                JHIST = { k:v for (k,v) in JHIST.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
 
                 self.D['JBODY'] = self.SYS.json(JBODY)
                 self.D['JSTRG'] = self.SYS.json(JSTRG)
-                self.D['J_DIV'] = self.SYS.json(J_DIV)
-                self.D['J_LEV'] = self.SYS.json(J_LEV)
+                self.D['JHIST'] = self.SYS.json(JHIST)
 
 # -----------------------------------------------------------------------------------------------------------------------
 # From Auto Input 

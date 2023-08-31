@@ -1,7 +1,7 @@
 import system.core.my_utils as my
 from system.core.load import SKIN
 
-class 목록_INVEST_GUIDE(SKIN) :
+class 목록_GUIDE(SKIN) :
 
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)
@@ -119,8 +119,8 @@ class 목록_INVEST_GUIDE(SKIN) :
                 매수비율 = 일매수금 / int(LD['sub4']) 
                 기초수량 = my.ceil(매수비율 * int(LD['sub18']))
 
-                찬스수량 = 0  
-                # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))  
+                찬스수량 = 0    
+                 # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
                 for i in range(0,일수+2) : 
                     찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
@@ -228,16 +228,6 @@ class 목록_INVEST_GUIDE(SKIN) :
                         if key =='add17' : style  += f"border-left:2px solid black;"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
                         
-                        txt_format = self.D['EXFORMA'][key] 
-                        
-                        if   txt_format == 'number' : clas = "class='list-add'"
-                        elif txt_format == 'edit'   : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
-                        elif txt_format == 'n_edit' : clas= f"class='list-live-edit' data-no='{item['no']}' data-fid='{key}'" 
-                        elif txt_format == 'mobile' : clas= f"class='list-mobile'" 
-                        else : clas=f"class='list-add'"
-                        
-                    #   if (self.D['EXFTYPE'][key] == 'int') or (txt_format == 'number') or (txt_format == 'n_edit'): txt = f"{int(txt):,}"
-
                         if (txt and self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
                         if (txt and self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,.2f}"
 

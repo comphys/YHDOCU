@@ -95,7 +95,7 @@
 				<td style='text-align:right;'>{{D['GD']['add8']}}</td>
 				<td style='text-align:right;'>{{D['GD']['add16']}}</td>
 	
-				<td style='text-align:right;border-left:2px solid black;'>{{D['GD']['add17']}}</td>
+				<td style='text-align:right;font-weight:700;'>{{D['GD']['add17']}}</td>
 			</tr>
 			<tr><td colspan="17" style="height:2px;background-color:cadetblue;padding:0px;"></td></tr>
 		<tbody>
@@ -284,17 +284,9 @@ const config_side = {
     plugins : { legend: {display:false},
 				tooltip : {enabled:false},
 				datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:10}}			
-	},
-    scales: {
-		y: {
-			grid : {
-				lineWidth:2,
-				color: function(context) {
-					if(context.tick.value == 20 || context.tick.value == 30 || context.tick.value == 50 || context.tick.value == 60 ) { return '#071418'} else return ''
-				}},	beginAtZero: true}
-		}
-	},
-};
+	}
+	}
+}
 const myChart_side = new Chart(ctx_side, config_side); 
 </script>
 

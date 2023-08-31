@@ -52,13 +52,12 @@ class 목록_INVEST(SKIN) :
             self.D['soxl_average'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
             self.D['lever_change'] = [float(x['add8']) for x in chart_data]
             self.D['sell_price']   = ['null'] * chart_slice
-            self.D['chance_price'] = ['null'] * chart_slice
 
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
             
-            LD = self.DB.get_line('add6,add8,add9,add14,add15,add17,add18,add19,add20,sub1,sub2,sub3,sub4,sub7,sub12,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub32')
+            LD = self.DB.get_line('add6,add8,add9,add10,add14,add15,add17,add18,add19,add20,sub1,sub2,sub3,sub4,sub7,sub12,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub32')
             
             # 가치 비율 for chart
             운용자금 = my.sv(LD['add19']) + my.sv(LD['add20'])
@@ -103,38 +102,11 @@ class 목록_INVEST(SKIN) :
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
             self.D['현재환율'] = f"{현재환율:,.2f}"
+            self.D['자산배분'] = LD['add10']
+            self.D['가치합계'] = round(float(LD['add17']))
             
             self.D['필요상승'] = f"({round((float(LD['sub20'])/float(LD['add14']) -1)*100,2)}%)" if int(LD['add9']) else ''
             
-            # ------------- 기회 투자 전략 
-            self.D['현수익률'] = float(LD['add8'])
-            self.D['손실회수'] = float(LD['sub7'])
-            찬스가격 = self.take_chance(int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
-            self.D['찬스가격'] = self.D['매도단가'] if 찬스가격 == 0 else 찬스가격
-
-            if 일수 >= 2 :
-
-                가용잔액 = int( 예치자금 * 2/3)
-                일매수금 = int(가용잔액/22)
-                매수비율 = 일매수금 / int(LD['sub4']) 
-                기초수량 = my.ceil(매수비율 * int(LD['sub18']))
-
-                찬스수량 = 0    
-                 # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
-                for i in range(0,일수+2) : 
-                    찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
-
-                self.D['찬스일자'] = last_date
-                self.D['찬스가격'] = f"{찬스가격:,.2f}"
-                self.D['찬스수량'] = f"{찬스수량:,}"
-                self.D['찬스자본'] = f"{찬스가격*찬스수량:,.2f}"
-                self.D['찬스일수'] = 일수
-                self.D['찬스주가'] = LD['add14']
-                self.D['찬스변동'] = round((찬스가격/float(LD['add14']) -1) * 100,2)
-                self.D['찬스하강'] = LD['sub6']
-                self.D['환율변환'] = f"{찬스가격*찬스수량* 현재환율:,.0f}"
-                self.D['기초환율'] = f"{현재환율:,.2f}"
-
             # 월별 실현손익
             qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {self.D['tbl']} WHERE CAST(add12 as float) > 0 "
             if self.D['limit_date'] : qry += f"and add0 <='{self.D['limit_date']}' " 
@@ -222,11 +194,10 @@ class 목록_INVEST(SKIN) :
                         tx[key] = tmp
                         
                     else : 
-                        if self.D['EXALIGN'][key]  : style   = f"text-align:{self.D['EXALIGN'][key]};"
-                        if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
-                        if key =='add4'  : style  += f"border-right:2px solid black;"
-                        if key =='add17' : style  += f"border-left:2px solid black;"
-                        if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
+                        if self.D['EXALIGN'][key]  : style  = f"text-align:{self.D['EXALIGN'][key]};"
+                        if self.D['EXCOLOR'][key]  : style += f"color:{self.D['EXCOLOR'][key]};"
+                        if self.D['EXCLASS'][key]  : clas   = f"class='{self.D['EXCLASS'][key]}'"  
+                        if self.D['EXWIDTH'][key]  : style += f"width:{self.D['EXWIDTH'][key]};"
                         
                         if (txt and self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
                         if (txt and self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,.2f}"
