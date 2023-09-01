@@ -106,9 +106,9 @@ class 목록_CHANCE(SKIN) :
                     
                 cp00 = self.take_chance( 0,  int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                 cp22 = self.take_chance(-2.2,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
-                
+
                 #  p = 0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
-                찬스가격 = cp00 if (float(TD['add8']) < cp22 or float(TD['sub7'])) else cp22
+                찬스가격 = cp00 if (float(TD['add8']) < -2.2 or float(TD['sub7'])) else cp22
                 찬스가격 = min(float(TD['sub19']),찬스가격)
                 
                 self.D['매수갯수'] = f"{찬스수량:,}"

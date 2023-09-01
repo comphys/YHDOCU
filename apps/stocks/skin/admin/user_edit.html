@@ -2,7 +2,7 @@
 
 <div id='sidebar'>
 	<ul>
-		<li class='active'><a href="{{ D['_bse']}}admin/user"><i class='fa fa-user'></i> <span> 사용자추가하기 </span></a></li>
+		<li><a href="{{ D['_bse']}}admin/user"><i class='fa fa-user'></i> <span> 사용자추가하기 </span></a></li>
         {% for val in D['ugrp'] %}
             <li class="{{'active submenu open' if val['grp'] == D['grp'] else 'submenu'}}">
             <a href='#'><i class='fa fa-th-list'></i> <span> {{ val['grp'] }} </span> <span class='label'> {{val['cnt']}} </span></a>

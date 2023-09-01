@@ -408,7 +408,7 @@ class Invest_guide(Control) :
         
         self.DB.clear()
         self.DB.tbl, self.DB.wre = (f"h_{self.target}_board",f"add0='{theDay}'")
-        TD = self.DB.get_line('add6,add8,add9,add14,sub1,sub2,sub4,sub5,sub6,sub12,sub18,sub19,sub20')
+        TD = self.DB.get_line('add6,add8,add9,add14,sub1,sub2,sub4,sub5,sub6,sub7,sub12,sub18,sub19,sub20')
         self.DB.wre = f"add0='{preDay}'"
         TO = self.DB.get_line('add14, sub19')
         
@@ -442,7 +442,7 @@ class Invest_guide(Control) :
                 
                 cp00 = self.take_chance( 0,  int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                 cp22 = self.take_chance(-2.2,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
-                내일가격 = cp00 if (float(TD['add8']) < cp22 or float(TD['sub7'])) else cp22
+                내일가격 = cp00 if (float(TD['add8']) < -2.2 or float(TD['sub7'])) else cp22
                 
                 self.B['sub19'] = min(float(TD['sub19']),내일가격) 
                 self.B['sub2']  = 내일수량                              
