@@ -12,62 +12,50 @@ class M_dashboard(Model) :
         ckdate = self.DB.get_one("max(add0)")
         self.DB.wre = f"add0='{ckdate}'"
 
-        out = self.DB.get_line("add9,add14,add17,add18,sub1,sub2,sub3,sub12,add7,sub19,sub20,sub25,sub26,sub28,add8")
-        매수수량 = int(out['sub2'])
-        매수가격 = float(out['sub19']) 
-        매수가액 = 매수수량 * 매수가격
+        self.DB.tbl = 'h_I230831_board'
+        out1 = self.DB.get_line('sub2,sub19,sub3,sub20,add10,add17')
 
-        self.D['매수수량'] = f"{매수수량:3d}"
-        self.D['매수가격'] = f"${매수가격:,.2f}"
-        self.D['매수가액'] = f"${매수가액:,.2f}"
-        self.D['현재시즌'] = out['sub1']
-        self.D['경과일수'] = out['sub12']
+        매수수량1 = int(out1['sub2'])
+        매수가격1 = float(out1['sub19']) 
+        매수가액1 = 매수수량1 * 매수가격1
 
-        매도수량 = int(out['sub3'])
-        매도가격 = float(out['sub20']) 
-        매도가액 = 매도수량 * 매도가격
+        self.D['매수수량1'] = f"{매수수량1:3d}"
+        self.D['매수가격1'] = f"${매수가격1:,.2f}"
+        self.D['매수가액1'] = f"${매수가액1:,.2f}"
+        self.D['자산분배1'] = out1['add10']
+        self.D['자산총액1'] = float(out1['add17']) 
 
-        self.D['매도수량'] = f"{매도수량:>3d}"
-        self.D['매도가격'] = f"${매도가격:,.2f}"
-        self.D['매도가액'] = f"${매도가액:,.2f}"
+        매도수량1 = int(out1['sub3'])
+        매도가격1 = float(out1['sub20']) 
+        매도가액1 = 매도수량1 * 매도가격1
 
-        self.D['총입금'] = f"{float(out['sub25']):,.0f}"
-        self.D['총출금'] = f"{float(out['sub26']):,.0f}"
-        self.D['현재액'] = f"{float(out['add17']):,.0f}"
-        self.D['수익금'] = f"{float(out['add17'])-float(out['sub25'])-float(out['sub26']):,.0f}"
-        self.D['수익률'] = f"{float(out['sub28']):,.1f}"
-
-        self.D['현재수량'] = out['add9']    
-        self.D['현재수익'] = out['add18']
-        self.D['현수익률'] = out['add8']
-        self.D['현재주가'] = out['add14']
-        self.D['평균단가'] = out['add7']
-
-        self.chart()
-
-    def chart(self) :
-        self.DB.clear()
-        self.DB.tbl = 'h_INVEST_board'
-        self.DB.odr = "add0 DESC"
-        self.DB.lmt = '20'
-
-        chart_data = self.DB.get("add0,add14,add17,add7,add8",assoc=True)
-
-        if chart_data :
-
-            first_date = chart_data[-1]['add0']
-            last_date  = chart_data[ 0]['add0']
-            self.D['s_date'] = first_date
-            self.D['e_date'] = last_date
-  
-            chart_data.reverse()
+        self.D['매도수량1'] = f"{매도수량1:>3d}"
+        self.D['매도가격1'] = f"${매도가격1:,.2f}"
+        self.D['매도가액1'] = f"${매도가액1:,.2f}"
         
-            self.D['chart_date']   = [x['add0'][5:] for x in chart_data]
-            self.D['close_price']  = [float(x['add14']) for x in chart_data]; close_base = self.D['close_price'][0]
-            self.D['close_change'] = [round((x-close_base) / close_base * 100,2) for x in self.D['close_price']]
-            self.D['total_value']  = [float(x['add17']) for x in chart_data]
-            self.D['soxl_average'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
-            self.D['lever_change'] = [float(x['add8']) for x in chart_data]
+        self.DB.tbl = 'h_C230831_board'
+        out2 = self.DB.get_line('sub2,sub19,sub3,sub20,add10,add17')
+
+        매수수량2 = int(out2['sub2'])
+        매수가격2 = float(out2['sub19']) 
+        매수가액2 = 매수수량1 * 매수가격1
+
+        self.D['매수수량2'] = f"{매수수량2:3d}"
+        self.D['매수가격2'] = f"${매수가격2:,.2f}"
+        self.D['매수가액2'] = f"${매수가액2:,.2f}"
+
+        매도수량2 = int(out2['sub3'])
+        매도가격2 = float(out2['sub20']) 
+        매도가액2 = 매도수량2 * 매도가격2
+
+        self.D['매도수량2'] = f"{매도수량2:>3d}"
+        self.D['매도가격2'] = f"${매도가격2:,.2f}"
+        self.D['매도가액2'] = f"${매도가액2:,.2f}"
+        self.D['자산분배2'] = out2['add10']
+        self.D['자산총액2'] = float(out2['add17']) 
+
+
+
 
 
 

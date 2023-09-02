@@ -196,7 +196,7 @@ function popup_notice(option,size) {
 		{	
 			if(size) width = '350px' ; else width = '230px' 
 			notice_popup = true
-			var url = uri('linkurl') + 'boards-stock_longterm_info/get_subinfo/tbl={{D['tbl']}}/opt='+option;
+			var url = uri('linkurl') + 'boards-stock_subinfo/get_subinfo/tbl={{D['tbl']}}/opt='+option;
 			var ypos = mouse_Y
 			// if(ypos > 400) ypos = ypos-250
 			var o = {id:'POP_INFO', width: width, x:mouse_X+10, y:mouse_Y,header:false,footer:false,drag:true}

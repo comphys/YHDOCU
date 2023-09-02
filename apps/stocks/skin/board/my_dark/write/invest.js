@@ -156,11 +156,10 @@ function tomorrow_sell(opt) {
 	if(경과일수 +1 >= 강매시작) {
 		매도가격 = 평균단가 * 강매가치;
 	}
-
+	if(찬스설정) {매도가격 = ctv('sub20','f'); alert(매도가격)}
+	else if(opt==2) { 매도가격 = s_load('LS','f')} // LS JBODY['LS'] from 쓰기_CHANCE.py 
 	매도가격 = round_up(매도가격);
-	매도수량 = 보유수량;	 
-	// LS JBODY['LS'] from 쓰기_CHANCE.py 
-	if(opt==2) { 매도가격 = s_load('LS','f')}
+	매도수량 = 보유수량;
 }
 
 function tomorrow_buy(opt) {

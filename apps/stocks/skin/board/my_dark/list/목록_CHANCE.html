@@ -10,7 +10,7 @@
 
 <div style="height:370px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
 	<div style="position:absolute;left:30px;top:60px;">
-		<canvas id="myChart_main"  style="width:1078px;height:350px;background-color:#24272d;"></canvas>
+		<canvas id="myChart_main"  style="width:1078px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
 	</div>>
 	<div style="position:absolute;left:1122px;top:62px;">
 		<canvas id="myChart_side" style="width:296px;height:320px;background-color:#24272d"></canvas>
@@ -22,7 +22,6 @@
 		</div>
 	</div>
 </div>
-<!-- <div style="position:absolute;left:1085px;top:60px;width:71px;height:350px;border:2px solid black;background-color:lightgreen;opacity:0.1;z-index:20"></div> -->
 
 {% if D['TR'] %}
 <div id="extra-info" class="clearfix" style="border:2px solid black;background-color:rgb(34, 33, 33);padding:5px 20px;margin-bottom:-2px">
@@ -181,7 +180,7 @@ function popup_notice(option,size) {
 		{	
 			if(size) width = '350px' ; else width = '230px' 
 			notice_popup = true
-			var url = uri('linkurl') + 'boards-stock_longterm_info/get_subinfo/tbl={{D['tbl']}}/opt='+option;
+			var url = uri('linkurl') + 'boards-stock_subinfo/get_subinfo/tbl={{D['tbl']}}/opt='+option;
 			var ypos = mouse_Y
 			// if(ypos > 400) ypos = ypos-250
 			var o = {id:'POP_INFO', width: width, x:mouse_X+10, y:mouse_Y,header:false,footer:false,drag:true}
@@ -197,12 +196,14 @@ const ctx_side = $id('myChart_side');
 ctx_main.style.backgroundColor = '#33363b';
 ctx_main.style.border = '2px solid black';
 
-let labels_main = {{D['chart_date']|safe}};				
-let close_price = {{D['close_price']|safe}}; 		
-let soxl_average = {{D['soxl_average']|safe}};		
+let labels_main  = {{D['chart_date']|safe}};				
+let close_price  = {{D['close_price']|safe}}; 		
+let soxl_average = {{D['soxl_average']|safe}};	
+let soxl_profits = {{D['soxl_profits']|safe}};	
 let target_value = {{D['target_value']|safe}};		
 let chance_value = {{D['chance_value']|safe}};		
 let chance_average = {{D['chance_average']|safe}};	
+let chance_profits = {{D['chance_profits']|safe}};	
 
 const data_main = {
     labels : labels_main,
@@ -240,7 +241,7 @@ const data_main = {
     ]   
 };
 const options_main = {
-	animation : { duration:0},
+	animation : { duration:500},
 
 	plugins : { legend: {display:false}, tooltip:{enabled:true}},
     responsive:false,
@@ -262,7 +263,7 @@ var allot_key = Object.keys(allot);
 var allot_val = Object.values(allot);
 var allot_sum = allot_val.reduce((acc,cur) => acc+cur,0);
 allot_val.forEach((val,idx,arr)=>{arr[idx]=Math.floor(val/allot_sum*cur_total);});
-{% endif %}
+
 
 const data_side = {
   labels: allot_key,
@@ -287,7 +288,100 @@ const config_side = {
 	}
 	}
 }
-const myChart_side = new Chart(ctx_side, config_side); 
-</script>
+const myChart_side = new Chart(ctx_side, config_side);
+{% endif %} 
 
+
+// ------------------------------------------------------------
+// Sub Chart
+// ------------------------------------------------------------
+const data_sub = {
+	labels : labels_main,
+	datasets : [
+		{label:' 종가변동',data : close_price,   borderColor:'cyan',    borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 평균변동',data : soxl_profits,  borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 찬스변동',data : chance_profits,borderColor:'yellow',  borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+	]   
+}
+
+
+const options_sub = {
+	animation : { duration:500},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:false} },
+	responsive:false,
+	layout:{padding:20},
+	scales:{
+		x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+		y: { ticks : {color:'gray'}, 
+		grid:{
+			color:function(context) {
+				if( context.tick.value == 0 ) { return 'gray'}
+				else if(context.tick.value % 10 == 0 ) { return 'black'} },
+			lineWidth: function(context) {if(context.tick.value %10 == 0 ) { return 1 } else return 0},
+		},
+		position:'right'}
+	}
+}
+
+
+let second_chart = false;
+
+function chart_toggle() {
+	if(! second_chart ) {
+		myChart_main.config.data = data_sub;
+		myChart_main.config.options = options_sub;
+	} else {
+		myChart_main.config.data = data_main;
+		myChart_main.config.options = options_main;
+	}
+	second_chart = ! second_chart;
+	slice_chart(1)
+}
+
+function slice_chart(opt) {
+
+	var s_date,e_date,new_s,new_e
+	if(opt==1) { 
+		s_date = $("input[name='s_date']").val().slice(2); 
+		e_date = $("input[name='e_date']").val().slice(2); 
+		for(d=0; d<labels_main.length; d++)     { if(labels_main[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_main[d]);break;}} 
+		for(d=labels_main.length-1; d >=0; d-- ) 	{ if(labels_main[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_main[d]);break;}} 
+	} else if(opt==2) { 
+		$("input[name='s_date']").val(season_first_day);
+		$("input[name='e_date']").val("{{D['e_date']}}");
+		s_date = season_first_day.slice(2);
+		new_s = labels_main.indexOf(s_date) 
+		new_e = labels_main.length;
+	} else {
+		s_date = "{{D['s_date']}}".slice(2); 
+		e_date = "{{D['e_date']}}".slice(2)
+		$("input[name='s_date']").val("{{D['s_date']}}"); 
+		$("input[name='e_date']").val("{{D['e_date']}}");
+		new_s =0; new_e = labels_main.length
+	}
+	end_date = $("input[name='e_date']").val().slice(2);
+	
+	let base;
+	if(second_chart) {
+		myChart_main.config.data.labels_main = labels_main.slice(new_s,new_e);
+		myChart_main.config.data.datasets[0].data =  close_price.slice(new_s,new_e);
+		myChart_main.config.data.datasets[1].data =  soxl_profits.slice(new_s,new_e);
+		myChart_main.config.data.datasets[2].data =  chance_profits.slice(new_s,new_e);
+		for(i=0;i<1;i++) {
+			base=myChart_main.config.data.datasets[i].data[0]; 
+			myChart_main.config.data.datasets[i].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})
+		}	
+
+	} else {
+		myChart_main.config.data.labels_main = labels_main.slice(new_s,new_e);
+		myChart_main.config.data.datasets[0].data =  close_price.slice(new_s,new_e);
+		myChart_main.config.data.datasets[1].data =  soxl_average.slice(new_s,new_e);
+		myChart_main.config.data.datasets[2].data =  target_value.slice(new_s,new_e);
+		myChart_main.config.data.datasets[3].data =  chance_value.slice(new_s,new_e);
+		myChart_main.config.data.datasets[4].data =  chance_average.slice(new_s,new_e);
+	}
+	myChart_main.update();
+}
+</script>
 {% endblock %}
