@@ -13,7 +13,7 @@ class M_dashboard(Model) :
         self.DB.wre = f"add0='{ckdate}'"
 
         self.DB.tbl = 'h_I230831_board'
-        out1 = self.DB.get_line('sub2,sub19,sub3,sub20,add10,add17')
+        out1 = self.DB.get_line('sub2,sub19,sub3,sub20,add10,add17,sub25')
 
         매수수량1 = int(out1['sub2'])
         매수가격1 = float(out1['sub19']) 
@@ -32,9 +32,10 @@ class M_dashboard(Model) :
         self.D['매도수량1'] = f"{매도수량1:>3d}"
         self.D['매도가격1'] = f"${매도가격1:,.2f}"
         self.D['매도가액1'] = f"${매도가액1:,.2f}"
+        self.D['증가비율1'] = float(out1['add17'])/float(out1['sub25']) * 100
         
         self.DB.tbl = 'h_C230831_board'
-        out2 = self.DB.get_line('sub2,sub19,sub3,sub20,add10,add17')
+        out2 = self.DB.get_line('sub2,sub19,sub3,sub20,add10,add17,sub25')
 
         매수수량2 = int(out2['sub2'])
         매수가격2 = float(out2['sub19']) 
@@ -43,6 +44,8 @@ class M_dashboard(Model) :
         self.D['매수수량2'] = f"{매수수량2:3d}"
         self.D['매수가격2'] = f"${매수가격2:,.2f}"
         self.D['매수가액2'] = f"${매수가액2:,.2f}"
+        self.D['자산분배2'] = out2['add10']
+        self.D['자산총액2'] = float(out2['add17'])
 
         매도수량2 = int(out2['sub3'])
         매도가격2 = float(out2['sub20']) 
@@ -51,8 +54,8 @@ class M_dashboard(Model) :
         self.D['매도수량2'] = f"{매도수량2:>3d}"
         self.D['매도가격2'] = f"${매도가격2:,.2f}"
         self.D['매도가액2'] = f"${매도가액2:,.2f}"
-        self.D['자산분배2'] = out2['add10']
-        self.D['자산총액2'] = float(out2['add17']) 
+        self.D['증가비율2'] = float(out2['add17'])/float(out2['sub25']) * 100
+ 
 
 
 
