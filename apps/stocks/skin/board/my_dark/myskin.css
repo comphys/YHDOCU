@@ -31,7 +31,7 @@
 #filter-qry {color:yellow;}
 #filter-reset { cursor:pointer; width:60px; text-align:center;}
 #cell-sum {font-weight:bold;color:yellow;margin-right:10px}
-#send-to-mobile-div {display:none;background-color:black;padding:10px;border:1px solid black;border-radius:6px;border:none;}
+#send-to-mobile-div {position:absolute;top:50px;left:20px;display:none;background-color:black;padding:10px;border:1px solid black;border-radius:6px;border:none;z-index:200;}
 #send-to-mobile-select {display:inline-block;outline:none;margin-right:10px;}
 #send-to-mobile-text {display:inline-block;color:cyan;outline:none;width:600px;white-space:pre-wrap;}
 #send-to-mobile-send {display:inline-block;color:yellow;width:80px;text-align:right;}
