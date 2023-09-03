@@ -36,6 +36,10 @@ class Page(Control) :
         
         return self.echo(D)
 
+    # ----------------------------------------------------
+    # For back_testing
+    # ----------------------------------------------------
+
     def backtest(self) :
         self.M = {}
         
@@ -58,30 +62,6 @@ class Page(Control) :
         D={'skin':f"{self.skin}/{self.D['bid']}_{self.D['strategy']}.html"}
         return self.echo(D)
 
-    def backtest2(self) :
-        self.M= {}
-        self.D['code']       = self.D['post']['code']
-        self.D['leverage']    = self.D['post']['leverage']
-        self.D['cash']   = self.D['post']['cash']
-        self.D['start_date'] = self.D['post']['start_date']
-        self.D['end_date']   = self.D['post']['end_date']
-        self.D['strategy']   = self.D['post']['strategy']
-
-        M = self.model('backtest-backtest_LT_backtest')
-        M.view()
-        M.get_start()
-        M.test_it()
-        D={'skin':f"{self.skin}/{self.D['bid']}.html"}
-        return self.echo(D)
-
-    def dashboard(self) :
-        D={'skin':f"{self.skin}/{self.D['bid']}.html"}
-        return self.echo(D)     
-
-    def dashboard2(self) :
-        D={'skin':f"{self.skin}/{self.D['bid']}.html"}
-        return self.echo(D)    
-
 
     def get_ohlc(self) :
         code = self.gets['code']
@@ -103,53 +83,6 @@ class Page(Control) :
         output += "</tr></table></div>"
         return self.echo(output)
 
-    def test_if(self) :
-
-        self.D['progress']   = self.gets['progress']
-        self.D['code']       = 'SOXL'
-        self.D['strategy']   = '셋째계좌'
-        self.D['capital']    = '20,000'
-        self.D['addition']   = '2,000'
-        self.D['start_date'] = self.gets['date']
-        self.D['end_date']   = my.timestamp_to_date(opt=7)
-
-        M = self.model('backtest-backtest_DNA_2022')
-
-        M.get_start()
-        M.test_this_day()
-
-        output  = "<div id='stock_tips' style='width:260px;height:180px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:2px solid #f6cece;' ondblclick=\"h_dialog.close('TEST_IF')\">"
-        output += f"시작일 = {self.D['s_day']} 진행률 {self.D['progress']} %<br>"
-        output += f"종료일 = {self.D['e_day']} <br>"
-        output += f"소요일 = {self.D['days_span']}일 <br>"
-        output += "=======================<br>"
-        output += f"총씨드 = {self.D['s_capital']:,} <br>"
-        output += f"최종액 = {self.D['e_capital']:,.2f} <br>"
-        output += f"수익률 = {self.D['profit_rate']:,.2f} % <br>"
-        output += "</div>"
-        return self.echo(output)
-
-    def test_theday(self) :
-
-        self.D['code']       = 'SOXL'
-        self.D['strategy']   = '첫째계좌'
-        self.D['capital']    = '20,000'
-        self.D['addition']   = '2,000'
-        self.D['start_date'] = self.gets['date']
-        self.D['end_date']   = my.timestamp_to_date(opt=7)
-
-
-        M = self.model('backtest-backtest_DNA_2022')
-        M.get_start()
-        M.test_the_day()
-
-        output  = "<div id='stock_tips' style='width:200px;height:180px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:2px solid #F7F8E0;' ondblclick=\"h_dialog.close('TEST_DAY')\">"
-        output += f"시작일 = {self.D['s_day']} <br>"
-        output += f"종료일 = {self.D['e_day']} <br>"
-        output += f"소요일 = {self.D['days_span']}일 <br>"
-        output += "==============<br>"
-        output += f"총씨드 = {self.D['s_capital']} <br>"
-        output += f"최종액 = {self.D['e_capital']:,.2f} <br>"
-        output += f"수익률 = {self.D['profit_rate']:,.2f} % <br>"
-        output += "</div>"
-        return self.echo(output)
+    # ----------------------------------------------------
+    # For engtutor
+    # ----------------------------------------------------

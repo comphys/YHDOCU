@@ -84,7 +84,7 @@
 									<input type='text' name='skin' style='width:150px' />
 									<select  style='background:#ffecef;display:inline-block;width:180px;' onchange="selectC(this,'skin')" >
 										<option selected='selected' value=''> 스킨선택 </option>
-										{% for val in D['skins'] %}  
+										{% for val in D['skin_list'] %}  
 										<option value='{{val}}'> {{val}} </option>
 										{% endfor %}
 									</select>
@@ -106,7 +106,6 @@
 			var str = f.bid.value; 
 			var re = new RegExp("^[a-z][a-z0-9_]+[a-z0-9]$","i");
 			var msg=''; 
-			if(!f.skin.value) msg = '스킨을 선택하여 주세요';
 			if(!f.title.value) msg = '보드 타이틀을 기재하여 주시기 바랍니다';
 			if(!re.test(str))  msg = '보드명이 형식에 맞지 않습니다'; 
 			if(!str) msg ='보드명을 기재하여 주시기 바랍니다'; 

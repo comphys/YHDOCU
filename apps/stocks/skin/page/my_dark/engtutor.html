@@ -1,0 +1,39 @@
+{% extends D['_skn'] + 'page/my_dark/main_layout_mobile.html' %}
+
+{% block contents_page  %}
+<div>
+<div style='font-size:14px;margin-bottom:10px;text-align:left;font-style:italic'>
+<b>JYH</b> Translator ver 1.0
+</div>
+
+<div style="margin-top:5px;">
+	<textarea name="korean" style="width:355px;height:200px;background-color:#0a2229;padding:10px"></textarea>
+</div>
+<div class="well" style="margin-top:10px;width:355px;text-align:center;cursor:pointer;" onclick="do_translate()">
+한글을 영어로 변역 ( Korean into English )
+</div>
+<div style="margin-top:5px;">
+	<textarea name="english" style="width:355px;height:280px;background-color:#071418;padding:10px" readonly></textarea>
+</div>
+
+<div class="well" style="margin-top:5px;width:355px;text-align:center;cursor:pointer;" onclick="do_clear()">
+  내용 지우기
+</div>
+
+
+</div>
+<script>
+function do_translate() {
+  let txt = $("textarea[name=korean]").val();
+  txt = $.trim(txt);
+  if(!txt) { h_dialog.alert("번역할 문장을 입력하여 주세요"); return; }
+	var posturl = uri('linkurl') + 'pages-pajax/eng_reply';
+	$.post( posturl,{txt:txt}).done( function(data) {$("textarea[name=english]").val(data);});	
+}
+
+function do_clear() {
+  $("textarea[name=korean]").val('');
+  $("textarea[name=english]").val('');
+}
+</script>
+{% endblock %}
