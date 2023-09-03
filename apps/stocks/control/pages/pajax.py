@@ -7,6 +7,7 @@ class Pajax(Control) :
         
     def eng_reply(self) :
         text = self.D['post']['txt']
+        text = f'"{text}" 를 영어로 번역해 주세요.'
         openai.api_key = self.DB.store('openai_key')
         system_role = self.DB.store('openai_english_teacher')
         messages=[{"role": "system", "content": system_role}]
