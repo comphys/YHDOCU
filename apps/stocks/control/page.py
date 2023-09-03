@@ -13,7 +13,8 @@ class Page(Control) :
             self.D['bid']     = self.parm[0] 
             self.D['BCONFIG'] = self.DB.exe(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'",many=1,assoc=True)
             self.D['xwidth'] = self.D['BCONFIG']['width'] if self.D['BCONFIG']['width'] else '815px'
-
+            if self.D['_mbl'] : self.D['xwidth'] = '384px'
+            
             self.skin = 'page/'+self.D['BCONFIG']['skin']
             self.D['DOCU_ROOT'] = self.C['DOCU_ROOT']
 

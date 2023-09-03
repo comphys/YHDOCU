@@ -15,8 +15,7 @@
 <script src="/skn/stocks/page/my_dark/skin.js"></script>
 <script src="/sys/zebra_datepicker/zebra_datepicker.min.js"></script>
 <style>
-	html{height:100%}
-	body{margin:0px;height:100%;width:100%}
+body{margin:0px;width:100%}
 </style>
 </head>
 <body>
@@ -34,7 +33,7 @@
 				{% endif %}
 				<ul class='dropdown-menu'>
 				{% for val in D[menu[0]] %}
-					<li><a href="/stocks/{{ val['bid'] }}">{{ val['title'] }}</a></li> 
+					<li><a href="{{D['_bse']}}{{ val['bid'] }}">{{ val['title'] }}</a></li> 
 				{% endfor %}
 				</ul>
 			</li>

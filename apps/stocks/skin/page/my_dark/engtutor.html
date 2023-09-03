@@ -7,16 +7,16 @@
 </div>
 
 <div style="margin-top:5px;">
-	<textarea name="korean" style="width:355px;height:200px;background-color:#0a2229;padding:10px"></textarea>
+	<textarea name="korean" style="width:100%;height:200px;background-color:#0a2229;padding:10px"></textarea>
 </div>
-<div class="well" id="btn1" style="margin-top:5px;width:355px;text-align:center;cursor:pointer;" onclick="do_translate()">
+<div class="well" id="btn1" style="margin-top:5px;width:100%;text-align:center;cursor:pointer;" onclick="do_translate()">
 한글을 영어로 변역 ( Korean into English )
 </div>
 <div style="margin-top:5px;">
-	<textarea name="english" style="width:355px;height:280px;background-color:#071418;color:#E0F8E0;padding:10px" readonly></textarea>
+	<textarea name="english" style="width:100%;height:280px;background-color:#071418;color:#E0F8E0;padding:10px" readonly></textarea>
 </div>
 
-<div class="well" id="btn2" style="margin-top:5px;width:355px;text-align:center;cursor:pointer;" onclick="do_clear()">
+<div class="well" id="btn2" style="margin-top:5px;width:100%;text-align:center;cursor:pointer;" onclick="do_clear()">
   내용 지우기
 </div>
 
@@ -32,7 +32,7 @@ function do_translate() {
   $("div.well").css("backgroundColor","#0B4C5F");
   let msg1 = $("#btn1").text();
   let msg2 = $("#btn2").text();
-  $(".well").css("backgroundColor","").text("번역 중입니다...");
+  $(".well").css("backgroundColor","#0B4C5F").text("번역 중입니다...");
   
 	$.post( posturl,{txt:txt}).done( function(data) { $("textarea[name=english]").val(data); h_dialog.closeCover();
     $(".well").css("backgroundColor","");
