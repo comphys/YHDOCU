@@ -7,7 +7,7 @@ class Sms(Control) :
 
     def _auto(self) :
         self.DB = self.db('stocks')
-        my_key = self.DB.one("SELECT p_data_01 FROM my_keep_data WHERE no=1")
+        my_key = self.DB.store("slack_key")
 
         self.client = WebClient(token=my_key)
 

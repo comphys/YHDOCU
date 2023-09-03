@@ -360,11 +360,11 @@ var h_dialog = {
 
 	},
 	cover : function(a) {
-				var o = { over_close:false, over_opacity:0.6 }; 
+				var o = { over_close:false, over_opacity:0.6, spin:false }; 
 				if(typeof a == 'object') $.extend(o,a);
 				$("<div>", { id  :  'overlay_only' , class : 'h_dialog_overlay'}).appendTo("body").show();
-			//	$( '<i class="fa fa-spinner fa-5x fa-spin"></i>' ).appendTo( "#overlay_only" );
-				$( '<div id="progress_index">123</div>' ).appendTo( "#overlay_only" );
+				if(o.spin) $( '<i class="fa fa-spinner fa-5x fa-spin"></i>' ).appendTo( "#overlay_only" );
+				else $( '<div id="progress_index"></div>' ).appendTo( "#overlay_only" );
 				if(o.over_opacity) $("#overlay_only").css({opacity: o.over_opacity});
 				if(o.over_close  ) $("#overlay_only").on('click', function() {$('#overlay_only').animate({opacity:0},300,function(){ $("#overlay_only").remove(); });});
 	},
