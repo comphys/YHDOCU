@@ -22,6 +22,6 @@ class Pajax(Control) :
         
         messages.append({"role":"user","content":f"{text}"})
         
-        completion = openai.ChatCompletion.create(model="gpt-3.5-turbo",temperature=0.8,messages=messages)
+        completion = openai.ChatCompletion.create(model="gpt-3.5-turbo",temperature=0.7,messages=messages,max_tokens=2048)
         assistant_content = completion.choices[0].message['content'].strip()
         return assistant_content
