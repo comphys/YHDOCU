@@ -197,3 +197,19 @@ class DB :
     def store_delete(self,key) :
         qry = f"DELETE FROM STORAGE WHERE key='{key}'"
         self.exe(qry)
+        
+    def table_info(self,tbl,info='col') :
+        # [cid / Integer / Column index ], [name / Text / Column name] , [type/Text/Colunm type, as given]
+        # [notnull/Integer/Has a Not NULL], [dflt_value/Text/Default value], [pk/Integer/Is part of the PK]
+        temp = self.exe(f"pragma table_info({tbl})")
+        cid    = [x[0] for x in temp]
+        col    = [x[1] for x in temp]
+        typ    = [x[2] for x in temp]
+        nnl    = [x[3] for x in temp]
+        dft    = [x[4] for x in temp]
+        pky    = [x[5] for x in temp]
+
+        if   info == 'col'      : return col
+        elif info == 'typ'      : return typ
+        elif info == 'col:typ'  : return dict(zip(col,typ)) 
+        elif info == 'all'      : return list(zip(cid,col,typ,nnl,dft,pky))
