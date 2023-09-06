@@ -8,22 +8,39 @@ class M_dashboard(Model) :
         self.D['오늘날자']  = my.timestamp_to_date(opt=7) 
         self.D['오늘요일']  = my.dayofdate(self.D['오늘날자'])
         
-        # get today and yesterday
-        
-        days  = self.DB.exe("SELECT add0 FROM h_stockHistory_board WHERE add1='SOXL' ORDER BY add0 DESC LIMIT 2" )
-        today = days[0][0]
-        # yesterday = days[1][0]
+        today  = self.DB.one("SELECT max(add0) FROM h_stockHistory_board WHERE add1='SOXL'" )
+        last_day = today
+        self.D['키움증권'] = ''
+        self.D['하이투자'] = ''
         
         self.DB.tbl = 'h_INVEST_board'
         cols = self.DB.table_info(self.DB.tbl)
         select_cols = [x for x in cols if x not in ('no', 'brother', 'add0', 'tle_color', 'uid', 'uname', 'content', 'reply', 'hit', 'wdate', 'mdate')]
         self.DB.wre = f"add0='{today}'"
         TD = self.DB.get_line(select_cols)
-
+        
+        if not TD : 
+            last_day = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
+            self.DB.wre = f"add0='{last_day}'"
+            TD = self.DB.get_line(select_cols)
+        
         self.DB.tbl = 'h_I230831_board'
         ID = self.DB.get_line(select_cols)
+        if not ID : 
+            last_day = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
+            self.DB.wre = f"add0='{last_day}'" 
+            ID = self.DB.get_line(select_cols)
+        
+        if today != last_day : self.D['키움증권'] = 'Need Updating'      
+        
         self.DB.tbl = 'h_C230831_board'
         CD = self.DB.get_line(select_cols)
+        if not CD : 
+            last_day = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
+            self.DB.wre = f"add0='{last_day}'"
+            CD = self.DB.get_line(select_cols)
+        
+        if today != last_day : self.D['하이투자'] = 'Need Updating'   
 
         # 키움증권
         
