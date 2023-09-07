@@ -213,3 +213,9 @@ class DB :
         elif info == 'typ'      : return typ
         elif info == 'col:typ'  : return dict(zip(col,typ)) 
         elif info == 'all'      : return list(zip(cid,col,typ,nnl,dft,pky))
+        
+    def table_cols(self,tbl,omit=None) :
+        cols = self.table_info(tbl,'col')
+        if omit : cols = [x for x in cols if x not in omit]
+        return cols
+    
