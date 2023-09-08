@@ -8,7 +8,8 @@ class M_dashboard(Model) :
         self.D['오늘날자']  = my.timestamp_to_date(opt=7) 
         self.D['오늘요일']  = my.dayofdate(self.D['오늘날자'])
         
-        today  = self.DB.one("SELECT max(add0) FROM h_stockHistory_board WHERE add1='SOXL'" )
+        today,close_price  = self.DB.exe("SELECT add0,add3 FROM h_stockHistory_board WHERE add1='SOXL' ORDER BY add0 DESC LIMIT 1",many=1,assoc=False)
+
         last_day = today
         self.D['투자안내'] = ''
         self.D['키움증권'] = ''
@@ -119,6 +120,8 @@ class M_dashboard(Model) :
         self.D['매도가격2'] = f"{매도가격2:,.2f}"
         self.D['매도가액2'] = f"{매도가액2:,.2f}"
         self.D['증가비율2'] = float(CD['add17'])/float(CD['sub25']) * 100
+        self.D['기준일자'] = today
+        self.D['기준종가'] = close_price
 
 
     def chance_init(self,balance,t_day_amount,t_basic_qty) :
