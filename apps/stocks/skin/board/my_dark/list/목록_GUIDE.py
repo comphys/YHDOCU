@@ -65,7 +65,7 @@ class 목록_GUIDE(SKIN) :
             예치자금 = my.sv(LD['sub32'])
             주식가치 = my.sv(LD['add15'])
             가치합계 = 운용자금 + 예치자금 + 주식가치
-            self.D['chart_percent'] = [round(운용자금/가치합계*100,2),round(예치자금/가치합계*100,2),round(주식가치/가치합계*100,2)]
+            self.D['chart_percent'] = [round(운용자금/가치합계*100,2),round(주식가치/가치합계*100,2)]
 
             # -- 환율 가져오기
             # 현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)"))

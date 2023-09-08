@@ -61,6 +61,9 @@ class M_dashboard(Model) :
         매도가격1 = float(ID['sub20']) 
         매도가액1 = 매도수량1 * 매도가격1
 
+        sellP1 = (매도가격1/float(close_price) - 1) * 100
+        self.D['현수익률1'] = ID['add8']
+        self.D['매도시점1'] = f"{sellP1:,.2f}"
         self.D['매도수량1'] = f"{매도수량1:,}"
         self.D['매도가격1'] = f"{매도가격1:,.2f}"
         self.D['매도가액1'] = f"{매도가액1:,.2f}"
@@ -111,6 +114,11 @@ class M_dashboard(Model) :
         매수가액2 = 매수수량2 * 매수가격2
         매도가액2 = 매도수량2 * 매도가격2
         
+        sellP2 = (매도가격2/float(close_price) - 1) * 100
+        self.info(매도가격2)
+        self.info(sellP2)
+        self.D['현수익률2'] = CD['add8']
+        self.D['매도시점2'] = f"{sellP2:.2f}"
         self.D['매수수량2'] = f"{매수수량2:,}"
         self.D['매수가격2'] = f"{매수가격2:,.2f}"
         self.D['매수가액2'] = f"{매수가액2:,.2f}"

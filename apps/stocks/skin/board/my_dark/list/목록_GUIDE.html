@@ -226,7 +226,6 @@ function limt_period() {
 	let lever_change = {{D['lever_change']|safe}};
 	let total_profit = {{D['total_profit']|safe}};
 	let sell_price = {{D['sell_price']|safe}};
-	let chance_price = {{D['chance_price']|safe}};
 
 	let labels_2 = labels.slice({{D['chart_start']}});
 	let close_price2 = close_price.slice({{D['chart_start']}});
@@ -236,7 +235,6 @@ function limt_period() {
 	let close_change2 = close_change.slice({{D['chart_start']}});
 	let lever_change2 = lever_change.slice({{D['chart_start']}});
 	let sell_price2 = sell_price.slice({{D['chart_start']}});
-	let chance_price2 = chance_price.slice({{D['chart_start']}});
 
 	let sellP = {{D['매도단가']}};
 	let chanP = {{D['찬스가격']}};
@@ -256,9 +254,7 @@ function limt_period() {
 			{
 				label:' 가치합계',data : total_value2,borderColor:'rgba(255, 255, 0, 0.8)', borderWidth:2,pointRadius:0, lineTension:0.2,yAxisID : 'y1'},	
 			{
-				label:' 매도가격',data : sell_price2,borderColor:'yellow', borderWidth:1, pointRadius:0, borderDash:[2,2]},	
-			{
-				label:' 찬스가격',data : chance_price2,borderColor:'darkgray', borderWidth:1, pointRadius:0, borderDash:[2,2]
+				label:' 매도가격',data : sell_price2,borderColor:'yellow', borderWidth:1, pointRadius:0, borderDash:[2,2]
 			}
 		]   
 	}
@@ -275,12 +271,13 @@ function limt_period() {
 	//
 
 	// Side Chart
-	const labels_side = ['Cash','Deposit','Leverage'];
+	const labels_side = ['Cash','Leverage'];
 	const data_side = {
 	labels: labels_side,
 	datasets: [{label: ' 자산배분비율 ',data: {{D['chart_percent']}},
-		backgroundColor: ['rgba(255, 205, 86, 0.4)','rgba(75, 192, 192, 0.4)','rgba(255, 99, 132, 0.4)'],
-		borderColor: ['rgb(255, 205, 86)','rgb(75, 192, 192)','rgb(255, 99, 132)'],	borderWidth: 1
+		backgroundColor: ['rgba(75, 192, 192, 0.4)','rgba(255, 99, 132, 0.4)'],
+		borderColor: ['rgb(75, 192, 192)','rgb(255, 99, 132)'],	borderWidth: 1,
+		barThickness:60
 		}]
 	}
 
@@ -392,11 +389,9 @@ function limt_period() {
 			myChart.config.data.datasets[1].data =  soxl_average.slice(new_s,new_e);
 			myChart.config.data.datasets[2].data =  total_value.slice(new_s,new_e);
 			myChart.config.data.datasets[3].data =  sell_price.slice(new_s,new_e);
-			myChart.config.data.datasets[4].data =  chance_price.slice(new_s,new_e);
 			if(myChart.config.data.datasets[3].data.length<=42 && the_current_day.slice(2) == end_date) {
 			myChart.config.data.datasets[2].data.fill(null);
 			myChart.config.data.datasets[3].data.fill(sellP);
-			myChart.config.data.datasets[4].data.fill(chanP);
 			}
 		}
 		myChart.update();
