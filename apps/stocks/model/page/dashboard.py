@@ -115,8 +115,6 @@ class M_dashboard(Model) :
         매도가액2 = 매도수량2 * 매도가격2
         
         sellP2 = (매도가격2/float(close_price) - 1) * 100
-        self.info(매도가격2)
-        self.info(sellP2)
         self.D['현수익률2'] = CD['add8']
         self.D['매도시점2'] = f"{sellP2:.2f}"
         self.D['매수수량2'] = f"{매수수량2:,}"
