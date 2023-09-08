@@ -67,7 +67,7 @@ class M_dashboard(Model) :
         self.D['매도수량1'] = f"{매도수량1:,}"
         self.D['매도가격1'] = f"{매도가격1:,.2f}"
         self.D['매도가액1'] = f"{매도가액1:,.2f}"
-        self.D['증가비율1'] = float(ID['add17'])/float(ID['sub25']) * 100
+        self.D['증가비율1'] = round(float(ID['add17'])/float(ID['sub25']) * 100,2)
         
 
         # 하이투자
@@ -127,7 +127,7 @@ class M_dashboard(Model) :
         self.D['매도수량2'] = f"{매도수량2:,}"
         self.D['매도가격2'] = f"{매도가격2:,.2f}"
         self.D['매도가액2'] = f"{매도가액2:,.2f}"
-        self.D['증가비율2'] = float(CD['add17'])/float(CD['sub25']) * 100
+        self.D['증가비율2'] = round(float(CD['add17'])/float(CD['sub25']) * 100,2)
         self.D['기준일자'] = today
         self.D['기준종가'] = close_price
 
@@ -143,10 +143,4 @@ class M_dashboard(Model) :
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)
-
-
-
-
-
-
- 
+    
