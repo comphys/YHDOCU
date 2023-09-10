@@ -127,6 +127,7 @@ class M_dashboard(Model) :
         self.D['매도가액2'] = f"{매도가액2:,.2f}"
         self.D['증가비율2'] = round(float(CD['add17'])/float(CD['sub25']) * 100,2)
         self.D['기준일자'] = today
+        self.D['기준요일'] = my.dayofdate(today)
         self.D['기준종가'] = close_price
 
 
