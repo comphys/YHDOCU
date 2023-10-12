@@ -7,6 +7,7 @@ class M_dashboard(Model) :
     
         self.D['오늘날자']  = my.timestamp_to_date(opt=7) 
         self.D['오늘요일']  = my.dayofdate(self.D['오늘날자'])
+        self.D['현재환율']  = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
         
         today,close_price  = self.DB.exe("SELECT add0,add3 FROM h_stockHistory_board WHERE add1='SOXL' ORDER BY add0 DESC LIMIT 1",many=1,assoc=False)
 
@@ -61,7 +62,7 @@ class M_dashboard(Model) :
         매도가격1 = float(ID['sub20']) 
         매도가액1 = 매도수량1 * 매도가격1
 
-        sellP1 = (매도가격1/float(close_price) - 1) * 100
+        sellP1 = (매도가격1/float(close_price) - 1) * 100 if 매도수량1 else 0
         self.D['현수익률1'] = ID['add8']
         self.D['매도시점1'] = f"{sellP1:,.2f}"
         self.D['매도수량1'] = f"{매도수량1:,}"
@@ -114,7 +115,7 @@ class M_dashboard(Model) :
         매수가액2 = 매수수량2 * 매수가격2
         매도가액2 = 매도수량2 * 매도가격2
         
-        sellP2 = (매도가격2/float(close_price) - 1) * 100
+        sellP2 = (매도가격2/float(close_price) - 1) * 100 if 매도수량2 else 0
         self.D['현수익률2'] = CD['add8']
         self.D['매도시점2'] = f"{sellP2:.2f}"
         self.D['매수수량2'] = f"{매수수량2:,}"

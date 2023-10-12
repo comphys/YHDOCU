@@ -13,9 +13,12 @@
     {% endif %}
   </div>
 
-  <div style="border:2px solid black;margin-top:10px;">
+  <div style="border:2px solid black;margin-top:10px;" onclick="$('#show_won').show()">
     <canvas id="myChart_side"  style="width:355px;height:200px;background-color:#24272d;padding:5px 10px"></canvas>
   </div>
+  
+  <div id='show_won' style="position:absolute;left:14px;top:105px;width:350px;height:200px;padding:20px;background-color:#23262c;opacity:0.9;display:none" onclick="$('#show_won').hide()"></div>
+
   <div style="border:2px solid black;margin-top:10px;">
     <canvas id="myChart_sub"  style="width:355px;height:150px;background-color:#24272d;padding:5px 10px"></canvas>
   </div>
@@ -23,7 +26,7 @@
   <div style="position:absolute;top:392px;left:180px;font-size:12px;">{{D['증가비율2']}}%</div>
 
   <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;">
-      <span style="color:white"> 투자일지(키움증권)</span>&nbsp;<span style='color:#747474;'>{{D['현수익률1']}}% , {{D['매도시점1']}}%</span>
+      <span style="color:white"> 투자일지(키움증권)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률1']}}% , {{D['매도시점1']}}%</span>
       <span style="color:#f0f0ab"> {{D['키움증권']}} </span><br>
       <table>
           <tr>
@@ -42,7 +45,7 @@
   </div>
 
   <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;">
-      <span style="color:white"> 투자일지(하이투자)</span>&nbsp;<span style='color:#747474;'>{{D['현수익률2']}}% , {{D['매도시점2']}}%</span>
+      <span style="color:white"> 투자일지(하이투자)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률2']}}% , {{D['매도시점2']}}%</span>
       <span style="color:#f0f0ab"> {{D['하이투자']}} </span><br>
       <table>
           <tr>
@@ -73,6 +76,7 @@
     var cur_total2 = {{D['자산총액2']}}; 
     var increase_rate1 = {{D['증가비율1']}};
     var increase_rate2 = {{D['증가비율2']}};
+    var usd_to_krw = {{D['현재환율']}}
  
     var allot_val = []
     var cur_total = cur_total1+cur_total2
@@ -84,7 +88,21 @@
 
     var allot_sum = allot_val.reduce((acc,cur) => acc+cur,0);
     allot_val.forEach((val,idx,arr)=>{arr[idx]=Math.floor(val/allot_sum*cur_total);});
-    
+    var allot_sum2 = allot_val.reduce((acc,cur) => acc+cur,0);
+    //
+    string = "Current values of investors / rate : "+usd_to_krw.toLocaleString()+"<br>"
+    string +="<table style='width:100%'>"
+    for(i=0;i<allot_key.length;i++) {
+      string += "<tr style='height:23px'><td>"+ allot_key[i] +"</td>"
+      string += "<td style='text-align:right'>"+ allot_val[i].toLocaleString() +"</td>"
+      string += "<td style='text-align:right'>"+ (allot_val[i] * usd_to_krw).toLocaleString() +"</td></tr>"
+    }
+    string += "<tr style='border-top:1px solid gray;height:23px;font-weight:bold'><td>Total</td>"
+    string += "<td style='text-align:right'>"+ allot_sum2.toLocaleString() +"</td>"
+    string += "<td style='text-align:right'>"+ (allot_sum2 * usd_to_krw).toLocaleString() +"</td></tr>"
+    string += "</table>"
+    $("#show_won").html(string)
+    //
     
     const data_side = {
       labels: allot_key,
