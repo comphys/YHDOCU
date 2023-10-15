@@ -51,6 +51,7 @@ class M_dashboard(Model) :
         매수수량1 = int(ID['sub2'])
         매수가격1 = float(ID['sub19']) 
         매수가액1 = 매수수량1 * 매수가격1
+        현매수금1 = float(ID['add6']) 
 
         self.D['매수수량1'] = f"{매수수량1:,}"
         self.D['매수가격1'] = f"{매수가격1:,.2f}"
@@ -61,6 +62,8 @@ class M_dashboard(Model) :
         매도수량1 = int(ID['sub3'])
         매도가격1 = float(ID['sub20']) 
         매도가액1 = 매도수량1 * 매도가격1
+        매도차익1 = 매도가액1 - 현매수금1
+        매도차원1 = 매도차익1 * float(self.D['현재환율'])
 
         sellP1 = (매도가격1/float(close_price) - 1) * 100 if 매도수량1 else 0
         self.D['현수익률1'] = ID['add8']
@@ -68,6 +71,11 @@ class M_dashboard(Model) :
         self.D['매도수량1'] = f"{매도수량1:,}"
         self.D['매도가격1'] = f"{매도가격1:,.2f}"
         self.D['매도가액1'] = f"{매도가액1:,.2f}"
+        self.D['매도차익1'] = f"{매도차익1:,.2f}"
+        self.D['매도차원1'] = f"{매도차원1:,.0f}"
+        self.D['현매수금1'] = f"{현매수금1:,.2f}"
+        self.D['현평가금1'] = f"{float(ID['add15']):,.2f}"
+        self.D['현이익금1'] = f"{float(ID['add18']):,.2f}" 
         self.D['증가비율1'] = round(float(ID['add17'])/float(ID['sub25']) * 100,2)
         
 
@@ -112,8 +120,11 @@ class M_dashboard(Model) :
             매도수량2 = int(CD['add9']) 
             매도가격2 = float(CD['sub20'])
 
+        현매수금2 = float(CD['add6']) 
         매수가액2 = 매수수량2 * 매수가격2
         매도가액2 = 매도수량2 * 매도가격2
+        매도차익2 = 매도가액2 - 현매수금2
+        매도차원2 = 매도차익2 * float(self.D['현재환율'])
         
         sellP2 = (매도가격2/float(close_price) - 1) * 100 if 매도수량2 else 0
         self.D['현수익률2'] = CD['add8']
@@ -130,6 +141,12 @@ class M_dashboard(Model) :
         self.D['기준일자'] = today
         self.D['기준요일'] = my.dayofdate(today)
         self.D['기준종가'] = close_price
+        
+        self.D['현평가금2'] = f"{float(CD['add15']):,.2f}"
+        self.D['현이익금2'] = f"{float(CD['add18']):,.2f}"
+        self.D['현매수금2'] = f"{현매수금2:,.2f}"
+        self.D['매도차익2'] = f"{매도차익2:,.2f}"
+        self.D['매도차원2'] = f"{매도차원2:,.0f}"
 
 
     def chance_init(self,balance,t_day_amount,t_basic_qty) :

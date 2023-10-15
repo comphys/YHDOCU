@@ -25,7 +25,7 @@
   <div style="position:absolute;top:340px;left:180px;font-size:12px;">{{D['증가비율1']}}%</div>
   <div style="position:absolute;top:392px;left:180px;font-size:12px;">{{D['증가비율2']}}%</div>
 
-  <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;">
+  <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;" onclick="$('#k_sub').show()">
       <span style="color:white"> 투자일지(키움증권)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률1']}}% , {{D['매도시점1']}}%</span>
       <span style="color:#f0f0ab"> {{D['키움증권']}} </span><br>
       <table>
@@ -44,7 +44,27 @@
       </table>
   </div>
 
-  <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;">
+  <div id='k_sub' style="display:none;position:absolute;left:14px;top:482px;width:356px;height:100px;font-size:14px;font-weight:700;line-height:30px;;padding:5px 10px;background-color:black;" onclick="$(this).hide()">
+    <span style="color:white"> 투자일지(키움증권)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률1']}}% , {{D['매도시점1']}}%</span>
+    <span style="color:#f0f0ab"> {{D['키움증권']}} </span><br>
+    <table>
+      <tr>
+          <td style="width:70px;color:#58ACFA">총매수금</td>
+          <td style="width:90px;text-align:right">{{D['현매수금1']}}</td>
+          <td style="width:90px;text-align:right">{{D['현평가금1']}}</td>
+          <td style="width:90px;text-align:right">{{D['현이익금1']}}</td>
+      </tr>
+      <tr>
+          <td style="width:70px;color:yellow">기대수익</td>
+          <td style="width:90px;text-align:right">{{D['매도가액1']}}</td>
+          <td style="width:100px;text-align:right;color:yellow">{{D['매도차익1']}}</td>
+          <td style="width:100px;text-align:right;color:yellow">{{D['매도차원1']}}</td>
+      </tr>
+  </table>
+  </div>
+
+
+  <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;" onclick="$('#h_sub').show()">
       <span style="color:white"> 투자일지(하이투자)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률2']}}% , {{D['매도시점2']}}%</span>
       <span style="color:#f0f0ab"> {{D['하이투자']}} </span><br>
       <table>
@@ -62,6 +82,25 @@
           </tr>
       </table>
   </div>
+</div>
+
+<div id='h_sub' style="display:none;position:absolute;left:14px;top:596px;width:356px;height:100px;font-size:14px;font-weight:700;line-height:30px;;padding:5px 10px;background-color:black;" onclick="$(this).hide()">
+  <span style="color:white"> 투자일지(하이투자)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률2']}}% , {{D['매도시점2']}}%</span>
+  <span style="color:#f0f0ab"> {{D['하이투자']}} </span><br>
+  <table>
+    <tr>
+        <td style="width:70px;color:#58ACFA">총매수금</td>
+        <td style="width:90px;text-align:right">{{D['현매수금2']}}</td>
+        <td style="width:90px;text-align:right">{{D['현평가금2']}}</td>
+        <td style="width:90px;text-align:right">{{D['현이익금2']}}</td>
+    </tr>
+    <tr>
+        <td style="width:70px;color:yellow">기대수익</td>
+        <td style="width:90px;text-align:right">{{D['매도가액2']}}</td>
+        <td style="width:100px;text-align:right;color:yellow">{{D['매도차익2']}}</td>
+        <td style="width:100px;text-align:right;color:yellow">{{D['매도차원2']}}</td>
+    </tr>
+</table>
 </div>
 
 <script src="/sys/chart/chart.min.js"></script>
