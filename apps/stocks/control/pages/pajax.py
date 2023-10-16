@@ -13,7 +13,11 @@ class Pajax(Control) :
         if  opt == 'eng_teacher' : 
             system_role = self.DB.store('openai_english_teacher')
             text = f'"{text}" 를 영어로 번역해 주세요.'
-        
+
+        if  opt == 'kor_teacher' : 
+            system_role = self.DB.store('openai_kind_teacher')
+            text = f'"{text}" 를 한글로 번역해 주세요.'
+                    
         elif opt == 'gen_teacher' :
             system_role = self.DB.store('openai_kind_teacher')
             
