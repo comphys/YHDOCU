@@ -48,13 +48,18 @@ class 목록_CHANCE(SKIN) :
             prev_date = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
             self.DB.wre = f"add0='{prev_date}'"
             LD = self.DB.get_line('add3,add4,add6,add7,add9,add10,add14,add16,add17,sub2,sub3,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub28')
-            CD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT) FROM {self.DB.tbl} WHERE CAST(add7 as FLOAT) != 0.0 AND add0 BETWEEN '{first_date}' AND '{last_date}'") 
-            
+            CD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
+                 
             cx = {};dx = {}
             self.D['chance_average'] = []; self.D['chance_profits'] = []
             if CD :
-                for c in CD : cx[c[0][2:]] = c[1]; dx[c[0][2:]] = c[2]
-                for x in self.D['chart_date'] : self.D['chance_average'].append(cx.get(x,'null')); self.D['chance_profits'].append(dx.get(x,'null'))
+                # cx[날자] = 평균단가, dx[날자] = 현수익률
+                for c in CD : 
+                    if c[1] : cx[c[0][2:]] = c[1] 
+                    if c[2] : dx[c[0][2:]] = c[2]
+                for x in self.D['chart_date'] : 
+                    self.D['chance_average'].append(cx.get(x,'null')) 
+                    self.D['chance_profits'].append(dx.get(x,'null'))
             
             self.D['chart_percent'] = [float(LD['add4']),float(LD['add16'])]
             
