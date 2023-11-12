@@ -290,7 +290,7 @@ class Invest_guide(Control) :
         매수단가 = round(self.M['당일종가'] * self.M['평단가치'],2)
         매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
 
-        if  매수수량 * self.M['당일종가'] > self.M['가용잔액'] + self.M['추가자금'] : 
+        if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 
             매수수량 = self.M['기초수량'] * self.M['위매비중']
             self.M['진행상황'] = '매수제한'
         if  매수수량 * self.M['당일종가'] > self.M['가용잔액'] + self.M['추가자금'] : 
