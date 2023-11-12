@@ -293,7 +293,7 @@ class Invest_guide(Control) :
         if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 
             매수수량 = self.M['기초수량'] * self.M['위매비중']
             self.M['진행상황'] = '매수제한'
-        if  매수수량 * self.M['당일종가'] > self.M['가용잔액'] + self.M['추가자금'] : 
+        if  매수수량 * 매수단가 > self.M['가용잔액'] + self.M['추가자금'] : 
             매수수량 = 0
             self.M['진행상황'] = '매수금지'  
 
