@@ -456,15 +456,15 @@ class M_backtest_STABLE(Model) :
             self.M['보유수량']  = self.M['매수수량']
             self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량'] 
             self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
-
             self.M['가용잔액'] -= self.M['매수금액']
-            self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
+            
             self.M['진행상황']  = '첫날매수'
             self.M['첫날기록']  = False
             self.M['거래코드']  = f"S{self.M['매수수량']}" 
             self.M['매수단계'] = '일반매수'
 
             if  self.M['비용차감'] : self.M['추가자금'] -=  self.commission(self.M['매수금액'],1)
+            self.M['자산총액'] = self.M['가용잔액'] + self.M['추가자금']
             # ------------------------------------------------------------------------------------
             # self.R['평균단가']  = self.M['당일종가']
             # self.R['매수수량']  = self.R['기초수량']

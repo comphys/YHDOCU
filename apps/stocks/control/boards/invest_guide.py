@@ -266,11 +266,11 @@ class Invest_guide(Control) :
             self.M['전매도량']  =  0
             self.M['전매도가']  =  self.M['당일종가']
             return
-
+        매수단가 = round(self.M['당일종가'] * self.M['평단가치'],2)
         매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
         매도단가 = my.round_up(self.M['평균단가'] * self.M['첫매가치'])  if self.M['평균단가'] else self.M['당일종가']
 
-        if (매수수량 * self.M['전일종가']) > self.M['가용잔액'] + self.M['추가자금'] : 
+        if (매수수량 * 매수단가) > self.M['가용잔액'] + self.M['추가자금'] : 
             매도단가 = my.round_up(self.M['평균단가']*self.M['둘매가치'])
         if self.M['회복전략'] and self.M['경과일수'] +1 <= self.M['회복기한'] : 매도단가 = my.round_up(self.M['평균단가']* (1+float(self.M['회복전략'])/100))
 
