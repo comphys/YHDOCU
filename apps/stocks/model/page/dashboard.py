@@ -91,7 +91,7 @@ class M_dashboard(Model) :
             
         elif 타겟일수 == 1 :
             매수수량2 = self.chance_init(float(CD['add3']),float(TD['sub4']),int(TD['sub18']))
-            매수가격2 = float(TD['sub19'])
+            매수가격2 = float(TD['add14'])
             매도수량2 = 0
             매도가격2 = 0.00
 

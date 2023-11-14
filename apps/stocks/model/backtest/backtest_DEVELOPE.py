@@ -115,7 +115,7 @@ class M_backtest_DEVELOPE(Model) :
                 self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']   
                 self.R['거래코드'] = f"R{self.R['매수수량']}" if self.R['매수수량'] else ' '  
 
-            if  self.M['날수'] == 2 :
+            if  self.M['날수'] == 2 and self.M['당일종가'] <= self.M['전일종가'] :
                 self.R['거래코드'] = f"RS{self.R['기초수량']}"
                 self.R['매수수량'] = self.R['기초수량']
                 self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가'] 
