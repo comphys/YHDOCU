@@ -1,7 +1,7 @@
 import system.core.my_utils as my
 from system.core.load import SKIN
 
-class 목록_INVEST(SKIN) :
+class 목록_Vtactic(SKIN) :
 
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)
