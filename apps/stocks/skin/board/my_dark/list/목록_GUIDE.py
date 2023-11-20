@@ -109,30 +109,21 @@ class 목록_GUIDE(SKIN) :
             # ------------- 기회 투자 전략 
             self.D['현수익률'] = float(LD['add8'])
             self.D['손실회수'] = float(LD['sub7'])
-            찬스가격 = self.take_chance(int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
-            self.D['찬스가격'] = self.D['매도단가'] if 찬스가격 == 0 else 찬스가격
+            찬스가격1 = self.take_chance(0,int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
+            찬스가격2 = self.take_chance(1,int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
+            찬스가격1 = self.D['매도단가'] if 찬스가격1 == 0 else 찬스가격1
+            찬스가격2 = self.D['매도단가'] if 찬스가격2 == 0 else 찬스가격2
 
             if 일수 >= 2 :
 
-                가용잔액 = int( 예치자금 * 2/3)
-                일매수금 = int(가용잔액/22)
-                매수비율 = 일매수금 / int(LD['sub4']) 
-                기초수량 = my.ceil(매수비율 * int(LD['sub18']))
-
-                찬스수량 = 0    
-                 # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
-                for i in range(0,일수+2) : 
-                    찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
-
                 self.D['찬스일자'] = last_date
-                self.D['찬스가격'] = f"{찬스가격:,.2f}"
-                self.D['찬스수량'] = f"{찬스수량:,}"
-                self.D['찬스자본'] = f"{찬스가격*찬스수량:,.2f}"
+                self.D['찬스가R'] = f"{찬스가격1:,.2f}"
+                self.D['찬스가S'] = f"{찬스가격2:,.2f}"
                 self.D['찬스일수'] = 일수
                 self.D['찬스주가'] = LD['add14']
-                self.D['찬스변동'] = round((찬스가격/float(LD['add14']) -1) * 100,2)
+                self.D['변동R'] = round((찬스가격1/float(LD['add14']) -1) * 100,2)
+                self.D['변동S'] = round((찬스가격2/float(LD['add14']) -1) * 100,2)
                 self.D['찬스하강'] = LD['sub6']
-                self.D['환율변환'] = f"{찬스가격*찬스수량* 현재환율:,.0f}"
                 self.D['기초환율'] = f"{현재환율:,.2f}"
 
             # 월별 실현손익
@@ -157,10 +148,10 @@ class 목록_GUIDE(SKIN) :
                 self.D['손익합계'] = f"$ {monthly_total:,.0f} ({monthly_total*현재환율:,.0f}원)"
     
 
-    def take_chance(self,H,n,A) :
+    def take_chance(self,C,H,n,A) :
         if H == 0 : return 0
-        기회시점 = -2.2
-        p = 0 if (self.D['현수익률'] < 기회시점 or self.D['손실회수']) else 기회시점
+        if C==0 : p = 0.0  if (self.D['현수익률'] < -2.2 or self.D['손실회수']) else -2.2
+        if C==1 : p =-5.0  if self.D['손실회수'] else -10.0
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)

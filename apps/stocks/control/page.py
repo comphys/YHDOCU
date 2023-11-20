@@ -54,6 +54,7 @@ class Page(Control) :
         # -------------------
         self.D['chanceCapital'] = self.D['post'].get('chanceCapital','36,000')
         self.D['chancePoint']   = self.D['post'].get('chancePoint','-2.2')
+        self.D['stablePoint']   = self.D['post'].get('stablePoint','-10.0')
 
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.D['strategy']}'")
         s_code = self.DB.get_one('add1')

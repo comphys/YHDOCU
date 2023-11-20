@@ -131,14 +131,12 @@
 	</div>
 </div>
 
-{% if D['찬스수량'] %}
+
 <div id="ChanceStrategy" style="display:none;opacity:0.7;position:absolute;left:1167px;top:62px;width:240px;height:320px;background-color: #393f4a;border:2px solid black;padding:10px" onclick="$(this).hide()">
     <span style="font-style: italic"> 기회 투자 전략</span><br><br>
 	<ul style="margin-left:20px">
-		<li>기회가격 : {{D['찬스가격']}} ({{D['찬스변동']}}%) </li>
-		<li>기회수량 : {{D['찬스수량']}} </li>
-		<li>기회자본 : $ {{D['찬스자본']}} </li>
-		<li>환율적용 : {{D['환율변환']}}원 </li>
+		<li>기회가격 : {{D['찬스가R']}} ({{D['변동R']}}%) </li>
+		<li>안정가격 : {{D['찬스가S']}} ({{D['변동S']}}%) </li>
 		<li>----------------------------</li>
 		<li>경과일수 : {{D['찬스일수']}} </li>
 		<li>현재주가 : {{D['찬스주가']}} </li>
@@ -147,7 +145,7 @@
 		<li>기초환율 : {{D['기초환율']}}원 </li>
 	</ul>
 </div>
-{% endif %}
+
 
 <div id='monthlyProfit' style="position:absolute;left:20px;top:55px;padding:5px 10px 5px 10px;opacity:0.9;z-index:3;">
 	<canvas id="monthlyProfitChart" style="width:1125px;height:350px;background-color:#24272d"></canvas>
@@ -219,9 +217,9 @@ function limt_period() {
 	ctx_main.style.border = '2px solid black';
 
 	let labels = {{D['chart_date']|safe}};
-	let close_price = {{D['close_price']|safe}};
-	let soxl_average = {{D['soxl_average']|safe}};
-	let total_value = {{D['total_value']|safe}};
+	let close_price = {{D['close_price']|safe}}; // 종가변동
+	let soxl_average = {{D['soxl_average']|safe}}; // 평균단가
+	let total_value = {{D['total_value']|safe}}; // 가치합계
 	let close_change = {{D['close_change']|safe}};
 	let lever_change = {{D['lever_change']|safe}};
 	let total_profit = {{D['total_profit']|safe}};
@@ -237,7 +235,7 @@ function limt_period() {
 	let sell_price2 = sell_price.slice({{D['chart_start']}});
 
 	let sellP = {{D['매도단가']}};
-	let chanP = {{D['찬스가격']}};
+	let chanP = {{D['찬스가R']}};
 
 	let season_first_day = '{{D['단기첫날']}}';
 	let the_current_day = $("input[name='e_date']").val();
@@ -245,53 +243,31 @@ function limt_period() {
 	const data_main = {
 		labels : labels_2,
 		datasets : [
-			{
-				label:' 종가변동',data : close_price2,borderColor:'#58ACFA', borderWidth:3, pointRadius:0, borderDash:[2,3],lineTension:0.2
-			},
-			{
-				label:' 평균단가',data : soxl_average2,borderColor:'#f78181', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2
-			},
-			{
-				label:' 가치합계',data : total_value2,borderColor:'rgba(255, 255, 0, 0.8)', borderWidth:2,pointRadius:0, lineTension:0.2,yAxisID : 'y1'},	
-			{
-				label:' 매도가격',data : sell_price2,borderColor:'yellow', borderWidth:1, pointRadius:0, borderDash:[2,2]
-			}
+			{label:' 종가변동',data : close_price2,borderColor:'#58ACFA', borderWidth:3, pointRadius:0, borderDash:[2,3],lineTension:0.2},
+			{label:' 평균단가',data : soxl_average2,borderColor:'#f78181', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
+			{label:' 가치합계',data : total_value2,borderColor:'rgba(255, 255, 0, 0.8)', borderWidth:2,pointRadius:0, lineTension:0.2,yAxisID : 'y1'},	
+			{label:' 매도가격',data : sell_price2,borderColor:'yellow', borderWidth:1, pointRadius:0, borderDash:[2,2]}
 		]   
 	}
 	const options_main = {
-		animation : { duration:500},
-
-		plugins : { legend: {display:false}, tooltip:{enabled:false}},
-		responsive:false,
-		layout:{padding:20},
+		animation : { duration:500},plugins : { legend: {display:false}, tooltip:{enabled:false}},	responsive:false,layout:{padding:20},
 		scales:{x: { ticks : {color:'gray'}},y:{  ticks : {color:'lightgray'}, position:'right'},y1:{ ticks : {color:'gray'}, position:'left'},}
 	}
+
 	const config_main  = {type:'line',data:data_main,options:options_main};
 	const myChart = new Chart(ctx_main, config_main); 
 	//
 
 	// Side Chart
 	const labels_side = ['Cash','Leverage'];
-	const data_side = {
-	labels: labels_side,
-	datasets: [{label: ' 자산배분비율 ',data: {{D['chart_percent']}},
-		backgroundColor: ['rgba(75, 192, 192, 0.4)','rgba(255, 99, 132, 0.4)'],
-		borderColor: ['rgb(75, 192, 192)','rgb(255, 99, 132)'],	borderWidth: 1,
-		barThickness:60
-		}]
+	const data_side = {labels: labels_side,	datasets: [{label: ' 자산배분비율 ',data: {{D['chart_percent']}},backgroundColor: ['rgba(75, 192, 192, 0.4)','rgba(255, 99, 132, 0.4)'],
+		borderColor: ['rgb(75, 192, 192)','rgb(255, 99, 132)'],	borderWidth: 1,barThickness:60}]
 	}
 
 	const config_side = {
-	type: 'bar',
-	data: data_side,
-	plugins:[ChartDataLabels],
-	options: {
-		animation : {duration:500},
-		plugins : { legend: {display:false},
-					tooltip : {enabled:false},
-					datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:14}}			
-		},
-		scales: {
+	type: 'bar',data: data_side,plugins:[ChartDataLabels],
+	options: {animation : {duration:500},plugins : { legend: {display:false},tooltip : {enabled:false},datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:14}}},
+	scales: {
 		y: {
 			grid : {
 				lineWidth:2,
@@ -307,16 +283,9 @@ function limt_period() {
 	const data_sub = {
 		labels : labels_2,
 		datasets : [
-			{
-				label:' 총수익률',data : total_profit2,borderColor:'yellow', borderWidth:3,pointRadius:0, lineTension:0.2,
-			},
-			{
-				label:' 종가변동',data : close_change2,borderColor:'cyan', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,
-			},
-			{
-				label:' 레버리지수익률',data : lever_change2,borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,
-			},
-
+			{label:' 총수익률',data : total_profit2,borderColor:'yellow', borderWidth:3,pointRadius:0, lineTension:0.2,},
+			{label:' 종가변동',data : close_change2,borderColor:'cyan', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+			{label:' 레버리지수익률',data : lever_change2,borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
 		]   
 	}
 
@@ -359,17 +328,17 @@ function limt_period() {
 	function slice_chart(opt) {
 
 		var s_date,e_date,new_s,new_e
-		if(opt==1) { s_date = $("input[name='s_date']").val().slice(2); e_date = $("input[name='e_date']").val().slice(2) 
-			for(d=0; d<labels.length; d++) {if(labels[d] >= s_date)    { new_s = d; $("input[name='s_date']").val('20'+labels[d]);break;}} 
-			for(d=labels.length-1; d >=0; d--) {if(labels[d] <= e_date){ new_e = d+1; $("input[name='e_date']").val('20'+labels[d]);break;}} 
-		} else if(opt==2) { 
-			$("input[name='s_date']").val(season_first_day);
-			$("input[name='e_date']").val("{{D['e_date']}}");
-			s_date = season_first_day.slice(2);
-			new_s = labels.indexOf(s_date) 
-			new_e = labels.length;
-		} else {
-			s_date = "{{D['s_date']}}".slice(2); e_date = "{{D['e_date']}}".slice(2)
+		if(opt==1) { 
+			s_date = $("input[name='s_date']").val().slice(2); for(d=0; d<labels.length; d++) {if(labels[d] >= s_date) {new_s = d; $("input[name='s_date']").val('20'+labels[d]);break;}} 
+			e_date = $("input[name='e_date']").val().slice(2); for(d=labels.length-1; d >=0; d--) {if(labels[d] <= e_date){ new_e = d+1; $("input[name='e_date']").val('20'+labels[d]);break;}} 
+					
+		} else if(opt==2) { // 2달치 데이타
+			$("input[name='s_date']").val(season_first_day);  s_date = season_first_day.slice(2); new_s = labels.indexOf(s_date); 
+			$("input[name='e_date']").val("{{D['e_date']}}"); new_e = labels.length;
+
+		} else { // 전체데이타
+			s_date = "{{D['s_date']}}".slice(2); 
+			e_date = "{{D['e_date']}}".slice(2)
 			$("input[name='s_date']").val("{{D['s_date']}}"); $("input[name='e_date']").val("{{D['e_date']}}");
 			new_s =0; new_e = labels.length
 		}
@@ -441,7 +410,7 @@ function limt_period() {
 		plugins : { legend: {display:false},
 					title:{display:true,color:'#F7F8E0',align:'end',font:{size:14,style:'italic',weight:'normal'},text:"{{D['손익합계']}}"},
 					tooltip : {enabled:false},
-					datalabels : {color:'white', anchor:'end', align:'end', offset: 3, font:{size:12}}			
+					datalabels : {color:'white', anchor:'end', align:'end', offset: 3, font:{size:11}}			
 		},
 		scales: {
 		x: { ticks : {color:'white'}, grid:{color:'#272727'}},
