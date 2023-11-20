@@ -381,26 +381,26 @@ const data_main = {
   			lineTension:0.2
     	},
 		{
-            label:' 평균단가M',
+            label:' 평균단가V',
             data : avg_mprice,
 			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
 			lineTension:0.2
         },
 		{
-            label:' 평균단가C',
+            label:' 평균단가S',
             data : avg_cprice,
 			borderColor:'yellow', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',
 			lineTension:0.2
         },
 		{
-            label:' 평가밸류M',
+            label:' 평가밸류V',
             data : eval_mvalue,
-			borderColor:'rgba(201, 149, 34, 0.6)', borderWidth:2,pointRadius:0, 
+			borderColor:'orange', borderWidth:2,pointRadius:0,borderDash:[2,3],
 			lineTension:0.2,
 			yAxisID : 'y1'
         },
 		{
-            label:' 평가밸류C',
+            label:' 평가밸류S',
             data : eval_cvalue,
 			borderColor:'rgba(255, 255, 0, 0.6)', borderWidth:2,pointRadius:0, 
 			lineTension:0.2,
