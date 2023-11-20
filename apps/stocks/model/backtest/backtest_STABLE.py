@@ -417,7 +417,6 @@ class M_backtest_STABLE(Model) :
         
         # 리밸런싱 2차 전략
         self.R['기회자금'] = float(self.D['chanceCapital'].replace(',',''))
-        self.info(self.D['stablePoint'])
         self.R['기회시점'] = float(self.D['stablePoint'])
         self.R['기회가격'] = 0.0
         self.R['기회진행'] = False
