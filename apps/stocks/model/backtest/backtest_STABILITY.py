@@ -2,7 +2,7 @@ from system.core.load import Model
 from datetime import datetime,date
 import system.core.my_utils as my
 
-class M_backtest_DEVELOPE(Model) :
+class M_backtest_STABILITY(Model) :
 
 # 변동성을 이용한 올타임 전략
 
@@ -114,11 +114,12 @@ class M_backtest_DEVELOPE(Model) :
                 self.R['매수수량'] = self.R['구매수량'] 
                 self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']   
                 self.R['거래코드'] = f"R{self.R['매수수량']}" if self.R['매수수량'] else ' '  
+        
+            # if  self.M['날수'] == 2 and self.M['당일종가'] <= self.M['전일종가'] :
+            #     self.R['거래코드'] = f"RS{self.R['기초수량']}"
+            #     self.R['매수수량'] = self.R['기초수량']
+            #     self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']
 
-            if  self.M['날수'] == 2 and self.M['당일종가'] <= self.M['전일종가'] :
-                self.R['거래코드'] = f"RS{self.R['기초수량']}"
-                self.R['매수수량'] = self.R['기초수량']
-                self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가'] 
         
         # 기회매수 첫 날 처리    
         if  not self.R['기회진행'] and self.M['날수'] > 2 and self.M['당일종가'] <= min(self.b_price, self.R['기회가격']) :
@@ -194,7 +195,8 @@ class M_backtest_DEVELOPE(Model) :
 
     def take_chance(self,H,n,A) :
         if H == 0 : return 0
-        p = 0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
+        p = -5 if self.M['손실회수'] else self.R['기회시점']
+        # p = self.R['기회시점']
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)
@@ -415,7 +417,7 @@ class M_backtest_DEVELOPE(Model) :
         
         # 리밸런싱 2차 전략
         self.R['기회자금'] = float(self.D['chanceCapital'].replace(',',''))
-        self.R['기회시점'] = float(self.D['chancePoint'])
+        self.R['기회시점'] = float(self.D['stablePoint'])
         self.R['기회가격'] = 0.0
         self.R['기회진행'] = False
         self.R['매수수량'] = 0
@@ -455,8 +457,8 @@ class M_backtest_DEVELOPE(Model) :
             self.M['보유수량']  = self.M['매수수량']
             self.M['매수금액']  = self.M['당일종가'] * self.M['매수수량'] 
             self.M['총매수금']  = self.M['평가금액'] = self.M['매수금액']
-
             self.M['가용잔액'] -= self.M['매수금액']
+            
             self.M['진행상황']  = '첫날매수'
             self.M['첫날기록']  = False
             self.M['거래코드']  = f"S{self.M['매수수량']}" 
