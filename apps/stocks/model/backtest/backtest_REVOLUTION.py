@@ -194,7 +194,7 @@ class M_backtest_REVOLUTION(Model) :
 
     def take_chance(self,H,n,A) :
         if H == 0 : return 0
-        p = -5 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
+        p = 0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)
