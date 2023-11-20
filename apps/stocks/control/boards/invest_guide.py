@@ -174,7 +174,7 @@ class Invest_guide(Control) :
         self.M['연속하락'] = self.DB.get_one('add10')
         
         # 매매전략 가져오기
-        self.M['매매전략'] = 'VICTORY'
+        self.M['매매전략'] = 'VOLATILITY'
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.M['매매전략']}'")
         self.S = self.DB.get_line('add2,add3,add4,add5,add9,add10,add11,add17,add18,add22,add25')
         self.M['분할횟수']  = int(self.S['add2'])

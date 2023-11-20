@@ -113,6 +113,7 @@ class 목록_GUIDE(SKIN) :
             찬스가격2 = self.take_chance(1,int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
             찬스가격1 = self.D['매도단가'] if 찬스가격1 == 0 else 찬스가격1
             찬스가격2 = self.D['매도단가'] if 찬스가격2 == 0 else 찬스가격2
+            self.D['찬스가R'] = 'null'
 
             if 일수 >= 2 :
 

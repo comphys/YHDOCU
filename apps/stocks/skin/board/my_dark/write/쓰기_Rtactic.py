@@ -24,7 +24,7 @@ class 쓰기_Rtactic(SKIN) :
    
             if self.D['today'] : 
                 JBODY = self.DB.line(f"SELECT * FROM h_{self.SYS.parm[0]}_board WHERE add0='{prev_date}'")
-                JSTRG = self.DB.line(f"SELECT * FROM h_stock_strategy_board WHERE add0='VICTORY'")
+                JSTRG = self.DB.line(f"SELECT * FROM h_stock_strategy_board WHERE add0='REVOLUTION'")
                 JHIST = self.DB.line(f"SELECT * FROM h_stockHistory_board WHERE add0='{self.D['today']}' and add1='SOXL'")
 
                 JBODY = { k:v for (k,v) in JBODY.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
