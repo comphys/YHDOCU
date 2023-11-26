@@ -137,7 +137,7 @@ class 목록_GUIDE(SKIN) :
                 self.D['월별이익'] = []
                 for mon, profit in monProfit :
                     self.D['월별구분'].append(mon)
-                    self.D['월별이익'].append(round(profit,2))
+                    self.D['월별이익'].append(round(profit))
                 
                 monthly_total = sum(self.D['월별이익'])
                 monthly_lenth = len(self.D['월별이익'])
@@ -145,7 +145,7 @@ class 목록_GUIDE(SKIN) :
                 self.D['월별구분'].reverse()  
                 self.D['월별이익'].reverse()
                 self.D['월별구분'].append('AVG')
-                self.D['월별이익'].append(round(monthly_total/monthly_lenth,2))
+                self.D['월별이익'].append(round(monthly_total/monthly_lenth))
                 self.D['손익합계'] = f"$ {monthly_total:,.0f} ({monthly_total*현재환율:,.0f}원)"
     
 
