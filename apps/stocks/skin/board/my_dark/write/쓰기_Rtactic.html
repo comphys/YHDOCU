@@ -20,7 +20,7 @@
 				{% endif %}
             </div>
 			<div class="btn-group">
-				<a class="btn btn-blue-s2" onclick="client_calculate(2);return false"><i class="fa fa-font" title="자동계산하기"></i></a>
+				<a class="btn btn-blue-s2" onclick="client_calculate();return false"><i class="fa fa-font" title="자동계산하기"></i></a>
 				<a class="btn btn-blue-s2" onclick="reset_value();return false"><i class="fa fa-undo" title="되돌리기"></i></a>
 				<a class="btn btn-blue-s2" onclick="money_inout();return false"><i class="fa fa-usd" title="입출금 재설정"></i></a>
 			</div>
@@ -292,7 +292,7 @@ $(".list-code").click(function(){var code = $(this).text();	winopen('winopen/cha
 function check_MainWriteForm(f)	{	
 	var wDiv = $id("YHBmainEditor");
 	JYHEDITOR.clearDocuSelect();
-	if( ! AutoCalulated && uri('method') != 'modify' ) client_calculate(2)
+	if( ! AutoCalulated && uri('method') != 'modify' ) client_calculate()
 	f.content.value = wDiv.innerHTML;
 	if(check_FormInput(f,{{D['ChkField']|safe}})) return false;
 
@@ -325,12 +325,14 @@ JYHEDITOR.UserTable = function() {
 	$("#tableMenu").css({left:mouse_X - 20 , top:mouse_Y }).toggle();
 }
 
-{% if D['JHIST'] -%} 
+{% if D['GBODY'] -%} 
 var JBODY = JSON.parse('{{D['JBODY']|safe}}')
+var GBODY = JSON.parse('{{D['GBODY']|safe}}')
 var JSTRG = JSON.parse('{{D['JSTRG']|safe}}')
-var JHIST = JSON.parse('{{D['JHIST']|safe}}')
 {% endif %}
 
 </script>
-<script src="/skn/stocks/board/my_dark/write/invest.js"></script>
+
+<script src="/skn/stocks/board/my_dark/write/tactics_common.js"></script>
+<script src="/skn/stocks/board/my_dark/write/Rtactic.js"></script>
 {% endblock %}

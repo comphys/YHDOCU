@@ -139,8 +139,7 @@ class M_backtest_REVOLUTION(Model) :
         
             가용잔액 = int(self.R['기회자금'] * self.M['자본비율'])
             일매수금 = int(가용잔액/self.M['분할횟수'])
-            매수비율 = 일매수금 / self.M['일매수금'] 
-            기초수량 = my.ceil(매수비율 * self.M['기초수량'])
+            기초수량 = my.ceil(일매수금/self.M['전일종가'])
             self.R['기초수량'] = 기초수량
 
     

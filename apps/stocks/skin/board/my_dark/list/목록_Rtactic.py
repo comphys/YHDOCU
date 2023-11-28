@@ -83,6 +83,7 @@ class 목록_Rtactic(SKIN) :
 
             # -- extra-info by invest guide
             타겟일수 = int(TD['sub12']) 
+            기초수량 = int(LD['sub18'])
  
             if  타겟일수 == 0 :
                 self.D['매수갯수'] = '0'; self.D['매수단가'] = '0.00'; self.D['매수예상'] = '0.00'
@@ -93,7 +94,6 @@ class 목록_Rtactic(SKIN) :
                 self.D['chance_value'] = ['null'] * chart_len 
             
             elif 타겟일수 == 1 :
-                기초수량 = self.chance_init(float(LD['add3']),float(TD['sub4']),int(TD['sub18']))
                 self.D['매수갯수'] = 기초수량; 
                 self.D['매수단가'] = TD['sub19']; 
                 self.D['매수예상'] = f"{기초수량 * float(TD['sub19']):,.2f}"
@@ -104,7 +104,6 @@ class 목록_Rtactic(SKIN) :
                 self.D['chance_value'] = [TD['sub19']] * chart_len                
             
             elif 타겟일수 >= 2 and int(LD['add9']) <= int(LD['sub18']): 
-                기초수량 = int(LD['sub18']) if int(LD['add9']) else self.chance_init(float(LD['add3']),float(TD['sub4']),int(TD['sub18']))
                 # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
                 찬스수량 = 0
                 day_count = min(int(TD['sub12'])+2,6)
@@ -159,12 +158,6 @@ class 목록_Rtactic(SKIN) :
             self.D['GD']['add18'] = f"{float(TD['add18']):,.2f}"
 
 
-
-    def chance_init(self,balance,t_day_amount,t_basic_qty) :
-        # -- 기초수량 구하기
-        가용잔액 = int( balance * 2/3); 일매수금 = int(가용잔액/22); 
-        매수비율 = 일매수금 / int(t_day_amount) 
-        return my.ceil(매수비율 * t_basic_qty)
 
     def take_chance(self,p,H,n,A) :
         if H == 0 : return 0

@@ -82,6 +82,7 @@ class M_dashboard(Model) :
         # 하이투자
         
         타겟일수 = int(TD['sub12'])
+        기초수량 = int(CD['sub18'])
         
         if  타겟일수 == 0 :
             매수수량2 = 0
@@ -90,13 +91,12 @@ class M_dashboard(Model) :
             매도가격2 = 0.00    
             
         elif 타겟일수 == 1 :
-            매수수량2 = self.chance_init(float(CD['add3']),float(TD['sub4']),int(TD['sub18']))
+            매수수량2 = 기초수량
             매수가격2 = float(TD['add14'])
             매도수량2 = 0
             매도가격2 = 0.00
 
         elif 타겟일수 >= 2 and int(CD['add9']) <= int(CD['sub18']): 
-            기초수량 = int(CD['sub18']) if int(CD['add9']) else self.chance_init(float(CD['add3']),float(TD['sub4']),int(TD['sub18']))
             # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
             찬스수량 = 0
             day_count = min(int(TD['sub12'])+2,6)
@@ -148,12 +148,6 @@ class M_dashboard(Model) :
         self.D['매도차익2'] = f"{매도차익2:,.2f}"
         self.D['매도차원2'] = f"{매도차원2:,.0f}"
 
-
-    def chance_init(self,balance,t_day_amount,t_basic_qty) :
-        # -- 기초수량 구하기
-        가용잔액 = int( balance * 2/3); 일매수금 = int(가용잔액/22); 
-        매수비율 = 일매수금 / int(t_day_amount) 
-        return my.ceil(매수비율 * t_basic_qty)
 
     def take_chance(self,p,H,n,A) :
         if H == 0 : return 0
