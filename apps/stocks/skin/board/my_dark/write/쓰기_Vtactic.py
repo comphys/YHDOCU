@@ -25,7 +25,7 @@ class 쓰기_Vtactic(SKIN) :
 
 
                 JBODY = self.DB.line(f"SELECT * FROM h_{self.SYS.parm[0]}_board WHERE add0='{prev_date}'")
-                JSTRG = self.DB.line(f"SELECT * FROM h_stock_strategy_board WHERE add0='VICTORY'")
+                JSTRG = self.DB.line(f"SELECT * FROM h_stock_strategy_board WHERE add0='VOLATILITY'")
                 JHIST = self.DB.line(f"SELECT * FROM h_stockHistory_board WHERE add0='{self.D['today']}' and add1='SOXL'")
 
 

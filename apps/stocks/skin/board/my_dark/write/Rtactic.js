@@ -1,3 +1,5 @@
+var 진행일자 = $("input[name='add0']" ).val();
+
 var 입금액수,출금액수,현재잔액,현금비중
 //  --------------------------------------------------
 var 매수금액, 매도금액, 변동수량, 현수익률
@@ -14,14 +16,12 @@ var 진행상황, 수수료등, 누적수료, 보존금액
 var 분할횟수, 큰단가치, 비중조절, 첫매가치, 둘매가치, 회수기한, 강매시작, 평단가치, 위매비중, 위매시점
 var 자산분배
 //  ---------------------------------------------------
+var AutoCalculated = true
 
-var 진행일자 = $("input[name='add0']" ).val();
-if(uri('method')=='write' && 진행일자 !='None') { 
-	var AutoCalulated = false; 
-	$("#notice-calculated").addClass('notice-calculated'); load_value(); 
-} else var AutoCalulated = true;
+if(uri('method')=='write' && 진행일자 !='None') { AutoCalulated = false; $("#notice-calculated").addClass('notice-calculated'); load_value();} 
 
 function client_calculate() {
+	if(AutoCalulated) {h_dialog.notice("계산이 완료된 상태입니다."); return;}
 	// do the Math : Cash Part
 	입금액수 = ctv('add1','f'); 
 	출금액수 = ctv('add2','f'); 
@@ -113,8 +113,8 @@ function load_value() {
         누적수료= s_load('sub31','f');     보존금액 = s_load('sub32','f');
 		// 전략변수
 		분할횟수=s_load('add2','i','S');  
-		큰단가치=s_load('add5','f','S');   큰단가치 = 1 + 큰단가치/100;
-		비중조절=s_load('add3','f','S');   비중조절 = 1 + 비중조절/100; 
+		큰단가치=s_load('add5','f','S');   큰단가치 = 1 + 큰단가치/100; 
+		비중조절=s_load('add3','f','S');   비중조절 = 1 + 비중조절/100;  	
 		첫매가치=s_load('add9','f','S');   첫매가치 = 1 + 첫매가치/100;
 		둘매가치=s_load('add10','f','S');  둘매가치 = 1 + 둘매가치/100;
 		회수기한=s_load('add11','i','S');
@@ -182,7 +182,7 @@ function tomorrow_buy() {
 	} else if(경과일수 >=2 && 보유수량 <= 기초수량) {
 		찬스수량 = 0
 		days = Math.min(경과일수+2,6)
-		for(i=0;i<days;i++) {찬스수량 += Math.ceil(기초수량 * (i*1.25+1))}
+		for(i=0;i<days;i++) {찬스수량 += Math.ceil(기초수량 * (i*비중조절+1))}
 		cp00 = take_chance(0);
 		cp22 = take_chance(-2.2);
 		찬스가격 = (회복전략 > 0.0)? cp00 : cp22
@@ -190,7 +190,7 @@ function tomorrow_buy() {
 		매수수량 = 찬스수량
 		매수가격 = 찬스가격
 	} else {
-		매수수량 = Math.ceil(기초수량 * (경과일수*1.25+1))
+		매수수량 = Math.ceil(기초수량 * (경과일수*비중조절+1))
 
 		if(매수수량*매수가격 > 가용잔액+추가자금) {
 			매수수량 = 기초수량 * 위매비중
@@ -204,7 +204,16 @@ function tomorrow_buy() {
 }   
 
 
-function take_chance(p){let H = s_load('add9','i','G');let n = s_load('sub2','i','G');let A = s_load('add6','f','G');if(H==0) return 0;	let N = H+n;k = N/(1+p/100);return round_up(A/(k-n),2)}
+function take_chance(p){
+	let H = s_load('add9','i','G');
+	let n = s_load('sub2','i','G');
+	let A = s_load('add6','f','G');
+	if(H==0) return 0;	
+	let N = H+n;
+	k = N/(1+p/100);
+	return round_up(A/(k-n),2)
+}
+
 function s_load(key,opt,opt2='B') {
 	if(opt2=='B')      { a=JBODY[key] } 
 	else if(opt2=='S') { a=JSTRG[key] }  
@@ -213,7 +222,7 @@ function s_load(key,opt,opt2='B') {
 	a = a.replace(/,/g,'');  
 	if(opt=='i') return parseInt(a);  else return parseFloat(a); 
 }
-function rebalance() { total = 가용잔액 + 추가자금; 가용잔액 = parseInt((total * 2)/3); 추가자금 = total - 가용잔액; 일매수금 = parseInt(가용잔액/분할횟수); 기초수량=Math.ceil(일매수금/마감금액);}
+function rebalance() { total = 가용잔액 + 추가자금; 가용잔액 = parseInt(total * 2/3); 추가자금 = total - 가용잔액; 일매수금 = parseInt(가용잔액/분할횟수); 기초수량=Math.ceil(일매수금/마감금액);}
 function back_restore() {let 매수금액 = s_load('add11','f'); let 가용잔액 = s_load('add19','f'); 가용잔액 += 매수금액; 매수금 = 0.00; vtc('add11',매수금액,2);	vtc('add19',가용잔액,2);}
 function reset_value() {
     var reset_key = ['add1','add2','add3','add4',
@@ -224,4 +233,21 @@ function reset_value() {
     for(i=0;i<reset_key.length;i++) { $("input[name='"+reset_key[i]+"']" ).val(''); }
 	AutoCalulated = false; $("#notice-calculated").addClass('notice-calculated');
 	load_value();
+}
+
+function do_rebalance() {
+
+	let 현재잔액 = ctv('add3','f');
+	let 현재종가 = ctv('add14','f');
+	let 분할횟수 = 22;
+	let 가용잔액 = parseInt((현재잔액 * 2)/3); 
+	let 추가자금 = 현재잔액 - 가용잔액; 
+	let 일매수금 = parseInt(가용잔액/분할횟수);
+	let 기초수량 = Math.ceil(일매수금/현재종가);
+
+	vtc("add19",가용잔액,2); 
+	vtc("add20",추가자금,2); 
+	vtc("sub4",일매수금,0); 
+	vtc("sub18",기초수량,0); 
+	h_dialog.notice("현재잔액에 대한 리밸런싱을 수행하였습니다");
 }
