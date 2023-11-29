@@ -193,7 +193,9 @@ class M_backtest_REVOLUTION(Model) :
 
     def take_chance(self,H,n,A) :
         if H == 0 : return 0
-        p = 0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
+        # 수익률 < 기회시점 인 경우는 2일째 수익률이 기회시점보다 내려가는 경우 3일째 사는 경우임
+        # p = 0.0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점'] 
+        p = 0.0 if self.M['손실회수'] else self.R['기회시점'] 
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)

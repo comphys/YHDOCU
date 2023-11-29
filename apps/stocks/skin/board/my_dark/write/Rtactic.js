@@ -185,7 +185,7 @@ function tomorrow_buy() {
 		for(i=0;i<days;i++) {찬스수량 += Math.ceil(기초수량 * (i*1.25+1))}
 		cp00 = take_chance(0);
 		cp22 = take_chance(-2.2);
-		찬스가격 = (현수익률<-2.2 || 회복전략 > 0.0)? cp00 : cp22
+		찬스가격 = (회복전략 > 0.0)? cp00 : cp22
 		찬스가격 = Math.min(매수가격,찬스가격) 
 		매수수량 = 찬스수량
 		매수가격 = 찬스가격
