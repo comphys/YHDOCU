@@ -185,6 +185,7 @@ class M_backtest_STABILITY(Model) :
             self.s_price = my.round_up(self.M['평균단가'] * self.M['둘매가치'])
         if  self.M['손실회수'] and self.M['날수']+1 <= self.M['회수기한'] : 
             self.s_price = my.round_up(self.M['평균단가'] * self.M['전화위복'])
+        # self.M['날수'] 는 오늘의 날수임으로, 내일을 판단하는 과정상 self.M['날수'] + 1 임
         if  self.M['날수']+1 >= self.M['강매시작'] : 
             self.s_price = my.round_up(self.M['평균단가'] * self.M['강매가치'])
         if  self.b_price >= self.s_price : self.b_price = self.s_price - 0.01 

@@ -149,19 +149,10 @@ class M_backtest_VOLATILITY(Model) :
         else : 
             return False
 
-    def today_price(self) :
-        self.buy_price = round(self.M['전일종가']*self.M['평단가치'],2)
-        self.sell_price = my.round_up(self.M['평균단가'] * self.M['첫매가치'])
-
-        if  self.M['매수단계'] in ('매수제한','매수중단') : self.sell_price = my.round_up(self.M['평균단가'] * self.M['둘매가치'])
-        if  self.M['손실회수'] and self.M['날수'] <= self.M['회수기한'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['전화위복'])
-        if  self.M['날수'] >= self.M['강매시작'] : self.sell_price = my.round_up(self.M['평균단가'] * self.M['강매가치'])
-        if self.buy_price >= self.sell_price : self.buy_price = self.sell_price - 0.01 
-        
 
     def normal_sell(self) :
         
-        if  self.M['당일종가'] >=  self.sell_price  : 
+        if  self.M['당일종가'] >=  self.s_price  : 
             self.M['매도수량'] =  self.M['보유수량']
             self.M['진행상황'] = '전량매도' 
             
@@ -176,7 +167,7 @@ class M_backtest_VOLATILITY(Model) :
 
     def normal_buy(self) :
 
-        if  self.M['당일종가']<= self.buy_price : 
+        if  self.M['당일종가']<= self.b_price : 
             self.M['매수수량'] = self.M['구매수량']
             거래코드 = 'L' if self.M['매수단계'] is '매수제한' else 'B'
             self.M['거래코드'] = 거래코드 + str(self.M['날수']) if self.M['구매수량'] else ' '
@@ -185,16 +176,28 @@ class M_backtest_VOLATILITY(Model) :
         
     def tomorrow_step(self)   :
         # 다음 날 구매수량 및 가격 예측
+        self.b_price = round(self.M['당일종가']*self.M['평단가치'],2)
+        self.s_price = my.round_up(self.M['평균단가'] * self.M['첫매가치'])
+        
         매수수량 = my.ceil(self.M['기초수량'] * (self.M['날수']*self.M['비중조절'] + 1))
-        매수단가 = round(self.M['당일종가']*self.M['평단가치'],2)
-        매수금액 = 매수수량 * 매수단가
-
+        매수금액 = 매수수량 * self.b_price
+        
         if  매수금액 > self.M['자산총액']   :
             매수수량 = my.ceil(self.M['기초수량'] * self.M['위매비중'])
-            매수금액 = 매수수량 * 매수단가
+            매수금액 = 매수수량 * self.b_price
             self.M['매수단계'] = '매수제한' 
             
             if  매수금액 > self.M['자산총액']  :  self.M['매수단계'] =  '매수중단'; 매수수량 = 0
+
+        if  self.M['매수단계'] in ('매수제한','매수중단') : 
+            self.s_price = my.round_up(self.M['평균단가'] * self.M['둘매가치'])
+        if  self.M['손실회수'] and self.M['날수']+1 <= self.M['회수기한'] : 
+            self.s_price = my.round_up(self.M['평균단가'] * self.M['전화위복'])
+        # self.M['날수'] 는 오늘의 날수임으로, 내일을 판단하는 과정상 self.M['날수'] + 1 임
+        if  self.M['날수']+1 >= self.M['강매시작'] : 
+            self.s_price = my.round_up(self.M['평균단가'] * self.M['강매가치'])
+        if self.b_price >= self.s_price : self.b_price = self.s_price - 0.01 
+        
        
         self.M['구매수량'] = 매수수량
 
@@ -217,7 +220,6 @@ class M_backtest_VOLATILITY(Model) :
                 if  self.new_day() : self.tomorrow_step(); self.print_backtest(); continue
                 else : self.M['첫날기록'] = True; continue
 
-            self.today_price()
             self.normal_sell()
             self.normal_buy()
             self.calculate()
@@ -230,7 +232,6 @@ class M_backtest_VOLATILITY(Model) :
 
     def nextStep(self) :
         self.M['전일종가'] = self.M['당일종가']
-        self.today_price()
         self.tomorrow_step()
 
         self.D['next_process'] = self.M['날수']
@@ -246,9 +247,9 @@ class M_backtest_VOLATILITY(Model) :
             self.D['next_sell'] = 0.00
             self.D['next_sell_qty']  = 0
         else :
-            self.D['next_buy']  = f"{self.buy_price:.2f}"
+            self.D['next_buy']  = f"{self.b_price:.2f}"
             self.D['next_buy_qty']  = self.M['구매수량']
-            self.D['next_sell'] = self.sell_price
+            self.D['next_sell'] = self.s_price
             self.D['next_sell_qty']  = self.M['보유수량']
     
     def set_value(self,key,val) :
