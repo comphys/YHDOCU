@@ -21,7 +21,7 @@ class 목록_Rtactic(SKIN) :
         
 
     def chart(self) :
-        target = self.DB.one(f"SELECT extra1,extra2 FROM h_board_config WHERE bid='{self.SYS.parm[0]}'")
+        target = self.DB.one(f"SELECT extra1 FROM h_board_config WHERE bid='{self.SYS.parm[0]}'")
         self.DB.clear()
         self.DB.tbl = f"h_{target}_board"
         self.DB.odr = "add0 DESC"
@@ -95,13 +95,13 @@ class 목록_Rtactic(SKIN) :
             
             elif 타겟일수 == 1 :
                 self.D['매수갯수'] = 기초수량; 
-                self.D['매수단가'] = TD['sub19']; 
-                self.D['매수예상'] = f"{기초수량 * float(TD['sub19']):,.2f}"
+                self.D['매수단가'] = LD['sub19']; 
+                self.D['매수예상'] = f"{기초수량 * float(LD['sub19']):,.2f}"
                 self.D['매도갯수'] = '0'; self.D['매도단가'] = TD['sub20']; self.D['매도예상'] = '0.00'
                 self.D['예상이익'] = '0.00' 
                 self.D['원화예상'] = '0'
                 self.D['target_value'] = [TD['sub20']] * chart_len 
-                self.D['chance_value'] = [TD['sub19']] * chart_len                
+                self.D['chance_value'] = [LD['sub19']] * chart_len                
             
             elif 타겟일수 >= 2 and int(LD['add9']) <= int(LD['sub18']): 
                 # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))

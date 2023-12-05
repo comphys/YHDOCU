@@ -18,10 +18,10 @@ var 자산분배
 //  ---------------------------------------------------
 var AutoCalculated = true
 
-if(uri('method')=='write' && 진행일자 !='None') { AutoCalulated = false; $("#notice-calculated").addClass('notice-calculated'); load_value(); } 
+if(uri('method')=='write' && 진행일자 !='None') { AutoCalculated = false; $("#notice-calculated").addClass('notice-calculated'); load_value(); } 
 
 function load_value() {
-    if( AutoCalulated ) return;
+    if( AutoCalculated ) return;
         // 현금투자 - 변수선언
         현재잔액= s_load('add3','f');
               
@@ -68,7 +68,7 @@ function load_value() {
 }
 
 function client_calculate() {
-	if(AutoCalulated) {h_dialog.notice("계산이 완료된 상태입니다."); return;}
+	if(AutoCalculated) {h_dialog.notice("계산이 완료된 상태입니다."); return;}
 	// 사용자에 의해 변화가 가능한 다음 수치는 화면에서 입력받게 한다.
 	입금액수 = ctv('add1','f'); 	출금액수 = ctv('add2','f'); 
 	매수금액 = ctv('add11','f');    매도금액 = ctv('add12','f');  	변동수량 = ctv('add5','i'); 
@@ -160,7 +160,7 @@ function client_calculate() {
 	vtc('sub29',진행상황,-2);   vtc('sub30',수수료등,2);    vtc('sub31',누적수료,2);    vtc('sub32',보존금액,-1);
 
 	h_dialog.notice("변동사항 계산을 완료하였습니다");
-	AutoCalulated = true; 
+	AutoCalculated = true; 
 	$("#notice-calculated").removeClass('notice-calculated');
 }
 
@@ -226,7 +226,7 @@ function initiate_invest() {
 		var ans = JSON.parse(data);
 		for(let i in ans) { $("input[name='"+i+"']" ).val(ans[i]); }
 	});
-	AutoCalulated = true; $("#notice-calculated").removeClass('notice-calculated');
+	AutoCalculated = true; $("#notice-calculated").removeClass('notice-calculated');
 }	
 
 function reset_value() {
@@ -236,7 +236,7 @@ function reset_value() {
                     'add19','sub11','sub25','sub27','add20','sub26','add17','sub28','sub1','sub4','sub2','sub3','sub12','sub18','sub19','sub20','sub29','sub30','sub31','sub32']
 
     for(i=0;i<reset_key.length;i++) { $("input[name='"+reset_key[i]+"']" ).val(''); }
-	AutoCalulated = false; $("#notice-calculated").addClass('notice-calculated');
+	AutoCalculated = false; $("#notice-calculated").addClass('notice-calculated');
 	load_value();
 }
 
