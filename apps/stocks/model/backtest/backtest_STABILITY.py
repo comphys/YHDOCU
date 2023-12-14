@@ -126,10 +126,6 @@ class M_backtest_STABILITY(Model) :
             self.R['기회진행'] = True
             self.chance_qty()
             매수수량R = self.R['찬스수량']
-            매수금액R = 매수수량R * self.R['기회가격']
-            
-            if 매수금액R > self.R['기회자금'] :
-                매수수량R = int(self.R['기회자금']/self.R['기회가격'])
             
             self.R['거래코드'] = f"S{self.R['기초수량']}/{매수수량R}" 
             self.R['매수수량'] = 매수수량R
@@ -140,8 +136,7 @@ class M_backtest_STABILITY(Model) :
         
             가용잔액 = int(self.R['기회자금'] * self.M['자본비율'])
             일매수금 = int(가용잔액/self.M['분할횟수'])
-            매수비율 = 일매수금 / self.M['일매수금'] 
-            기초수량 = my.ceil(매수비율 * self.M['기초수량'])
+            기초수량 = my.ceil(일매수금/self.M['전일종가'])
             self.R['기초수량'] = 기초수량
 
     

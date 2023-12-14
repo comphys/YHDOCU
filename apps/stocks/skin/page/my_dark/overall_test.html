@@ -1,0 +1,439 @@
+{% extends D['_skn'] + 'page/my_dark/main_layout.html' %}
+
+{% block contents_page  %}
+<div class="row-row">
+<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
+<br>
+<div class="well clearfix" style="border-radius:0px;">
+    <form method='post' name='stock_back_testing' action="{{D['_bse']}}page/overall_test/overall_test" onsubmit='return check_thisForm()'>
+    <div class="pull-left">
+    <div class='select' style='margin-right:10px;vertical-align:bottom'>
+        <input placeholder='종목코드' name='종목코드' type='text' value="{{D['종목코드']}}">
+            <div class='btn-group'>
+                <button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>
+                    <ul class='dropdown-menu'>
+                        <li><a>종목코드</a></li>
+                        <li><a href='#'>SOXL</a></li>
+                    </ul>
+            </div>
+    </div>
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 일반자금</div>
+        <input type='text' class="i-number" name='일반자금' style="width:70px;text-align:center;" value="{{D['일반자금']}}">
+    </div>
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 기회자금</div>
+        <input type='text' class="i-number" name="기회자금" style="width:70px;text-align:center;" value="{{D['기회자금']}}">
+    </div>
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 안정자금</div>
+        <input type='text' class="i-number" name="안정자금" style="width:70px;text-align:center;" value="{{D['안정자금']}}">
+    </div>
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 기회시점</div>
+        <input type='text' class="i-number" name="기회시점" style="width:50px;text-align:center;" value="{{D['기회시점']}}">
+    </div>
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 안정시점</div>
+        <input type='text' class="i-number" name="안정시점" style="width:50px;text-align:center;" value="{{D['안정시점']}}">
+    </div>
+    </div> <!--pull left-->
+    <div class="pull-right">
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 시작일자</div>
+        <input type='text' name='시작일자' class="i-date" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
+    </div>
+    <div class='i-input-div'>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 종료일자</div>
+        <input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
+    </div>
+    <button class="btn btn-red-s3" style="vertical-align:middle;">테스팅</button>
+    </div> <!--pull right-->
+    </form>
+</div> 
+
+<div id="myChart_main-div" class="clearfix" style="width:100%;height:370px;background-color:#24272d;padding:10px;border:2px solid black;">
+	<div class="pull-left" style="margin-right:20px">
+		<canvas id="myChart_main"  style="width:1210px;height:350px;background-color:#24272d;"></canvas>
+	</div>
+	<div class="pull-left" onclick="$('#Next-Strategy').show()">
+		<canvas id="myChart_side" style="width:300px;height:350px;background-color:#24272d"></canvas>
+	</div>
+</div>
+
+{% if D['NOTICE'] %}
+<div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
+{% else %}
+<div class="clearfix" style="border-radius:0px;padding:10px;">
+	<div class="pull-left" style="color:lightgray;">
+		최장 : <b>{{D['max_days']}}</b> 일 {{D['max_date']}} &nbsp;
+		MDD : <b>{{D['MDD1']}}</b>% / <b>{{D['MDD2']}}</b>% / <b>{{D['MDD3']}}</b>% &nbsp;
+		일반 : <b>{{D['일반익절']}}</b> / <b>{{D['기회익절']}}</b> / <b>{{D['안정익절']}}</b> &nbsp; 
+		전략 : <b>{{D['일반손절']}}</b> / <b>{{D['기회손절']}}</b> / <b>{{D['안정손절']}}</b> &nbsp;
+		<i class="fa fa-arrow-up" onclick="chart_up_dn(1)"></i>
+		<i class="fa fa-arrow-down" onclick="chart_up_dn(2)"></i>
+	</div>
+	<div class="pull-right" style="color:lightgray">
+		{{D['output']|safe}}
+	</div>
+</div>
+<table class='table table-striped table-hover' style="width:{{D['xwidth']}};border:2px solid black;">
+	<tr style="background-color:#393f4a;border-bottom:1px solid black">
+		<th style='text-align:center;width:50px'>날수</th>
+		<th style='text-align:center;width:100px'>기록일자</th>
+		<th style='text-align:right;width:70px'>종가</th>
+		<th style='text-align:right;width:60px'>변동</th>
+
+		<th style='text-align:right;width:80px'>일반진행</th>
+		<th style='text-align:right;width:80px'>일반평균</th>
+		<th style='text-align:right;width:90px'>일반수익</th>
+		<th style='text-align:right;width:90px'>일반(%)</th>
+		<th style='text-align:right;width:100px'>일반잔액</th>
+
+		<th style='text-align:right;width:80px'>기회진행</th>
+		<th style='text-align:right;width:80px'>기회평균</th>
+		<th style='text-align:right;width:90px'>기회수익</th>
+		<th style='text-align:right;width:90px'>기회(%)</th>
+		<th style='text-align:right;width:100px'>기회잔액</th>
+
+		<th style='text-align:right;width:80px'>안정진행</th>
+		<th style='text-align:right;width:80px'>안정평균</th>
+		<th style='text-align:right;width:90px'>안정수익</th>
+		<th style='text-align:right;width:90px'>안정(%)</th>
+		<th style='text-align:right;'>안정잔액</th>
+	</tr>
+</table>
+</div> <!--postion:fixed-->
+</div> <!--rowrow clearfix-->
+
+{% if D['TR'] %}
+<div id="backTesting-table" class="row-row clearfix" style="margin-top:470px">
+	
+	<table class='table table-striped table-hover' style="border:2px solid black">
+		<colgroup>
+			<col style="width:50px;"> <!-- 날수 -->
+			<col style="width:100px;"> <!-- 일자 -->
+			<col style="width:70px;"> <!-- 당일종가 -->
+			<col style="width:60px;border-right:2px solid gray"> <!-- 당일변동 -->
+
+			<col style="width:80px"> <!-- 일반진행 -->
+			<col style="width:80px"> <!-- 일반평균 -->
+			<col style="width:90px"> <!-- 일반수익 -->
+			<col style="width:90px"> <!-- 일반(%) -->
+			<col style="width:100px;border-right:2px solid gray"> <!-- 일반잔액 -->
+
+			<col style="width:80px"> <!-- 기회진행 -->
+			<col style="width:80px"> <!-- 기회평균 -->
+			<col style="width:90px"> <!-- 기회수익 -->
+			<col style="width:90px"> <!-- 기회(%) -->
+			<col style="width:100px;border-right:2px solid gray"> <!-- 기회잔액 -->
+
+			<col style="width:80px"> <!-- 안정진행 -->
+			<col style="width:80px"> <!-- 안정평균 -->
+			<col style="width:90px"> <!-- 안정수익 -->
+			<col style="width:90px"> <!-- 안정(%) -->
+			<col>
+		</colgroup>
+
+		<tbody>
+			{%- for TR in D['TR'] -%}
+			{% if TR['진행상황'] == '익절매도'  %}
+			<tr style="border-top:1px solid #F3F781;border-bottom:1px solid #F3F781;background-color:black;font-weight:bold" onclick="show_chart({{TR['기록시즌']}})"> 
+			{% elif TR['진행상황'] == '손절매도' %}
+			<tr style="border-top:1px solid #A9D0F5;border-bottom:1px solid #A9D0F5;background-color:black;" onclick="show_chart({{TR['기록시즌']}})">
+			{% else %}
+			<tr>
+			{% endif %}
+				<td style='text-align:center'>{{TR['현재날수']}}</td>
+				<td class='if-the-day'>{{TR['기록일자']}}</td>
+				<td style='text-align:right;font-weight:bold;'>{{TR['당일종가']|safe}}</td>
+				<td style='text-align:right;font-weight:bold;'>{{TR['당일변동']|safe}}</td>
+
+				<td style='text-align:right;color:#F6CECE'>{{TR['일반진행']}}</td>
+				<td style='text-align:right'>{{TR['일반평균']|safe}}</td>
+				<td style='text-align:right'>{{TR['일반수익']|safe}}</td>
+				<td style='text-align:right;font-weight:bold'>{{TR['일반익률']|safe}}</td>
+				<td style='text-align:right;color:#CEF6CE'>{{TR['일반잔액']|safe}}</td>
+
+				<td style='text-align:right;color:#F6CECE'>{{TR['기회진행']}}</td>
+				<td style='text-align:right;color:#E6F8E0'>{{TR['기회평균']|safe}}</td>
+				<td style='text-align:right'>{{TR['기회수익']|safe}}</td>
+				<td style='text-align:right;font-weight:bold'>{{TR['기회익률']|safe}}</td>
+				<td style='text-align:right;color:#CEF6CE'>{{TR['기회잔액']|safe}}</td>
+
+				<td style='text-align:right;color:#F6CECE'>{{TR['안정진행']}}</td>
+				<td style='text-align:right;color:#E6F8E0'>{{TR['안정평균']|safe}}</td>
+				<td style='text-align:right'>{{TR['안정수익']|safe}}</td>
+				<td style='text-align:right;font-weight:bold'>{{TR['안정익률']|safe}}</td>
+				<td style='text-align:right;color:#CEF6CE'>{{TR['안정잔액']|safe}}</td>				
+			</tr>
+			{%- endfor %}
+		</tbody>
+	</table>
+</div>
+{% endif %}
+{% endif %}
+
+<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1450px;background-color:#24272d;padding:20px;border:2px solid black;opacity:0.9">
+	<canvas id="mybackTestChart" style="width:100%;height:310px;background-color:#24272d"></canvas>
+</div>
+
+<div id="Next-Strategy" style="display:none;opacity:0.7;position:fixed;left:1255px;top:112px;width:230px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
+    <span style="font-style: italic"> Next Strategy</span><br><br>
+	<ul style="margin-left:10px">
+		<li>진행일자 : {{D['next_process']}}</li>
+		<li>전일종가 : $ {{D['next_base_price']}}</li>
+		<li>현재잔액 : $ {{D['next_available_money']}}</li>
+		<li>--------------------</li>
+		<li>현재단계 : {{D['next_status']}}</li>
+		<li>일매수금 : $ {{D['next_base_amount']}}</li>
+		<li>기초수량 : {{D['next_base_qty']}}</li>
+		<li>매수전략 : {{D['next_buy_qty']}}(${{D['next_buy']}})</li>
+		<li>매도전략 : {{D['next_sell_qty']}}(${{D['next_sell']}})</li>
+	</ul>
+</div>
+
+
+<script src="/sys/chart/chart.min.js"></script>
+<script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
+<script>
+
+$(".if-the-day").click(function(){
+	var date=$(this).text(); $("input[name='start_date']").val(date);}).contextmenu(function(e){  e.preventDefault();
+	var date=$(this).text(); $("input[name='end_date']").val(date); $("form[name='stock_back_testing']").submit();
+});
+
+
+// 챠트 객체 생성
+const ctx_season = $id('mybackTestChart');
+ctx_season.style.backgroundColor = '#33363b';
+ctx_season.style.border = '2px solid black';
+
+const labels_season = Array.from(new Array(10),(x,i)=> i+1);
+const data_season = {
+	labels : labels_season,
+	datasets : [
+		{
+			label:'당일종가',
+			data : [2,5,6,3,8],
+			borderColor:'#58ACFA', borderWidth:2,borderDash: [2,2], pointStyle:'circle', pointRadius:2, pointHoverRadius:15, backgroundColor:'#58ACFA',
+			lineTension:0.2
+
+		},
+		{
+			label:'일반평균',
+			data : [3,6,7,8,5],
+			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',
+			lineTension:0.2
+
+		},
+		{
+			label:'기회평균',
+			data : [3,6,7,8,5],
+			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'yellow',backgroundColor:'yellow',
+			lineTension:0.2
+
+		},
+		{
+			label:'안정평균',
+			data : [3,6,7,8,5],
+			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'orange',backgroundColor:'orange',
+			lineTension:0.2
+
+		},
+		{
+			label:'추세하향선',
+			data : [4,7,5,3,4],
+			borderWidth:2,borderColor:'darkgray',borderDash: [2,5],backgroundColor:'white',pointRadius:2,pointHoverRadius:15,
+			lineTension:0.2
+
+		}
+
+	]   
+};
+const options_season = {
+	animation : {duration:0},
+	plugins : { legend: {display:false} },
+	responsive:false,
+	layout:{padding:20},
+	scales:{
+		x:{ ticks : {color:'lightgray'}, grid:{color:'#272727'}},
+		y:{ ticks : {color:'lightgray'}, grid:{color:'#272727'}}
+	}
+};
+const config_season  = {type:'line',data:data_season,options:options_season};
+const myChart_season = new Chart(ctx_season, config_season);
+// --------------------------------------------------------------------------------------
+const ctx_side= $id('myChart_side');
+const labels_side = ['일반진행','기회진행','안정진행'];
+
+const data_side = {
+  labels: labels_side,
+  datasets: [{
+    label: ' 수익률비교 ',
+    data: [ {{D['v_profit']}}, {{D['r_profit']}}, {{D['s_profit']}}],
+    backgroundColor: ['rgba(255, 205, 86, 0.4)','rgba(75, 192, 192, 0.4)','rgba(255, 99, 132, 0.4)'],
+    borderColor: ['rgb(255, 205, 86)','rgb(75, 192, 192)','rgb(255, 99, 132)'],
+    borderWidth: 1
+  }]
+};
+
+const config_side = {
+  type: 'bar',
+  data: data_side,
+  plugins:[ChartDataLabels],
+  options: {
+	animation : {duration:500},
+    plugins : { legend: {display:false},
+				tooltip : {enabled:false},
+				datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:12}}			
+	}
+  },
+};
+const myChart_side = new Chart(ctx_side, config_side); 
+
+// --------------------------------------------------------------------------------------
+var selected_tr = null
+$(document).ready(function(){ 
+	$('#backTestingChart').bind('dblclick',function(){$(this).hide();}).draggable().hide();
+
+});	
+
+function check_thisForm() {
+    if(! $("input[name='종목코드']").val() ) { h_dialog.notice("코드 입력은 필수입니다"); return false; }
+    if(! $("input[name='시작일자']").val() ) { h_dialog.notice("시작 일자가 입력되지않았습니다"); return false; }  
+    if(! $("input[name='종료일자']").val() ) { h_dialog.notice("종료 일자가 입력되지않았습니다"); return false; }  
+    if($("input[name='시작일자']").val() > $("input[name='종료일자']").val() ) { h_dialog.notice("종료 일자는 시작일보다 나중이어야 합니다"); return false; }
+}
+
+function show_chart(season) {
+	$('#backTestingChart').css({top:'110px',left:'32px'}).show();
+	var clsp = [];
+	var avgv = [];
+	var avgr = [];
+	var avgs = [];
+	var dlne = [];
+
+	$(".clsp"+season).each(function() {clsp.push(parseFloat($(this).text()))});
+	$(".avgv"+season).each(function() {avgv.push(parseFloat($(this).text()))});
+	$(".avgr"+season).each(function() {
+		tmpv = parseFloat($(this).text());
+		tmpv = (tmpv)? avgr.push(tmpv) : avgr.push(null); 
+	});
+	$(".avgs"+season).each(function() {
+		tmpv = parseFloat($(this).text());
+		tmpv = (tmpv)? avgs.push(tmpv) : avgs.push(null); 
+	});
+	
+	const t0 = 0.02;
+	const a0 = clsp[0];	const d0 = 1-t0;
+
+	for(let x=0; x < clsp.length; x++) { dlne.push(a0*(1-x*t0));}
+
+	var xticks = clsp.length
+	if (xticks < 30 ) { xticks = 30; }
+	var new_labels = Array.from(new Array(xticks),(x,i)=> i+1);
+	avgv[avgv.length - 1] = avgv[avgv.length - 2]
+	avgr[avgr.length - 1] = avgr[avgr.length - 2]
+	avgs[avgs.length - 1] = avgs[avgs.length - 2]
+
+	myChart_season.config.data.labels = new_labels;
+	myChart_season.config.data.datasets[0].data =  clsp;
+	myChart_season.config.data.datasets[1].data =  avgv;
+	myChart_season.config.data.datasets[2].data =  avgr;
+	myChart_season.config.data.datasets[3].data =  avgs;
+	myChart_season.config.data.datasets[4].data =  dlne;
+	myChart_season.update();
+}
+
+// 본챠트 그리기
+const ctx_main = $id('myChart_main');
+ctx_main.style.backgroundColor = '#33363b';
+ctx_main.style.border = '2px solid black';
+
+let close_price = {{D['clse_p']|safe}};
+// let avg_tprice = {{D['average_price_t']|safe}};
+let avge_v = {{D['avge_v']|safe}};
+let avge_r = {{D['avge_r']|safe}};
+let avge_s = {{D['avge_s']|safe}};
+let eval_v = {{D['eval_v']|safe}};
+let eval_r = {{D['eval_r']|safe}};
+let eval_s = {{D['eval_s']|safe}};
+
+let labels_main = {{D['c_date']|safe}};
+let data_count = labels_main.length
+
+if(data_count > 100) {
+	avge_v.fill(null)
+	avge_r.fill(null) 
+	avge_s.fill(null) 
+}
+
+const data_main = {
+    labels : labels_main,
+    datasets : [
+		{
+            label:' 종가변동',
+            data : close_price,
+			borderColor:'gray', borderWidth:2, pointRadius:0, borderDash:[2,3],
+  			lineTension:0.2
+    	},
+		{
+            label:' 평균단가V',
+            data : avge_v,
+			borderColor:'yellow', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
+			lineTension:0.2
+        },
+		{
+            label:' 평균단가R',
+            data : avge_r,
+			borderColor:'cyan', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',
+			lineTension:0.2
+        },
+		{
+            label:' 평가밸류V',
+            data : eval_v,
+			borderColor:'orange', borderWidth:2,pointRadius:0,borderDash:[2,3],
+			lineTension:0.2,
+			yAxisID : 'y1'
+        },
+		{
+            label:' 평가밸류R',
+            data : eval_r,
+			borderColor:'rgba(75, 192, 192, 0.4)', borderWidth:2,pointRadius:0, 
+			lineTension:0.2,
+			yAxisID : 'y1'
+        },
+		{
+            label:' 평가밸류S',
+            data : eval_s,
+			borderColor:'white', borderWidth:2,pointRadius:0, 
+			lineTension:0.2,
+			yAxisID : 'y1'
+        },
+    ]   
+};
+const options_main = {
+	animation : { duration:1000	},
+	// animation,
+	plugins : { legend: {display:false}, tooltip:{enabled:false}},
+    responsive:false,
+    layout:{padding:20},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'left'},
+		y1:{ type:'linear', display:true, position:'right'}
+    }
+};
+const config_main  = {type:'line',data:data_main,options:options_main};
+const myChart_main = new Chart(ctx_main, config_main);
+
+
+function chart_up_dn(opt) {
+	if(opt==1) { $("#myChart_main-div").hide(); $("#backTesting-table").css("marginTop",'100px'); }
+	else {$("#myChart_main-div").show(); $("#backTesting-table").css("marginTop",'470px');}
+	// "margin-top:473px"
+}
+//
+</script>
+{% endblock %}

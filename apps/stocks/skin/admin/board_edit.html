@@ -61,11 +61,10 @@
 				<div id="adminBoardB_editTab0" class="tab-pane {{D['active_tab'][0]}}">
 					<form id='adminBoardB_edit01' action="{{D['_bse']}}admins-action/board_edit_basic" method="post" class="form-horizontal" >
 						<div class='control-group'>
-							<label class='control-label'>보드명칭 : </label>
+							<label class='control-label'>보드이름 : </label>
 							<div class='controls'>
-								<input type='text' name='title' value="{{D['bconfig']['title']}}" style='width:164px' />
-								<span class='control-right-label'>: 보드에 대한 한글 명칭입니다</span>
-								<input type='hidden' name='bid' value="{{D['bconfig']['bid']}}" />
+								<input type='text' name='type' style='width:164px' value="{{D['bconfig']['bid']}}" readonly='readonly' />
+								<span class='control-right-label'>: 보드이름(아이디)는 변경할 수 없습니다</span>
 							</div>
 						</div>
 						<div class='control-group'>
@@ -73,6 +72,14 @@
 							<div class='controls'>
 								<input type='text' name='type' style='width:164px' value="{{D['bconfig']['type']}}" readonly='readonly' />
 								<span class='control-right-label'>: 보드타입은 보드 생성시 결정됩니다</span>
+							</div>
+						</div>
+						<div class='control-group'>
+							<label class='control-label'>보드명칭 : </label>
+							<div class='controls'>
+								<input type='text' name='title' value="{{D['bconfig']['title']}}" style='width:164px' />
+								<span class='control-right-label'>: 보드에 대한 한글 명칭입니다</span>
+								<input type='hidden' name='bid' value="{{D['bconfig']['bid']}}" />
 							</div>
 						</div>
 						<div class='control-group'>

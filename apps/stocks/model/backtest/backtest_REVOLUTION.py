@@ -125,10 +125,6 @@ class M_backtest_REVOLUTION(Model) :
             self.R['기회진행'] = True
             self.chance_qty()
             매수수량R = self.R['찬스수량']
-            매수금액R = 매수수량R * self.R['기회가격']
-            
-            if 매수금액R > self.R['기회자금'] :
-                매수수량R = int(self.R['기회자금']/self.R['기회가격'])
             
             self.R['거래코드'] = f"S{self.R['기초수량']}/{매수수량R}" 
             self.R['매수수량'] = 매수수량R
