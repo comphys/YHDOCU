@@ -280,29 +280,29 @@ class M_backtest_OVERALL(Model) :
         초기자본1 = float(self.D['일반자금'].replace(',','')) 
         최종자본1 = self.V['평가금액'] + self.V['일반자금'] 
         최종수익1 = 최종자본1 - 초기자본1 
-        self.D['v_profit'] = round((최종수익1/초기자본1) * 100,2)      
+        self.D['v_profit'] = round((최종수익1/초기자본1) * 100,1)      
         
         초기자본2 = float(self.D['기회자금'].replace(',',''))
         최종자본2 = self.R['평가금액'] + self.R['기회자금'] 
         최종수익2 = 최종자본2 - 초기자본2 
-        self.D['r_profit'] = round((최종수익2/초기자본2) * 100,2)
+        self.D['r_profit'] = round((최종수익2/초기자본2) * 100,1)
 
         초기자본3 = float(self.D['안정자금'].replace(',',''))
         최종자본3 = self.S['평가금액'] + self.S['안정자금'] 
         최종수익3 = 최종자본3 - 초기자본3 
-        self.D['s_profit'] = round((최종수익3/초기자본3) * 100,2)
+        self.D['s_profit'] = round((최종수익3/초기자본3) * 100,1)
         
         초기자본 = 초기자본1 + 초기자본2 + 초기자본3
         최종자본 = 최종자본1 + 최종자본2 + 최종자본3
         최종수익 = 최종자본 - 초기자본 
-        최종수익률 = (최종수익/초기자본) * 100
+        self.D['t_profit'] = round((최종수익/초기자본) * 100,1)
         
         style1 = "<span style='font-weight:bold;color:white'>"
         style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
         style3 = "<span style='font-weight:bold;color:#F6CECE'>"
         self.D['output']  = f"총 {style1}{self.D['days_span']:,}</span>일 "
         self.D['output'] += f"초기 {style1}${초기자본:,.0f}</span> 최종 {style1}${최종자본:,.2f}</span> "
-        self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 수익률은 {style3}{최종수익률:,.2f}( {self.D['v_profit']:,.2f} / {self.D['r_profit']:,.2f} / {self.D['s_profit']:,.2f} ) %</span>"
+        self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 수익률은 {style3}{self.D['t_profit']:,.2f}( {self.D['v_profit']:,.2f} / {self.D['r_profit']:,.2f} / {self.D['s_profit']:,.2f} ) %</span>"
         
     
     def get_start(self) :
