@@ -246,7 +246,7 @@ class M_backtest_OVERALL(Model) :
             self.V['거래코드'] = ' ' 
             self.R['거래코드'] = ' '
             self.S['거래코드'] = ' '
-            self.set_value(['매도수량','매도금액','매수수량','매수금액'],0)
+            self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률'],0)
             
             # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정(12%)값 이상으로 상승 시 건너뛰기 위함
             if  idx == idxx + 1 or self.M['첫날기록'] : 
@@ -280,22 +280,22 @@ class M_backtest_OVERALL(Model) :
         초기자본1 = float(self.D['일반자금'].replace(',','')) 
         최종자본1 = self.V['평가금액'] + self.V['일반자금'] 
         최종수익1 = 최종자본1 - 초기자본1 
-        self.D['v_profit'] = round((최종수익1/초기자본1) * 100,1)      
+        self.D['v_profit'] = round((최종수익1/초기자본1) * 100,2)      
         
         초기자본2 = float(self.D['기회자금'].replace(',',''))
         최종자본2 = self.R['평가금액'] + self.R['기회자금'] 
         최종수익2 = 최종자본2 - 초기자본2 
-        self.D['r_profit'] = round((최종수익2/초기자본2) * 100,1)
+        self.D['r_profit'] = round((최종수익2/초기자본2) * 100,2)
 
         초기자본3 = float(self.D['안정자금'].replace(',',''))
         최종자본3 = self.S['평가금액'] + self.S['안정자금'] 
         최종수익3 = 최종자본3 - 초기자본3 
-        self.D['s_profit'] = round((최종수익3/초기자본3) * 100,1)
+        self.D['s_profit'] = round((최종수익3/초기자본3) * 100,2)
         
         초기자본 = 초기자본1 + 초기자본2 + 초기자본3
         최종자본 = 최종자본1 + 최종자본2 + 최종자본3
         최종수익 = 최종자본 - 초기자본 
-        self.D['t_profit'] = round((최종수익/초기자본) * 100,1)
+        self.D['t_profit'] = round((최종수익/초기자본) * 100,2)
         
         style1 = "<span style='font-weight:bold;color:white'>"
         style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
@@ -332,7 +332,7 @@ class M_backtest_OVERALL(Model) :
         tx = {}
         #--------------------------------------------------------
         tx['현재날수'] = self.M['현재날수']; tx['기록시즌'] = self.M['기록시즌']
-        tx['기록일자'] = self.M['현재일자']
+        tx['기록일자'] = self.M['현재일자'][2:]
         tx['당일종가'] = f"<span class='clsp{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
         tx['당일변동'] = f"{self.M['당일변동']:.1f}"
         #--------------------------------------------------------
