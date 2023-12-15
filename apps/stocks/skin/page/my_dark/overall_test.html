@@ -54,10 +54,10 @@
 
 <div id="myChart_main-div" class="clearfix" style="width:100%;height:370px;background-color:#24272d;padding:10px;border:2px solid black;">
 	<div class="pull-left" style="margin-right:20px">
-		<canvas id="myChart_main"  style="width:1210px;height:350px;background-color:#24272d;"></canvas>
+		<canvas id="myChart_main"  style="width:1200px;height:350px;background-color:#24272d;"></canvas>
 	</div>
 	<div class="pull-left" onclick="$('#Next-Strategy').show()">
-		<canvas id="myChart_side" style="width:340px;height:350px;background-color:#24272d"></canvas>
+		<canvas id="myChart_side" style="width:280px;height:350px;background-color:#24272d"></canvas>
 	</div>
 </div>
 
@@ -66,10 +66,10 @@
 {% else %}
 <div class="clearfix" style="border-radius:0px;padding:10px;">
 	<div class="pull-left" style="color:lightgray;">
-		최장 : <b>{{D['max_days']}}</b> 일 {{D['max_date']}} &nbsp;
+		최장 : <b>{{D['max_days']}}</b>일({{D['max_date']}}) &nbsp;
 		MDD : <b>{{D['MDD1']}}</b>% / <b>{{D['MDD2']}}</b>% / <b>{{D['MDD3']}}</b>% &nbsp;
-		일반 : <b>{{D['일반익절']}}</b> / <b>{{D['기회익절']}}</b> / <b>{{D['안정익절']}}</b> &nbsp; 
-		전략 : <b>{{D['일반손절']}}</b> / <b>{{D['기회손절']}}</b> / <b>{{D['안정손절']}}</b> &nbsp;
+		일반 : <b>{{D['일반익절']}}</b>/<b>{{D['기회익절']}}</b>/<b>{{D['안정익절']}}</b> &nbsp; 
+		전략 : <b>{{D['일반손절']}}</b>/<b>{{D['기회손절']}}</b>/<b>{{D['안정손절']}}</b> &nbsp;
 		<i class="fa fa-arrow-up" onclick="chart_up_dn(1)"></i>
 		<i class="fa fa-arrow-down" onclick="chart_up_dn(2)"></i>
 	</div>
@@ -79,27 +79,27 @@
 </div>
 <table class='table table-striped table-hover' style="width:{{D['xwidth']}};border:2px solid black;">
 	<tr style="background-color:#393f4a;border-bottom:1px solid black">
-		<th style='text-align:center;width:50px'>날수</th>
-		<th style='text-align:center;width:100px'>기록일자</th>
-		<th style='text-align:right;width:70px'>종가</th>
-		<th style='text-align:right;width:60px'>변동</th>
+		<th style='text-align:center;'>날수</th>
+		<th style='text-align:center;'>기록일자</th>
+		<th style='text-align:right;'>종가</th>
+		<th style='text-align:right;'>변동</th>
 
-		<th style='text-align:right;width:80px'>일반진행</th>
-		<th style='text-align:right;width:80px'>일반평균</th>
-		<th style='text-align:right;width:90px'>일반수익</th>
-		<th style='text-align:right;width:90px'>일반(%)</th>
-		<th style='text-align:right;width:100px'>일반잔액</th>
+		<th style='text-align:right;'>일반진행</th>
+		<th style='text-align:right;'>일반평균</th>
+		<th style='text-align:right;'>일반수익</th>
+		<th style='text-align:right;'>일반(%)</th>
+		<th style='text-align:right;'>일반잔액</th>
 
-		<th style='text-align:right;width:80px'>기회진행</th>
-		<th style='text-align:right;width:80px'>기회평균</th>
-		<th style='text-align:right;width:90px'>기회수익</th>
-		<th style='text-align:right;width:90px'>기회(%)</th>
-		<th style='text-align:right;width:100px'>기회잔액</th>
+		<th style='text-align:right;'>기회진행</th>
+		<th style='text-align:right;'>기회평균</th>
+		<th style='text-align:right;'>기회수익</th>
+		<th style='text-align:right;'>기회(%)</th>
+		<th style='text-align:right;'>기회잔액</th>
 
-		<th style='text-align:right;width:80px'>안정진행</th>
-		<th style='text-align:right;width:80px'>안정평균</th>
-		<th style='text-align:right;width:90px'>안정수익</th>
-		<th style='text-align:right;width:90px'>안정(%)</th>
+		<th style='text-align:right;'>안정진행</th>
+		<th style='text-align:right;'>안정평균</th>
+		<th style='text-align:right;'>안정수익</th>
+		<th style='text-align:right;'>안정(%)</th>
 		<th style='text-align:right;'>안정잔액</th>
 	</tr>
 </table>
@@ -111,27 +111,27 @@
 	
 	<table class='table table-striped table-hover' style="border:2px solid black">
 		<colgroup>
-			<col style="width:50px;"> <!-- 날수 -->
-			<col style="width:100px;"> <!-- 일자 -->
-			<col style="width:70px;"> <!-- 당일종가 -->
-			<col style="width:60px;border-right:2px solid gray"> <!-- 당일변동 -->
+			<col> <!-- 날수 -->
+			<col> <!-- 일자 -->
+			<col> <!-- 당일종가 -->
+			<col style="border-right:2px solid gray"> <!-- 당일변동 -->
 
-			<col style="width:80px"> <!-- 일반진행 -->
-			<col style="width:80px"> <!-- 일반평균 -->
-			<col style="width:90px"> <!-- 일반수익 -->
-			<col style="width:90px"> <!-- 일반(%) -->
-			<col style="width:100px;border-right:2px solid gray"> <!-- 일반잔액 -->
+			<col> <!-- 일반진행 -->
+			<col> <!-- 일반평균 -->
+			<col> <!-- 일반수익 -->
+			<col> <!-- 일반(%) -->
+			<col style="border-right:2px solid gray"> <!-- 일반잔액 -->
 
-			<col style="width:80px"> <!-- 기회진행 -->
-			<col style="width:80px"> <!-- 기회평균 -->
-			<col style="width:90px"> <!-- 기회수익 -->
-			<col style="width:90px"> <!-- 기회(%) -->
-			<col style="width:100px;border-right:2px solid gray"> <!-- 기회잔액 -->
+			<col> <!-- 기회진행 -->
+			<col> <!-- 기회평균 -->
+			<col> <!-- 기회수익 -->
+			<col> <!-- 기회(%) -->
+			<col style="border-right:2px solid gray"> <!-- 기회잔액 -->
 
-			<col style="width:80px"> <!-- 안정진행 -->
-			<col style="width:80px"> <!-- 안정평균 -->
-			<col style="width:90px"> <!-- 안정수익 -->
-			<col style="width:90px"> <!-- 안정(%) -->
+			<col> <!-- 안정진행 -->
+			<col> <!-- 안정평균 -->
+			<col> <!-- 안정수익 -->
+			<col> <!-- 안정(%) -->
 			<col>
 		</colgroup>
 
@@ -272,7 +272,7 @@ const data_side = {
   datasets: [{
     label: ' 수익률비교 ',
     data: [ {{D['t_profit']}}, {{D['v_profit']}}, {{D['r_profit']}}, {{D['s_profit']}}],
-	barThickness:65,
+	barThickness:55,
     backgroundColor: ['#A67F78','#8F8681','#32435F','#283B42','#69491A','#003E19','#283B42'],
     borderColor: ['#000000','#000000','#000000','#000000','#000000','#000000','#000000'],
     borderWidth: 1

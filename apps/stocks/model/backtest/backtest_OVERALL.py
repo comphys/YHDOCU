@@ -86,10 +86,6 @@ class M_backtest_OVERALL(Model) :
         
     def rebalance(self)  :
         
-        self.V['평가밸류'] = self.V['일반자금'] 
-        self.R['평가밸류'] = self.R['기회자금'] 
-        self.S['평가밸류'] = self.S['안정자금']
-        
         self.V['일매수금'] = int(int(self.V['일반자금']*self.M['리밸비율'])/self.M['분할횟수']) 
         self.R['일매수금'] = int(int(self.R['기회자금']*self.M['리밸비율'])/self.M['분할횟수']) 
         self.S['일매수금'] = int(int(self.S['안정자금']*self.M['리밸비율'])/self.M['분할횟수']) 
@@ -143,22 +139,21 @@ class M_backtest_OVERALL(Model) :
         
 
         if  not self.R['기회진행'] and self.M['현재날수'] > 2 and self.M['당일종가'] <= min(self.M['매수가격'], self.R['기회가격']) :
-            self.R['기회진행'] = True
-            매수수량R = self.chance_qty(0)
             
+            매수수량R = self.chance_qty(0)
             self.R['거래코드'] = f"R{self.R['기초수량']}/{매수수량R}" 
             self.R['매수수량'] = 매수수량R
             self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']
-
+            self.R['기회진행'] = True
        
         if  not self.S['안정진행'] and self.M['현재날수'] > 2 and self.M['당일종가'] <= min(self.M['매수가격'], self.S['안정가격']) :
-            self.S['안정진행'] = True
-            매수수량S = self.chance_qty(1)
             
+            매수수량S = self.chance_qty(1)
             self.S['거래코드'] = f"S{self.S['기초수량']}/{매수수량S}" 
             self.S['매수수량'] = 매수수량S
             self.S['매수금액'] = self.S['매수수량'] * self.M['당일종가']
-            
+            self.S['안정진행'] = True
+    
     def chance_qty(self,option) :
 
             찬스수량 = 0    
@@ -182,7 +177,8 @@ class M_backtest_OVERALL(Model) :
             매수금액 = 매수수량 * self.M['매수가격']
             self.M['매수단계'] = '매수제한' 
             if  매수금액 > self.V['일반자금'] : self.M['매수단계'] = '매수중단'; 매수수량 = 0
-       
+        
+        self.V['구매수량'] = 매수수량
         
         if  self.R['기회진행'] :
             매수수량R = my.ceil(self.R['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
@@ -192,7 +188,8 @@ class M_backtest_OVERALL(Model) :
                 매수수량R = my.ceil(self.R['기초수량'] * self.M['위매비중'])
                 매수금액R = 매수수량R * self.M['매수가격']
                 if 매수금액R > self.R['기회자금'] : 매수수량R = 0        
-        else : self.R['기회가격'] = self.take_chanceR(self.V['보유수량'],매수수량,self.V['총매수금'])
+        else : 
+            self.R['기회가격'] = self.take_chance('R')
         
         if  self.S['안정진행'] :
             매수수량S = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
@@ -202,7 +199,8 @@ class M_backtest_OVERALL(Model) :
                 매수수량S = my.ceil(self.S['기초수량'] * self.M['위매비중'])
                 매수금액S = 매수수량S * self.M['매수가격']
                 if 매수금액S > self.S['안정자금'] : 매수수량S = 0        
-        else : self.S['안정가격'] = self.take_chanceS(self.V['보유수량'],매수수량,self.V['총매수금'])
+        else : 
+            self.S['안정가격'] = self.take_chance('S')
         
 
         if  self.M['매수단계'] in ('매수제한','매수중단') : 
@@ -213,24 +211,22 @@ class M_backtest_OVERALL(Model) :
             self.M['판매가격'] = my.round_up(self.V['평균단가'] * self.M['강매가치'])
         if  self.M['매수가격'] >= self.M['판매가격'] : self.M['매수가격'] = self.M['판매가격'] - 0.01 
         
-        self.V['구매수량'] = 매수수량
+        
         self.R['구매수량'] = 매수수량R
         self.S['구매수량'] = 매수수량S
         
 
-    def take_chanceR(self,H,n,A) :
+    def take_chance(self,opt) :
+        H = self.V['보유수량']
+        n = self.V['구매수량']
+        A = self.V['총매수금']
         if H == 0 : return 0
-        p = 0 if self.M['손실회수'] else self.R['기회시점']
+        if opt == 'R' : p =  0 if self.M['손실회수'] else self.R['기회시점']
+        if opt == 'S' : p = -5 if self.M['손실회수'] else self.S['안정시점']
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)
     
-    def take_chanceS(self,H,n,A) :
-        if H == 0 : return 0
-        p = -5 if self.M['손실회수'] else self.S['안정시점']
-        N = H + n
-        k = N / (1+p/100)
-        return round(A/(k-n),2)
     
     def test_it(self) :
 
@@ -272,7 +268,7 @@ class M_backtest_OVERALL(Model) :
     def result(self) :
 
         self.D['max_days'] = self.M['최대일수']
-        self.D['max_date'] = self.M['최대날자']
+        self.D['max_date'] = self.M['최대날자'][2:]
         self.D['MDD1'] = f"{self.V['최대하락']:.2f}"; self.D['MDD_DAY1'] = self.V['최하일자']
         self.D['MDD2'] = f"{self.R['최대하락']:.2f}"; self.D['MDD_DAY1'] = self.R['최하일자']
         self.D['MDD3'] = f"{self.S['최대하락']:.2f}"; self.D['MDD_DAY1'] = self.S['최하일자']
@@ -425,9 +421,12 @@ class M_backtest_OVERALL(Model) :
         self.S['안정진행']  = False; self.S['안정시점'] = float(self.D['안정시점']) 
         self.M['전일종가']  = 0.0
         
-        self.V['매수수량']  = 0; self.V['매도수량']  = 0; self.V['매도금액']  = 0.0; self.V['실현수익']  = 0.0; self.V['구매수량'] = 0; self.V['보유수량'] = 0; self.V['총매수금'] = 0.0
-        self.R['매수수량']  = 0; self.R['매도수량']  = 0; self.R['매도금액']  = 0.0; self.R['실현수익']  = 0.0; self.R['구매수량'] = 0; self.R['보유수량'] = 0; self.R['총매수금'] = 0.0
-        self.S['매수수량']  = 0; self.S['매도수량']  = 0; self.S['매도금액']  = 0.0; self.S['실현수익']  = 0.0; self.S['구매수량'] = 0; self.S['보유수량'] = 0; self.S['총매수금'] = 0.0
+        self.V['매수수량']  = 0;   self.V['매도수량']  = 0; self.V['매도금액'] = 0.0;  self.V['매수금액'] = 0.0 
+        self.V['실현수익']  = 0.0; self.V['구매수량']  = 0; self.V['보유수량'] = 0;    self.V['총매수금'] = 0.0
+        self.R['매수수량']  = 0;   self.R['매도수량']  = 0; self.R['매도금액'] = 0.0;  self.R['매수금액'] = 0.0 
+        self.R['실현수익']  = 0.0; self.R['구매수량']  = 0; self.R['보유수량'] = 0;    self.R['총매수금'] = 0.0
+        self.S['매수수량']  = 0;   self.S['매도수량']  = 0; self.S['매도금액'] = 0.0;  self.S['매수금액'] = 0.0 
+        self.S['실현수익']  = 0.0; self.S['구매수량']  = 0; self.S['보유수량'] = 0;    self.S['총매수금'] = 0.0
         
         self.V['최하일자']  = ''
         self.R['최하일자']  = ''
@@ -435,7 +434,6 @@ class M_backtest_OVERALL(Model) :
         
         self.R['평균단가']  = 0.0; self.R['수익현황']  = 0.0; self.R['현수익률'] = 0.0; self.R['평가금액'] = 0.0; self.R['기회가격'] = 0.0
         self.S['평균단가']  = 0.0; self.S['수익현황']  = 0.0; self.S['현수익률'] = 0.0; self.S['평가금액'] = 0.0; self.S['안정가격'] = 0.0
-        
 
         self.D['TR'] = []
 
@@ -451,10 +449,6 @@ class M_backtest_OVERALL(Model) :
         self.D['일반익절'] = 0; self.D['기회익절'] = 0; self.D['안정익절'] = 0
         self.D['일반손절'] = 0; self.D['기회손절'] = 0; self.D['안정손절'] = 0
         
-        self.V['평가밸류'] = self.V['일반자금'] 
-        self.R['평가밸류'] = self.R['기회자금']
-        self.S['평가밸류'] = self.S['안정자금']
-
     def new_day(self) :
 
         if  self.M['당일종가'] <  round(self.M['전일종가'] * self.M['큰단가치'],2) :
