@@ -190,6 +190,7 @@ class M_backtest_OVERALL(Model) :
                 if 매수금액R > self.R['기회자금'] : 매수수량R = 0        
         else : 
             self.R['기회가격'] = self.take_chance('R')
+
         
         if  self.S['안정진행'] :
             매수수량S = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
@@ -497,12 +498,16 @@ class M_backtest_OVERALL(Model) :
         self.D['next_안정기초'] = self.S['기초수량']
         
         self.D['next_일반매수가'] = round(self.M['매수가격'],2)
-        self.D['next_기회매수가'] = self.R['기회가격'] if round(self.R['기회진행'],2) and self.R['구매수량'] else round(self.M['매수가격'],2)
-        self.D['next_안정매수가'] = self.S['기회가격'] if round(self.S['안정진행'],2) and self.S['구매수량'] else round(self.M['매수가격'],2)
+        self.D['next_기회매수가'] = self.R['기회가격'] if self.R['기회가격'] and not self.R['기회진행'] else round(self.M['매수가격'],2)
+        self.D['next_안정매수가'] = self.S['안정가격'] if self.S['안정가격'] and not self.R['기회진행'] else round(self.M['매수가격'],2)
         
-        self.D['next_일반매수량'] = self.V['구매수량']
-        self.D['next_기회매수량'] = self.R['구매수량']
-        self.D['next_안정매수량'] = self.S['구매수량']
+        self.D['next_일매변동'] = round((self.D['next_일반매수가']/self.M['전일종가']- 1)*100,1)
+        self.D['next_기매변동'] = round((self.D['next_기회매수가']/self.M['전일종가']- 1)*100,1)
+        self.D['next_안매변동'] = round((self.D['next_안정매수가']/self.M['전일종가']- 1)*100,1)
+        
+        self.D['next_일반매수량'] = self.V['구매수량'] 
+        self.D['next_기회매수량'] = self.chance_qty(0) if not self.R['기회진행'] and self.M['현재날수'] > 2 else self.R['구매수량']
+        self.D['next_안정매수량'] = self.chance_qty(1) if not self.S['안정진행'] and self.M['현재날수'] > 2 else self.S['구매수량']
 
         self.D['next_일반매도량'] = self.V['보유수량']
         self.D['next_기회매도량'] = self.R['보유수량']
