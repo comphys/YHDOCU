@@ -81,23 +81,23 @@
 	<tr style="background-color:#393f4a;border-bottom:1px solid black">
 		<th style='text-align:center;width:50px'>날수</th>
 		<th style='text-align:center;width:80px'>일자</th>
-		<th style='text-align:right;width:70px'>종가</th>
+		<th style='text-align:right;width:60px'>종가</th>
 		<th style='text-align:right;width:60px'>변동</th>
 
-		<th style='text-align:right;width:90px'>일반진행</th>
-		<th style='text-align:right;width:80px'>일반평균</th>
+		<th style='text-align:right;width:100px'>일반진행</th>
+		<th style='text-align:right;width:74px'>일반평균</th>
 		<th style='text-align:right;width:90px'>일반수익</th>
 		<th style='text-align:right;width:70px'>일반(%)</th>
 		<th style='text-align:right;width:100px'>일반잔액</th>
 
-		<th style='text-align:right;width:90px'>기회진행</th>
-		<th style='text-align:right;width:80px'>기회평균</th>
+		<th style='text-align:right;width:100px'>기회진행</th>
+		<th style='text-align:right;width:74px'>기회평균</th>
 		<th style='text-align:right;width:90px'>기회수익</th>
 		<th style='text-align:right;width:70px'>기회(%)</th>
 		<th style='text-align:right;width:100px'>기회잔액</th>
 
-		<th style='text-align:right;width:90px'>안정진행</th>
-		<th style='text-align:right;width:80px'>안정평균</th>
+		<th style='text-align:right;width:100px'>안정진행</th>
+		<th style='text-align:right;width:74px'>안정평균</th>
 		<th style='text-align:right;width:90px'>안정수익</th>
 		<th style='text-align:right;width:70px'>안정(%)</th>
 		<th style='text-align:right;'>안정잔액</th>
@@ -113,23 +113,23 @@
 		<colgroup>
 			<col style="width:50px;"> <!-- 날수 -->
 			<col style="width:80px;"> <!-- 일자 -->
-			<col style="width:70px;"> <!-- 당일종가 -->
+			<col style="width:60px;"> <!-- 당일종가 -->
 			<col style="width:60px;border-right:2px solid gray"> <!-- 당일변동 -->
 
-			<col style="width:90px"> <!-- 일반진행 -->
-			<col style="width:80px"> <!-- 일반평균 -->
+			<col style="width:100px"> <!-- 일반진행 -->
+			<col style="width:70px"> <!-- 일반평균 -->
 			<col style="width:90px"> <!-- 일반수익 -->
 			<col style="width:70px"> <!-- 일반(%) -->
 			<col style="width:100px;border-right:2px solid gray"> <!-- 일반잔액 -->
 
-			<col style="width:90px"> <!-- 기회진행 -->
-			<col style="width:80px"> <!-- 기회평균 -->
+			<col style="width:100px"> <!-- 기회진행 -->
+			<col style="width:70px"> <!-- 기회평균 -->
 			<col style="width:90px"> <!-- 기회수익 -->
 			<col style="width:70px"> <!-- 기회(%) -->
 			<col style="width:100px;border-right:2px solid gray"> <!-- 기회잔액 -->
 
-			<col style="width:90px"> <!-- 안정진행 -->
-			<col style="width:80px"> <!-- 안정평균 -->
+			<col style="width:100px"> <!-- 안정진행 -->
+			<col style="width:70px"> <!-- 안정평균 -->
 			<col style="width:90px"> <!-- 안정수익 -->
 			<col style="width:70px"> <!-- 안정(%) -->
 			<col>
@@ -178,18 +178,21 @@
 	<canvas id="mybackTestChart" style="width:1200px;height:330px;background-color:#24272d"></canvas>
 </div>
 
-<div id="Next-Strategy" style="display:none;opacity:0.7;position:fixed;left:1255px;top:112px;width:230px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
+<div id="Next-Strategy" style="display:none;opacity:0.7;position:fixed;left:1240px;top:112px;width:300px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
     <span style="font-style: italic"> Next Strategy</span><br><br>
 	<ul style="margin-left:10px">
-		<li>진행일자 : {{D['next_process']}}</li>
-		<li>전일종가 : $ {{D['next_base_price']}}</li>
-		<li>현재잔액 : $ {{D['next_available_money']}}</li>
+		<li>진행일자 : {{D['next_일자']}}</li>
+		<li>전일종가 : $ {{D['next_종가']}}/({{D['next_변동']}})%</li>
+		<li>현재단계 : {{D['next_단계']}}</li>
+		<li>기초수량 : {{D['next_일반기초']}}/{{D['next_기회기초']}}/{{D['next_안정기초']}}</li>
 		<li>--------------------</li>
-		<li>현재단계 : {{D['next_status']}}</li>
-		<li>일매수금 : $ {{D['next_base_amount']}}</li>
-		<li>기초수량 : {{D['next_base_qty']}}</li>
-		<li>매수전략 : {{D['next_buy_qty']}}(${{D['next_buy']}})</li>
-		<li>매도전략 : {{D['next_sell_qty']}}(${{D['next_sell']}})</li>
+		<li>일반매수 : {{D['next_일반매수량']}} for {{D['next_일반매수가']}}</li>
+		<li>기회매수 : {{D['next_기회매수량']}} for {{D['next_기회매수가']}}</li>
+		<li>안정매수 : {{D['next_안정매수량']}} for {{D['next_안정매수가']}}</li>
+		<li>--------------------</li>
+		<li>일반매도 : {{D['next_일반매도량']}} for {{D['next_일반매도가']}}</li>
+		<li>기회매도 : {{D['next_기회매도량']}} for {{D['next_기회매도가']}}</li>
+		<li>안정매도 : {{D['next_안정매도량']}} for {{D['next_안정매도가']}}</li>
 	</ul>
 </div>
 
