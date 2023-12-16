@@ -486,9 +486,8 @@ class M_backtest_OVERALL(Model) :
 
     def nextStep(self) :
         self.M['전일종가'] = self.M['당일종가']
-        self.tomorrow_step()
 
-        self.D['next_일자'] = self.M['현재날수']
+        self.D['next_일자'] = self.M['현재날수'] 
         self.D['next_종가'] = self.M['전일종가']
         self.D['next_변동'] = round(self.M['당일변동'],2)
 
