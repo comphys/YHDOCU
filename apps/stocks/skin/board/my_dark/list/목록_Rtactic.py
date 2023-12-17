@@ -5,7 +5,6 @@ class 목록_Rtactic(SKIN) :
 
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)
-        self.Type = self.D['BCONFIG']['type']
 
     def head(self) : 
         return
@@ -154,7 +153,11 @@ class 목록_Rtactic(SKIN) :
             self.D['GD']['add17'] = f"{float(TD['add17']):,.2f}"
             self.D['GD']['add18'] = f"{float(TD['add18']):,.2f}"
 
-
+            yy = my.sv(self.D['GD']['add14'])
+            bb = my.sv(self.D['매수단가'])
+            ss = my.sv(self.D['매도단가'])
+            self.D['yx_b'] = f"{round(bb/yy - 1,4) * 100:.2f}"
+            self.D['yx_s'] = f"{round(ss/yy - 1,4) * 100:.2f}"
 
     def take_chance(self,p,H,n,A) :
         if H == 0 : return 0
@@ -168,32 +171,19 @@ class 목록_Rtactic(SKIN) :
 
         if self.TrCnt :
             self.chart()
-            self.D['cno'] = -1 ; TrCnt = self.TrCnt
+ 
+            for item in self.D['LIST'] :
 
-            for idx,item in enumerate(self.D['LIST']) :
-
-                if int(item['no']) == int(self.D['No']) : self.D['cno'] = idx ; cno = True 
-                else : cno = False
-                
                 for key in self.D['list_order'] :
 
                     style=clas=tmp=''
                     txt = item[key]
-                    if   key == 'no'    : 
-                        if cno : tx[key] = "<td class='list-current-no'><i class='fa fa-edit'></i></td>"
-                        else   : tx[key] = f"<td class='list-no'>{TrCnt}</td>"
-                        TrCnt -= 1
-
                        
-                    elif key == 'add0'  : 
+                    if key == 'add0'  : 
                         if self.D['EXCOLOR']['add0'] : style = f"style='color:{self.D['EXCOLOR']['add0']}'"
-                        
                         tmp = "<td class='text-center'>"
-                        
-                        if cno : tmp += f"<span {style}>{txt}</span>"
-                        else :
-                            href  = f"{self.D['_bse']}board/modify/{self.D['bid']}/no={item['no']}/page={self.D['page']}"
-                            tmp += f"<span class='list-subject' data-href='{href}' {style}>{txt}</span>"
+                        href  = f"{self.D['_bse']}board/modify/{self.D['bid']}/no={item['no']}/page={self.D['page']}"
+                        tmp += f"<span class='list-subject' data-href='{href}' {style}>{txt}</span>"
                         tmp += '</td>'
                         tx[key] = tmp
 
