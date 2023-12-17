@@ -8,17 +8,7 @@ class 목록_Vtactic(SKIN) :
         self.Type = self.D['BCONFIG']['type']
         
     def head(self) : 
-        TH_title = {'no':'번호','uname':'작성자','wdate':'작성일','mdate':'수정일','hit':'조회','uid':'아이디'}
-        TH_align = {'no':'center','uname':'center','wdate':'center','mdate':'center','hit':'center','uid':'center'}
-        THX = {}
-        TH_title |= self.D['EXTITLE'] ; TH_align |= self.D['EXALIGN']
-
-        for key in self.D['list_order'] :
-            if   key == self.D['Sort']  : THX[key] = f"<th class='list-sort'  onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
-            elif key == self.D['Sort1'] : THX[key] = f"<th class='list-sort1' onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
-            else : THX[key] = f"<th class='list-sort2' onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
-        
-        self.D['head_td'] = THX
+        return
 
     def chart(self) :
         self.DB.clear()
@@ -66,8 +56,6 @@ class 목록_Vtactic(SKIN) :
             가치합계 = 운용자금 + 예치자금 + 주식가치
             self.D['chart_percent'] = [round(운용자금/가치합계*100,2),round(예치자금/가치합계*100,2),round(주식가치/가치합계*100,2)]
 
-            # -- 환율 가져오기
-            # 현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)"))
             현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
             
             # --------------
@@ -85,7 +73,7 @@ class 목록_Vtactic(SKIN) :
             self.D['총수익률'] = f"{총수익률:.2f}"
             
             # # -- extra-info
-            self.D['현재시즌'] = LD['sub1'] ; 일수 = int(LD['sub12']); 시즌 = int(self.D['현재시즌'])
+            self.D['현재시즌'] = LD['sub1']  
             
             slice_first = -42 if chart_slice > 42 else 0
             self.D['단기첫날'] = '20'+self.D['chart_date'][slice_first]
@@ -140,9 +128,7 @@ class 목록_Vtactic(SKIN) :
 
 
     def list(self) :
-        self.head()
         self.chart()
-
         TR = [] ; tx = {}
 
         if self.TrCnt :

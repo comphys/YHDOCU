@@ -149,6 +149,10 @@
 
 
 <script>
+$(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+$("#the-last-date").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, direction:false,onSelect:function(){limt_period()}});
+
 var notice_popup = false;
 var show_dollar   = true;
 var dollar_notice = [];
@@ -196,48 +200,33 @@ const ctx_side = $id('myChart_side');
 ctx_main.style.backgroundColor = '#33363b';
 ctx_main.style.border = '2px solid black';
 
-let labels_main  = {{D['chart_date']|safe}};				
-let close_price  = {{D['close_price']|safe}}; 		
-let soxl_average = {{D['soxl_average']|safe}};	
-let soxl_profits = {{D['soxl_profits']|safe}};	
-let target_value = {{D['target_value']|safe}};		
-let chance_value = {{D['chance_value']|safe}};		
-let chance_average = {{D['chance_average']|safe}};	
-let chance_profits = {{D['chance_profits']|safe}};	
+let labels_origin   = {{D['chart_date']|safe}}				// labels main origin
+let close_origin    = {{D['close_price']|safe}} 		    // soxl close price origin 
+let r_avg_origin    = {{D['soxl_average']|safe}}	        // soxl average in r tactic
+let r_pro_origin    = {{D['soxl_profits']|safe}}	        // soxl profits in r tactic
+let v_sel_origin    = {{D['target_value']|safe}}		    // soxl sell value
+let v_buy_origin    = {{D['chance_value']|safe}}		
+let v_avg_origin    = {{D['chance_average']|safe}}	
+let v_pro_origin    = {{D['chance_profits']|safe}}
+let ChartStart      = {{D['chart_start']}};	
+
+let labels_main     =  labels_origin.slice(ChartStart)				
+let close_price     =  close_origin.slice(ChartStart)	
+let r_avg_value     =  r_avg_origin.slice(ChartStart)  
+let r_pro_value     =  r_pro_origin.slice(ChartStart)	
+let v_sel_value     =  v_sel_origin.slice(ChartStart)		
+let v_buy_value     =  v_buy_origin.slice(ChartStart)		
+let v_avg_value     =  v_avg_origin.slice(ChartStart)	
+let v_pro_value     =  v_pro_origin.slice(ChartStart)
 
 const data_main = {
     labels : labels_main,
     datasets : [
-		{
-            label:' 종가변동',
-            data : close_price,
-			borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],
-  			lineTension:0.2
-        },
-		{
-            label:' 평균단가',
-            data : soxl_average,
-			borderColor:'#f78181', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
-			lineTension:0.2
-        },
-		{
-            label:' 매도가격',
-            data : target_value,
-			borderColor:'yellow', borderWidth:1, pointRadius:0,borderDash:[2,2],
-  			lineTension:0.2
-        },
-		{
-            label:' 기회가격',
-            data : chance_value,
-			borderColor:'darkgray', borderWidth:1, pointRadius:0,borderDash:[2,2], 
-  			lineTension:0.2
-        },
-		{
-            label:' 찬스평균',
-            data : chance_average,
-			borderColor:'yellow', borderWidth:4, pointRadius:2,pointHoverRadius:24, backgroundColor:'yellow',
-			lineTension:0.2
-        },
+		{   label:' 종가변동',data : close_price,borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],lineTension:0.2},
+		{   label:' 평균단가',data : r_avg_value,borderColor:'#f78181', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
+		{   label:' 매도가격',data : v_sel_value,borderColor:'yellow', borderWidth:1, pointRadius:0,borderDash:[2,2],lineTension:0.2},
+		{   label:' 기회가격',data : v_buy_value,borderColor:'darkgray', borderWidth:1, pointRadius:0,borderDash:[2,2],lineTension:0.2},
+		{   label:' 찬스평균',data : v_avg_value,borderColor:'yellow', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
     ]   
 };
 const options_main = {
@@ -299,9 +288,9 @@ const myChart_side = new Chart(ctx_side, config_side);
 const data_sub = {
 	labels : labels_main,
 	datasets : [
-		{label:' 종가변동',data : close_price,   borderColor:'cyan',    borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
-		{label:' 평균변동',data : soxl_profits,  borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
-		{label:' 찬스변동',data : chance_profits,borderColor:'yellow',  borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 종가변동',data : close_price,borderColor:'cyan',    borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 평균변동',data : r_pro_value,borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 찬스변동',data : v_pro_value,borderColor:'yellow',  borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
 	]   
 }
 
@@ -346,41 +335,35 @@ function slice_chart(opt) {
 	if(opt==1) { 
 		s_date = $("input[name='s_date']").val().slice(2); 
 		e_date = $("input[name='e_date']").val().slice(2); 
-		for(d=0; d<labels_main.length; d++)     { if(labels_main[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_main[d]);break;}} 
-		for(d=labels_main.length-1; d >=0; d-- ) 	{ if(labels_main[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_main[d]);break;}} 
-	} else if(opt==2) { 
-		$("input[name='s_date']").val(season_first_day);
-		$("input[name='e_date']").val("{{D['e_date']}}");
-		s_date = season_first_day.slice(2);
-		new_s = labels_main.indexOf(s_date) 
-		new_e = labels_main.length;
+		for(d=0; d<labels_origin.length; d++)     { if(labels_origin[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_origin[d]);break;}} 
+		for(d=labels_origin.length-1; d >=0; d--) { if(labels_origin[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_origin[d]);break;}} 
 	} else {
 		s_date = "{{D['s_date']}}".slice(2); 
 		e_date = "{{D['e_date']}}".slice(2)
 		$("input[name='s_date']").val("{{D['s_date']}}"); 
 		$("input[name='e_date']").val("{{D['e_date']}}");
-		new_s =0; new_e = labels_main.length
+		new_s =0; new_e = labels_origin.length
 	}
 	end_date = $("input[name='e_date']").val().slice(2);
 	
 	let base;
 	if(second_chart) {
-		myChart_main.config.data.labels_main = labels_main.slice(new_s,new_e);
-		myChart_main.config.data.datasets[0].data =  close_price.slice(new_s,new_e);
-		myChart_main.config.data.datasets[1].data =  soxl_profits.slice(new_s,new_e);
-		myChart_main.config.data.datasets[2].data =  chance_profits.slice(new_s,new_e);
+		myChart_main.config.data.labels = labels_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[0].data =  close_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[1].data =  r_pro_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[2].data =  v_pro_origin.slice(new_s,new_e);
 		for(i=0;i<1;i++) {
 			base=myChart_main.config.data.datasets[i].data[0]; 
 			myChart_main.config.data.datasets[i].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})
 		}	
 
 	} else {
-		myChart_main.config.data.labels_main = labels_main.slice(new_s,new_e);
-		myChart_main.config.data.datasets[0].data =  close_price.slice(new_s,new_e);
-		myChart_main.config.data.datasets[1].data =  soxl_average.slice(new_s,new_e);
-		myChart_main.config.data.datasets[2].data =  target_value.slice(new_s,new_e);
-		myChart_main.config.data.datasets[3].data =  chance_value.slice(new_s,new_e);
-		myChart_main.config.data.datasets[4].data =  chance_average.slice(new_s,new_e);
+		myChart_main.config.data.labels = labels_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[0].data =  close_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[1].data =  r_avg_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[2].data =  v_sel_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[3].data =  v_buy_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[4].data =  v_avg_origin.slice(new_s,new_e);
 	}
 	myChart_main.update();
 }

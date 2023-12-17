@@ -12,13 +12,6 @@ class Action(Control) :
         self.BCONFIG = self.DB.get("*",many=1,assoc=True)
   
     def save(self) :
-        # h_{bid}_board : [no,brother,add0,uid,uname,content,reply,hit,wdate,mdate,add1~add15]
-        
-        # 저장 시 [정수 및 실수] 형식은 형태를 수정하여 저장한다. 
-        USE_KEY = []
-        for i in range(16) :
-            key = f'add{i}' 
-            if self.BCONFIG[key] :  USE_KEY.append(key)        
 
         SAVE = self.D['post']
 
@@ -80,7 +73,7 @@ class Action(Control) :
         qry = self.DB.qry_update(tbl,self.D['post'],con)
         self.DB.exe(qry)
 
-        if self.bid in ('daily_trading','daily_first','daily_second','daily_third','myLT') : 
+        if self.BCONFIG['extra2']  == 'no-body' : 
             return self.moveto(f"board/list/{self.parm[0]}/page={self.page}/csh=on")
         if self.BCONFIG['stayfom'] == 'on' :
             return self.moveto(f"board/modify/{self.parm[0]}/no={no}/page={self.page}/brother={brother}")
