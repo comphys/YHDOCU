@@ -164,13 +164,13 @@ class M_backtest_OVERALL(Model) :
             return 찬스수량   
         
     def tomorrow_step(self)   :
-
+        
+        내일날수 = self.M['현재날수'] + 1
         self.M['매수가격'] = round(self.M['당일종가']*self.M['평단가치'],2)
         self.M['판매가격'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
         
         매수수량 = my.ceil(self.V['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1)); 매수수량R = 0; 매수수량S = 0
         매수금액 = 매수수량 * self.M['매수가격']
-        내일날수 = self.M['현재날수'] + 1
 
         if  매수금액 > self.V['일반자금']   :
             매수수량 = my.ceil(self.V['기초수량'] * self.M['위매비중'])
@@ -498,7 +498,7 @@ class M_backtest_OVERALL(Model) :
         
         self.D['next_일반매수가'] = round(self.M['매수가격'],2)
         self.D['next_기회매수가'] = self.R['기회가격'] if self.R['기회가격'] and not self.R['기회진행'] else round(self.M['매수가격'],2)
-        self.D['next_안정매수가'] = self.S['안정가격'] if self.S['안정가격'] and not self.R['기회진행'] else round(self.M['매수가격'],2)
+        self.D['next_안정매수가'] = self.S['안정가격'] if self.S['안정가격'] and not self.S['안정진행'] else round(self.M['매수가격'],2)
         
         self.D['next_일매변동'] = round((self.D['next_일반매수가']/self.M['전일종가']- 1)*100,1)
         self.D['next_기매변동'] = round((self.D['next_기회매수가']/self.M['전일종가']- 1)*100,1)
