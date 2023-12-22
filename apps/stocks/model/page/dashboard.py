@@ -28,7 +28,7 @@ class M_dashboard(Model) :
         
         if today != last_day : self.D['투자안내'] = 'Need Updating' 
         
-        self.DB.tbl = 'h_I230831_board'
+        self.DB.tbl = 'h_V230831_board'
         ID = self.DB.get_line(select_cols)
         if not ID : 
             last_day = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
@@ -37,7 +37,7 @@ class M_dashboard(Model) :
         
         if today != last_day : self.D['키움증권'] = 'Need Updating'      
         
-        self.DB.tbl = 'h_C230831_board'
+        self.DB.tbl = 'h_R230831_board'
         CD = self.DB.get_line(select_cols)
         if not CD : 
             last_day = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
