@@ -44,20 +44,20 @@ class 목록_Rtactic(SKIN) :
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
-            
             LD = self.DB.get_line('add3,add4,add6,add7,add9,add10,add14,add16,add17,sub2,sub3,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub28')
-            CD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
+            
+            RD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
                  
             cx = {};dx = {}
-            self.D['chance_average'] = []; self.D['chance_profits'] = []
-            if CD :
+            self.D['Rtactic_avg'] = []; self.D['Rtactic_pro'] = []
+            if RD :
                 # cx[날자] = 평균단가, dx[날자] = 현수익률
-                for c in CD : 
+                for c in RD : 
                     if c[1] : cx[c[0][2:]] = c[1] 
                     if c[2] : dx[c[0][2:]] = c[2]
                 for x in self.D['chart_date'] : 
-                    self.D['chance_average'].append(cx.get(x,'null')) 
-                    self.D['chance_profits'].append(dx.get(x,'null'))
+                    self.D['Rtactic_avg'].append(cx.get(x,'null')) 
+                    self.D['Rtactic_pro'].append(dx.get(x,'null'))
             
             self.D['chart_percent'] = [float(LD['add4']),float(LD['add16'])]
             
@@ -70,9 +70,10 @@ class 목록_Rtactic(SKIN) :
             chart_len = len(chart_data)
             # --------------
             현재환율 = self.DB.one("SELECT CAST(usd_krw AS FLOAT) FROM usd_krw ORDER BY rowid DESC LIMIT 1")
-            총투자금 = float(LD['sub27'])
+            총투자금 = float(LD['sub25'])
             총수익금 = float(LD['add17']) - 총투자금
             총수익률 = (float(LD['add17'])/총투자금-1) * 100 if 총투자금 else 0
+            
             self.D['총입금'] = f"{float(LD['sub25']):,.0f}"
             self.D['총출금'] = f"{float(LD['sub26']):,.0f}"
             self.D['현재총액'] = f"{float(LD['add17']):,.0f}"

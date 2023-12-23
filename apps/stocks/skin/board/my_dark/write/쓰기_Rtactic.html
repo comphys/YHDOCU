@@ -22,10 +22,10 @@
 			<div class="btn-group">
 				<a class="btn btn-blue-s2" onclick="client_calculate();return false"><i class="fa fa-font" title="자동계산하기"></i></a>
 				<a class="btn btn-blue-s2" onclick="reset_value();return false"><i class="fa fa-undo" title="되돌리기"></i></a>
-				<a class="btn btn-blue-s2" onclick="money_inout();return false"><i class="fa fa-usd" title="입출금 재설정"></i></a>
 			</div>
 			<div class="btn-group">
-				<a class="btn btn-red-s2"  onclick="do_rebalance();return false"><i class="fa fa-sitemap" title="리밸런싱"></i></a>
+				<a class="btn btn-red-s3"  onclick="do_initiate();return false">초기화</a>
+				<a class="btn btn-red-s2"  onclick="do_basicqty();return false">기초수량</a>
 			</div>
         </td>
     </tr>
@@ -123,12 +123,12 @@
 				<input type='text' name='sub6' class="i-number" style="width:100px;" value="{{D['BODY']['sub6']}}">
 			</div>
 			<div class='i-input-div-2'>
-				<div class='write-input-server'>현재손익</div>
-				<input type='text' name='add18' class="i-number" style="width:110px;text-align:right" value="{{D['BODY']['add18']}}">
+				<div class='write-input-server'>종가변동</div>
+				<input type='text' name='sub28' class="i-number" style="width:110px;text-align:right" value="{{D['BODY']['sub28']}}">
 			</div>
 			<div class='i-input-div-2'>
-				<div class='write-input-server'>회복전략</div>
-				<input type='text' name='sub7' class="i-number" style="width:100px;" value="{{D['BODY']['sub7']}}">
+				<div class='write-input-server'>현재손익</div>
+				<input type='text' name='add18' class="i-number" style="width:100px;" value="{{D['BODY']['add18']}}">
 			</div>
         </td>
     </tr>
@@ -138,39 +138,6 @@
     <tr id="config-toggle">
         <td class='write-td-left'>투자전략</td>
 		<td class="write-td-right">
-			<div class='i-input-div'>
-				<div class='write-input-server'>가용잔액</div>
-				<input type='text' name='add19' class="i-number" style="width:100px;" value="{{D['BODY']['add19']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-server'>양도세금</div>
-				<input type='text' name='sub11' class="i-number" style="width:100px;" value="{{D['BODY']['sub11']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-server'>입금합계</div>
-				<input type='text' name='sub25' class="i-number" style="width:110px;" value="{{D['BODY']['sub25']}}">
-			</div>
-			<div class='i-input-div'>
-				<div class='write-input-server' >전투자금</div>
-				<input type='text' name='sub27' class="i-number" style="width:100px;" value="{{D['BODY']['sub27']}}">
-			</div>
-			<div class='i-input-div-2'>
-				<div class='write-input-server'>추가자금</div>
-				<input type='text' name='add20' class="i-number" style="width:100px;" value="{{D['BODY']['add20']}}">
-			</div>
-			<div class='i-input-div-2'>
-				<div class='write-input-server'>출금합계</div>
-				<input type='text' name='sub26' class="i-number" style="width:100px;" value="{{D['BODY']['sub26']}}">
-			</div>
-			<div class='i-input-div-2'>
-				<div class='write-input-server' >가치합계</div>
-				<input type='text' name='add17' class="i-number" style="width:110px;" value="{{D['BODY']['add17']}}">
-			</div>
-			<div class='i-input-div-2'>
-				<div class='write-input-server' >전수익률</div>
-				<input type='text' name='sub28' class="i-number" style="width:100px;" value="{{D['BODY']['sub28']}}">
-			</div>
-			<br><br>
 			<div class='i-input-div'>
 				<div class='write-input-server'>현재시즌</div>
 				<input type='text' name='sub1' class="i-number" style="width:100px;" value="{{D['BODY']['sub1']}}">
@@ -204,9 +171,27 @@
 				<input type='text' name='sub20' class="i-number" style="width:100px;text-align:right;" value="{{D['BODY']['sub20']}}">
 			</div>
 			<br><br>
+
+			<div class='i-input-div-2'>
+				<div class='write-input-server'>가치합계</div>
+				<input type='text' name='add17' class="i-number" style="width:100px;" value="{{D['BODY']['add17']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-server'>입금합계</div>
+				<input type='text' name='sub25' class="i-number" style="width:100px;" value="{{D['BODY']['sub25']}}">
+			</div>
+			<div class='i-input-div-2'>
+				<div class='write-input-server'>출금합계</div>
+				<input type='text' name='sub26' class="i-number" style="width:110px;" value="{{D['BODY']['sub26']}}">
+			</div>
+			<div class='i-input-div'>
+				<div class='write-input-server'>보존금액</div>
+				<input type='text' name='sub32' class="i-number" style="width:100px;" value="{{D['BODY']['sub32']}}">
+			</div>
+			<br>
 			<div class='i-input-div'>
 				<div class='write-input-server'>진행상황</div>
-				<input type='text' name='sub29' class="i-text" style="width:100px;" value="{{D['BODY']['sub29']}}">
+				<input type='text' name='sub29' class="i-text" style="width:100px;text-align:right" value="{{D['BODY']['sub29']}}">
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-server'>수수료등</div>
@@ -217,8 +202,8 @@
 				<input type='text' name='sub31' class="i-number" style="width:110px;" value="{{D['BODY']['sub31']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-server'>보존금액</div>
-				<input type='text' name='sub32' class="i-number" style="width:100px;" value="{{D['BODY']['sub32']}}">
+				<div class='write-input-server'>양도세금</div>
+				<input type='text' name='sub11' class="i-number" style="width:100px;" value="{{D['BODY']['sub11']}}">
 			</div>
         </td>
     </tr>
@@ -329,6 +314,39 @@ var JBODY = JSON.parse('{{D['JBODY']|safe}}')
 var GBODY = JSON.parse('{{D['GBODY']|safe}}')
 var JSTRG = JSON.parse('{{D['JSTRG']|safe}}')
 {% endif %}
+
+function do_initiate() {
+	let theDay  = $("input[name='add0']").val();
+	let Balance = $("input[name='add3']").val();
+	if(theDay=='None') {h_dialog.notice('날자를 선택하여 주세요'); return;}
+	if(!Balance) {h_dialog.notice('잔액을 입력하여 주세요'); return;}
+	
+	let posturl = uri('linkurl')+ 'boards-rtactic_guide/initiate_Stactic/'+uri(0)
+
+	postData = {theDay:theDay, Balance:Balance}
+	$.post( posturl, postData).done(function(data) {
+		var ans = JSON.parse(data);
+		for(let i in ans) { $("input[name='"+i+"']" ).val(ans[i]); }
+	});
+	AutoCalculated = true; $("#notice-calculated").removeClass('notice-calculated');
+}
+
+function do_basicqty() {
+	let theDay  = $("input[name='add0']").val();
+	let Balance = $("input[name='add3']").val();
+	if(theDay=='None') {h_dialog.notice('날자를 선택하여 주세요'); return;}
+	if(!Balance) {h_dialog.notice('잔액을 입력하여 주세요'); return;}
+	
+	let posturl = uri('linkurl')+ 'boards-rtactic_guide/basic_qty/'+uri(0)
+
+	postData = {theDay:theDay, Balance:Balance}
+	$.post( posturl, postData).done(function(data) {
+		var ans = JSON.parse(data);
+		for(let i in ans) { $("input[name='"+i+"']" ).val(ans[i]); }
+	});
+	AutoCalculated = true; $("#notice-calculated").removeClass('notice-calculated');
+}
+
 
 </script>
 

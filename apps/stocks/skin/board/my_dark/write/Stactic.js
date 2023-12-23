@@ -1,6 +1,6 @@
 var 진행일자 = $("input[name='add0']" ).val();
 
-var 입금액수,출금액수,가용자금,현금비중
+var 입금액수,출금액수,현재잔액,현금비중
 //  --------------------------------------------------
 var 매수금액, 매도금액, 변동수량, 현수익률
 var 마감금액, 레버가치, 보유수량, 레버비중
@@ -25,7 +25,7 @@ function client_calculate() {
 	// do the Math : Cash Part
 	입금액수 = ctv('add1','f'); 
 	출금액수 = ctv('add2','f'); 
-	가용자금+= 입금액수 - 출금액수; 
+	현재잔액+= 입금액수 - 출금액수; 
 	입금합계+= 입금액수; 
 	출금합계+= 출금액수; 
 
@@ -39,7 +39,7 @@ function client_calculate() {
 	수수료등 += commission(매도금액,2);
 	누적수료 += 수수료등; 
 
-	가용자금 = 가용자금 - 매수금액 + 매도금액 - 수수료등 - 출금액수; 
+	현재잔액 = 현재잔액 - 매수금액 + 매도금액 - 수수료등 - 출금액수; 
 	레버가치 = 보유수량 * 마감금액;
 
 	if( 보유수량 == 0) {
@@ -52,8 +52,8 @@ function client_calculate() {
 	 	현재손익 = 레버가치 - 현매수금; 
  	}
 
-	가치합계 = 가용자금 + 레버가치;
-	현금비중 = (가용자금 / 가치합계)*100; 
+	가치합계 = 현재잔액 + 레버가치;
+	현금비중 = (현재잔액 / 가치합계)*100; 
 	레버비중 = (레버가치/가치합계)*100; 
 
 	if( 변동수량 <  0) {
@@ -69,7 +69,7 @@ function client_calculate() {
 	
 	if(경과일수==0) rebalance();
 	//  출력파트
-	vtc('add1',입금액수,2);		vtc('add2',출금액수,2);		vtc('add3',가용자금,2);		vtc('add4',현금비중,2);      
+	vtc('add1',입금액수,2);		vtc('add2',출금액수,2);		vtc('add3',현재잔액,2);		vtc('add4',현금비중,2);      
 
 	vtc('add8',현수익률,2);
 	vtc('add14',마감금액,-1);	vtc('add15',레버가치,2);	vtc('add9',보유수량,0);     vtc('add16',레버비중,2);
@@ -91,7 +91,7 @@ function client_calculate() {
 function load_value() {
     if( AutoCalculated ) return;
         // 현금투자 - 변수선언
-        가용자금= s_load('add3','f');
+        현재잔액= s_load('add3','f');
              
         // SOXL - 변수선언
 		매수금액= 0.00; 				   매도금액 = 0.00; 				   변동수량 = 0
@@ -118,7 +118,7 @@ function load_value() {
 		위매시점=s_load('add22','f','S'); 
 
         // 현금투자
-        vtc('add1',0,2); vtc('add2',0,2); vtc('add3',가용자금,2);
+        vtc('add1',0,2); vtc('add2',0,2); 
           
         // SOXL
 		vtc('add11',0.00,2);       vtc('add12',0.00,2);                vtc('add5',0,0);
@@ -168,7 +168,7 @@ function tomorrow_buy() {
 		매수수량 = 0;
 		매수가격 = round_up(마감금액*큰단가치,2)
 	} else if(경과일수 == 1) {
-		매수수량 = 기초수량
+		매수수량 = 0
 		매수가격 = 마감금액
 		수수료등 = 0.0 
 		누적수료 = 0.0
@@ -185,11 +185,11 @@ function tomorrow_buy() {
 	} else {
 		매수수량 = Math.ceil(기초수량 * (경과일수*비중조절+1))
 
-		if(매수수량*매수가격 > 가용자금) {
+		if(매수수량*매수가격 > 현재잔액) {
 			매수수량 = 기초수량 * 위매비중
 			진행상황 = '매수제한'
 		}
-		if(매수수량*매수가격 > 가용자금) {
+		if(매수수량*매수가격 > 현재잔액) {
 			매수수량 = 0
 			진행상황 = '매수금지'
 		}	
@@ -215,8 +215,8 @@ function s_load(key,opt,opt2='B') {
 	a = a.replace(/,/g,'');  
 	if(opt=='i') return parseInt(a);  else return parseFloat(a); 
 }
-function rebalance() { 일매수금 = parseInt(parseInt(가용자금*2/3)/분할횟수); 기초수량=Math.ceil(일매수금/마감금액);}
-function back_restore() {let 매수금액 = s_load('add11','f');  가용자금 += 매수금액; 매수금 = 0.00; vtc('add11',매수금액,2);	}
+function rebalance() { 일매수금 = parseInt(parseInt(현재잔액*2/3)/분할횟수); 기초수량=Math.ceil(일매수금/마감금액);}
+function back_restore() {let 매수금액 = s_load('add11','f');  현재잔액 += 매수금액; 매수금 = 0.00; vtc('add11',매수금액,2);	}
 function reset_value() {
     var reset_key = ['add1','add2','add3','add4',
 					'add11','add12','add5','add8','add14','add15','add9','add16',

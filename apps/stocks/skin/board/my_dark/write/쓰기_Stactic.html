@@ -24,7 +24,8 @@
 				<a class="btn btn-blue-s2" onclick="reset_value();return false"><i class="fa fa-undo" title="되돌리기"></i></a>
 			</div>
 			<div class="btn-group">
-				<a class="btn btn-red-s2"  onclick="do_initiate();return false">초기화</a>
+				<a class="btn btn-red-s3"  onclick="do_initiate();return false">초기화</a>
+				<a class="btn btn-red-s2"  onclick="do_basicqty();return false">기초수량</a>
 			</div>
         </td>
     </tr>
@@ -321,6 +322,22 @@ function do_initiate() {
 	if(!Balance) {h_dialog.notice('잔액을 입력하여 주세요'); return;}
 	
 	let posturl = uri('linkurl')+ 'boards-stactic_guide/initiate_Stactic/'+uri(0)
+
+	postData = {theDay:theDay, Balance:Balance}
+	$.post( posturl, postData).done(function(data) {
+		var ans = JSON.parse(data);
+		for(let i in ans) { $("input[name='"+i+"']" ).val(ans[i]); }
+	});
+	AutoCalculated = true; $("#notice-calculated").removeClass('notice-calculated');
+}
+
+function do_basicqty() {
+	let theDay  = $("input[name='add0']").val();
+	let Balance = $("input[name='add3']").val();
+	if(theDay=='None') {h_dialog.notice('날자를 선택하여 주세요'); return;}
+	if(!Balance) {h_dialog.notice('잔액을 입력하여 주세요'); return;}
+	
+	let posturl = uri('linkurl')+ 'boards-stactic_guide/basic_qty/'+uri(0)
 
 	postData = {theDay:theDay, Balance:Balance}
 	$.post( posturl, postData).done(function(data) {

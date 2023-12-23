@@ -28,14 +28,16 @@ class 쓰기_Rtactic(SKIN) :
                 
                 JBODY = self.DB.line(f"SELECT * FROM h_{self.SYS.parm[0]}_board WHERE add0='{prev_date}'")
                 GBODY = self.DB.line(f"SELECT * FROM h_{target}_board WHERE add0='{self.D['today']}'")
-                JSTRG = self.DB.line(f"SELECT * FROM h_stock_strategy_board WHERE add0='REVOLUTION'")
+                JSTRG = self.DB.line(f"SELECT * FROM h_stock_strategy_board WHERE add0='STABILITY'")
                 
                 JBODY = { k:v for (k,v) in JBODY.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
                 GBODY = { k:v for (k,v) in GBODY.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
                 JSTRG = { k:v for (k,v) in JSTRG.items() if k not in {'content','no','brother','tle_color','uid','uname','reply','hit','wdate','mdate'}}
                 
                 if not GBODY : self.SYS.set_message(f"{target} 보드에 해당 일자 매매 데이타가 존재하지 않습니다.")
-
+                # 종가변동 구하기
+                GBODY['sub28'] = f"{(float(GBODY['add14'])/float(JBODY['add14']) - 1)*100}"
+                                
                 self.D['JBODY'] = self.SYS.json(JBODY)
                 self.D['GBODY'] = self.SYS.json(GBODY)
                 self.D['JSTRG'] = self.SYS.json(JSTRG)

@@ -519,10 +519,18 @@ class M_backtest_OVERALL(Model) :
             self.D['next_일자'] = 1
             self.D['next_단계'] = '첫날매수'
             
+            V_qty  = my.ceil(self.V['일매수금']/self.M['당일종가'])
+            R_qty  = my.ceil(self.R['일매수금']/self.M['당일종가'])
+            S_qty  = my.ceil(self.S['일매수금']/self.M['당일종가'])
+            
+            self.D['next_일반기초'] = V_qty
+            self.D['next_기회기초'] = R_qty
+            self.D['next_안정기초'] = S_qty
+            
             self.D['next_일반매수가'] = round(self.M['전일종가'] * self.M['큰단가치'],2)
             self.D['next_기회매수가'] = self.D['next_안정매수가'] = 0.0
             
-            self.D['next_일반매수량'] = self.V['기초수량']
+            self.D['next_일반매수량'] = V_qty
             self.D['next_기회매수량'] = self.D['next_안정매수량'] = 0
             
             self.D['next_일반매도량'] = self.D['next_기회매도량'] = self.D['next_안정매도량'] = 0 

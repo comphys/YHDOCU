@@ -33,7 +33,7 @@ class Stactic_guide(Control) :
         
         # 경과일수 GD의 데이타는 오늘의 자료임, 가이드가 진행 중일 때 초기화 시키는 것을 전제로 함
         일매수금 = int(int(Balance*2/3)/22)
-        bprice = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 < '{theDay}' ORDER BY add0 DESC LIMIT 1")
+        bprice = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 <= '{theDay}' ORDER BY add0 DESC LIMIT 1")
         기초수량 = my.ceil(일매수금/float(bprice)) 
         
         찬스수량 = 0
@@ -43,7 +43,7 @@ class Stactic_guide(Control) :
         cp10 = self.take_chance(-10.0,int(GD['add9']),int(GD['sub2']),float(GD['add6']))
         찬스가격 = cp05 if float(GD['sub7']) else cp10
         찬스가격 = min(float(GD['sub19']),찬스가격)
-        bprice = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 < '{theDay}' ORDER BY add0 DESC LIMIT 1")
+        bprice = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 <= '{theDay}' ORDER BY add0 DESC LIMIT 1")
         기초수량 = my.ceil(일매수금/float(bprice)); self.B['sub18'] = 기초수량
         
         self.B['sub1']  = 1; self.B['sub4'] = 일매수금; self.B['sub2'] = 찬스수량;  self.B['sub3'] = 0
@@ -59,6 +59,22 @@ class Stactic_guide(Control) :
         k = N / (1+p/100)
         return round(A/(k-n),2)
     
+# -----------------------------------------------------------------------------------------------------------------------
+# Basic qty : Recalculate the basic quantity
+# -----------------------------------------------------------------------------------------------------------------------
+    def basic_qty(self) :
+        self.Q = {}
+        theDay  = self.D['post']['theDay']
+        Balance = my.sv(self.D['post']['Balance']) 
+        
+        일매수금 = int(int(Balance*2/3)/22)
+        bprice = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 <= '{theDay}' ORDER BY add0 DESC LIMIT 1")
+        기초수량 = my.ceil(일매수금/float(bprice))        
+
+        self.Q['sub4'] = 일매수금
+        self.Q['sub18'] = 기초수량
+        
+        return self.json(self.Q)
 # -----------------------------------------------------------------------------------------------------------------------
 # OneWrite STABILITY TACTIC
 # -----------------------------------------------------------------------------------------------------------------------
@@ -153,6 +169,7 @@ class Stactic_guide(Control) :
     def rebalance(self)  :
         가용잔액 = int(self.M['현재잔액'] * 2/3)
         self.M['일매수금'] = int(가용잔액/self.M['분할횟수'])
+        self.M['기초수량'] = my.ceil(self.M['일매수금']/float(self.M['기초종가']))
 
 
     def calculate(self)  :
@@ -259,8 +276,8 @@ class Stactic_guide(Control) :
         self.M['진행상황'] = '매도대기'
         
         # 기초수량 구하기
-        bprice = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 <= '{self.M['진행일자']}' ORDER BY add0 DESC LIMIT 1")
-        self.M['기초수량'] = my.ceil(self.M['일매수금']/float(bprice))
+        self.M['기초종가'] = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 <= '{self.M['진행일자']}' ORDER BY add0 DESC LIMIT 1")
+        self.M['기초수량'] = my.ceil(self.M['일매수금']/float(self.M['기초종가']))
 
 
     def update_value(self) :
@@ -282,12 +299,12 @@ class Stactic_guide(Control) :
         U['add11']  = round(self.M['매수금액'],2)
         U['add12']  = round(self.M['매도금액'],2)
         if  U['add11'] :
-            U['sub14'] = float(U['sub14']) + U['add11'] #매수누적
-            U['add6']  = float(U['add6'])  + U['add11'] #현매수금
+            U['sub14'] = round(float(U['sub14']) + U['add11'],2) #매수누적
+            U['add6']  = round(float(U['add6'])  + U['add11'],2) #현매수금
             U['add7']  = round(U['add6']/U['add9'],4) #평균단가
 
         if  U['add12'] :
-            U['sub15'] = float(U['sub15']) + U['add12'] #매도누적
+            U['sub15'] = round(float(U['sub15']) + U['add12'],2) #매도누적
             U['add8']  = round((U['add12'] / float(U['add6']) - 1) * 100,2)
             U['add6'] = 0.00 #현매수금
             U['add7'] = 0.00 #평균단가
@@ -320,7 +337,6 @@ class Stactic_guide(Control) :
         U['sub19']  = self.M['전매수가']
         U['sub3']   = self.M['전매도량']
         U['sub20']  = self.M['전매도가']
-        if U['sub20'] <= U['sub19'] :  U['sub19'] = U['sub20'] - 0.01
         U['sub29']  = self.M['진행상황']
         U['sub30']  = self.M['수수료등']
         U['sub31'] = float(U['sub31']) + self.M['수수료등'] if self.M['경과일수'] != 1 else self.M['수수료등'] # 누적수수료

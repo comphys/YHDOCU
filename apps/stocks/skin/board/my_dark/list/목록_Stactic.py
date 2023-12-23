@@ -49,7 +49,7 @@ class 목록_Stactic(SKIN) :
             SD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
             self.DB.tbl = 'h_R230831_board'
             RD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
-            self.info(RD)
+
             cx = {};dx = {}
             self.D['Stactic_avg'] = []; self.D['Stactic_pro'] = []
             if SD :
