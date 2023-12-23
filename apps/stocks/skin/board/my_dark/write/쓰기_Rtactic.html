@@ -321,7 +321,7 @@ function do_initiate() {
 	if(theDay=='None') {h_dialog.notice('날자를 선택하여 주세요'); return;}
 	if(!Balance) {h_dialog.notice('잔액을 입력하여 주세요'); return;}
 	
-	let posturl = uri('linkurl')+ 'boards-rtactic_guide/initiate_Stactic/'+uri(0)
+	let posturl = uri('linkurl')+ 'boards-rtactic_guide/initiate_Rtactic/'+uri(0)
 
 	postData = {theDay:theDay, Balance:Balance}
 	$.post( posturl, postData).done(function(data) {
