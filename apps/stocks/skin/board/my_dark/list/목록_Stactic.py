@@ -44,12 +44,12 @@ class 목록_Stactic(SKIN) :
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
-            
             LD = self.DB.get_line('add3,add4,add6,add7,add9,add10,add14,add16,add17,sub2,sub3,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub28')
+            
             SD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
-            self.DB.tbl = 'h_C230831_board'
+            self.DB.tbl = 'h_R230831_board'
             RD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
-                 
+            self.info(RD)
             cx = {};dx = {}
             self.D['Stactic_avg'] = []; self.D['Stactic_pro'] = []
             if SD :
@@ -98,7 +98,7 @@ class 목록_Stactic(SKIN) :
             타겟일수 = int(TD['sub12']) 
             기초수량 = int(LD['sub18'])
  
-            if  타겟일수 == 0 :
+            if  타겟일수 == 0 or 타겟일수 == 1 :
                 self.D['매수갯수'] = '0'; self.D['매수단가'] = f"{float(LD['sub19']):,.2f}"; self.D['매수예상'] = '0.00'
                 self.D['매도갯수'] = '0'; self.D['매도단가'] = f"{float(LD['sub20']):,.2f}"; self.D['매도예상'] = '0.00'
                 self.D['예상이익'] = '0.00'
@@ -106,8 +106,8 @@ class 목록_Stactic(SKIN) :
                 self.D['target_value'] = ['null'] * chart_len 
                 self.D['chance_value'] = ['null'] * chart_len 
             
-            
-            elif 타겟일수 >= 1 and int(LD['add9']) <= int(LD['sub18']): 
+
+            elif 타겟일수 >= 2 and int(LD['add9']) <= int(LD['sub18']): 
                 # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
                 찬스수량 = 0
                 day_count = min(int(TD['sub12'])+2,6)

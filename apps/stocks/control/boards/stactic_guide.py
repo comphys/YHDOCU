@@ -7,6 +7,7 @@ class Stactic_guide(Control) :
         self.DB = self.db('stocks')
         self.bid   = self.parm[0]
         self.board = 'h_'+self.bid+'_board'
+        self.guide = 'h_IGUIDE_board'
     
 # -----------------------------------------------------------------------------------------------------------------------
 # Initiate  STABILITY TACTIC (calller : Stactic.html)
@@ -20,7 +21,7 @@ class Stactic_guide(Control) :
         self.M = {}
 
         HD = self.DB.line(f"SELECT add3,add8,add9,add10 FROM h_stockHistory_board WHERE add0='{theDay}'")
-        GD = self.DB.line(f"SELECT add6,add9,sub2,sub7,sub12,sub19,sub20,sub29 FROM h_INVEST_board WHERE add0='{theDay}'")
+        GD = self.DB.line(f"SELECT add6,add9,sub2,sub7,sub12,sub19,sub20,sub29 FROM {self.guide} WHERE add0='{theDay}'")
         
         self.B['add0']  = theDay
         self.B['add1']  = '0.00';     self.B['add2']  = '0.00';      self.B['add3']  = Balance;      self.B['add4']  = '100'
@@ -32,7 +33,7 @@ class Stactic_guide(Control) :
         
         # 경과일수 GD의 데이타는 오늘의 자료임, 가이드가 진행 중일 때 초기화 시키는 것을 전제로 함
         일매수금 = int(int(Balance*2/3)/22)
-        bprice = self.DB.one(f"SELECT add14 FROM h_INVEST_board WHERE sub12='0' and add0 < '{theDay}' ORDER BY add0 DESC LIMIT 1")
+        bprice = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 < '{theDay}' ORDER BY add0 DESC LIMIT 1")
         기초수량 = my.ceil(일매수금/float(bprice)) 
         
         찬스수량 = 0
@@ -42,7 +43,7 @@ class Stactic_guide(Control) :
         cp10 = self.take_chance(-10.0,int(GD['add9']),int(GD['sub2']),float(GD['add6']))
         찬스가격 = cp05 if float(GD['sub7']) else cp10
         찬스가격 = min(float(GD['sub19']),찬스가격)
-        bprice = self.DB.one(f"SELECT add14 FROM h_INVEST_board WHERE sub12='0' and add0 < '{theDay}' ORDER BY add0 DESC LIMIT 1")
+        bprice = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 < '{theDay}' ORDER BY add0 DESC LIMIT 1")
         기초수량 = my.ceil(일매수금/float(bprice)); self.B['sub18'] = 기초수량
         
         self.B['sub1']  = 1; self.B['sub4'] = 일매수금; self.B['sub2'] = 찬스수량;  self.B['sub3'] = 0
@@ -201,9 +202,9 @@ class Stactic_guide(Control) :
         
         self.M['진행일자'] = self.D['today']
         # 가이드 데이타 가져오기
-        select_cols = self.DB.table_cols('h_INVEST_board',('no', 'brother', 'add0', 'tle_color', 'uid', 'uname', 'content', 'reply', 'hit', 'wdate', 'mdate'))
+        select_cols = self.DB.table_cols(self.guide,('no', 'brother', 'add0', 'tle_color', 'uid', 'uname', 'content', 'reply', 'hit', 'wdate', 'mdate'))
         self.DB.wre =  f"add0='{self.D['today']}'"
-        self.DB.tbl = 'h_INVEST_board'
+        self.DB.tbl = self.guide
         GD = self.M['GD'] = self.DB.get_line(select_cols)
                 
         self.DB.tbl = f"h_{self.bid}_board"
@@ -258,7 +259,7 @@ class Stactic_guide(Control) :
         self.M['진행상황'] = '매도대기'
         
         # 기초수량 구하기
-        bprice = self.DB.one(f"SELECT add14 FROM h_INVEST_board WHERE sub12='0' and add0 <= '{self.M['진행일자']}' ORDER BY add0 DESC LIMIT 1")
+        bprice = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 <= '{self.M['진행일자']}' ORDER BY add0 DESC LIMIT 1")
         self.M['기초수량'] = my.ceil(self.M['일매수금']/float(bprice))
 
 
