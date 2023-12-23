@@ -11,9 +11,13 @@ class 목록_Rtactic(SKIN) :
         
 
     def chart(self) :
+        
+        last_date = self.DB.one(f"SELECT max(add0) FROM {self.D['tbl']}")
         target = self.D['BCONFIG']['extra1']
+        
         self.DB.clear()
         self.DB.tbl = f"h_{target}_board"
+        self.DB.wre = f"add0 <='{last_date}'"
         self.DB.odr = "add0 DESC"
         self.DB.lmt = '200'
         
@@ -22,7 +26,6 @@ class 목록_Rtactic(SKIN) :
         if chart_data :
 
             first_date = chart_data[-1]['add0']
-            last_date  = chart_data[ 0]['add0']
             self.D['s_date'] = first_date
             self.D['e_date'] = last_date
             self.D['총경과일'] = my.diff_day(first_date,day2=last_date)
@@ -35,13 +38,13 @@ class 목록_Rtactic(SKIN) :
         
             self.D['chart_date']   = [x['add0'][2:] for x in chart_data]
             self.D['close_price']  = [float(x['add14']) for x in chart_data]; 
-            self.D['soxl_average'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
-            self.D['soxl_profits'] = [float(x['add8']) for x in chart_data]
+            self.D['Vtactic_avg'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
+            self.D['Vtactic_pro'] = [float(x['add8']) for x in chart_data]
 
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
-            prev_date = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
-            self.DB.wre = f"add0='{prev_date}'"
+            self.DB.wre = f"add0='{last_date}'"
+            
             LD = self.DB.get_line('add3,add4,add6,add7,add9,add10,add14,add16,add17,sub2,sub3,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub28')
             CD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
                  

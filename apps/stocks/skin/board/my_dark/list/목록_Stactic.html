@@ -140,6 +140,7 @@
 	<div class='pull-left'>
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red-s2'>검 토</button></a>
+		<a href="{{D['_bse']}}boards-stactic_guide/oneWrite_Stactic/{{D['bid']}}"><button class='btn btn-small btn-red'>기 록</button></a>&nbsp;
 	</div>
 	<div class='pagination pull-right'>
 		<ul>{{D['Pagination']|safe}}</ul>
@@ -201,32 +202,39 @@ ctx_main.style.border = '2px solid black';
 
 let labels_origin   = {{D['chart_date']|safe}}				// labels main origin
 let close_origin    = {{D['close_price']|safe}} 		    // soxl close price origin 
-let r_avg_origin    = {{D['soxl_average']|safe}}	        // soxl average in r tactic
-let r_pro_origin    = {{D['soxl_profits']|safe}}	        // soxl profits in r tactic
-let v_sel_origin    = {{D['target_value']|safe}}		    // soxl sell value
-let v_buy_origin    = {{D['chance_value']|safe}}		
-let v_avg_origin    = {{D['chance_average']|safe}}	
-let v_pro_origin    = {{D['chance_profits']|safe}}
+let v_avg_origin    = {{D['Vtactic_avg']|safe}}	        // soxl average in v tactic
+let v_pro_origin    = {{D['Vtactic_pro']|safe}}	        // soxl profits in v tactic
+let s_sel_origin    = {{D['target_value']|safe}}		    // soxl sell value
+let s_buy_origin    = {{D['chance_value']|safe}}		
+let s_avg_origin    = {{D['Stactic_avg']|safe}}	
+let s_pro_origin    = {{D['Stactic_pro']|safe}}
+let r_avg_origin    = {{D['Rtactic_avg']|safe}}	
+let r_pro_origin    = {{D['Rtactic_pro']|safe}}
+
+
 let ChartStart      = {{D['chart_start']}};	
 
 let labels_main     =  labels_origin.slice(ChartStart); let span_start = labels_main[0]; $("input[name='s_date']").val('20'+span_start)
 let close_price     =  close_origin.slice(ChartStart)	
-let r_avg_value     =  r_avg_origin.slice(ChartStart)  
-let r_pro_value     =  r_pro_origin.slice(ChartStart)	
-let v_sel_value     =  v_sel_origin.slice(ChartStart)		
-let v_buy_value     =  v_buy_origin.slice(ChartStart)		
-let v_avg_value     =  v_avg_origin.slice(ChartStart)	
-let v_pro_value     =  v_pro_origin.slice(ChartStart)
+let v_avg_value     =  v_avg_origin.slice(ChartStart)  
+let v_pro_value     =  v_pro_origin.slice(ChartStart)	
+let s_sel_value     =  s_sel_origin.slice(ChartStart)		
+let s_buy_value     =  s_buy_origin.slice(ChartStart)		
+let s_avg_value     =  s_avg_origin.slice(ChartStart)	
+let s_pro_value     =  s_pro_origin.slice(ChartStart)
+let r_avg_value     =  r_avg_origin.slice(ChartStart)	
+let r_pro_value     =  r_pro_origin.slice(ChartStart)
 
 
 const data_main = {
     labels : labels_main,
     datasets : [
 		{   label:' 종가변동',data : close_price,borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],lineTension:0.2},
-		{   label:' 평균단가',data : r_avg_value,borderColor:'#f78181', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
-		{   label:' 매도가격',data : v_sel_value,borderColor:'yellow', borderWidth:1, pointRadius:0,borderDash:[2,2],lineTension:0.2},
-		{   label:' 기회가격',data : v_buy_value,borderColor:'darkgray', borderWidth:1, pointRadius:0,borderDash:[2,2],lineTension:0.2},
-		{   label:' 찬스평균',data : v_avg_value,borderColor:'yellow', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
+		{   label:' 평균단가',data : v_avg_value,borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
+		{   label:' 매도가격',data : s_sel_value,borderColor:'yellow', borderWidth:1, pointRadius:0,borderDash:[2,2],lineTension:0.2},
+		{   label:' 안정가격',data : s_buy_value,borderColor:'darkgray', borderWidth:1, pointRadius:0,borderDash:[2,2],lineTension:0.2},
+		{   label:' 안정평균',data : s_avg_value,borderColor:'lightgreen', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
+		{   label:' 기회평균',data : r_avg_value,borderColor:'yellow', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
     ]   
 };
 const options_main = {
@@ -289,8 +297,9 @@ const data_sub = {
 	labels : labels_main,
 	datasets : [
 		{label:' 종가변동',data : close_price,borderColor:'cyan',    borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
-		{label:' 평균변동',data : r_pro_value,borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
-		{label:' 찬스변동',data : v_pro_value,borderColor:'yellow',  borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 평균변동',data : v_pro_value,borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 안정변동',data : s_pro_value,borderColor:'yellow',  borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 기회변동',data : r_pro_value,borderColor:'lightgreen',  borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
 	]   
 }
 
@@ -355,8 +364,9 @@ function slice_chart(opt) {
 	if(second_chart) {
 		myChart_main.config.data.labels = labels_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[0].data =  close_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[1].data =  r_pro_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[2].data =  v_pro_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[1].data =  v_pro_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[2].data =  s_pro_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[3].data =  r_pro_origin.slice(new_s,new_e);
 		for(i=0;i<1;i++) {
 			base=myChart_main.config.data.datasets[i].data[0]; 
 			myChart_main.config.data.datasets[i].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})
@@ -365,10 +375,11 @@ function slice_chart(opt) {
 	} else {
 		myChart_main.config.data.labels = labels_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[0].data =  close_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[1].data =  r_avg_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[2].data =  v_sel_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[3].data =  v_buy_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[4].data =  v_avg_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[1].data =  v_avg_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[2].data =  s_sel_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[3].data =  s_buy_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[4].data =  s_avg_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[5].data =  r_avg_origin.slice(new_s,new_e);
 	}
 	myChart_main.update();
 }

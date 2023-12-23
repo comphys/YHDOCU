@@ -190,7 +190,7 @@
 			<br>
 			<div class='i-input-div'>
 				<div class='write-input-server'>진행상황</div>
-				<input type='text' name='sub29' class="i-text" style="width:100px;" value="{{D['BODY']['sub29']}}">
+				<input type='text' name='sub29' class="i-text" style="width:100px;text-align:right" value="{{D['BODY']['sub29']}}">
 			</div>
 			<div class='i-input-div'>
 				<div class='write-input-server'>수수료등</div>
@@ -201,8 +201,8 @@
 				<input type='text' name='sub31' class="i-number" style="width:110px;" value="{{D['BODY']['sub31']}}">
 			</div>
 			<div class='i-input-div'>
-				<div class='write-input-server'>회복전략</div>
-				<input type='text' name='sub7' class="i-number" style="width:100px;" value="{{D['BODY']['sub7']}}">
+				<div class='write-input-server'>보존금액</div>
+				<input type='text' name='sub32' class="i-number" style="width:100px;" value="{{D['BODY']['sub32']}}">
 			</div>
         </td>
     </tr>
@@ -320,7 +320,7 @@ function do_initiate() {
 	if(theDay=='None') {h_dialog.notice('날자를 선택하여 주세요'); return;}
 	if(!Balance) {h_dialog.notice('잔액을 입력하여 주세요'); return;}
 	
-	let posturl = uri('linkurl')+ 'boards-vrs_guide/initiate_Stactic/'+uri(0)
+	let posturl = uri('linkurl')+ 'boards-stactic_guide/initiate_Stactic/'+uri(0)
 
 	postData = {theDay:theDay, Balance:Balance}
 	$.post( posturl, postData).done(function(data) {
