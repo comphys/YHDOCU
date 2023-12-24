@@ -238,7 +238,7 @@ class M_backtest_OVERALL(Model) :
 
             self.M['현재일자'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
-            self.M['당일변동'] = float(BD['add8']) * 100
+            self.M['종가변동'] = float(BD['add8']) 
             self.M['전일종가'] = float(self.B[idx-1]['add3'])  
             self.V['거래코드'] = ' ' 
             self.R['거래코드'] = ' '
@@ -331,8 +331,8 @@ class M_backtest_OVERALL(Model) :
         tx['현재날수'] = self.M['현재날수']; tx['기록시즌'] = self.M['기록시즌']
         tx['기록일자'] = self.M['현재일자'][2:]
         tx['당일종가'] = f"<span class='clsp{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
-        clr = "#F6CECE" if self.M['당일변동'] >= 0 else "#CED8F6"
-        tx['당일변동'] = f"<span style='color:{clr}'>{self.M['당일변동']:,.1f}</span>"
+        clr = "#F6CECE" if self.M['종가변동'] >= 0 else "#CED8F6"
+        tx['종가변동'] = f"<span style='color:{clr}'>{self.M['종가변동']:,.2f}</span>"
         #--------------------------------------------------------
         tx['일반진행'] = f"{round(self.V['매도금액'],4):,.2f}" if self.V['매도금액'] else self.V['거래코드']
         tx['일반평균'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.V['평균단가'],4):,.4f}</span>" if self.V['평균단가'] else f"<span class='avgv{self.M['기록시즌']}'></span>"
@@ -489,7 +489,7 @@ class M_backtest_OVERALL(Model) :
 
         self.D['next_일자'] = self.M['현재날수'] 
         self.D['next_종가'] = self.M['전일종가']
-        self.D['next_변동'] = round(self.M['당일변동'],2)
+        self.D['next_변동'] = round(self.M['종가변동'],2)
 
         self.D['next_단계'] = self.M['매수단계']
         self.D['next_일반기초'] = self.V['기초수량']
