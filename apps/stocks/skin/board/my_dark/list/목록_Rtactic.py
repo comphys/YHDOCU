@@ -59,8 +59,6 @@ class 목록_Rtactic(SKIN) :
                     self.D['Rtactic_avg'].append(cx.get(x,'null')) 
                     self.D['Rtactic_pro'].append(dx.get(x,'null'))
             
-            self.D['chart_percent'] = [float(LD['add4']),float(LD['add16'])]
-            
             # ------------- taget record 불러오기
             self.DB.clear()
             self.DB.tbl = f"h_{target}_board"

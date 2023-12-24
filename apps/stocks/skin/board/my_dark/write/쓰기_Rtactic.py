@@ -1,5 +1,4 @@
 from system.core.load import SKIN
-import system.core.my_utils as my
 
 class 쓰기_Rtactic(SKIN) :
 
@@ -36,7 +35,8 @@ class 쓰기_Rtactic(SKIN) :
                 
                 if not GBODY : self.SYS.set_message(f"{target} 보드에 해당 일자 매매 데이타가 존재하지 않습니다.")
                 # 종가변동 구하기
-                GBODY['sub28'] = f"{(float(GBODY['add14'])/float(JBODY['add14']) - 1)*100}"
+                p_change = self.DB.one(f"SELECT add8 FROM h_stockHistory_board WHERE add0='{self.D['today']}' and add1='SOXL'")
+                GBODY['add20'] = f"{float(p_change):.2f}"                
                                 
                 self.D['JBODY'] = self.SYS.json(JBODY)
                 self.D['GBODY'] = self.SYS.json(GBODY)

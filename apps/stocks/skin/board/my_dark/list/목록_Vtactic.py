@@ -50,28 +50,18 @@ class 목록_Vtactic(SKIN) :
             LD = self.DB.get_line('add6,add8,add9,add10,add14,add15,add17,add18,add19,add20,sub1,sub2,sub3,sub4,sub7,sub12,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub32')
             
             # 가치 비율 for chart
-            운용자금 = my.sv(LD['add19']) + my.sv(LD['add20'])
-            예치자금 = my.sv(LD['sub32'])
-            주식가치 = my.sv(LD['add15'])
-            가치합계 = 운용자금 + 예치자금 + 주식가치
-            self.D['chart_percent'] = [round(운용자금/가치합계*100,2),round(예치자금/가치합계*100,2),round(주식가치/가치합계*100,2)]
-
             현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
-            
-            # --------------
-
-            총투자금 = float(LD['sub27'])
+            총투자금 = float(LD['sub25'])
             총수익금 = float(LD['add17']) - 총투자금
             총수익률 = (float(LD['add17'])/총투자금-1) * 100 if 총투자금 else 0
+            
             self.D['총입금'] = f"{float(LD['sub25']):,.0f}"
             self.D['총출금'] = f"{float(LD['sub26']):,.0f}"
-            현재총액 = float(LD['add17'])
-            self.D['현재총액'] = f"{현재총액:,.0f}"
-            self.D['원화총액'] = f"{현재총액 * 현재환율:,.0f}"
+            self.D['현재총액'] = f"{float(LD['add17']):,.0f}"
             self.D['총수익금'] = f"{총수익금:,.0f}"
-            # self.D['원화수익'] = f"{총수익금 * 현재환율:,.0f}"
-            self.D['총수익률'] = f"{총수익률:.2f}"
-            
+            self.D['총수익률'] = f"{총수익률:.2f}"        
+            # --------------
+
             # # -- extra-info
             self.D['현재시즌'] = LD['sub1']  
             
@@ -155,7 +145,14 @@ class 목록_Vtactic(SKIN) :
                             tx[key] = f"<td class='list-bulls'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bears'>{profit:,.2f}</td>"
                         else : 
                             tx[key] = "<td class='list-normal'>0.00</td>"
-                            
+                    
+                    elif key == 'add20': 
+                        profit = float(txt)
+                        if profit != 0 : 
+                            tx[key] = f"<td class='list-bull'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bear'>{profit:,.2f}</td>"
+                        else : 
+                            tx[key] = "<td class='list-normal'>0.00</td>"
+                           
                     elif key == 'add14' :
                         tx[key] = f"<td class='ohlc-price' style='text-align:right;color:#E0F8E0;cursor:pointer'>{txt}</td>"
 

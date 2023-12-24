@@ -55,17 +55,18 @@
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('입금내역',0)">입금</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('출금내역',0)">출금</th>
 				<th colspan='2' style="background-color:#0A2229;font-style:italic">US dollar</th>
-				<th colspan='11' style="background-color:#0B2F3A;font-style:italic;cursor:pointer;" onclick="winopen('winopen/chart2/soxl',820,450,'stock_chart');">Leverage Stock {{D['적용종목']}}</th>
+				<th colspan='12' style="background-color:#0B2F3A;font-style:italic;cursor:pointer;" onclick="winopen('winopen/chart2/soxl',820,450,'stock_chart');">Leverage Stock {{D['적용종목']}}</th>
 				<th style="background-color:#071418;;font-style:italic">Total</th>
 			</tr>
 			<tr style="height:27px">
-				<th style="background-color:#071418;font-style:italic;width:110px;cursor:pointer" onclick="monthlyProfit_toggle()">{{D['총경과일']}} days</th>
-				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총입금']}}</th>
-				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총출금']}}</th>
+				<th style="background-color:#071418;font-style:italic;width:100px;cursor:pointer" onclick="monthlyProfit_toggle()">{{D['총경과일']}} days</th>
+				<th style="background-color:#0A2229;text-align:right;width:70px">{{D['총입금']}}</th>
+				<th style="background-color:#0A2229;text-align:right;width:70px">{{D['총출금']}}</th>
 				<th style="background-color:#0A2229;text-align:right;;width:90px">잔액</th>
 				<th style="background-color:#0A2229;text-align:right;;width:65px">비중</th>
 
 				<th style="background-color:#0B2F3A;text-align:right;cursor:pointer;width:70px" onclick="popup_notice('종가2',0)">종가</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:50px">변동</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:60px">수량</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:84px">매수금</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:84px">평균단가</th>
@@ -94,6 +95,7 @@
 			{{TR['add4']|safe}}
 
 			{{TR['add14']|safe}}
+			{{TR['add20']|safe}}
 			{{TR['add5']|safe}}
 			{{TR['add11']|safe}}
 			{{TR['add7']|safe}}
@@ -123,7 +125,7 @@
 	<div class='pull-left'>
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red-s2'>검 토</button></a>
-		<a href="{{D['_bse']}}boards-invest_guide/oneWrite/{{D['bid']}}"><button class='btn btn-small btn-red'>기 록</button></a>&nbsp;
+		<a href="{{D['_bse']}}boards-vtactic_guide/oneWrite_Vtactic/{{D['bid']}}"><button class='btn btn-small btn-red'>기 록</button></a>&nbsp;
 	</div>
 	<div class='pagination pull-right'>
 		<input id="the-last-date" type='text' style='height:26px;text-align:center;vertical-align:top;width:100px' value="{{D['limit_date']}}" />
@@ -228,7 +230,6 @@ function limt_period() {
 		datasets : [
 			{   label:' 종가변동',data : close_price2,borderColor:'#58ACFA', borderWidth:3, pointRadius:0, borderDash:[2,3],lineTension:0.2},
 			{  	label:' 평균단가',data : soxl_average2,borderColor:'#f78181', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
-			{   label:' 가치합계',data : total_value2,borderColor:'rgba(255, 255, 0, 0.8)', borderWidth:2,pointRadius:0, lineTension:0.2,yAxisID : 'y1'},	
 			{   label:' 매도가격',data : sell_price2,borderColor:'yellow', borderWidth:1, pointRadius:0, borderDash:[2,2]}	
 		]   
 	}
@@ -237,7 +238,7 @@ function limt_period() {
 		plugins : { legend: {display:false}, tooltip:{enabled:false}},
 		responsive:false,
 		layout:{padding:20},
-		scales:{x: { ticks : {color:'gray'}},y:{  ticks : {color:'lightgray'}, position:'right'},y1:{ ticks : {color:'gray'}, position:'left'},}
+		scales:{x: { ticks : {color:'gray'}},y:{  ticks : {color:'lightgray'}, position:'right'}}
 	}
 	const config_main  = {type:'line',data:data_main,options:options_main};
 	const myChart = new Chart(ctx_main, config_main); 
@@ -357,11 +358,9 @@ function limt_period() {
 			myChart.config.data.labels = labels.slice(new_s,new_e);
 			myChart.config.data.datasets[0].data =  close_price.slice(new_s,new_e);
 			myChart.config.data.datasets[1].data =  soxl_average.slice(new_s,new_e);
-			myChart.config.data.datasets[2].data =  total_value.slice(new_s,new_e);
-			myChart.config.data.datasets[3].data =  sell_price.slice(new_s,new_e);
-			if(myChart.config.data.datasets[3].data.length<=42 && the_current_day.slice(2) == end_date) {
-			myChart.config.data.datasets[2].data.fill(null);
-			myChart.config.data.datasets[3].data.fill(sellP);
+			myChart.config.data.datasets[2].data =  sell_price.slice(new_s,new_e);
+			if(myChart.config.data.labels.length<=42 && the_current_day.slice(2) == end_date) {
+			myChart.config.data.datasets[2].data.fill(sellP);
 			}
 		}
 		myChart.update();

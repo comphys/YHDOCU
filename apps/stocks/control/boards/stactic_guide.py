@@ -233,13 +233,13 @@ class Stactic_guide(Control) :
 
         # 종가구하기
         self.M['당일종가'] = float(GD['add14'])
-        p_change = self.DB.one(f"SELECT add8 FROM h_stockHistory_board WHERE add0='{self.M['진행일자']}'")
+        p_change = self.DB.one(f"SELECT add8 FROM h_stockHistory_board WHERE add0='{self.M['진행일자']}' and add1='SOXL'")
         self.M['종가변동'] = f"{float(p_change):.2f}"
         self.M['연속상승'] = GD['sub5']
         self.M['연속하락'] = GD['sub6']
 
         # 매매전략 가져오기
-        self.M['매매전략'] = 'REVOLUTION'
+        self.M['매매전략'] = 'STABILITY'
         self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.M['매매전략']}'")
         self.S = self.DB.get_line('add2,add3,add4,add5,add9,add10,add11,add17,add18,add22,add25')
         self.M['분할횟수']  = int(self.S['add2'])
