@@ -7,7 +7,7 @@ class Rtactic_guide(Control) :
         self.DB = self.db('stocks')
         self.bid   = self.parm[0]
         self.board = 'h_'+self.bid+'_board'
-        self.guide = 'h_IGUIDE_board'
+        self.guide = 'h_INVEST_board'
     
 # -----------------------------------------------------------------------------------------------------------------------
 # Initiate  REVOLUTION TACTIC (calller : Rtactic.html)
@@ -28,7 +28,7 @@ class Rtactic_guide(Control) :
         self.B['add11'] = '0.00';     self.B['add12'] = '0.00';      self.B['add5']  = 0;          self.B['add8'] = '0.00'
         self.B['add14'] = HD['add3']; self.B['add15'] = '0.00';      self.B['add9']  = 0;          self.B['add16']= '0.00'
         self.B['add7']  = '0.0000';   self.B['sub15'] = '0.00';      self.B['sub14'] = '0.00'; self.B['add6'] = '0.00'
-        self.B['sub5']  = HD['add9']; self.B['sub6']  = HD['add10']; self.B['sub28'] = round(my.sv(HD['add8']) * 100,1); self.B['add18'] = '0.00'
+        self.B['sub5']  = HD['add9']; self.B['sub6']  = HD['add10']; self.B['sub28'] = round(my.sv(HD['add8']) * 100,2); self.B['add18'] = '0.00'
         
         
         # 경과일수 GD의 데이타는 오늘의 자료임, 가이드가 진행 중일 때 초기화 시키는 것을 전제로 함
@@ -336,6 +336,7 @@ class Rtactic_guide(Control) :
         U['sub2']   = self.M['전매수량']
         U['sub19']  = self.M['전매수가']
         U['sub3']   = self.M['전매도량']
+        if self.M['전매도가'] <= self.M['전매수가'] : self.M['전매도가'] = self.M['전매수가'] + 0.01 # 첫 날 큰수매일 경우에 적용됨
         U['sub20']  = self.M['전매도가']
         U['sub29']  = self.M['진행상황']
         U['sub30']  = self.M['수수료등']
@@ -353,6 +354,7 @@ class Rtactic_guide(Control) :
         U['add16']  = f"{U['add16']:.2f}"
         U['add17']  = f"{U['add17']:.2f}"
 
+        U['sub14']  = f"{float(U['sub14']):.2f}"
         U['sub19']  = f"{U['sub19']:.2f}"
         U['sub20']  = f"{U['sub20']:.2f}"
         U['sub30']  = f"{U['sub30']:.2f}"

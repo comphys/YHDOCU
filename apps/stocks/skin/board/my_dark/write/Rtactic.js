@@ -101,7 +101,9 @@ function load_value() {
 		현재시즌= s_load('sub1','i');      일매수금 = s_load('sub4','i');      매수수량 = 0;   매도수량 = 0; 
 		경과일수= s_load('sub12','i','G'); 기초수량 = s_load('sub18','i');     매수가격 = s_load('sub19','f','G');  매도가격 = s_load('sub20','f','G'); 
 		입금합계=s_load('sub25','f');      출금합계 = s_load('sub26','f');     양도세금 = s_load('sub11','f');
-        누적수료= s_load('sub31','f');     보존금액 = s_load('sub32','f');      회복전략 = s_load('sub7','f','G');            
+        누적수료= s_load('sub31','f');     보존금액 = s_load('sub32','f');     
+		// 회복전략 값은 V전략에서만 존재하고 이 값을 가이드 에게서 가져옴
+		회복전략= s_load('sub7','f','G');            
                 
 		// 전략변수
 		분할횟수=s_load('add2','i','S');  
