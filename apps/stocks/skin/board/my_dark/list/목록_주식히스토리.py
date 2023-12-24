@@ -2,7 +2,6 @@ import system.core.my_utils as ut
 from flask import session
 from system.core.load import SKIN
 from datetime import datetime
-import time
 
 class 목록_주식히스토리(SKIN) :
 
@@ -75,7 +74,7 @@ class 목록_주식히스토리(SKIN) :
                     elif key == 'hit'   : tx[key] = f"<td class='list-hit'>{txt}</td>" 
                     elif key == 'uname' : tx[key] = f"<td class='list-name'>{txt}</td>"
                     elif key == 'add8'  : 
-                        txt_val = float(txt)*100
+                        txt_val = float(txt)
                         clr = "#F6CECE;" if txt_val > 0 else "#CED8F6"
                         txt = f"{txt_val:.2f}"
                         tx[key] = f"<td style='text-align:right;color:{clr}'>{txt}</td>"

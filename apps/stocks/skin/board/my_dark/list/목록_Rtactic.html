@@ -9,7 +9,7 @@
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 
 <div style="height:370px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
-	<div style="position:absolute;left:30px;top:60px;">
+	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
 		<canvas id="myChart_main"  style="width:1078px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
 	</div>>
 	<div style="position:absolute;left:1122px;top:62px;">
@@ -49,17 +49,18 @@
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('입금내역',0)">입금</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('출금내역',0)">출금</th>
 				<th colspan='2' style="background-color:#0A2229;font-style:italic">US dollar</th>
-				<th colspan='11' style="background-color:#0B2F3A;font-style:italic;cursor:pointer;" onclick="winopen('winopen/chart2/soxl',820,450,'stock_chart');">Leverage Stock {{D['적용종목']}}</th>
+				<th colspan='12' style="background-color:#0B2F3A;font-style:italic;cursor:pointer;" onclick="winopen('winopen/chart2/soxl',820,450,'stock_chart');">Leverage Stock {{D['적용종목']}}</th>
 				<th style="background-color:#071418;;font-style:italic">Total</th>
 			</tr>
 			<tr>
-				<th style="background-color:#071418;font-style:italic;width:110px">{{D['총경과일']}} days</th>
-				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총입금']}}</th>
-				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총출금']}}</th>
+				<th style="background-color:#071418;font-style:italic;width:110px;cursor:pointer" onclick="monthlyProfit_toggle()">{{D['총경과일']}} days</th>
+				<th style="background-color:#0A2229;text-align:right;width:70px">{{D['총입금']}}</th>
+				<th style="background-color:#0A2229;text-align:right;width:70px">{{D['총출금']}}</th>
 				<th style="background-color:#0A2229;text-align:right;;width:90px">잔액</th>
 				<th style="background-color:#0A2229;text-align:right;;width:65px">비중</th>
 
 				<th style="background-color:#0B2F3A;text-align:right;cursor:pointer;width:70px" onclick="popup_notice('종가2',0)">종가</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:60px">변동</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:60px">수량</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:84px">매수금</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:84px">평균단가</th>
@@ -73,30 +74,9 @@
 
 				<th style="background-color:#071418;font-style:italic">Value</th>
 			</tr>
-			<tr><td colspan="17" style="height:2px;background-color:cadetblue;padding:0px;"></td></tr>
+			<tr><td colspan="18" style="height:2px;background-color:cadetblue;padding:0px;"></td></tr>
 		</thead>
-			<tr style="background-color:#071418;">
-				<td class='text-center'>{{D['GD']['add0']}}</td>
-				<td style='text-align:right;color:#F3F781;'>{{D['GD']['sub1']}}-{{D['GD']['sub12']}}</td>
-				<td style='text-align:right;color:#F3F781;'>{{D['GD']['sub29']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add3']}}</td>
-				<td style='text-align:right;border-right:2px solid black;' class='list-add'>{{D['GD']['add4']}}</td>
-	
-				<td style='text-align:right;'>{{D['GD']['add14']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add5']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add11']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add7']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add9']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add6']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add15']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add12']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add18']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add8']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add16']}}</td>
-	
-				<td style='text-align:right;font-weight:700;'>{{D['GD']['add17']}}</td>
-			</tr>
-			<tr><td colspan="17" style="height:2px;background-color:cadetblue;padding:0px;"></td></tr>
+
 		<tbody>
 			{%- for TR in D['TR'] -%}
 			{% if (TR['add12']|striptags != '0.00') and (TR['add15']|striptags == '0.00') %}
@@ -111,6 +91,7 @@
 			{{TR['add4']|safe}}
 
 			{{TR['add14']|safe}}
+			{{TR['add20']|safe}}
 			{{TR['add5']|safe}}
 			{{TR['add11']|safe}}
 			{{TR['add7']|safe}}
@@ -146,7 +127,9 @@
 		<ul>{{D['Pagination']|safe}}</ul>
 	</div>
 </div>
-
+<div id='monthlyProfit' style="position:absolute;left:20px;top:55px;padding:5px 10px 5px 10px;opacity:0.9;z-index:3;">
+	<canvas id="monthlyProfitChart" style="width:1078px;height:350px;background-color:#24272d"></canvas>
+</div>
 
 
 <script>
@@ -373,5 +356,73 @@ function slice_chart(opt) {
 	}
 	myChart_main.update();
 }
+
+// -- Monthly Profit Graph -----------------------------------------------------------------
+{% if D['월별구분']|safe %}
+	{% if D['월별이익'] %}
+	const ctx_monthly= $id('monthlyProfitChart');
+
+	ctx_monthly.style.backgroundColor = '#33363b';
+	ctx_monthly.style.border = '2px solid black';
+
+	let labels_monthly = {{D['월별구분']|safe}};
+	let monthlyProfits = {{D['월별이익']|safe}};
+	let backColor = new Array(labels_monthly.length-1);
+	let boreColor = new Array(labels_monthly.length-1);
+	backColor.fill('rgba(75, 192, 192, 0.4)');
+	backColor.push('rgba(255, 99, 132, 0.4)');
+	// backColor.push('rgba(255, 205, 86, 0.4)');
+	boreColor.fill('rgb(75, 192, 192)');
+	boreColor.push('rgb(255, 99, 132)');
+	// boreColor.push('rgb(255, 205, 86)');
+
+	const data_monthly = {
+	labels: labels_monthly,
+	datasets: [{
+		label: ' 월별수익금 ',
+		data: monthlyProfits,
+		backgroundColor: backColor,
+		borderColor: boreColor,
+		borderWidth: 1
+	}]
+	};
+
+	const config_monthly = {
+	type: 'bar',
+	data: data_monthly,
+	plugins:[ChartDataLabels],
+	options: {
+		animation : {duration:500},
+		layout:{padding:10},
+		plugins : { legend: {display:false},
+					title:{display:true,color:'#F7F8E0',align:'end',font:{size:14,style:'italic',weight:'normal'},text:"{{D['손익합계']}}"},
+					tooltip : {enabled:false},
+					datalabels : {color:'white', anchor:'end', align:'end', offset: 3, font:{size:12}}			
+		},
+		scales: {
+		x: { ticks : {color:'white'}, grid:{color:'#272727'}},
+		y: {
+			grid : {
+				lineWidth:2,
+				color: function(context) {
+					if(context.tick.value == 0 ) { return '#071418'} else { return '' }
+				}
+			},
+			beginAtZero: true
+		}
+		}
+	},
+	};
+	const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
+	{% endif %}
+
+
+	let monthlyProfit_show = false;
+	function monthlyProfit_toggle() { 
+		monthlyProfit_show = !monthlyProfit_show;
+		if(monthlyProfit_show) $('#monthlyProfit').css('zIndex',7); else $('#monthlyProfit').css('zIndex',3);
+	}	
+{% endif %}
+// -----------------------------------------------------------------------------------------
 </script>
 {% endblock %}

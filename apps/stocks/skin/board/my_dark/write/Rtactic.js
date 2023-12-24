@@ -96,7 +96,7 @@ function load_value() {
 		매수금액= 0.00; 				   매도금액 = 0.00; 				   변동수량 = 0
         마감금액= s_load('add14','f','G'); 보유수량 = s_load('add9','i');      전일종가 = s_load('add14','f')
         평균단가= s_load('add7','f');      매도누적 = s_load('sub15','f');     매수누적 = s_load('sub14','f');  현매수금= s_load('add6','f');
-        연속상승= s_load('sub5','i','G');  연속하락 = s_load('sub6','i','G');  종가변동 = s_load('sub28','f','G');
+        연속상승= s_load('sub5','i','G');  연속하락 = s_load('sub6','i','G');  종가변동 = s_load('add20','f','G');
         // 투자전략 - 변수선언
 		현재시즌= s_load('sub1','i');      일매수금 = s_load('sub4','i');      매수수량 = 0;   매도수량 = 0; 
 		경과일수= s_load('sub12','i','G'); 기초수량 = s_load('sub18','i');     매수가격 = s_load('sub19','f','G');  매도가격 = s_load('sub20','f','G'); 
@@ -126,7 +126,7 @@ function load_value() {
         check_buy(); check_sell();
         vtc('add14',마감금액,2);    vtc('add15',마감금액*보유수량,0);    vtc('add9',보유수량,0);
         vtc('add7',평균단가,4);     vtc('sub15',매도누적,2);            vtc('sub14',매수누적,2);    vtc('add6',현매수금,2);
-        vtc('sub5',연속상승,0);     vtc('sub6',연속하락,0);             vtc('sub28',종가변동,1);    vtc('sub32',보존금액,1);
+        vtc('sub5',연속상승,0);     vtc('sub6',연속하락,0);             vtc('add20',종가변동,1);    vtc('sub32',보존금액,1);
     
         // 투자전략
 		vtc('sub1',현재시즌,0);     vtc('sub4',일매수금,0); 
@@ -221,7 +221,7 @@ function back_restore() {let 매수금액 = s_load('add11','f');  현재잔액 +
 function reset_value() {
     var reset_key = ['add1','add2','add3','add4',
 					'add11','add12','add5','add8','add14','add15','add9','add16',
-					'add7','sub15','sub14','add6','sub5','sub6','sub28','add18',
+					'add7','sub15','sub14','add6','sub5','sub6','add20','add18',
 					'sub1','sub4','sub2','sub3','sub12','sub18','sub19','sub20',
 					'add17','sub25','sub26','sub11','sub29','sub30','sub31','sub7']
 

@@ -28,7 +28,7 @@ class Stactic_guide(Control) :
         self.B['add11'] = '0.00';     self.B['add12'] = '0.00';      self.B['add5']  = 0;          self.B['add8'] = '0.00'
         self.B['add14'] = HD['add3']; self.B['add15'] = '0.00';      self.B['add9']  = 0;          self.B['add16']= '0.00'
         self.B['add7']  = '0.0000';   self.B['sub15'] = '0.00';      self.B['sub14'] = '0.00'; self.B['add6'] = '0.00'
-        self.B['sub5']  = HD['add9']; self.B['sub6']  = HD['add10']; self.B['sub28'] = round(my.sv(HD['add8']) * 100,2); self.B['add18'] = '0.00'
+        self.B['sub5']  = HD['add9']; self.B['sub6']  = HD['add10']; self.B['add20'] = f"{float(HD['add8']):.2f}"; self.B['add18'] = '0.00'
         
         
         # 경과일수 GD의 데이타는 오늘의 자료임, 가이드가 진행 중일 때 초기화 시키는 것을 전제로 함
@@ -233,8 +233,8 @@ class Stactic_guide(Control) :
 
         # 종가구하기
         self.M['당일종가'] = float(GD['add14'])
-        self.M['전일종가'] = float(self.M['LD']['add14'])
-        self.M['종가변동'] = f"{round(self.M['당일종가']/self.M['전일종가'] - 1,4) * 100:.2f}"
+        p_change = self.DB.one(f"SELECT add8 FROM h_stockHistory_board WHERE add0='{self.M['진행일자']}'")
+        self.M['종가변동'] = f"{float(p_change):.2f}"
         self.M['연속상승'] = GD['sub5']
         self.M['연속하락'] = GD['sub6']
 
@@ -341,7 +341,7 @@ class Stactic_guide(Control) :
         U['sub29']  = self.M['진행상황']
         U['sub30']  = self.M['수수료등']
         U['sub31'] = float(U['sub31']) + self.M['수수료등'] if self.M['경과일수'] != 1 else self.M['수수료등'] # 누적수수료
-        U['sub28'] = self.M['종가변동']
+        U['add20'] = self.M['종가변동']
         U['content'] = "<div><p>Written by Auto</p></div>"
 
     # Formatting
