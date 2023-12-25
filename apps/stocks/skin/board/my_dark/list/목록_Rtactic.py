@@ -68,7 +68,8 @@ class 목록_Rtactic(SKIN) :
             chart_len = len(chart_data)
             # --------------
             현재환율 = self.DB.one("SELECT CAST(usd_krw AS FLOAT) FROM usd_krw ORDER BY rowid DESC LIMIT 1")
-            총투자금 = float(LD['sub25'])
+            
+            총투자금 = float(LD['sub25']) - float(LD['sub26'])
             총수익금 = float(LD['add17']) - 총투자금
             총수익률 = (float(LD['add17'])/총투자금-1) * 100 if 총투자금 else 0
             

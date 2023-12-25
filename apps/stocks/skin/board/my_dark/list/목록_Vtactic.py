@@ -51,7 +51,8 @@ class 목록_Vtactic(SKIN) :
             
             # 가치 비율 for chart
             현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
-            총투자금 = float(LD['sub25'])
+            
+            총투자금 = float(LD['sub25']) - float(LD['sub26'])
             총수익금 = float(LD['add17']) - 총투자금
             총수익률 = (float(LD['add17'])/총투자금-1) * 100 if 총투자금 else 0
             
