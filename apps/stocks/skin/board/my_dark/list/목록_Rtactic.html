@@ -30,7 +30,7 @@
 		<i class="fa fa-sign-out"></i> <span class="exchange">{{D['총출금']}}</span> &nbsp;
 		<i class="fa fa-usd"></i> <span class="exchange">{{D['현재총액']}}</span> &nbsp;
 		<i class="fa fa-signal"></i> <span class="exchange">{{D['총수익금']}}</span> &nbsp; 
-		<i class="fa fa-line-chart"></i> {{D['총수익률']}}% &nbsp;
+		<span style="color:yellow"><i class="fa fa-line-chart"></i> {{D['총수익률']}}%</span> &nbsp;
 		<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} {{D['yx_b']}}% ( <span class="exchange">{{D['매수예상']}}</span> )</span> / 
 		<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <i class="fa fa-usd"></i> {{D['매도단가']}} {{D['yx_s']}}% ( {{D['매도예상']}} )</span> / 
 		<i class="fa fa-arrow-up"></i> {{D['연속상승']}} <i class="fa fa-arrow-down"></i> {{D['연속하락']}}&nbsp;/&nbsp; 
@@ -45,7 +45,7 @@
 	<table class='table table-bordered table-striped table-hover'>
 		<thead>
 			<tr>
-				<th style="background-color:#071418;font-style:italic">Progress</th>
+				<th style="background-color:#071418;font-style:italic;cursor:pointer;" onclick="monthlyProfit_toggle()">Progress</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('입금내역',0)">입금</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('출금내역',0)">출금</th>
 				<th colspan='2' style="background-color:#0A2229;font-style:italic">US dollar</th>

@@ -29,8 +29,8 @@
 		<i class="fa fa-sign-in"></i> <span class="exchange">{{D['총입금']}}</span> &nbsp;
 		<i class="fa fa-sign-out"></i> <span class="exchange">{{D['총출금']}}</span> &nbsp;
 		<i class="fa fa-usd"></i> <span class="exchange">{{D['현재총액']}}</span> &nbsp;
-		<i class="fa fa-signal"></i> <span class="exchange">{{D['총수익금']}}</span> &nbsp; 
-		<i class="fa fa-line-chart"></i> {{D['총수익률']}}% &nbsp;
+		<i class="fa fa-signal"></i> <span class="exchange">{{D['총수익금']}}</span> &nbsp;
+		<span style="color:yellow"><i class="fa fa-line-chart"></i> {{D['총수익률']}}%</span> &nbsp;
 		<span style="color:#58ACFA"> BP :  <i class="fa fa-shopping-cart"></i> {{D['매수갯수']}} for <i class="fa fa-usd"></i> {{D['매수단가']}} {{D['yx_b']}}% ( <span class="exchange">{{D['매수예상']}}</span> )</span> / 
 		<span style="color:#f78181"> SP :  <i class="fa fa-shopping-cart"></i> {{D['매도갯수']}} for <i class="fa fa-usd"></i> {{D['매도단가']}} {{D['yx_s']}}% ( {{D['매도예상']}} )</span> / 
 		<i class="fa fa-arrow-up"></i> {{D['연속상승']}} <i class="fa fa-arrow-down"></i> {{D['연속하락']}}&nbsp;/&nbsp; 
@@ -49,17 +49,18 @@
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('입금내역',0)">입금</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('출금내역',0)">출금</th>
 				<th colspan='2' style="background-color:#0A2229;font-style:italic">US dollar</th>
-				<th colspan='11' style="background-color:#0B2F3A;font-style:italic;cursor:pointer;" onclick="winopen('winopen/chart2/soxl',820,450,'stock_chart');">Leverage Stock {{D['적용종목']}}</th>
+				<th colspan='12' style="background-color:#0B2F3A;font-style:italic;cursor:pointer;" onclick="winopen('winopen/chart2/soxl',820,450,'stock_chart');">Leverage Stock {{D['적용종목']}}</th>
 				<th style="background-color:#071418;;font-style:italic">Total</th>
 			</tr>
 			<tr>
-				<th style="background-color:#071418;font-style:italic;width:110px">{{D['총경과일']}} days</th>
-				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총입금']}}</th>
-				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총출금']}}</th>
+				<th style="background-color:#071418;font-style:italic;width:100px">{{D['총경과일']}} days</th>
+				<th style="background-color:#0A2229;text-align:right;width:70px">{{D['총입금']}}</th>
+				<th style="background-color:#0A2229;text-align:right;width:70px">{{D['총출금']}}</th>
 				<th style="background-color:#0A2229;text-align:right;;width:90px">잔액</th>
 				<th style="background-color:#0A2229;text-align:right;;width:65px">비중</th>
 
 				<th style="background-color:#0B2F3A;text-align:right;cursor:pointer;width:70px" onclick="popup_notice('종가2',0)">종가</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:50px">변동</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:60px">수량</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:84px">매수금</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:84px">평균단가</th>
@@ -73,30 +74,9 @@
 
 				<th style="background-color:#071418;font-style:italic">Value</th>
 			</tr>
-			<tr><td colspan="17" style="height:2px;background-color:cadetblue;padding:0px;"></td></tr>
+			<tr><td colspan="18" style="height:2px;background-color:cadetblue;padding:0px;"></td></tr>
 		</thead>
-			<tr style="background-color:#071418;">
-				<td class='text-center'>{{D['GD']['add0']}}</td>
-				<td style='text-align:right;color:#F3F781;'>{{D['GD']['sub1']}}-{{D['GD']['sub12']}}</td>
-				<td style='text-align:right;color:#F3F781;'>{{D['GD']['sub29']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add3']}}</td>
-				<td style='text-align:right;border-right:2px solid black;' class='list-add'>{{D['GD']['add4']}}</td>
-	
-				<td style='text-align:right;'>{{D['GD']['add14']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add5']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add11']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add7']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add9']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add6']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add15']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add12']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add18']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add8']}}</td>
-				<td style='text-align:right;'>{{D['GD']['add16']}}</td>
-	
-				<td style='text-align:right;font-weight:700;'>{{D['GD']['add17']}}</td>
-			</tr>
-			<tr><td colspan="17" style="height:2px;background-color:cadetblue;padding:0px;"></td></tr>
+
 		<tbody>
 			{%- for TR in D['TR'] -%}
 			{% if (TR['add12']|striptags != '0.00') and (TR['add15']|striptags == '0.00') %}
@@ -111,6 +91,7 @@
 			{{TR['add4']|safe}}
 
 			{{TR['add14']|safe}}
+			{{TR['add20']|safe}}
 			{{TR['add5']|safe}}
 			{{TR['add11']|safe}}
 			{{TR['add7']|safe}}
