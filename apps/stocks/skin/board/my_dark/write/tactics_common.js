@@ -3,12 +3,17 @@
 // -------------------------------------------------------------------------------------------------------------------------
 
 
-function vtc(pos,num,weigh) { if(weigh==-1) return;	if(weigh==-2) $("input[name='"+pos+"']").val(num);	else {$("input[name='"+pos+"']").val(num.toFixed(weigh)).comma('init');}}
-function commission(mm,opt) {if(opt==1) { return (parseInt(mm*0.07)/100);}	else if(opt==2) { m1 = parseInt(mm*0.07)/100; m2=Math.round(mm*0.0008)/100; return m1+m2;}}
+function vtc(pos,num,weigh) { 
+	if(pos=='0000') return; 
+	if(weigh==-2) $("input[name='"+pos+"']").val(num);	else {$("input[name='"+pos+"']").val(num.toFixed(weigh)).comma('init');}
+}
+function commission(mm,opt) {
+	if(opt==1) { return (parseInt(mm*0.07)/100);}	
+	else if(opt==2) { m1 = parseInt(mm*0.07)/100; m2=Math.round(mm*0.0008)/100; return m1+m2;}
+}
 function ctv(key,opt='f') {a=$("input[name='"+key+"']" ).val(); if(!a) return 0 ;  a = a.replace(/,/g,'');  if(opt=='i') return parseInt(a);  else return parseFloat(a);}
 
 function round_up(n,decimals=2){ multiplier = 10 ** decimals;   return Math.ceil(n * multiplier) / multiplier; }
-
 
 function show_add_info(opt) {
 	let title=''
