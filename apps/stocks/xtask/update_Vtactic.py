@@ -296,6 +296,8 @@ week_day = my.dayofdate(today)
 if week_day in ['일','월'] : pass
 else :
     B = update_Vtactic()
+    B.bid = 'IGUIDE'
+    B.oneWrite(1)
     B.bid = 'V230831'
     B.oneWrite(1)
     

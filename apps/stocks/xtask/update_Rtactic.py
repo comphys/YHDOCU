@@ -312,9 +312,6 @@ class update_Rtactic :
 today = my.timestamp_to_date(opt=7)
 week_day = my.dayofdate(today)
 
-# B = update_R230831()
-# B.oneWrite()
-
 if week_day in ['일','월'] : pass
 else :
     B = update_Rtactic()
