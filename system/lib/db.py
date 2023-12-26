@@ -198,6 +198,25 @@ class DB :
         qry = f"DELETE FROM STORAGE WHERE key='{key}'"
         self.exe(qry)
         
+    def parameters(self,key) :
+        parm = self.exe(f"SELECT val,type FROM parameters WHERE key='{key}'",many=1,assoc=False)
+        if    parm[1] == 'float' : return float(parm[0])
+        elif  parm[1] == 'int'   : return int(parm[0])
+        else  : return parm[0]
+        
+    def parameters_dict(self,cat=None) :
+        con = "WHERE cat ='{}'" if cat else ''
+        parm = self.exe(f"SELECT key,val,type FROM parameters {con}",assoc=False)
+        if not parm : return None
+        
+        D = {}
+        for k,v,t in parm :
+            if   t == 'float' : D[k] = float(v)
+            elif t == 'int'   : D[k] = int(v)
+            else : D[k] = v
+            
+        return D
+        
     def table_info(self,tbl,info='col') :
         # [cid / Integer / Column index ], [name / Text / Column name] , [type/Text/Colunm type, as given]
         # [notnull/Integer/Has a Not NULL], [dflt_value/Text/Default value], [pk/Integer/Is part of the PK]

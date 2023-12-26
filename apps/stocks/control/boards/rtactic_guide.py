@@ -167,8 +167,7 @@ class Rtactic_guide(Control) :
         self.M['현재잔액'] -= fee
 
     def rebalance(self)  :
-        가용잔액 = int(self.M['현재잔액'] * 2/3)
-        self.M['일매수금'] = int(가용잔액/self.M['분할횟수'])
+        self.M['일매수금'] = int(self.M['현재잔액']/self.M['분할횟수'])
         self.M['기초수량'] = my.ceil(self.M['일매수금']/float(self.M['기초종가']))
 
 
@@ -239,19 +238,10 @@ class Rtactic_guide(Control) :
         self.M['연속하락'] = GD['sub6']
 
         # 매매전략 가져오기
-        self.M['매매전략'] = 'REVOLUTION'
-        self.DB.tbl, self.DB.wre = ('h_stock_strategy_board',f"add0='{self.M['매매전략']}'")
-        self.S = self.DB.get_line('add2,add3,add4,add5,add9,add10,add11,add17,add18,add22,add25')
-        self.M['분할횟수']  = int(self.S['add2'])
-        self.D['비중조절']  = 1 + float(self.S['add3'])/100   # 매매일수 에 따른 구매수량 가중치
-        self.M['평단가치']  = 1 + float(self.S['add4'])/100   # 일반매수 구매가 범위
-        self.M['큰단가치']  = 1 + float(self.S['add5'])/100   # 매수첫날 구매가 범위
-        self.M['첫매가치']  = 1 + float(self.S['add9'])/100
-        self.M['둘매가치']  = 1 + float(self.S['add10'])/100
-        self.M['강매시작']  = int(self.S['add17'])
-        self.M['강매가치']  = 1 + float(self.S['add18'])/100
-        self.M['위매비중']  = int(self.S['add25'])
-        self.M['회복기한']  = int(self.S['add11'])
+        self.M['분할횟수']  = self.DB.parameters('001')
+        self.D['비중조절']  = self.DB.parameters('025')   # 매매일수 에 따른 구매수량 가중치
+        self.M['큰단가치']  = self.DB.parameters('002')   # 매수첫날 구매가 범위
+        self.M['위매비중']  = self.DB.parameters('010')
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0

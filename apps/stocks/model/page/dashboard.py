@@ -29,44 +29,53 @@ class M_dashboard(Model) :
         if today != last_day : self.D['투자안내'] = 'Need Updating' 
         
         self.DB.tbl = 'h_V230831_board'
-        ID = self.DB.get_line(select_cols)
-        if not ID : 
+        VD = self.DB.get_line(select_cols)
+        if not VD : 
             last_day = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
             self.DB.wre = f"add0='{last_day}'" 
-            ID = self.DB.get_line(select_cols)
+            VD = self.DB.get_line(select_cols)
         
         if today != last_day : self.D['키움증권'] = 'Need Updating'      
         
         self.DB.tbl = 'h_R230831_board'
-        CD = self.DB.get_line(select_cols)
-        if not CD : 
+        RD = self.DB.get_line(select_cols)
+        if not RD : 
             last_day = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
             self.DB.wre = f"add0='{last_day}'"
-            CD = self.DB.get_line(select_cols)
+            RD = self.DB.get_line(select_cols)
         
         if today != last_day : self.D['하이투자'] = 'Need Updating'   
 
+        self.DB.tbl = 'h_S231226_board'
+        SD = self.DB.get_line(select_cols)
+        if not SD : 
+            last_day = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
+            self.DB.wre = f"add0='{last_day}'"
+            SD = self.DB.get_line(select_cols)
+        
+        if today != last_day : self.D['케이비이'] = 'Need Updating' 
+        
         # 키움증권
         
-        매수수량1 = int(ID['sub2'])
-        매수가격1 = float(ID['sub19']) 
+        매수수량1 = int(VD['sub2'])
+        매수가격1 = float(VD['sub19']) 
         매수가액1 = 매수수량1 * 매수가격1
-        현매수금1 = float(ID['add6']) 
+        현매수금1 = float(VD['add6']) 
 
         self.D['매수수량1'] = f"{매수수량1:,}"
         self.D['매수가격1'] = f"{매수가격1:,.2f}"
         self.D['매수가액1'] = f"{매수가액1:,.2f}"
-        self.D['자산분배1'] = ID['add10']
-        self.D['자산총액1'] = float(ID['add17']) 
+        self.D['자산분배1'] = VD['add10']
+        self.D['자산총액1'] = float(VD['add17']) 
 
-        매도수량1 = int(ID['sub3'])
-        매도가격1 = float(ID['sub20']) 
+        매도수량1 = int(VD['sub3'])
+        매도가격1 = float(VD['sub20']) 
         매도가액1 = 매도수량1 * 매도가격1
         매도차익1 = 매도가액1 - 현매수금1
         매도차원1 = 매도차익1 * float(self.D['현재환율'])
 
         sellP1 = (매도가격1/float(close_price) - 1) * 100 if 매도수량1 else 0
-        self.D['현수익률1'] = ID['add8']
+        self.D['현수익률1'] = VD['add8']
         self.D['매도시점1'] = f"{sellP1:,.2f}"
         self.D['매도수량1'] = f"{매도수량1:,}"
         self.D['매도가격1'] = f"{매도가격1:,.2f}"
@@ -74,15 +83,15 @@ class M_dashboard(Model) :
         self.D['매도차익1'] = f"{매도차익1:,.2f}"
         self.D['매도차원1'] = f"{매도차원1:,.0f}"
         self.D['현매수금1'] = f"{현매수금1:,.2f}"
-        self.D['현평가금1'] = f"{float(ID['add15']):,.2f}"
-        self.D['현이익금1'] = f"{float(ID['add18']):,.2f}" 
-        self.D['증가비율1'] = round(float(ID['add17'])/float(ID['sub25']) * 100,2)
+        self.D['현평가금1'] = f"{float(VD['add15']):,.2f}"
+        self.D['현이익금1'] = f"{float(VD['add18']):,.2f}" 
+        self.D['증가비율1'] = round(float(VD['add17'])/(float(VD['sub25'])-float(VD['sub26']))* 100,2)
         
 
         # 하이투자
         
         타겟일수 = int(TD['sub12'])
-        기초수량 = int(CD['sub18'])
+        기초수량 = int(RD['sub18'])
         
         if  타겟일수 == 0 :
             매수수량2 = 0
@@ -96,7 +105,7 @@ class M_dashboard(Model) :
             매도수량2 = 0
             매도가격2 = 0.00
 
-        elif 타겟일수 >= 2 and int(CD['add9']) <= int(CD['sub18']): 
+        elif 타겟일수 >= 2 and int(RD['add9']) <= int(RD['sub18']): 
             # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
             찬스수량 = 0
             day_count = min(int(TD['sub12'])+2,6)
@@ -112,47 +121,53 @@ class M_dashboard(Model) :
             
             매수수량2 = 찬스수량
             매수가격2 = 찬스가격
-            매도수량2 = int(CD['add9'])
+            매도수량2 = int(RD['add9'])
             매도가격2 = float(TD['sub20'])
             
         else : # 가이드 및 투자가 진행 중일 때
-            매수수량2 = int(CD['sub2'])
-            매수가격2 = float(CD['sub19'])
-            매도수량2 = int(CD['add9']) 
-            매도가격2 = float(CD['sub20'])
+            매수수량2 = int(RD['sub2'])
+            매수가격2 = float(RD['sub19'])
+            매도수량2 = int(RD['add9']) 
+            매도가격2 = float(RD['sub20'])
 
-        현매수금2 = float(CD['add6']) 
+        현매수금2 = float(RD['add6']) 
         매수가액2 = 매수수량2 * 매수가격2
         매도가액2 = 매도수량2 * 매도가격2
         매도차익2 = 매도가액2 - 현매수금2
         매도차원2 = 매도차익2 * float(self.D['현재환율'])
         
         sellP2 = (매도가격2/float(close_price) - 1) * 100 if 매도수량2 else 0
-        self.D['현수익률2'] = CD['add8']
+        self.D['현수익률2'] = RD['add8']
         self.D['매도시점2'] = f"{sellP2:.2f}"
         self.D['매수수량2'] = f"{매수수량2:,}"
         self.D['매수가격2'] = f"{매수가격2:,.2f}"
         self.D['매수가액2'] = f"{매수가액2:,.2f}"
-        self.D['자산분배2'] = CD['add10']
-        self.D['자산총액2'] = float(CD['add17'])
+        self.D['자산분배2'] = RD['add10']
+        self.D['자산총액2'] = float(RD['add17'])
         self.D['매도수량2'] = f"{매도수량2:,}"
         self.D['매도가격2'] = f"{매도가격2:,.2f}"
         self.D['매도가액2'] = f"{매도가액2:,.2f}"
-        self.D['증가비율2'] = round(float(CD['add17'])/float(CD['sub25']) * 100,2)
+        self.D['증가비율2'] = round(float(RD['add17'])/(float(RD['sub25'])-float(RD['sub26'])) * 100,2)
         self.D['기준일자'] = today
         self.D['기준요일'] = my.dayofdate(today)
         self.D['기준종가'] = close_price
         
-        self.D['현평가금2'] = f"{float(CD['add15']):,.2f}"
-        self.D['현이익금2'] = f"{float(CD['add18']):,.2f}"
+        self.D['현평가금2'] = f"{float(RD['add15']):,.2f}"
+        self.D['현이익금2'] = f"{float(RD['add18']):,.2f}"
         self.D['현매수금2'] = f"{현매수금2:,.2f}"
         self.D['매도차익2'] = f"{매도차익2:,.2f}"
         self.D['매도차원2'] = f"{매도차원2:,.0f}"
 
-
+        # 케이비이  
+        self.D['자산분배3'] = SD['add10']
+        self.D['자산총액3'] = float(SD['add17'])
+    
+    
     def take_chance(self,p,H,n,A) :
         if H == 0 : return 0
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)
     
+    
+ 

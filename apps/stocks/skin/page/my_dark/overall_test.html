@@ -65,6 +65,7 @@
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
 {% else %}
 <div class="clearfix" style="border-radius:0px;padding:10px;">
+	{% if D['max_days'] %}
 	<div class="pull-left" style="color:lightgray;">
 		최장 : <b>{{D['max_days']}}</b>일({{D['max_date']}}) &nbsp;
 		MDD : <b>{{D['MDD1']}}</b>% / <b>{{D['MDD2']}}</b>% / <b>{{D['MDD3']}}</b>% &nbsp;
@@ -103,6 +104,7 @@
 		<th style='text-align:right;'>안정잔액</th>
 	</tr>
 </table>
+{% endif %}
 </div> <!--postion:fixed-->
 </div> <!--rowrow clearfix-->
 
@@ -224,30 +226,30 @@ const data_season = {
 
 		},
 		{
-			label:'일반평균',
-			data : [3,6,7,8,5],
-			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',
-			lineTension:0.2
-
-		},
-		{
-			label:'기회평균',
+			label:'V 평균',
 			data : [3,6,7,8,5],
 			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'yellow',backgroundColor:'yellow',
 			lineTension:0.2
 
 		},
 		{
-			label:'안정평균',
+			label:'R 평균',
 			data : [3,6,7,8,5],
-			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'lightgreen',backgroundColor:'lightgreen',
+			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',
+			lineTension:0.2
+
+		},
+		{
+			label:'S 평균',
+			data : [3,6,7,8,5],
+			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'lightgray',backgroundColor:'lightgray',
 			lineTension:0.2
 
 		},
 		{
 			label:'추세하향선',
 			data : [4,7,5,3,4],
-			borderWidth:2,borderColor:'darkgray',borderDash: [2,5],backgroundColor:'white',pointRadius:2,pointHoverRadius:15,
+			borderWidth:2,borderColor:'darkgray',borderDash: [2,5],backgroundColor:'darkgray',pointRadius:2,pointHoverRadius:15,
 			lineTension:0.2
 
 		}
@@ -276,7 +278,7 @@ const data_side = {
     label: ' 수익률비교 ',
     data: [ {{D['t_profit']}}, {{D['v_profit']}}, {{D['r_profit']}}, {{D['s_profit']}}],
 	barThickness:35,
-    backgroundColor: ['#8F8681','#AEB404','#A67F78','#283B42','#69491A','#003E19','#283B42'],
+    backgroundColor: ['#283B42','#AEB404','#A67F78','#8F8681','#69491A','#003E19','#283B42'],
     borderColor: ['#000000','#000000','#000000','#000000','#000000','#000000','#000000'],
     borderWidth: 1
   }]
@@ -423,7 +425,7 @@ const data_main = {
 		{
             label:' 평가밸류S',
             data : eval_s,
-			borderColor:'#A9F5A9', borderWidth:2,pointRadius:0,borderDash:[2,2], 
+			borderColor:'white', borderWidth:2,pointRadius:0,borderDash:[2,2], 
 			lineTension:0.2,
 			yAxisID : 'y1'
         },
