@@ -17,6 +17,8 @@ class M_overall_test(Model) :
 
         self.D['기회시점'] = '-2.2'
         self.D['안정시점'] = '-10.0'
+        self.D['기회회복'] = '0'
+        self.D['안정회복'] = '-5.0'
         # 기간 설정(최근 2년간)
         # self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)
         self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")

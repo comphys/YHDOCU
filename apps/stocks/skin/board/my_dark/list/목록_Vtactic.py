@@ -125,25 +125,32 @@ class 목록_Vtactic(SKIN) :
         if self.TrCnt :
             self.D['cno'] = -1 ; TrCnt = self.TrCnt
 
-            for idx,item in enumerate(self.D['LIST']) :
+            for item in self.D['LIST'] :
 
-                if int(item['no']) == int(self.D['No']) : self.D['cno'] = idx ; cno = True 
-                else : cno = False
-                
                 for key in self.D['list_order'] :
 
                     style=clas=tmp=''
                     txt = item[key]
-
-                    if   key == 'no'    : 
-                        if cno : tx[key] = "<td class='list-current-no'><i class='fa fa-edit'></i></td>"
-                        else   : tx[key] = f"<td class='list-no'>{TrCnt}</td>"
-                        TrCnt -= 1
+                       
+                    if key == 'add0'  : 
+                        if self.D['EXCOLOR']['add0'] : style = f"style='color:{self.D['EXCOLOR']['add0']}'"
+                        tmp = "<td class='text-center'>"
+                        href  = f"{self.D['_bse']}board/modify/{self.D['bid']}/no={item['no']}/page={self.D['page']}"
+                        tmp += f"<span class='list-subject' data-href='{href}' {style}>{txt}</span>"
+                        tmp += '</td>'
+                        tx[key] = tmp
 
                     elif key == 'add8' : 
                         profit = float(txt)
                         if profit != 0 : 
                             tx[key] = f"<td class='list-bulls'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bears'>{profit:,.2f}</td>"
+                        else : 
+                            tx[key] = "<td class='list-normal'>0.00</td>"
+
+                    elif key == 'add18' : 
+                        profit = float(txt.replace(',',''))
+                        if profit != 0 : 
+                            tx[key] = f"<td class='list-bulls2'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bears2'>{profit:,.2f}</td>"
                         else : 
                             tx[key] = "<td class='list-normal'>0.00</td>"
                     
@@ -153,35 +160,12 @@ class 목록_Vtactic(SKIN) :
                             tx[key] = f"<td class='list-bull'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bear'>{profit:,.2f}</td>"
                         else : 
                             tx[key] = "<td class='list-normal'>0.00</td>"
-                           
-                    elif key == 'add14' :
-                        tx[key] = f"<td class='ohlc-price' style='text-align:right;color:#E0F8E0;cursor:pointer'>{txt}</td>"
 
-                    elif key == 'add18' : 
-                        profit = float(txt.replace(',',''))
-                        if profit != 0 : 
-                            tx[key] = f"<td class='list-bulls2'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bears2'>{profit:,.2f}</td>"
-                        else : 
-                            tx[key] = "<td class='list-normal'>0.00</td>"
-
-                        
-                    elif key == 'add0'  : 
-                        if self.D['EXCOLOR']['add0'] : style = f"style='color:{self.D['EXCOLOR']['add0']}'"
-                        
-                        tmp = "<td class='text-center'>"
-                        
-                        if cno : tmp += f"<span {style}>{txt}</span>"
-                        else :
-                            href  = f"{self.D['_bse']}board/modify/{self.D['bid']}/no={item['no']}/page={self.D['page']}"
-                            tmp += f"<span class='list-subject' data-href='{href}' {style}>{txt}</span>"
-                        tmp += '</td>'
-                        tx[key] = tmp
-                        
                     else : 
-                        if self.D['EXALIGN'][key]  : style  = f"text-align:{self.D['EXALIGN'][key]};"
-                        if self.D['EXCOLOR'][key]  : style += f"color:{self.D['EXCOLOR'][key]};"
-                        if self.D['EXCLASS'][key]  : clas   = f"class='{self.D['EXCLASS'][key]}'"  
-                        if self.D['EXWIDTH'][key]  : style += f"width:{self.D['EXWIDTH'][key]};"
+                        if self.D['EXALIGN'][key]  : style   = f"text-align:{self.D['EXALIGN'][key]};"
+                        if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
+                        if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
+                        if self.D['EXCLASS'][key]  : clas   =  f"class='{self.D['EXCLASS'][key]}'"
                         
                         if (txt and self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
                         if (txt and self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,.2f}"

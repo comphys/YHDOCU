@@ -113,10 +113,10 @@ class 목록_Stactic(SKIN) :
                 day_count = min(int(TD['sub12'])+2,6)
                 for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
                     
-                cp05 = self.take_chance( -5.0,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
-                cp10 = self.take_chance(-10.0,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                cpc = self.take_chance(self.DB.parameters('024'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                cpn = self.take_chance(self.DB.parameters('023'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                 
-                찬스가격 = cp05 if float(TD['sub7']) else cp10
+                찬스가격 = cpc if float(TD['sub7']) else cpn
                 찬스가격 = min(float(TD['sub19']),찬스가격)
                 
                 self.D['매수갯수'] = f"{찬스수량:,}"
@@ -207,7 +207,14 @@ class 목록_Stactic(SKIN) :
                             tx[key] = f"<td class='list-bulls2'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bears2'>{profit:,.2f}</td>"
                         else : 
                             tx[key] = "<td class='list-normal'>0.00</td>"
-                        
+                    
+                    elif key == 'add20': 
+                        profit = float(txt)
+                        if profit != 0 : 
+                            tx[key] = f"<td class='list-bull'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bear'>{profit:,.2f}</td>"
+                        else : 
+                            tx[key] = "<td class='list-normal'>0.00</td>"
+
                     else : 
                         if self.D['EXALIGN'][key]  : style   = f"text-align:{self.D['EXALIGN'][key]};"
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"

@@ -222,8 +222,8 @@ class M_backtest_OVERALL(Model) :
         n = self.V['구매수량']
         A = self.V['총매수금']
         if H == 0 : return 0
-        if opt == 'R' : p = self.M['기회회복'] if self.M['손실회수'] else self.R['기회시점']
-        if opt == 'S' : p = self.M['안정회복'] if self.M['손실회수'] else self.S['안정시점']
+        if opt == 'R' : p = self.R['기회회복'] if self.M['손실회수'] else self.R['기회시점']
+        if opt == 'S' : p = self.S['안정회복'] if self.M['손실회수'] else self.S['안정시점']
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)
@@ -383,19 +383,19 @@ class M_backtest_OVERALL(Model) :
         self.R = {}
         self.S = {}
         
-        self.M['비중조절']  = self.DB.parameters('025')  # 매매일수 에 따른 구매수량 가중치(1.25)
-        self.M['평단가치']  = self.DB.parameters('003')  # 매수시 가중치(1.022)
-        self.M['큰단가치']  = self.DB.parameters('002')  # 첫날매수 시 가중치(1.12)
-        self.M['첫매가치']  = self.DB.parameters('004')  # 일반매도 시 이율(1.022) 
-        self.M['둘매가치']  = self.DB.parameters('005')  # 매수제한 시 이율(0.939) 
-        self.M['강매시작']  = self.DB.parameters('008')  # 강매시작 일(24) 
-        self.M['강매가치']  = self.DB.parameters('007')  # 손절가 범위(0.7)
-        self.M['위매비중']  = self.DB.parameters('010')  # 매수제한 시 매수범위 기본수량의 (3)
-        self.M['매도대기']  = self.DB.parameters('006')  # 매도대기(18)
-        self.M['전화위복']  = self.DB.parameters('009')  # 손절 이후 매도 이율(1.12)
-        self.M['분할횟수']  = self.DB.parameters('001')
-        self.M['기회회복']  = self.DB.parameters('022')
-        self.M['안정회복']  = self.DB.parameters('024')
+        ST = self.DB.parameters_dict('매매전략/VRS')
+        
+        self.M['비중조절']  = ST['025']  # 매매일수 에 따른 구매수량 가중치(1.25)
+        self.M['평단가치']  = ST['003']  # 매수시 가중치(1.022)
+        self.M['큰단가치']  = ST['002']  # 첫날매수 시 가중치(1.12)
+        self.M['첫매가치']  = ST['004']  # 일반매도 시 이율(1.022) 
+        self.M['둘매가치']  = ST['005']  # 매수제한 시 이율(0.939) 
+        self.M['강매시작']  = ST['008']  # 강매시작 일(24) 
+        self.M['강매가치']  = ST['007']  # 손절가 범위(0.7)
+        self.M['위매비중']  = ST['010']  # 매수제한 시 매수범위 기본수량의 (3)
+        self.M['매도대기']  = ST['006']  # 매도대기(18)
+        self.M['전화위복']  = ST['009']  # 손절 이후 매도 이율(1.12)
+        self.M['분할횟수']  = ST['001']  # 분할 횟수
         
         self.M['손실회수']  = False  
         self.M['매수단계']  = '일반매수'
@@ -422,8 +422,12 @@ class M_backtest_OVERALL(Model) :
         self.S['최대하락']  = 0
 
         self.M['첫날기록']  = False
-        self.R['기회진행']  = False; self.R['기회시점'] = float(self.D['기회시점']) 
-        self.S['안정진행']  = False; self.S['안정시점'] = float(self.D['안정시점']) 
+        self.R['기회진행']  = False 
+        self.R['기회시점']  = float(self.D['기회시점']) 
+        self.R['기회회복']  = float(self.D['기회회복']) 
+        self.S['안정진행']  = False 
+        self.S['안정시점']  = float(self.D['안정시점']) 
+        self.S['안정회복']  = float(self.D['안정회복']) 
         self.M['전일종가']  = 0.0
         
         self.V['매수수량']  = 0;   self.V['매도수량']  = 0; self.V['매도금액'] = 0.0;  self.V['매수금액'] = 0.0 

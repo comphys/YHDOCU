@@ -77,7 +77,9 @@ class Page(Control) :
         self.D['종료일자'] = self.D['post']['종료일자']
         # -------------------
         self.D['기회시점'] = self.D['post']['기회시점']
+        self.D['기회회복'] = self.D['post']['기회회복']
         self.D['안정시점'] = self.D['post']['안정시점']
+        self.D['안정회복'] = self.D['post']['안정회복']
 
         M = self.model('backtest-backtest_OVERALL')
         M.get_start()

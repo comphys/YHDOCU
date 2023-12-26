@@ -7,7 +7,7 @@ class Rtactic_guide(Control) :
         self.DB = self.db('stocks')
         self.bid   = self.parm[0]
         self.board = 'h_'+self.bid+'_board'
-        self.guide = 'h_INVEST_board'
+        self.guide = 'h_IGUIDE_board'
     
 # -----------------------------------------------------------------------------------------------------------------------
 # Initiate  REVOLUTION TACTIC (calller : Rtactic.html)
@@ -39,9 +39,9 @@ class Rtactic_guide(Control) :
         찬스수량 = 0
         day_count = min(int(GD['sub12'])+1,6)
         for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
-        cp00 = self.take_chance(   0,int(GD['add9']),int(GD['sub2']),float(GD['add6']))
-        cp22 = self.take_chance(-2.2,int(GD['add9']),int(GD['sub2']),float(GD['add6']))
-        찬스가격 = cp00 if float(GD['sub7']) else cp22
+        cpc = self.take_chance(self.M['기회회복'],int(GD['add9']),int(GD['sub2']),float(GD['add6']))
+        cpn = self.take_chance(self.M['기회시점'],int(GD['add9']),int(GD['sub2']),float(GD['add6']))
+        찬스가격 = cpc if float(GD['sub7']) else cpn
         찬스가격 = min(float(GD['sub19']),찬스가격)
         bprice = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 <= '{theDay}' ORDER BY add0 DESC LIMIT 1")
         기초수량 = my.ceil(일매수금/float(bprice)); self.B['sub18'] = 기초수량
@@ -132,10 +132,10 @@ class Rtactic_guide(Control) :
             day_count = min(int(self.M['GD']['sub12'])+2,6)
             for i in range(0,day_count) : 찬스수량 += my.ceil(int(self.M['기초수량']) *(i*1.25 + 1))
             
-            cp00 = self.take_chance(   0,int(self.M['GD']['add9']),int(self.M['GD']['sub2']),float(self.M['GD']['add6']))
-            cp22 = self.take_chance(-2.2,int(self.M['GD']['add9']),int(self.M['GD']['sub2']),float(self.M['GD']['add6']))
+            cpc = self.take_chance(self.M['기회회복'],int(self.M['GD']['add9']),int(self.M['GD']['sub2']),float(self.M['GD']['add6']))
+            cpn = self.take_chance(self.M['기회시점'],int(self.M['GD']['add9']),int(self.M['GD']['sub2']),float(self.M['GD']['add6']))
 
-            찬스가격 = cp00 if float(self.M['GD']['sub7']) else cp22
+            찬스가격 = cpc if float(self.M['GD']['sub7']) else cpn
             찬스가격 = min(float(self.M['GD']['sub19']),찬스가격)
             
             self.M['전매수량'] = 찬스수량
@@ -143,7 +143,7 @@ class Rtactic_guide(Control) :
             
         else : # 가이드 및 투자가 진행 중일 때
             매수단가 = float(self.M['GD']['sub19'])
-            매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
+            매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
 
             if  매수수량 * 매수단가 > self.M['현재잔액'] :
                 매수수량 = self.M['기초수량'] * self.M['위매비중']
@@ -238,10 +238,13 @@ class Rtactic_guide(Control) :
         self.M['연속하락'] = GD['sub6']
 
         # 매매전략 가져오기
-        self.M['분할횟수']  = self.DB.parameters('001')
-        self.D['비중조절']  = self.DB.parameters('025')   # 매매일수 에 따른 구매수량 가중치
-        self.M['큰단가치']  = self.DB.parameters('002')   # 매수첫날 구매가 범위
-        self.M['위매비중']  = self.DB.parameters('010')
+        ST = self.DB.parameters_dict('매매전략/VRS')
+        self.M['분할횟수']  = ST['001']  # 분할 횟수
+        self.M['비중조절']  = ST['025']  # 매매일수 에 따른 구매수량 가중치(1.25)
+        self.M['큰단가치']  = ST['002']  # 첫날매수 시 가중치(1.12)
+        self.M['위매비중']  = ST['010']  # 매수제한 시 매수범위 기본수량의 (3)
+        self.M['기회시점']  = ST['021']  # S전략 일반 매수시점
+        self.M['기회회복']  = ST['022']  # S전략 회복 매수시점
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0

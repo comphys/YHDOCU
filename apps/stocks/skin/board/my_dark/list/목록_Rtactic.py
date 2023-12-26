@@ -107,12 +107,12 @@ class 목록_Rtactic(SKIN) :
                 day_count = min(int(TD['sub12'])+2,6)
                 for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
                     
-                cp00 = self.take_chance( 0,  int(TD['add9']),int(TD['sub2']),float(TD['add6']))
-                cp22 = self.take_chance(-2.2,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                cpc = self.take_chance(self.DB.parameters('022'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                cpn = self.take_chance(self.DB.parameters('021'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
 
                 #  p = 0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
                 # 찬스가격 = cp00 if (float(TD['add8']) < -2.2 or float(TD['sub7'])) else cp22
-                찬스가격 = cp00 if float(TD['sub7']) else cp22
+                찬스가격 = cpc if float(TD['sub7']) else cpn
                 찬스가격 = min(float(TD['sub19']),찬스가격)
                 
                 self.D['매수갯수'] = f"{찬스수량:,}"
