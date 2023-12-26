@@ -14,12 +14,13 @@ class M_dashboard(Model) :
         last_day = today
         self.D['투자안내'] = ''
         self.D['키움증권'] = ''
+        self.D['케이비이'] = ''
         self.D['하이투자'] = ''
         
-        select_cols = self.DB.table_cols('h_INVEST_board',('no', 'brother', 'add0', 'tle_color', 'uid', 'uname', 'content', 'reply', 'hit', 'wdate', 'mdate'))
+        select_cols = self.DB.table_cols('h_IGUIDE_board',('no', 'brother', 'add0', 'tle_color', 'uid', 'uname', 'content', 'reply', 'hit', 'wdate', 'mdate'))
         self.DB.wre = f"add0='{today}'"
         
-        self.DB.tbl = 'h_INVEST_board'
+        self.DB.tbl = 'h_IGUIDE_board'
         TD = self.DB.get_line(select_cols)
         if not TD : 
             last_day = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
@@ -44,7 +45,7 @@ class M_dashboard(Model) :
             self.DB.wre = f"add0='{last_day}'"
             RD = self.DB.get_line(select_cols)
         
-        if today != last_day : self.D['하이투자'] = 'Need Updating'   
+        if today != last_day : self.D['케이비이'] = 'Need Updating'   
 
         self.DB.tbl = 'h_S231226_board'
         SD = self.DB.get_line(select_cols)
@@ -53,7 +54,7 @@ class M_dashboard(Model) :
             self.DB.wre = f"add0='{last_day}'"
             SD = self.DB.get_line(select_cols)
         
-        if today != last_day : self.D['케이비이'] = 'Need Updating' 
+        if today != last_day : self.D['하이투자'] = 'Need Updating' 
         
         # 키움증권
         
@@ -88,7 +89,9 @@ class M_dashboard(Model) :
         self.D['증가비율1'] = round(float(VD['add17'])/(float(VD['sub25'])-float(VD['sub26']))* 100,2)
         
 
-        # 하이투자
+        # ----------------------------------------------------------------------------------------------
+        # Revolution
+        # ----------------------------------------------------------------------------------------------
         
         타겟일수 = int(TD['sub12'])
         기초수량 = int(RD['sub18'])
@@ -111,12 +114,12 @@ class M_dashboard(Model) :
             day_count = min(int(TD['sub12'])+2,6)
             for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
                 
-            cp00 = self.take_chance( 0,  int(TD['add9']),int(TD['sub2']),float(TD['add6']))
-            cp22 = self.take_chance(-2.2,int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+            cpc = self.take_chance(self.DB.parameters('022'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+            cpn = self.take_chance(self.DB.parameters('021'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
 
             #  p = 0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
             # 찬스가격 = cp00 if (float(TD['add8']) < -2.2 or float(TD['sub7'])) else cp22
-            찬스가격 = cp00 if float(TD['sub7']) else cp22
+            찬스가격 = cpc if float(TD['sub7']) else cpn
             찬스가격 = min(float(TD['sub19']),찬스가격)
             
             매수수량2 = 찬스수량
@@ -158,16 +161,70 @@ class M_dashboard(Model) :
         self.D['매도차익2'] = f"{매도차익2:,.2f}"
         self.D['매도차원2'] = f"{매도차원2:,.0f}"
 
-        # 케이비이  
+        # ----------------------------------------------------------------------------------------------
+        # Stability
+        # ----------------------------------------------------------------------------------------------
+        
+        기초수량 = int(SD['sub18'])
+        
+        if  타겟일수 == 0 or 타겟일수 == 1:
+            매수수량3 = 0
+            매수가격3 = 0.00
+            매도수량3 = 0
+            매도가격3 = 0.00    
+            
+        elif 타겟일수 >= 2 and int(SD['add9']) <= int(SD['sub18']): 
+            # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
+            찬스수량 = 0
+            day_count = min(int(TD['sub12'])+2,6)
+            for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
+                
+            cpc = self.take_chance(self.DB.parameters('024'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+            cpn = self.take_chance(self.DB.parameters('023'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+
+            찬스가격 = cpc if float(TD['sub7']) else cpn
+            찬스가격 = min(float(TD['sub19']),찬스가격)
+            
+            매수수량3 = 찬스수량
+            매수가격3 = 찬스가격
+            매도수량3 = int(SD['add9'])
+            매도가격3 = float(TD['sub20'])
+            
+        else : # 가이드 및 투자가 진행 중일 때
+            매수수량3 = int(SD['sub2'])
+            매수가격3 = float(SD['sub19'])
+            매도수량3 = int(SD['add9']) 
+            매도가격3 = float(SD['sub20'])
+
+        현매수금3 = float(SD['add6']) 
+        매수가액3 = 매수수량3 * 매수가격3
+        매도가액3 = 매도수량3 * 매도가격3
+        매도차익3 = 매도가액3 - 현매수금3
+        매도차원3 = 매도차익3 * float(self.D['현재환율'])
+        
+        sellP3 = (매도가격3/float(close_price) - 1) * 100 if 매도수량3 else 0
+        self.D['현수익률3'] = SD['add8']
+        self.D['매도시점3'] = f"{sellP3:.2f}"
+        self.D['매수수량3'] = f"{매수수량3:,}"
+        self.D['매수가격3'] = f"{매수가격3:,.2f}"
+        self.D['매수가액3'] = f"{매수가액3:,.2f}"
         self.D['자산분배3'] = SD['add10']
         self.D['자산총액3'] = float(SD['add17'])
-    
-    
+        self.D['매도수량3'] = f"{매도수량2:,}"
+        self.D['매도가격3'] = f"{매도가격2:,.2f}"
+        self.D['매도가액3'] = f"{매도가액2:,.2f}"
+        self.D['증가비율3'] = round(float(SD['add17'])/(float(SD['sub25'])-float(SD['sub26'])) * 100,2)
+        
+        self.D['현평가금3'] = f"{float(SD['add15']):,.2f}"
+        self.D['현이익금3'] = f"{float(SD['add18']):,.2f}"
+        self.D['현매수금3'] = f"{현매수금3:,.2f}"
+        self.D['매도차익3'] = f"{매도차익3:,.2f}"
+        self.D['매도차원3'] = f"{매도차원3:,.0f}"
+
+
     def take_chance(self,p,H,n,A) :
         if H == 0 : return 0
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)
     
-    
- 

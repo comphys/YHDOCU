@@ -19,13 +19,9 @@
   
   <div id='show_won' style="position:absolute;left:14px;top:105px;width:350px;height:200px;padding:20px;background-color:#23262c;opacity:0.9;display:none" onclick="$('#show_won').hide()"></div>
 
-  <div style="border:2px solid black;margin-top:10px;">
-    <canvas id="myChart_sub"  style="width:355px;height:150px;background-color:#24272d;padding:5px 10px"></canvas>
-  </div>
-  <div style="position:absolute;top:340px;left:180px;font-size:12px;">{{D['증가비율1']}}%</div>
-  <div style="position:absolute;top:392px;left:180px;font-size:12px;">{{D['증가비율2']}}%</div>
 
-  <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;" onclick="$('#k_sub').show()">
+<!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+  <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;" onclick="$('#v_sub').show()">
       <span style="color:white"> 투자일지(키움증권)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률1']}}% , {{D['매도시점1']}}%</span>
       <span style="color:#f0f0ab"> {{D['키움증권']}} </span><br>
       <table>
@@ -44,7 +40,7 @@
       </table>
   </div>
 
-  <div id='k_sub' style="display:none;position:absolute;left:14px;top:482px;width:356px;height:100px;font-size:14px;font-weight:700;line-height:30px;;padding:5px 10px;background-color:black;" onclick="$(this).hide()">
+  <div id='v_sub' style="display:none;position:absolute;left:14px;top:318px;width:356px;height:100px;font-size:14px;font-weight:700;line-height:30px;;padding:5px 10px;background-color:black;" onclick="$(this).hide()">
     <span style="color:white"> 투자일지(키움증권)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률1']}}% , {{D['매도시점1']}}%</span>
     <span style="color:#f0f0ab"> {{D['키움증권']}} </span><br>
     <table>
@@ -63,10 +59,11 @@
   </table>
   </div>
 
+<!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
-  <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;" onclick="$('#h_sub').show()">
-      <span style="color:white"> 투자일지(하이투자)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률2']}}% , {{D['매도시점2']}}%</span>
-      <span style="color:#f0f0ab"> {{D['하이투자']}} </span><br>
+  <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;" onclick="$('#r_sub').show()">
+      <span style="color:white"> 투자일지(케이비이)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률2']}}% , {{D['매도시점2']}}%</span>
+      <span style="color:#f0f0ab"> {{D['케이비이']}} </span><br>
       <table>
           <tr>
               <td style="width:70px;color:#58ACFA">매수전략</td>
@@ -82,26 +79,77 @@
           </tr>
       </table>
   </div>
-</div>
 
-<div id='h_sub' style="display:none;position:absolute;left:14px;top:596px;width:356px;height:100px;font-size:14px;font-weight:700;line-height:30px;;padding:5px 10px;background-color:black;" onclick="$(this).hide()">
-  <span style="color:white"> 투자일지(하이투자)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률2']}}% , {{D['매도시점2']}}%</span>
+  <div id='r_sub' style="display:none;position:absolute;left:14px;top:432px;width:356px;height:100px;font-size:14px;font-weight:700;line-height:30px;;padding:5px 10px;background-color:black;" onclick="$(this).hide()">
+    <span style="color:white"> 투자일지(케이비이)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률2']}}% , {{D['매도시점2']}}%</span>
+    <span style="color:#f0f0ab"> {{D['케이비이']}} </span><br>
+    <table>
+      <tr>
+          <td style="width:70px;color:#58ACFA">총매수금</td>
+          <td style="width:90px;text-align:right">{{D['현매수금2']}}</td>
+          <td style="width:90px;text-align:right">{{D['현평가금2']}}</td>
+          <td style="width:90px;text-align:right">{{D['현이익금2']}}</td>
+      </tr>
+      <tr>
+          <td style="width:70px;color:yellow">기대수익</td>
+          <td style="width:90px;text-align:right">{{D['매도가액2']}}</td>
+          <td style="width:100px;text-align:right;color:yellow">{{D['매도차익2']}}</td>
+          <td style="width:100px;text-align:right;color:yellow">{{D['매도차원2']}}</td>
+      </tr>
+  </table>
+  </div>
+
+<!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+  <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;" onclick="$('#s_sub').show()">
+    <span style="color:white"> 투자일지(하이투자)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률3']}}% , {{D['매도시점3']}}%</span>
+    <span style="color:#f0f0ab"> {{D['하이투자']}} </span><br>
+    <table>
+        <tr>
+            <td style="width:70px;color:#58ACFA">매수전략</td>
+            <td style="width:60px;text-align:right">{{D['매수수량3']}}</td>
+            <td style="width:80px;text-align:right">{{D['매수가격3']}}</td>
+            <td style="width:100px;text-align:right">{{D['매수가액3']}}</td>
+        </tr>
+        <tr>
+            <td style="width:70px;color:#f78181">매도전략</td>
+            <td style="width:60px;text-align:right">{{D['매도수량3']}}</td>
+            <td style="width:80px;text-align:right">{{D['매도가격3']}}</td>
+            <td style="width:100px;text-align:right">{{D['매도가액3']}}</td>
+        </tr>
+    </table>
+  </div>
+
+
+  <div id='s_sub' style="display:none;position:absolute;left:14px;top:546px;width:356px;height:100px;font-size:14px;font-weight:700;line-height:30px;;padding:5px 10px;background-color:black;" onclick="$(this).hide()">
+  <span style="color:white"> 투자일지(하이투자)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률3']}}% , {{D['매도시점3']}}%</span>
   <span style="color:#f0f0ab"> {{D['하이투자']}} </span><br>
   <table>
-    <tr>
-        <td style="width:70px;color:#58ACFA">총매수금</td>
-        <td style="width:90px;text-align:right">{{D['현매수금2']}}</td>
-        <td style="width:90px;text-align:right">{{D['현평가금2']}}</td>
-        <td style="width:90px;text-align:right">{{D['현이익금2']}}</td>
-    </tr>
-    <tr>
-        <td style="width:70px;color:yellow">기대수익</td>
-        <td style="width:90px;text-align:right">{{D['매도가액2']}}</td>
-        <td style="width:100px;text-align:right;color:yellow">{{D['매도차익2']}}</td>
-        <td style="width:100px;text-align:right;color:yellow">{{D['매도차원2']}}</td>
-    </tr>
-</table>
+  <tr>
+      <td style="width:70px;color:#58ACFA">총매수금</td>
+      <td style="width:90px;text-align:right">{{D['현매수금3']}}</td>
+      <td style="width:90px;text-align:right">{{D['현평가금3']}}</td>
+      <td style="width:90px;text-align:right">{{D['현이익금3']}}</td>
+  </tr>
+  <tr>
+      <td style="width:70px;color:yellow">기대수익</td>
+      <td style="width:90px;text-align:right">{{D['매도가액3']}}</td>
+      <td style="width:100px;text-align:right;color:yellow">{{D['매도차익3']}}</td>
+      <td style="width:100px;text-align:right;color:yellow">{{D['매도차원3']}}</td>
+  </tr>
+  </table>
+  </div>
+
+  <div style="border:2px solid black;margin-top:10px;">
+    <canvas id="myChart_sub"  style="width:355px;height:150px;background-color:#24272d;padding:5px 10px"></canvas>
+  </div>
+  <div style="position:absolute;top:665px;left:180px;font-size:12px;">{{D['증가비율1']}}%</div>
+  <div style="position:absolute;top:700px;left:180px;font-size:12px;">{{D['증가비율2']}}%</div>
+  <div style="position:absolute;top:735px;left:180px;font-size:12px;">{{D['증가비율3']}}%</div>
+
+
 </div>
+<!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
 <script src="/sys/chart/chart.min.js"></script>
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
@@ -117,6 +165,7 @@
     var cur_total3 = {{D['자산총액3']}}; 
     var increase_rate1 = {{D['증가비율1']}};
     var increase_rate2 = {{D['증가비율2']}};
+    var increase_rate3 = {{D['증가비율3']}};
     var usd_to_krw = {{D['현재환율']}}
  
     var allot_val = []
@@ -182,10 +231,10 @@
     const ctx_sub = $id('myChart_sub');
     
     const data_sub = {
-      labels: ['키움','하이'],
+      labels: ['키움','케비','하이'],
       datasets: [
-        { label: '키움증권',    data: [100,100], borderColor: '#32435F',      backgroundColor: '#32435F', barThickness:10, },
-        { label: '하이투자',    data: [increase_rate1,increase_rate2], borderColor: '#A67F78',      backgroundColor: '#A67F78', barThickness:10, }
+        { label: '기초현황',    data: [100,100,100], borderColor: '#32435F',      backgroundColor: '#32435F', barThickness:8, },
+        { label: '수익현황',    data: [increase_rate1,increase_rate2,increase_rate3], borderColor: '#A67F78',      backgroundColor: '#A67F78', barThickness:8, },
       ]
     };
     // </block:setup>
