@@ -222,6 +222,11 @@ class M_dashboard(Model) :
         self.D['매도차원3'] = f"{매도차원3:,.0f}"
 
 
+        총가치합 = float(VD['add17'])+float(RD['add17'])+float(SD['add17'])
+        총입출입 = float(VD['sub25'])-float(VD['sub26'])+float(RD['sub25'])-float(RD['sub26'])+float(SD['sub25'])-float(SD['sub26'])
+        
+        self.D['증가비율0'] = round(총가치합/총입출입 * 100,2)
+
     def take_chance(self,p,H,n,A) :
         if H == 0 : return 0
         N = H + n

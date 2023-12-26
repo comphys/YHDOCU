@@ -141,11 +141,12 @@
   </div>
 
   <div style="border:2px solid black;margin-top:10px;">
-    <canvas id="myChart_sub"  style="width:355px;height:150px;background-color:#24272d;padding:5px 10px"></canvas>
+    <canvas id="myChart_sub"  style="width:355px;height:180px;background-color:#24272d;padding:5px 10px"></canvas>
   </div>
-  <div style="position:absolute;top:665px;left:180px;font-size:12px;">{{D['증가비율1']}}%</div>
-  <div style="position:absolute;top:700px;left:180px;font-size:12px;">{{D['증가비율2']}}%</div>
-  <div style="position:absolute;top:735px;left:180px;font-size:12px;">{{D['증가비율3']}}%</div>
+  <div style="position:absolute;top:665px;left:180px;font-size:12px;">{{D['증가비율0']}}%</div>
+  <div style="position:absolute;top:699px;left:180px;font-size:12px;">{{D['증가비율1']}}%</div>
+  <div style="position:absolute;top:732px;left:180px;font-size:12px;">{{D['증가비율2']}}%</div>
+  <div style="position:absolute;top:765px;left:180px;font-size:12px;">{{D['증가비율3']}}%</div>
 
 
 </div>
@@ -166,6 +167,7 @@
     var increase_rate1 = {{D['증가비율1']}};
     var increase_rate2 = {{D['증가비율2']}};
     var increase_rate3 = {{D['증가비율3']}};
+    var increase_rate0 = {{D['증가비율0']}};
     var usd_to_krw = {{D['현재환율']}}
  
     var allot_val = []
@@ -231,10 +233,10 @@
     const ctx_sub = $id('myChart_sub');
     
     const data_sub = {
-      labels: ['키움','케비','하이'],
+      labels: ['종합','키움','케비','하이'],
       datasets: [
-        { label: '기초현황',    data: [100,100,100], borderColor: '#32435F',      backgroundColor: '#32435F', barThickness:8, },
-        { label: '수익현황',    data: [increase_rate1,increase_rate2,increase_rate3], borderColor: '#A67F78',      backgroundColor: '#A67F78', barThickness:8, },
+        { label: '기초현황',    data: [100,100,100,100], borderColor: '#32435F',      backgroundColor: '#32435F', barThickness:8, },
+        { label: '수익현황',    data: [increase_rate0,increase_rate1,increase_rate2,increase_rate3], borderColor: '#A67F78',      backgroundColor: '#A67F78', barThickness:8, },
       ]
     };
     // </block:setup>
