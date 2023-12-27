@@ -505,6 +505,7 @@ class M_backtest_OVERALL(Model) :
         
         self.D['next_일반매수가'] = round(self.M['매수가격'],2)
         self.D['next_기회매수가'] = self.R['기회가격'] if self.R['기회가격'] and not self.R['기회진행'] else round(self.M['매수가격'],2)
+        if self.M['현재날수'] == 2 : self.D['next_기회매수가'] = self.M['전일종가']
         self.D['next_안정매수가'] = self.S['안정가격'] if self.S['안정가격'] and not self.S['안정진행'] else round(self.M['매수가격'],2)
         
         self.D['next_일매변동'] = round((self.D['next_일반매수가']/self.M['전일종가']- 1)*100,1)
@@ -512,9 +513,18 @@ class M_backtest_OVERALL(Model) :
         self.D['next_안매변동'] = round((self.D['next_안정매수가']/self.M['전일종가']- 1)*100,1)
         
         self.D['next_일반매수량'] = self.V['구매수량'] 
-        self.D['next_기회매수량'] = self.chance_qty(0) if not self.R['기회진행'] and self.M['현재날수'] > 2 else self.R['구매수량']
-        self.D['next_안정매수량'] = self.chance_qty(1) if not self.S['안정진행'] and self.M['현재날수'] > 2 else self.S['구매수량']
-
+        
+        self.D['next_기회매수량'] = 0
+        self.D['next_안정매수량'] = 0
+        
+        if self.R['기회진행'] : self.D['next_기회매수량'] = self.R['구매수량']
+        else :
+             if   self.M['현재날수'] == 2 : self.D['next_기회매수량'] = self.R['기초수량'] 
+             elif self.M['현재날수']  > 2 : self.D['next_기회매수량'] = self.chance_qty(0)
+        
+        if   self.S['안정진행'] : self.D['next_안정매수량'] = self.S['구매수량']
+        elif self.M['현재날수'] > 2 :  self.D['next_안정매수량'] = self.chance_qty(1) 
+        
         self.D['next_일반매도량'] = self.V['보유수량']
         self.D['next_기회매도량'] = self.R['보유수량']
         self.D['next_안정매도량'] = self.S['보유수량']
