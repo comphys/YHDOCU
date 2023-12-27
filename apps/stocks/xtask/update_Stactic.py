@@ -8,12 +8,10 @@ class update_Stactic :
         self.D = {}
         self.DB = DB('stocks')
         self.skey = self.DB.store("slack_key")
-        self.bid   = 'S231226'
-        self.board = 'h_'+self.bid+'_board'
         self.guide = 'h_IGUIDE_board'
 
 
-    def oneWrite(self,p) :
+    def oneWrite(self) :
         
         self.D['prev_date'] = self.DB.one(f"SELECT max(add0) FROM h_{self.bid}_board")
         
@@ -32,12 +30,16 @@ class update_Stactic :
             self.update_value()
 
         else :
-            if p : my.post_slack(self.skey,f"[하이투자] {self.D['prev_date']} 이후 업데이트된 정보가 없습니다")
-            else : print(f"{self.D['prev_date']} 이후 업데이트된 정보가 없습니다")
+            self.send_message(f"{self.bid} {self.D['prev_date']} 이후 업데이트된 정보가 없습니다")
             return
 
-        if p : my.post_slack(self.skey,f"[하이투자] {self.D['today']} 현황을 업데이트 하였습니다")
-        else : print(f"{self.D['today']} 현황을 업데이트 하였습니다")
+        self.send_message(f"{self.bid} {self.D['today']} 현황을 업데이트 하였습니다")
+
+
+    def send_message(self,message) :
+        if self.DB.system == "Linux" : my.post_slack(self.skey,message)
+        else : print(message)
+
 
     def tomorrow_sell(self) :
 
@@ -292,12 +294,13 @@ class update_Stactic :
         # DATA INSERT OR UPDATE
         U.update({k:'' for k,v in U.items() if v == None})
 
+        board = f"h_{self.bid}_board"
         if  self.M['업데이트'] :
-            qry=self.DB.qry_update(self.board,U,f"add0='{self.D['prev_date']}'")
+            qry=self.DB.qry_update(board,U,f"add0='{self.D['prev_date']}'")
             self.DB.exe(qry)
 
         else :
-            qry=self.DB.qry_insert(self.board,U)
+            qry=self.DB.qry_insert(board,U)
             self.DB.exe(qry)
 
     def take_chance(self,p) :
@@ -316,4 +319,4 @@ if week_day in ['일','월'] : pass
 else :
     B = update_Stactic()
     B.bid = 'S231226'
-    B.oneWrite(1)
+    B.oneWrite()

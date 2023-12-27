@@ -8,11 +8,9 @@ class update_Vtactic :
         self.D = {}
         self.DB = DB('stocks')
         self.skey = self.DB.store("slack_key")
-        self.bid   = 'V230831'
-        self.board = 'h_'+self.bid+'_board'
-        # self.target = self.DB.one(f"SELECT extra1 FROM h_board_config WHERE bid='{self.bid}'")
 
-    def oneWrite(self,p) :
+    def oneWrite(self) :
+
         self.D['prev_date'] = self.DB.one(f"SELECT max(add0) FROM h_{self.bid}_board")
         if  self.D['prev_date'] :
             self.D['today'] = self.DB.one(f"SELECT min(add0) FROM h_stockHistory_board WHERE add0 > '{self.D['prev_date']}'")
@@ -29,13 +27,16 @@ class update_Vtactic :
             self.update_value()
 
         else :
-            if p : my.post_slack(self.skey,f"[키움증권] {self.D['prev_date']} 이후 업데이트된 정보가 없습니다")
-            else : print(f"{self.D['prev_date']} 이후 업데이트된 정보가 없습니다")
+            self.send_message(f"[키움증권] {self.D['prev_date']} 이후 업데이트된 정보가 없습니다")
             return
 
-        if p : my.post_slack(self.skey,f"[키움증권] {self.D['today']} 현황을 업데이트 하였습니다")
-        else : print(f"{self.D['today']} 현황을 업데이트 하였습니다")
+        self.send_message(f"{self.D['today']} 일자 {self.bid} 업데이트 완료")
 
+    
+    def send_message(self,message) :
+        if self.DB.system == "Linux" : my.post_slack(self.skey,message)
+        else : print(message)
+    
     def tomorrow_sell(self) :
 
         if  self.M['경과일수'] ==  0 :
@@ -44,7 +45,7 @@ class update_Vtactic :
             return
 
         매수단가 = round(self.M['당일종가'] * self.M['평단가치'],2)
-        매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
+        매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
         매도단가 = my.round_up(self.M['평균단가'] * self.M['첫매가치'])  if self.M['평균단가'] else self.M['당일종가']
 
         if (매수수량 * 매수단가) > self.M['현재잔액']  :
@@ -65,7 +66,7 @@ class update_Vtactic :
             return
 
         매수단가 = round(self.M['당일종가'] * self.M['평단가치'],2)
-        매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
+        매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
 
         if  매수수량 * 매수단가 > self.M['현재잔액']  :
             매수수량 = self.M['기초수량'] * self.M['위매비중']
@@ -238,8 +239,6 @@ class update_Vtactic :
 
         if U['add7'] and float(U['add7']) : U['add8'] = round((self.M['당일종가'] / float(U['add7']) - 1) * 100,2)  # 현수익률 if 평균단가 != 0
 
-        U['add19'] = self.M['가용잔액']
-
         U['add1']   = '0.00'
         U['add2']   = '0.00'
         U['add3']   = self.M['현재잔액'] #현금합계
@@ -285,8 +284,8 @@ class update_Vtactic :
 
 
         U.update({k:'' for k,v in U.items() if v == None})
-
-        qry=self.DB.qry_insert(self.board,U)
+    
+        qry=self.DB.qry_insert(f"h_{self.bid}_board",U)
         self.DB.exe(qry)
 
 
@@ -297,7 +296,7 @@ if week_day in ['일','월'] : pass
 else :
     B = update_Vtactic()
     B.bid = 'IGUIDE'
-    B.oneWrite(1)
+    B.oneWrite()
     B.bid = 'V230831'
-    B.oneWrite(1)
+    B.oneWrite()
     
