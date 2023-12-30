@@ -27,10 +27,10 @@ class update_Vtactic :
             self.update_value()
 
         else :
-            self.send_message(f"[키움증권] {self.D['prev_date']} 이후 업데이트된 정보가 없습니다")
+            self.send_message(f"{self.bid} {self.D['prev_date']} 이후 업데이트된 정보가 없습니다")
             return
 
-        self.send_message(f"{self.D['today']} 일자 {self.bid} 업데이트 완료")
+        self.send_message(f"{self.D['today']} {self.bid} 업데이트")
 
     
     def send_message(self,message) :

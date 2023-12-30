@@ -15,11 +15,11 @@
 	<div id="myChart_main-div" class="clearfix" style="width:100%;background-color:#24272d;padding:10px;border:2px solid black;">
 		<div style="width:100%;padding:5px 0;">
 			<form method='post' name='category_search' action="{{D['_bse']}}page/view/{{D['bid']}}" style='display:inline;'>
-			<div class='myselect' style='margin-right:10px;vertical-align:bottom'>
-				<input placeholder='카테고리' name='category' type='text' value="{{D['category']}}">
+			<div class='myselect' style='margin-right:10px;vertical-align:bottom;'>
+				<input placeholder='카테고리' name='category' type='text' value="{{D['category']}}" style="width:150px;">
 					<div class='btn-group'>
 						<button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>
-							<ul class='dropdown-menu'>
+							<ul class='dropdown-menu' style="width:170px;margin-left:-150px">
 								<li><a>카테고리</a></li>
 								{% for cat in D['sel_cats'] %}
 								<li><a href='#'>{{cat}}</a></li>
@@ -28,6 +28,8 @@
 					</div>
 			</div>
 			</form>
+			<button class='btn btn-red-s2' style="vertical-align:top;">새행삽입</button></a>
+			<button class='btn btn-blue' style="vertical-align:top;">새로고침</button></a>
 		</div>
 		<div>
 			<table id='PeditTable' class='table table-bordered' style="width:1460px">

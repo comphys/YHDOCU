@@ -33,7 +33,7 @@ class update_Rtactic :
             self.send_message(f"{self.bid} {self.D['prev_date']} 이후 업데이트된 정보가 없습니다")
             return
 
-        self.send_message(f"{self.bid} {self.D['today']} 현황을 업데이트 하였습니다")
+        self.send_message(f"{self.bid} {self.D['today']} 업데이트")
     
     def send_message(self,message) :
         if self.DB.system == "Linux" : my.post_slack(self.skey,message)
@@ -79,7 +79,7 @@ class update_Rtactic :
             
         else : # 가이드 및 투자가 진행 중일 때
             매수단가 = float(self.M['GD']['sub19'])
-            매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
+            매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
 
             if  매수수량 * 매수단가 > self.M['현재잔액'] :
                 매수수량 = self.M['기초수량'] * self.M['위매비중']

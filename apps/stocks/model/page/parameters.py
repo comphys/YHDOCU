@@ -10,6 +10,8 @@ class M_parameters(Model) :
         if not cat : cat=base_cat
 
         self.D['PM'] = self.DB.exe(f"SELECT * FROM parameters WHERE cat='{cat}' ORDER BY key",assoc=True)
+        if not self.D['PM'] : self.D['PM'] = self.DB.exe(f"SELECT * FROM parameters ORDER BY cat",assoc=True)
+            
         sel_cats = self.DB.exe("SELECT distinct cat FROM parameters ORDER BY cat")
         
         self.D['sel_cats'] = [v[0] for v in sel_cats]

@@ -39,7 +39,7 @@ class SU :
             sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
             self.DB.exe(sql)
 
-        if self.DB.system == 'Linux' : my.post_slack(self.skey,f"{today} 현황을 업데이트 하였습니다")
+        if self.DB.system == 'Linux' : my.post_slack(self.skey,f"{today} 주가 업데이트 완료")
         else : print(f"{b_date} 이후 {cdx} 주식 정보가 업데이트 되었습니다")
 
 
