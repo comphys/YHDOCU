@@ -29,3 +29,23 @@ class Pajax(Control) :
         completion = openai.ChatCompletion.create(model="gpt-3.5-turbo",temperature=0.7,messages=messages,max_tokens=2048)
         assistant_content = completion.choices[0].message['content'].strip()
         return assistant_content
+    
+    def update_parameters(self) :
+
+        key = self.D['post']['key']
+        val = self.D['post']['val']
+        no  = self.D['post']['no']
+
+        sql = f"UPDATE parameters SET {key}= '{val}' WHERE no={no}"
+        self.DB.exe(sql)
+            
+        return 
+    
+    def delete_parameters(self) :
+        
+        no  = self.D['post']['no']
+        sql = f"DELETE FROM parameters WHERE no={no}"
+        self.DB.exe(sql)
+        
+        return 
+        

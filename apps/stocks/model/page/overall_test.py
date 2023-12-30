@@ -6,8 +6,6 @@ class M_overall_test(Model) :
 
     def view(self) :
         
-        now = int(datetime.now().timestamp())
-
         # 기본 값
         self.D['종목코드'] = 'SOXL'
         self.D['일반자금'] = '36,000'

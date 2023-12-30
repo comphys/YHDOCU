@@ -2,8 +2,10 @@
 
 {% block contents_page  %}
 <style>
-	#PeditTable td {height:36px;}
-	.delTR {color:darkslategray;text-align:center;cursor: pointer;}
+	#PeditTable td {height:30px;}
+	.delTR {color:salmon;font-weight:bold;background-color: black;}
+	.field-edit-on {background-color:black;color:yellow;font-weight:bold;}
+
 </style>
 
 <div class="row-row">
@@ -11,6 +13,22 @@
 	</div> 
 
 	<div id="myChart_main-div" class="clearfix" style="width:100%;background-color:#24272d;padding:10px;border:2px solid black;">
+		<div style="width:100%;padding:5px 0;">
+			<form method='post' name='category_search' action="{{D['_bse']}}page/view/{{D['bid']}}" style='display:inline;'>
+			<div class='myselect' style='margin-right:10px;vertical-align:bottom'>
+				<input placeholder='카테고리' name='category' type='text' value="{{D['category']}}">
+					<div class='btn-group'>
+						<button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>
+							<ul class='dropdown-menu'>
+								<li><a>카테고리</a></li>
+								{% for cat in D['sel_cats'] %}
+								<li><a href='#'>{{cat}}</a></li>
+								{% endfor %}
+							</ul>
+					</div>
+			</div>
+			</form>
+		</div>
 		<div>
 			<table id='PeditTable' class='table table-bordered' style="width:1460px">
 					<tr style="background-color:teal;border-bottom:5px solid aquamarine;height:30px;">
@@ -41,13 +59,13 @@
 	<tbody>
 		{%- for PM in D['PM'] -%}
 		<tr>
-			<td>{{PM['cat']}}</td>
-			<td>{{PM['key']}}</td>
-			<td>{{PM['name']}}</td>
-			<td style="text-align:right">{{PM['val']}}</td>
-			<td style="text-align:center">{{PM['type']}}</td>
-			<td>{{PM['description']}}</td>
-			<td class="delTR">-</td>
+			<td class="liveEdit" data-fid="cat">{{PM['cat']}}</td>
+			<td class="liveEdit" data-fid="key">{{PM['key']}}</td>
+			<td class="liveEdit" data-fid="name">{{PM['name']}}</td>
+			<td class="liveEdit" style="text-align:right" data-fid="val">{{PM['val']}}</td>
+			<td class="liveEdit" style="text-align:center" data-fid="type">{{PM['type']}}</td>
+			<td class="liveEdit" data-fid="description">{{PM['description']}}</td>
+			<td style="cursor:pointer" data-no="{{PM['no']}}">-</td>
 		</tr>
 		{%- endfor -%}
 	</tbody>
@@ -63,5 +81,62 @@ $(document).ready(function(){
 	$(".delTR").mouseover(function(){$(this).parent().css("backgroundColor","gray");});
 	$(".delTR").mouseout(function(){$(this).parent().css("backgroundColor","");});
 });
+
+var _bse = "{{D['_bse']}}";
+
+(function($){ var YH_liveEdit={ 
+    init:function(){ 
+        return this.each(function(){ 
+            var ori = $(this).text(); 
+            var sel = this;
+            $(this).on('dblclick', function() { 
+                // $(this).text('');  
+                $(this).attr('contenteditable',true).addClass('field-edit-on').focus();}); 
+                $(this).on('keydown', function(event) { if(event.which == 27) {
+                    $(this).attr('contenteditable',false).removeClass('field-edit-on');
+                    $(this).text(ori)
+                } 
+                if(event.which == 13) { $(this).attr('contenteditable',false).removeClass('field-edit-on'); 
+                var tbl = uri(0); 
+                var no  = $(this).parent().children("td:last").attr("data-no"); 
+                var key = $(this).attr('data-fid');	
+                var val = $(this).text(); 
+                var data = {'tbl':tbl, 'no':no, 'key':key, 'val' : val}
+                var posturl = _bse + 'pages-pajax/update_parameters'; 
+
+                $.post(posturl,data,null,'json').done(function(data){$(sel).text(ori); h_dialog.notice(data.msg);});
+				}});});}, 
+                clear:function(){ return this.each(function(){ $(this).off(); });}};	
+                $.fn.liveEdit =function(method) { 
+                    if(YH_liveEdit[method]) { 
+                        return YH_liveEdit[method].apply(this,Array.prototype.slice.call(arguments,1));} 
+                        else if(typeof method === 'object' || ! method){ 
+                            return YH_liveEdit.init.apply( this,arguments);} 
+                            else { $.error( 'Method ' +method+' does not exist');}};
+})(jQuery);
+
+
+$('.liveEdit').liveEdit();
+
+$("[data-no]").dblclick(function(){
+	var key = $(this).parent().children().eq(1).text()
+    $(this).parent().addClass("delTR")
+    var no = $(this).attr('data-no');
+    var url = _bse + 'pages-pajax/delete_parameters'; 
+    data = {'no':no}
+    self = this;
+	h_dialog.confirm('key:['+ key + '] 행을 정말 삭제하시겠습니까?',
+		{  x:mouse_X-350, y:mouse_Y, over_opacity:0.01, h_title :'다시 확인해 주세요',
+           buttons: 
+            [
+                {text : '돌아가기', call: function(a) { $(self).parent().removeClass("delTR"); h_dialog.close(a); }},
+                {text : '삭제하기', call: function(a) {$.post(url,data).done(function(data){location.reload()});}}
+			]
+	});    
+    
+});
+
+
+
 </script>
 {% endblock %}

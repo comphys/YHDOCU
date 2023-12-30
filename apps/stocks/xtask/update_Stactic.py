@@ -80,7 +80,7 @@ class update_Stactic :
             
         else : # 가이드 및 투자가 진행 중일 때
             매수단가 = float(self.M['GD']['sub19'])
-            매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.D['비중조절'] + 1))
+            매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
 
             if  매수수량 * 매수단가 > self.M['현재잔액'] :
                 매수수량 = self.M['기초수량'] * self.M['위매비중']
