@@ -42,15 +42,30 @@ class M_backtest_OVERALL(Model) :
             self.M['첫날기록']  = True
             self.M['매수단계']  = '일반매수'
             
-            if self.V['현수익률'] >= 0 : self.D['일반익절'] += 1
-            if self.V['현수익률'] <  0 : self.D['일반손절'] += 1
-            
+            if  self.V['현수익률'] >= 0 : 
+                if self.M['회복전략'] : self.D['일회익절'] += 1
+                else : self.D['일정익절'] += 1  
+            else : 
+                if self.M['회복전략'] : self.D['일회손절'] += 1
+                else : self.D['일정손절'] += 1             
+ 
             if self.R['매도수량'] :
-                if self.R['현수익률'] >= 0 : self.D['기회익절'] += 1
-                if self.R['현수익률'] <  0 : self.D['기회손절'] += 1
+                if  self.R['현수익률'] >= 0 : 
+                    if self.M['회복전략'] : self.D['기회익절'] += 1
+                    else : self.D['기정익절'] += 1  
+                else : 
+                    if self.M['회복전략'] : self.D['기회손절'] += 1
+                    else : self.D['기정손절'] += 1                 
+
             if self.S['매도수량'] :
-                if self.S['현수익률'] >= 0 : self.D['안정익절'] += 1
-                if self.S['현수익률'] <  0 : self.D['안정손절'] += 1
+                if  self.S['현수익률'] >= 0 : 
+                    if self.M['회복전략'] : self.D['안회익절'] += 1
+                    else : self.D['안정익절'] += 1  
+                else : 
+                    if self.M['회복전략'] : self.D['안회손절'] += 1
+                    else : self.D['안정손절'] += 1
+            
+            self.M['회복전략']  = self.M['손실회수']
             
             if  self.M['비용차감'] : 
                 self.V['일반자금'] -=  self.commission(self.V['매도금액'],2)
@@ -58,6 +73,7 @@ class M_backtest_OVERALL(Model) :
                 self.S['안정자금'] -=  self.commission(self.S['매도금액'],2)
                 
             self.rebalance() 
+            
             
         self.V['평가금액'] = self.M['당일종가'] * self.V['보유수량']; self.V['수익현황'] = self.V['평가금액'] - self.V['총매수금']
         self.R['평가금액'] = self.M['당일종가'] * self.R['보유수량']; self.R['수익현황'] = self.R['평가금액'] - self.R['총매수금']
@@ -98,6 +114,7 @@ class M_backtest_OVERALL(Model) :
             self.R['매도수량']  = self.R['보유수량'] 
             self.S['매도수량']  = self.S['보유수량']
             self.M['진행상황']  = '익절매도' 
+            self.M['회복전략']  = self.M['손실회수']
             
             if  self.M['당일종가'] < self.V['평균단가'] : 
                 self.M['진행상황'] = '손절매도'
@@ -157,7 +174,7 @@ class M_backtest_OVERALL(Model) :
     def chance_qty(self,option) :
 
             찬스수량 = 0    
-            day_count = min(self.M['현재날수']+1,6)
+            day_count = min(self.M['현재날수']+self.M['찬스일가'],6)
             기초수량 = self.S['기초수량'] if option else self.R['기초수량']
             for i in range(0,day_count) : 
                 찬스수량 += my.ceil( 기초수량 *(i*1.25 + 1))
@@ -270,9 +287,9 @@ class M_backtest_OVERALL(Model) :
 
         self.D['max_days'] = self.M['최대일수']
         self.D['max_date'] = self.M['최대날자'][2:]
-        self.D['MDD1'] = f"{self.V['최대하락']:.2f}"; self.D['MDD_DAY1'] = self.V['최하일자']
-        self.D['MDD2'] = f"{self.R['최대하락']:.2f}"; self.D['MDD_DAY1'] = self.R['최하일자']
-        self.D['MDD3'] = f"{self.S['최대하락']:.2f}"; self.D['MDD_DAY1'] = self.S['최하일자']
+        self.D['MDD1'] = f"{self.V['최대하락']:.2f}"; self.D['MDD_DAY1'] = self.V['최하일자'][2:]
+        self.D['MDD2'] = f"{self.R['최대하락']:.2f}"; self.D['MDD_DAY2'] = self.R['최하일자'][2:]
+        self.D['MDD3'] = f"{self.S['최대하락']:.2f}"; self.D['MDD_DAY3'] = self.S['최하일자'][2:]
         
         초기자본1 = float(self.D['일반자금'].replace(',','')) 
         최종자본1 = self.V['평가금액'] + self.V['일반자금'] 
@@ -396,8 +413,10 @@ class M_backtest_OVERALL(Model) :
         self.M['매도대기']  = ST['006']  # 매도대기(18)
         self.M['전화위복']  = ST['009']  # 손절 이후 매도 이율(1.12)
         self.M['분할횟수']  = ST['001']  # 분할 횟수
+        self.M['찬스일가']  = ST['026']  # V,R 전략 시 찬스 수량 계산 가중일
         
         self.M['손실회수']  = False  
+        self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
         self.M['매수단계']  = '일반매수'
         self.M['비용차감']  = True # 수수료 계산날수 초과 후 강매선택
         self.M['기록시즌']  = 0
@@ -455,8 +474,11 @@ class M_backtest_OVERALL(Model) :
         self.D['전략횟수'] = 0
         self.D['기회전량'] = 0
         self.D['기회전략'] = 0
-        self.D['일반익절'] = 0; self.D['기회익절'] = 0; self.D['안정익절'] = 0
-        self.D['일반손절'] = 0; self.D['기회손절'] = 0; self.D['안정손절'] = 0
+        # 결과작성
+        self.D['일정익절'] = 0; self.D['기정익절'] = 0; self.D['안정익절'] = 0
+        self.D['일정손절'] = 0; self.D['기정손절'] = 0; self.D['안정손절'] = 0
+        self.D['일회익절'] = 0; self.D['기회익절'] = 0; self.D['안회익절'] = 0
+        self.D['일회손절'] = 0; self.D['기회손절'] = 0; self.D['안회손절'] = 0
         
     def new_day(self) :
 

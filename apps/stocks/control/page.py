@@ -95,7 +95,7 @@ class Page(Control) :
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{code}' and add0='{date}'")
         ohlc = self.DB.get_line("add4,add5,add6,add3,add8,add9,add10")
         # day_change = (float(ohlc['add5']) - float(ohlc['add4'])) / float(ohlc['add4']) * 100
-        change = float(ohlc['add8'])*100
+        change = float(ohlc['add8'])
         output  = "<div id='stock_prices' style='width:430px;height:80px;padding:10px;background-color:#1d1f24;color:#e1e1e1;border:2px solid slategray;' ondblclick=\"h_dialog.close('OHLC_DAY')\">"
         output += "<table class='table' style='text-align:center'><tr><th>시가</th><th>고가</th><th>저가</th><th>종가</th><th>변동</th><th>상승</th><th>하락</th></tr><tr>"
         output += f"<td>{ohlc['add4']}</td>"

@@ -48,4 +48,14 @@ class Pajax(Control) :
         self.DB.exe(sql)
         
         return 
+    
+    def insert_parameters(self) :
+        
+        cat = self.D['post']['cat']
+        ID  = {'key':'000','name':'XXX','val':'   ','type':'char','description':'-----','cat':cat}
+        sql = self.DB.qry_insert('parameters',ID)
+        self.DB.exe(sql)
+        
+        return 
+
         

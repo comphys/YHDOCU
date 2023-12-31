@@ -42,11 +42,11 @@
     </div> <!--pull left-->
     <div class="pull-right">
     <div class='i-input-div'>
-        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 시작일자</div>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px;cursor:pointer;" onclick="year_up_dn(0)"> 시작일자</div>
         <input type='text' name='시작일자' class="i-date" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
     </div>
     <div class='i-input-div'>
-        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 종료일자</div>
+        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px;cursor:pointer;" onclick="year_up_dn(1)"> 종료일자</div>
         <input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
     </div>
     <button class="btn btn-red-s3" style="vertical-align:middle;">테스팅</button>
@@ -62,6 +62,11 @@
 		<canvas id="myChart_side" style="width:250px;height:350px;background-color:#24272d"></canvas>
 	</div>
 </div>
+{% if D['일정익절'] %}
+<div id="result-memo" style="position:fixed;left:84px;top:120px;color:gray;font-style:italic;">
+Normal : {{D['일정익절']}},{{D['일정손절']}} / {{D['기정익절']}},{{D['기정손절']}} / {{D['안정익절']}},{{D['안정손절']}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Recovery : {{D['일회익절']}},{{D['일회손절']}} / {{D['기회익절']}},{{D['기회손절']}} / {{D['안회익절']}},{{D['안회손절']}}
+{% endif %}
+</div>
 
 {% if D['NOTICE'] %}
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
@@ -70,9 +75,7 @@
 	{% if D['max_days'] %}
 	<div class="pull-left" style="color:lightgray;">
 		최장 : <b>{{D['max_days']}}</b>일({{D['max_date']}}) &nbsp;
-		MDD : <b>{{D['MDD1']}}</b>% / <b>{{D['MDD2']}}</b>% / <b>{{D['MDD3']}}</b>% &nbsp;
-		일반 : <b>{{D['일반익절']}}</b>/<b>{{D['기회익절']}}</b>/<b>{{D['안정익절']}}</b> &nbsp; 
-		전략 : <b>{{D['일반손절']}}</b>/<b>{{D['기회손절']}}</b>/<b>{{D['안정손절']}}</b> &nbsp;
+		MDD : <b>{{D['MDD1']}}%</b>({{D['MDD_DAY1']}}) / <b>{{D['MDD2']}}%</b>({{D['MDD_DAY2']}}) / <b>{{D['MDD3']}}%</b>({{D['MDD_DAY3']}})&nbsp;
 		<i class="fa fa-arrow-up" onclick="chart_up_dn(1)"></i>
 		<i class="fa fa-arrow-down" onclick="chart_up_dn(2)"></i>
 	</div>
@@ -149,8 +152,8 @@
 			<tr>
 			{% endif %}
 				<td style='text-align:center'>{{TR['현재날수']}}</td>
-				<td class='if-the-day'>{{TR['기록일자']}}</td>
-				<td style='text-align:right;font-weight:bold;'>{{TR['당일종가']|safe}}</td>
+				<td>{{TR['기록일자']}}</td>
+				<td class='ohlc-price' style='text-align:right;font-weight:bold;cursor:pointer;'>{{TR['당일종가']|safe}}</td>
 				<td style='text-align:right;font-weight:bold;'>{{TR['종가변동']|safe}}</td>
 
 				<td style='text-align:right;color:#F6CECE'>{{TR['일반진행']}}</td>
@@ -205,11 +208,16 @@
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 <script>
 
-$(".if-the-day").click(function(){
-	var date=$(this).text(); $("input[name='start_date']").val(date);}).contextmenu(function(e){  e.preventDefault();
-	var date=$(this).text(); $("input[name='end_date']").val(date); $("form[name='stock_back_testing']").submit();
+$(".ohlc-price").click(function(){
+	if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
+	var code = $("input[name='종목코드']").val()
+	var date = '20'+$(this).prev().text();
+	var url = uri('linkurl') + 'page/get_ohlc/back_testing/date=' + date + '/code=' + code;
+	var ypos= mouse_Y
+	if(ypos > 800) ypos = ypos-280
+	var o = {id:'OHLC_DAY', width:'430px', x:240, y:ypos,header:false,footer:false,drag:false}
+	h_dialog.load(url,o)		
 });
-
 
 // 챠트 객체 생성
 const ctx_season = $id('mybackTestChart');
@@ -450,9 +458,21 @@ const myChart_main = new Chart(ctx_main, config_main);
 
 
 function chart_up_dn(opt) {
-	if(opt==1) { $("#myChart_main-div").hide(); $("#backTesting-table").css("marginTop",'100px'); }
-	else {$("#myChart_main-div").show(); $("#backTesting-table").css("marginTop",'470px');}
+	if(opt==1) { $("#myChart_main-div").hide(); $("#result-memo").hide(); $("#backTesting-table").css("marginTop",'100px'); }
+	else {$("#myChart_main-div").show(); $("#result-memo").show(); $("#backTesting-table").css("marginTop",'470px');}
 	// "margin-top:473px"
+}
+
+function year_up_dn(opt) {
+	let date1 = $("input[name='시작일자']").val()
+	let date2 = $("input[name='종료일자']").val()
+	year1 = date1.slice(0,4); year1_l = date1.slice(4);
+	year2 = date2.slice(0,4); year2_l = date2.slice(4);
+	if(opt) {year1 = parseInt(year1)+1; year2 = parseInt(year2)+1; }
+	else    {year1 = parseInt(year1)-1; year2 = parseInt(year2)-1; }
+
+	date1 = year1 + year1_l; $("input[name='시작일자']").val(date1)
+	date2 = year2 + year2_l; $("input[name='종료일자']").val(date2)
 }
 //
 </script>
