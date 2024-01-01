@@ -1,5 +1,4 @@
 from system.core.load import Control
-from PyKakao import Message
 import openai
 
 class Pajax(Control) :
