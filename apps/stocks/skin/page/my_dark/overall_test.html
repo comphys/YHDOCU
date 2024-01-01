@@ -2,119 +2,124 @@
 
 {% block contents_page  %}
 <div class="row-row">
-<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
-<br>
-<div class="well clearfix" style="border-radius:0px;">
-    <form method='post' name='stock_back_testing' action="{{D['_bse']}}page/overall_test/overall_test" onsubmit='return check_thisForm()'>
-    <div class="pull-left">
-    <div class='select' style='margin-right:10px;vertical-align:bottom'>
-        <input placeholder='종목코드' name='종목코드' type='text' value="{{D['종목코드']}}">
-            <div class='btn-group'>
-                <button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>
-                    <ul class='dropdown-menu'>
-                        <li><a>종목코드</a></li>
-                        <li><a href='#'>SOXL</a></li>
-                    </ul>
-            </div>
-    </div>
-    <div class='i-input-div'>
-        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 일반자금</div>
-        <input type='text' class="i-number" name='일반자금' style="width:70px;text-align:center;" value="{{D['일반자금']}}">
-    </div>
-    <div class='i-input-div'>
-        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 기회자금</div>
-        <input type='text' class="i-number" name="기회자금" style="width:70px;text-align:center;" value="{{D['기회자금']}}">
-    </div>
-    <div class='i-input-div'>
-        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 안정자금</div>
-        <input type='text' class="i-number" name="안정자금" style="width:70px;text-align:center;" value="{{D['안정자금']}}">
-    </div>
-    <div class='i-input-div'>
-        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 기회시점</div>
-        <input type='text' class="i-number" name="기회시점" style="width:50px;text-align:center;" value="{{D['기회시점']}}">
-		<input type='text' class="i-number" name="기회회복" style="width:50px;text-align:center;background-color:black;" value="{{D['기회회복']}}">
-    </div>
-    <div class='i-input-div'>
-        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 안정시점</div>
-        <input type='text' class="i-number" name="안정시점" style="width:50px;text-align:center;" value="{{D['안정시점']}}">
-		<input type='text' class="i-number" name="안정회복" style="width:50px;text-align:center;background-color:black;" value="{{D['안정회복']}}">
-    </div>
-    </div> <!--pull left-->
-    <div class="pull-right">
-    <div class='i-input-div'>
-        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px;cursor:pointer;" onclick="year_up_dn(0)"> 시작일자</div>
-        <input type='text' name='시작일자' class="i-date" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
-    </div>
-    <div class='i-input-div'>
-        <div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px;cursor:pointer;" onclick="year_up_dn(1)"> 종료일자</div>
-        <input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
-    </div>
-    <button class="btn btn-red-s3" style="vertical-align:middle;">테스팅</button>
-    </div> <!--pull right-->
-    </form>
-</div> 
+	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
+		<br>
+		<div class="well clearfix" style="border-radius:0px;">
+    		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/overall_test/overall_test" onsubmit='return check_thisForm()'>
+    			<div class="pull-left">
+    				<div class='select' style='margin-right:10px;vertical-align:bottom'>
+        				<input placeholder='종목코드' name='종목코드' type='text' value="{{D['종목코드']}}">
+            			<div class='btn-group'>
+                			<button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>
+                    		<ul class='dropdown-menu'>
+                        		<li><a>종목코드</a></li>
+                        		<li><a href='#'>SOXL</a></li>
+                    		</ul>
+            			</div>
+    				</div>
+					<div class='i-input-div'>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 일반자금</div>
+						<input type='text' class="i-number" name='일반자금' style="width:70px;text-align:center;" value="{{D['일반자금']}}">
+					</div>
+					<div class='i-input-div'>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 기회자금</div>
+						<input type='text' class="i-number" name="기회자금" style="width:70px;text-align:center;" value="{{D['기회자금']}}">
+					</div>
+					<div class='i-input-div'>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 안정자금</div>
+						<input type='text' class="i-number" name="안정자금" style="width:70px;text-align:center;" value="{{D['안정자금']}}">
+					</div>
+					<div class='i-input-div'>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 기회시점</div>
+						<input type='text' class="i-number" name="기회시점" style="width:50px;text-align:center;" value="{{D['기회시점']}}">
+						<input type='text' class="i-number" name="기회회복" style="width:50px;text-align:center;background-color:black;" value="{{D['기회회복']}}">
+					</div>
+					<div class='i-input-div'>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 안정시점</div>
+						<input type='text' class="i-number" name="안정시점" style="width:50px;text-align:center;" value="{{D['안정시점']}}">
+						<input type='text' class="i-number" name="안정회복" style="width:50px;text-align:center;background-color:black;" value="{{D['안정회복']}}">
+					</div>
+    			</div> <!--pull left-->
 
-<div id="myChart_main-div" class="clearfix" style="width:100%;height:370px;background-color:#24272d;padding:10px;border:2px solid black;">
-	<div class="pull-left" style="margin-right:20px">
-		<canvas id="myChart_main"  style="width:1230px;height:350px;background-color:#24272d;"></canvas>
-	</div>
-	<div class="pull-left" onclick="$('#Next-Strategy').show()">
-		<canvas id="myChart_side" style="width:250px;height:350px;background-color:#24272d"></canvas>
-	</div>
-</div>
-{% if D['일정익절'] %}
-<div id="result-memo" style="position:fixed;left:84px;top:120px;color:gray;font-style:italic;">
-Normal : {{D['일정익절']}},{{D['일정손절']}} / {{D['기정익절']}},{{D['기정손절']}} / {{D['안정익절']}},{{D['안정손절']}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Recovery : {{D['일회익절']}},{{D['일회손절']}} / {{D['기회익절']}},{{D['기회손절']}} / {{D['안회익절']}},{{D['안회손절']}}
-{% endif %}
-</div>
+    			<div class="pull-right">
+					<div class='i-input-div'>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px;cursor:pointer;" onclick="year_up_dn(0)"> 시작일자</div>
+						<input type='text' name='시작일자' class="i-date" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
+					</div>
+					<div class='i-input-div'>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px;cursor:pointer;" onclick="year_up_dn(1)"> 종료일자</div>
+						<input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
+					</div>
+    				<button class="btn btn-red-s3" style="vertical-align:middle;">테스팅</button>
+    			</div> <!--pull right-->
 
-{% if D['NOTICE'] %}
-<div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
-{% else %}
-<div class="clearfix" style="border-radius:0px;padding:10px;">
-	{% if D['max_days'] %}
-	<div class="pull-left" style="color:lightgray;">
-		최장 : <b>{{D['max_days']}}</b>일({{D['max_date']}}) &nbsp;
-		MDD : <b>{{D['MDD1']}}%</b>({{D['MDD_DAY1']}}) / <b>{{D['MDD2']}}%</b>({{D['MDD_DAY2']}}) / <b>{{D['MDD3']}}%</b>({{D['MDD_DAY3']}})&nbsp;
-		<i class="fa fa-arrow-up" onclick="chart_up_dn(1)"></i>
-		<i class="fa fa-arrow-down" onclick="chart_up_dn(2)"></i>
-	</div>
-	<div class="pull-right" style="color:lightgray">
-		{{D['output']|safe}}
-	</div>
-</div>
-<table class='table table-striped table-hover' style="width:{{D['xwidth']}};border:2px solid black;">
-	<tr style="background-color:#393f4a;border-bottom:1px solid black">
-		<th style='text-align:center;width:50px'>날수</th>
-		<th style='text-align:center;width:80px'>일자</th>
-		<th style='text-align:right;width:60px'>종가</th>
-		<th style='text-align:right;width:60px'>변동</th>
+    		</form>
+		</div> 
 
-		<th style='text-align:right;width:100px'>일반진행</th>
-		<th style='text-align:right;width:74px'>일반평균</th>
-		<th style='text-align:right;width:90px'>일반수익</th>
-		<th style='text-align:right;width:70px'>일반(%)</th>
-		<th style='text-align:right;width:100px'>일반잔액</th>
+		<div id="myChart_main-div" class="clearfix" style="height:370px;background-color:#24272d;padding:10px;border:2px solid black;">
+			<div class="pull-left" style="margin-right:20px">
+				<canvas id="myChart_main"  style="width:1230px;height:350px;background-color:#24272d;"></canvas>
+			</div>
+			<div class="pull-left" onclick="$('#Next-Strategy').show()">
+				<canvas id="myChart_side" style="width:300px;height:350px;background-color:#24272d"></canvas>
+			</div>
+		</div>
+		{% if D['일정익절'] %}
+		<div id="result-memo" style="position:fixed;left:84px;top:120px;color:gray;font-style:italic;">
+		V tactic  {{D['일정익절']}}:{{D['일정손절']}} , {{D['일회익절']}}:{{D['일회손절']}}&nbsp;&nbsp;
+		R tactic  {{D['기정익절']}}:{{D['기정손절']}} , {{D['기회익절']}}:{{D['기회손절']}}&nbsp;&nbsp;
+		S tactic  {{D['안정익절']}}:{{D['안정손절']}} , {{D['안회익절']}}:{{D['안회손절']}}
+		</div>
+		{% endif %}
 
-		<th style='text-align:right;width:100px'>기회진행</th>
-		<th style='text-align:right;width:74px'>기회평균</th>
-		<th style='text-align:right;width:90px'>기회수익</th>
-		<th style='text-align:right;width:70px'>기회(%)</th>
-		<th style='text-align:right;width:100px'>기회잔액</th>
-
-		<th style='text-align:right;width:100px'>안정진행</th>
-		<th style='text-align:right;width:74px'>안정평균</th>
-		<th style='text-align:right;width:90px'>안정수익</th>
-		<th style='text-align:right;width:70px'>안정(%)</th>
-		<th style='text-align:right;'>안정잔액</th>
-	</tr>
-</table>
-{% endif %}
-</div> <!--postion:fixed-->
+		<div class="clearfix" style="border-radius:0px;padding:10px;">
+			<div class="pull-left" style="color:lightgray;">
+				{% if D['max_days'] %}
+				최장 : <b>{{D['max_days']}}</b>일( {{D['max_date']}} ) &nbsp;
+				MDD ( {{D['MDD_DAY1']}} ) : <b>{{D['MDD1']}}%</b> / <b>{{D['MDD2']}}%</b> / <b>{{D['MDD3']}}%</b>&nbsp;
+				<i class="fa fa-arrow-up" onclick="chart_up_dn(1)"></i>
+				<i class="fa fa-arrow-down" onclick="chart_up_dn(2)"></i>
+				{% endif %}
+			</div>
+			<div class="pull-right" style="color:lightgray">
+				{{D['output']|safe}}
+			</div>
+		</div>
+		{% if D['TR'] %}
+		<div>
+			<table class='table table-striped table-hover' style="border:2px solid black;">
+				<tr style="background-color:#393f4a;border-bottom:1px solid black">
+					<th style='text-align:center;width:50px'>날수</th>
+					<th style='text-align:center;width:80px'>일자</th>
+					<th style='text-align:right;width:60px'>종가</th>
+					<th style='text-align:right;width:60px'>변동</th>
+	
+					<th style='text-align:right;width:100px'>일반진행</th>
+					<th style='text-align:right;width:74px'>일반평균</th>
+					<th style='text-align:right;width:90px'>일반수익</th>
+					<th style='text-align:right;width:70px'>일반(%)</th>
+					<th style='text-align:right;width:100px'>일반잔액</th>
+	
+					<th style='text-align:right;width:100px'>기회진행</th>
+					<th style='text-align:right;width:74px'>기회평균</th>
+					<th style='text-align:right;width:90px'>기회수익</th>
+					<th style='text-align:right;width:70px'>기회(%)</th>
+					<th style='text-align:right;width:100px'>기회잔액</th>
+	
+					<th style='text-align:right;width:100px'>안정진행</th>
+					<th style='text-align:right;width:74px'>안정평균</th>
+					<th style='text-align:right;width:90px'>안정수익</th>
+					<th style='text-align:right;width:70px'>안정(%)</th>
+					<th style='text-align:right;'>안정잔액</th>
+				</tr>
+			</table>
+		</div>
+		{% endif %}
+	</div> <!--postion:fixed-->
 </div> <!--rowrow clearfix-->
 
 {% if D['TR'] %}
-<div id="backTesting-table" class="row-row clearfix" style="margin-top:470px">
+<div id="backTesting-table" class="row-row clearfix" style="width:{{D['xwidth']}};margin-top:470px">
 	
 	<table class='table table-striped table-hover' style="border:2px solid black">
 		<colgroup>
@@ -142,8 +147,8 @@ Normal : {{D['일정익절']}},{{D['일정손절']}} / {{D['기정익절']}},{{D
 			<col>
 		</colgroup>
 
-		<tbody>
-			{%- for TR in D['TR'] -%}
+
+			{% for TR in D['TR'] %}
 			{% if TR['진행상황'] == '익절매도'  %}
 			<tr style="border-top:1px solid #F3F781;border-bottom:1px solid #F3F781;background-color:black;font-weight:bold" onclick="show_chart({{TR['기록시즌']}})"> 
 			{% elif TR['진행상황'] == '손절매도' %}
@@ -175,17 +180,20 @@ Normal : {{D['일정익절']}},{{D['일정손절']}} / {{D['기정익절']}},{{D
 				<td style='text-align:right;color:#CEF6CE'>{{TR['안정잔액']|safe}}</td>				
 			</tr>
 			{%- endfor %}
-		</tbody>
+
 	</table>
 </div>
 {% endif %}
+
+{% if D['NOTICE'] %}
+<div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
 {% endif %}
 
 <div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1240px;background-color:#24272d;padding:10px;border:2px solid black;opacity:0.9">
 	<canvas id="mybackTestChart" style="width:1210px;height:330px;background-color:#24272d"></canvas>
 </div>
 
-<div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;width:280px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
+<div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;width:320px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
     <span style="font-style: italic"> Next Strategy</span><br><br>
 	<ul style="margin-left:10px">
 		<li>진행일자 : {{D['next_일자']}}</li>
@@ -287,7 +295,7 @@ const data_side = {
   datasets: [{
     label: ' 수익률비교 ',
     data: [ {{D['t_profit']}}, {{D['v_profit']}}, {{D['r_profit']}}, {{D['s_profit']}}],
-	barThickness:35,
+	barThickness:40,
     backgroundColor: ['#283B42','#AEB404','#A67F78','#8F8681','#69491A','#003E19','#283B42'],
     borderColor: ['#000000','#000000','#000000','#000000','#000000','#000000','#000000'],
     borderWidth: 1
