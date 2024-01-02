@@ -121,6 +121,7 @@ function load_value() {
 	위매비중=JSTRG['010'];
 	기회시점=JSTRG['021'];
 	기회회복=JSTRG['022'];
+	날수가산=JSTRG['026'];
 
 	vtc('add1', 0,2);			vtc('add2',0,2);		  vtc('0000',현재잔액,2);	  vtc('0000',현금비중,2);      
 
@@ -170,7 +171,7 @@ function tomorrow_buy() {
 	} else if(경과일수 >=2 && 보유수량 <= 기초수량) {
 	
 		찬스수량 = 0
-		days = Math.min(경과일수+2,6)
+		days = Math.min(경과일수+1+날수가산,6)
 		for(i=0;i<days;i++) {찬스수량 += Math.ceil(기초수량 * (i*비중조절+1))}
 		cpc = take_chance(기회회복);
 		cpn = take_chance(기회시점);
