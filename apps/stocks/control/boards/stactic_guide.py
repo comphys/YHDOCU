@@ -37,7 +37,7 @@ class Stactic_guide(Control) :
         기초수량 = my.ceil(일매수금/float(bprice)) 
         
         찬스수량 = 0
-        day_count = min(int(GD['sub12'])+1,6)
+        day_count = min(int(GD['sub12'])+self.M['날수가산'],6)
         for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
         cpc = self.take_chance(self.M['안정회복'],int(GD['add9']),int(GD['sub2']),float(GD['add6']))
         cpn = self.take_chance(self.M['안정시점'],int(GD['add9']),int(GD['sub2']),float(GD['add6']))
@@ -129,7 +129,7 @@ class Stactic_guide(Control) :
         elif self.M['경과일수'] >= 2 and int(self.M['보유수량']) <= int(self.M['기초수량']): 
             
             찬스수량 = 0
-            day_count = min(int(self.M['GD']['sub12'])+2,6)
+            day_count = min(int(self.M['GD']['sub12'])+1+self.M['날수가산'],6)
             for i in range(0,day_count) : 찬스수량 += my.ceil(int(self.M['기초수량']) *(i*1.25 + 1))
             
             cpc = self.take_chance(self.M['안정회복'],int(self.M['GD']['add9']),int(self.M['GD']['sub2']),float(self.M['GD']['add6']))
@@ -245,6 +245,7 @@ class Stactic_guide(Control) :
         self.M['위매비중']  = ST['010']  # 매수제한 시 매수범위 기본수량의 (3)
         self.M['안정시점']  = ST['023']  # S전략 일반 매수시점
         self.M['안정회복']  = ST['024']  # S전략 회복 매수시점
+        self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0

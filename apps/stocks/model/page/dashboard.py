@@ -115,7 +115,7 @@ class M_dashboard(Model) :
         elif 타겟일수 >= 2 and int(RD['add9']) <= int(RD['sub18']): 
             # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
             찬스수량 = 0
-            day_count = min(int(TD['sub12'])+2,6)
+            day_count = min(int(TD['sub12'])+1+self.DB.parameters('026'),6)
             for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
                 
             cpc = self.take_chance(self.DB.parameters('022'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
@@ -176,7 +176,7 @@ class M_dashboard(Model) :
         elif 타겟일수 >= 2 and int(SD['add9']) <= int(SD['sub18']): 
             # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
             찬스수량 = 0
-            day_count = min(int(TD['sub12'])+2,6)
+            day_count = min(int(TD['sub12'])+1+self.DB.parameters('026'),6)
             for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
                 
             cpc = self.take_chance(self.DB.parameters('024'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))

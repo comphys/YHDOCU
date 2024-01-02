@@ -65,7 +65,7 @@ class update_Rtactic :
             
             # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
             찬스수량 = 0
-            day_count = min(int(self.M['GD']['sub12'])+2,6)
+            day_count = min(int(self.M['GD']['sub12'])+1+self.M['날수가산'],6)
             for i in range(0,day_count) : 찬스수량 += my.ceil(int(self.M['기초수량']) *(i*1.25 + 1))
                 
             cpn = self.take_chance(self.M['기회시점'])
@@ -183,6 +183,7 @@ class update_Rtactic :
         self.M['위매비중']  = ST['010']  # 매수제한 시 매수범위 기본수량의 (3)
         self.M['기회시점']  = ST['021']  # S전략 일반 매수시점
         self.M['기회회복']  = ST['022']  # S전략 회복 매수시점
+        self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0
