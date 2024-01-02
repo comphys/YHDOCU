@@ -210,7 +210,7 @@ class M_dashboard(Model) :
         self.D['매수가액3'] = f"{매수가액3:,.2f}"
         self.D['자산분배3'] = SD['add10']
         self.D['자산총액3'] = float(SD['add17'])
-        self.D['매도수량3'] = f"{매도수량2:,}"
+        self.D['매도수량3'] = f"{매도수량3:,}"
         self.D['매도가격3'] = f"{매도가격2:,.2f}"
         self.D['매도가액3'] = f"{매도가액2:,.2f}"
         self.D['증가비율3'] = round(float(SD['add17'])/(float(SD['sub25'])-float(SD['sub26'])) * 100,2)
