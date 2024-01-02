@@ -56,8 +56,12 @@ class M_dashboard(Model) :
         
         if today != last_day : self.D['하이투자'] = 'Need Updating' 
         
-        # 키움증권
         
+        self.D['기준일자'] = today
+        self.D['기준요일'] = my.dayofdate(today)
+        self.D['기준종가'] = close_price        
+        
+        # 키움증권
         매수수량1 = int(VD['sub2'])
         매수가격1 = float(VD['sub19']) 
         매수가액1 = 매수수량1 * 매수가격1
@@ -151,10 +155,6 @@ class M_dashboard(Model) :
         self.D['매도가격2'] = f"{매도가격2:,.2f}"
         self.D['매도가액2'] = f"{매도가액2:,.2f}"
         self.D['증가비율2'] = round(float(RD['add17'])/(float(RD['sub25'])-float(RD['sub26'])) * 100,2)
-        self.D['기준일자'] = today
-        self.D['기준요일'] = my.dayofdate(today)
-        self.D['기준종가'] = close_price
-        
         self.D['현평가금2'] = f"{float(RD['add15']):,.2f}"
         self.D['현이익금2'] = f"{float(RD['add18']):,.2f}"
         self.D['현매수금2'] = f"{현매수금2:,.2f}"
@@ -211,16 +211,14 @@ class M_dashboard(Model) :
         self.D['자산분배3'] = SD['add10']
         self.D['자산총액3'] = float(SD['add17'])
         self.D['매도수량3'] = f"{매도수량3:,}"
-        self.D['매도가격3'] = f"{매도가격2:,.2f}"
-        self.D['매도가액3'] = f"{매도가액2:,.2f}"
+        self.D['매도가격3'] = f"{매도가격3:,.2f}"
+        self.D['매도가액3'] = f"{매도가액3:,.2f}"
         self.D['증가비율3'] = round(float(SD['add17'])/(float(SD['sub25'])-float(SD['sub26'])) * 100,2)
-        
         self.D['현평가금3'] = f"{float(SD['add15']):,.2f}"
         self.D['현이익금3'] = f"{float(SD['add18']):,.2f}"
         self.D['현매수금3'] = f"{현매수금3:,.2f}"
         self.D['매도차익3'] = f"{매도차익3:,.2f}"
         self.D['매도차원3'] = f"{매도차원3:,.0f}"
-
 
         총가치합 = float(VD['add17'])+float(RD['add17'])+float(SD['add17'])
         총입출입 = float(VD['sub25'])-float(VD['sub26'])+float(RD['sub25'])-float(RD['sub26'])+float(SD['sub25'])-float(SD['sub26'])
