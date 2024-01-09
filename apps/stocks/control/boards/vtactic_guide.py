@@ -6,6 +6,7 @@ class Vtactic_guide(Control) :
     def _auto(self) :
         self.DB = self.db('stocks')
         self.bid   = self.parm[0]
+        self.guide = 'h_IGUIDE_board'
         self.board = 'h_'+self.bid+'_board'
     
 # -----------------------------------------------------------------------------------------------------------------------
@@ -22,13 +23,14 @@ class Vtactic_guide(Control) :
         self.Q = {}
         theDay  = self.D['post']['theDay']
         Balance = my.sv(self.D['post']['Balance']) 
-        
+
         일매수금 = int(int(Balance*2/3)/22)
         bprice = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 <= '{theDay}' ORDER BY add0 DESC LIMIT 1")
         기초수량 = my.ceil(일매수금/float(bprice))        
 
         self.Q['sub4'] = 일매수금
         self.Q['sub18'] = 기초수량
+        self.Q['add17'] = f"{Balance:,.2f}"
         
         return self.json(self.Q)
 # -----------------------------------------------------------------------------------------------------------------------

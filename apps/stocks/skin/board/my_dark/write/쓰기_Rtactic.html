@@ -334,7 +334,7 @@ function do_initiate() {
 function do_basicqty() {
 	let theDay  = $("input[name='add0']").val();
 	let Balance = $("input[name='add3']").val();
-	if(theDay=='None') {h_dialog.notice('날자를 선택하여 주세요'); return;}
+	if(theDay=='None' || theDay =='') {h_dialog.notice('날자를 선택하여 주세요'); return;}
 	if(!Balance) {h_dialog.notice('잔액을 입력하여 주세요'); return;}
 	
 	let posturl = uri('linkurl')+ 'boards-rtactic_guide/basic_qty/'+uri(0)

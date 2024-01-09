@@ -9,7 +9,7 @@
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 
 <div style="height:370px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
-	<div style="position:absolute;left:30px;top:60px;">
+	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
 		<canvas id="myChart_main"  style="width:1078px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
 	</div>>
 	<div style="position:absolute;left:1122px;top:62px;">
@@ -45,7 +45,7 @@
 	<table class='table table-bordered table-striped table-hover'>
 		<thead>
 			<tr>
-				<th style="background-color:#071418;font-style:italic">Progress</th>
+				<th style="background-color:#071418;font-style:italic;cursor:pointer;" onclick="monthlyProfit_toggle()">Progress</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('입금내역',0)">입금</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('출금내역',0)">출금</th>
 				<th colspan='2' style="background-color:#0A2229;font-style:italic">US dollar</th>
@@ -53,7 +53,7 @@
 				<th style="background-color:#071418;;font-style:italic">Total</th>
 			</tr>
 			<tr>
-				<th style="background-color:#071418;font-style:italic;width:100px">{{D['총경과일']}} days</th>
+				<th style="background-color:#071418;font-style:italic;width:100px;cursor:pointer" onclick="monthlyProfit_toggle()">{{D['총경과일']}} days</th>
 				<th style="background-color:#0A2229;text-align:right;width:70px">{{D['총입금']}}</th>
 				<th style="background-color:#0A2229;text-align:right;width:70px">{{D['총출금']}}</th>
 				<th style="background-color:#0A2229;text-align:right;;width:90px">잔액</th>
@@ -128,7 +128,9 @@
 	</div>
 </div>
 
-
+<div id='monthlyProfit' style="position:absolute;left:20px;top:55px;padding:5px 10px 5px 10px;opacity:0.9;z-index:3;">
+	<canvas id="monthlyProfitChart" style="width:1078px;height:350px;background-color:#24272d"></canvas>
+</div>
 
 <script>
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
@@ -364,5 +366,72 @@ function slice_chart(opt) {
 	}
 	myChart_main.update();
 }
+
+// -- Monthly Profit Graph -----------------------------------------------------------------
+{% if D['월별구분']|safe %}
+	{% if D['월별이익'] %}
+	const ctx_monthly= $id('monthlyProfitChart');
+
+	ctx_monthly.style.backgroundColor = '#33363b';
+	ctx_monthly.style.border = '2px solid black';
+
+	let labels_monthly = {{D['월별구분']|safe}};
+	let monthlyProfits = {{D['월별이익']|safe}};
+	let backColor = new Array(labels_monthly.length-1);
+	let boreColor = new Array(labels_monthly.length-1);
+	backColor.fill('rgba(75, 192, 192, 0.4)');
+	backColor.push('rgba(255, 99, 132, 0.4)');
+	// backColor.push('rgba(255, 205, 86, 0.4)');
+	boreColor.fill('rgb(75, 192, 192)');
+	boreColor.push('rgb(255, 99, 132)');
+	// boreColor.push('rgb(255, 205, 86)');
+
+	const data_monthly = {
+	labels: labels_monthly,
+	datasets: [{
+		label: ' 월별수익금 ',
+		data: monthlyProfits,
+		backgroundColor: backColor,
+		borderColor: boreColor,
+		borderWidth: 1
+	}]
+	};
+
+	const config_monthly = {
+	type: 'bar',
+	data: data_monthly,
+	plugins:[ChartDataLabels],
+	options: {
+		animation : {duration:500},
+		layout:{padding:10},
+		plugins : { legend: {display:false},
+					title:{display:true,color:'#F7F8E0',align:'end',font:{size:14,style:'italic',weight:'normal'},text:"{{D['손익합계']}}"},
+					tooltip : {enabled:false},
+					datalabels : {color:'white', anchor:'end', align:'end', offset: 3, font:{size:12}}			
+		},
+		scales: {
+		x: { ticks : {color:'white'}, grid:{color:'#272727'}},
+		y: {
+			grid : {
+				lineWidth:2,
+				color: function(context) {
+					if(context.tick.value == 0 ) { return '#071418'} else { return '' }
+				}
+			},
+			beginAtZero: true
+		}
+		}
+	},
+	};
+	const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
+	{% endif %}
+
+	let monthlyProfit_show = false;
+	function monthlyProfit_toggle() { 
+		monthlyProfit_show = !monthlyProfit_show;
+		if(monthlyProfit_show) $('#monthlyProfit').css('zIndex',7); else $('#monthlyProfit').css('zIndex',3);
+	}	
+{% endif %}
+// -----------------------------------------------------------------------------------------
 </script>
 {% endblock %}

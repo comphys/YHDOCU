@@ -1,24 +1,14 @@
 import system.core.my_utils as my
 from system.core.load import SKIN
 
-class 목록_GUIDE(SKIN) :
+class 목록_Guide(SKIN) :
 
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)
         self.Type = self.D['BCONFIG']['type']
         
     def head(self) : 
-        TH_title = {'no':'번호','uname':'작성자','wdate':'작성일','mdate':'수정일','hit':'조회','uid':'아이디'}
-        TH_align = {'no':'center','uname':'center','wdate':'center','mdate':'center','hit':'center','uid':'center'}
-        THX = {}
-        TH_title |= self.D['EXTITLE'] ; TH_align |= self.D['EXALIGN']
-
-        for key in self.D['list_order'] :
-            if   key == self.D['Sort']  : THX[key] = f"<th class='list-sort'  onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
-            elif key == self.D['Sort1'] : THX[key] = f"<th class='list-sort1' onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
-            else : THX[key] = f"<th class='list-sort2' onclick=\"sort_go('{key}')\" style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
-        
-        self.D['head_td'] = THX
+        return
 
     def chart(self) :
         self.DB.clear()
@@ -52,41 +42,29 @@ class 목록_GUIDE(SKIN) :
             self.D['soxl_average'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
             self.D['lever_change'] = [float(x['add8']) for x in chart_data]
             self.D['sell_price']   = ['null'] * chart_slice
-            self.D['chance_price'] = ['null'] * chart_slice
 
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
             
-            LD = self.DB.get_line('add6,add8,add9,add14,add15,add17,add18,add19,add20,sub1,sub2,sub3,sub4,sub7,sub12,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub32')
+            LD = self.DB.get_line('add6,add8,add9,add10,add14,add15,add17,add18,add19,add20,sub1,sub2,sub3,sub4,sub7,sub12,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub32')
             
             # 가치 비율 for chart
-            운용자금 = my.sv(LD['add19']) + my.sv(LD['add20'])
-            예치자금 = my.sv(LD['sub32'])
-            주식가치 = my.sv(LD['add15'])
-            가치합계 = 운용자금 + 예치자금 + 주식가치
-            self.D['chart_percent'] = [round(운용자금/가치합계*100,2),round(주식가치/가치합계*100,2)]
-
-            # -- 환율 가져오기
-            # 현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw WHERE no=(SELECT max(no) FROM usd_krw)"))
             현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
             
-            # --------------
-
-            총투자금 = float(LD['sub27'])
+            총투자금 = float(LD['sub25']) - float(LD['sub26'])
             총수익금 = float(LD['add17']) - 총투자금
             총수익률 = (float(LD['add17'])/총투자금-1) * 100 if 총투자금 else 0
+            
             self.D['총입금'] = f"{float(LD['sub25']):,.0f}"
             self.D['총출금'] = f"{float(LD['sub26']):,.0f}"
-            현재총액 = float(LD['add17'])
-            self.D['현재총액'] = f"{현재총액:,.0f}"
-            self.D['원화총액'] = f"{현재총액 * 현재환율:,.0f}"
+            self.D['현재총액'] = f"{float(LD['add17']):,.0f}"
             self.D['총수익금'] = f"{총수익금:,.0f}"
-            # self.D['원화수익'] = f"{총수익금 * 현재환율:,.0f}"
-            self.D['총수익률'] = f"{총수익률:.2f}"
-            
+            self.D['총수익률'] = f"{총수익률:.2f}"        
+            # --------------
+
             # # -- extra-info
-            self.D['현재시즌'] = LD['sub1'] ; 일수 = int(LD['sub12']); 시즌 = int(self.D['현재시즌'])
+            self.D['현재시즌'] = LD['sub1']  
             
             slice_first = -42 if chart_slice > 42 else 0
             self.D['단기첫날'] = '20'+self.D['chart_date'][slice_first]
@@ -103,30 +81,11 @@ class 목록_GUIDE(SKIN) :
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
             self.D['현재환율'] = f"{현재환율:,.2f}"
+            self.D['자산배분'] = LD['add10']
+            self.D['가치합계'] = round(float(LD['add17']))
             
             self.D['필요상승'] = f"({round((float(LD['sub20'])/float(LD['add14']) -1)*100,2)}%)" if int(LD['add9']) else ''
             
-            # ------------- 기회 투자 전략 
-            self.D['현수익률'] = float(LD['add8'])
-            self.D['손실회수'] = float(LD['sub7'])
-            찬스가격1 = self.take_chance(0,int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
-            찬스가격2 = self.take_chance(1,int(LD['add9']),int(LD['sub2']),float(LD['add6'])) 
-            찬스가격1 = self.D['매도단가'] if 찬스가격1 == 0 else 찬스가격1
-            찬스가격2 = self.D['매도단가'] if 찬스가격2 == 0 else 찬스가격2
-            self.D['찬스가R'] = 'null'
-
-            if 일수 >= 2 :
-
-                self.D['찬스일자'] = last_date
-                self.D['찬스가R'] = f"{찬스가격1:,.2f}"
-                self.D['찬스가S'] = f"{찬스가격2:,.2f}"
-                self.D['찬스일수'] = 일수
-                self.D['찬스주가'] = LD['add14']
-                self.D['변동R'] = round((찬스가격1/float(LD['add14']) -1) * 100,2)
-                self.D['변동S'] = round((찬스가격2/float(LD['add14']) -1) * 100,2)
-                self.D['찬스하강'] = LD['sub6']
-                self.D['기초환율'] = f"{현재환율:,.2f}"
-
             # 월별 실현손익
             qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {self.D['tbl']} WHERE CAST(add12 as float) > 0 "
             if self.D['limit_date'] : qry += f"and add0 <='{self.D['limit_date']}' " 
@@ -149,10 +108,10 @@ class 목록_GUIDE(SKIN) :
                 self.D['손익합계'] = f"$ {monthly_total:,.0f} ({monthly_total*현재환율:,.0f}원)"
     
 
-    def take_chance(self,C,H,n,A) :
+    def take_chance(self,H,n,A) :
         if H == 0 : return 0
-        if C==0 : p = 0.0  if (self.D['현수익률'] < -2.2 or self.D['손실회수']) else -2.2
-        if C==1 : p =-5.0  if self.D['손실회수'] else -10.0
+        기회시점 = -2.2
+        p = 0 if (self.D['현수익률'] < 기회시점 or self.D['손실회수']) else 기회시점
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)
@@ -160,28 +119,26 @@ class 목록_GUIDE(SKIN) :
 
 
     def list(self) :
-        self.head()
         self.chart()
-
         TR = [] ; tx = {}
 
         if self.TrCnt :
             self.D['cno'] = -1 ; TrCnt = self.TrCnt
 
-            for idx,item in enumerate(self.D['LIST']) :
+            for item in self.D['LIST'] :
 
-                if int(item['no']) == int(self.D['No']) : self.D['cno'] = idx ; cno = True 
-                else : cno = False
-                
                 for key in self.D['list_order'] :
 
                     style=clas=tmp=''
                     txt = item[key]
-
-                    if   key == 'no'    : 
-                        if cno : tx[key] = "<td class='list-current-no'><i class='fa fa-edit'></i></td>"
-                        else   : tx[key] = f"<td class='list-no'>{TrCnt}</td>"
-                        TrCnt -= 1
+                       
+                    if key == 'add0'  : 
+                        if self.D['EXCOLOR']['add0'] : style = f"style='color:{self.D['EXCOLOR']['add0']}'"
+                        tmp = "<td class='text-center'>"
+                        href  = f"{self.D['_bse']}board/modify/{self.D['bid']}/no={item['no']}/page={self.D['page']}"
+                        tmp += f"<span class='list-subject' data-href='{href}' {style}>{txt}</span>"
+                        tmp += '</td>'
+                        tx[key] = tmp
 
                     elif key == 'add8' : 
                         profit = float(txt)
@@ -189,9 +146,6 @@ class 목록_GUIDE(SKIN) :
                             tx[key] = f"<td class='list-bulls'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bears'>{profit:,.2f}</td>"
                         else : 
                             tx[key] = "<td class='list-normal'>0.00</td>"
-                            
-                    elif key == 'add14' :
-                        tx[key] = f"<td class='ohlc-price' style='text-align:right;color:#E0F8E0;cursor:pointer'>{txt}</td>"
 
                     elif key == 'add18' : 
                         profit = float(txt.replace(',',''))
@@ -199,26 +153,19 @@ class 목록_GUIDE(SKIN) :
                             tx[key] = f"<td class='list-bulls2'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bears2'>{profit:,.2f}</td>"
                         else : 
                             tx[key] = "<td class='list-normal'>0.00</td>"
+                    
+                    elif key == 'add20': 
+                        profit = float(txt)
+                        if profit != 0 : 
+                            tx[key] = f"<td class='list-bull'>{profit:,.2f}</td>" if profit > 0  else f"<td class='list-bear'>{profit:,.2f}</td>"
+                        else : 
+                            tx[key] = "<td class='list-normal'>0.00</td>"
 
-                        
-                    elif key == 'add0'  : 
-                        if self.D['EXCOLOR']['add0'] : style = f"style='color:{self.D['EXCOLOR']['add0']}'"
-                        
-                        tmp = "<td class='text-center'>"
-                        
-                        if cno : tmp += f"<span {style}>{txt}</span>"
-                        else :
-                            href  = f"{self.D['_bse']}board/modify/{self.D['bid']}/no={item['no']}/page={self.D['page']}"
-                            tmp += f"<span class='list-subject' data-href='{href}' {style}>{txt}</span>"
-                        tmp += '</td>'
-                        tx[key] = tmp
-                        
                     else : 
                         if self.D['EXALIGN'][key]  : style   = f"text-align:{self.D['EXALIGN'][key]};"
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
-                        if key =='add4'  : style  += f"border-right:2px solid black;"
-                        if key =='add17' : style  += f"border-left:2px solid black;"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
+                        if self.D['EXCLASS'][key]  : clas   =  f"class='{self.D['EXCLASS'][key]}'"
                         
                         if (txt and self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
                         if (txt and self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,.2f}"

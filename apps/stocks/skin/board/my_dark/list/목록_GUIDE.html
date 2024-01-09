@@ -10,10 +10,10 @@
 
 <div style="height:370px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
 	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
-		<canvas id="myChart"  style="width:1125px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
+		<canvas id="myChart"  style="width:1078px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
 	</div>
-	<div style="position:absolute;left:1170px;top:62px;width:230px">
-		<canvas id="myChart_side" style="width:200px;height:280px;" onclick="$('#ChanceStrategy').show()"></canvas>
+	<div style="position:absolute;left:1122px;top:62px;">
+		<canvas id="myChart_side" style="width:280px;height:320px;"></canvas>
 		<div style="margin-top:2px;text-align:center;">
 			<input type='text' name='s_date' class="i-date_1" style="width:83px;text-align:center;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}"> -
 			<input type='text' name='e_date' class="i-date_2" style="width:83px;text-align:center;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}">
@@ -55,17 +55,18 @@
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('입금내역',0)">입금</th>
 				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('출금내역',0)">출금</th>
 				<th colspan='2' style="background-color:#0A2229;font-style:italic">US dollar</th>
-				<th colspan='11' style="background-color:#0B2F3A;font-style:italic;cursor:pointer;" onclick="winopen('winopen/chart2/soxl',820,450,'stock_chart');">Leverage Stock {{D['적용종목']}}</th>
+				<th colspan='12' style="background-color:#0B2F3A;font-style:italic;cursor:pointer;" onclick="winopen('winopen/chart2/soxl',820,450,'stock_chart');">Leverage Stock {{D['적용종목']}}</th>
 				<th style="background-color:#071418;;font-style:italic">Total</th>
 			</tr>
 			<tr style="height:27px">
-				<th style="background-color:#071418;font-style:italic;width:110px;cursor:pointer" onclick="monthlyProfit_toggle()">{{D['총경과일']}} days</th>
-				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총입금']}}</th>
-				<th style="background-color:#0A2229;text-align:right;width:80px">{{D['총출금']}}</th>
+				<th style="background-color:#071418;font-style:italic;width:100px;cursor:pointer" onclick="monthlyProfit_toggle()">{{D['총경과일']}} days</th>
+				<th style="background-color:#0A2229;text-align:right;width:70px">{{D['총입금']}}</th>
+				<th style="background-color:#0A2229;text-align:right;width:70px">{{D['총출금']}}</th>
 				<th style="background-color:#0A2229;text-align:right;;width:90px">잔액</th>
 				<th style="background-color:#0A2229;text-align:right;;width:65px">비중</th>
 
 				<th style="background-color:#0B2F3A;text-align:right;cursor:pointer;width:70px" onclick="popup_notice('종가2',0)">종가</th>
+				<th style="background-color:#0B2F3A;text-align:right;width:50px">변동</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:60px">수량</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:84px">매수금</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:84px">평균단가</th>
@@ -94,6 +95,7 @@
 			{{TR['add4']|safe}}
 
 			{{TR['add14']|safe}}
+			{{TR['add20']|safe}}
 			{{TR['add5']|safe}}
 			{{TR['add11']|safe}}
 			{{TR['add7']|safe}}
@@ -123,7 +125,7 @@
 	<div class='pull-left'>
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red-s2'>검 토</button></a>
-		<a href="{{D['_bse']}}boards-invest_guide/oneWrite/{{D['bid']}}"><button class='btn btn-small btn-red'>기 록</button></a>&nbsp;
+		<a href="{{D['_bse']}}boards-vtactic_guide/oneWrite_Vtactic/{{D['bid']}}"><button class='btn btn-small btn-red'>기 록</button></a>&nbsp;
 	</div>
 	<div class='pagination pull-right'>
 		<input id="the-last-date" type='text' style='height:26px;text-align:center;vertical-align:top;width:100px' value="{{D['limit_date']}}" />
@@ -131,24 +133,8 @@
 	</div>
 </div>
 
-
-<div id="ChanceStrategy" style="display:none;opacity:0.7;position:absolute;left:1167px;top:62px;width:240px;height:320px;background-color: #393f4a;border:2px solid black;padding:10px" onclick="$(this).hide()">
-    <span style="font-style: italic"> 기회 투자 전략</span><br><br>
-	<ul style="margin-left:20px">
-		<li>기회가격 : {{D['찬스가R']}} ({{D['변동R']}}%) </li>
-		<li>안정가격 : {{D['찬스가S']}} ({{D['변동S']}}%) </li>
-		<li>----------------------------</li>
-		<li>경과일수 : {{D['찬스일수']}} </li>
-		<li>현재주가 : {{D['찬스주가']}} </li>
-		<li>연속하강 : {{D['찬스하강']}} </li>
-		<li>기초일자 : {{D['찬스일자']}} </li>
-		<li>기초환율 : {{D['기초환율']}}원 </li>
-	</ul>
-</div>
-
-
 <div id='monthlyProfit' style="position:absolute;left:20px;top:55px;padding:5px 10px 5px 10px;opacity:0.9;z-index:3;">
-	<canvas id="monthlyProfitChart" style="width:1125px;height:350px;background-color:#24272d"></canvas>
+	<canvas id="monthlyProfitChart" style="width:1078px;height:350px;background-color:#24272d"></canvas>
 </div>
 
 <script>
@@ -217,9 +203,9 @@ function limt_period() {
 	ctx_main.style.border = '2px solid black';
 
 	let labels = {{D['chart_date']|safe}};
-	let close_price = {{D['close_price']|safe}}; // 종가변동
-	let soxl_average = {{D['soxl_average']|safe}}; // 평균단가
-	let total_value = {{D['total_value']|safe}}; // 가치합계
+	let close_price = {{D['close_price']|safe}};
+	let soxl_average = {{D['soxl_average']|safe}};
+	let total_value = {{D['total_value']|safe}};
 	let close_change = {{D['close_change']|safe}};
 	let lever_change = {{D['lever_change']|safe}};
 	let total_profit = {{D['total_profit']|safe}};
@@ -235,7 +221,6 @@ function limt_period() {
 	let sell_price2 = sell_price.slice({{D['chart_start']}});
 
 	let sellP = {{D['매도단가']}};
-	let chanP = {{D['찬스가R']}};
 
 	let season_first_day = '{{D['단기첫날']}}';
 	let the_current_day = $("input[name='e_date']").val();
@@ -243,39 +228,57 @@ function limt_period() {
 	const data_main = {
 		labels : labels_2,
 		datasets : [
-			{label:' 종가변동',data : close_price2,borderColor:'#58ACFA', borderWidth:3, pointRadius:0, borderDash:[2,3],lineTension:0.2},
-			{label:' 평균단가',data : soxl_average2,borderColor:'#f78181', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
-			{label:' 가치합계',data : total_value2,borderColor:'rgba(255, 255, 0, 0.8)', borderWidth:2,pointRadius:0, lineTension:0.2,yAxisID : 'y1'},	
-			{label:' 매도가격',data : sell_price2,borderColor:'yellow', borderWidth:1, pointRadius:0, borderDash:[2,2]}
+			{   label:' 종가변동',data : close_price2,borderColor:'#58ACFA', borderWidth:3, pointRadius:0, borderDash:[2,3],lineTension:0.2},
+			{  	label:' 평균단가',data : soxl_average2,borderColor:'#f78181', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
+			{   label:' 매도가격',data : sell_price2,borderColor:'yellow', borderWidth:1, pointRadius:0, borderDash:[2,2]}	
 		]   
 	}
 	const options_main = {
-		animation : { duration:500},plugins : { legend: {display:false}, tooltip:{enabled:false}},	responsive:false,layout:{padding:20},
-		scales:{x: { ticks : {color:'gray'}},y:{  ticks : {color:'lightgray'}, position:'right'},y1:{ ticks : {color:'gray'}, position:'left'},}
+		animation : { duration:500},
+		plugins : { legend: {display:false}, tooltip:{enabled:false}},
+		responsive:false,
+		layout:{padding:20},
+		scales:{x: { ticks : {color:'gray'}},y:{  ticks : {color:'lightgray'}, position:'right'}}
 	}
-
 	const config_main  = {type:'line',data:data_main,options:options_main};
 	const myChart = new Chart(ctx_main, config_main); 
 	//
 
 	// Side Chart
-	const labels_side = ['Cash','Leverage'];
-	const data_side = {labels: labels_side,	datasets: [{label: ' 자산배분비율 ',data: {{D['chart_percent']}},backgroundColor: ['rgba(75, 192, 192, 0.4)','rgba(255, 99, 132, 0.4)'],
-		borderColor: ['rgb(75, 192, 192)','rgb(255, 99, 132)'],	borderWidth: 1,barThickness:60}]
+
+	{% if D['자산배분'] %}
+	var allot = {{D['자산배분']}};
+	var cur_total = {{D['가치합계']}}; 
+	var allot_key = Object.keys(allot);
+	var allot_val = Object.values(allot);
+	var allot_sum = allot_val.reduce((acc,cur) => acc+cur,0);
+	allot_val.forEach((val,idx,arr)=>{arr[idx]=Math.floor(val/allot_sum*cur_total);});
+	{% endif %}
+
+	const data_side = {
+	labels: allot_key,
+	datasets: [{
+		label: ' 자산배분비율 ',
+		data: allot_val,
+		barThickness:50,
+		backgroundColor: ['#A67F78','#8F8681','#32435F','#283B42','#69491A','#003E19','#283B42'],
+		borderColor: ['#000000','#000000','#000000','#000000','#000000','#000000','#000000'],
+		borderWidth: 1
+		}]
 	}
 
 	const config_side = {
-	type: 'bar',data: data_side,plugins:[ChartDataLabels],
-	options: {animation : {duration:500},plugins : { legend: {display:false},tooltip : {enabled:false},datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:14}}},
-	scales: {
-		y: {
-			grid : {
-				lineWidth:2,
-				color: function(context) {
-					if(context.tick.value == 20 || context.tick.value == 30 || context.tick.value == 50 || context.tick.value == 60 ) { return '#071418'} else return ''
-				}},	beginAtZero: true}
+	type: 'bar',
+	data: data_side,
+	plugins:[ChartDataLabels],
+	options: {
+		animation : {duration:500},
+		plugins : { legend: {display:false},
+					tooltip : {enabled:false},
+					datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:12}}			
 		}
 	},
+	scales : {y:{}}
 	}
 	const myChart_side = new Chart(ctx_side, config_side); 
 
@@ -283,12 +286,11 @@ function limt_period() {
 	const data_sub = {
 		labels : labels_2,
 		datasets : [
-			{label:' 총수익률',data : total_profit2,borderColor:'yellow', borderWidth:3,pointRadius:0, lineTension:0.2,},
-			{label:' 종가변동',data : close_change2,borderColor:'cyan', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
-			{label:' 레버리지수익률',data : lever_change2,borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+			{   label:' 총수익률',data : total_profit2,borderColor:'yellow', borderWidth:3,pointRadius:0, lineTension:0.2,},
+			{   label:' 종가변동',data : close_change2,borderColor:'cyan', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+			{   label:' 레버리지수익률',data : lever_change2,borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
 		]   
 	}
-
 
 	const options_sub = {
 		animation : { duration:500},
@@ -328,17 +330,17 @@ function limt_period() {
 	function slice_chart(opt) {
 
 		var s_date,e_date,new_s,new_e
-		if(opt==1) { 
-			s_date = $("input[name='s_date']").val().slice(2); for(d=0; d<labels.length; d++) {if(labels[d] >= s_date) {new_s = d; $("input[name='s_date']").val('20'+labels[d]);break;}} 
-			e_date = $("input[name='e_date']").val().slice(2); for(d=labels.length-1; d >=0; d--) {if(labels[d] <= e_date){ new_e = d+1; $("input[name='e_date']").val('20'+labels[d]);break;}} 
-					
-		} else if(opt==2) { // 2달치 데이타
-			$("input[name='s_date']").val(season_first_day);  s_date = season_first_day.slice(2); new_s = labels.indexOf(s_date); 
-			$("input[name='e_date']").val("{{D['e_date']}}"); new_e = labels.length;
-
-		} else { // 전체데이타
-			s_date = "{{D['s_date']}}".slice(2); 
-			e_date = "{{D['e_date']}}".slice(2)
+		if(opt==1) { s_date = $("input[name='s_date']").val().slice(2); e_date = $("input[name='e_date']").val().slice(2) 
+			for(d=0; d<labels.length; d++) {if(labels[d] >= s_date)    { new_s = d; $("input[name='s_date']").val('20'+labels[d]);break;}} 
+			for(d=labels.length-1; d >=0; d--) {if(labels[d] <= e_date){ new_e = d+1; $("input[name='e_date']").val('20'+labels[d]);break;}} 
+		} else if(opt==2) { 
+			$("input[name='s_date']").val(season_first_day);
+			$("input[name='e_date']").val("{{D['e_date']}}");
+			s_date = season_first_day.slice(2);
+			new_s = labels.indexOf(s_date) 
+			new_e = labels.length;
+		} else {
+			s_date = "{{D['s_date']}}".slice(2); e_date = "{{D['e_date']}}".slice(2)
 			$("input[name='s_date']").val("{{D['s_date']}}"); $("input[name='e_date']").val("{{D['e_date']}}");
 			new_s =0; new_e = labels.length
 		}
@@ -348,19 +350,17 @@ function limt_period() {
 		if(second_chart) {
 			myChart.config.data.labels = labels.slice(new_s,new_e);
 			myChart.config.data.datasets[0].data =  total_value.slice(new_s,new_e);
-			myChart.config.data.datasets[1].data =  close_price.slice(new_s,new_e);
-			myChart.config.data.datasets[2].data =  lever_change.slice(new_s,new_e);
-			for(i=0;i<2;i++){base=myChart.config.data.datasets[i].data[0]; myChart.config.data.datasets[i].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})}
+			myChart.config.data.datasets[0].data =  close_price.slice(new_s,new_e);
+			myChart.config.data.datasets[1].data =  lever_change.slice(new_s,new_e);
+			for(i=0;i<1;i++){base=myChart.config.data.datasets[i].data[0]; myChart.config.data.datasets[i].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})}
 
 		} else {
 			myChart.config.data.labels = labels.slice(new_s,new_e);
 			myChart.config.data.datasets[0].data =  close_price.slice(new_s,new_e);
 			myChart.config.data.datasets[1].data =  soxl_average.slice(new_s,new_e);
-			myChart.config.data.datasets[2].data =  total_value.slice(new_s,new_e);
-			myChart.config.data.datasets[3].data =  sell_price.slice(new_s,new_e);
-			if(myChart.config.data.datasets[3].data.length<=42 && the_current_day.slice(2) == end_date) {
-			myChart.config.data.datasets[2].data.fill(null);
-			myChart.config.data.datasets[3].data.fill(sellP);
+			myChart.config.data.datasets[2].data =  sell_price.slice(new_s,new_e);
+			if(myChart.config.data.labels.length<=42 && the_current_day.slice(2) == end_date) {
+			myChart.config.data.datasets[2].data.fill(sellP);
 			}
 		}
 		myChart.update();
@@ -410,7 +410,7 @@ function limt_period() {
 		plugins : { legend: {display:false},
 					title:{display:true,color:'#F7F8E0',align:'end',font:{size:14,style:'italic',weight:'normal'},text:"{{D['손익합계']}}"},
 					tooltip : {enabled:false},
-					datalabels : {color:'white', anchor:'end', align:'end', offset: 3, font:{size:11}}			
+					datalabels : {color:'white', anchor:'end', align:'end', offset: 3, font:{size:12}}			
 		},
 		scales: {
 		x: { ticks : {color:'white'}, grid:{color:'#272727'}},

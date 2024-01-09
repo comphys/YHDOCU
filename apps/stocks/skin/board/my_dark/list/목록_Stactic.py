@@ -165,6 +165,27 @@ class 목록_Stactic(SKIN) :
             ss = my.sv(self.D['매도단가'])
             self.D['yx_b'] = f"{round(bb/yy - 1,4) * 100:.2f}"
             self.D['yx_s'] = f"{round(ss/yy - 1,4) * 100:.2f}"
+            
+            # 월별 실현손익
+            qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {self.D['tbl']} WHERE CAST(add12 as float) > 0 "
+            qry += "GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
+            monProfit = self.DB.exe(qry)
+            if monProfit :
+                self.D['월별구분'] = []
+                self.D['월별이익'] = []
+                for mon, profit in monProfit :
+                    self.D['월별구분'].append(mon)
+                    self.D['월별이익'].append(round(profit))
+                
+                monthly_total = sum(self.D['월별이익'])
+                monthly_lenth = len(self.D['월별이익'])
+                
+                self.D['월별구분'].reverse()  
+                self.D['월별이익'].reverse()
+                self.D['월별구분'].append('AVG')
+                self.D['월별이익'].append(round(monthly_total/monthly_lenth))
+                self.D['손익합계'] = f"$ {monthly_total:,.0f} ({monthly_total*현재환율:,.0f}원)" 
+                
 
     def take_chance(self,p,H,n,A) :
         if H == 0 : return 0
