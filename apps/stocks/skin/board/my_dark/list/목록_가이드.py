@@ -1,7 +1,7 @@
 import system.core.my_utils as my
 from system.core.load import SKIN
 
-class 목록_Guide(SKIN) :
+class 목록_가이드(SKIN) :
 
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)
