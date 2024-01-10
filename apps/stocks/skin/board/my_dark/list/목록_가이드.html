@@ -350,9 +350,9 @@ function limt_period() {
 		if(second_chart) {
 			myChart.config.data.labels = labels.slice(new_s,new_e);
 			myChart.config.data.datasets[0].data =  total_value.slice(new_s,new_e);
-			myChart.config.data.datasets[0].data =  close_price.slice(new_s,new_e);
-			myChart.config.data.datasets[1].data =  lever_change.slice(new_s,new_e);
-			for(i=0;i<1;i++){base=myChart.config.data.datasets[i].data[0]; myChart.config.data.datasets[i].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})}
+			myChart.config.data.datasets[1].data =  close_price.slice(new_s,new_e);
+			myChart.config.data.datasets[2].data =  lever_change.slice(new_s,new_e);
+			for(i=0;i<2;i++){base=myChart.config.data.datasets[i].data[0]; myChart.config.data.datasets[i].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})}
 
 		} else {
 			myChart.config.data.labels = labels.slice(new_s,new_e);
