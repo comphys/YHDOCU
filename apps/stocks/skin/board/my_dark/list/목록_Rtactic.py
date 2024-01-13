@@ -30,7 +30,7 @@ class 목록_Rtactic(SKIN) :
             self.D['e_date'] = last_date
             self.D['총경과일'] = my.diff_day(first_date,day2=last_date)
 
-            chart_span = 100
+            chart_span = 40
             chart_slice = len(chart_data)
             self.D['chart_start'] = chart_slice - chart_span if chart_slice > chart_span else 0
     

@@ -74,7 +74,7 @@
 
 				<th style="background-color:#071418;font-style:italic">Value</th>
 			</tr>
-			<tr><td colspan="18" style="height:2px;background-color:cadetblue;padding:0px;"></td></tr>
+			<tr><td colspan="18" style="height:2px;background-color:lightgreen;padding:0px;"></td></tr>
 		</thead>
 
 		<tbody>
@@ -214,10 +214,10 @@ const data_main = {
     datasets : [
 		{   label:' 종가변동',data : close_price,borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],lineTension:0.2},
 		{   label:' 평균단가',data : v_avg_value,borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
+		{   label:' 기회평균',data : r_avg_value,borderColor:'yellow', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
+		{   label:' 안정평균',data : s_avg_value,borderColor:'lightgreen', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
 		{   label:' 매도가격',data : s_sel_value,borderColor:'yellow', borderWidth:1, pointRadius:0,borderDash:[2,2],lineTension:0.2},
 		{   label:' 안정가격',data : s_buy_value,borderColor:'darkgray', borderWidth:1, pointRadius:0,borderDash:[2,2],lineTension:0.2},
-		{   label:' 안정평균',data : s_avg_value,borderColor:'lightgreen', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
-		{   label:' 기회평균',data : r_avg_value,borderColor:'yellow', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
     ]   
 };
 const options_main = {
@@ -279,10 +279,10 @@ const myChart_side = new Chart(ctx_side, config_side);
 const data_sub = {
 	labels : labels_main,
 	datasets : [
-		{label:' 종가변동',data : close_price,borderColor:'cyan',    borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
-		{label:' 평균변동',data : v_pro_value,borderColor:'#f78181', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
-		{label:' 안정변동',data : s_pro_value,borderColor:'yellow',  borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
-		{label:' 기회변동',data : r_pro_value,borderColor:'lightgreen',  borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 종가변동',data : close_price,borderColor:'cyan',    	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 평균변동',data : v_pro_value,borderColor:'#f78181', 	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 기회변동',data : r_pro_value,borderColor:'yellow',	 	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 안정변동',data : s_pro_value,borderColor:'lightgreen', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
 	]   
 }
 
@@ -348,8 +348,8 @@ function slice_chart(opt) {
 		myChart_main.config.data.labels = labels_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[0].data =  close_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[1].data =  v_pro_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[2].data =  s_pro_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[3].data =  r_pro_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[2].data =  r_pro_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[3].data =  s_pro_origin.slice(new_s,new_e);
 		for(i=0;i<1;i++) {
 			base=myChart_main.config.data.datasets[i].data[0]; 
 			myChart_main.config.data.datasets[i].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})
@@ -359,10 +359,11 @@ function slice_chart(opt) {
 		myChart_main.config.data.labels = labels_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[0].data =  close_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[1].data =  v_avg_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[2].data =  s_sel_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[3].data =  s_buy_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[4].data =  s_avg_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[5].data =  r_avg_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[2].data =  r_avg_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[3].data =  s_avg_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[4].data =  s_sel_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[5].data =  s_buy_origin.slice(new_s,new_e);
+		
 	}
 	myChart_main.update();
 }
