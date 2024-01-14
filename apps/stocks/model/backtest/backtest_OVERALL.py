@@ -486,14 +486,14 @@ class M_backtest_OVERALL(Model) :
             
             self.M['기록시즌'] += 1
             self.M['현재날수'] = 1
-            self.V['평균단가']  = self.M['당일종가']; 
+            self.V['평균단가']  = self.M['당일종가']
             
             self.V['기초수량']  = my.ceil(self.V['일매수금']/self.M['전일종가'])
             self.R['기초수량']  = my.ceil(self.R['일매수금']/self.M['전일종가'])
             self.S['기초수량']  = my.ceil(self.S['일매수금']/self.M['전일종가'])
             
             self.V['매수수량']  = self.V['기초수량']
-            self.V['수익현황']  = self.V['현수익률'] = 0.0; self.V['수익현황']  = self.V['현수익률'] = 0.0
+            self.V['수익현황']  = self.V['현수익률'] = 0.0
             
             self.V['보유수량']  = self.V['매수수량']
             self.V['매수금액']  = self.M['당일종가'] * self.V['매수수량'] 

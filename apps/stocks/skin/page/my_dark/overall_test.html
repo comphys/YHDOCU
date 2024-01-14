@@ -42,6 +42,7 @@
     			</div> <!--pull left-->
 
     			<div class="pull-right">
+					<div class='label label-info' style="cursor:pointer" onclick="oneYearSpan()">1y</div>&nbsp;
 					<div class='i-input-div'>
 						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px;cursor:pointer;" onclick="year_up_dn(0)"> 시작일자</div>
 						<input type='text' name='시작일자' class="i-date" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
@@ -443,7 +444,7 @@ const data_main = {
 		{
             label:' 평가밸류S',
             data : eval_s,
-			borderColor:'white', borderWidth:2,pointRadius:0,borderDash:[2,2], 
+			borderColor:'lightgray', borderWidth:2,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
         },
@@ -481,6 +482,15 @@ function year_up_dn(opt) {
 
 	date1 = year1 + year1_l; $("input[name='시작일자']").val(date1)
 	date2 = year2 + year2_l; $("input[name='종료일자']").val(date2)
+}
+
+function oneYearSpan() {
+	let date1 = $("input[name='종료일자']").val()
+	let now = new Date(date1)
+
+	let oneYearAgo = new Date(now.setDate(now.getDate() - 364)) 
+	let date2 = oneYearAgo.toISOString().split('T')[0]
+	$("input[name='시작일자']").val(date2)
 }
 //
 </script>
