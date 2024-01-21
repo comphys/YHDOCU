@@ -87,6 +87,30 @@ class Page(Control) :
         D={'skin':f"{self.skin}/{self.D['bid']}.html"}
         return self.echo(D)
 
+    def VTRS(self) :
+        self.M = {}
+        
+        self.D['종목코드'] = self.D['post']['종목코드']
+        self.D['시작자금'] = self.D['post']['시작자금']
+        self.D['타임자금'] = self.D['시작자금']
+        self.D['기회자금'] = self.D['시작자금']
+        self.D['안정자금'] = self.D['시작자금']
+
+        self.D['시작일자'] = self.D['post']['시작일자']
+        self.D['종료일자'] = self.D['post']['종료일자']
+        # -------------------
+        self.D['타임지연'] = self.D['post']['타임지연']
+        self.D['타임시점'] = self.D['post']['타임시점']
+        self.D['기회시점'] = self.D['post']['기회시점']
+        self.D['기회회복'] = self.D['post']['기회회복']
+        self.D['안정시점'] = self.D['post']['안정시점']
+        self.D['안정회복'] = self.D['post']['안정회복']
+
+        M = self.model('backtest-backtest_VTRS')
+        M.get_start()
+        M.test_it()
+        D={'skin':f"{self.skin}/{self.D['bid']}.html"}
+        return self.echo(D)
 
 
     def get_ohlc(self) :
