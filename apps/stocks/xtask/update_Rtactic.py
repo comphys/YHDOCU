@@ -40,7 +40,7 @@ class update_Rtactic :
         else : print(message)
 
 
-    def tomorrow_sell(self) : #1111
+    def tomorrow_sell(self) : 
 
         if  self.M['경과일수'] ==  0 :
             self.M['전매도량']  =  0
