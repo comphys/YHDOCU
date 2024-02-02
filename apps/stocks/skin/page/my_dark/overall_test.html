@@ -217,6 +217,8 @@
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 <script>
 
+{% if D['TR'] %}
+
 $(".ohlc-price").click(function(){
 	if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
 	var code = $("input[name='종목코드']").val()
@@ -471,6 +473,8 @@ function chart_up_dn(opt) {
 	else {$("#myChart_main-div").show(); $("#result-memo").show(); $("#backTesting-table").css("marginTop",'470px');}
 	// "margin-top:473px"
 }
+{% endif %}
+
 
 function year_up_dn(opt) {
 	let date1 = $("input[name='시작일자']").val()
