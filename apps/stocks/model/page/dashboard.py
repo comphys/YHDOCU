@@ -8,53 +8,59 @@ class M_dashboard(Model) :
         self.D['오늘날자']  = my.timestamp_to_date(opt=7) 
         self.D['오늘요일']  = my.dayofdate(self.D['오늘날자'])
         self.D['현재환율']  = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
+        ST = self.DB.parameters_dict('매매전략/VRS')
+    
         
         today,close_price  = self.DB.exe("SELECT add0,add3 FROM h_stockHistory_board WHERE add1='SOXL' ORDER BY add0 DESC LIMIT 1",many=1,assoc=False)
 
         last_day = today
-        self.D['투자안내'] = ''
-        self.D['키움증권'] = ''
-        self.D['케이비이'] = ''
-        self.D['하이투자'] = ''
+        self.D['I_guide'] = ''
+        self.D['Vtactic'] = ''
+        self.D['Rtactic'] = ''
+        self.D['Stactic'] = ''
         
-        select_cols = self.DB.table_cols('h_IGUIDE_board',('no', 'brother', 'add0', 'tle_color', 'uid', 'uname', 'content', 'reply', 'hit', 'wdate', 'mdate'))
+        self.D['V_title'] = ST['031']
+        self.D['R_title'] = ST['032']
+        self.D['S_title'] = ST['033']
+        
+        select_cols = self.DB.table_cols(ST['034'],('no', 'brother', 'add0', 'tle_color', 'uid', 'uname', 'content', 'reply', 'hit', 'wdate', 'mdate'))
         self.DB.wre = f"add0='{today}'"
         
-        self.DB.tbl = 'h_IGUIDE_board'
+        self.DB.tbl = ST['034']
         TD = self.DB.get_line(select_cols)
         if not TD : 
             last_day = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
             self.DB.wre = f"add0='{last_day}'"
             TD = self.DB.get_line(select_cols)
         
-        if today != last_day : self.D['투자안내'] = 'Need Updating' 
+        if today != last_day : self.D['I_guide'] = 'Need Updating' 
         
-        self.DB.tbl = 'h_V230831_board'
+        self.DB.tbl = ST['035']
         VD = self.DB.get_line(select_cols)
         if not VD : 
             last_day = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
             self.DB.wre = f"add0='{last_day}'" 
             VD = self.DB.get_line(select_cols)
         
-        if today != last_day : self.D['키움증권'] = 'Need Updating'      
+        if today != last_day : self.D['Vtactic'] = 'Need Updating'      
         
-        self.DB.tbl = 'h_R230831_board'
+        self.DB.tbl = ST['036']
         RD = self.DB.get_line(select_cols)
         if not RD : 
             last_day = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
             self.DB.wre = f"add0='{last_day}'"
             RD = self.DB.get_line(select_cols)
         
-        if today != last_day : self.D['케이비이'] = 'Need Updating'   
+        if today != last_day : self.D['Rtactic'] = 'Need Updating'   
 
-        self.DB.tbl = 'h_S231226_board'
+        self.DB.tbl = ST['037']
         SD = self.DB.get_line(select_cols)
         if not SD : 
             last_day = self.DB.one(f"SELECT max(add0) FROM {self.DB.tbl}")
             self.DB.wre = f"add0='{last_day}'"
             SD = self.DB.get_line(select_cols)
         
-        if today != last_day : self.D['하이투자'] = 'Need Updating' 
+        if today != last_day : self.D['Stactic'] = 'Need Updating' 
         
         
         self.D['기준일자'] = today
@@ -115,11 +121,11 @@ class M_dashboard(Model) :
         elif 타겟일수 >= 2 and int(RD['add9']) <= int(RD['sub18']): 
             # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
             찬스수량 = 0
-            day_count = min(int(TD['sub12'])+1+self.DB.parameters('026'),6)
+            day_count = min(int(TD['sub12'])+1+ST['026'],6)
             for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
                 
-            cpc = self.take_chance(self.DB.parameters('022'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
-            cpn = self.take_chance(self.DB.parameters('021'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+            cpc = self.take_chance(ST['022'],int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+            cpn = self.take_chance(ST['021'],int(TD['add9']),int(TD['sub2']),float(TD['add6']))
 
             #  p = 0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
             # 찬스가격 = cp00 if (float(TD['add8']) < -2.2 or float(TD['sub7'])) else cp22
@@ -176,11 +182,11 @@ class M_dashboard(Model) :
         elif 타겟일수 >= 2 and int(SD['add9']) <= int(SD['sub18']): 
             # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
             찬스수량 = 0
-            day_count = min(int(TD['sub12'])+1+self.DB.parameters('026'),6)
+            day_count = min(int(TD['sub12'])+1+ST['026'],6)
             for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
                 
-            cpc = self.take_chance(self.DB.parameters('024'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
-            cpn = self.take_chance(self.DB.parameters('023'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+            cpc = self.take_chance(ST['024'],int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+            cpn = self.take_chance(ST['023'],int(TD['add9']),int(TD['sub2']),float(TD['add6']))
 
             찬스가격 = cpc if float(TD['sub7']) else cpn
             찬스가격 = min(float(TD['sub19']),찬스가격)

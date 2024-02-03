@@ -46,31 +46,27 @@ class 목록_Stactic(SKIN) :
             self.DB.wre = f"add0='{last_date}'"
             LD = self.DB.get_line('add3,add4,add6,add7,add9,add10,add14,add16,add17,sub2,sub3,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub28')
             
-            SD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
+            SD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT), CAST(add9 as INT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
             self.DB.tbl = 'h_R230831_board'
-            RD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
+            RD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT), CAST(add9 as INT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
 
             cx = {};dx = {}
             self.D['Stactic_avg'] = []; self.D['Stactic_pro'] = []
             if SD :
                 # cx[날자] = 평균단가, dx[날자] = 현수익률
                 for c in SD : 
-                    if c[1] : cx[c[0][2:]] = c[1] 
-                    if c[2] : dx[c[0][2:]] = c[2]
-                for x in self.D['chart_date'] : 
-                    self.D['Stactic_avg'].append(cx.get(x,'null')) 
-                    self.D['Stactic_pro'].append(dx.get(x,'null'))
+                    if c[3] : cx[c[0][2:]] = c[1]
+                    if c[2] or c[3] : dx[c[0][2:]] = c[2]
+                for x in self.D['chart_date'] : self.D['Stactic_avg'].append(cx.get(x,'null')); self.D['Stactic_pro'].append(dx.get(x,'null'))
 
             cx = {};dx = {}
             self.D['Rtactic_avg'] = []; self.D['Rtactic_pro'] = []
             if RD :
                 # cx[날자] = 평균단가, dx[날자] = 현수익률
                 for c in RD : 
-                    if c[1] : cx[c[0][2:]] = c[1] 
-                    if c[2] : dx[c[0][2:]] = c[2]
-                for x in self.D['chart_date'] : 
-                    self.D['Rtactic_avg'].append(cx.get(x,'null')) 
-                    self.D['Rtactic_pro'].append(dx.get(x,'null'))
+                    if c[3] : cx[c[0][2:]] = c[1]
+                    if c[2] or c[3]: dx[c[0][2:]] = c[2]
+                for x in self.D['chart_date'] : self.D['Rtactic_avg'].append(cx.get(x,'null')); self.D['Rtactic_pro'].append(dx.get(x,'null'))
             
             
             # ------------- taget record 불러오기
@@ -99,8 +95,8 @@ class 목록_Stactic(SKIN) :
             기초수량 = int(LD['sub18'])
  
             if  타겟일수 == 0 or 타겟일수 == 1 :
-                self.D['매수갯수'] = '0'; self.D['매수단가'] = f"{float(LD['sub19']):,.2f}"; self.D['매수예상'] = '0.00'
-                self.D['매도갯수'] = '0'; self.D['매도단가'] = f"{float(LD['sub20']):,.2f}"; self.D['매도예상'] = '0.00'
+                self.D['매수갯수'] = '0'; self.D['매수단가'] = '0.00'; self.D['매수예상'] = '0.00'
+                self.D['매도갯수'] = '0'; self.D['매도단가'] = '0.00'; self.D['매도예상'] = '0.00'
                 self.D['예상이익'] = '0.00'
                 self.D['원화예상'] = '0'
                 self.D['target_value'] = ['null'] * chart_len 
@@ -163,8 +159,8 @@ class 목록_Stactic(SKIN) :
             yy = my.sv(self.D['GD']['add14'])
             bb = my.sv(self.D['매수단가'])
             ss = my.sv(self.D['매도단가'])
-            self.D['yx_b'] = f"{round(bb/yy - 1,4) * 100:.2f}"
-            self.D['yx_s'] = f"{round(ss/yy - 1,4) * 100:.2f}"
+            self.D['yx_b'] = f"{round(bb/yy - 1,4) * 100:.2f}" if bb else ''
+            self.D['yx_s'] = f"{round(ss/yy - 1,4) * 100:.2f}" if ss else ''
             
             # 월별 실현손익
             qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {self.D['tbl']} WHERE CAST(add12 as float) > 0 "

@@ -6,7 +6,7 @@
   {{D['오늘날자']}}({{D['오늘요일']}}) 투자현황 및 전략
   </div>
   <div style='font-size:14px;color:gray;font-weight:bold;text-align:center;'>
-    {% if D['투자안내'] %}
+    {% if D['I_guide'] %}
     투자전략 가이드가 업데이트 되지 않았습니다
     {% else %}
     최종 종가 {{D['기준종가']}} / {{D['기준일자']}}({{D['기준요일']}})
@@ -22,8 +22,8 @@
 
 <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
   <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;" onclick="$('#v_sub').show()">
-      <span style="color:white"> 투자일지(키움증권)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률1']}}% , {{D['매도시점1']}}%</span>
-      <span style="color:#f0f0ab"> {{D['키움증권']}} </span><br>
+      <span style="color:white"> {{D['V_title']}}</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률1']}}% , {{D['매도시점1']}}%</span>
+      <span style="color:#f0f0ab"> {{D['Vtactic']}} </span><br>
       <table>
         <tr>
           <td style="width:70px;color:#f78181">매수전략</td>
@@ -41,8 +41,8 @@
   </div>
 
   <div id='v_sub' style="display:none;position:absolute;left:14px;top:318px;width:356px;height:100px;font-size:14px;font-weight:700;line-height:30px;;padding:5px 10px;background-color:black;" onclick="$(this).hide()">
-    <span style="color:white"> 투자일지(키움증권)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률1']}}% , {{D['매도시점1']}}%</span>
-    <span style="color:#f0f0ab"> {{D['키움증권']}} </span><br>
+    <span style="color:white"> {{D['V_title']}}</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률1']}}% , {{D['매도시점1']}}%</span>
+    <span style="color:#f0f0ab"> {{D['Vtactic']}} </span><br>
     <table>
       <tr>
           <td style="width:70px;color:#58ACFA">총매수금</td>
@@ -62,8 +62,8 @@
 <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
   <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;" onclick="$('#r_sub').show()">
-      <span style="color:white"> 투자일지(케이비이)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률2']}}% , {{D['매도시점2']}}%</span>
-      <span style="color:#f0f0ab"> {{D['케이비이']}} </span><br>
+      <span style="color:white"> {{D['R_title']}}</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률2']}}% , {{D['매도시점2']}}%</span>
+      <span style="color:#f0f0ab"> {{D['Rtactic']}} </span><br>
       <table>
         <tr>
           <td style="width:70px;color:#f78181">매수전략</td>
@@ -81,8 +81,8 @@
   </div>
 
   <div id='r_sub' style="display:none;position:absolute;left:14px;top:432px;width:356px;height:100px;font-size:14px;font-weight:700;line-height:30px;;padding:5px 10px;background-color:black;" onclick="$(this).hide()">
-    <span style="color:white"> 투자일지(케이비이)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률2']}}% , {{D['매도시점2']}}%</span>
-    <span style="color:#f0f0ab"> {{D['케이비이']}} </span><br>
+    <span style="color:white"> {{D['R_title']}}</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률2']}}% , {{D['매도시점2']}}%</span>
+    <span style="color:#f0f0ab"> {{D['Rtactic']}} </span><br>
     <table>
       <tr>
           <td style="width:70px;color:#58ACFA">총매수금</td>
@@ -102,8 +102,8 @@
 <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
   <div style="font-size:14px;font-weight:700;line-height:30px;border:2px solid black;padding:5px 10px;background-color:black;margin-top:10px;" onclick="$('#s_sub').show()">
-    <span style="color:white"> 투자일지(하이투자)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률3']}}% , {{D['매도시점3']}}%</span>
-    <span style="color:#f0f0ab"> {{D['하이투자']}} </span><br>
+    <span style="color:white"> {{D['S_title']}}</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률3']}}% , {{D['매도시점3']}}%</span>
+    <span style="color:#f0f0ab"> {{D['Stactic']}} </span><br>
     <table>
       <tr>
         <td style="width:70px;color:#f78181">매수전략</td>
@@ -122,8 +122,8 @@
 
 
   <div id='s_sub' style="display:none;position:absolute;left:14px;top:546px;width:356px;height:100px;font-size:14px;font-weight:700;line-height:30px;;padding:5px 10px;background-color:black;" onclick="$(this).hide()">
-  <span style="color:white"> 투자일지(하이투자)</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률3']}}% , {{D['매도시점3']}}%</span>
-  <span style="color:#f0f0ab"> {{D['하이투자']}} </span><br>
+  <span style="color:white"> {{D['S_title']}}</span>&nbsp;<span style='color:#747474;'>&nbsp; {{D['현수익률3']}}% , {{D['매도시점3']}}%</span>
+  <span style="color:#f0f0ab"> {{D['Stactic']}} </span><br>
   <table>
   <tr>
       <td style="width:70px;color:#58ACFA">총매수금</td>
@@ -194,12 +194,12 @@
       string += "<tr style='height:23px'><td>"+ allot_key[i] +"</td>"
       string += "<td style='text-align:right'>"+ allot_ori[i].toLocaleString() +"</td>"
       string += "<td style='text-align:right'>"+ allot_val[i].toLocaleString() +"</td>"
-      string += "<td style='text-align:right'>"+ (allot_val[i] * usd_to_krw).toLocaleString() +"</td></tr>"
+      string += "<td style='text-align:right'>"+ parseInt(allot_val[i] * usd_to_krw).toLocaleString() +"</td></tr>"
     }
     string += "<tr style='border-top:1px solid gray;height:23px;font-weight:bold'><td>Total</td>"
     string += "<td style='text-align:right'>"+ allot_sum0.toLocaleString() +"</td>"
     string += "<td style='text-align:right'>"+ allot_sum1.toLocaleString() +"</td>"
-    string += "<td style='text-align:right'>"+ (allot_sum1 * usd_to_krw).toLocaleString() +"</td></tr>"
+    string += "<td style='text-align:right'>"+ parseInt(allot_sum1 * usd_to_krw).toLocaleString() +"</td></tr>"
     string += "</table>"
     $("#show_won").html(string)
     //
