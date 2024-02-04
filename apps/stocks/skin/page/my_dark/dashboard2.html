@@ -1,0 +1,328 @@
+{% extends D['_skn'] + 'page/my_dark/main_layout.html' %}
+
+{% block contents_page  %}
+<div>
+    <script src="/sys/chart/chart.min.js"></script>
+    <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
+    
+    <div class="clearfix" style="background-color:#24272d;padding:10px;border:2px solid black;">
+        <div class="pull-left" style="border:1px solid black;">
+            <canvas id="myChart_main"  style="width:1078px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
+        </div>
+        <div class="pull-left" style="border:1px solid black;margin-left:10px;padding:10px;">
+            <canvas id="myChart_side" style="width:310px;height:303px;background-color:#24272d"></canvas>
+            <div style="margin-top:2px;text-align:center;">
+                <input type='text' name='s_date' class="i-date_1" style="width:90px;text-align:center;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}"> -
+                <input type='text' name='e_date' class="i-date_2" style="width:90px;text-align:center;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}">
+                <span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(2)" title="설정구간"><i class="fa fa-bars"></i></span>
+                <span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(0)" title="전체시즌"><i class="fa fa-home"></i></span>
+            </div>
+        </div>
+    </div>
+
+    <div>&nbsp;</div>   
+
+    <div class="clearfix" style="background-color:#24272d;padding:10px;border:2px solid black;">
+        <div class="pull-left" style="border:1px solid black;">
+            <canvas id="monthlyProfitChart"  style="width:1078px;height:350px;background-color:#24272d;"></canvas>
+        </div>
+        <div class="pull-left" style="border:1px solid black;margin-left:10px;width:330px;height:350px;padding:10px;">
+            <div id="show_allotment"></div>
+            <div style="margin-top:10px;">
+                <canvas id="myChart_vrs"  style="width:300px;height:180px;background-color:#24272d;"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="position:absolute;top:619px;left:1280px;font-size:12px;">{{D['증가비율0']}}%</div>
+    <div style="position:absolute;top:656px;left:1280px;font-size:12px;">{{D['증가비율1']}}%</div>
+    <div style="position:absolute;top:691px;left:1280px;font-size:12px;">{{D['증가비율2']}}%</div>
+    <div style="position:absolute;top:727px;left:1280px;font-size:12px;">{{D['증가비율3']}}%</div>
+
+<script>
+    
+    $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+    $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+    
+    const ctx_main = $id('myChart_main');
+    ctx_main.style.backgroundColor = '#33363b';
+    ctx_main.style.border = '2px solid black';
+
+    let labels_origin   = {{D['chart_date']|safe}}		    // labels main origin
+    let close_origin    = {{D['close_price']|safe}} 	    // soxl close price origin 
+    let v_avg_origin    = {{D['Vtactic_avg']|safe}}	        // soxl average in v tactic
+    let v_pro_origin    = {{D['Vtactic_pro']|safe}}	        // soxl profits in v tactic
+    let r_avg_origin    = {{D['Rtactic_avg']|safe}}
+    let r_pro_origin    = {{D['Rtactic_pro']|safe}}
+    let s_avg_origin    = {{D['Stactic_avg']|safe}}	
+    let s_pro_origin    = {{D['Stactic_pro']|safe}}
+
+    let ChartStart      = {{D['chart_start']}};	
+
+    let labels_main     =  labels_origin.slice(ChartStart); let span_start = labels_main[0]; $("input[name='s_date']").val('20'+span_start)
+    let close_price     =  close_origin.slice(ChartStart)	
+    let v_avg_value     =  v_avg_origin.slice(ChartStart)  
+    let v_pro_value     =  v_pro_origin.slice(ChartStart)	
+    let r_avg_value     =  r_avg_origin.slice(ChartStart)	
+    let r_pro_value     =  r_pro_origin.slice(ChartStart)
+    let s_avg_value     =  s_avg_origin.slice(ChartStart)	
+    let s_pro_value     =  s_pro_origin.slice(ChartStart)
+
+    const data_main = {
+        labels : labels_main,
+        datasets : [
+            {   label:' 종가변동',data : close_price,borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],lineTension:0.2},
+            {   label:' 평균단가',data : v_avg_value,borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
+            {   label:' 기회평균',data : r_avg_value,borderColor:'yellow', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
+            {   label:' 안정평균',data : s_avg_value,borderColor:'lightgreen', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
+        ]   
+    };
+    const options_main = {
+        animation : { duration:500},
+    
+        plugins : { legend: {display:false}, tooltip:{enabled:true}},
+        responsive:false,
+        layout:{padding:20},
+        scales:{
+            x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+            y: { ticks : {color:'lightgray'}, grid:{color:'#272727'},position:'right'},
+        }
+    };
+    const config_main  = {type:'line',data:data_main,options:options_main};
+    const myChart_main = new Chart(ctx_main, config_main); 
+    //
+
+// ------------------------------------------------------------
+// Sub Chart
+// ------------------------------------------------------------
+const data_sub = {
+	labels : labels_main,
+	datasets : [
+		{label:' 종가변동',data : close_price,borderColor:'cyan',    	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 평균변동',data : v_pro_value,borderColor:'#f78181', 	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 기회변동',data : r_pro_value,borderColor:'yellow',	 	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 안정변동',data : s_pro_value,borderColor:'lightgreen', borderWidth:3,pointRadius:0,lineTension:0.2,},
+	]   
+}
+
+
+const options_sub = {
+	animation : { duration:500},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:false} },
+	responsive:false,
+	layout:{padding:20},
+	scales:{
+		x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+		y: { ticks : {color:'gray'}, 
+		grid:{
+			color:function(context) {
+				if( context.tick.value == 0 ) { return 'gray'}
+				else if(context.tick.value % 10 == 0 ) { return 'black'} },
+			lineWidth: function(context) {if(context.tick.value %10 == 0 ) { return 1 } else return 0},
+		},
+		position:'right'}
+	}
+}
+
+
+let second_chart = false;
+
+function chart_toggle() {
+	if(! second_chart ) {
+		myChart_main.config.data = data_sub;
+		myChart_main.config.options = options_sub;
+	} else {
+		myChart_main.config.data = data_main;
+		myChart_main.config.options = options_main;
+	}
+	second_chart = ! second_chart;
+	slice_chart(1)
+}
+
+function slice_chart(opt) {
+
+	var s_date,e_date,new_s,new_e
+	if(opt==1) { 
+		s_date = $("input[name='s_date']").val().slice(2); 
+		e_date = $("input[name='e_date']").val().slice(2); 
+		for(d=0; d<labels_origin.length; d++)     { if(labels_origin[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_origin[d]);break;}} 
+		for(d=labels_origin.length-1; d >=0; d--) { if(labels_origin[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_origin[d]);break;}} 
+	} else if(opt==2){
+		s_date = span_start; 
+		e_date = "{{D['e_date']}}".slice(2) 
+		for(d=0; d<labels_origin.length; d++)     { if(labels_origin[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_origin[d]);break;}} 
+		for(d=labels_origin.length-1; d >=0; d--) { if(labels_origin[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_origin[d]);break;}} 		
+	} else {
+		s_date = "{{D['s_date']}}".slice(2)
+		e_date = "{{D['e_date']}}".slice(2)
+		$("input[name='s_date']").val("{{D['s_date']}}"); 
+		$("input[name='e_date']").val("{{D['e_date']}}");
+		new_s =0; new_e = labels_origin.length
+	}
+	end_date = $("input[name='e_date']").val().slice(2);
+	
+	let base;
+	if(second_chart) {
+		myChart_main.config.data.labels = labels_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[0].data =  close_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[1].data =  v_pro_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[2].data =  r_pro_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[3].data =  s_pro_origin.slice(new_s,new_e);
+		for(i=0;i<1;i++) {
+			base=myChart_main.config.data.datasets[i].data[0]; 
+			myChart_main.config.data.datasets[i].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})
+		}	
+
+	} else {
+		myChart_main.config.data.labels = labels_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[0].data =  close_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[1].data =  v_avg_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[2].data =  r_avg_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[3].data =  s_avg_origin.slice(new_s,new_e);
+	}
+	myChart_main.update();
+}
+
+{% if D['월별구분']|safe %}
+	const ctx_monthly= $id('monthlyProfitChart');
+	ctx_monthly.style.backgroundColor = '#33363b';
+	ctx_monthly.style.border = '2px solid black';
+
+	let labels_monthly = {{D['월별구분']|safe}};
+	let monthlyProfits = {{D['월별이익']|safe}};
+	let backColor = new Array(labels_monthly.length-1);
+	let boreColor = new Array(labels_monthly.length-1);
+	backColor.fill('rgba(75, 192, 192, 0.4)');
+	backColor.push('rgba(255, 99, 132, 0.4)');
+	boreColor.fill('rgb(75, 192, 192)');
+	boreColor.push('rgb(255, 99, 132)');
+
+	const data_monthly = {
+	 labels: labels_monthly,
+	 datasets: [{label: ' 월별수익금 ',data: monthlyProfits,backgroundColor: backColor,borderColor: boreColor,borderWidth: 1}]
+	};
+
+	const config_monthly = {
+	type: 'bar',
+	data: data_monthly,
+	plugins:[ChartDataLabels],
+	options: {
+		animation : {duration:500},
+		layout:{padding:10},
+		plugins : { legend: {display:false},
+					title:{display:true,color:'#F7F8E0',align:'end',font:{size:14,style:'italic',weight:'normal'},text:"{{D['손익합계']}}"},
+					tooltip : {enabled:false},
+					datalabels : {color:'white', anchor:'end', align:'end', offset: 3, font:{size:12}}			
+		},
+		scales: {
+		 x: { ticks : {color:'white'}, grid:{color:'#272727'}},
+		 y: { grid : { lineWidth:2,	color: function(context) { if(context.tick.value == 0 ) { return '#071418'} else { return '' }}},beginAtZero: true}
+		}
+	},
+	};
+	const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
+{% endif %}
+
+// ------------------------------------------------------------
+// Side Chart
+// ------------------------------------------------------------
+const ctx_side = $id('myChart_side');
+
+var allot1 = {{D['자산분배1']}}; var cur_total1 = {{D['자산총액1']}}; 
+var allot2 = {{D['자산분배2']}}; var cur_total2 = {{D['자산총액2']}}; 
+var allot3 = {{D['자산분배3']}}; var cur_total3 = {{D['자산총액3']}}; 
+var usd_to_krw = {{D['현재환율']}}
+
+var allot_val = []
+var cur_total = cur_total1+cur_total2+cur_total3
+
+var allot_key  = Object.keys(allot1);
+var allot_val1 = Object.values(allot1);
+var allot_val2 = Object.values(allot2);
+var allot_val3 = Object.values(allot3);
+
+for(i=0;i<allot_val1.length;i++) {allot_val[i] = allot_val1[i] + allot_val2[i] + allot_val3[i]};  
+var allot_ori = allot_val.slice();
+var allot_sum0 = allot_ori.reduce((acc,cur) => acc+cur,0); 
+
+allot_val.forEach((val,idx,arr)=>{arr[idx]=Math.floor((val/allot_sum0)*cur_total);});
+var allot_sum1 = allot_val.reduce((acc,cur) => acc+cur,0);
+//
+string  ="<table style='width:100%'>"
+string +="<tr style='border-bottom:1px solid gray;height:23px;'>"
+string +="<td>Holder</td><td style='text-align:right'>Principal</td>"
+string +="<td style='text-align:right'>Current</td>"
+string +="<td style='text-align:right'>Kor("+usd_to_krw.toLocaleString()+"₩/$)</td></tr>"
+for(i=0;i<allot_key.length;i++) {
+  string += "<tr style='height:23px'><td>"+ allot_key[i] +"</td>"
+  string += "<td style='text-align:right'>"+ allot_ori[i].toLocaleString() +"</td>"
+  string += "<td style='text-align:right'>"+ allot_val[i].toLocaleString() +"</td>"
+  string += "<td style='text-align:right'>"+ parseInt(allot_val[i] * usd_to_krw).toLocaleString() +"</td></tr>"
+}
+string += "<tr style='border-top:1px solid gray;height:23px;font-weight:bold'><td>Total</td>"
+string += "<td style='text-align:right'>"+ allot_sum0.toLocaleString() +"</td>"
+string += "<td style='text-align:right'>"+ allot_sum1.toLocaleString() +"</td>"
+string += "<td style='text-align:right'>"+ parseInt(allot_sum1 * usd_to_krw).toLocaleString() +"</td></tr>"
+string += "</table>"
+$("#show_allotment").html(string)
+//
+
+const data_side = {
+  labels: allot_key,
+  datasets: [{
+    label: ' 자산배분비율 ',
+    data: allot_val,
+    barThickness:60,
+    backgroundColor: ['#A67F78','#8F8681','#32435F','#283B42','#69491A','#003E19','#283B42'],
+    borderColor: ['#000000','#000000','#000000','#000000','#000000','#000000','#000000'],
+    borderWidth: 1
+  }]
+};
+
+const config_side = {
+  type: 'bar',
+  data: data_side,
+  plugins:[ChartDataLabels],
+  options: {
+    animation : {duration:500},
+    plugins : { legend: {display:false},
+                tooltip : {enabled:false},
+                datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:12}}			
+    }
+    }
+}
+const myChart_side = new Chart(ctx_side, config_side);
+
+// ------------------------------------------------------------
+// Bottom Chart
+// ------------------------------------------------------------
+var increase_rate1 = {{D['증가비율1']}};
+var increase_rate2 = {{D['증가비율2']}};
+var increase_rate3 = {{D['증가비율3']}};
+var increase_rate0 = {{D['증가비율0']}};
+
+const ctx_vrs = $id('myChart_vrs');
+    
+const data_vrs = {
+  labels: ['T','V','R','S'],
+  datasets: [
+    { label: '기초현황',    data: [100,100,100,100], borderColor: '#000000',      backgroundColor: '#32435F', barThickness:8, },
+    { label: '수익현황',    data: [increase_rate0,increase_rate1,increase_rate2,increase_rate3], borderColor: '#000000',      backgroundColor: '#A67F78', barThickness:8, },
+  ]
+};
+const config_vrs = {
+  type: 'bar',
+  data: data_vrs,
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    plugins : { legend: {display:false},
+                tooltip : {enabled:false},
+   }
+  },
+}
+const myChart_vrs = new Chart(ctx_vrs, config_vrs);
+</script>
+{% endblock %}

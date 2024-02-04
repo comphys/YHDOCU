@@ -36,8 +36,8 @@ class 목록_Stactic(SKIN) :
     
             chart_data.reverse()
         
-            self.D['chart_date']   = [x['add0'][2:] for x in chart_data]
-            self.D['close_price']  = [float(x['add14']) for x in chart_data]; 
+            self.D['chart_date']  = [x['add0'][2:] for x in chart_data]
+            self.D['close_price'] = [float(x['add14']) for x in chart_data]; 
             self.D['Vtactic_avg'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
             self.D['Vtactic_pro'] = [float(x['add8']) for x in chart_data]
 
