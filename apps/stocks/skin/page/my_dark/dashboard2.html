@@ -35,10 +35,10 @@
 
     </div>
 
-    <div style="position:absolute;top:619px;left:1280px;font-size:12px;">{{D['증가비율0']}}%</div>
-    <div style="position:absolute;top:656px;left:1280px;font-size:12px;">{{D['증가비율1']}}%</div>
-    <div style="position:absolute;top:691px;left:1280px;font-size:12px;">{{D['증가비율2']}}%</div>
-    <div style="position:absolute;top:727px;left:1280px;font-size:12px;">{{D['증가비율3']}}%</div>
+    <div style="position:absolute;top:621px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['증가비율0']}}%</div>
+    <div style="position:absolute;top:658px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['증가비율1']}}%</div>
+    <div style="position:absolute;top:693px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['증가비율2']}}%</div>
+    <div style="position:absolute;top:729px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['증가비율3']}}%</div>
 
 <script>
     
@@ -57,6 +57,7 @@
     let r_pro_origin    = {{D['Rtactic_pro']|safe}}
     let s_avg_origin    = {{D['Stactic_avg']|safe}}	
     let s_pro_origin    = {{D['Stactic_pro']|safe}}
+    let t_sel_origin    = {{D['eachSellTotal']|safe}}
 
     let ChartStart      = {{D['chart_start']}};	
 
@@ -68,6 +69,7 @@
     let r_pro_value     =  r_pro_origin.slice(ChartStart)
     let s_avg_value     =  s_avg_origin.slice(ChartStart)	
     let s_pro_value     =  s_pro_origin.slice(ChartStart)
+    let t_sel_value     =  t_sel_origin.slice(ChartStart)
 
     const data_main = {
         labels : labels_main,
@@ -76,6 +78,7 @@
             {   label:' 평균단가',data : v_avg_value,borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
             {   label:' 기회평균',data : r_avg_value,borderColor:'yellow', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
             {   label:' 안정평균',data : s_avg_value,borderColor:'lightgreen', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
+            {   label:' 매도금액',data : t_sel_value,barThickness:10,borderColor:'black', backgroundColor:'#8F8681',type:'bar',yAxisID:'y1'},
         ]   
     };
     const options_main = {
@@ -87,11 +90,11 @@
         scales:{
             x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
             y: { ticks : {color:'lightgray'}, grid:{color:'#272727'},position:'right'},
+            y1: { ticks : {color:'gray'}, grid:{color:function(context) {if(context.tick.value == 0 ) return '#000000'; else return null;}},position:'left'},
         }
     };
     const config_main  = {type:'line',data:data_main,options:options_main};
     const myChart_main = new Chart(ctx_main, config_main); 
-    //
 
 // ------------------------------------------------------------
 // Sub Chart
@@ -181,6 +184,7 @@ function slice_chart(opt) {
 		myChart_main.config.data.datasets[1].data =  v_avg_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[2].data =  r_avg_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[3].data =  s_avg_origin.slice(new_s,new_e);
+    myChart_main.config.data.datasets[4].data =  t_sel_origin.slice(new_s,new_e);
 	}
 	myChart_main.update();
 }
@@ -274,7 +278,7 @@ const data_side = {
   datasets: [{
     label: ' 자산배분비율 ',
     data: allot_val,
-    barThickness:60,
+    barThickness:54,
     backgroundColor: ['#A67F78','#8F8681','#32435F','#283B42','#69491A','#003E19','#283B42'],
     borderColor: ['#000000','#000000','#000000','#000000','#000000','#000000','#000000'],
     borderWidth: 1
@@ -308,8 +312,8 @@ const ctx_vrs = $id('myChart_vrs');
 const data_vrs = {
   labels: ['T','V','R','S'],
   datasets: [
-    { label: '기초현황',    data: [100,100,100,100], borderColor: '#000000',      backgroundColor: '#32435F', barThickness:8, },
-    { label: '수익현황',    data: [increase_rate0,increase_rate1,increase_rate2,increase_rate3], borderColor: '#000000',      backgroundColor: '#A67F78', barThickness:8, },
+    { label: '기초현황',    data: [100,100,100,100], borderColor: '#000000',      backgroundColor: '#32435F', barThickness:3, },
+    { label: '수익현황',    data: [increase_rate0,increase_rate1,increase_rate2,increase_rate3], borderColor: '#000000',      backgroundColor: '#A67F78', barThickness:4, },
   ]
 };
 const config_vrs = {

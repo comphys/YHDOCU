@@ -1,5 +1,6 @@
 from system.core.load import Model
 import system.core.my_utils as my
+# import numpy
 
 class M_dashboard2(Model) :
 
@@ -7,6 +8,7 @@ class M_dashboard2(Model) :
         ST = self.DB.parameters_dict('매매전략/VRS')
         self.M['boards'] = [ST['035'],ST['036'],ST['037']]
         self.M['monthlyProfit'] = {}
+        self.M['eachSellTotal'] = {} 
         self.monthlyProfitTotal()
         
         self.progressGraph()
@@ -65,17 +67,28 @@ class M_dashboard2(Model) :
                     if c[3] : cx[c[0][2:]] = c[1]
                     if c[2] or c[3] : dx[c[0][2:]] = c[2]
                 for x in self.D['chart_date'] : self.D['Stactic_avg'].append(cx.get(x,'null')); self.D['Stactic_pro'].append(dx.get(x,'null'))
+                
+            # self.D['표준편차'] = numpy.std(self.D['close_price'])
 
-           
-    
+            # 매도한 날 매도금 합 가져오기
+            for bid in self.M['boards'] :
+                qry = f"SELECT SUBSTR(add0,3,10), CAST(add18 as float) FROM {bid} WHERE CAST(add12 as float) > 0 and add0 BETWEEN '{first_date}' AND '{last_date}'"
+                eachSellTotal = dict(self.DB.exe(qry))
+                self.merge_dict(self.M['eachSellTotal'],eachSellTotal)
+            
+            self.D['eachSellTotal'] = []
+            for x in self.D['chart_date'] : self.D['eachSellTotal'].append(self.M['eachSellTotal'].get(x,'null'))
+            
+            self.info(self.D['eachSellTotal'])
+            
     
     def monthlyProfitTotal(self) :
         # 월별 실현손익
         for bid in self.M['boards'] :
-                qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {bid} WHERE CAST(add12 as float) > 0 "
-                qry += "GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
-                monthlyProfit = dict(self.DB.exe(qry))
-                self.merge_dict(self.M['monthlyProfit'],monthlyProfit)
+            qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {bid} WHERE CAST(add12 as float) > 0 "
+            qry += "GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
+            monthlyProfit = dict(self.DB.exe(qry))
+            self.merge_dict(self.M['monthlyProfit'],monthlyProfit)
         
         self.D['월별구분'] = list(self.M['monthlyProfit'].keys())
         self.D['월별이익'] = list(self.M['monthlyProfit'].values())
