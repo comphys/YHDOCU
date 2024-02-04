@@ -79,8 +79,7 @@ class M_dashboard2(Model) :
             self.D['eachSellTotal'] = []
             for x in self.D['chart_date'] : self.D['eachSellTotal'].append(self.M['eachSellTotal'].get(x,'null'))
             
-            self.info(self.D['eachSellTotal'])
-            
+           
     
     def monthlyProfitTotal(self) :
         # 월별 실현손익
