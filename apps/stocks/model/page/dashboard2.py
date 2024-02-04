@@ -4,7 +4,8 @@ import system.core.my_utils as my
 class M_dashboard2(Model) :
 
     def view(self) :
-        self.M['boards'] = ['h_V230831_board','h_R230831_board','h_S231226_board']
+        ST = self.DB.parameters_dict('매매전략/VRS')
+        self.M['boards'] = [ST['035'],ST['036'],ST['037']]
         self.M['monthlyProfit'] = {}
         self.monthlyProfitTotal()
         
@@ -106,12 +107,7 @@ class M_dashboard2(Model) :
         
         self.D['증가비율0'] = round(총가치합/총입출입 * 100,2)    
             
-
-
-                
- 
-    
-    
+        
     def merge_dict(self,A,B) :
         
         for k in B : A[k] = B[k] if k not in A.keys() else A[k] + B[k]    
