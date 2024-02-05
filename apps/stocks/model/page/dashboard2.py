@@ -9,11 +9,12 @@ class M_dashboard2(Model) :
         self.M['boards'] = [ST['035'],ST['036'],ST['037']]
         self.M['monthlyProfit'] = {}
         self.M['eachSellTotal'] = {} 
+        
         self.monthlyProfitTotal()
-        
         self.progressGraph()
-        
         self.total_value_allot()
+        self.show_strategy(ST)
+        
 
     
     def progressGraph(self) :
@@ -119,7 +120,18 @@ class M_dashboard2(Model) :
         
         self.D['증가비율0'] = round(총가치합/총입출입 * 100,2)    
             
+    def show_strategy(self,ST) :
+        # self.D['Vtactic'] = ST['031']
+        # self.D['Rtactic'] = ST['032'] 
+        # self.D['Stactic'] = ST['033']
         
+        # for odr in [0,1,2] :
+        #     qry = f"SELECT sub2, sub19, sub3, sub20 FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
+        
+        return
+
+            
+    
     def merge_dict(self,A,B) :
         
         for k in B : A[k] = B[k] if k not in A.keys() else A[k] + B[k]    
