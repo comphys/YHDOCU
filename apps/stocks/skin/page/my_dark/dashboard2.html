@@ -23,7 +23,7 @@
     <div>&nbsp;</div>   
 
     <div class="clearfix" style="background-color:#24272d;padding:10px;border:2px solid black;">
-        <div class="pull-left" style="border:1px solid black;">
+        <div class="pull-left" style="border:1px solid black;"  onclick="$('#next_strategy').show()">
             <canvas id="monthlyProfitChart"  style="width:1078px;height:350px;background-color:#24272d;"></canvas>
         </div>
         <div class="pull-left" style="border:1px solid black;margin-left:10px;width:330px;height:350px;padding:10px;">
@@ -35,11 +35,40 @@
 
     </div>
 
-    <!-- <div style="position:absolute;top:460px;left:34px;width:1076px;height:348px;padding:20px;background-color:#000000;opacity:0.8">
-      V tactic({{D['Vtactic']}}) : <br><br>
-      R tactic({{D['Rtactic']}}) : <br><br>
-      S tactic({{D['Stactic']}}) : <br>
-    </div> -->
+    <div id="next_strategy" style="position:absolute;top:460px;left:34px;width:1076px;height:348px;padding:20px;background-color:#000000;opacity:0.8;display:none;" onclick="$(this).hide()">
+      <table class="table table-bordered" style="width:700px;">
+        <tr style="color:gray;">
+          <th colspan="2">전략구분</th><th colspan="3" style="text-align:center">매수전략</th></th><th colspan="3" style="text-align:center">매도전략</th>
+          <th colspan="2">기타정보</th>
+        </tr>
+        <tr>
+          <th>구 분</th><th style="text-align:right;">시 즌</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
+          <th style="text-align:right">매수금액</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
+          <th style="text-align:right">매도금액</th><th style="text-align:right">잔액</th><th>수익률</th>
+        </tr>
+        <tr>
+          <td style="color:#f78181">V tactic({{D['Vtactic']}}) :</td><td style="text-align:right;">{{D['현재시즌1']}}-{{D['현재일수1']}}</td>
+          <td style="text-align:right;color:#f78181">{{D['매수수량1']}}</td><td style="text-align:right;color:#f78181">{{D['매수가격1']}}</td>
+          <td style="text-align:right;color:gray">{{D['매수금액1']}}</td><td style="text-align:right;color:#58ACFA">{{D['매도수량1']}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['매도가격1']}}</td><td style="text-align:right;color:gray">{{D['매도금액1']}}</td>
+          <td style="text-align:right;color:#CEF6F5">{{D['현재잔액1']}}</td><td style="text-align:right;">{{D['현수익률1']}}%</td>
+        </tr>
+        <tr>
+          <td style="color:yellow">R tactic({{D['Rtactic']}}) :</td><td style="text-align:right;">{{D['현재시즌2']}}-{{D['현재일수2']}}</td>
+          <td style="text-align:right;color:#f78181">{{D['매수수량2']}}</td><td style="text-align:right;color:#f78181">{{D['매수가격2']}}</td>
+          <td style="text-align:right;color:gray">{{D['매수금액2']}}</td><td style="text-align:right;color:#58ACFA">{{D['매도수량2']}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['매도가격2']}}</td><td style="text-align:right;color:gray">{{D['매도금액2']}}</td>
+          <td style="text-align:right;color:#CEF6F5">{{D['현재잔액2']}}</td><td style="text-align:right;">{{D['현수익률2']}}%</td>
+        </tr>
+        <tr>
+          <td style="color:lightgreen">S tactic({{D['Stactic']}}) :</td><td style="text-align:right;">{{D['현재시즌3']}}-{{D['현재일수3']}}</td>
+          <td style="text-align:right;color:#f78181">{{D['매수수량3']}}</td><td style="text-align:right;color:#f78181">{{D['매수가격3']}}</td>
+          <td style="text-align:right;color:gray">{{D['매수금액3']}}</td><td style="text-align:right;color:#58ACFA">{{D['매도수량3']}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['매도가격3']}}</td><td style="text-align:right;color:gray">{{D['매도금액3']}}</td>
+          <td style="text-align:right;color:#CEF6F5">{{D['현재잔액3']}}</td><td style="text-align:right;">{{D['현수익률3']}}%</td>
+        </tr>
+      </table>
+    </div>
 
     <div style="position:absolute;top:621px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['증가비율0']}}%</div>
     <div style="position:absolute;top:658px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['증가비율1']}}%</div>
@@ -84,7 +113,7 @@
             {   label:' 평균단가',data : v_avg_value,borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
             {   label:' 기회평균',data : r_avg_value,borderColor:'yellow', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
             {   label:' 안정평균',data : s_avg_value,borderColor:'lightgreen', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
-            {   label:' 매도금액',data : t_sel_value,barThickness:10,borderColor:'black', backgroundColor:'#8F8681',type:'bar',yAxisID:'y1'},
+            {   label:' 매도금액',data : t_sel_value,barThickness:3,borderColor:'black', backgroundColor:'#8F8681',type:'bar',yAxisID:'y1'},
         ]   
     };
     const options_main = {

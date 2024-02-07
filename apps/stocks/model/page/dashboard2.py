@@ -121,12 +121,24 @@ class M_dashboard2(Model) :
         self.D['증가비율0'] = round(총가치합/총입출입 * 100,2)    
             
     def show_strategy(self,ST) :
-        # self.D['Vtactic'] = ST['031']
-        # self.D['Rtactic'] = ST['032'] 
-        # self.D['Stactic'] = ST['033']
+        self.D['Vtactic'] = ST['031']
+        self.D['Rtactic'] = ST['032'] 
+        self.D['Stactic'] = ST['033']
         
-        # for odr in [0,1,2] :
-        #     qry = f"SELECT sub2, sub19, sub3, sub20 FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
+        for odr in [0,1,2] :
+            qry = f"SELECT CAST(sub2 as INT), CAST(sub19 as float), CAST(sub3 as INT), CAST(sub20 as float),sub1,sub12,add3,add8 FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
+            rst = self.DB.oneline(qry)
+            key = str(odr+1)
+            self.D['매수수량'+key] = rst[0]
+            self.D['매수가격'+key] = rst[1]
+            self.D['매수금액'+key] = f"{rst[0]*rst[1]:,.2f}"
+            self.D['매도수량'+key] = rst[2]
+            self.D['매도가격'+key] = rst[3]
+            self.D['매도금액'+key] = f"{rst[2]*rst[3]:,.2f}"
+            self.D['현재시즌'+key] = rst[4]
+            self.D['현재일수'+key] = rst[5]
+            self.D['현재잔액'+key] = f"{float(rst[6]):,.2f}"
+            self.D['현수익률'+key] = rst[7]
         
         return
 
