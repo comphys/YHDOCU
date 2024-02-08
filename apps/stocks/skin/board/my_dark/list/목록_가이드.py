@@ -18,7 +18,7 @@ class 목록_가이드(SKIN) :
         self.D['limit_date'] = self.SYS.gets.get('date2','')
         if self.D['limit_date'] : self.DB.wre = f"add0 <='{self.D['limit_date']}'"
 
-        chart_data = self.DB.get("add0,add14,add17,add7,sub28,add8",assoc=True)
+        chart_data = self.DB.get("add0,add14,add17,add7,sub28,add8,add18,add12",assoc=True)
 
         if chart_data :
 
@@ -42,6 +42,7 @@ class 목록_가이드(SKIN) :
             self.D['soxl_average'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
             self.D['lever_change'] = [float(x['add8']) for x in chart_data]
             self.D['sell_price']   = ['null'] * chart_slice
+            self.D['eachSellAmout']= ['null' if not float(x['add12']) else float(x['add18']) for x in chart_data] 
 
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
@@ -106,7 +107,10 @@ class 목록_가이드(SKIN) :
                 self.D['월별구분'].append('AVG')
                 self.D['월별이익'].append(round(monthly_total/monthly_lenth))
                 self.D['손익합계'] = f"$ {monthly_total:,.0f} ({monthly_total*현재환율:,.0f}원)"
-    
+            
+
+
+
 
     def take_chance(self,H,n,A) :
         if H == 0 : return 0
