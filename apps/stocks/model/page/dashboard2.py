@@ -111,6 +111,7 @@ class M_dashboard2(Model) :
     def total_value_allot(self) :
         
         self.D['현재환율']  = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
+        self.D['환율표기']  = f"{self.D['현재환율']:,.1f}"
         for odr in [0,1,2] :
             qry = f"SELECT add10, add17, sub25, sub26 FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
             rst = self.DB.oneline(qry)
