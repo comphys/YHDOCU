@@ -1,6 +1,5 @@
 from system.core.load import Model
 import system.core.my_utils as my
-# import numpy
 
 class M_dashboard2(Model) :
 
@@ -9,6 +8,9 @@ class M_dashboard2(Model) :
         self.M['boards'] = [ST['035'],ST['036'],ST['037']]
         self.M['monthlyProfit'] = {}
         self.M['eachSellTotal'] = {} 
+
+        self.D['오늘날자']  = my.timestamp_to_date(opt=7) 
+        self.D['오늘요일']  = my.dayofdate(self.D['오늘날자'])
         
         self.monthlyProfitTotal()
         self.progressGraph()
@@ -20,7 +22,9 @@ class M_dashboard2(Model) :
     def progressGraph(self) :
         
         # add7 평균단가, add8 현수익률, add9 보유수량
-        last_date = self.DB.one(f"SELECT max(add0) FROM {self.M['boards'][0]}")
+        self.D['최종날자'] = last_date = self.DB.one(f"SELECT max(add0) FROM {self.M['boards'][0]}")
+        self.D['최종요일']  = my.dayofdate(self.D['최종날자'])
+        
         self.DB.clear()
         self.DB.tbl = self.M['boards'][0]
         self.DB.wre = f"add0 <='{last_date}'"
@@ -45,6 +49,8 @@ class M_dashboard2(Model) :
             self.D['close_price'] = [float(x['add14']) for x in chart_data]; 
             self.D['Vtactic_avg'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
             self.D['Vtactic_pro'] = [float(x['add8']) for x in chart_data]   
+
+            self.D['최종종가'] = self.D['close_price'][-1]
         
             self.DB.clear(); self.DB.wre = f"add0='{last_date}'"
             
@@ -126,7 +132,7 @@ class M_dashboard2(Model) :
         self.D['Stactic'] = ST['033']
         
         for odr in [0,1,2] :
-            qry = f"SELECT CAST(sub2 as INT), CAST(sub19 as float), CAST(sub3 as INT), CAST(sub20 as float),sub1,sub12,add3,add8,add9,add7 FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
+            qry = f"SELECT CAST(sub2 as INT), CAST(sub19 as float), CAST(sub3 as INT), CAST(sub20 as float),sub1,sub12,add3,add8,add9,add7,add4 FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
             rst = self.DB.oneline(qry)
             key = str(odr+1)
             self.D['매수수량'+key] = rst[0]
@@ -141,6 +147,7 @@ class M_dashboard2(Model) :
             self.D['현수익률'+key] = rst[7]
             self.D['보유수량'+key] = rst[8]
             self.D['평균단가'+key] = rst[9]
+            self.D['현금비중'+key] = rst[10]
         
         return
 
