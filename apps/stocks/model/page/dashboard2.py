@@ -132,6 +132,9 @@ class M_dashboard2(Model) :
         self.D['Rtactic'] = ST['032'] 
         self.D['Stactic'] = ST['033']
         
+        chk_off = self.DB.exe(f"SELECT description FROM parameters WHERE val='{self.D['오늘날자']}' AND cat='미국증시휴장일'")
+        self.D['chk_off'] = chk_off[0][0] if chk_off else ''
+
         for odr in [0,1,2] :
             qry = f"SELECT CAST(sub2 as INT), CAST(sub19 as float), CAST(sub3 as INT), CAST(sub20 as float),sub1,sub12,add3,add8,add9,add7,add4 FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
             rst = self.DB.oneline(qry)

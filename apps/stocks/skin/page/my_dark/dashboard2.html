@@ -32,16 +32,16 @@
                 <canvas id="myChart_vrs"  style="width:300px;height:180px;background-color:#24272d;"></canvas>
             </div>
         </div>
-
     </div>
 
     <div id="next_strategy" style="position:absolute;top:460px;left:34px;width:1076px;height:348px;padding:20px;background-color:#000000;opacity:0.8;display:none;" onclick="$(this).hide()">
-      <div style="font-style:italic;color:gray;margin-bottom:30px;">
+      <div style="font-style:italic;color:gray;margin-bottom:20px;">
         The Strategy for the day <span style="color:yellow">{{D['오늘날자']}}({{D['오늘요일']}})</span> 
         from <span style="color:white">{{D['최종날자']}}({{D['최종요일']}})</span>.
         The last price is <span style="color:white">{{D['최종종가']}}</span>. 
-        The current exchange rate is <span style="color:white">{{D['환율표기']}}</span> won/usd.   
+        The current exchange rate is <span style="color:white">{{D['환율표기']}}</span> won/usd.
       </div>
+      <div style="text-align:center;color:gold;">{{D['chk_off']}}</div>
       <table class="table table-bordered" style="width:1020px;">
         <tr style="color:gray;">
           <th></th><th></th>
@@ -82,6 +82,7 @@
           <td style="text-align:right;color:gray">{{D['현금비중3']}}%</td>
         </tr>
       </table>
+      <br>
     </div>
 
     <div style="position:absolute;top:621px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['증가비율0']}}%</div>
