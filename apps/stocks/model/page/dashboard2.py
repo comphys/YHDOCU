@@ -128,15 +128,14 @@ class M_dashboard2(Model) :
         self.D['증가비율0'] = round(총가치합/총입출입 * 100,2)    
             
     def show_strategy(self,ST) :
-        self.D['Vtactic'] = ST['031']
-        self.D['Rtactic'] = ST['032'] 
-        self.D['Stactic'] = ST['033']
-        
-        chk_off = self.DB.exe(f"SELECT description FROM parameters WHERE val='{self.D['오늘날자']}' AND cat='미국증시휴장일'")
-        self.D['chk_off'] = chk_off[0][0] if chk_off else ''
+        self.D['증권계좌1'] = ST['031']
+        self.D['증권계좌2'] = ST['032'] 
+        self.D['증권계좌3'] = ST['033']
 
+        today = self.DB.one("SELECT add0 FROM h_stockHistory_board WHERE add1='SOXL' ORDER BY add0 DESC LIMIT 1")
+        
         for odr in [0,1,2] :
-            qry = f"SELECT CAST(sub2 as INT), CAST(sub19 as float), CAST(sub3 as INT), CAST(sub20 as float),sub1,sub12,add3,add8,add9,add7,add4 FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
+            qry = f"SELECT CAST(sub2 as INT), CAST(sub19 as float), CAST(sub3 as INT), CAST(sub20 as float),sub1,sub12,add3,add8,add9,add7,add4,add0 FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
             rst = self.DB.oneline(qry)
             key = str(odr+1)
             self.D['매수수량'+key] = rst[0]
@@ -152,7 +151,13 @@ class M_dashboard2(Model) :
             self.D['보유수량'+key] = rst[8]
             self.D['평균단가'+key] = rst[9]
             self.D['현금비중'+key] = rst[10]
-        
+            if today != rst[11] : self.D['증권계좌'+key] = "확인필요"
+            
+        chk_off = self.DB.exe(f"SELECT description FROM parameters WHERE val='{self.D['오늘날자']}' AND cat='미국증시휴장일'")
+        self.D['chk_off'] = chk_off[0][0] if chk_off else ''    
+
+        if self.D['증권계좌2'] == "확인필요" : self.D['chk_off'] = "Not all information is updated. Please Check it."
+
         return
 
             
