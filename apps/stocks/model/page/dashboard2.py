@@ -156,7 +156,7 @@ class M_dashboard2(Model) :
         chk_off = self.DB.exe(f"SELECT description FROM parameters WHERE val='{self.D['오늘날자']}' AND cat='미국증시휴장일'")
         self.D['chk_off'] = chk_off[0][0] if chk_off else ''    
 
-        if self.D['증권계좌2'] == "확인필요" : self.D['chk_off'] = "Not all information is updated. Please Check it."
+        if self.D['증권계좌3'] == "확인필요" : self.D['chk_off'] = "Not all information is updated. Please Check it."
 
         return
 
