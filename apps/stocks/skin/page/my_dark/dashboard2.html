@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <div id="next_strategy" style="position:absolute;top:458px;left:34px;width:1076px;height:349px;padding:20px;background-color:#000000;opacity:0.8;display:none;" onclick="$(this).hide()">
+    <div id="next_strategy" style="position:absolute;top:458px;left:34px;width:1076px;height:349px;padding:20px;background-color:#000000;opacity:0.9;display:none;" onclick="$(this).hide()">
       <div style="font-style:italic;color:gray;margin-bottom:20px;">
         The Strategy for the day <span style="color:yellow">{{D['오늘날자']}}({{D['오늘요일']}})</span> 
         from <span style="color:white">{{D['최종날자']}}({{D['최종요일']}})</span>.
@@ -51,35 +51,30 @@
         <tr>
           <th>전략구분</th><th>시즌</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
           <th style="text-align:right">매수상한</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
-          <th style="text-align:right">매도하한</th><th style="text-align:right">보유수량</th><th style="text-align:right">평균단가</th>
+          <th style="text-align:right">매도하한</th><th style="text-align:right">추정손익(원)</th><th style="text-align:right">평균단가</th>
           <th>수익률</th><th style="text-align:right">현재잔액</th><th style="text-align:right">현금비중</th>
         </tr>
+        {% for key in ['1','2','3'] %}
         <tr>
-          <td style="color:#f78181">V tactic({{D['증권계좌1']}}) :</td><td style="text-align:right;">{{D['현재시즌1']}}-{{D['현재일수1']}}</td>
-          <td style="text-align:right;color:#f78181">{{D['매수수량1']}}</td><td style="text-align:right;color:#f78181">{{D['매수가격1']}}</td>
-          <td style="text-align:right;color:gray">{{D['매수금액1']}}</td><td style="text-align:right;color:#58ACFA">{{D['매도수량1']}}</td>
-          <td style="text-align:right;color:#58ACFA">{{D['매도가격1']}}</td><td style="text-align:right;color:gray">{{D['매도금액1']}}</td>
-          <td style="text-align:right;color:gray">{{D['보유수량1']}}</td><td style="text-align:right;color:gray">{{D['평균단가1']}}</td>
-          <td style="text-align:right;color:gray">{{D['현수익률1']}}%</td><td style="text-align:right;color:gray">{{D['현재잔액1']}}</td>
-          <td style="text-align:right;color:gray">{{D['현금비중1']}}%</td>
+          <td style="color:{{D['식별색상'+key]}}">V tactic({{D['증권계좌'+key]}}) :</td>
+          <td style="text-align:right;">{{D['현재시즌'+key]}}-{{D['현재일수'+key]}}</td>
+          <td style="text-align:right;color:#f78181">{{D['매수수량'+key]}}</td>
+          <td style="text-align:right;color:#f78181">{{D['매수가격'+key]}}</td>
+          <td style="text-align:right;color:gray">{{D['매수금액'+key]}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['매도수량'+key]}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['매도가격'+key]}}</td>
+          <td style="text-align:right;color:gray">{{D['매도금액'+key]}}</td>
+          <td style="text-align:right;color:yellow">{{D['추정손익'+key]}}</td>
+          <td style="text-align:right;color:gray">{{D['평균단가'+key]}}</td>
+          <td style="text-align:right;color:gray">{{D['현수익률'+key]}}%</td>
+          <td style="text-align:right;color:gray">{{D['현재잔액'+key]}}</td>
+          <td style="text-align:right;color:gray">{{D['현금비중'+key]}}%</td>
         </tr>
+        {% endfor %}
         <tr>
-          <td style="color:yellow">R tactic({{D['증권계좌2']}}) :</td><td style="text-align:right;">{{D['현재시즌2']}}-{{D['현재일수2']}}</td>
-          <td style="text-align:right;color:#f78181">{{D['매수수량2']}}</td><td style="text-align:right;color:#f78181">{{D['매수가격2']}}</td>
-          <td style="text-align:right;color:gray">{{D['매수금액2']}}</td><td style="text-align:right;color:#58ACFA">{{D['매도수량2']}}</td>
-          <td style="text-align:right;color:#58ACFA">{{D['매도가격2']}}</td><td style="text-align:right;color:gray">{{D['매도금액2']}}</td>
-          <td style="text-align:right;color:gray">{{D['보유수량2']}}</td><td style="text-align:right;color:gray">{{D['평균단가2']}}</td>
-          <td style="text-align:right;color:gray">{{D['현수익률2']}}%</td><td style="text-align:right;color:gray">{{D['현재잔액2']}}</td>
-          <td style="text-align:right;color:gray">{{D['현금비중2']}}%</td>
-        </tr>
-        <tr>
-          <td style="color:lightgreen">S tactic({{D['증권계좌3']}}) :</td><td style="text-align:right;">{{D['현재시즌3']}}-{{D['현재일수3']}}</td>
-          <td style="text-align:right;color:#f78181">{{D['매수수량3']}}</td><td style="text-align:right;color:#f78181">{{D['매수가격3']}}</td>
-          <td style="text-align:right;color:gray">{{D['매수금액3']}}</td><td style="text-align:right;color:#58ACFA">{{D['매도수량3']}}</td>
-          <td style="text-align:right;color:#58ACFA">{{D['매도가격3']}}</td><td style="text-align:right;color:gray">{{D['매도금액3']}}</td>
-          <td style="text-align:right;color:gray">{{D['보유수량3']}}</td><td style="text-align:right;color:gray">{{D['평균단가3']}}</td>
-          <td style="text-align:right;color:gray">{{D['현수익률3']}}%</td><td style="text-align:right;color:gray">{{D['현재잔액3']}}</td>
-          <td style="text-align:right;color:gray">{{D['현금비중3']}}%</td>
+          <td colspan="6">&nbsp;</td><td style="text-align:right;color:gray">{{D['필요상승']}}%</td><td>&nbsp;</td>
+          <td style="text-align:right;color:yellow">{{D['추정합계']}}</td>
+          <td colspan="4">&nbsp;</td>
         </tr>
       </table>
       <br>
