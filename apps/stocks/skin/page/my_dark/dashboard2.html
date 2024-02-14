@@ -49,14 +49,14 @@
           <th colspan="5">기타정보</th>
         </tr>
         <tr>
-          <th>전략구분</th><th>시즌</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
+          <th style="text-align:left">전략구분</th><th>시즌</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
           <th style="text-align:right">매수상한</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
           <th style="text-align:right">매도하한</th><th style="text-align:right">추정손익(원)</th><th style="text-align:right">평균단가</th>
           <th>수익률</th><th style="text-align:right">현재잔액</th><th style="text-align:right">현금비중</th>
         </tr>
         {% for key in ['1','2','3'] %}
         <tr>
-          <td style="color:{{D['식별색상'+key]}}">V tactic({{D['증권계좌'+key]}}) :</td>
+          <td style="color:{{D['식별색상'+key]}}">{{D['증권계좌'+key]}}</td>
           <td style="text-align:right;">{{D['현재시즌'+key]}}-{{D['현재일수'+key]}}</td>
           <td style="text-align:right;color:#f78181">{{D['매수수량'+key]}}</td>
           <td style="text-align:right;color:#f78181">{{D['매수가격'+key]}}</td>
