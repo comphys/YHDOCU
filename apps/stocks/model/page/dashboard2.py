@@ -142,14 +142,14 @@ class M_dashboard2(Model) :
             qry = f"SELECT CAST(sub2 as INT), CAST(sub19 as float), CAST(sub3 as INT), CAST(sub20 as float),sub1,sub12,add3,add8,add7,add4,add0,add6 FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
             rst = self.DB.oneline(qry)
             key = str(odr+1)
-            self.D['매수수량'+key] = rst[0] if rst[0] else ' '
-            self.D['매수가격'+key] = rst[1] if rst[0] else ' '
+            self.D['매수수량'+key] = rst[0] if rst[0] else ''
+            self.D['매수가격'+key] = rst[1] if rst[0] else ''
             매수금액 = rst[0]*rst[1]
-            self.D['매수금액'+key] = f"{매수금액:,.2f}" if rst[0] else ' '
-            self.D['매도수량'+key] = rst[2] if rst[2] else ' '
-            self.D['매도가격'+key] = rst[3] if rst[2] else ' '
+            self.D['매수금액'+key] = f"{매수금액:,.2f}" if rst[0] else ''
+            self.D['매도수량'+key] = rst[2] if rst[2] else ''
+            self.D['매도가격'+key] = rst[3] if rst[2] else ''
             매도금액 = rst[2]*rst[3]
-            self.D['매도금액'+key] = f"{매도금액:,.2f}" if rst[2] else ' '
+            self.D['매도금액'+key] = f"{매도금액:,.2f}" if rst[2] else ''
             self.D['현재시즌'+key] = rst[4]
             self.D['현재일수'+key] = rst[5]
             self.D['현재잔액'+key] = f"{float(rst[6]):,.2f}"
@@ -160,10 +160,10 @@ class M_dashboard2(Model) :
             
             # 추정이익 계산
             추정손익 = rst[2]*rst[3] - float(rst[11]); self.D['추정합계'] += 추정손익
-            self.D['추정손익'+key] = f"{추정손익 * self.D['현재환율']:,.0f}" if rst[2] else ' '
+            self.D['추정손익'+key] = f"{추정손익 * self.D['현재환율']:,.0f}" if rst[2] else ''
         
         self.D['추정합계'] = f"{self.D['추정합계']* self.D['현재환율']:,.0f}"
-        self.D['필요상승'] = f"{(self.D['매도가격1']/float(self.D['최종종가']) - 1)*100:.1f}"
+        self.D['필요상승'] = f"{(self.D['매도가격1']/float(self.D['최종종가']) - 1)*100:.1f}" if self.D['매도가격1'] else ''
             
             
         chk_off = self.DB.exe(f"SELECT description FROM parameters WHERE val='{self.D['오늘날자']}' AND cat='미국증시휴장일'")
