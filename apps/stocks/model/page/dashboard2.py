@@ -162,8 +162,8 @@ class M_dashboard2(Model) :
             추정손익 = rst[2]*rst[3] - float(rst[11]); self.D['추정합계'] += 추정손익
             self.D['추정손익'+key] = f"{추정손익 * self.D['현재환율']:,.0f}" if rst[2] else ''
         
-        self.D['추정합계'] = f"{self.D['추정합계']* self.D['현재환율']:,.0f}"
-        self.D['필요상승'] = f"{(self.D['매도가격1']/float(self.D['최종종가']) - 1)*100:.1f}" if self.D['매도가격1'] else ''
+        self.D['추정합계'] = f"{self.D['추정합계']* self.D['현재환율']:,.0f}" if self.D['추정합계'] else ''
+        self.D['필요상승'] = f"{(self.D['매도가격1']/float(self.D['최종종가']) - 1)*100:.1f}%" if self.D['매도가격1'] else ''
             
             
         chk_off = self.DB.exe(f"SELECT description FROM parameters WHERE val='{self.D['오늘날자']}' AND cat='미국증시휴장일'")
