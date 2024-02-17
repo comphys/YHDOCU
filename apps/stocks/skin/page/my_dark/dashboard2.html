@@ -38,7 +38,7 @@
       <div style="font-style:italic;color:gray;margin-bottom:20px;">
         The Strategy for the day <span style="color:yellow">{{D['오늘날자']}}({{D['오늘요일']}})</span> 
         from <span style="color:white">{{D['최종날자']}}({{D['최종요일']}})</span>.
-        The last price is <span style="color:white">{{D['최종종가']}}</span>. 
+        The last price is <span style="color:white">{{D['최종종가']}}({{D['종가변동']}})</span>. 
         The current exchange rate is <span style="color:white">{{D['환율표기']}}</span> won/usd.
       </div>
       <div style="text-align:center;color:gold;font-style:italic;">{{D['chk_off']}}</div>
@@ -50,7 +50,7 @@
         </tr>
         <tr>
           <th style="text-align:left">전략구분</th><th>시즌</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
-          <th style="text-align:right">매수상한</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
+          <th style="text-align:right">타겟지점</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
           <th style="text-align:right">매도하한</th><th style="text-align:right">추정손익(원)</th><th style="text-align:right">평균단가</th>
           <th>수익률</th><th style="text-align:right">현재잔액</th><th style="text-align:right">현금비중</th>
         </tr>
@@ -60,7 +60,7 @@
           <td style="text-align:right;">{{D['현재시즌'+key]}}-{{D['현재일수'+key]}}</td>
           <td style="text-align:right;color:#f78181">{{D['매수수량'+key]}}</td>
           <td style="text-align:right;color:#f78181">{{D['매수가격'+key]}}</td>
-          <td style="text-align:right;color:gray">{{D['매수금액'+key]}}</td>
+          <td style="text-align:right;color:gray">{{D['타겟지점'+key]}}</td>
           <td style="text-align:right;color:#58ACFA">{{D['매도수량'+key]}}</td>
           <td style="text-align:right;color:#58ACFA">{{D['매도가격'+key]}}</td>
           <td style="text-align:right;color:gray">{{D['매도금액'+key]}}</td>

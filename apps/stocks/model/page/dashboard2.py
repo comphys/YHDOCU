@@ -52,6 +52,7 @@ class M_dashboard2(Model) :
             self.D['Vtactic_pro'] = [float(x['add8']) for x in chart_data]   
 
             self.D['최종종가'] = self.D['close_price'][-1]
+            self.D['종가변동'] = self.percent_diff(float(self.D['close_price'][-2]),float(self.D['최종종가']))
         
             self.DB.clear(); self.DB.wre = f"add0='{last_date}'"
             
@@ -144,8 +145,7 @@ class M_dashboard2(Model) :
             key = str(odr+1)
             self.D['매수수량'+key] = rst[0] if rst[0] else ''
             self.D['매수가격'+key] = rst[1] if rst[0] else ''
-            매수금액 = rst[0]*rst[1]
-            self.D['매수금액'+key] = f"{매수금액:,.2f}" if rst[0] else ''
+            self.D['타겟지점'+key] = self.percent_diff(float(self.D['최종종가']),rst[1])
             self.D['매도수량'+key] = rst[2] if rst[2] else ''
             self.D['매도가격'+key] = rst[3] if rst[2] else ''
             매도금액 = rst[2]*rst[3]
@@ -163,17 +163,21 @@ class M_dashboard2(Model) :
             self.D['추정손익'+key] = f"{추정손익 * self.D['현재환율']:,.0f}" if rst[2] else ''
         
         self.D['추정합계'] = f"{self.D['추정합계']* self.D['현재환율']:,.0f}" if self.D['추정합계'] else ''
-        self.D['필요상승'] = f"{(self.D['매도가격1']/float(self.D['최종종가']) - 1)*100:.1f}%" if self.D['매도가격1'] else ''
+        self.D['필요상승'] = self.percent_diff(float(self.D['최종종가']),self.D['매도가격1']) 
             
             
         chk_off = self.DB.exe(f"SELECT description FROM parameters WHERE val='{self.D['오늘날자']}' AND cat='미국증시휴장일'")
         self.D['chk_off'] = chk_off[0][0] if chk_off else ''    
 
-        if self.D['증권계좌3'] == "확인필요" : self.D['chk_off'] = "Not all information is updated. Please Check it."
+        if  self.D['증권계좌3'] == "확인필요" : self.D['chk_off'] = "Not all information is updated. Please Check it."
+
+        if  self.D['오늘요일'] in ('토','일') : self.D['chk_off'] = "Today is weekend. Take a rest!" 
 
         return
 
-            
+    def percent_diff(self,a,b) :
+        if not a or not b : return ''
+        return f"{(b/a - 1) * 100:.2f}%"        
     
     def merge_dict(self,A,B) :
         
