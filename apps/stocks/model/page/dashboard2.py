@@ -9,28 +9,42 @@ class M_dashboard2(Model) :
         self.M['monthlyProfit'] = {}
         self.M['eachSellTotal'] = {} 
 
-        self.D['오늘날자']  = my.timestamp_to_date(opt=7) 
-        self.D['오늘요일']  = my.dayofdate(self.D['오늘날자'])
-        self.D['현재환율']  = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
+        self.M['구간시작'] = self.gets.get('ss','')
+        self.M['구간종료'] = self.gets.get('se','')
+        
+        if  self.M['구간종료'] :
+            self.D['오늘날자']  = self.M['구간종료']
+            self.D['오늘요일']  = my.dayofdate(self.D['오늘날자'])
+            self.D['현재환율']  = float(self.DB.one(f"SELECT usd_krw FROM usd_krw WHERE date <='{self.M['구간종료']}' ORDER BY rowid DESC LIMIT 1"))
+        else :
+            self.D['오늘날자']  = my.timestamp_to_date(opt=7) 
+            self.D['오늘요일']  = my.dayofdate(self.D['오늘날자'])
+            self.D['현재환율']  = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))            
         
         self.monthlyProfitTotal()
         self.progressGraph()
         self.total_value_allot()
-        self.show_strategy(ST)
         
-
+        if self.M['구간종료'] : self.D['chk_off'] = "특정 구간 확인 모드입니다."
+        else : self.show_strategy(ST)
+        
     
     def progressGraph(self) :
         
         # add7 평균단가, add8 현수익률, add9 보유수량
-        self.D['최종날자'] = last_date = self.DB.one(f"SELECT max(add0) FROM {self.M['boards'][0]}")
+        if  self.M['구간종료'] :
+            self.D['최종날자'] = last_date = self.DB.one(f"SELECT max(add0) FROM {self.M['boards'][0]} WHERE add0 <= '{self.M['구간종료']}'")
+        else :
+            self.D['최종날자'] = last_date = self.DB.one(f"SELECT max(add0) FROM {self.M['boards'][0]}")
+
         self.D['최종요일']  = my.dayofdate(self.D['최종날자'])
-        
+
         self.DB.clear()
         self.DB.tbl = self.M['boards'][0]
         self.DB.wre = f"add0 <='{last_date}'"
+        if self.M['구간시작'] : self.DB.wre += f" AND add0 >= '{self.M['구간시작']}'"
         self.DB.odr = "add0 DESC"
-        self.DB.lmt = '200'        
+        if not self.M['구간시작'] : self.DB.lmt = '200'        
         
         chart_data = self.DB.get("add0,add14,add17,add7,sub28,add8",assoc=True)
         if chart_data :
@@ -94,30 +108,38 @@ class M_dashboard2(Model) :
         # 월별 실현손익
         for bid in self.M['boards'] :
             qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {bid} WHERE CAST(add12 as float) > 0 "
+            if self.M['구간종료'] : qry += f" AND add0 BETWEEN '{self.M['구간시작']}' AND '{self.M['구간종료']}' "
             qry += "GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
             monthlyProfit = dict(self.DB.exe(qry))
             self.merge_dict(self.M['monthlyProfit'],monthlyProfit)
-        
-        self.D['월별구분'] = list(self.M['monthlyProfit'].keys())
-        self.D['월별이익'] = list(self.M['monthlyProfit'].values())
-        monthly_total = sum(self.D['월별이익'])
-        monthly_lenth = len(self.D['월별이익'])
-        
-        self.D['월별구분'].reverse()  
-        self.D['월별이익'].reverse()
-        self.D['월별구분'].append('AVG')
-        self.D['월별이익'].append(monthly_total/monthly_lenth)
-        self.D['월별이익'] = [int(x) for x in self.D['월별이익']] # list(map(int,self.D['월별이익']))
-        self.D['손익합계'] = f"$ {monthly_total:,.0f} ({monthly_total*self.D['현재환율']:,.0f}원)"
+ 
+        if self.M['monthlyProfit'] :
+            self.D['월별구분'] = list(self.M['monthlyProfit'].keys())
+            self.D['월별이익'] = list(self.M['monthlyProfit'].values())
+            monthly_total = sum(self.D['월별이익'])
+            monthly_lenth = len(self.D['월별이익'])
+            
+            self.D['월별구분'].reverse()  
+            self.D['월별이익'].reverse()
+            self.D['월별구분'].append('AVG')
+            self.D['월별이익'].append(monthly_total/monthly_lenth)
+            self.D['월별이익'] = [int(x) for x in self.D['월별이익']] # list(map(int,self.D['월별이익']))
+            self.D['손익합계'] = f"$ {monthly_total:,.0f} ({monthly_total*self.D['현재환율']:,.0f}원)"
         
 
     def total_value_allot(self) :
-        
-        
+        self.D['자산분배1'] = self.D['자산분배2'] = self.D['자산분배3'] = "{YH:0, YW:0, HJ:0, YG:0}"
+        self.D['자산총액1'] = self.D['자산총액2'] = self.D['자산총액3'] = 0.0
+        self.D['총입금액1'] = self.D['총출금액1'] = self.D['총입금액2'] = self.D['총출금액2'] = self.D['총입금액3'] = self.D['총출금액3'] = 0.0
+        self.D['증가비율1'] = self.D['증가비율2'] = self.D['증가비율3'] = 0.0
+
         self.D['환율표기']  = f"{self.D['현재환율']:,.1f}"
         for odr in [0,1,2] :
-            qry = f"SELECT add10, add17, sub25, sub26 FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
-            rst = self.DB.oneline(qry)
+            cond = f"WHERE add0 BETWEEN '{self.M['구간시작']}' AND '{self.M['구간종료']}'" if self.M['구간종료'] else ''
+            qry = f"SELECT add10, add17, sub25, sub26 FROM {self.M['boards'][odr]} {cond} ORDER BY add0 DESC LIMIT 1"
+            qrs = self.DB.exe(qry)
+            if not qrs : break
+            rst = qrs[0] 
             key = str(odr+1)
             self.D['자산분배'+key] = rst[0]
             self.D['자산총액'+key] = float(rst[1])
@@ -131,6 +153,7 @@ class M_dashboard2(Model) :
         self.D['증가비율0'] = round(총가치합/총입출입 * 100,2)    
             
     def show_strategy(self,ST) :
+
         self.D['증권계좌1'] = ST['031']; self.D['식별색상1'] = "#f78181"
         self.D['증권계좌2'] = ST['032']; self.D['식별색상2'] = "yellow" 
         self.D['증권계좌3'] = ST['033']; self.D['식별색상3'] = "lightgreen"

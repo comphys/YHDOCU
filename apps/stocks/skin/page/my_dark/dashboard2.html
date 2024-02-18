@@ -11,11 +11,13 @@
         </div>
         <div class="pull-left" style="border:1px solid black;margin-left:10px;padding:10px;">
             <canvas id="myChart_side" style="width:310px;height:303px;background-color:#24272d"></canvas>
-            <div style="margin-top:2px;text-align:center;">
+            <div style="margin-top:2px;margin-left:30px;text-align:center;">
                 <input type='text' name='s_date' class="i-date_1" style="width:90px;text-align:center;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}"> -
                 <input type='text' name='e_date' class="i-date_2" style="width:90px;text-align:center;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}">
-                <span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(2)" title="설정구간"><i class="fa fa-bars"></i></span>
-                <span style="display:inline-block;vertical-align:middle;cursor:pointer;color:gray" onclick="slice_chart(0)" title="전체시즌"><i class="fa fa-home"></i></span>
+                <span style="cursor:pointer;color:gray" onclick="slice_chart(2)" title="설정구간"><i class="fa fa-bars"></i></span>
+                <span style="cursor:pointer;color:gray" onclick="slice_chart(0)" title="전체시즌"><i class="fa fa-home"></i></span>
+                <span style="cursor:pointer;color:gray" onclick="specific_span(1)" title="특정일자기준"><i class="fa fa-calendar"></i></span>
+                <span style="cursor:pointer;color:gray" onclick="specific_span(0)" title="전체일자기준 리셋"><i class="fa fa-refresh"></i></span>
             </div>
         </div>
     </div>
@@ -23,8 +25,8 @@
     <div>&nbsp;</div>   
 
     <div class="clearfix" style="background-color:#24272d;padding:10px;border:2px solid black;">
-        <div class="pull-left" style="border:1px solid black;"  onclick="$('#next_strategy').show()">
-            <canvas id="monthlyProfitChart"  style="width:1078px;height:350px;background-color:#24272d;"></canvas>
+        <div id="monthlyProfitDiv" class="pull-left" style="border:1px solid black;width:1078px;height:350px;"  onclick="$('#next_strategy').show()">
+            <canvas id="monthlyProfitChart"  style="background-color:#24272d;width:1078px;height:350px;"></canvas>
         </div>
         <div class="pull-left" style="border:1px solid black;margin-left:10px;width:330px;height:350px;padding:10px;">
             <div id="show_allotment"></div>
@@ -234,6 +236,16 @@ function slice_chart(opt) {
 	myChart_main.update();
 }
 
+function specific_span(opt) {
+  if(opt){ 
+    const s_date = $("input[name='s_date']").val(); 	
+    const e_date = $("input[name='e_date']").val();  
+    location.href = uri('linkurl') + '/page/view/dashboard2/ss='+s_date+'/se='+e_date;
+  }
+  else { location.href = uri('linkurl') + '/page/view/dashboard2'; }
+}
+
+
 {% if D['월별구분']|safe %}
 	const ctx_monthly= $id('monthlyProfitChart');
 	ctx_monthly.style.backgroundColor = '#33363b';
@@ -272,6 +284,8 @@ function slice_chart(opt) {
 	},
 	};
 	const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
+{% else %}
+  $("#monthlyProfitDiv").html("<div style='text-align:center;margin-top:100px;'>현재의 구간엔 월별 수입내역이 없습니다.</div>")
 {% endif %}
 
 // ------------------------------------------------------------
