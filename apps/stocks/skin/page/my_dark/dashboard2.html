@@ -10,7 +10,7 @@
             <canvas id="myChart_main"  style="width:1078px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
         </div>
         <div class="pull-left" style="border:1px solid black;margin-left:10px;padding:10px;">
-            <canvas id="myChart_side" style="width:310px;height:303px;background-color:#24272d"></canvas>
+            <canvas id="myChart_side" style="width:310px;height:303px;background-color:#24272d" onclick="$('#HolderProfits').show()"></canvas>
             <div style="margin-top:2px;margin-left:30px;text-align:center;">
                 <input type='text' name='s_date' class="i-date_1" style="width:90px;text-align:center;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}"> -
                 <input type='text' name='e_date' class="i-date_2" style="width:90px;text-align:center;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}">
@@ -82,10 +82,12 @@
       <br>
     </div>
 
-    <div style="position:absolute;top:621px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['증가비율0']}}%</div>
-    <div style="position:absolute;top:658px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['증가비율1']}}%</div>
-    <div style="position:absolute;top:693px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['증가비율2']}}%</div>
-    <div style="position:absolute;top:729px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['증가비율3']}}%</div>
+    <div style="position:absolute;top:521px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['E증가비율0']}}%</div>
+    <div style="position:absolute;top:558px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['E증가비율1']}}%</div>
+    <div style="position:absolute;top:593px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['E증가비율2']}}%</div>
+    <div style="position:absolute;top:629px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['E증가비율3']}}%</div>
+
+    <div id="HolderProfits" onclick="$(this).hide()" style="position:absolute;top:210px;left:1125px;width:330px;border:2px solid gray;opacity:0.7;background-color:black;padding:10px;display:none"></div>
 
 <script>
     
@@ -293,9 +295,9 @@ function specific_span(opt) {
 // ------------------------------------------------------------
 const ctx_side = $id('myChart_side');
 
-var allot1 = {{D['자산분배1']}}; var cur_total1 = {{D['자산총액1']}}; 
-var allot2 = {{D['자산분배2']}}; var cur_total2 = {{D['자산총액2']}}; 
-var allot3 = {{D['자산분배3']}}; var cur_total3 = {{D['자산총액3']}}; 
+var allot1 = {{D['E자산분배1']}}; var cur_total1 = {{D['E자산총액1']}}; 
+var allot2 = {{D['E자산분배2']}}; var cur_total2 = {{D['E자산총액2']}}; 
+var allot3 = {{D['E자산분배3']}}; var cur_total3 = {{D['E자산총액3']}}; 
 var usd_to_krw = {{D['현재환율']}}
 
 var allot_val = []
@@ -329,7 +331,7 @@ string += "<td style='text-align:right'>"+ allot_sum0.toLocaleString() +"</td>"
 string += "<td style='text-align:right'>"+ allot_sum1.toLocaleString() +"</td>"
 string += "<td style='text-align:right'>"+ parseInt(allot_sum1 * usd_to_krw).toLocaleString() +"</td></tr>"
 string += "</table>"
-$("#show_allotment").html(string)
+$("#HolderProfits").html(string)
 //
 
 const data_side = {
@@ -361,10 +363,10 @@ const myChart_side = new Chart(ctx_side, config_side);
 // ------------------------------------------------------------
 // Bottom Chart
 // ------------------------------------------------------------
-var increase_rate1 = {{D['증가비율1']}};
-var increase_rate2 = {{D['증가비율2']}};
-var increase_rate3 = {{D['증가비율3']}};
-var increase_rate0 = {{D['증가비율0']}};
+var increase_rate1 = {{D['E증가비율1']}};
+var increase_rate2 = {{D['E증가비율2']}};
+var increase_rate3 = {{D['E증가비율3']}};
+var increase_rate0 = {{D['E증가비율0']}};
 
 const ctx_vrs = $id('myChart_vrs');
     
