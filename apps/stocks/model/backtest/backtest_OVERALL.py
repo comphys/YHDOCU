@@ -78,6 +78,13 @@ class M_backtest_OVERALL(Model) :
         self.V['평가금액'] = self.M['당일종가'] * self.V['보유수량']; self.V['수익현황'] = self.V['평가금액'] - self.V['총매수금']
         self.R['평가금액'] = self.M['당일종가'] * self.R['보유수량']; self.R['수익현황'] = self.R['평가금액'] - self.R['총매수금']
         self.S['평가금액'] = self.M['당일종가'] * self.S['보유수량']; self.S['수익현황'] = self.S['평가금액'] - self.S['총매수금']
+
+        # Real MDD
+        self.V['실최하락'] = self.V['수익현황'] / (self.V['일반자금'] + self.V['총매수금']) * 100
+        self.R['실최하락'] = self.R['수익현황'] / (self.R['기회자금'] + self.R['총매수금']) * 100
+        self.S['실최하락'] = self.S['수익현황'] / (self.S['안정자금'] + self.S['총매수금']) * 100
+
+        self.info(f"{self.V['실최하락']} {self.R['실최하락']} {self.S['실최하락']}")
         
         if  self.V['보유수량'] == 0 and self.V['매도수량']:
             self.V['현수익률'] = self.V['매수익률']; self.V['수익현황'] = self.V['실현수익'] 
@@ -89,9 +96,12 @@ class M_backtest_OVERALL(Model) :
             self.S['현수익률']  = (self.M['당일종가']/self.S['평균단가'] -1) * 100  if self.S['평균단가'] else 0.00    
             
         if self.M['현재날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['현재날수']; self.M['최대날자'] = self.M['현재일자']
-        if self.V['현수익률'] < self.V['최대하락'] : self.V['최대하락'] = self.V['현수익률']; self.V['최하일자'] = self.M['현재일자']
-        if self.R['현수익률'] < self.R['최대하락'] : self.R['최대하락'] = self.R['현수익률']; self.R['최하일자'] = self.M['현재일자']
-        if self.S['현수익률'] < self.S['최대하락'] : self.S['최대하락'] = self.S['현수익률']; self.S['최하일자'] = self.M['현재일자']
+        if self.V['실최하락'] < self.V['진최하락'] : self.V['진최하락'] = self.V['실최하락']; self.V['최하일자'] = self.M['현재일자']
+        if self.R['실최하락'] < self.R['진최하락'] : self.R['진최하락'] = self.R['실최하락']; self.R['최하일자'] = self.M['현재일자']
+        if self.S['실최하락'] < self.S['진최하락'] : self.S['진최하락'] = self.S['실최하락']; self.S['최하일자'] = self.M['현재일자']
+
+
+
 
     def commission(self,mm,opt) :
         if  opt==1 :  return int(mm*0.07)/100
@@ -287,9 +297,9 @@ class M_backtest_OVERALL(Model) :
 
         self.D['max_days'] = self.M['최대일수']
         self.D['max_date'] = self.M['최대날자'][2:]
-        self.D['MDD1'] = f"{self.V['최대하락']:.2f}"; self.D['MDD_DAY1'] = self.V['최하일자'][2:]
-        self.D['MDD2'] = f"{self.R['최대하락']:.2f}"; self.D['MDD_DAY2'] = self.R['최하일자'][2:]
-        self.D['MDD3'] = f"{self.S['최대하락']:.2f}"; self.D['MDD_DAY3'] = self.S['최하일자'][2:]
+        self.D['MDD1'] = f"{self.V['진최하락']:.2f}"; self.D['MDD_DAY1'] = self.V['최하일자'][2:]
+        self.D['MDD2'] = f"{self.R['진최하락']:.2f}"; self.D['MDD_DAY2'] = self.R['최하일자'][2:]
+        self.D['MDD3'] = f"{self.S['진최하락']:.2f}"; self.D['MDD_DAY3'] = self.S['최하일자'][2:]
         
         초기자본1 = float(self.D['일반자금'].replace(',','')) 
         최종자본1 = self.V['평가금액'] + self.V['일반자금'] 
@@ -436,9 +446,9 @@ class M_backtest_OVERALL(Model) :
         self.M['현재날수']  = 1
         self.M['최대일수']  = 0   # 최고 오래 지속된 시즌의 일수
         
-        self.V['최대하락']  = 0   # 최고 MDD
-        self.R['최대하락']  = 0
-        self.S['최대하락']  = 0
+        self.V['진최하락']  = 0   # 최고 MDD
+        self.R['진최하락']  = 0
+        self.S['진최하락']  = 0
 
         self.M['첫날기록']  = False
         self.R['기회진행']  = False 
