@@ -29,10 +29,7 @@
             <canvas id="monthlyProfitChart"  style="background-color:#24272d;width:1078px;height:350px;"></canvas>
         </div>
         <div class="pull-left" style="border:1px solid black;margin-left:10px;width:330px;height:350px;padding:10px;">
-            <div id="show_allotment"></div>
-            <div style="margin-top:10px;">
-                <canvas id="myChart_vrs"  style="width:300px;height:180px;background-color:#24272d;"></canvas>
-            </div>
+            <div id="vrs_progress"></div>
         </div>
     </div>
 
@@ -81,11 +78,6 @@
       </table>
       <br>
     </div>
-
-    <div style="position:absolute;top:521px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['E증가비율0']}}%</div>
-    <div style="position:absolute;top:558px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['E증가비율1']}}%</div>
-    <div style="position:absolute;top:593px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['E증가비율2']}}%</div>
-    <div style="position:absolute;top:629px;left:1200px;font-size:12px;width:100px;text-align:right;">{{D['E증가비율3']}}%</div>
 
     <div id="HolderProfits" onclick="$(this).hide()" style="position:absolute;top:210px;left:1125px;width:330px;border:2px solid gray;opacity:0.7;background-color:black;padding:10px;display:none"></div>
 
@@ -291,7 +283,7 @@ function specific_span(opt) {
 {% endif %}
 
 // ------------------------------------------------------------
-// Side Chart
+// 우측 상단 챠트
 // ------------------------------------------------------------
 const ctx_side = $id('myChart_side');
 
@@ -363,31 +355,33 @@ const myChart_side = new Chart(ctx_side, config_side);
 // ------------------------------------------------------------
 // Bottom Chart
 // ------------------------------------------------------------
-var increase_rate1 = {{D['E증가비율1']}};
-var increase_rate2 = {{D['E증가비율2']}};
-var increase_rate3 = {{D['E증가비율3']}};
-var increase_rate0 = {{D['E증가비율0']}};
+var tactics_name = ['V','R','S']
+var tactics_From = {{D['처음순증']}};
+var tactics_toto = {{D['나중순증']}};
+var tactics_diff = []
 
-const ctx_vrs = $id('myChart_vrs');
-    
-const data_vrs = {
-  labels: ['T','V','R','S'],
-  datasets: [
-    { label: '기초현황',    data: [100,100,100,100], borderColor: '#000000',      backgroundColor: '#32435F', barThickness:3, },
-    { label: '수익현황',    data: [increase_rate0,increase_rate1,increase_rate2,increase_rate3], borderColor: '#000000',      backgroundColor: '#A67F78', barThickness:4, },
-  ]
-};
-const config_vrs = {
-  type: 'bar',
-  data: data_vrs,
-  options: {
-    indexAxis: 'y',
-    responsive: true,
-    plugins : { legend: {display:false},
-                tooltip : {enabled:false},
-   }
-  },
+for(i=0;i<tactics_From.length;i++) { tactics_diff[i] = tactics_toto[i] - tactics_From[i]; }
+
+var sum_From = tactics_From.reduce((acc,cur) => acc+cur,0); 
+var sum_toto = tactics_toto.reduce((acc,cur) => acc+cur,0); 
+var sum_diff = tactics_diff.reduce((acc,cur) => acc+cur,0); 
+
+string  ="<table style='width:100%'>"
+string +="<tr style='border-bottom:1px solid gray;height:23px;'>"
+string +="<td>T</td><td style='text-align:right'>From </td>"
+string +="<td style='text-align:right'>To </td>"
+string +="<td style='text-align:right'>Pro</td></tr>"
+for(i=0;i<tactics_name.length;i++) {
+  string += "<tr style='height:23px'><td>"+ tactics_name[i] +"</td>"
+  string += "<td style='text-align:right'>"+ tactics_From[i].toLocaleString() +"</td>"
+  string += "<td style='text-align:right'>"+ tactics_toto[i].toLocaleString() +"</td>"
+  string += "<td style='text-align:right'>"+ tactics_diff[i].toLocaleString() +"</td></tr>"
 }
-const myChart_vrs = new Chart(ctx_vrs, config_vrs);
+string += "<tr style='border-top:1px solid gray;height:23px;font-weight:bold'><td>Sum</td>"
+string += "<td style='text-align:right'>"+ sum_From.toLocaleString() +"</td>"
+string += "<td style='text-align:right'>"+ sum_toto.toLocaleString() +"</td>"
+string += "<td style='text-align:right'>"+ sum_diff.toLocaleString() +"</td></tr>"
+string += "</table>"
+$("#vrs_progress").html(string)
 </script>
 {% endblock %}
