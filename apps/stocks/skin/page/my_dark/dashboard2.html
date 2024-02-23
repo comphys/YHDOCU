@@ -10,7 +10,7 @@
             <canvas id="myChart_main"  style="width:1078px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
         </div>
         <div class="pull-left" style="border:1px solid black;margin-left:10px;padding:10px;">
-            <canvas id="myChart_side" style="width:310px;height:303px;background-color:#24272d" onclick="$('#HolderProfits').show()"></canvas>
+            <canvas id="myChart_side" style="width:310px;height:303px;background-color:#24272d"></canvas>
             <div style="margin-top:2px;margin-left:30px;text-align:center;">
                 <input type='text' name='s_date' class="i-date_1" style="width:90px;text-align:center;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}"> -
                 <input type='text' name='e_date' class="i-date_2" style="width:90px;text-align:center;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}">
@@ -82,8 +82,6 @@
       </table>
       <br>
     </div>
-
-    <div id="HolderProfits" onclick="$(this).hide()" style="position:absolute;top:210px;left:1125px;width:330px;border:2px solid gray;opacity:0.7;background-color:black;padding:10px;display:none"></div>
 
 <script>
     
@@ -259,9 +257,9 @@ function specific_span(opt) {
 	let backColor = new Array(labels_monthly.length-1);
 	let boreColor = new Array(labels_monthly.length-1);
 	backColor.fill('rgba(75, 192, 192, 0.4)');
-	backColor.push('rgba(255, 99, 132, 0.4)');
+	backColor.push('#8F8681');
 	boreColor.fill('rgb(75, 192, 192)');
-	boreColor.push('rgb(255, 99, 132)');
+	boreColor.push('#000000');
 
 	const data_monthly = {
 	 labels: labels_monthly,
