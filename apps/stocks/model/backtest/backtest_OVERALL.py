@@ -84,8 +84,6 @@ class M_backtest_OVERALL(Model) :
         self.R['실최하락'] = self.R['수익현황'] / (self.R['기회자금'] + self.R['총매수금']) * 100
         self.S['실최하락'] = self.S['수익현황'] / (self.S['안정자금'] + self.S['총매수금']) * 100
 
-        self.info(f"{self.V['실최하락']} {self.R['실최하락']} {self.S['실최하락']}")
-        
         if  self.V['보유수량'] == 0 and self.V['매도수량']:
             self.V['현수익률'] = self.V['매수익률']; self.V['수익현황'] = self.V['실현수익'] 
             self.R['현수익률'] = self.R['매수익률']; self.R['수익현황'] = self.R['실현수익'] 
