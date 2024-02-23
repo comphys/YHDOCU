@@ -180,7 +180,7 @@ class M_dashboard2(Model) :
             key = str(odr+1)
             self.D['매수수량'+key] = rst[0] if rst[0] else ''
             self.D['매수가격'+key] = rst[1] if rst[0] else ''
-            self.D['타겟지점'+key] = self.percent_diff(float(self.D['최종종가']),rst[1])
+            self.D['타겟지점'+key] = self.percent_diff(float(self.D['최종종가']),rst[1]) if rst[0] else ''
             self.D['매도수량'+key] = rst[2] if rst[2] else ''
             self.D['매도가격'+key] = rst[3] if rst[2] else ''
             매도금액 = rst[2]*rst[3]
