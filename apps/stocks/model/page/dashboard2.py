@@ -153,7 +153,7 @@ class M_dashboard2(Model) :
             cond = f"WHERE add0 <= '{self.D['e_date']}'" 
             qry = f"SELECT add10, add17, sub25, sub26 FROM {self.M['boards'][odr]} {cond} ORDER BY add0 DESC LIMIT 1"
             qrs = self.DB.exe(qry)
-            if not qrs : break
+            if not qrs : qrs=[('0','0','0'),]
             rst = qrs[0] 
             key = str(odr+1)
             self.D['E자산분배'+key] = rst[0]
