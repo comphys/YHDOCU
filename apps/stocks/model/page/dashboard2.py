@@ -16,35 +16,33 @@ class M_dashboard2(Model) :
             self.D['오늘날자']  = self.M['구간종료']
             self.D['오늘요일']  = my.dayofdate(self.D['오늘날자'])
             self.D['현재환율']  = float(self.DB.one(f"SELECT usd_krw FROM usd_krw WHERE date <='{self.M['구간종료']}' ORDER BY rowid DESC LIMIT 1"))
+            self.D['chk_off'] = "특정 구간 확인 모드입니다."
         else :
             self.D['오늘날자']  = my.timestamp_to_date(opt=7) 
             self.D['오늘요일']  = my.dayofdate(self.D['오늘날자'])
-            self.D['현재환율']  = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))            
-        
-        self.monthlyProfitTotal()
+            self.D['현재환율']  = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1")) 
+                    
         self.progressGraph()
+        self.monthlyProfitTotal()
         self.total_value_allot()
-        
-        if self.M['구간종료'] : self.D['chk_off'] = "특정 구간 확인 모드입니다."
-        else : self.show_strategy(ST)
-        
-    
+        self.show_strategy(ST)   
+           
     def progressGraph(self) :
         
-        # add7 평균단가, add8 현수익률, add9 보유수량
-        if  self.M['구간종료'] :
-            self.D['최종날자'] = last_date = self.DB.one(f"SELECT max(add0) FROM {self.M['boards'][0]} WHERE add0 <= '{self.M['구간종료']}'")
-        else :
-            self.D['최종날자'] = last_date = self.DB.one(f"SELECT max(add0) FROM {self.M['boards'][0]}")
+        cond = f" WHERE add0 <= '{self.M['구간종료']}' " if self.M['구간종료'] else ''
 
+        self.D['최종날자'] = last_date = self.DB.one(f"SELECT max(add0) FROM {self.M['boards'][0]} {cond}")
         self.D['최종요일']  = my.dayofdate(self.D['최종날자'])
 
         self.DB.clear()
         self.DB.tbl = self.M['boards'][0]
         self.DB.wre = f"add0 <='{last_date}'"
-        if self.M['구간시작'] : self.DB.wre += f" AND add0 >= '{self.M['구간시작']}'"
         self.DB.odr = "add0 DESC"
-        if not self.M['구간시작'] : self.DB.lmt = '200'        
+
+        if  self.M['구간시작'] : 
+            self.DB.wre += f" AND add0 >= '{self.M['구간시작']}'"
+        else : 
+            self.DB.lmt = '200'        
         
         chart_data = self.DB.get("add0,add14,add17,add7,sub28,add8",assoc=True)
         if chart_data :
@@ -68,12 +66,9 @@ class M_dashboard2(Model) :
             self.D['최종종가'] = self.D['close_price'][-1]
             self.D['종가변동'] = self.percent_diff(float(self.D['close_price'][-2]),float(self.D['최종종가']))
         
-            self.DB.clear(); self.DB.wre = f"add0='{last_date}'"
-            
-            self.DB.tbl = self.M['boards'][1]
-            RD = self.DB.exe(f"SELECT add0,CAST(add7 as FLOAT),CAST(add8 as FLOAT),CAST(add9 as INT),CAST(add17 as FLOAT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
-            self.DB.tbl = self.M['boards'][2]
-            SD = self.DB.exe(f"SELECT add0,CAST(add7 as FLOAT),CAST(add8 as FLOAT),CAST(add9 as INT),CAST(add17 as FLOAT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
+            cond = f"add0 BETWEEN '{first_date}' AND '{last_date}'"
+            RD = self.DB.exe(f"SELECT add0,CAST(add7 as FLOAT),CAST(add8 as FLOAT),CAST(add9 as INT),CAST(add17 as FLOAT) FROM {self.M['boards'][1]} WHERE {cond}") 
+            SD = self.DB.exe(f"SELECT add0,CAST(add7 as FLOAT),CAST(add8 as FLOAT),CAST(add9 as INT),CAST(add17 as FLOAT) FROM {self.M['boards'][2]} WHERE {cond}") 
 
             cx = {};dx = {}
             self.D['Rtactic_avg'] = []; self.D['Rtactic_pro'] = []
@@ -83,7 +78,7 @@ class M_dashboard2(Model) :
                     if c[2] or c[3]: dx[c[0][2:]] = c[2]
                 for x in self.D['chart_date'] : self.D['Rtactic_avg'].append(cx.get(x,'null')); self.D['Rtactic_pro'].append(dx.get(x,'null')) 
                 
-            cx = {};dx = {}
+            cx.clear();dx.clear()
             self.D['Stactic_avg'] = []; self.D['Stactic_pro'] = []
             if SD :
                 for c in SD : 
@@ -91,11 +86,9 @@ class M_dashboard2(Model) :
                     if c[2] or c[3] : dx[c[0][2:]] = c[2]
                 for x in self.D['chart_date'] : self.D['Stactic_avg'].append(cx.get(x,'null')); self.D['Stactic_pro'].append(dx.get(x,'null'))
                 
-            # self.D['표준편차'] = numpy.std(self.D['close_price'])
-
             # 매도한 날 매도금 합 가져오기
             for bid in self.M['boards'] :
-                qry = f"SELECT SUBSTR(add0,3,10), CAST(add18 as float) FROM {bid} WHERE CAST(add12 as float) > 0 and add0 BETWEEN '{first_date}' AND '{last_date}'"
+                qry = f"SELECT SUBSTR(add0,3,10), CAST(add18 as float) FROM {bid} WHERE CAST(add12 as float) > 0 and {cond}"
                 eachSellTotal = dict(self.DB.exe(qry))
                 self.merge_dict(self.M['eachSellTotal'],eachSellTotal)
             
@@ -103,13 +96,14 @@ class M_dashboard2(Model) :
             for x in self.D['chart_date'] : self.D['eachSellTotal'].append(self.M['eachSellTotal'].get(x,'null'))
             
            
-    
     def monthlyProfitTotal(self) :
-        # 월별 실현손익
+
         for bid in self.M['boards'] :
             qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {bid} WHERE CAST(add12 as float) > 0 "
-            if self.M['구간종료'] : qry += f" AND add0 BETWEEN '{self.M['구간시작']}' AND '{self.M['구간종료']}' "
+            if  self.M['구간종료'] : 
+                qry += f" AND add0 BETWEEN '{self.M['구간시작']}' AND '{self.M['구간종료']}' "
             qry += "GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
+            
             monthlyProfit = dict(self.DB.exe(qry))
             self.merge_dict(self.M['monthlyProfit'],monthlyProfit)
  
@@ -166,6 +160,7 @@ class M_dashboard2(Model) :
             
     def show_strategy(self,ST) :
 
+        if self.M['구간종료'] : return
         self.D['증권계좌1'] = ST['031']; self.D['식별색상1'] = "#f78181"
         self.D['증권계좌2'] = ST['032']; self.D['식별색상2'] = "yellow" 
         self.D['증권계좌3'] = ST['033']; self.D['식별색상3'] = "lightgreen"
