@@ -42,14 +42,17 @@
     			</div> <!--pull left-->
 
     			<div class="pull-right">
-					<div class='label label-info' style="cursor:pointer" onclick="oneYearSpan()">1y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(5)">5y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(3)">3y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(2)">2y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(1)">1y</div>&nbsp;
 					<div class='label label-info' style="cursor:pointer" onclick="startYearSpan()">S</div>&nbsp;
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px;cursor:pointer;" onclick="year_up_dn(0)"> 시작일자</div>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(0)"> 시작</div>
 						<input type='text' name='시작일자' class="i-date" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
 					</div>
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px;cursor:pointer;" onclick="year_up_dn(1)"> 종료일자</div>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(1)"> 종료</div>
 						<input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
 					</div>
     				<button class="btn btn-red-s3" style="vertical-align:middle;">테스팅</button>
@@ -489,12 +492,12 @@ function year_up_dn(opt) {
 	date2 = year2 + year2_l; $("input[name='종료일자']").val(date2)
 }
 
-function oneYearSpan() {
+function YearSpan(opt) {
 	let date1 = $("input[name='종료일자']").val()
 	let now = new Date(date1)
 
-	let oneYearAgo = new Date(now.setDate(now.getDate() - 364)) 
-	let date2 = oneYearAgo.toISOString().split('T')[0]
+	let YearsAgo = new Date(now.setDate(now.getDate() - (365*opt-1))) 
+	let date2 = YearsAgo.toISOString().split('T')[0]
 	$("input[name='시작일자']").val(date2)
 }
 
