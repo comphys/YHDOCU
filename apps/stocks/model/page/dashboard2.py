@@ -168,9 +168,11 @@ class M_dashboard2(Model) :
         today = self.DB.one("SELECT add0 FROM h_stockHistory_board WHERE add1='SOXL' ORDER BY add0 DESC LIMIT 1")
         
         self.D['추정합계'] = 0.0
+        self.D['가치합계'] = 0.0
         
         for odr in [0,1,2] :
-            qry = f"SELECT CAST(sub2 as INT), CAST(sub19 as float), CAST(sub3 as INT), CAST(sub20 as float),sub1,sub12,add3,add8,add7,add4,add0,add6 FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
+            qry = f"SELECT CAST(sub2 as INT), CAST(sub19 as float), CAST(sub3 as INT), CAST(sub20 as float),sub1,sub12,add3,add8,add7,add4,add0,add6,CAST(add17 as float)"
+            qry+= f" FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
             rst = self.DB.oneline(qry)
             key = str(odr+1)
             self.D['매수수량'+key] = rst[0] if rst[0] else ''
@@ -186,12 +188,15 @@ class M_dashboard2(Model) :
             self.D['현수익률'+key] = rst[7]
             self.D['평균단가'+key] = rst[8]
             self.D['현금비중'+key] = rst[9]
+            self.D['현재가치'+key] = f"{rst[12] * self.D['현재환율']:,.0f}"
+            self.D['가치합계'] += rst[12]
             if today != rst[10] : self.D['증권계좌'+key] = "확인필요"
             
             # 추정이익 계산
             추정손익 = rst[2]*rst[3] - float(rst[11]); self.D['추정합계'] += 추정손익
             self.D['추정손익'+key] = f"{추정손익 * self.D['현재환율']:,.0f}" if rst[2] else ''
         
+        self.D['가치합계'] = f"{self.D['가치합계']* self.D['현재환율']:,.0f}" 
         self.D['추정합계'] = f"{self.D['추정합계']* self.D['현재환율']:,.0f}" if self.D['추정합계'] else ''
         self.D['필요상승'] = self.percent_diff(float(self.D['최종종가']),self.D['매도가격1']) 
             
