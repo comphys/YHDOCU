@@ -22,12 +22,13 @@ class Pajax(Control) :
             system_role = self.DB.store('openai_kind_teacher')
             
         messages=[{'role':'system','content':system_role}]
+        
         openai.api_key = self.DB.store('openai_key')
         
         messages.append({"role":"user","content":f"{text}"})
         
-        completion = openai.ChatCompletion.create(model="gpt-3.5-turbo",temperature=0.7,messages=messages,max_tokens=2048)
-        assistant_content = completion.choices[0].message['content'].strip()
+        completion = openai.chat.completions.create(model="gpt-3.5-turbo",temperature=0.7,messages=messages,max_tokens=2048)
+        assistant_content = completion.choices[0].message.content.strip()
         return assistant_content
     
     def update_parameters(self) :
