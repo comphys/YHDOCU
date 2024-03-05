@@ -131,19 +131,19 @@
 			<col style="width:50px;"> <!-- 날수 -->
 			<col style="width:80px;"> <!-- 일자 -->
 			<col style="width:60px;"> <!-- 당일종가 -->
-			<col style="width:60px;border-right:2px solid gray"> <!-- 종가변동 -->
+			<col style="width:60px;border-right:3px solid #424242"> <!-- 종가변동 -->
 
 			<col style="width:100px"> <!-- 일반진행 -->
 			<col style="width:70px"> <!-- 일반평균 -->
 			<col style="width:90px"> <!-- 일반수익 -->
 			<col style="width:70px"> <!-- 일반(%) -->
-			<col style="width:100px;border-right:2px solid gray"> <!-- 일반잔액 -->
+			<col style="width:100px;border-right:3px solid #424242"> <!-- 일반잔액 -->
 
 			<col style="width:100px"> <!-- 기회진행 -->
 			<col style="width:70px"> <!-- 기회평균 -->
 			<col style="width:90px"> <!-- 기회수익 -->
 			<col style="width:70px"> <!-- 기회(%) -->
-			<col style="width:100px;border-right:2px solid gray"> <!-- 기회잔액 -->
+			<col style="width:100px;border-right:3px solid #424242"> <!-- 기회잔액 -->
 
 			<col style="width:100px"> <!-- 안정진행 -->
 			<col style="width:70px"> <!-- 안정평균 -->
@@ -155,7 +155,7 @@
 
 			{% for TR in D['TR'] %}
 			{% if TR['진행상황'] == '익절매도'  %}
-			<tr style="border-top:1px solid #F3F781;border-bottom:1px solid #F3F781;background-color:black;font-weight:bold" onclick="show_chart({{TR['기록시즌']}})"> 
+			<tr style="border-top:1px solid #424242;border-bottom:1px solid #424242;background-color:black;font-weight:bold" onclick="show_chart({{TR['기록시즌']}})"> 
 			{% elif TR['진행상황'] == '손절매도' %}
 			<tr style="border-top:1px solid #A9D0F5;border-bottom:1px solid #A9D0F5;background-color:black;" onclick="show_chart({{TR['기록시즌']}})">
 			{% else %}
