@@ -75,9 +75,16 @@
         </tr>
         {% endfor %}
         <tr>
-          <td colspan="6">&nbsp;</td><td style="text-align:right;color:gray">{{D['필요상승']}}</td>
+          <td colspan="2">&nbsp;</td>
+          <td style="text-align:right;color:#f78181">{{D['매수수합']}}</td>
+          <td colspan="2">&nbsp;</td>
+          <td style="text-align:right;color:#58ACFA">{{D['매도수합']}}</td>
+          <td style="text-align:right;color:gray">{{D['필요상승']}}</td>
           <td style="text-align:right;color:yellow">{{D['추정합계']}}</td>
-          <td colspan="4">&nbsp;</td><td style="text-align:right;color:yellow">{{D['가치합계']}}</td>
+          <td colspan="2">&nbsp;</td>
+          <td style="text-align:right;color:gray">{{D['잔액합산']}}</td>
+          <td style="text-align:right;color:gray">{{D['전현비중']}}%</td>
+          <td style="text-align:right;color:yellow">{{D['가치합계']}}</td>
         </tr>
       </table>
       <br>
