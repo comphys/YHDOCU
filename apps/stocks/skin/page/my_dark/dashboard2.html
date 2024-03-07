@@ -54,7 +54,7 @@
         <tr>
           <th style="text-align:left">전략구분</th><th>시즌</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
           <th style="text-align:right">타겟지점</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
-          <th style="text-align:right">추정손익(원)</th><th style="text-align:right">평균단가</th><th>수익률</th>
+          <th style="text-align:right">추정손익(원)</th><th style="text-align:right">평균단가</th><th style="text-align:right">현수익금(원)</th>
           <th style="text-align:right">현재잔액</th><th style="text-align:right">현금비중</th><th style="text-align:right">현재가치(원)</th>
         </tr>
         {% for key in ['1','2','3'] %}
@@ -68,7 +68,7 @@
           <td style="text-align:right;color:#58ACFA">{{D['매도가격'+key]}}</td>
           <td style="text-align:right;color:yellow">{{D['추정손익'+key]}}</td>
           <td style="text-align:right;color:gray">{{D['평균단가'+key]}}</td>
-          <td style="text-align:right;color:gray">{{D['현수익률'+key]}}%</td>
+          <td style="text-align:right;color:gray">{{D['현수익금'+key]}}</td>
           <td style="text-align:right;color:gray">{{D['현재잔액'+key]}}</td>
           <td style="text-align:right;color:gray">{{D['현금비중'+key]}}%</td>
           <td style="text-align:right;color:gray">{{D['현재가치'+key]}}</td>
@@ -79,9 +79,10 @@
           <td style="text-align:right;color:#f78181">{{D['매수수합']}}</td>
           <td colspan="2">&nbsp;</td>
           <td style="text-align:right;color:#58ACFA">{{D['매도수합']}}</td>
-          <td style="text-align:right;color:#f78181">{{D['필요상승']}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['필요상승']}}</td>
           <td style="text-align:right;color:yellow">{{D['추정합계']}}</td>
-          <td colspan="2">&nbsp;</td>
+          <td style="text-align:right;color:gray">{{D['종합평단']}}</td>
+          <td style="text-align:right;color:yellow">{{D['수익금합']}}</td>
           <td style="text-align:right;color:gray">{{D['잔액합산']}}</td>
           <td style="text-align:right;color:gray">{{D['전현비중']}}%</td>
           <td style="text-align:right;color:yellow">{{D['가치합계']}}</td>
