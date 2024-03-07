@@ -64,7 +64,7 @@ class M_dashboard2(Model) :
             self.D['Vtactic_pro'] = [float(x['add8']) for x in chart_data]   
 
             self.D['최종종가'] = self.D['close_price'][-1]
-            self.D['종가변동'] = self.percent_diff(float(self.D['close_price'][-2]),float(self.D['최종종가']))
+            self.D['종가변동'] = self.percent_diff(self.D['close_price'][-2],self.D['최종종가'])
         
             cond = f"add0 BETWEEN '{first_date}' AND '{last_date}'"
             RD = self.DB.exe(f"SELECT add0,CAST(add7 as FLOAT),CAST(add8 as FLOAT),CAST(add9 as INT),CAST(add17 as FLOAT) FROM {self.M['boards'][1]} WHERE {cond}") 
@@ -180,7 +180,7 @@ class M_dashboard2(Model) :
             key = str(odr+1)
             self.D['매수수량'+key] = rst[0] if rst[0] else ''
             self.D['매수가격'+key] = f"{rst[1]:.2f}" if rst[0] else ''
-            self.D['타겟지점'+key] = self.percent_diff(float(self.D['최종종가']),rst[1]) if rst[0] else ''
+            self.D['타겟지점'+key] = self.percent_diff(self.D['최종종가'],rst[1]) if rst[0] else ''
             self.D['매도수량'+key] = rst[2] if rst[2] else ''
             self.D['매도가격'+key] = f"{rst[3]:.2f}" if rst[2] else ''
             매도금액 = rst[2]*rst[3]
@@ -207,8 +207,9 @@ class M_dashboard2(Model) :
         self.D['전현비중'] = f"{self.D['잔액합산']/self.D['가치합계']*100:.2f}"
         self.D['가치합계'] = f"{self.D['가치합계']* self.D['현재환율']:,.0f}" 
         self.D['추정합계'] = f"{self.D['추정합계']* self.D['현재환율']:,.0f}" if self.D['추정합계'] else ''
-        self.D['필요상승'] = self.percent_diff(float(self.D['최종종가']),float(self.D['매도가격1'])) 
+        self.D['필요상승'] = self.percent_diff(self.D['최종종가'],self.D['매도가격1']) 
         self.D['잔액합산'] = f"{self.D['잔액합산']:,.2f}"
+        self.D['매도수합'] = f"{self.D['매도수합']:,}" if self.D['매도수합'] else ''
             
             
         chk_off = self.DB.exe(f"SELECT description FROM parameters WHERE val='{self.D['오늘날자']}' AND cat='미국증시휴장일'")
@@ -222,7 +223,7 @@ class M_dashboard2(Model) :
 
     def percent_diff(self,a,b) :
         if not a or not b : return ''
-        return f"{(b/a - 1) * 100:.2f}%"        
+        return f"{(float(b)/float(a) - 1) * 100:.2f}%"        
     
     def merge_dict(self,A,B) :
         
