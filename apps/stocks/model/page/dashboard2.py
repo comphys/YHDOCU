@@ -70,8 +70,6 @@ class M_dashboard2(Model) :
             RD = self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add7 as FLOAT),CAST(add8 as FLOAT),CAST(add9 as INT) FROM {self.M['boards'][1]} WHERE {cond}") 
             SD = self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add7 as FLOAT),CAST(add8 as FLOAT),CAST(add9 as INT) FROM {self.M['boards'][2]} WHERE {cond}") 
 
-            
-
             cx = {};dx = {}
             self.D['Rtactic_avg'] = []; self.D['Rtactic_pro'] = []
             if RD :
@@ -96,8 +94,39 @@ class M_dashboard2(Model) :
             
             self.D['eachSellTotal'] = []
             for x in self.D['chart_date'] : self.D['eachSellTotal'].append(self.M['eachSellTotal'].get(x,'null'))
+
+        self.totalValue()
             
-           
+    def totalValue(self) :
+
+        s_date = '20'+self.D['chart_date'][0]
+        e_date = '20'+self.D['chart_date'][-1]
+
+        r_m = self.DB.exe(f"SELECT add0,CAST(add17 as float) FROM {self.M['boards'][1]} WHERE add0 <= '{s_date}' ORDER BY add0 LIMIT 1")
+        s_m = self.DB.exe(f"SELECT add0,CAST(add17 as float) FROM {self.M['boards'][2]} WHERE add0 <= '{s_date}' ORDER BY add0 LIMIT 1")
+        r_min = r_m[0][1] if r_m else 0
+        s_min = s_m[0][1] if s_m else 0
+
+        vd = dict(self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add17 as float) FROM {self.M['boards'][0]} WHERE add0 BETWEEN '{s_date}' AND '{e_date}'"))
+        rd = dict(self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add17 as float) FROM {self.M['boards'][1]} WHERE add0 BETWEEN '{s_date}' AND '{e_date}'"))
+        sd = dict(self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add17 as float) FROM {self.M['boards'][2]} WHERE add0 BETWEEN '{s_date}' AND '{e_date}'"))
+
+        tv = {}
+
+        for key in self.D['chart_date'] :
+
+            tv[key] = vd[key] 
+
+            if key in rd : tv[key] += rd[key]; r_min = rd[key]
+            else : tv[key] += r_min
+
+            if key in sd : tv[key] += sd[key]; s_min = sd[key]
+            else : tv[key] += s_min
+
+
+        self.D['totalValues'] = list(tv.values()) 
+
+
     def monthlyProfitTotal(self) :
 
         for bid in self.M['boards'] :

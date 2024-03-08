@@ -112,6 +112,7 @@
     let s_avg_origin    = {{D['Stactic_avg']|safe}}	
     let s_pro_origin    = {{D['Stactic_pro']|safe}}
     let t_sel_origin    = {{D['eachSellTotal']|safe}}
+    let total_origin    = {{D['totalValues']|safe}}
 
     let ChartStart      = {{D['chart_start']}};	
 
@@ -124,6 +125,7 @@
     let s_avg_value     =  s_avg_origin.slice(ChartStart)	
     let s_pro_value     =  s_pro_origin.slice(ChartStart)
     let t_sel_value     =  t_sel_origin.slice(ChartStart)
+    let total_value     =  total_origin.slice(ChartStart)
 
     const data_main = {
         labels : labels_main,
@@ -160,6 +162,7 @@ const data_sub = {
 		{label:' 평균변동',data : v_pro_value,borderColor:'#f78181', 	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
 		{label:' 기회변동',data : r_pro_value,borderColor:'yellow',	 	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
 		{label:' 안정변동',data : s_pro_value,borderColor:'lightgreen', borderWidth:3,pointRadius:0,lineTension:0.2,},
+    {label:' 가치합계',data : total_value,borderColor:'cornsilk', borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,yAxisID:'y1'},
 	]   
 }
 
@@ -179,7 +182,8 @@ const options_sub = {
 				else if(context.tick.value % 10 == 0 ) { return 'black'} },
 			lineWidth: function(context) {if(context.tick.value %10 == 0 ) { return 1 } else return 0},
 		},
-		position:'right'}
+		position:'right'},
+    y1: { ticks : {color:'gray'}, position:'left'}
 	}
 }
 
@@ -227,10 +231,10 @@ function slice_chart(opt) {
 		myChart_main.config.data.datasets[1].data =  v_pro_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[2].data =  r_pro_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[3].data =  s_pro_origin.slice(new_s,new_e);
-		for(i=0;i<1;i++) {
-			base=myChart_main.config.data.datasets[i].data[0]; 
-			myChart_main.config.data.datasets[i].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})
-		}	
+    myChart_main.config.data.datasets[4].data =  total_origin.slice(new_s,new_e);
+
+		base=myChart_main.config.data.datasets[0].data[0]; myChart_main.config.data.datasets[0].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})
+			
 
 	} else {
 		myChart_main.config.data.labels = labels_origin.slice(new_s,new_e);
