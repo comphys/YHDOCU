@@ -207,41 +207,43 @@ class M_dashboard2(Model) :
         self.D['현매수합'] = 0.0
         self.D['총보유량'] = 0
         
+        sk = self.DB.cast_key(['sub2','sub3','add9'],['sub19','sub20','add3','add18','add6','add17'],['sub1','sub12','add7','add4','add0','add8'])
+
         for odr in [0,1,2] :
-            qry = f"SELECT CAST(sub2 as INT), CAST(sub19 as float), CAST(sub3 as INT), CAST(sub20 as float),sub1,"
-            qry+= f"sub12,CAST(add3 as float),CAST(add18 as float),add7,add4,add0,"
-            qry+= f"CAST(add6 as float),CAST(add17 as float),CAST(add9 as INT)"
-            qry+= f" FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
-            rst = self.DB.oneline(qry)
+ 
+            qry = f"SELECT {sk} "
+            qry+= f"FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
+            rst = self.DB.line(qry)
             key = str(odr+1)
-            self.D['매수수량'+key] = rst[0] if rst[0] else ''
-            self.D['매수가격'+key] = f"{rst[1]:.2f}" if rst[0] else ''
-            self.D['타겟지점'+key] = self.percent_diff(self.D['최종종가'],rst[1]) if rst[0] else ''
-            self.D['매도수량'+key] = rst[2] if rst[2] else ''
-            self.D['매도가격'+key] = f"{rst[3]:.2f}" if rst[2] else ''
-            매도금액 = rst[2]*rst[3]
-            self.D['매도금액'+key] = f"{매도금액:,.2f}" if rst[2] else ''
-            self.D['현재시즌'+key] = rst[4]
-            self.D['현재일수'+key] = rst[5]
-            self.D['현재잔액'+key] = f"{rst[6]:,.2f}"
-            self.D['현수익금'+key] = f"{rst[7]* self.D['현재환율']:,.0f}"
-            self.D['평균단가'+key] = rst[8]
-            self.D['현금비중'+key] = rst[9]
-            self.D['현재가치'+key] = f"{rst[12] * self.D['현재환율']:,.0f}"
-            self.D['가치합계'] += rst[12]
-            if today != rst[10] : self.D['증권계좌'+key] = "확인필요"
-            
-            self.D['매수수합'] += rst[0]
-            self.D['매도수합'] += rst[2]
-            self.D['잔액합산'] += rst[6]
-            self.D['수익금합'] += rst[7]
-            self.D['현매수합'] += rst[11]
-            self.D['총보유량'] += rst[13]
+            if today != rst['add0'] : self.D['증권계좌'+key] = "확인필요"
+
+            self.D['매수수량'+key] = rst['sub2'] if rst['sub2'] else ''
+            self.D['매수가격'+key] = f"{rst['sub19']:.2f}" if rst['sub2'] else ''
+            self.D['타겟지점'+key] = self.percent_diff(self.D['최종종가'],rst['sub19']) if rst['sub2'] else ''
+            self.D['매도수량'+key] = rst['sub3'] if rst['sub3'] else ''
+            self.D['매도가격'+key] = f"{rst['sub20']:.2f}" if rst['sub3'] else ''
+            self.D['매도금액'+key] = f"{rst['sub3']*rst['sub20']:,.2f}" if rst['sub3'] else ''
+            self.D['현재시즌'+key] = rst['sub1']
+            self.D['현재일수'+key] = rst['sub12']
+            self.D['현재잔액'+key] = f"{rst['add3']:,.2f}"
+            self.D['현수익금'+key] = f"{rst['add18']* self.D['현재환율']:,.0f}"
+            self.D['평균단가'+key] = rst['add7']
+            self.D['현금비중'+key] = rst['add4']
+            self.D['현수익률'+key] = rst['add8']
+            self.D['현재가치'+key] = f"{rst['add17'] * self.D['현재환율']:,.0f}"
+            self.D['가치합계'] += rst['add17']
+                        
+            self.D['매수수합'] += rst['sub2']
+            self.D['매도수합'] += rst['sub3']
+            self.D['잔액합산'] += rst['add3']
+            self.D['수익금합'] += rst['add18']
+            self.D['현매수합'] += rst['add6']
+            self.D['총보유량'] += rst['add9']
             
             # 추정이익 계산
-            추정손익 = rst[2]*rst[3] - rst[11]
+            추정손익 = rst['sub3']*rst['sub20'] - rst['add6']
             self.D['추정합계'] += 추정손익
-            self.D['추정손익'+key] = f"{추정손익 * self.D['현재환율']:,.0f}" if rst[2] else ''
+            self.D['추정손익'+key] = f"{추정손익 * self.D['현재환율']:,.0f}" if rst['sub3'] else ''
         
         self.D['전현비중'] = f"{self.D['잔액합산']/self.D['가치합계']*100:.2f}"
         self.D['가치합계'] = f"{self.D['가치합계']* self.D['현재환율']:,.0f}" 
@@ -251,6 +253,7 @@ class M_dashboard2(Model) :
         self.D['매도수합'] = f"{self.D['매도수합']:,}" if self.D['매도수합'] else ''
         self.D['수익금합'] = f"{self.D['수익금합']* self.D['현재환율']:,.0f}"
         self.D['종합평단'] = f"{self.D['현매수합']/self.D['총보유량']:.4f}" if self.D['총보유량'] else ''
+        self.D['총수익률'] = self.percent_diff(self.D['종합평단'],self.D['최종종가'])
             
             
         chk_off = self.DB.exe(f"SELECT description FROM parameters WHERE val='{self.D['오늘날자']}' AND cat='미국증시휴장일'")

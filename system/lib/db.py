@@ -89,14 +89,15 @@ class DB :
 
 
     def fetch_assoc(self, many=0) :
+        if not self.rst : return ''
         rst = self.rst.fetchall() if not many else  self.rst.fetchmany(many)
-        if not rst : return None 
         temp_list = []
         col = [x[0] for x in self.rst.description]
         for row in rst : temp_list.append(dict(zip(col,row)))
         return temp_list[0] if many == 1 else temp_list      
 
     def fetch(self, many=0) :
+        if not self.rst : return ''
         if    many == 0 : return self.rst.fetchall()
         elif  many == 1 : return self.rst.fetchmany(1)[0]
         else  : return self.rst.fetchmany(many)
@@ -179,6 +180,16 @@ class DB :
         P    = S if S else self.SYS.D['post'] 
         qry  = self.qry_insert(tbl,P)
         self.exe(qry)
+
+    def cast_key(self,int_keys,float_keys,keys) :
+        sel = ''
+        if  int_keys : 
+            for x in int_keys :   sel += f"CAST({x} as INT) as {x}," 
+        if  float_keys : 
+            for x in float_keys : sel += f"CAST({x} as FLOAT) as {x}," 
+        if  keys : 
+            for x in keys : sel += f"{x},"
+        return sel.rstrip(',') 
 
     # json 형태처럼 key 값과 value 값으로 데이터를 저장 및 불러오기
     def store(self,key,val=None) :
