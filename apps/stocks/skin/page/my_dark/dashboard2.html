@@ -52,9 +52,10 @@
           <th colspan="5">기타정보</th>
         </tr>
         <tr>
-          <th style="text-align:left">전략</th><th>시즌</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
-          <th style="text-align:right">타겟지점</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
-          <th style="text-align:right">추정익(원)</th><th style="text-align:right">평균단가</th>
+          <th style="text-align:left">&nbsp;</th><th>시즌</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
+          <th style="text-align:right">타겟점</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
+          <th style="text-align:right">추정익(원)</th><th style="text-align:right">매수금</th>
+          <th style="text-align:right">평균단가</th>
           <th style="text-align:right">현수익률</th><th style="text-align:right">현수익(원)</th>
           <th style="text-align:right">현재잔액</th><th style="text-align:right">현금비중</th><th style="text-align:right">현재가치(원)</th>
         </tr>
@@ -68,6 +69,7 @@
           <td style="text-align:right;color:#58ACFA">{{D['매도수량'+key]}}</td>
           <td style="text-align:right;color:#58ACFA">{{D['매도가격'+key]}}</td>
           <td style="text-align:right;color:yellow">{{D['추정손익'+key]}}</td>
+          <td style="text-align:right;color:gray">{{D['현매수금'+key]}}</td>
           <td style="text-align:right;color:gray">{{D['평균단가'+key]}}</td>
           <td style="text-align:right;color:gray">{{D['현수익률'+key]}}%</td>
           <td style="text-align:right;color:gray">{{D['현수익금'+key]}}</td>
@@ -83,11 +85,12 @@
           <td style="text-align:right;color:#58ACFA">{{D['매도수합']}}</td>
           <td style="text-align:right;color:#58ACFA">{{D['필요상승']}}</td>
           <td style="text-align:right;color:yellow">{{D['추정합계']}}</td>
-          <td style="text-align:right;color:gray">{{D['종합평단']}}</td>
-          <td style="text-align:right;color:gray">{{D['총수익률']}}</td>
+          <td style="text-align:right;color:white">{{D['현매수합']}}</td>
+          <td style="text-align:right;color:white">{{D['종합평단']}}</td>
+          <td style="text-align:right;color:white">{{D['총수익률']}}</td>
           <td style="text-align:right;color:yellow">{{D['수익금합']}}</td>
-          <td style="text-align:right;color:gray">{{D['잔액합산']}}</td>
-          <td style="text-align:right;color:gray">{{D['전현비중']}}%</td>
+          <td style="text-align:right;color:white">{{D['잔액합산']}}</td>
+          <td style="text-align:right;color:white">{{D['전현비중']}}%</td>
           <td style="text-align:right;color:yellow">{{D['가치합계']}}</td>
         </tr>
       </table>

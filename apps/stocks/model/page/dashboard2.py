@@ -227,6 +227,7 @@ class M_dashboard2(Model) :
             self.D['현재일수'+key] = rst['sub12']
             self.D['현재잔액'+key] = f"{rst['add3']:,.2f}"
             self.D['현수익금'+key] = f"{rst['add18']* self.D['현재환율']:,.0f}"
+            self.D['현매수금'+key] = f"{rst['add6']:,.2f}" if rst['add6'] else ''
             self.D['평균단가'+key] = rst['add7']
             self.D['현금비중'+key] = rst['add4']
             self.D['현수익률'+key] = rst['add8']
@@ -254,6 +255,7 @@ class M_dashboard2(Model) :
         self.D['수익금합'] = f"{self.D['수익금합']* self.D['현재환율']:,.0f}"
         self.D['종합평단'] = f"{self.D['현매수합']/self.D['총보유량']:.4f}" if self.D['총보유량'] else ''
         self.D['총수익률'] = self.percent_diff(self.D['종합평단'],self.D['최종종가'])
+        self.D['현매수합'] = f"{self.D['현매수합']:,.2f}"
             
             
         chk_off = self.DB.exe(f"SELECT description FROM parameters WHERE val='{self.D['오늘날자']}' AND cat='미국증시휴장일'")
