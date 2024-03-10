@@ -192,9 +192,9 @@ class M_dashboard2(Model) :
     def show_strategy(self,ST) :
 
         if self.M['구간종료'] : return
-        self.D['증권계좌1'] = ST['031']; self.D['식별색상1'] = "#f78181"
-        self.D['증권계좌2'] = ST['032']; self.D['식별색상2'] = "yellow" 
-        self.D['증권계좌3'] = ST['033']; self.D['식별색상3'] = "lightgreen"
+        self.D['전략구분1'] = ST['031']; self.D['식별색상1'] = "#f78181"
+        self.D['전략구분2'] = ST['032']; self.D['식별색상2'] = "yellow" 
+        self.D['전략구분3'] = ST['033']; self.D['식별색상3'] = "lightgreen"
 
         today = self.DB.one("SELECT add0 FROM h_stockHistory_board WHERE add1='SOXL' ORDER BY add0 DESC LIMIT 1")
         
@@ -215,7 +215,7 @@ class M_dashboard2(Model) :
             qry+= f"FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
             rst = self.DB.line(qry)
             key = str(odr+1)
-            if today != rst['add0'] : self.D['증권계좌'+key] = "확인필요"
+            if today != rst['add0'] : self.D['전략구분'+key] = "확인필요"
 
             self.D['매수수량'+key] = rst['sub2'] if rst['sub2'] else ''
             self.D['매수가격'+key] = f"{rst['sub19']:.2f}" if rst['sub2'] else ''
@@ -261,7 +261,7 @@ class M_dashboard2(Model) :
         chk_off = self.DB.exe(f"SELECT description FROM parameters WHERE val='{self.D['오늘날자']}' AND cat='미국증시휴장일'")
         self.D['chk_off'] = chk_off[0][0] if chk_off else ''    
 
-        if  self.D['증권계좌3'] == "확인필요" : self.D['chk_off'] = "Not all information is updated. Please Check it."
+        if  self.D['전략구분3'] == "확인필요" : self.D['chk_off'] = "Not all information is updated. Please Check it."
 
         if  self.D['오늘요일'] in ('토','일') : self.D['chk_off'] = "Today is weekend. Take a rest!" 
 
