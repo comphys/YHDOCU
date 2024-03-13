@@ -27,25 +27,28 @@ class M_backtest_OVERALL(Model) :
             self.S['실현수익']  = (self.M['당일종가'] - self.S['평균단가']) * self.S['매도수량']
             self.S['보유수량'] -=  self.S['매도수량'];  self.S['안정자금'] += self.S['매도금액']; self.S['총매수금'] = 0.00
             self.S['안정자금'] -=  self.commission(self.S['매도금액'],2)
+            self.S['수익현황']  =  self.S['실현수익']
             self.rstCount(self.S['실현수익'],'안')
 
         if  self.R['매도수량'] :
             self.R['실현수익']  = (self.M['당일종가'] - self.R['평균단가']) * self.R['매도수량']
             self.R['보유수량'] -=  self.R['매도수량'];  self.R['기회자금'] += self.R['매도금액']; self.R['총매수금'] = 0.00
             self.R['기회자금'] -=  self.commission(self.R['매도금액'],2)
+            self.R['수익현황']  =  self.R['실현수익'] 
             self.rstCount(self.R['실현수익'],'기')
 
         if  self.V['매도수량'] :
             self.V['실현수익']  = (self.M['당일종가'] - self.V['평균단가']) * self.V['매도수량']  
             self.V['보유수량'] -=  self.V['매도수량'];  self.V['일반자금'] += self.V['매도금액']; self.V['총매수금'] = 0.00 
             self.V['일반자금'] -=  self.commission(self.V['매도금액'],2)
+            self.V['수익현황']  =  self.V['실현수익']
             self.rstCount(self.V['실현수익'],'일')
             
             self.M['첫날기록']  = True
             self.M['매수단계']  = '일반매수'
             self.M['회복전략']  = self.M['손실회수']
             self.rebalance() 
-            
+        
         self.V['평가금액'] = self.M['당일종가'] * self.V['보유수량'] 
         self.R['평가금액'] = self.M['당일종가'] * self.R['보유수량'] 
         self.S['평가금액'] = self.M['당일종가'] * self.S['보유수량'] 
@@ -53,17 +56,10 @@ class M_backtest_OVERALL(Model) :
         self.V['현수익률']  = (self.M['당일종가']/self.V['평균단가'] -1) * 100  if self.V['평균단가'] else 0.00
         self.R['현수익률']  = (self.M['당일종가']/self.R['평균단가'] -1) * 100  if self.R['평균단가'] else 0.00  
         self.S['현수익률']  = (self.M['당일종가']/self.S['평균단가'] -1) * 100  if self.S['평균단가'] else 0.00
-
-        if  self.V['보유수량'] == 0 :
-            self.V['수익현황'] = self.V['실현수익'] 
-            self.R['수익현황'] = self.R['실현수익'] 
-            self.S['수익현황'] = self.S['실현수익']
-            self.V['평균단가']  = self.R['평균단가'] = self.S['평균단가'] = 0.0
-            
-        else :
-            self.V['수익현황'] = self.V['평가금액'] - self.V['총매수금']
-            self.R['수익현황'] = self.R['평가금액'] - self.R['총매수금']
-            self.S['수익현황'] = self.S['평가금액'] - self.S['총매수금']
+        
+        if  not self.V['매도수량'] : self.V['수익현황'] = self.V['평가금액'] - self.V['총매수금']
+        if  not self.R['매도수량'] : self.R['수익현황'] = self.R['평가금액'] - self.R['총매수금']
+        if  not self.S['매도수량'] : self.S['수익현황'] = self.S['평가금액'] - self.S['총매수금']
 
         self.realMDD()
 
@@ -477,6 +473,9 @@ class M_backtest_OVERALL(Model) :
         
     def new_day(self) :
 
+        self.R['수익현황']  = self.R['현수익률'] = self.R['평균단가'] = 0.0
+        self.S['수익현황']  = self.S['현수익률'] = self.S['평균단가'] = 0.0
+            
         if  self.M['당일종가'] <  round(self.M['전일종가'] * self.M['큰단가치'],2) :
             
             self.M['기록시즌'] += 1
@@ -488,7 +487,9 @@ class M_backtest_OVERALL(Model) :
             self.S['기초수량']  = my.ceil(self.S['일매수금']/self.M['전일종가'])
             
             self.V['매수수량']  = self.V['기초수량']
+            
             self.V['수익현황']  = self.V['현수익률'] = 0.0
+
             
             self.V['보유수량']  = self.V['매수수량']
             self.V['매수금액']  = self.M['당일종가'] * self.V['매수수량'] 
