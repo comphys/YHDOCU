@@ -273,5 +273,5 @@ class M_dashboard2(Model) :
     
     def merge_dict(self,A,B) :
         
-        for k in B : A[k] = B[k] if k not in A.keys() else A[k] + B[k]    
+        for k in B : A[k] = B[k] if k not in A else A[k] + B[k]    
         
