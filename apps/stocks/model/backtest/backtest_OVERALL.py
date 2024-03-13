@@ -10,103 +10,90 @@ class M_backtest_OVERALL(Model) :
         
         if  self.V['매수수량'] or self.R['매수수량'] or self.S['매수수량'] : 
             self.V['일반자금'] -= self.V['매수금액'];  self.V['보유수량'] += self.V['매수수량'];  self.V['총매수금'] += self.V['매수금액']
-            self.R['기회자금'] -= self.R['매수금액'];  self.R['보유수량'] += self.R['매수수량'];  self.R['총매수금'] += self.R['매수금액']
-            self.S['안정자금'] -= self.S['매수금액'];  self.S['보유수량'] += self.S['매수수량'];  self.S['총매수금'] += self.S['매수금액']
-              
             self.V['평균단가']  =  self.V['총매수금'] / self.V['보유수량'] 
-            self.R['평균단가']  =  self.R['총매수금'] / self.R['보유수량'] if self.R['보유수량'] else 0.0
-            self.S['평균단가']  =  self.S['총매수금'] / self.S['보유수량'] if self.S['보유수량'] else 0.0
-            
-            if  self.M['비용차감'] : 
-                self.V['일반자금'] -=  self.commission(self.V['매수금액'],1)
-                self.R['기회자금'] -=  self.commission(self.R['매수금액'],1)
-                self.S['안정자금'] -=  self.commission(self.S['매수금액'],1)
-                
+            self.V['일반자금'] -=  self.commission(self.V['매수금액'],1)
+        
+        if  self.R['매수수량'] : 
+            self.R['기회자금'] -= self.R['매수금액'];  self.R['보유수량'] += self.R['매수수량'];  self.R['총매수금'] += self.R['매수금액']
+            self.R['평균단가']  =  self.R['총매수금'] / self.R['보유수량'] 
+            self.R['기회자금'] -=  self.commission(self.R['매수금액'],1)
+
+        if  self.S['매수수량'] : 
+            self.S['안정자금'] -= self.S['매수금액'];  self.S['보유수량'] += self.S['매수수량'];  self.S['총매수금'] += self.S['매수금액']
+            self.S['평균단가']  =  self.S['총매수금'] / self.S['보유수량'] 
+            self.S['안정자금'] -=  self.commission(self.S['매수금액'],1)
+        
+        if  self.S['매도수량'] :
+            self.S['실현수익']  = (self.M['당일종가']-self.S['평균단가'])*self.S['매도수량']
+            self.S['보유수량'] -= self.S['매도수량']; self.S['안정자금'] += self.S['매도금액']; self.S['총매수금'] = 0.00
+            self.S['안정자금'] -=  self.commission(self.S['매도금액'],2)
+            self.rstCount(self.S['실현수익'],'안')
+
+        if  self.R['매도수량'] :
+            self.R['실현수익']  = (self.M['당일종가']-self.R['평균단가'])*self.R['매도수량']
+            self.R['보유수량'] -= self.R['매도수량']; self.R['기회자금'] += self.R['매도금액']; self.R['총매수금'] = 0.00
+            self.R['기회자금'] -=  self.commission(self.R['매도금액'],2)
+            self.rstCount(self.R['실현수익'],'기')
+
         if  self.V['매도수량'] :
             self.V['실현수익']  = (self.M['당일종가']-self.V['평균단가'])*self.V['매도수량']  
-            self.R['실현수익']  = (self.M['당일종가']-self.R['평균단가'])*self.R['매도수량'] 
-            self.S['실현수익']  = (self.M['당일종가']-self.S['평균단가'])*self.S['매도수량']
-            
-            self.V['매수익률']  = (self.M['당일종가']/self.V['평균단가'] -1 ) * 100
-            self.R['매수익률']  = (self.M['당일종가']/self.R['평균단가'] -1 ) * 100 if self.R['평균단가'] else 0.00
-            self.S['매수익률']  = (self.M['당일종가']/self.S['평균단가'] -1 ) * 100 if self.S['평균단가'] else 0.00
-            
             self.V['보유수량'] -= self.V['매도수량']; self.V['일반자금'] += self.V['매도금액']; self.V['총매수금'] = 0.00 
-            self.R['보유수량'] -= self.R['매도수량']; self.R['기회자금'] += self.R['매도금액']; self.R['총매수금'] = 0.00
-            self.S['보유수량'] -= self.S['매도수량']; self.S['안정자금'] += self.S['매도금액']; self.S['총매수금'] = 0.00
-            
-            self.V['현수익률']  = self.V['매수익률']; self.V['평균단가']  = 0.0 
-            self.R['현수익률']  = self.R['매수익률']; self.R['평균단가']  = 0.0
-            self.S['현수익률']  = self.S['매수익률']; self.S['평균단가']  = 0.0
+            self.V['일반자금'] -=  self.commission(self.V['매도금액'],2)
+            self.rstCount(self.V['실현수익'],'일')
             
             self.M['첫날기록']  = True
             self.M['매수단계']  = '일반매수'
-            
-            if  self.V['현수익률'] >= 0 : 
-                if self.M['회복전략'] : self.D['일회익절'] += 1
-                else : self.D['일정익절'] += 1  
-            else : 
-                if self.M['회복전략'] : self.D['일회손절'] += 1
-                else : self.D['일정손절'] += 1             
- 
-            if self.R['매도수량'] :
-                if  self.R['현수익률'] >= 0 : 
-                    if self.M['회복전략'] : self.D['기회익절'] += 1
-                    else : self.D['기정익절'] += 1  
-                else : 
-                    if self.M['회복전략'] : self.D['기회손절'] += 1
-                    else : self.D['기정손절'] += 1                 
-
-            if self.S['매도수량'] :
-                if  self.S['현수익률'] >= 0 : 
-                    if self.M['회복전략'] : self.D['안회익절'] += 1
-                    else : self.D['안정익절'] += 1  
-                else : 
-                    if self.M['회복전략'] : self.D['안회손절'] += 1
-                    else : self.D['안정손절'] += 1
-            
             self.M['회복전략']  = self.M['손실회수']
-            
-            if  self.M['비용차감'] : 
-                self.V['일반자금'] -=  self.commission(self.V['매도금액'],2)
-                self.R['기회자금'] -=  self.commission(self.R['매도금액'],2)
-                self.S['안정자금'] -=  self.commission(self.S['매도금액'],2)
-                
             self.rebalance() 
             
-            
-        self.V['평가금액'] = self.M['당일종가'] * self.V['보유수량']; self.V['수익현황'] = self.V['평가금액'] - self.V['총매수금']
-        self.R['평가금액'] = self.M['당일종가'] * self.R['보유수량']; self.R['수익현황'] = self.R['평가금액'] - self.R['총매수금']
-        self.S['평가금액'] = self.M['당일종가'] * self.S['보유수량']; self.S['수익현황'] = self.S['평가금액'] - self.S['총매수금']
+        self.V['평가금액'] = self.M['당일종가'] * self.V['보유수량'] 
+        self.R['평가금액'] = self.M['당일종가'] * self.R['보유수량'] 
+        self.S['평가금액'] = self.M['당일종가'] * self.S['보유수량'] 
 
-        # Real MDD
+        self.V['현수익률']  = (self.M['당일종가']/self.V['평균단가'] -1) * 100  if self.V['평균단가'] else 0.00
+        self.R['현수익률']  = (self.M['당일종가']/self.R['평균단가'] -1) * 100  if self.R['평균단가'] else 0.00  
+        self.S['현수익률']  = (self.M['당일종가']/self.S['평균단가'] -1) * 100  if self.S['평균단가'] else 0.00
+
+        if  self.V['보유수량'] == 0 :
+            self.V['수익현황'] = self.V['실현수익'] 
+            self.R['수익현황'] = self.R['실현수익'] 
+            self.S['수익현황'] = self.S['실현수익']
+            self.V['평균단가']  = self.R['평균단가'] = self.S['평균단가'] = 0.0
+            
+        else :
+            self.V['수익현황'] = self.V['평가금액'] - self.V['총매수금']
+            self.R['수익현황'] = self.R['평가금액'] - self.R['총매수금']
+            self.S['수익현황'] = self.S['평가금액'] - self.S['총매수금']
+
+        self.realMDD()
+
+
+    def realMDD(self) :
+
         self.V['실최하락'] = self.V['수익현황'] / (self.V['일반자금'] + self.V['총매수금']) * 100
         self.R['실최하락'] = self.R['수익현황'] / (self.R['기회자금'] + self.R['총매수금']) * 100
         self.S['실최하락'] = self.S['수익현황'] / (self.S['안정자금'] + self.S['총매수금']) * 100
 
-        if  self.V['보유수량'] == 0 and self.V['매도수량']:
-            self.V['현수익률'] = self.V['매수익률']; self.V['수익현황'] = self.V['실현수익'] 
-            self.R['현수익률'] = self.R['매수익률']; self.R['수익현황'] = self.R['실현수익'] 
-            self.S['현수익률'] = self.S['매수익률']; self.S['수익현황'] = self.S['실현수익']
-        else :
-            self.V['현수익률']  = (self.M['당일종가']/self.V['평균단가'] -1) * 100  if self.V['평균단가'] else 0.00
-            self.R['현수익률']  = (self.M['당일종가']/self.R['평균단가'] -1) * 100  if self.R['평균단가'] else 0.00  
-            self.S['현수익률']  = (self.M['당일종가']/self.S['평균단가'] -1) * 100  if self.S['평균단가'] else 0.00    
-            
         if self.M['현재날수'] > self.M['최대일수'] : self.M['최대일수'] = self.M['현재날수']; self.M['최대날자'] = self.M['현재일자']
         if self.V['실최하락'] < self.V['진최하락'] : self.V['진최하락'] = self.V['실최하락']; self.V['최하일자'] = self.M['현재일자']
         if self.R['실최하락'] < self.R['진최하락'] : self.R['진최하락'] = self.R['실최하락']; self.R['최하일자'] = self.M['현재일자']
         if self.S['실최하락'] < self.S['진최하락'] : self.S['진최하락'] = self.S['실최하락']; self.S['최하일자'] = self.M['현재일자']
 
-
-
+    def rstCount(self,profit,key) :
+        if  profit >= 0 : 
+            if self.M['회복전략'] : self.D[key+'회익절'] += 1
+            else : self.D[key+'정익절'] += 1  
+        else : 
+            if self.M['회복전략'] : self.D[key+'회손절'] += 1
+            else : self.D[key+'정손절'] += 1   
 
     def commission(self,mm,opt) :
-        if  opt==1 :  return int(mm*0.07)/100
-        if  opt==2 :  
-            m1 = int(mm*0.07)/100
-            m2=round(mm*0.0008)/100
-            return m1+m2
+        if  self.M['비용차감'] : 
+            if  opt==1 :  return int(mm*0.07)/100
+            if  opt==2 :  
+                m1 = int(mm*0.07)/100
+                m2=round(mm*0.0008)/100
+                return m1+m2
         
     def rebalance(self)  :
         
