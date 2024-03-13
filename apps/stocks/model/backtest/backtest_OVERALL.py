@@ -8,36 +8,36 @@ class M_backtest_OVERALL(Model) :
  
     def calculate(self)  :
         
-        if  self.V['매수수량'] or self.R['매수수량'] or self.S['매수수량'] : 
-            self.V['일반자금'] -= self.V['매수금액'];  self.V['보유수량'] += self.V['매수수량'];  self.V['총매수금'] += self.V['매수금액']
+        if  self.V['매수수량'] : 
+            self.V['일반자금'] -=  self.V['매수금액'];  self.V['보유수량'] += self.V['매수수량'];  self.V['총매수금'] += self.V['매수금액']
             self.V['평균단가']  =  self.V['총매수금'] / self.V['보유수량'] 
             self.V['일반자금'] -=  self.commission(self.V['매수금액'],1)
         
         if  self.R['매수수량'] : 
-            self.R['기회자금'] -= self.R['매수금액'];  self.R['보유수량'] += self.R['매수수량'];  self.R['총매수금'] += self.R['매수금액']
+            self.R['기회자금'] -=  self.R['매수금액'];  self.R['보유수량'] += self.R['매수수량'];  self.R['총매수금'] += self.R['매수금액']
             self.R['평균단가']  =  self.R['총매수금'] / self.R['보유수량'] 
             self.R['기회자금'] -=  self.commission(self.R['매수금액'],1)
 
         if  self.S['매수수량'] : 
-            self.S['안정자금'] -= self.S['매수금액'];  self.S['보유수량'] += self.S['매수수량'];  self.S['총매수금'] += self.S['매수금액']
+            self.S['안정자금'] -=  self.S['매수금액'];  self.S['보유수량'] += self.S['매수수량'];  self.S['총매수금'] += self.S['매수금액']
             self.S['평균단가']  =  self.S['총매수금'] / self.S['보유수량'] 
             self.S['안정자금'] -=  self.commission(self.S['매수금액'],1)
         
         if  self.S['매도수량'] :
-            self.S['실현수익']  = (self.M['당일종가']-self.S['평균단가'])*self.S['매도수량']
-            self.S['보유수량'] -= self.S['매도수량']; self.S['안정자금'] += self.S['매도금액']; self.S['총매수금'] = 0.00
+            self.S['실현수익']  = (self.M['당일종가'] - self.S['평균단가']) * self.S['매도수량']
+            self.S['보유수량'] -=  self.S['매도수량'];  self.S['안정자금'] += self.S['매도금액']; self.S['총매수금'] = 0.00
             self.S['안정자금'] -=  self.commission(self.S['매도금액'],2)
             self.rstCount(self.S['실현수익'],'안')
 
         if  self.R['매도수량'] :
-            self.R['실현수익']  = (self.M['당일종가']-self.R['평균단가'])*self.R['매도수량']
-            self.R['보유수량'] -= self.R['매도수량']; self.R['기회자금'] += self.R['매도금액']; self.R['총매수금'] = 0.00
+            self.R['실현수익']  = (self.M['당일종가'] - self.R['평균단가']) * self.R['매도수량']
+            self.R['보유수량'] -=  self.R['매도수량'];  self.R['기회자금'] += self.R['매도금액']; self.R['총매수금'] = 0.00
             self.R['기회자금'] -=  self.commission(self.R['매도금액'],2)
             self.rstCount(self.R['실현수익'],'기')
 
         if  self.V['매도수량'] :
-            self.V['실현수익']  = (self.M['당일종가']-self.V['평균단가'])*self.V['매도수량']  
-            self.V['보유수량'] -= self.V['매도수량']; self.V['일반자금'] += self.V['매도금액']; self.V['총매수금'] = 0.00 
+            self.V['실현수익']  = (self.M['당일종가'] - self.V['평균단가']) * self.V['매도수량']  
+            self.V['보유수량'] -=  self.V['매도수량'];  self.V['일반자금'] += self.V['매도금액']; self.V['총매수금'] = 0.00 
             self.V['일반자금'] -=  self.commission(self.V['매도금액'],2)
             self.rstCount(self.V['실현수익'],'일')
             
