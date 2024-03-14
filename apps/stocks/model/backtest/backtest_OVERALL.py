@@ -57,9 +57,10 @@ class M_backtest_OVERALL(Model) :
         self.R['현수익률']  = (self.M['당일종가']/self.R['평균단가'] -1) * 100  if self.R['평균단가'] else 0.00  
         self.S['현수익률']  = (self.M['당일종가']/self.S['평균단가'] -1) * 100  if self.S['평균단가'] else 0.00
         
-        if  not self.V['매도수량'] : self.V['수익현황'] = self.V['평가금액'] - self.V['총매수금']
-        if  not self.R['매도수량'] : self.R['수익현황'] = self.R['평가금액'] - self.R['총매수금']
-        if  not self.S['매도수량'] : self.S['수익현황'] = self.S['평가금액'] - self.S['총매수금']
+        if  not self.V['매도수량'] : 
+            self.V['수익현황'] = self.V['평가금액'] - self.V['총매수금']
+            self.R['수익현황'] = self.R['평가금액'] - self.R['총매수금']
+            self.S['수익현황'] = self.S['평가금액'] - self.S['총매수금']
 
         self.realMDD()
 
@@ -251,7 +252,7 @@ class M_backtest_OVERALL(Model) :
             self.V['거래코드'] = ' ' 
             self.R['거래코드'] = ' '
             self.S['거래코드'] = ' '
-            self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률'],0)
+            self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가'],0)
             
             # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정(12%)값 이상으로 상승 시 건너뛰기 위함
             if  idx == idxx + 1 or self.M['첫날기록'] : 
@@ -473,9 +474,6 @@ class M_backtest_OVERALL(Model) :
         
     def new_day(self) :
 
-        self.R['수익현황']  = self.R['현수익률'] = self.R['평균단가'] = 0.0
-        self.S['수익현황']  = self.S['현수익률'] = self.S['평균단가'] = 0.0
-            
         if  self.M['당일종가'] <  round(self.M['전일종가'] * self.M['큰단가치'],2) :
             
             self.M['기록시즌'] += 1
@@ -490,7 +488,6 @@ class M_backtest_OVERALL(Model) :
             
             self.V['수익현황']  = self.V['현수익률'] = 0.0
 
-            
             self.V['보유수량']  = self.V['매수수량']
             self.V['매수금액']  = self.M['당일종가'] * self.V['매수수량'] 
             self.V['총매수금']  = self.V['평가금액'] = self.V['매수금액']
