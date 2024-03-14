@@ -172,56 +172,50 @@ class M_backtest_OVERALL(Model) :
         
     def tomorrow_step(self)   :
         
-        내일날수 = self.M['현재날수'] + 1
         self.M['매수가격'] = round(self.M['당일종가']*self.M['평단가치'],2)
         self.M['판매가격'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
         
-        매수수량 = my.ceil(self.V['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1)); 매수수량R = 0; 매수수량S = 0
-        매수금액 = 매수수량 * self.M['매수가격']
+        일반수량 = my.ceil(self.V['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1)); 기회수량 = 0; 안정수량 = 0
 
-        if  매수금액 > self.V['일반자금']   :
-            매수수량 = my.ceil(self.V['기초수량'] * self.M['위매비중'])
-            매수금액 = 매수수량 * self.M['매수가격']
+        if  일반수량 * self.M['매수가격'] > self.V['일반자금']   :
             self.M['매수단계'] = '매수제한' 
-            if  매수금액 > self.V['일반자금'] : self.M['매수단계'] = '매수중단'; 매수수량 = 0
+            
+            일반수량 = my.ceil(self.V['기초수량'] * self.M['위매비중'])
+            if  일반수량 * self.M['매수가격'] > self.V['일반자금'] : 
+                self.M['매수단계'] = '매수중단' 
+                일반수량 = 0
         
-        self.V['구매수량'] = 매수수량
+        self.V['구매수량'] = 일반수량  # take_chance 호출 전 결정되어야 함
         
         if  self.R['기회진행'] :
-            매수수량R = my.ceil(self.R['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
-            매수금액R = 매수수량R * self.M['매수가격']
+            기회수량 = my.ceil(self.R['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
 
-            if  매수금액R > self.R['기회자금']   : 
-                매수수량R = my.ceil(self.R['기초수량'] * self.M['위매비중'])
-                매수금액R = 매수수량R * self.M['매수가격']
-                if 매수금액R > self.R['기회자금'] : 매수수량R = 0        
+            if  기회수량 * self.M['매수가격'] > self.R['기회자금']   : 
+                기회수량 = my.ceil(self.R['기초수량'] * self.M['위매비중']) 
+                기회수량 = 0 if 기회수량 * self.M['매수가격'] > self.R['기회자금'] else 기회수량
         else : 
             self.R['기회가격'] = self.take_chance('R')
 
-        
         if  self.S['안정진행'] :
-            매수수량S = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
-            매수금액S = 매수수량S * self.M['매수가격']
+            안정수량 = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
 
-            if  매수금액S > self.S['안정자금']   : 
-                매수수량S = my.ceil(self.S['기초수량'] * self.M['위매비중'])
-                매수금액S = 매수수량S * self.M['매수가격']
-                if 매수금액S > self.S['안정자금'] : 매수수량S = 0        
+            if  안정수량 * self.M['매수가격'] > self.S['안정자금']   : 
+                안정수량 = my.ceil(self.S['기초수량'] * self.M['위매비중'])
+                안정수량 = 0 if 안정수량 * self.M['매수가격'] > self.S['안정자금'] else 안정수량
         else : 
             self.S['안정가격'] = self.take_chance('S')
         
+        내일날수 = self.M['현재날수'] + 1
 
-        if  self.M['매수단계'] in ('매수제한','매수중단') : 
-            self.M['판매가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
-        if  self.M['손실회수'] and 내일날수 <= self.M['매도대기'] : 
-            self.M['판매가격'] = my.round_up(self.V['평균단가'] * self.M['전화위복'])
-        if  내일날수 >= self.M['강매시작'] : 
+        if  self.M['매수단계'] in ('매수제한','매수중단') :          self.M['판매가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
+        if  self.M['손실회수'] and 내일날수 <= self.M['매도대기'] :  self.M['판매가격'] = my.round_up(self.V['평균단가'] * self.M['전화위복'])
+        if  내일날수 >= self.M['강매시작'] :                        
             self.M['판매가격'] = my.round_up(self.V['평균단가'] * self.M['강매가치'])
+        
         if  self.M['매수가격'] >= self.M['판매가격'] : self.M['매수가격'] = self.M['판매가격'] - 0.01 
         
-        
-        self.R['구매수량'] = 매수수량R
-        self.S['구매수량'] = 매수수량S
+        self.R['구매수량'] = 기회수량
+        self.S['구매수량'] = 안정수량
         
 
     def take_chance(self,opt) :
