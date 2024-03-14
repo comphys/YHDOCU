@@ -86,11 +86,9 @@ class M_backtest_OVERALL(Model) :
 
     def commission(self,mm,opt) :
         if  self.M['비용차감'] : 
-            if  opt==1 :  return int(mm*0.07)/100
-            if  opt==2 :  
-                m1 = int(mm*0.07)/100
-                m2=round(mm*0.0008)/100
-                return m1+m2
+            fee = int(mm*0.07)/100
+            if opt==2 : fee += round(mm*0.0008)/100
+            return fee
         
     def rebalance(self)  :
         
