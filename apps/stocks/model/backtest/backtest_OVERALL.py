@@ -129,15 +129,15 @@ class M_backtest_OVERALL(Model) :
             self.V['매수금액'] = self.V['매수수량'] * self.M['당일종가']
             self.M['진행상황'] = self.M['매수단계']
             
-            if  self.R['기회진행'] :
-                self.R['매수수량'] = self.R['구매수량'] 
-                self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']   
-                self.R['거래코드'] = f"R{self.R['매수수량']}" if self.R['매수수량'] else ' '  
-            
             if  self.M['현재날수'] == 2 and self.M['당일종가'] <= self.M['전일종가'] :
                 self.R['거래코드'] = f"R{self.R['기초수량']}"
                 self.R['매수수량'] = self.R['기초수량']
                 self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가'] 
+                
+            if  self.R['기회진행'] :
+                self.R['매수수량'] = self.R['구매수량'] 
+                self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']   
+                self.R['거래코드'] = f"R{self.R['매수수량']}" if self.R['매수수량'] else ' ' 
 
             if  self.S['안정진행'] :
                 self.S['매수수량'] = self.S['구매수량'] 
@@ -147,7 +147,7 @@ class M_backtest_OVERALL(Model) :
 
         if  not self.R['기회진행'] and self.M['현재날수'] > 2 and self.M['당일종가'] <= min(self.M['매수가격'], self.R['기회가격']) :
             
-            매수수량R = self.chance_qty(0)
+            매수수량R = self.chance_qty(self.R['기초수량'])
             self.R['거래코드'] = f"R{self.R['기초수량']}/{매수수량R}" 
             self.R['매수수량'] = 매수수량R
             self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']
@@ -155,19 +155,18 @@ class M_backtest_OVERALL(Model) :
        
         if  not self.S['안정진행'] and self.M['현재날수'] > 2 and self.M['당일종가'] <= min(self.M['매수가격'], self.S['안정가격']) :
             
-            매수수량S = self.chance_qty(1)
+            매수수량S = self.chance_qty(self.S['기초수량'])
             self.S['거래코드'] = f"S{self.S['기초수량']}/{매수수량S}" 
             self.S['매수수량'] = 매수수량S
             self.S['매수금액'] = self.S['매수수량'] * self.M['당일종가']
             self.S['안정진행'] = True
     
-    def chance_qty(self,option) :
+    def chance_qty(self,basic_qty) :
 
             찬스수량 = 0    
             day_count = min(self.M['현재날수']+self.M['찬스일가'],6)
-            기초수량 = self.S['기초수량'] if option else self.R['기초수량']
             for i in range(0,day_count) : 
-                찬스수량 += my.ceil( 기초수량 *(i*1.25 + 1))
+                찬스수량 += my.ceil( basic_qty *(i*1.25 + 1))
             return 찬스수량   
         
     def tomorrow_step(self)   :
@@ -175,15 +174,14 @@ class M_backtest_OVERALL(Model) :
         self.M['매수가격'] = round(self.M['당일종가']*self.M['평단가치'],2)
         self.M['판매가격'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
         
-        일반수량 = my.ceil(self.V['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1)); 기회수량 = 0; 안정수량 = 0
+        일반수량 = my.ceil(self.V['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
+        기회수량 = 안정수량 = 0
 
         if  일반수량 * self.M['매수가격'] > self.V['일반자금']   :
             self.M['매수단계'] = '매수제한' 
             
             일반수량 = my.ceil(self.V['기초수량'] * self.M['위매비중'])
-            if  일반수량 * self.M['매수가격'] > self.V['일반자금'] : 
-                self.M['매수단계'] = '매수중단' 
-                일반수량 = 0
+            if 일반수량 * self.M['매수가격'] > self.V['일반자금'] : self.M['매수단계'] = '매수중단'; 일반수량 = 0
         
         self.V['구매수량'] = 일반수량  # take_chance 호출 전 결정되어야 함
         
@@ -479,10 +477,7 @@ class M_backtest_OVERALL(Model) :
             self.S['기초수량']  = my.ceil(self.S['일매수금']/self.M['전일종가'])
             
             self.V['매수수량']  = self.V['기초수량']
-            
             self.V['수익현황']  = self.V['현수익률'] = 0.0
-
-            
             self.V['보유수량']  = self.V['매수수량']
             self.V['매수금액']  = self.M['당일종가'] * self.V['매수수량'] 
             self.V['총매수금']  = self.V['평가금액'] = self.V['매수금액']
