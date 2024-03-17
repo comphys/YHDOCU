@@ -90,8 +90,9 @@ class Board(Control) :
             if self.DB.cnt(qry) == 1 : 
                 session['N_NO'] = self.DB.one(qry)
                 session['CSH'] = {}
-                if self.D['_mbl'] : return self.moveto('page/view/dashboard')
-                else : return self.moveto('board/list')
+                # if self.D['_mbl'] : return self.moveto('page/view/dashboard')
+                # else : return self.moveto('board/list')
+                return self.moveto('board/list')
         
         return self.echo(D)
 
