@@ -82,10 +82,10 @@ class update_Stactic :
             매수단가 = float(self.M['GD']['sub19'])
             매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
 
-            if  매수수량 * 매수단가 > self.M['현재잔액'] :
+            if  self.M['현재잔액'] < 매수수량 * 매수단가 :
                 매수수량 = self.M['기초수량'] * self.M['위매비중']
                 self.M['진행상황'] = '매수제한'
-            if  매수수량 * 매수단가 > self.M['현재잔액'] :
+            if  self.M['현재잔액'] < 매수수량 * 매수단가 :
                 매수수량 = 0
                 self.M['진행상황'] = '매수금지'
 
