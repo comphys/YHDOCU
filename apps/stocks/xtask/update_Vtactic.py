@@ -107,7 +107,7 @@ class update_Vtactic :
             self.M['현재잔액'] += self.M['매도금액']
             self.M['진행상황'] = '전량매도'
             수익금액 = self.M['매도금액'] - self.M['현매수금']
-            self.M['회복전략'] = 0 if 수익금액 > 0 else self.S['add22']
+            self.M['회복전략'] = 0 if 수익금액 > 0 else self.M['전략가치']
             self.M['현재손익'] = f"{수익금액:.2f}"
             self.M['경과일수'] = 0
             self.M['시즌'] += 1
