@@ -256,8 +256,11 @@ class M_dashboard2(Model) :
         self.D['종합평단'] = f"{self.D['현매수합']/self.D['총보유량']:.4f}" if self.D['총보유량'] else ''
         self.D['총수익률'] = self.percent_diff(self.D['종합평단'],self.D['최종종가'])
         self.D['현매수합'] = f"{self.D['현매수합']:,.2f}"
-            
-            
+        
+        # 시작일점과의 변동률
+        self.D['시즌시가'] = self.DB.one(f"SELECT add14 FROM {self.M['boards'][0]} WHERE sub1='{self.D['현재시즌1']}' and sub12='1'") if int(self.D['현재일수1'] ) else 0
+        self.D['시즌변동'] = self.percent_diff(self.D['시즌시가'],self.D['최종종가'])
+               
         chk_off = self.DB.exe(f"SELECT description FROM parameters WHERE val='{self.D['오늘날자']}' AND cat='미국증시휴장일'")
         self.D['chk_off'] = chk_off[0][0] if chk_off else ''    
 

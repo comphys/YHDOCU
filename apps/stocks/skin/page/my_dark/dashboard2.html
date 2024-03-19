@@ -32,6 +32,7 @@
               <input type='text' name='from_date' class="i-date_3" style="width:90px;color:lightskyblue;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}">-
               <input type='text' name='toto_date' class="i-date_4" style="width:90px;color:lightskyblue;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}"> 
               <span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="specific_span(1)" title="특정일자기준"><i class="fa fa-calendar"></i></span>
+              <span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="specific_span(2)" title="년초기준"><i class="fa fa-hand-o-right"></i></i></span>
               <span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="specific_span(0)" title="전체일자기준 리셋"><i class="fa fa-refresh"></i></span>             
             </div>
         </div>
@@ -42,7 +43,7 @@
         The Strategy for the day <span style="color:yellow">{{D['오늘날자']}}({{D['오늘요일']}})</span> 
         from <span style="color:white">{{D['최종날자']}}({{D['최종요일']}})</span>.
         The last price is <span style="color:white">{{D['최종종가']}}({{D['종가변동']}})</span>. 
-        The current exchange rate is <span style="color:white">{{D['환율표기']}}</span> won/usd.
+        The rate of change is <span style="color:white">{{D['시즌변동']}}</span> from {{D['시즌시가']}} at Seasn Start. 
       </div>
       <div style="text-align:center;color:gold;font-style:italic;">{{D['chk_off']}}</div>
       <table class="table table-bordered" style="width:1020px;">
@@ -254,12 +255,17 @@ function slice_chart(opt) {
 }
 
 function specific_span(opt) {
-  if(opt){ 
+
+  if(opt==1){ 
     var from_date = $("input[name='from_date']").val(); 	
-    var toto_date = $("input[name='toto_date']").val();  
+    var toto_date = $("input[name='toto_date']").val();
     if(from_date < '2023-08-30') from_date = '2023-08-30';
     if(toto_date < '2023-09-30') toto_date = '2023-09-30'; 
     location.href = uri('linkurl') + '/page/view/dashboard2/ss='+from_date+'/se='+toto_date;
+  } else if(opt==2){
+    var today = new Date().format("yyyy-MM-dd")
+    from_date = today.substring(0,5) + '01-02'
+    location.href = uri('linkurl') + '/page/view/dashboard2/ss='+from_date+'/se='+today;
   }
   else { location.href = uri('linkurl') + '/page/view/dashboard2'; }
 }
