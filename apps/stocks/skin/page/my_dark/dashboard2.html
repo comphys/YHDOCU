@@ -38,7 +38,7 @@
         </div>
     </div> <br>
 
-    <div id="next_strategy" style="position:absolute;top:458px;left:34px;width:1076px;height:349px;padding:20px;background-color:#000000;opacity:0.9;display:none;" onclick="$(this).hide()">
+    <div id="next_strategy" style="position:absolute;top:458px;left:34px;width:1076px;height:349px;padding:20px;background-color:#000000;opacity:0.9;display:none;" ondblclick="$(this).hide()">
       <div style="font-style:italic;color:gray;margin-bottom:20px;">
         The Strategy for <span style="color:yellow">{{D['오늘날자']}}({{D['오늘요일']}})</span> 
         from <span style="color:white">{{D['최종날자']}}({{D['최종요일']}})</span>.
@@ -55,28 +55,28 @@
         <tr>
           <th style="text-align:left">&nbsp;</th><th>시즌</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
           <th style="text-align:right">타겟점</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
-          <th style="text-align:right">추정익(원)</th><th style="text-align:right">매수금</th>
+          <th style="text-align:right">추정이익</th><th style="text-align:right">매수금</th>
           <th style="text-align:right">평균단가</th>
-          <th style="text-align:right">현수익률</th><th style="text-align:right">현수익(원)</th>
-          <th style="text-align:right">현재잔액</th><th style="text-align:right">현금비중</th><th style="text-align:right">현재가치(원)</th>
+          <th style="text-align:right">현수익률</th><th style="text-align:right">현수익</th>
+          <th style="text-align:right">현재잔액</th><th style="text-align:right">현금비중</th><th style="text-align:right">현재가치</th>
         </tr>
         {% for key in ['1','2','3'] %}
         <tr>
           <td style="color:{{D['식별색상'+key]}}">{{D['전략구분'+key]}}</td>
           <td style="text-align:right;">{{D['현재시즌'+key]}}-{{D['현재일수'+key]}}</td>
           <td style="text-align:right;color:#f78181">{{D['매수수량'+key]}}</td>
-          <td style="text-align:right;color:#f78181">{{D['매수가격'+key]}}</td>
+          <td style="text-align:right;color:#f78181" class="ko">{{D['매수가격'+key]}}</td>
           <td style="text-align:right;color:gray">{{D['타겟지점'+key]}}</td>
           <td style="text-align:right;color:#58ACFA">{{D['매도수량'+key]}}</td>
-          <td style="text-align:right;color:#58ACFA">{{D['매도가격'+key]}}</td>
-          <td style="text-align:right;color:yellow">{{D['추정손익'+key]}}</td>
-          <td style="text-align:right;color:gray">{{D['현매수금'+key]}}</td>
-          <td style="text-align:right;color:gray">{{D['평균단가'+key]}}</td>
+          <td style="text-align:right;color:#58ACFA" class="ko">{{D['매도가격'+key]}}</td>
+          <td style="text-align:right;color:yellow"  class="ko">{{D['추정손익'+key]}}</td>
+          <td style="text-align:right;color:gray" class="ko">{{D['현매수금'+key]}}</td>
+          <td style="text-align:right;color:gray" class="ko">{{D['평균단가'+key]}}</td>
           <td style="text-align:right;color:gray">{{D['현수익률'+key]}}%</td>
-          <td style="text-align:right;color:gray">{{D['현수익금'+key]}}</td>
-          <td style="text-align:right;color:gray">{{D['현재잔액'+key]}}</td>
+          <td style="text-align:right;color:gray" class="ko">{{D['현수익금'+key]}}</td>
+          <td style="text-align:right;color:gray" class="ko">{{D['현재잔액'+key]}}</td>
           <td style="text-align:right;color:gray">{{D['현금비중'+key]}}%</td>
-          <td style="text-align:right;color:gray">{{D['현재가치'+key]}}</td>
+          <td style="text-align:right;color:gray" class="ko">{{D['현재가치'+key]}}</td>
         </tr>
         {% endfor %}
         <tr>
@@ -85,14 +85,14 @@
           <td colspan="2">&nbsp;</td>
           <td style="text-align:right;color:#58ACFA">{{D['매도수합']}}</td>
           <td style="text-align:right;color:#58ACFA">{{D['필요상승']}}</td>
-          <td style="text-align:right;color:yellow">{{D['추정합계']}}</td>
-          <td style="text-align:right;color:white">{{D['현매수합']}}</td>
-          <td style="text-align:right;color:white">{{D['종합평단']}}</td>
+          <td style="text-align:right;color:yellow" class="ko">{{D['추정합계']}}</td>
+          <td style="text-align:right;color:white"  class="ko">{{D['현매수합']}}</td>
+          <td style="text-align:right;color:white"  class="ko">{{D['종합평단']}}</td>
           <td style="text-align:right;color:white">{{D['총수익률']}}</td>
-          <td style="text-align:right;color:yellow">{{D['수익금합']}}</td>
-          <td style="text-align:right;color:white">{{D['잔액합산']}}</td>
+          <td style="text-align:right;color:yellow" class="ko">{{D['수익금합']}}</td>
+          <td style="text-align:right;color:white"  class="ko">{{D['잔액합산']}}</td>
           <td style="text-align:right;color:white">{{D['전현비중']}}%</td>
-          <td style="text-align:right;color:yellow">{{D['가치합계']}}</td>
+          <td style="text-align:right;color:yellow" class="ko">{{D['가치합계']}}</td>
         </tr>
       </table>
       <br>
@@ -105,6 +105,12 @@
 
     $(".i-date_3").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false});
     $(".i-date_4").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false});
+    $("#next_strategy table td.ko").click(function(){
+       var us_kor = {{D['현재환율']}};
+       var us = $(this).text().replace(/,/g,'');
+       var ko = parseInt(us_kor * us)
+       h_dialog.notice((ko.toLocaleString()+'원'),{x:mouse_X-20,y:mouse_Y-70});
+    });
     
     const ctx_main = $id('myChart_main');
     ctx_main.style.backgroundColor = '#33363b';
@@ -112,8 +118,8 @@
 
     let labels_origin   = {{D['chart_date']|safe}}		    // labels main origin
     let close_origin    = {{D['close_price']|safe}} 	    // soxl close price origin 
-    let v_avg_origin    = {{D['Vtactic_avg']|safe}}	        // soxl average in v tactic
-    let v_pro_origin    = {{D['Vtactic_pro']|safe}}	        // soxl profits in v tactic
+    let v_avg_origin    = {{D['Vtactic_avg']|safe}}	      // soxl average in v tactic
+    let v_pro_origin    = {{D['Vtactic_pro']|safe}}	      // soxl profits in v tactic
     let r_avg_origin    = {{D['Rtactic_avg']|safe}}
     let r_pro_origin    = {{D['Rtactic_pro']|safe}}
     let s_avg_origin    = {{D['Stactic_avg']|safe}}	
