@@ -43,7 +43,7 @@ class M_backtest_OVERALL(Model) :
 
     def realMDD(self) :
         for tac in (self.V,self.R,self.S) :
-            tac['실최하락'] = tac['수익현황'] / (tac['현재잔액'] + tac['총매수금']) * 100
+            tac['실최하락'] = (tac['평가금액']-tac['총매수금']) / (tac['현재잔액'] + tac['총매수금']) * 100
             if  tac['실최하락'] < tac['진최하락'] : 
                 tac['진최하락'] = tac['실최하락']; tac['최하일자'] = self.M['현재일자']
 
