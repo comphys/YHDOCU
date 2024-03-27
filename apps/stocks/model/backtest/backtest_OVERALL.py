@@ -167,9 +167,13 @@ class M_backtest_OVERALL(Model) :
         else :      self.S['매수가격'] = self.take_chance('S')
 
     def tomorrow_step(self)   :
-        
         self.M['매수가격'] = round(self.M['당일종가']*self.M['평단가치'],2)
-        self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
+
+        # 2024.03.18. 사태에 의한 보완( 안정도 향상 )
+        매도가격S=매도가격R=매도가격V = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
+        if self.R['기회진행'] : 매도가격R = my.round_up(self.R['평균단가'] * self.M['기회매도'])
+        if self.S['안정진행'] : 매도가격S = my.round_up(self.S['평균단가'] * self.M['안정매도'])
+        self.M['매도가격'] = min(매도가격V,매도가격R,매도가격S)
         
         self.V['구매수량'] = my.ceil(self.V['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
         
@@ -183,7 +187,8 @@ class M_backtest_OVERALL(Model) :
                 self.M['매수단계'] = '매수중단' 
         
         # 내일날자(현재날자+1)
-        if  self.M['손실회수']  and self.M['현재날수']+1  <= self.M['매도대기'] :  self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['전화위복'])
+        
+        if  self.M['손실회수']  and self.M['현재날수']+1  <= self.M['매도대기'] : self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['전화위복'])
         if  self.M['현재날수']+1 >= self.M['강매시작'] :                        
             self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['강매가치'])
         
@@ -203,7 +208,43 @@ class M_backtest_OVERALL(Model) :
         k = N / (1+p/100)
         return round(A/(k-n),2)
     
-    
+    def new_day(self) :
+
+        self.R['매수가격'] = 0.0;  self.R['기회진행'] = False; self.R['매수금액'] = 0.0; self.R['매수수량'] = 0
+        self.S['매수가격'] = 0.0;  self.S['안정진행'] = False; self.S['매수금액'] = 0.0; self.S['매수수량'] = 0
+
+        self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가'],0)
+            
+        if  self.M['당일종가'] <  round(self.M['전일종가'] * self.M['큰단가치'],2) :
+            
+            self.M['기록시즌'] += 1
+            self.M['현재날수'] = 1
+            self.V['평균단가']  = self.M['당일종가']
+            
+            self.V['기초수량']  = my.ceil(self.V['일매수금']/self.M['전일종가'])
+            self.R['기초수량']  = my.ceil(self.R['일매수금']/self.M['전일종가'])
+            self.S['기초수량']  = my.ceil(self.S['일매수금']/self.M['전일종가'])
+            
+            self.V['매수수량']  = self.V['기초수량']
+            self.V['수익현황']  = self.V['현수익률'] = 0.0
+            self.V['보유수량']  = self.V['매수수량']
+            self.V['매수금액']  = self.M['당일종가'] * self.V['매수수량'] 
+            self.V['총매수금']  = self.V['평가금액'] = self.V['매수금액']
+            self.V['현재잔액'] -= self.V['매수금액']
+            
+            self.M['진행상황']  = '첫날매수'
+            self.M['첫날기록']  = False
+            self.V['거래코드']  = f"S{self.V['매수수량']}" 
+            self.M['매수단계'] = '일반매수'
+
+            if  self.M['비용차감'] : self.V['현재잔액'] -=  self.commission(self.V['매수금액'],1)
+ 
+            return True
+
+        else : 
+            return False
+        
+
     def test_it(self) :
 
         self.init_value()
@@ -368,11 +409,13 @@ class M_backtest_OVERALL(Model) :
         self.M['강매시작']  = ST['008']  # 강매시작 일(24) 
         self.M['강매가치']  = ST['007']  # 손절가 범위(0.7)
         self.M['위매비중']  = ST['010']  # 매수제한 시 매수범위 기본수량의 (3)
+        self.M['기회매도']  = ST['011']
+        self.M['안정매도']  = ST['012']
         self.M['매도대기']  = ST['006']  # 매도대기(18)
         self.M['전화위복']  = ST['009']  # 손절 이후 매도 이율(1.12)
         self.M['분할횟수']  = ST['001']  # 분할 횟수
         self.M['찬스일가']  = ST['026']  # V,R 전략 시 찬스 수량 계산 가중일
-        
+
         self.M['손실회수']  = False  
         self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
         self.M['매수단계']  = '일반매수'
@@ -426,43 +469,6 @@ class M_backtest_OVERALL(Model) :
         self.D['일회익절'] = 0; self.D['기회익절'] = 0; self.D['안회익절'] = 0
         self.D['일회손절'] = 0; self.D['기회손절'] = 0; self.D['안회손절'] = 0
         
-    def new_day(self) :
-
-        self.R['매수가격'] = 0.0;  self.R['기회진행'] = False; self.R['매수금액'] = 0.0; self.R['매수수량'] = 0
-        self.S['매수가격'] = 0.0;  self.S['안정진행'] = False; self.S['매수금액'] = 0.0; self.S['매수수량'] = 0
-
-        self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가'],0)
-            
-        if  self.M['당일종가'] <  round(self.M['전일종가'] * self.M['큰단가치'],2) :
-            
-            self.M['기록시즌'] += 1
-            self.M['현재날수'] = 1
-            self.V['평균단가']  = self.M['당일종가']
-            
-            self.V['기초수량']  = my.ceil(self.V['일매수금']/self.M['전일종가'])
-            self.R['기초수량']  = my.ceil(self.R['일매수금']/self.M['전일종가'])
-            self.S['기초수량']  = my.ceil(self.S['일매수금']/self.M['전일종가'])
-            
-            self.V['매수수량']  = self.V['기초수량']
-            self.V['수익현황']  = self.V['현수익률'] = 0.0
-            self.V['보유수량']  = self.V['매수수량']
-            self.V['매수금액']  = self.M['당일종가'] * self.V['매수수량'] 
-            self.V['총매수금']  = self.V['평가금액'] = self.V['매수금액']
-            self.V['현재잔액'] -= self.V['매수금액']
-            
-            self.M['진행상황']  = '첫날매수'
-            self.M['첫날기록']  = False
-            self.V['거래코드']  = f"S{self.V['매수수량']}" 
-            self.M['매수단계'] = '일반매수'
-
-            if  self.M['비용차감'] : self.V['현재잔액'] -=  self.commission(self.V['매수금액'],1)
- 
-            return True
-
-        else : 
-            return False
-
-
     def nextStep(self) :
         self.M['전일종가'] = self.M['당일종가']
 
