@@ -8,7 +8,7 @@ class update_Stactic :
         self.D = {}
         self.DB = DB('stocks')
         self.skey = self.DB.store("slack_key")
-        self.guide = 'h_IGUIDE_board'
+        self.guide = 'h_V230831_board'
 
 
     def oneWrite(self) :
@@ -50,6 +50,13 @@ class update_Stactic :
 
         self.M['전매도량'] = self.M['보유수량']
         self.M['전매도가'] = float(self.M['GD']['sub20'])
+
+        if int(self.M['보유수량']) > int(self.M['기초수량']) and self.M['회복아님'] : 
+            매도가격S = my.round_up(self.M['평균단가'] * self.M['안정매도'])
+            if  매도가격S < self.M['전매도가'] : 
+                self.M['전매도가'] = 매도가격S
+                self.DB.exe(f"UPDATE {self.guide} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
+                self.DB.exe(f"UPDATE h_R230831_board SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
 
 
     def tomorrow_buy(self)  :
@@ -185,7 +192,8 @@ class update_Stactic :
         self.M['안정시점']  = ST['023']  # S전략 일반 매수시점
         self.M['안정회복']  = ST['024']  # S전략 회복 매수시점
         self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
- 
+        self.M['안정매도']  = ST['012']
+
         # 매수 매도 초기화
         self.M['매수금액']=0.0
         self.M['매도금액']=0.0
@@ -207,6 +215,7 @@ class update_Stactic :
         self.M['현매수금'] = float(LD['add6'])
         self.M['현재잔액'] = float(LD['add3'])
         self.M['진행상황'] = '매도대기'
+        self.M['회복아님'] = False if float(GD['sub7']) else True
         
         # 기초수량 구하기
         self.M['기초종가'] = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 <= '{self.M['진행일자']}' ORDER BY add0 DESC LIMIT 1")
