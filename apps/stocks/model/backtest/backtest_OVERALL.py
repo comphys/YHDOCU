@@ -133,6 +133,7 @@ class M_backtest_OVERALL(Model) :
             self.V['매수금액']  = self.V['매수수량'] * self.M['당일종가']
             self.M['진행상황']  = self.M['매수단계']
 
+            # R 전략, S 전략의 매수가격은 V전략 매수가격 보다 같거나 작다.
             self.today_buy_R()
             self.today_buy_S()
             

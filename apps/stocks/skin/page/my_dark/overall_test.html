@@ -62,11 +62,18 @@
 		</div> 
 
 		<div id="myChart_main-div" class="clearfix" style="height:370px;background-color:#24272d;padding:10px;border:2px solid black;">
-			<div class="pull-left" style="margin-right:20px">
-				<canvas id="myChart_main"  style="width:1230px;height:350px;background-color:#24272d;"></canvas>
+			<div class="pull-left" style="margin-right:10px">
+				<canvas id="myChart_main"  style="width:1240px;height:350px;background-color:#24272d;"></canvas>
 			</div>
-			<div class="pull-left" onclick="$('#Next-Strategy').show()">
-				<canvas id="myChart_side" style="width:300px;height:350px;background-color:#24272d"></canvas>
+			<div class="pull-left" ondblclick="$('#Next-Strategy').show()">
+				<canvas id="myChart_side" style="width:300px;height:330px;background-color:#24272d;"></canvas>
+				<div style="margin-right:10px;text-align:right;">
+					<input type='text' name='s_date' class="i-date_1" style="width:90px;text-align:center;background:none;border:none" placeholder='시작일자' value="20{{D['c_date'][0]}}"> -
+					<input type='text' name='e_date' class="i-date_2" style="width:90px;text-align:center;background:none;border:none" placeholder='종료일자' value="20{{D['c_date'][-1]}}">
+					<span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="slice_chart(3)" title="한달앞으로"><i class="fa fa-arrow-circle-left"></i></span>
+					<span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="slice_chart(2)" title="한달뒤로"><i class="fa fa-arrow-circle-right"></i></span>
+					<span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="slice_chart(0)" title="전체시즌"><i class="fa fa-home"></i></span>
+				</div>
 			</div>
 		</div>
 		{% if D['일정익절'] %}
@@ -222,6 +229,9 @@
 <script>
 
 {% if D['TR'] %}
+
+$(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 
 $(".ohlc-price").click(function(){
 	if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
@@ -382,16 +392,24 @@ const ctx_main = $id('myChart_main');
 ctx_main.style.backgroundColor = '#33363b';
 ctx_main.style.border = '2px solid black';
 
-let close_price = {{D['clse_p']|safe}};
-// let avg_tprice = {{D['average_price_t']|safe}};
-let avge_v = {{D['avge_v']|safe}};
-let avge_r = {{D['avge_r']|safe}};
-let avge_s = {{D['avge_s']|safe}};
-let eval_v = {{D['eval_v']|safe}};
-let eval_r = {{D['eval_r']|safe}};
-let eval_s = {{D['eval_s']|safe}};
+let closeP_ori   = {{D['clse_p']|safe}};
+let avge_v_ori   = {{D['avge_v']|safe}};
+let avge_r_ori   = {{D['avge_r']|safe}};
+let avge_s_ori   = {{D['avge_s']|safe}};
+let eval_v_ori   = {{D['eval_v']|safe}};
+let eval_r_ori   = {{D['eval_r']|safe}};
+let eval_s_ori   = {{D['eval_s']|safe}};
+let labels_main_ori = {{D['c_date']|safe}};
 
-let labels_main = {{D['c_date']|safe}};
+let closeP   = closeP_ori.slice(0);
+let avge_v   = avge_v_ori.slice(0);
+let avge_r   = avge_r_ori.slice(0);
+let avge_s   = avge_s_ori.slice(0);
+let eval_v   = eval_v_ori.slice(0);
+let eval_r   = eval_r_ori.slice(0);
+let eval_s   = eval_s_ori.slice(0);
+let labels_main = labels_main_ori.slice(0);
+
 let data_count = labels_main.length
 
 if(data_count > 100) {
@@ -411,7 +429,7 @@ const data_main = {
     datasets : [
 		{
             label:' 종가변동',
-            data : close_price,
+            data : closeP,
 			borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,2],
   			lineTension:0.2
     	},
@@ -457,7 +475,7 @@ const data_main = {
     ]   
 };
 const options_main = {
-	animation : { duration:1000	},
+	animation : { duration:300},
 	// animation,
 	plugins : { legend: {display:false}, tooltip:{enabled:false}},
     responsive:false,
@@ -479,6 +497,66 @@ function chart_up_dn(opt) {
 }
 {% endif %}
 
+
+function slice_chart(opt) {
+
+var s_date,e_date,new_s,new_e
+if(opt==1) { 
+	s_date = $("input[name='s_date']").val().slice(2); 
+	e_date = $("input[name='e_date']").val().slice(2); 
+	for(d=0; d<labels_main_ori.length; d++)     { if(labels_main_ori[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_main_ori[d]);break;}} 
+	for(d=labels_main_ori.length-1; d >=0; d--) { if(labels_main_ori[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_main_ori[d]);break;}} 
+} else if(opt==2){
+	s_date = new Date($("input[name='s_date']").val());
+	e_date = new Date($("input[name='e_date']").val());
+	s_date = new Date(s_date.setMonth(s_date.getMonth() + 1));
+	e_date = new Date(e_date.setMonth(e_date.getMonth() + 1));	
+	s_date = s_date.format("yyyy-MM-dd").slice(2);
+	e_date = e_date.format("yyyy-MM-dd").slice(2);
+	for(d=0; d<labels_main_ori.length; d++)     { if(labels_main_ori[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_main_ori[d]);break;}} 
+	for(d=labels_main_ori.length-1; d >=0; d--) { if(labels_main_ori[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_main_ori[d]);break;}} 
+} else if(opt==3){
+	s_date = new Date($("input[name='s_date']").val());
+	e_date = new Date($("input[name='e_date']").val());
+	s_date = new Date(s_date.setMonth(s_date.getMonth() - 1));
+	e_date = new Date(e_date.setMonth(e_date.getMonth() - 1));	
+	s_date = s_date.format("yyyy-MM-dd").slice(2);
+	e_date = e_date.format("yyyy-MM-dd").slice(2);
+	for(d=0; d<labels_main_ori.length; d++)     { if(labels_main_ori[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_main_ori[d]);break;}} 
+	for(d=labels_main_ori.length-1; d >=0; d--) { if(labels_main_ori[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_main_ori[d]);break;}} 
+} else {
+	s_date = "{{D['c_date'][0]}}".slice(2)
+	e_date = "{{D['c_date'][-1]}}".slice(2)
+	$("input[name='s_date']").val("20{{D['c_date'][0]}}"); 
+	$("input[name='e_date']").val("20{{D['c_date'][-1]}}");
+	new_s =0; new_e = labels_main_ori.length
+}
+end_date = $("input[name='e_date']").val().slice(2);
+
+myChart_main.config.data.labels = labels_main_ori.slice(new_s,new_e);
+data_count = myChart_main.config.data.labels.length
+
+myChart_main.config.data.datasets[0].data =  closeP_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[1].data =  avge_v_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[2].data =  avge_r_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[3].data =  avge_s_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[4].data =  eval_v_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[5].data =  eval_r_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[6].data =  eval_s_ori.slice(new_s,new_e);
+
+if(data_count > 100)  {	
+	myChart_main.config.data.datasets[1].data.fill(null); 	
+	myChart_main.config.data.datasets[2].data.fill(null); 
+	myChart_main.config.data.datasets[3].data.fill(null); 
+}
+if(data_count <= 100) { 
+	myChart_main.config.data.datasets[4].data.fill(null); 	
+	myChart_main.config.data.datasets[5].data.fill(null); 
+	myChart_main.config.data.datasets[6].data.fill(null); 
+}
+
+myChart_main.update();
+}
 
 function year_up_dn(opt) {
 	let date1 = $("input[name='시작일자']").val()
