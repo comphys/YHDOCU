@@ -317,8 +317,12 @@ class M_backtest_OVERALL(Model) :
         self.D['output']  = f"총 {style1}{self.D['days_span']:,}</span>일 "
         self.D['output'] += f"초기 {style1}${초기자본:,.0f}</span> 최종 {style1}${최종자본:,.2f}</span> "
         self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 수익률은 {style3}{self.D['t_profit']:,.2f}( {self.D['v_profit']:,.2f} / {self.D['r_profit']:,.2f} / {self.D['s_profit']:,.2f} ) %</span>"
-        
-    
+
+        if self.D['c_date'] :
+            self.D['s_date'] = self.D['c_date'][0]
+            self.D['e_date'] = self.D['c_date'][-1]
+
+
     def get_start(self) :
 
         # 매매전략 가져오기
