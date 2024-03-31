@@ -56,7 +56,7 @@ class update_Stactic :
             if  매도가격S < self.M['전매도가'] : 
                 self.M['전매도가'] = 매도가격S
                 self.DB.exe(f"UPDATE {self.guide} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
-                self.DB.exe(f"UPDATE h_R230831_board SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
+                self.DB.exe(f"UPDATE {self.rtact} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
 
 
     def tomorrow_buy(self)  :
@@ -193,6 +193,7 @@ class update_Stactic :
         self.M['안정회복']  = ST['024']  # S전략 회복 매수시점
         self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
         self.M['안정매도']  = ST['012']
+        self.rtact = ST['36']
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0
