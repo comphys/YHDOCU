@@ -65,7 +65,7 @@ class update_Rtactic :
         
         elif self.M['경과일수'] == 1 :
             self.M['전매수량'] = self.M['기초수량']
-            self.M['전매수가'] = self.M['당일종가']
+            self.M['전매수가'] = float(self.M['GD']['sub19'])
 
         elif self.M['경과일수'] >= 2 and int(self.M['보유수량']) <= int(self.M['기초수량']): 
             

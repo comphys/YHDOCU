@@ -93,7 +93,7 @@ class M_backtest_OVERALL(Model) :
 
     def today_buy_R(self) :
 
-        if  self.M['현재날수'] == 2 and self.M['당일종가'] <= self.M['전일종가'] :
+        if  self.M['현재날수'] == 2 :
             self.R['거래코드'] = f"R{self.R['기초수량']}"
             self.R['매수수량'] = self.R['기초수량']
             self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가'] 
