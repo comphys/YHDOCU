@@ -64,7 +64,7 @@
         <tr>
           <td style="color:{{D['식별색상'+key]}}">{{D['전략구분'+key]}}</td>
           <td style="text-align:right;">{{D['현재시즌'+key]}}-{{D['현재일수'+key]}}</td>
-          <td style="text-align:right;color:#f78181">{{D['매수수량'+key]}}</td>
+          <td style="text-align:right;color:#f78181" class="k2">{{D['매수수량'+key]}}</td>
           <td style="text-align:right;color:#f78181" class="ko">{{D['매수가격'+key]}}</td>
           <td style="text-align:right;color:gray">{{D['타겟지점'+key]}}</td>
           <td style="text-align:right;color:#58ACFA">{{D['매도수량'+key]}}</td>
@@ -99,16 +99,22 @@
     </div>
 
 <script>
-    
+  let us_kor = {{D['현재환율']}};  
     $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
     $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 
     $(".i-date_3").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false});
     $(".i-date_4").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false});
     $("#next_strategy table td.ko").click(function(){
-       var us_kor = {{D['현재환율']}};
        var us = $(this).text().replace(/,/g,'');
        var ko = parseInt(us_kor * us)
+       h_dialog.notice((ko.toLocaleString()+'원'),{x:mouse_X-20,y:mouse_Y-70});
+    });
+
+    $("#next_strategy table td.k2").click(function(){
+       var qt = $(this).text().replace(/,/g,'');
+       var mo = $(this).next().text();
+       var ko = parseInt(us_kor * qt * mo)
        h_dialog.notice((ko.toLocaleString()+'원'),{x:mouse_X-20,y:mouse_Y-70});
     });
     

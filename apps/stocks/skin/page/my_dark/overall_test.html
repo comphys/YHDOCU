@@ -450,7 +450,7 @@ const data_main = {
 		{
             label:' 평균단가S',
             data : avge_s,
-			borderColor:'lightgreen', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',
+			borderColor:'lightgreen', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',
 			lineTension:0.2
         },
 		{
@@ -560,6 +560,9 @@ if(data_count <= 100) {
 myChart_main.update();
 }
 
+{% endif %}
+
+
 function year_up_dn(opt) {
 	let date1 = $("input[name='시작일자']").val()
 	let date2 = $("input[name='종료일자']").val()
@@ -586,7 +589,7 @@ function startYearSpan() {
 	let date2 = date1.slice(0,4)+'-01-01'
 	$("input[name='시작일자']").val(date2)
 }
-{% endif %}
+
 //
 </script>
 {% endblock %}
