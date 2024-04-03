@@ -206,6 +206,7 @@ class M_dashboard2(Model) :
         self.D['수익금합'] = 0.0
         self.D['현매수합'] = 0.0
         self.D['총보유량'] = 0
+        self.D['구입금합'] = 0.0
         
         sk = self.DB.cast_key(['sub2','sub3','add9'],['sub19','sub20','add3','add18','add6','add17'],['sub1','sub12','add7','add4','add0','add8'])
 
@@ -219,6 +220,7 @@ class M_dashboard2(Model) :
 
             self.D['매수수량'+key] = rst['sub2'] if rst['sub2'] else ''
             self.D['매수가격'+key] = f"{rst['sub19']:.2f}" if rst['sub2'] else ''
+            self.D['매수금액'+key] = rst['sub2']*rst['sub19'] if rst['sub2'] else 0
             self.D['타겟지점'+key] = self.percent_diff(self.D['최종종가'],rst['sub19']) if rst['sub2'] else ''
             self.D['매도수량'+key] = rst['sub3'] if rst['sub3'] else ''
             self.D['매도가격'+key] = f"{rst['sub20']:.2f}" if rst['sub3'] else ''
@@ -240,6 +242,7 @@ class M_dashboard2(Model) :
             self.D['수익금합'] += rst['add18']
             self.D['현매수합'] += rst['add6']
             self.D['총보유량'] += rst['add9']
+            self.D['구입금합'] += self.D['매수금액'+key]
             
             # 추정이익 계산
             추정손익 = rst['sub3']*rst['sub20'] - rst['add6']
@@ -256,6 +259,7 @@ class M_dashboard2(Model) :
         self.D['종합평단'] = f"{self.D['현매수합']/self.D['총보유량']:.4f}" if self.D['총보유량'] else ''
         self.D['총수익률'] = self.percent_diff(self.D['종합평단'],self.D['최종종가'])
         self.D['현매수합'] = f"{self.D['현매수합']:,.2f}"
+         
         
         # 시작일점과의 변동률
         chk_season = self.D['현재시즌1'] if int(self.D['현재일수1']) else int(self.D['현재시즌1']) - 1

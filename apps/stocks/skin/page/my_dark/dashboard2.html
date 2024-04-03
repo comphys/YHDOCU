@@ -81,7 +81,7 @@
         {% endfor %}
         <tr>
           <td colspan="2">&nbsp;</td>
-          <td style="text-align:right;color:#f78181">{{D['매수수합']}}</td>
+          <td style="text-align:right;color:#f78181" class="k3">{{D['매수수합']}}</td>
           <td colspan="2">&nbsp;</td>
           <td style="text-align:right;color:#58ACFA">{{D['매도수합']}}</td>
           <td style="text-align:right;color:#58ACFA">{{D['필요상승']}}</td>
@@ -100,6 +100,7 @@
 
 <script>
   let us_kor = {{D['현재환율']}};  
+  let buying_total = {{D['구입금합']}};
     $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
     $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 
@@ -115,6 +116,11 @@
        var qt = $(this).text().replace(/,/g,'');
        var mo = $(this).next().text();
        var ko = parseInt(us_kor * qt * mo)
+       h_dialog.notice((ko.toLocaleString()+'원'),{x:mouse_X-20,y:mouse_Y-70});
+    });
+
+    $("#next_strategy table td.k3").click(function(){
+       var ko = parseInt(us_kor * buying_total)
        h_dialog.notice((ko.toLocaleString()+'원'),{x:mouse_X-20,y:mouse_Y-70});
     });
     
