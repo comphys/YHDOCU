@@ -7,7 +7,8 @@ class Rtactic_guide(Control) :
         self.DB = self.db('stocks')
         self.bid   = self.parm[0]
         self.board = 'h_'+self.bid+'_board'
-        self.guide = 'h_IGUIDE_board'
+        self.guide = 'h_V230831_board'
+
     
 # -----------------------------------------------------------------------------------------------------------------------
 # Initiate  REVOLUTION TACTIC (calller : Rtactic.html)
@@ -77,11 +78,9 @@ class Rtactic_guide(Control) :
         
         return self.json(self.Q)
 
-
 # -----------------------------------------------------------------------------------------------------------------------
-# OneWrite STABILITY TACTIC
+# Basic qty : Recalculate the basic quantity
 # -----------------------------------------------------------------------------------------------------------------------
-
     def oneWrite_Rtactic(self) :
         
         self.D['prev_date'] = self.DB.one(f"SELECT max(add0) FROM h_{self.bid}_board")
@@ -118,6 +117,12 @@ class Rtactic_guide(Control) :
         self.M['전매도량'] = self.M['보유수량']
         self.M['전매도가'] = float(self.M['GD']['sub20'])
 
+        if int(self.M['보유수량']) > int(self.M['기초수량']) and self.M['회복아님'] : 
+            매도가격R = my.round_up(self.M['평균단가'] * self.M['기회매도'])
+            if  매도가격R < self.M['전매도가'] : 
+                self.M['전매도가'] = 매도가격R
+                self.DB.exe(f"UPDATE {self.guide} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'" )
+
 
     def tomorrow_buy(self)  :
 
@@ -127,7 +132,7 @@ class Rtactic_guide(Control) :
         
         elif self.M['경과일수'] == 1 :
             self.M['전매수량'] = self.M['기초수량']
-            self.M['전매수가'] = self.M['당일종가']
+            self.M['전매수가'] = float(self.M['GD']['sub19'])
 
         elif self.M['경과일수'] >= 2 and int(self.M['보유수량']) <= int(self.M['기초수량']): 
             
@@ -135,8 +140,8 @@ class Rtactic_guide(Control) :
             day_count = min(int(self.M['GD']['sub12'])+1+self.M['날수가산'],6)
             for i in range(0,day_count) : 찬스수량 += my.ceil(int(self.M['기초수량']) *(i*1.25 + 1))
             
-            cpc = self.take_chance(self.M['기회회복'],int(self.M['GD']['add9']),int(self.M['GD']['sub2']),float(self.M['GD']['add6']))
             cpn = self.take_chance(self.M['기회시점'],int(self.M['GD']['add9']),int(self.M['GD']['sub2']),float(self.M['GD']['add6']))
+            cpc = self.take_chance(self.M['기회회복'],int(self.M['GD']['add9']),int(self.M['GD']['sub2']),float(self.M['GD']['add6']))
 
             찬스가격 = cpc if float(self.M['GD']['sub7']) else cpn
             찬스가격 = min(float(self.M['GD']['sub19']),찬스가격)
@@ -148,10 +153,10 @@ class Rtactic_guide(Control) :
             매수단가 = float(self.M['GD']['sub19'])
             매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
 
-            if  매수수량 * 매수단가 > self.M['현재잔액'] :
+            if  self.M['현재잔액'] < 매수수량 * 매수단가 :
                 매수수량 = self.M['기초수량'] * self.M['위매비중']
                 self.M['진행상황'] = '매수제한'
-            if  매수수량 * 매수단가 > self.M['현재잔액'] :
+            if  self.M['현재잔액'] < 매수수량 * 매수단가 :
                 매수수량 = 0
                 self.M['진행상황'] = '매수금지'
 
@@ -215,7 +220,6 @@ class Rtactic_guide(Control) :
         if  self.M['당일종가'] <= float(self.M['LD']['sub19']) : self.M['매수수량']  = int(self.M['LD']['sub2'])
 
 
-
     def init_value(self) :
         self.M = {}
         
@@ -235,6 +239,7 @@ class Rtactic_guide(Control) :
 
         # 종가구하기
         self.M['당일종가'] = float(GD['add14'])
+        self.M['전일종가'] = float(self.M['LD']['add14'])
         p_change = self.DB.one(f"SELECT add8 FROM h_stockHistory_board WHERE add0='{self.M['진행일자']}' and add1='SOXL'")
         self.M['종가변동'] = f"{float(p_change):.2f}"
         self.M['연속상승'] = GD['sub5']
@@ -249,6 +254,7 @@ class Rtactic_guide(Control) :
         self.M['기회시점']  = ST['021']  # S전략 일반 매수시점
         self.M['기회회복']  = ST['022']  # S전략 회복 매수시점
         self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
+        self.M['기회매도']  = ST['011']
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0
@@ -271,6 +277,7 @@ class Rtactic_guide(Control) :
         self.M['현매수금'] = float(LD['add6'])
         self.M['현재잔액'] = float(LD['add3'])
         self.M['진행상황'] = '매도대기'
+        self.M['회복아님'] = False if float(GD['sub7']) else True
         
         # 기초수량 구하기
         self.M['기초종가'] = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 <= '{self.M['진행일자']}' ORDER BY add0 DESC LIMIT 1")
@@ -351,7 +358,6 @@ class Rtactic_guide(Control) :
         U['add16']  = f"{U['add16']:.2f}"
         U['add17']  = f"{U['add17']:.2f}"
 
-        U['sub14']  = f"{float(U['sub14']):.2f}"
         U['sub19']  = f"{U['sub19']:.2f}"
         U['sub20']  = f"{U['sub20']:.2f}"
         U['sub30']  = f"{U['sub30']:.2f}"
@@ -367,4 +373,4 @@ class Rtactic_guide(Control) :
             qry=self.DB.qry_insert(self.board,U)
             self.DB.exe(qry)
             
-
+            

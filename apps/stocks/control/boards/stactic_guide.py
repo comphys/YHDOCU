@@ -7,7 +7,7 @@ class Stactic_guide(Control) :
         self.DB = self.db('stocks')
         self.bid   = self.parm[0]
         self.board = 'h_'+self.bid+'_board'
-        self.guide = 'h_IGUIDE_board'
+        self.guide = 'h_V230831_board'
     
 # -----------------------------------------------------------------------------------------------------------------------
 # Initiate  STABILITY TACTIC (calller : Stactic.html)
@@ -115,6 +115,13 @@ class Stactic_guide(Control) :
 
         self.M['전매도량'] = self.M['보유수량']
         self.M['전매도가'] = float(self.M['GD']['sub20'])
+        
+        if int(self.M['보유수량']) > int(self.M['기초수량']) and self.M['회복아님'] : 
+            매도가격S = my.round_up(self.M['평균단가'] * self.M['안정매도'])
+            if  매도가격S < self.M['전매도가'] : 
+                self.M['전매도가'] = 매도가격S
+                self.DB.exe(f"UPDATE {self.guide} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
+                self.DB.exe(f"UPDATE {self.rtact} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
 
 
     def tomorrow_buy(self)  :
@@ -146,10 +153,10 @@ class Stactic_guide(Control) :
             매수단가 = float(self.M['GD']['sub19'])
             매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
 
-            if  매수수량 * 매수단가 > self.M['현재잔액'] :
+            if  self.M['현재잔액'] < 매수수량 * 매수단가 :
                 매수수량 = self.M['기초수량'] * self.M['위매비중']
                 self.M['진행상황'] = '매수제한'
-            if  매수수량 * 매수단가 > self.M['현재잔액'] :
+            if  self.M['현재잔액'] < 매수수량 * 매수단가 :
                 매수수량 = 0
                 self.M['진행상황'] = '매수금지'
 
@@ -233,6 +240,7 @@ class Stactic_guide(Control) :
 
         # 종가구하기
         self.M['당일종가'] = float(GD['add14'])
+        self.M['전일종가'] = float(self.M['LD']['add14'])
         p_change = self.DB.one(f"SELECT add8 FROM h_stockHistory_board WHERE add0='{self.M['진행일자']}' and add1='SOXL'")
         self.M['종가변동'] = f"{float(p_change):.2f}"
         self.M['연속상승'] = GD['sub5']
@@ -247,7 +255,9 @@ class Stactic_guide(Control) :
         self.M['안정시점']  = ST['023']  # S전략 일반 매수시점
         self.M['안정회복']  = ST['024']  # S전략 회복 매수시점
         self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
-
+        self.M['안정매도']  = ST['012']
+        self.rtact = ST['36']
+        
         # 매수 매도 초기화
         self.M['매수금액']=0.0
         self.M['매도금액']=0.0
@@ -269,6 +279,7 @@ class Stactic_guide(Control) :
         self.M['현매수금'] = float(LD['add6'])
         self.M['현재잔액'] = float(LD['add3'])
         self.M['진행상황'] = '매도대기'
+        self.M['회복아님'] = False if float(GD['sub7']) else True
         
         # 기초수량 구하기
         self.M['기초종가'] = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 <= '{self.M['진행일자']}' ORDER BY add0 DESC LIMIT 1")
