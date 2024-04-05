@@ -19,25 +19,28 @@
     				</div>
 					<div class='i-input-div'>
 						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 일반자금</div>
-						<input type='text' class="i-number" name='일반자금' style="width:70px;text-align:center;" value="{{D['일반자금']}}">
+						<input type='text' class="i-number" name='일반자금' style="width:80px;text-align:center;" value="{{D['일반자금']}}">
 					</div>
 					<div class='i-input-div'>
 						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 기회자금</div>
-						<input type='text' class="i-number" name="기회자금" style="width:70px;text-align:center;" value="{{D['기회자금']}}">
+						<input type='text' class="i-number" name="기회자금" style="width:80px;text-align:center;" value="{{D['기회자금']}}">
 					</div>
 					<div class='i-input-div'>
 						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 안정자금</div>
-						<input type='text' class="i-number" name="안정자금" style="width:70px;text-align:center;" value="{{D['안정자금']}}">
+						<input type='text' class="i-number" name="안정자금" style="width:80px;text-align:center;" value="{{D['안정자금']}}">
 					</div>
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 기회시점</div>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px"> 기회</div>
 						<input type='text' class="i-number" name="기회시점" style="width:50px;text-align:center;" value="{{D['기회시점']}}">
 						<input type='text' class="i-number" name="기회회복" style="width:50px;text-align:center;background-color:black;" value="{{D['기회회복']}}">
 					</div>
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 안정시점</div>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px"> 안정</div>
 						<input type='text' class="i-number" name="안정시점" style="width:50px;text-align:center;" value="{{D['안정시점']}}">
 						<input type='text' class="i-number" name="안정회복" style="width:50px;text-align:center;background-color:black;" value="{{D['안정회복']}}">
+					</div>
+					<div id="synchro" style="display:inline-block;color:gray;cursor:pointer;" onclick="synchro()">
+						<i class="fa fa-superpowers fa-lg" title="동기화"></i>
 					</div>
     			</div> <!--pull left-->
 
@@ -588,6 +591,17 @@ function startYearSpan() {
 	let date1 = $("input[name='종료일자']").val()
 	let date2 = date1.slice(0,4)+'-01-01'
 	$("input[name='시작일자']").val(date2)
+}
+
+function synchro() {
+	let date = $("input[name='시작일자']").val();
+	let posturl = uri('linkurl') + 'pages-pajax/overall_test_sync';
+	$.post(posturl, { s_date : date },null,'json').done(function(data){
+		$("input[name='시작일자']").val(data.date);
+		$("input[name='일반자금']").val(data.V_money);
+		$("input[name='기회자금']").val(data.R_money);
+		$("input[name='안정자금']").val(data.S_money);
+	});
 }
 
 //

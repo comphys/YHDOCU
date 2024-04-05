@@ -58,5 +58,20 @@ class Pajax(Control) :
         self.DB.exe(sql)
 
         return 
+    
+    def overall_test_sync(self) :
+        s_date  = self.D['post']['s_date']
+        V_board = self.DB.parameters('035')
+        R_board = self.DB.parameters('036')
+        S_board = self.DB.parameters('037')
+        V_sdate = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 <= '{s_date}' and sub12 = '1' ORDER BY add0 DESC LIMIT 1")
+  
+        V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 <= '{s_date}' and sub12 = '0' ORDER BY add0 DESC LIMIT 1")
+        R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 <= '{s_date}' and sub12 = '0' ORDER BY add0 DESC LIMIT 1")
+        S_money = self.DB.one(f"SELECT add3 FROM {S_board} WHERE add0 <= '{s_date}' and sub12 = '0' ORDER BY add0 DESC LIMIT 1")
+
+        RST = {'date':V_sdate,'V_money':f"{float(V_money):,.2f}",'R_money':f"{float(R_money):,.2f}",'S_money':f"{float(S_money):,.2f}"}
+
+        return self.json(RST)
 
         
