@@ -594,7 +594,7 @@ function startYearSpan() {
 }
 
 function synchro() {
-	let date = $("input[name='종료일자']").val();
+	let date = $("input[name='시작일자']").val();
 	let posturl = uri('linkurl') + 'pages-pajax/overall_test_sync';
 	$.post(posturl, { s_date : date },null,'json').done(function(data){
 		$("input[name='시작일자']").val(data.date);
