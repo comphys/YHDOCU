@@ -503,10 +503,10 @@ class M_backtest_OVERALL(Model) :
         if self.R['기회진행'] : self.D['next_기회매수량'] = self.R['구매수량']
         else :
              if   self.M['현재날수'] == 2 : self.D['next_기회매수량'] = self.R['기초수량'] 
-             elif self.M['현재날수']  > 2 : self.D['next_기회매수량'] = self.chance_qty(0)
+             elif self.M['현재날수']  > 2 : self.D['next_기회매수량'] = self.chance_qty(self.R['기초수량'])
         
         if   self.S['안정진행'] : self.D['next_안정매수량'] = self.S['구매수량']
-        elif self.M['현재날수'] > 2 :  self.D['next_안정매수량'] = self.chance_qty(1) 
+        elif self.M['현재날수'] > 2 :  self.D['next_안정매수량'] = self.chance_qty(self.S['기초수량']) 
         
         self.D['next_일반매도량'] = self.V['보유수량']
         self.D['next_기회매도량'] = self.R['보유수량']
