@@ -11,6 +11,7 @@ class M_dashboard2(Model) :
 
         self.M['구간시작'] = self.gets.get('ss','')
         self.M['구간종료'] = self.gets.get('se','')
+        self.D['구입금합'] = 0.0
         
         if  self.M['구간종료'] :
             self.D['오늘날자']  = self.M['구간종료']
@@ -206,7 +207,6 @@ class M_dashboard2(Model) :
         self.D['수익금합'] = 0.0
         self.D['현매수합'] = 0.0
         self.D['총보유량'] = 0
-        self.D['구입금합'] = 0.0
         
         sk = self.DB.cast_key(['sub2','sub3','add9'],['sub19','sub20','add3','add18','add6','add17'],['sub1','sub12','add7','add4','add0','add8'])
 
