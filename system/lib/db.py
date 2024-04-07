@@ -36,7 +36,8 @@ class DB :
     
     def one(self,qry) : 
         self.rst = self.cur.execute(qry)
-        return self.rst.fetchone()[0]
+        if  rst := self.rst.fetchone() : return rst[0] 
+        return None
 
     def line(self,qry) :
         return self.exe(qry,many=1,assoc=True)

@@ -563,6 +563,8 @@ if(data_count <= 100) {
 myChart_main.update();
 }
 
+
+
 {% endif %}
 
 
@@ -597,10 +599,14 @@ function synchro() {
 	let date = $("input[name='시작일자']").val();
 	let posturl = uri('linkurl') + 'pages-pajax/overall_test_sync';
 	$.post(posturl, { s_date : date },null,'json').done(function(data){
-		$("input[name='시작일자']").val(data.date);
-		$("input[name='일반자금']").val(data.V_money);
-		$("input[name='기회자금']").val(data.R_money);
-		$("input[name='안정자금']").val(data.S_money);
+		if(data.date=='None'){h_dialog.notice(data.msg);}
+		else {
+			h_dialog.notice("동기화 데이타가 입력되었습니다.")
+			$("input[name='시작일자']").val(data.date);
+			$("input[name='일반자금']").val(data.V_money);
+			$("input[name='기회자금']").val(data.R_money);
+			$("input[name='안정자금']").val(data.S_money);
+		}
 	});
 }
 
