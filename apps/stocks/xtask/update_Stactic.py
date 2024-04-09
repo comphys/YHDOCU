@@ -119,7 +119,9 @@ class update_Stactic :
         self.M['일매수금'] = int(self.M['현재잔액']/self.M['분할횟수'])
         self.M['기초수량'] = my.ceil(self.M['일매수금']/float(self.M['기초종가']))
 
-        self.DB.exe(f"UPDATE {self.rtact} SET add3='{self.M['현재잔액']}', sub4='{self.M['일매수금']}', sub18='{'기초수량'}' WHERE add0='{self.D['today']}'")
+        UD  = {'add3':self.M['현재잔액'],'add17':self.M['현재잔액'],'sub4':self.M['일매수금'],'sub18':self.M['기초수량']}
+        qry = self.DB.qry_update(self.rtact,UD,f"add0='{self.D['today']}'") 
+        self.DB.exe(qry)
 
 
     def calculate(self)  :
@@ -200,7 +202,7 @@ class update_Stactic :
         self.M['안정회복']  = ST['024']  # S전략 회복 매수시점
         self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
         self.M['안정매도']  = ST['012']
-        self.rtact = ST['36']
+        self.rtact = ST['036']
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0
