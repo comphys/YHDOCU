@@ -74,7 +74,4 @@ class Pajax(Control) :
             RST = {'date':'None','msg':f"주어진 날자 이전의 동기화된 데이타는 존재하지 않습니다."}
         else :
             RST = {'date':V_sdate,'V_money':f"{float(V_money):,.2f}",'R_money':f"{float(R_money):,.2f}",'S_money':f"{float(S_money):,.2f}"}
-        self.info(RST)
         return self.json(RST)
-
-        

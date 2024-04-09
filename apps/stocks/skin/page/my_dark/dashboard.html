@@ -158,11 +158,9 @@
 <script>
     const ctx_side = $id('myChart_side');
 
-    var allot1 = {{D['자산분배1']}};
+    var allot = {{D['자산분배']}};
     var cur_total1 = {{D['자산총액1']}}; 
-    var allot2 = {{D['자산분배2']}};
     var cur_total2 = {{D['자산총액2']}}; 
-    var allot3 = {{D['자산분배3']}};
     var cur_total3 = {{D['자산총액3']}}; 
     var increase_rate1 = {{D['증가비율1']}};
     var increase_rate2 = {{D['증가비율2']}};
@@ -173,12 +171,9 @@
     var allot_val = []
     var cur_total = cur_total1+cur_total2+cur_total3
 
-    var allot_key  = Object.keys(allot1);
-    var allot_val1 = Object.values(allot1);
-    var allot_val2 = Object.values(allot2);
-    var allot_val3 = Object.values(allot3);
+    var allot_key  = Object.keys(allot);
+    var allot_val  = Object.values(allot);
 
-    for(i=0;i<allot_val1.length;i++) {allot_val[i] = allot_val1[i] + allot_val2[i] + allot_val3[i]};  
     var allot_ori = allot_val.slice();
     var allot_sum0 = allot_ori.reduce((acc,cur) => acc+cur,0); 
 

@@ -215,10 +215,14 @@ class DB :
         if    parm[1] == 'float' : return float(parm[0])
         elif  parm[1] == 'int'   : return int(parm[0])
         else  : return parm[0]
-        
+    
+    def parameters_des(self,key) :
+        parm = self.one(f"SELECT description FROM parameters WHERE key='{key}' LIMIT 1")
+        return parm
+
     def parameters_dict(self,cat=None) :
         con = f"WHERE cat ='{cat}'" if cat else ''
-        parm = self.exe(f"SELECT key,val,type FROM parameters {con}",assoc=False)
+        parm = self.exe(f"SELECT key,val,type FROM parameters {con}",assoc=False)   
         if not parm : return None
         
         D = {}

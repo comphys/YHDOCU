@@ -154,7 +154,7 @@ class M_dashboard2(Model) :
         
 
     def total_value_allot(self) :
-        self.D['E자산분배1'] = self.D['E자산분배2'] = self.D['E자산분배3'] = "{YH:0, YW:0, HJ:0, YG:0}"
+
         self.D['E자산총액1'] = self.D['E자산총액2'] = self.D['E자산총액3'] = 0.0
 
         self.D['환율표기']  = f"{self.D['현재환율']:,.1f}"
@@ -175,17 +175,18 @@ class M_dashboard2(Model) :
 
 
         self.D['나중순증'] = []
+        self.D['자산분배'] = self.DB.parameters_des('038')
         for odr in [0,1,2] :
             cond = f"WHERE add0 <= '{self.D['e_date']}'" 
-            qry = f"SELECT add10, add17, sub25, sub26 FROM {self.M['boards'][odr]} {cond} ORDER BY add0 DESC LIMIT 1"
+            qry = f"SELECT add17, sub25, sub26 FROM {self.M['boards'][odr]} {cond} ORDER BY add0 DESC LIMIT 1"
             qrs = self.DB.exe(qry)
-            if not qrs : qrs=[('{YH:0, YW:0, HJ:0, YG:0}','0','0','0'),]
+            if not qrs : qrs=[('0','0','0'),]
             rst = qrs[0] 
             key = str(odr+1)
-            self.D['E자산분배'+key] = rst[0]
-            self.D['E자산총액'+key] = float(rst[1])
-            self.M['E총입금액'+key] = float(rst[2])
-            self.M['E총출금액'+key] = float(rst[3])
+            
+            self.D['E자산총액'+key] = float(rst[0])
+            self.M['E총입금액'+key] = float(rst[1])
+            self.M['E총출금액'+key] = float(rst[2])
             self.M['E순자증액'+key] = self.D['E자산총액'+key]-self.M['E총입금액'+key]+self.M['E총출금액'+key]
             self.D['나중순증'].append(self.M['E순자증액'+key])
         

@@ -44,7 +44,7 @@ class 목록_Rtactic(SKIN) :
             self.DB.clear()
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
-            LD = self.DB.get_line('add3,add4,add6,add7,add9,add10,add14,add16,add17,sub2,sub3,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub28')
+            LD = self.DB.get_line('add3,add4,add6,add7,add9,add14,add16,add17,sub2,sub3,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub28')
             
             RD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT), CAST(add9 as INT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
                  
@@ -142,7 +142,7 @@ class 목록_Rtactic(SKIN) :
             self.D['연속상승'] = TD['sub5']
             self.D['연속하락'] = TD['sub6']
             self.D['현재환율'] = f"{현재환율:,.2f}"
-            self.D['자산배분'] = LD['add10']
+            self.D['자산배분'] = self.DB.parameters_des('038')
             self.D['가치합계'] = round(float(LD['add17']))
 
             # GD : Guide Data

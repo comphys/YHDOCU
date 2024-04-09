@@ -111,8 +111,15 @@ class update_Stactic :
         self.M['현재잔액'] -= fee
 
     def rebalance(self)  :
+        
+        기회잔액 = self.DB.one(f"SELECT add3 FROM {self.rtact} WHERE add0='{self.D['today']}'")
+        토탈금액 = float(기회잔액) + self.M['현재잔액']
+        
+        self.M['현재잔액'] = round(토탈금액/2,2)
         self.M['일매수금'] = int(self.M['현재잔액']/self.M['분할횟수'])
         self.M['기초수량'] = my.ceil(self.M['일매수금']/float(self.M['기초종가']))
+
+        self.DB.exe(f"UPDATE {self.rtact} SET sub3='{self.M['현재잔액']}', sub4='{self.M['일매수금']}', sub18='{'기초수량'}' WHERE add0='{self.D['today']}'")
 
 
     def calculate(self)  :

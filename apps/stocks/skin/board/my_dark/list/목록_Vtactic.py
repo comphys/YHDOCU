@@ -48,7 +48,7 @@ class 목록_Vtactic(SKIN) :
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
             
-            LD = self.DB.get_line('add6,add8,add9,add10,add14,add15,add17,add18,add19,add20,sub1,sub2,sub3,sub4,sub7,sub12,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub32')
+            LD = self.DB.get_line('add6,add8,add9,add14,add15,add17,add18,add19,add20,sub1,sub2,sub3,sub4,sub7,sub12,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub32')
             
             # 가치 비율 for chart
             현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
@@ -82,7 +82,7 @@ class 목록_Vtactic(SKIN) :
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
             self.D['현재환율'] = f"{현재환율:,.2f}"
-            self.D['자산배분'] = LD['add10']
+            self.D['자산배분'] = self.DB.parameters_des('038')
             self.D['가치합계'] = round(float(LD['add17']))
             
             self.D['필요상승'] = f"({round((float(LD['sub20'])/float(LD['add14']) -1)*100,2)}%)" if int(LD['add9']) else ''

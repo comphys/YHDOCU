@@ -22,6 +22,7 @@ class M_dashboard(Model) :
         self.D['V_title'] = ST['031']
         self.D['R_title'] = ST['032']
         self.D['S_title'] = ST['033']
+        self.D['자산분배'] = self.DB.parameters_des('038')
         
         select_cols = self.DB.table_cols(ST['034'],('no', 'brother', 'add0', 'tle_color', 'uid', 'uname', 'content', 'reply', 'hit', 'wdate', 'mdate'))
         self.DB.wre = f"add0='{today}'"
@@ -76,7 +77,6 @@ class M_dashboard(Model) :
         self.D['매수수량1'] = f"{매수수량1:,}"
         self.D['매수가격1'] = f"{매수가격1:,.2f}"
         self.D['매수가액1'] = f"{매수가액1:,.2f}"
-        self.D['자산분배1'] = VD['add10']
         self.D['자산총액1'] = float(VD['add17']) 
 
         매도수량1 = int(VD['sub3'])
@@ -155,7 +155,6 @@ class M_dashboard(Model) :
         self.D['매수수량2'] = f"{매수수량2:,}"
         self.D['매수가격2'] = f"{매수가격2:,.2f}"
         self.D['매수가액2'] = f"{매수가액2:,.2f}"
-        self.D['자산분배2'] = RD['add10']
         self.D['자산총액2'] = float(RD['add17'])
         self.D['매도수량2'] = f"{매도수량2:,}"
         self.D['매도가격2'] = f"{매도가격2:,.2f}"
@@ -214,7 +213,6 @@ class M_dashboard(Model) :
         self.D['매수수량3'] = f"{매수수량3:,}"
         self.D['매수가격3'] = f"{매수가격3:,.2f}"
         self.D['매수가액3'] = f"{매수가액3:,.2f}"
-        self.D['자산분배3'] = SD['add10']
         self.D['자산총액3'] = float(SD['add17'])
         self.D['매도수량3'] = f"{매도수량3:,}"
         self.D['매도가격3'] = f"{매도가격3:,.2f}"
