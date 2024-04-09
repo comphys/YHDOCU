@@ -119,7 +119,7 @@ class update_Stactic :
         self.M['일매수금'] = int(self.M['현재잔액']/self.M['분할횟수'])
         self.M['기초수량'] = my.ceil(self.M['일매수금']/float(self.M['기초종가']))
 
-        self.DB.exe(f"UPDATE {self.rtact} SET sub3='{self.M['현재잔액']}', sub4='{self.M['일매수금']}', sub18='{'기초수량'}' WHERE add0='{self.D['today']}'")
+        self.DB.exe(f"UPDATE {self.rtact} SET add3='{self.M['현재잔액']}', sub4='{self.M['일매수금']}', sub18='{'기초수량'}' WHERE add0='{self.D['today']}'")
 
 
     def calculate(self)  :
