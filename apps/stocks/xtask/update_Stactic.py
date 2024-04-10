@@ -8,8 +8,6 @@ class update_Stactic :
         self.D = {}
         self.DB = DB('stocks')
         self.skey = self.DB.store("slack_key")
-        self.guide = 'h_V230831_board'
-
 
     def oneWrite(self) :
         
@@ -169,7 +167,20 @@ class update_Stactic :
 
     def init_value(self) :
         self.M = {}
-        
+
+        # 매매전략 가져오기
+        ST = self.DB.parameters_dict('매매전략/VRS')
+        self.M['분할횟수']  = ST['001']  # 분할 횟수
+        self.M['비중조절']  = ST['025']  # 매매일수 에 따른 구매수량 가중치(1.25)
+        self.M['큰단가치']  = ST['002']  # 첫날매수 시 가중치(1.12)
+        self.M['위매비중']  = ST['010']  # 매수제한 시 매수범위 기본수량의 (3)
+        self.M['안정시점']  = ST['023']  # S전략 일반 매수시점
+        self.M['안정회복']  = ST['024']  # S전략 회복 매수시점
+        self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
+        self.M['안정매도']  = ST['012']
+        self.guide = ST['035']
+        self.rtact = ST['036']
+
         self.M['진행일자'] = self.D['today']
         # 가이드 데이타 가져오기
         select_cols = self.DB.table_cols(self.guide,('no', 'brother', 'add0', 'tle_color', 'uid', 'uname', 'content', 'reply', 'hit', 'wdate', 'mdate'))
@@ -191,18 +202,6 @@ class update_Stactic :
         self.M['종가변동'] = f"{float(p_change):.2f}"
         self.M['연속상승'] = GD['sub5']
         self.M['연속하락'] = GD['sub6']
-
-        # 매매전략 가져오기
-        ST = self.DB.parameters_dict('매매전략/VRS')
-        self.M['분할횟수']  = ST['001']  # 분할 횟수
-        self.M['비중조절']  = ST['025']  # 매매일수 에 따른 구매수량 가중치(1.25)
-        self.M['큰단가치']  = ST['002']  # 첫날매수 시 가중치(1.12)
-        self.M['위매비중']  = ST['010']  # 매수제한 시 매수범위 기본수량의 (3)
-        self.M['안정시점']  = ST['023']  # S전략 일반 매수시점
-        self.M['안정회복']  = ST['024']  # S전략 회복 매수시점
-        self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
-        self.M['안정매도']  = ST['012']
-        self.rtact = ST['036']
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0
@@ -294,8 +293,6 @@ class update_Stactic :
         U['sub31'] = float(U['sub31']) + self.M['수수료등'] if self.M['경과일수'] != 1 else self.M['수수료등'] # 누적수수료
         U['add20'] = self.M['종가변동']
         U['content'] = "<div><p>Written by Auto</p></div>"
-
-        
 
     # Formatting
         U['add3']   = f"{U['add3']:.2f}"

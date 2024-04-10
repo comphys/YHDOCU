@@ -8,9 +8,7 @@ class update_Rtactic :
         self.D = {}
         self.DB = DB('stocks')
         self.skey = self.DB.store("slack_key")
-        self.guide = 'h_V230831_board'
-
-
+        
     def oneWrite(self) :
         
         self.D['prev_date'] = self.DB.one(f"SELECT max(add0) FROM h_{self.bid}_board")
@@ -158,6 +156,18 @@ class update_Rtactic :
 
     def init_value(self) :
         self.M = {}
+
+        # 매매전략 가져오기
+        ST = self.DB.parameters_dict('매매전략/VRS')
+        self.M['분할횟수']  = ST['001']  # 분할 횟수
+        self.M['비중조절']  = ST['025']  # 매매일수 에 따른 구매수량 가중치(1.25)
+        self.M['큰단가치']  = ST['002']  # 첫날매수 시 가중치(1.12)
+        self.M['위매비중']  = ST['010']  # 매수제한 시 매수범위 기본수량의 (3)
+        self.M['기회시점']  = ST['021']  # S전략 일반 매수시점
+        self.M['기회회복']  = ST['022']  # S전략 회복 매수시점
+        self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
+        self.M['기회매도']  = ST['011']
+        self.guide = ST['035']
         
         self.M['진행일자'] = self.D['today']
         # 가이드 데이타 가져오기
@@ -180,17 +190,6 @@ class update_Rtactic :
         self.M['종가변동'] = f"{float(p_change):.2f}"
         self.M['연속상승'] = GD['sub5']
         self.M['연속하락'] = GD['sub6']
-
-        # 매매전략 가져오기
-        ST = self.DB.parameters_dict('매매전략/VRS')
-        self.M['분할횟수']  = ST['001']  # 분할 횟수
-        self.M['비중조절']  = ST['025']  # 매매일수 에 따른 구매수량 가중치(1.25)
-        self.M['큰단가치']  = ST['002']  # 첫날매수 시 가중치(1.12)
-        self.M['위매비중']  = ST['010']  # 매수제한 시 매수범위 기본수량의 (3)
-        self.M['기회시점']  = ST['021']  # S전략 일반 매수시점
-        self.M['기회회복']  = ST['022']  # S전략 회복 매수시점
-        self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
-        self.M['기회매도']  = ST['011']
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0
