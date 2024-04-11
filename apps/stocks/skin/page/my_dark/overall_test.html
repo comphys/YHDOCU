@@ -66,7 +66,7 @@
 
 		<div id="myChart_main-div" class="clearfix" style="height:370px;background-color:#24272d;padding:10px;border:2px solid black;">
 			<div class="pull-left" style="margin-right:10px">
-				<canvas id="myChart_main"  style="width:1240px;height:350px;background-color:#24272d;"></canvas>
+				<canvas id="myChart_main"  style="width:1330px;height:350px;background-color:#24272d;"></canvas>
 			</div>
 			<div class="pull-left" ondblclick="$('#Next-Strategy').show()">
 				<canvas id="myChart_side" style="width:300px;height:330px;background-color:#24272d;"></canvas>
@@ -111,21 +111,21 @@
 					<th style='text-align:right;width:60px'>종가</th>
 					<th style='text-align:right;width:60px'>변동</th>
 	
-					<th style='text-align:right;width:100px'>일반진행</th>
+					<th style='text-align:right;width:110px'>일반진행</th>
 					<th style='text-align:right;width:74px'>일반평균</th>
-					<th style='text-align:right;width:90px'>일반수익</th>
+					<th style='text-align:right;width:100px'>일반수익</th>
 					<th style='text-align:right;width:70px'>일반(%)</th>
-					<th style='text-align:right;width:100px'>일반잔액</th>
+					<th style='text-align:right;width:110px'>일반잔액</th>
 	
-					<th style='text-align:right;width:100px'>기회진행</th>
+					<th style='text-align:right;width:110px'>기회진행</th>
 					<th style='text-align:right;width:74px'>기회평균</th>
-					<th style='text-align:right;width:90px'>기회수익</th>
+					<th style='text-align:right;width:100px'>기회수익</th>
 					<th style='text-align:right;width:70px'>기회(%)</th>
-					<th style='text-align:right;width:100px'>기회잔액</th>
+					<th style='text-align:right;width:110px'>기회잔액</th>
 	
-					<th style='text-align:right;width:100px'>안정진행</th>
+					<th style='text-align:right;width:110px'>안정진행</th>
 					<th style='text-align:right;width:74px'>안정평균</th>
-					<th style='text-align:right;width:90px'>안정수익</th>
+					<th style='text-align:right;width:100px'>안정수익</th>
 					<th style='text-align:right;width:70px'>안정(%)</th>
 					<th style='text-align:right;'>안정잔액</th>
 				</tr>
@@ -145,21 +145,21 @@
 			<col style="width:60px;"> <!-- 당일종가 -->
 			<col style="width:60px;border-right:3px solid #424242"> <!-- 종가변동 -->
 
-			<col style="width:100px"> <!-- 일반진행 -->
-			<col style="width:70px"> <!-- 일반평균 -->
-			<col style="width:90px"> <!-- 일반수익 -->
+			<col style="width:110px"> <!-- 일반진행 -->
+			<col style="width:74px"> <!-- 일반평균 -->
+			<col style="width:100px"> <!-- 일반수익 -->
 			<col style="width:70px"> <!-- 일반(%) -->
-			<col style="width:100px;border-right:3px solid #424242"> <!-- 일반잔액 -->
+			<col style="width:110px;border-right:3px solid #424242"> <!-- 일반잔액 -->
 
-			<col style="width:100px"> <!-- 기회진행 -->
-			<col style="width:70px"> <!-- 기회평균 -->
-			<col style="width:90px"> <!-- 기회수익 -->
+			<col style="width:110px"> <!-- 기회진행 -->
+			<col style="width:74px"> <!-- 기회평균 -->
+			<col style="width:100px"> <!-- 기회수익 -->
 			<col style="width:70px"> <!-- 기회(%) -->
-			<col style="width:100px;border-right:3px solid #424242"> <!-- 기회잔액 -->
+			<col style="width:110px;border-right:3px solid #424242"> <!-- 기회잔액 -->
 
-			<col style="width:100px"> <!-- 안정진행 -->
-			<col style="width:70px"> <!-- 안정평균 -->
-			<col style="width:90px"> <!-- 안정수익 -->
+			<col style="width:110px"> <!-- 안정진행 -->
+			<col style="width:74px"> <!-- 안정평균 -->
+			<col style="width:100px"> <!-- 안정수익 -->
 			<col style="width:70px"> <!-- 안정(%) -->
 			<col>
 		</colgroup>
@@ -206,8 +206,8 @@
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
 {% endif %}
 
-<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1240px;background-color:#24272d;padding:10px;border:2px solid black;opacity:0.9">
-	<canvas id="mybackTestChart" style="width:1210px;height:330px;background-color:#24272d"></canvas>
+<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1330px;background-color:#24272d;padding:10px;border:2px solid black;opacity:0.9">
+	<canvas id="mybackTestChart" style="width:1300px;height:330px;background-color:#24272d"></canvas>
 </div>
 
 <div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;width:320px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">

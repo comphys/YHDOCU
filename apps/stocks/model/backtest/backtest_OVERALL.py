@@ -17,6 +17,7 @@ class M_backtest_OVERALL(Model) :
             tac['보유수량'] -=  tac['매도수량'];  tac['현재잔액'] += tac['매도금액']; tac['총매수금'] = 0.00
             tac['현재잔액'] -=  self.commission(tac['매도금액'],2)
             tac['수익현황']  =  tac['실현수익']
+            # tac['현재잔액'] -=  self.tax(tac['실현수익'])
             self.rstCount(tac['실현수익'],key)
 
         tac['평가금액'] =  self.M['당일종가'] * tac['보유수량'] 
@@ -65,6 +66,10 @@ class M_backtest_OVERALL(Model) :
             if opt==2 : fee += round(mm*0.0008)/100
             return fee
         
+    def tax(self,mm) :
+        return int(mm*0.22) 
+        
+        
     def rebalance(self)  :
 
         if  self.M['RS_리밸런싱'] :
@@ -75,7 +80,7 @@ class M_backtest_OVERALL(Model) :
                 self.V['현재잔액']  = self.M['V0_리밸런싱']
                 self.R['현재잔액'] += v0b
                 self.S['현재잔액'] += v0b 
-            
+               
         self.V['일매수금'] = int(self.V['현재잔액']/self.M['분할횟수']) 
         self.R['일매수금'] = int(self.R['현재잔액']/self.M['분할횟수']) 
         self.S['일매수금'] = int(self.S['현재잔액']/self.M['분할횟수']) 
