@@ -66,9 +66,15 @@ class M_backtest_OVERALL(Model) :
             return fee
         
     def rebalance(self)  :
-        if  self.M['기회안정'] :
+
+        if  self.M['RS_리밸런싱'] :
             total = self.R['현재잔액'] + self.S['현재잔액'] 
             self.R['현재잔액'] = self.S['현재잔액'] = round(total/2,2)
+            if  self.M['V0_리밸런싱'] and self.V['현재잔액'] >= self.M['V0_리밸런싱'] :
+                v0b = (self.V['현재잔액'] - self.M['V0_리밸런싱']) / 2
+                self.V['현재잔액']  = self.M['V0_리밸런싱']
+                self.R['현재잔액'] += v0b
+                self.S['현재잔액'] += v0b 
             
         self.V['일매수금'] = int(self.V['현재잔액']/self.M['분할횟수']) 
         self.R['일매수금'] = int(self.R['현재잔액']/self.M['분할횟수']) 
@@ -423,7 +429,8 @@ class M_backtest_OVERALL(Model) :
         self.M['전화위복']  = ST['009']  # 손절 이후 매도 이율(1.12)
         self.M['분할횟수']  = ST['001']  # 분할 횟수
         self.M['찬스일가']  = ST['026']  # V,R 전략 시 찬스 수량 계산 가중일
-        self.M['기회안정']  = ST['027']  # R,S 리밸런싱 적용 여부
+        self.M['RS_리밸런싱']  = ST['027']  # R,S 리밸런싱 적용 여부
+        self.M['V0_리밸런싱']  = ST['028']
 
         self.M['손실회수']  = False  
         self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
