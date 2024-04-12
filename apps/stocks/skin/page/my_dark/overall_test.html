@@ -3,6 +3,7 @@
 {% block contents_page  %}
 <div class="row-row">
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
+		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/overall_test/overall_test" onsubmit='return check_thisForm()'>
 		<br>
 		<div class="well clearfix" style="border-radius:0px;">
     		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/overall_test/overall_test" onsubmit='return check_thisForm()'>
@@ -61,16 +62,16 @@
     				<button class="btn btn-red-s3" style="vertical-align:middle;">테스팅</button>
     			</div> <!--pull right-->
 
-    		</form>
+
 		</div> 
 
 		<div id="myChart_main-div" class="clearfix" style="height:370px;background-color:#24272d;padding:10px;border:2px solid black;">
-			<div class="pull-left" style="margin-right:10px">
-				<canvas id="myChart_main"  style="width:1330px;height:350px;background-color:#24272d;"></canvas>
+			<div class="pull-left">
+				<canvas id="myChart_main"  style="width:1230px;height:350px;background-color:#24272d;"></canvas>
 			</div>
-			<div class="pull-left" ondblclick="$('#Next-Strategy').show()">
+			<div class="pull-left" ondblclick="$('#Next-Strategy').show()" style="margin-left:10px">
 				<canvas id="myChart_side" style="width:300px;height:330px;background-color:#24272d;"></canvas>
-				<div style="margin-right:10px;text-align:right;">
+				<div style="text-align:right;">
 					{% if D['s_date'] %}
 					<input type='text' name='s_date' class="i-date_1" style="width:90px;text-align:center;background:none;border:none" placeholder='시작일자' value="20{{D['s_date']}}"> -
 					<input type='text' name='e_date' class="i-date_2" style="width:90px;text-align:center;background:none;border:none" placeholder='종료일자' value="20{{D['e_date']}}">
@@ -80,7 +81,31 @@
 					{% endif %}
 				</div>
 			</div>
+			<div class="pull-left" style="padding:10px 5px;margin-right:0px">
+				Options
+				<div class="toggle-block" style="margin-top:20px">
+					<input role="switch" type="checkbox" name="chk_fee" {{ 'checked' if D['수료적용'] =='on' else '' }}><span>fee</span> 
+				</div>
+				<div class="toggle-block">
+					<input role="switch" type="checkbox" name="chk_tax" {{ 'checked' if D['세금적용'] =='on' else '' }}><span>Tax</span> 
+				</div>
+				<div class="toggle-block">
+					<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on' else '' }}><span>RS reb</span> 
+				</div>
+				<div class="toggle-block">
+					<input role="switch" type="checkbox" name="chk_bv0" {{ 'checked' if D['이밸런싱'] =='on' else '' }}><span>V0 reb</span> 
+				</div>
+				<div class="toggle-block">
+					<input role="switch" type="checkbox" name="chk_dep" {{ 'checked' if D['자금활용'] =='on' else '' }}><span>Saving</span> 
+				</div>
+				{% if D['자금활용'] == 'on' %}
+				<div class="toggle-block" style="color:gray;">
+					{{D['활용자금']}}
+				</div>
+				{% endif %}
+			</div>
 		</div>
+	</form>
 		{% if D['일정익절'] %}
 		<div id="result-memo" style="position:fixed;left:84px;top:120px;color:gray;font-style:italic;">
 		V tactic  {{D['일정익절']}}:{{D['일정손절']}} , {{D['일회익절']}}:{{D['일회손절']}}&nbsp;&nbsp;

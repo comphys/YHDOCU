@@ -10,14 +10,14 @@ class M_backtest_OVERALL(Model) :
         if  tac['매수수량'] : 
             tac['현재잔액'] -=  tac['매수금액'];  tac['보유수량'] += tac['매수수량'];  tac['총매수금'] += tac['매수금액']
             tac['평균단가']  =  tac['총매수금'] / tac['보유수량'] 
-            tac['현재잔액'] -=  self.commission(tac['매수금액'],1)
+            if self.D['수료적용'] == 'on' : tac['현재잔액'] -=  self.commission(tac['매수금액'],1)
         
         if  tac['매도수량'] :
             tac['실현수익']  = (self.M['당일종가'] - tac['평균단가']) * tac['매도수량']
             tac['보유수량'] -=  tac['매도수량'];  tac['현재잔액'] += tac['매도금액']; tac['총매수금'] = 0.00
             tac['현재잔액'] -=  self.commission(tac['매도금액'],2)
             tac['수익현황']  =  tac['실현수익']
-            # tac['현재잔액'] -=  self.tax(tac['실현수익'])
+            if self.D['세금적용'] == 'on' : tac['현재잔액'] -=  self.tax(tac['실현수익'])
             self.rstCount(tac['실현수익'],key)
 
         tac['평가금액'] =  self.M['당일종가'] * tac['보유수량'] 
@@ -72,12 +72,15 @@ class M_backtest_OVERALL(Model) :
         
     def rebalance(self)  :
 
-        if  self.M['RS_R'] :
+        if  self.D['일밸런싱'] == 'on' :
             self.R['현재잔액'] = self.S['현재잔액'] = round((self.R['현재잔액'] + self.S['현재잔액']) /2,2)
             
-            if  self.M['V0_R'] and self.V['현재잔액'] >= self.M['V0_R'] :
-                toRS = (self.V['현재잔액'] - self.M['V0_R']) / 2
-                self.V['현재잔액']  = self.M['V0_R']
+        if  self.D['이밸런싱'] == 'on' and self.V['현재잔액'] >= self.M['V0_R'] :
+            toRS = (self.V['현재잔액'] - self.M['V0_R']) / 2
+            self.V['현재잔액']  = self.M['V0_R']
+            if  self.D['자금활용'] == 'on' : 
+                self.D['여유자금'] += (toRS * 2)
+            else :
                 self.R['현재잔액'] += toRS
                 self.S['현재잔액'] += toRS 
                
@@ -411,6 +414,7 @@ class M_backtest_OVERALL(Model) :
         self.D['eval_s'].append(round(self.S['현재잔액']+self.S['평가금액'],0))
         
         self.M['현재날수'] +=1
+        self.D['활용자금'] = f"{self.D['여유자금']:,.2f}"
 
 
     def init_value(self) :
@@ -442,6 +446,7 @@ class M_backtest_OVERALL(Model) :
         self.M['매수단계']  = '일반매수'
         self.M['비용차감']  = True # 수수료 계산날수 초과 후 강매선택
         self.M['기록시즌']  = 0
+        self.D['여유자금']  = 0.0
 
         
         self.V['현재잔액']  = my.sv(self.D['일반자금'])

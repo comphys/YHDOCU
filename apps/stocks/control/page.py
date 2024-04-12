@@ -81,6 +81,12 @@ class Page(Control) :
         self.D['안정시점'] = self.D['post']['안정시점']
         self.D['안정회복'] = self.D['post']['안정회복']
 
+        self.D['수료적용'] = self.D['post'].get('chk_fee','off')
+        self.D['세금적용'] = self.D['post'].get('chk_tax','off')
+        self.D['일밸런싱'] = self.D['post'].get('chk_brs','off')
+        self.D['이밸런싱'] = self.D['post'].get('chk_bv0','off')
+        self.D['자금활용'] = self.D['post'].get('chk_dep','off')
+
         M = self.model('backtest-backtest_OVERALL')
         M.get_start()
         M.test_it()

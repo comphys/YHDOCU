@@ -270,4 +270,17 @@ input.search-query {padding:4px 14px;margin-bottom: 0;border-radius: 15px;}
 .close:hover { cursor:pointer; opacity:0.4; color:#000000;}
 .alert-success {color: rgb(70, 136, 71);background-color: rgb(223, 240, 216);border-color: rgb(214, 233, 198);}
 .alert-info {color: rgb(58, 135, 173);background-color: rgb(217, 237, 247);border-color: rgb(188, 232, 241);}
-
+/*/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/ toggle switch
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+.toggle-switch { display:inline-flex; align-items:center; gap:8px; cursor:pointer;}
+.toggle-block  { display:flex; align-items:center; gap:8px; cursor:pointer; margin-bottom:10px;}
+[type="checkbox"] {appearance: none; position: relative; border: 1px solid gray; border-radius: 20px; width:36px; height:20px;}
+[type="checkbox"]::before { content: "";position: absolute;	left: 0; top:0;width:18px; height: 18px;border-radius: 50%;transform: scale(0.8);	background-color: gray;	transition: left 250ms linear;}
+[type="checkbox"]:checked {	background-color: tomato; border-color: tomato;  }
+[type="checkbox"]:checked::before {	background-color: white; left: 16px; }
+[type="checkbox"]:disabled { border-color: lightgray; opacity: 0.7;	cursor: not-allowed; }
+[type="checkbox"]:disabled:before {	background-color: lightgray; }
+[type="checkbox"]:disabled + span { opacity: 0.7; cursor: not-allowed; }
+[type="checkbox"]:focus-visible { outline-offset: 1px; outline: 1px solid tomato; }
+[type="checkbox"]:enabled:hover { box-shadow: 0 0 0 2px lightgray; }
