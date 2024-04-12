@@ -8,9 +8,9 @@ class M_overall_test(Model) :
         
         # 기본 값
         self.D['종목코드'] = 'SOXL'
-        self.D['일반자금'] = '36,000'
-        self.D['기회자금'] = '36,000'
-        self.D['안정자금'] = '36,000'
+        self.D['일반자금'] = self.DB.parameters('051')
+        self.D['기회자금'] = self.DB.parameters('052')
+        self.D['안정자금'] = self.DB.parameters('053')
 
         self.D['기회시점'] = self.DB.parameters('021')
         self.D['기회회복'] = self.DB.parameters('022')
