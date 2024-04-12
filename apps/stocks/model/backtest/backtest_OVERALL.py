@@ -15,7 +15,7 @@ class M_backtest_OVERALL(Model) :
         if  tac['매도수량'] :
             tac['실현수익']  = (self.M['당일종가'] - tac['평균단가']) * tac['매도수량']
             tac['보유수량'] -=  tac['매도수량'];  tac['현재잔액'] += tac['매도금액']; tac['총매수금'] = 0.00
-            tac['현재잔액'] -=  self.commission(tac['매도금액'],2)
+            if self.D['수료적용'] == 'on' : tac['현재잔액'] -=  self.commission(tac['매도금액'],2)
             tac['수익현황']  =  tac['실현수익']
             if self.D['세금적용'] == 'on' : tac['현재잔액'] -=  self.tax(tac['실현수익'])
             self.rstCount(tac['실현수익'],key)
@@ -76,13 +76,13 @@ class M_backtest_OVERALL(Model) :
             self.R['현재잔액'] = self.S['현재잔액'] = round((self.R['현재잔액'] + self.S['현재잔액']) /2,2)
             
         if  self.D['이밸런싱'] == 'on' and self.V['현재잔액'] >= self.M['V0_R'] :
-            toRS = (self.V['현재잔액'] - self.M['V0_R']) / 2
+            toRS = self.V['현재잔액'] - self.M['V0_R']
             self.V['현재잔액']  = self.M['V0_R']
             if  self.D['자금활용'] == 'on' : 
-                self.D['여유자금'] += (toRS * 2)
+                self.D['여유자금'] += toRS
             else :
-                self.R['현재잔액'] += toRS
-                self.S['현재잔액'] += toRS 
+                self.R['현재잔액'] += toRS/2
+                self.S['현재잔액']  = self.R['현재잔액']
                
         self.V['일매수금'] = int(self.V['현재잔액']/self.M['분할횟수']) 
         self.R['일매수금'] = int(self.R['현재잔액']/self.M['분할횟수']) 
