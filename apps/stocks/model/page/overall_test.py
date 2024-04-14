@@ -21,7 +21,6 @@ class M_overall_test(Model) :
         self.D['세금적용'] = 'off'
         self.D['일밸런싱'] = 'on'
         self.D['이밸런싱'] = 'on'
-        self.D['자금활용'] = 'off'
 
         # 기간 설정(최근 2년간)
         # self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)

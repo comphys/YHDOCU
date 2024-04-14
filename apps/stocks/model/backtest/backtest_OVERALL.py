@@ -75,14 +75,12 @@ class M_backtest_OVERALL(Model) :
         if  self.D['일밸런싱'] == 'on' :
             self.R['현재잔액'] = self.S['현재잔액'] = round((self.R['현재잔액'] + self.S['현재잔액']) /2,2)
             
-        if  self.D['이밸런싱'] == 'on' and self.V['현재잔액'] >= self.M['V0_R'] :
-            toRS = self.V['현재잔액'] - self.M['V0_R']
-            self.V['현재잔액']  = self.M['V0_R']
-            if  self.D['자금활용'] == 'on' : 
-                self.D['여유자금'] += toRS
-            else :
-                self.R['현재잔액'] += toRS/2
-                self.S['현재잔액']  = self.R['현재잔액']
+        if  self.D['이밸런싱'] == 'on' and self.V['현재잔액'] >= self.M['이밸한도'] :
+            toRS = self.V['현재잔액'] - self.M['이밸한도']
+            self.V['현재잔액']  = self.M['이밸한도']
+            
+            self.R['현재잔액'] += toRS/2
+            self.S['현재잔액'] += toRS/2
                
         self.V['일매수금'] = int(self.V['현재잔액']/self.M['분할횟수']) 
         self.R['일매수금'] = int(self.R['현재잔액']/self.M['분할횟수']) 
@@ -414,7 +412,6 @@ class M_backtest_OVERALL(Model) :
         self.D['eval_s'].append(round(self.S['현재잔액']+self.S['평가금액'],0))
         
         self.M['현재날수'] +=1
-        self.D['활용자금'] = f"{self.D['여유자금']:,.2f}"
 
 
     def init_value(self) :
@@ -438,17 +435,14 @@ class M_backtest_OVERALL(Model) :
         self.M['전화위복']  = ST['009']  # 손절 이후 매도 이율(1.12)
         self.M['분할횟수']  = ST['001']  # 분할 횟수
         self.M['찬스일가']  = ST['026']  # V,R 전략 시 찬스 수량 계산 가중일
-        self.M['RS_R']  = ST['027']  # R,S 리밸런싱 적용 여부
-        self.M['V0_R']  = ST['028']
+        self.M['이밸한도']  = ST['028']
 
         self.M['손실회수']  = False  
         self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
         self.M['매수단계']  = '일반매수'
         self.M['비용차감']  = True # 수수료 계산날수 초과 후 강매선택
         self.M['기록시즌']  = 0
-        self.D['여유자금']  = 0.0
-
-        
+         
         self.V['현재잔액']  = my.sv(self.D['일반자금'])
         self.R['현재잔액']  = my.sv(self.D['기회자금'])
         self.S['현재잔액']  = my.sv(self.D['안정자금'])
