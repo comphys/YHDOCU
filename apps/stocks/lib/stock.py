@@ -6,7 +6,7 @@ class STOCK :
     
     def __init__(self,SYS) :    
         self.SYS = SYS
-        self.headers = {'User-Agent' : ('Mozilla/5.0 (Windows NT 10.0;Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36')} 
+        self.headers = {'User-Agent' : ('Mozilla/5.0 (Windows NT 10.0;Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36')} 
 
     def get_history(self,code,minDate) :
         url = f"https://finance.yahoo.com/quote/{code}/history"
