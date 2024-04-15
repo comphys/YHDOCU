@@ -65,7 +65,7 @@ def post_slack(key,text,ch='주식'):
 # stock
 
 def get_history(code,minDate) :
-    headers = {'User-Agent' : ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36')}
+    headers = {'User-Agent' : ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36')}
     url = f"https://finance.yahoo.com/quote/{code}/history"
     temp = requests.get(url, headers=headers)
     soup = bs(temp.text,'lxml')
