@@ -66,11 +66,10 @@ def post_slack(key,text,ch='주식'):
 
 def get_history(code,minDate) :
     headers = {'User-Agent' : ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36')}
-    url = f"https://finance.yahoo.com/quote/{code}/history?p={code}"
+    url = f"https://finance.yahoo.com/quote/{code}/history"
     temp = requests.get(url, headers=headers)
     soup = bs(temp.text,'lxml')
-    html = soup.select("#Col1-1-HistoricalDataTable-Proxy>section>div>table>tbody>tr")[0:20]
-
+    html = soup.select("#nimbus-app > section > section > section > article > div.container > div.table-container.svelte-ta1t6m > table > tbody > tr")[0:20]
     today = timestamp_to_date(ts='now',opt=7)
     SH = []
 
