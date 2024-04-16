@@ -585,6 +585,12 @@ $(".begin-date").click(function(){
 	$("input[name=시작일자]").val(b_date);
 });
 
+$(".begin-date").contextmenu(function(e){
+	e.preventDefault();
+	b_date = '20'+ $(this).text();
+	$("input[name=종료일자]").val(b_date);
+});
+
 {% endif %}
 
 
