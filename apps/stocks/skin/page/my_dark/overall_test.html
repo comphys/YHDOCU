@@ -191,7 +191,7 @@
 			<tr>
 			{% endif %}
 				<td style='text-align:center'>{{TR['현재날수']}}</td>
-				<td>{{TR['기록일자']}}</td>
+				<td class="begin-date">{{TR['기록일자']}}</td>
 				<td class='ohlc-price' style='text-align:right;font-weight:bold;cursor:pointer;'>{{TR['당일종가']|safe}}</td>
 				<td style='text-align:right;font-weight:bold;'>{{TR['종가변동']|safe}}</td>
 
@@ -580,7 +580,10 @@ if(data_count <= 100) {
 myChart_main.update();
 }
 
-
+$(".begin-date").click(function(){
+	b_date = '20'+ $(this).text();
+	$("input[name=시작일자]").val(b_date);
+});
 
 {% endif %}
 
