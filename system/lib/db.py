@@ -38,6 +38,13 @@ class DB :
         self.rst = self.cur.execute(qry)
         if  rst := self.rst.fetchone() : return rst[0] 
         return None
+    
+    def col(self,qry,opt=1) :
+        self.rst = self.cur.execute(qry)
+        if  rst := self.rst.fetchall() : 
+            rst = [x[0] for x in rst]
+            return rst 
+        else : return None
 
     def line(self,qry) :
         return self.exe(qry,many=1,assoc=True)

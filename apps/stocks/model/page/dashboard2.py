@@ -208,6 +208,7 @@ class M_dashboard2(Model) :
         self.D['수익금합'] = 0.0
         self.D['현매수합'] = 0.0
         self.D['총보유량'] = 0
+        self.D['주가흐름'] = []
         
         sk = self.DB.cast_key(['sub2','sub3','add9'],['sub19','sub20','add3','add18','add6','add17'],['sub1','sub12','add7','add4','add0','add8'])
 
@@ -261,7 +262,13 @@ class M_dashboard2(Model) :
         self.D['총수익률'] = self.percent_diff(self.D['종합평단'],self.D['최종종가'])
         self.D['현매수합'] = f"{self.D['현매수합']:,.2f}"
          
+        # 시즌기간 주가 
+        if  day := int(self.D['현재일수1']) :
+            qry = f"SELECT add14,add20 FROM {self.M['boards'][0]} ORDER BY add0 DESC LIMIT {day}"
+            self.D['주가흐름'] = self.DB.exe(qry)
+            self.D['주가흐름'].reverse()
         
+       
         # 시작일점과의 변동률
         chk_season = self.D['현재시즌1'] if int(self.D['현재일수1']) else int(self.D['현재시즌1']) - 1
         self.D['시즌시가'] = self.DB.one(f"SELECT add14 FROM {self.M['boards'][0]} WHERE sub1='{chk_season}' and sub12='1'") 
@@ -274,7 +281,7 @@ class M_dashboard2(Model) :
 
         if  self.D['오늘요일'] in ('토','일') : self.D['chk_off'] = "Today is weekend. Take a rest!" 
 
-        return
+       
 
     def percent_diff(self,a,b) :
         if not a or not b : return ''

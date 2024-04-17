@@ -96,7 +96,13 @@
         </tr>
       </table>
       <br>
-    </div>
+      <div style="color:gray;font-style: italic;">
+      시즌기간 종가 : &nbsp;
+      {% for cp in D['주가흐름'] %}
+      {{cp[0]}}({{cp[1]}}%)&nbsp;&nbsp;
+      {% endfor %}
+      </div>
+      </div>
 
 <script>
   let us_kor = {{D['현재환율']}};  
