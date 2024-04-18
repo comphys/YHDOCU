@@ -254,7 +254,6 @@ class M_dashboard2(Model) :
         self.D['전현비중'] = f"{self.D['잔액합산']/self.D['가치합계']*100:.2f}"
         self.D['가치합계'] = f"{self.D['가치합계']:,.2f}" 
         self.D['추정합계'] = f"{self.D['추정합계']:,.2f}" if self.D['추정합계'] else ''
-        # self.D['필요상승'] = self.percent_diff(self.D['최종종가'],self.D['매도가격1']) 
         self.D['잔액합산'] = f"{self.D['잔액합산']:,.2f}"
         self.D['매도수합'] = f"{self.D['매도수합']:,}" if self.D['매도수합'] else ''
         self.D['수익금합'] = f"{self.D['수익금합']:,.2f}"
@@ -273,27 +272,18 @@ class M_dashboard2(Model) :
             self.D['매수수량2']  = '+'
             self.D['매수가격2']  = '↓'
 
-        # 매도수량 합산
-        self.D['필요상승'] = self.D['매도가격3']
-        
-        if  self.D['매도가격1'] == self.D['매도가격2'] : 
-            self.D['매도수량2'] += self.D['매도수량1']
-            self.D['매도수량1']  = '+' 
-            self.D['매도가격1']  = self.percent_diff(self.D['평균단가1'],self.D['매도가격3'])
-        
-        if  self.D['매도가격2'] == self.D['매도가격3'] : 
-            self.D['매도수량3'] += self.D['매도수량2']
-            self.D['매도수량2']  = '+'
-            self.D['매도가격2']  = self.percent_diff(self.D['평균단가2'],self.D['매도가격3'])
-            self.D['매도가격3']  = self.percent_diff(self.D['평균단가3'],self.D['매도가격3'])
+        # 매도 타겟점
+        self.D['필요상승']   = self.D['매도가격1']
+        self.D['매도가격1']  = self.percent_diff(self.D['평균단가1'],self.D['매도가격1']) if self.D['매도수량1'] else ''
+        self.D['매도가격2']  = self.percent_diff(self.D['평균단가2'],self.D['매도가격2']) if self.D['매도수량2'] else ''
+        self.D['매도가격3']  = self.percent_diff(self.D['평균단가3'],self.D['매도가격3']) if self.D['매도수량3'] else ''
         
 
         # 시즌기간 주가 
         if  day := int(self.D['현재일수1']) :
             qry = f"SELECT add14,add20 FROM {self.M['boards'][0]} ORDER BY add0 DESC LIMIT {day}"
             self.D['주가흐름'] = self.DB.exe(qry)
-            self.D['주가흐름'].reverse()
-        
+         
        
         # 시작일점과의 변동률
         chk_season = self.D['현재시즌1'] if int(self.D['현재일수1']) else int(self.D['현재시즌1']) - 1
