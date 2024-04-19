@@ -11,7 +11,6 @@ class M_dashboard2(Model) :
 
         self.M['구간시작'] = self.gets.get('ss','')
         self.M['구간종료'] = self.gets.get('se','')
-        self.D['구입금합'] = 0.0
         
         if  self.M['구간종료'] :
             self.D['오늘날자']  = self.M['구간종료']
@@ -244,7 +243,6 @@ class M_dashboard2(Model) :
             self.D['수익금합'] += rst['add18']
             self.D['현매수합'] += rst['add6']
             self.D['총보유량'] += rst['add9']
-            self.D['구입금합'] += self.D['매수금액'+key]
             
             # 추정이익 계산
             추정손익 = rst['sub3']*rst['sub20'] - rst['add6']
@@ -273,11 +271,11 @@ class M_dashboard2(Model) :
             self.D['매수가격2']  = '↓'
 
         # 매도 타겟점
-        self.D['필요상승']   = self.D['매도가격1']
+        self.D['매도가격0']   = self.D['매도가격1']
         self.D['매도가격1']  = self.percent_diff(self.D['평균단가1'],self.D['매도가격1']) if self.D['매도수량1'] else ''
         self.D['매도가격2']  = self.percent_diff(self.D['평균단가2'],self.D['매도가격2']) if self.D['매도수량2'] else ''
         self.D['매도가격3']  = self.percent_diff(self.D['평균단가3'],self.D['매도가격3']) if self.D['매도수량3'] else ''
-        
+        self.D['필요상승']   = self.percent_diff(self.D['최종종가'], self.D['매도가격0']) if self.D['매도가격0'] else ''
 
         # 시즌기간 주가 
         if  day := int(self.D['현재일수1']) :
