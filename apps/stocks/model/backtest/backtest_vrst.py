@@ -2,7 +2,7 @@ from system.core.load import Model
 from datetime import datetime,date
 import system.core.my_utils as my
 
-class M_backtest_OVERALL(Model) :
+class M_backtest_vrst(Model) :
 
 # 변동성을 이용한 올타임 전략 V(일반) / R(기회) / S(안정)
     def calculate_sub(self,tac,key) :
@@ -77,13 +77,9 @@ class M_backtest_OVERALL(Model) :
         if  self.D['일밸런싱'] == 'on' :
             self.R['현재잔액'] = self.S['현재잔액'] = round((self.R['현재잔액'] + self.S['현재잔액']) /2,2)
             
-        if  self.D['이밸런싱'] == 'on' and self.V['현재잔액'] >= self.M['이밸한도'] :
-            toRS = self.V['현재잔액'] - self.M['이밸한도']
+        if  self.V['현재잔액'] >= self.M['이밸한도'] :
             self.V['현재잔액']  = self.M['이밸한도']
             
-            self.R['현재잔액'] += toRS/2
-            self.S['현재잔액'] += toRS/2
-               
         self.V['일매수금'] = int(self.V['현재잔액']/self.M['분할횟수']) 
         self.R['일매수금'] = int(self.R['현재잔액']/self.M['분할횟수']) 
         self.S['일매수금'] = int(self.S['현재잔액']/self.M['분할횟수']) 
@@ -422,6 +418,7 @@ class M_backtest_OVERALL(Model) :
         self.V = {}
         self.R = {}
         self.S = {}
+        self.T = {}
         
         ST = self.DB.parameters_dict('매매전략/VRS')
         
@@ -450,6 +447,7 @@ class M_backtest_OVERALL(Model) :
         self.V['현재잔액']  = my.sv(self.D['일반자금'])
         self.R['현재잔액']  = my.sv(self.D['기회자금'])
         self.S['현재잔액']  = my.sv(self.D['안정자금'])
+
         
         self.V['일매수금']  = int(self.V['현재잔액'] / self.M['분할횟수'])
         self.R['일매수금']  = int(self.R['현재잔액'] / self.M['분할횟수'])

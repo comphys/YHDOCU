@@ -41,7 +41,10 @@
 						<input type='text' class="i-number" name="안정회복" style="width:50px;text-align:center;background-color:black;" value="{{D['안정회복']}}">
 					</div>
 					<div id="synchro" style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro()" title="동기화"></i>
+						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro(0)" title="동기화"></i>
+					</div>
+					<div id="synchro" style="display:inline-block;">
+						<i class="fa fa-superpowers fa-lg" style="color:lightslategray;cursor:pointer;" onclick="synchro(1)" title="동기화"></i>
 					</div>
     			</div> <!--pull left-->
 
@@ -621,10 +624,16 @@ function startYearSpan() {
 	$("input[name='시작일자']").val(date2)
 }
 
-function synchro() {
-	let date = $("input[name='시작일자']").val();
+function synchro(opt) {
+	let today =''
+	if(opt==1) {
+		today = new Date().format("yyyy-MM-dd");
+		$("input[name='종료일자']").val(today);
+	} else {
+		today = $("input[name='시작일자']").val();
+	}
 	let posturl = uri('linkurl') + 'pages-pajax/overall_test_sync';
-	$.post(posturl, { s_date : date },null,'json').done(function(data){
+	$.post(posturl, { s_date : today },null,'json').done(function(data){
 		if(data.date=='None'){h_dialog.notice(data.msg);}
 		else {
 			h_dialog.notice("동기화 데이타가 입력되었습니다.")

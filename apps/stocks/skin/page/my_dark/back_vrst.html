@@ -3,9 +3,10 @@
 {% block contents_page  %}
 <div class="row-row">
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
+		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/back_vrst/back_vrst" onsubmit='return check_thisForm()'>
 		<br>
 		<div class="well clearfix" style="border-radius:0px;">
-    		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/VTRS/VTRS" onsubmit='return check_thisForm()'>
+    		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/overall_test/overall_test" onsubmit='return check_thisForm()'>
     			<div class="pull-left">
     				<div class='select' style='margin-right:10px;vertical-align:bottom'>
         				<input placeholder='종목코드' name='종목코드' type='text' value="{{D['종목코드']}}">
@@ -18,54 +19,88 @@
             			</div>
     				</div>
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 시작자금</div>
-						<input type='text' class="i-number" name='시작자금' style="width:70px;text-align:center;" value="{{D['시작자금']}}">
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 일반자금</div>
+						<input type='text' class="i-number" name='일반자금' style="width:80px;text-align:center;" value="{{D['일반자금']}}">
 					</div>
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> T-tactic</div>
-						<input type='text' class="i-number" name="타임지연" style="width:50px;text-align:center;" value="{{D['타임지연']}}">
-						<input type='text' class="i-number" name="타임시점" style="width:50px;text-align:center;background-color:black;" value="{{D['타임시점']}}">
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 기회자금</div>
+						<input type='text' class="i-number" name="기회자금" style="width:80px;text-align:center;" value="{{D['기회자금']}}">
 					</div>
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> R-tactic</div>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 안정자금</div>
+						<input type='text' class="i-number" name="안정자금" style="width:80px;text-align:center;" value="{{D['안정자금']}}">
+					</div>
+					<div class='i-input-div'>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 기회시점</div>
 						<input type='text' class="i-number" name="기회시점" style="width:50px;text-align:center;" value="{{D['기회시점']}}">
 						<input type='text' class="i-number" name="기회회복" style="width:50px;text-align:center;background-color:black;" value="{{D['기회회복']}}">
 					</div>
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> S-tactic</div>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 안정시점</div>
 						<input type='text' class="i-number" name="안정시점" style="width:50px;text-align:center;" value="{{D['안정시점']}}">
 						<input type='text' class="i-number" name="안정회복" style="width:50px;text-align:center;background-color:black;" value="{{D['안정회복']}}">
+					</div>
+					<div id="synchro" style="display:inline-block;">
+						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro(0)" title="동기화"></i>
+					</div>
+					<div id="synchro" style="display:inline-block;">
+						<i class="fa fa-superpowers fa-lg" style="color:lightslategray;cursor:pointer;" onclick="synchro(1)" title="동기화"></i>
 					</div>
     			</div> <!--pull left-->
 
     			<div class="pull-right">
-					<div class='label label-info' style="cursor:pointer" onclick="oneYearSpan()">1y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(5)">5y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(3)">3y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(2)">2y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(1)">1y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="startYearSpan()">S</div>&nbsp;
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px;cursor:pointer;" onclick="year_up_dn(0)"> 시작일자</div>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(0)"> 시작</div>
 						<input type='text' name='시작일자' class="i-date" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
 					</div>
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px;cursor:pointer;" onclick="year_up_dn(1)"> 종료일자</div>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(1)"> 종료</div>
 						<input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
 					</div>
     				<button class="btn btn-red-s3" style="vertical-align:middle;">테스팅</button>
     			</div> <!--pull right-->
 
-    		</form>
+
 		</div> 
 
 		<div id="myChart_main-div" class="clearfix" style="height:370px;background-color:#24272d;padding:10px;border:2px solid black;">
-			<div class="pull-left" style="margin-right:20px">
+			<div class="pull-left">
 				<canvas id="myChart_main"  style="width:1230px;height:350px;background-color:#24272d;"></canvas>
 			</div>
-			<div class="pull-left" onclick="$('#Next-Strategy').show()">
-				<canvas id="myChart_side" style="width:300px;height:350px;background-color:#24272d"></canvas>
+			<div class="pull-left" ondblclick="$('#Next-Strategy').show()" style="margin-left:10px">
+				<canvas id="myChart_side" style="width:300px;height:330px;background-color:#24272d;"></canvas>
+				<div style="text-align:right;">
+					{% if D['s_date'] %}
+					<input type='text' name='s_date' class="i-date_1" style="width:90px;text-align:center;background:none;border:none" placeholder='시작일자' value="20{{D['s_date']}}"> -
+					<input type='text' name='e_date' class="i-date_2" style="width:90px;text-align:center;background:none;border:none" placeholder='종료일자' value="20{{D['e_date']}}">
+					<span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="slice_chart(3)" title="한달앞으로"><i class="fa fa-arrow-circle-left"></i></span>
+					<span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="slice_chart(2)" title="한달뒤로"><i class="fa fa-arrow-circle-right"></i></span>
+					<span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="slice_chart(0)" title="전체시즌"><i class="fa fa-home"></i></span>
+					{% endif %}
+				</div>
+			</div>
+			<div class="pull-left" style="padding:10px 5px;margin-right:0px">
+				Options
+				<div class="toggle-block" style="margin-top:20px">
+					<input role="switch" type="checkbox" name="chk_fee" {{ 'checked' if D['수료적용'] =='on' else '' }}><span>fee</span> 
+				</div>
+				<div class="toggle-block">
+					<input role="switch" type="checkbox" name="chk_tax" {{ 'checked' if D['세금적용'] =='on' else '' }}><span>Tax</span> 
+				</div>
+				<div class="toggle-block">
+					<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on' else '' }}><span>RS reb</span> 
+				</div>
 			</div>
 		</div>
+	</form>
 		{% if D['일정익절'] %}
 		<div id="result-memo" style="position:fixed;left:84px;top:120px;color:gray;font-style:italic;">
 		V tactic  {{D['일정익절']}}:{{D['일정손절']}} , {{D['일회익절']}}:{{D['일회손절']}}&nbsp;&nbsp;
-		T tactic  {{D['타정익절']}}:{{D['타정손절']}} , {{D['타회익절']}}:{{D['타회손절']}}&nbsp;&nbsp;
 		R tactic  {{D['기정익절']}}:{{D['기정손절']}} , {{D['기회익절']}}:{{D['기회손절']}}&nbsp;&nbsp;
 		S tactic  {{D['안정익절']}}:{{D['안정손절']}} , {{D['안회익절']}}:{{D['안회손절']}}
 		</div>
@@ -75,7 +110,7 @@
 			<div class="pull-left" style="color:lightgray;">
 				{% if D['max_days'] %}
 				최장 : <b>{{D['max_days']}}</b>일( {{D['max_date']}} ) &nbsp;
-				MDD ( {{D['MDD_DAY1']}} ) : <b>{{D['MDD1']}}%</b> / <b>{{D['MDD2']}}%</b> / <b>{{D['MDD3']}}%</b>&nbsp;
+				MDD : <b>{{D['MDD1']}}%</b>( {{D['MDD_DAY1']}} )  / <b>{{D['MDD2']}}%</b>( {{D['MDD_DAY2']}} ) / <b>{{D['MDD3']}}%</b>( {{D['MDD_DAY3']}} )&nbsp;
 				<i class="fa fa-arrow-up" onclick="chart_up_dn(1)"></i>
 				<i class="fa fa-arrow-down" onclick="chart_up_dn(2)"></i>
 				{% endif %}
@@ -93,25 +128,23 @@
 					<th style='text-align:right;width:60px'>종가</th>
 					<th style='text-align:right;width:60px'>변동</th>
 	
-					<th style='text-align:right;width:110px;color:yellow;'>일반진행</th>
-					<th style='text-align:right;width:74px;color:yellow;'>일반평균</th>
-					<th style='text-align:right;width:70px;color:yellow;'>일반(%)</th>
-					<th style='text-align:right;width:110px;color:yellow;'>일반잔액</th>
-
-					<th style='text-align:right;width:110px;'>타임진행</th>
-					<th style='text-align:right;width:74px'>타임평균</th>
-					<th style='text-align:right;width:70px'>타임(%)</th>
-					<th style='text-align:right;width:110px'>타임잔액</th>
+					<th style='text-align:right;width:110px'>일반진행</th>
+					<th style='text-align:right;width:74px'>일반평균</th>
+					<th style='text-align:right;width:100px'>일반수익</th>
+					<th style='text-align:right;width:70px'>일반(%)</th>
+					<th style='text-align:right;width:110px'>일반잔액</th>
 	
-					<th style='text-align:right;width:110px;color:#F5D0A9;'>기회진행</th>
-					<th style='text-align:right;width:74px;color:#F5D0A9;'>기회평균</th>
-					<th style='text-align:right;width:70px;color:#F5D0A9;'>기회(%)</th>
-					<th style='text-align:right;width:110px;color:#F5D0A9;'>기회잔액</th>
+					<th style='text-align:right;width:110px'>기회진행</th>
+					<th style='text-align:right;width:74px'>기회평균</th>
+					<th style='text-align:right;width:100px'>기회수익</th>
+					<th style='text-align:right;width:70px'>기회(%)</th>
+					<th style='text-align:right;width:110px'>기회잔액</th>
 	
-					<th style='text-align:right;width:110px;color:#A9F5F2;'>안정진행</th>
-					<th style='text-align:right;width:74px;color:#A9F5F2;'>안정평균</th>
-					<th style='text-align:right;width:70px;color:#A9F5F2;'>안정(%)</th>
-					<th style='text-align:right;;color:#A9F5F2;'>안정잔액</th>
+					<th style='text-align:right;width:110px'>안정진행</th>
+					<th style='text-align:right;width:74px'>안정평균</th>
+					<th style='text-align:right;width:100px'>안정수익</th>
+					<th style='text-align:right;width:70px'>안정(%)</th>
+					<th style='text-align:right;'>안정잔액</th>
 				</tr>
 			</table>
 		</div>
@@ -127,25 +160,23 @@
 			<col style="width:50px;"> <!-- 날수 -->
 			<col style="width:80px;"> <!-- 일자 -->
 			<col style="width:60px;"> <!-- 당일종가 -->
-			<col style="width:60px;border-right:2px solid gray"> <!-- 종가변동 -->
+			<col style="width:60px;border-right:3px solid #424242"> <!-- 종가변동 -->
 
 			<col style="width:110px"> <!-- 일반진행 -->
-			<col style="width:70px"> <!-- 일반평균 -->
+			<col style="width:74px"> <!-- 일반평균 -->
+			<col style="width:100px"> <!-- 일반수익 -->
 			<col style="width:70px"> <!-- 일반(%) -->
-			<col style="width:110px;border-right:2px solid gray"> <!-- 일반잔액 -->
-
-			<col style="width:110px"> <!-- 타임진행 -->
-			<col style="width:70px"> <!-- 타임평균 -->
-			<col style="width:70px"> <!-- 타임(%) -->
-			<col style="width:110px;border-right:2px solid gray"> <!-- 타임잔액 -->
+			<col style="width:110px;border-right:3px solid #424242"> <!-- 일반잔액 -->
 
 			<col style="width:110px"> <!-- 기회진행 -->
-			<col style="width:70px"> <!-- 기회평균 -->
+			<col style="width:74px"> <!-- 기회평균 -->
+			<col style="width:100px"> <!-- 기회수익 -->
 			<col style="width:70px"> <!-- 기회(%) -->
-			<col style="width:110px;border-right:2px solid gray"> <!-- 기회잔액 -->
+			<col style="width:110px;border-right:3px solid #424242"> <!-- 기회잔액 -->
 
 			<col style="width:110px"> <!-- 안정진행 -->
-			<col style="width:70px"> <!-- 안정평균 -->
+			<col style="width:74px"> <!-- 안정평균 -->
+			<col style="width:100px"> <!-- 안정수익 -->
 			<col style="width:70px"> <!-- 안정(%) -->
 			<col>
 		</colgroup>
@@ -153,34 +184,32 @@
 
 			{% for TR in D['TR'] %}
 			{% if TR['진행상황'] == '익절매도'  %}
-			<tr style="border-top:1px solid #F3F781;border-bottom:1px solid #F3F781;background-color:black;font-weight:bold" onclick="show_chart({{TR['기록시즌']}})"> 
+			<tr style="border-top:1px solid #424242;border-bottom:1px solid #424242;background-color:black;font-weight:bold" onclick="show_chart({{TR['기록시즌']}})"> 
 			{% elif TR['진행상황'] == '손절매도' %}
 			<tr style="border-top:1px solid #A9D0F5;border-bottom:1px solid #A9D0F5;background-color:black;" onclick="show_chart({{TR['기록시즌']}})">
 			{% else %}
 			<tr>
 			{% endif %}
 				<td style='text-align:center'>{{TR['현재날수']}}</td>
-				<td>{{TR['기록일자']}}</td>
+				<td class="begin-date">{{TR['기록일자']}}</td>
 				<td class='ohlc-price' style='text-align:right;font-weight:bold;cursor:pointer;'>{{TR['당일종가']|safe}}</td>
 				<td style='text-align:right;font-weight:bold;'>{{TR['종가변동']|safe}}</td>
 
 				<td style='text-align:right;color:#F6CECE'>{{TR['일반진행']}}</td>
 				<td style='text-align:right'>{{TR['일반평균']|safe}}</td>
+				<td style='text-align:right'>{{TR['일반수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['일반익률']|safe}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['일반잔액']|safe}}</td>
 
-				<td style='text-align:right;color:#F6CECE'>{{TR['타임진행']}}</td>
-				<td style='text-align:right'>{{TR['타임평균']|safe}}</td>
-				<td style='text-align:right;font-weight:bold'>{{TR['타임익률']|safe}}</td>
-				<td style='text-align:right;color:#CEF6CE'>{{TR['타임잔액']|safe}}</td>
-
 				<td style='text-align:right;color:#F6CECE'>{{TR['기회진행']}}</td>
 				<td style='text-align:right;color:#E6F8E0'>{{TR['기회평균']|safe}}</td>
+				<td style='text-align:right'>{{TR['기회수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['기회익률']|safe}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['기회잔액']|safe}}</td>
 
 				<td style='text-align:right;color:#F6CECE'>{{TR['안정진행']}}</td>
 				<td style='text-align:right;color:#E6F8E0'>{{TR['안정평균']|safe}}</td>
+				<td style='text-align:right'>{{TR['안정수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['안정익률']|safe}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['안정잔액']|safe}}</td>				
 			</tr>
@@ -194,8 +223,8 @@
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
 {% endif %}
 
-<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1240px;background-color:#24272d;padding:10px;border:2px solid black;opacity:0.9">
-	<canvas id="mybackTestChart" style="width:1210px;height:330px;background-color:#24272d"></canvas>
+<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1230px;background-color:#24272d;padding:10px;border:2px solid black;opacity:0.9">
+	<canvas id="mybackTestChart" style="width:1200px;height:330px;background-color:#24272d"></canvas>
 </div>
 
 <div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;width:320px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
@@ -220,7 +249,12 @@
 <script src="/sys/chart/chart.min.js"></script>
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 <script>
+
 {% if D['TR'] %}
+
+$(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+
 $(".ohlc-price").click(function(){
 	if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
 	var code = $("input[name='종목코드']").val()
@@ -293,16 +327,16 @@ const config_season  = {type:'line',data:data_season,options:options_season};
 const myChart_season = new Chart(ctx_season, config_season);
 // --------------------------------------------------------------------------------------
 const ctx_side= $id('myChart_side');
-const labels_side = [' ',' ',' ',' ',' '];
+const labels_side = [' ',' ',' ',' '];
 
 const data_side = {
   labels: labels_side,
   datasets: [{
     label: ' 수익률비교 ',
-    data: [ {{D['a_profit']}}, {{D['v_profit']}}, {{D['t_profit']}}, {{D['r_profit']}}, {{D['s_profit']}}],
+    data: [ {{D['t_profit']}}, {{D['v_profit']}}, {{D['r_profit']}}, {{D['s_profit']}}],
 	barThickness:40,
-    backgroundColor: ['darkgray','#AEB404','#8F8681','#A67F78','#A9F5F2'],
-    borderColor: ['#000000','#000000','#000000','#000000','#000000'],
+    backgroundColor: ['#283B42','#AEB404','#A67F78','#8F8681','#69491A','#003E19','#283B42'],
+    borderColor: ['#000000','#000000','#000000','#000000','#000000','#000000','#000000'],
     borderWidth: 1
   }]
 };
@@ -380,16 +414,24 @@ const ctx_main = $id('myChart_main');
 ctx_main.style.backgroundColor = '#33363b';
 ctx_main.style.border = '2px solid black';
 
-let close_price = {{D['clse_p']|safe}};
-// let avg_tprice = {{D['average_price_t']|safe}};
-let avge_v = {{D['avge_v']|safe}};
-let avge_r = {{D['avge_r']|safe}};
-let avge_s = {{D['avge_s']|safe}};
-let eval_v = {{D['eval_v']|safe}};
-let eval_r = {{D['eval_r']|safe}};
-let eval_s = {{D['eval_s']|safe}};
+let closeP_ori   = {{D['clse_p']|safe}};
+let avge_v_ori   = {{D['avge_v']|safe}};
+let avge_r_ori   = {{D['avge_r']|safe}};
+let avge_s_ori   = {{D['avge_s']|safe}};
+let eval_v_ori   = {{D['eval_v']|safe}};
+let eval_r_ori   = {{D['eval_r']|safe}};
+let eval_s_ori   = {{D['eval_s']|safe}};
+let labels_main_ori = {{D['c_date']|safe}};
 
-let labels_main = {{D['c_date']|safe}};
+let closeP   = closeP_ori.slice(0);
+let avge_v   = avge_v_ori.slice(0);
+let avge_r   = avge_r_ori.slice(0);
+let avge_s   = avge_s_ori.slice(0);
+let eval_v   = eval_v_ori.slice(0);
+let eval_r   = eval_r_ori.slice(0);
+let eval_s   = eval_s_ori.slice(0);
+let labels_main = labels_main_ori.slice(0);
+
 let data_count = labels_main.length
 
 if(data_count > 100) {
@@ -409,7 +451,7 @@ const data_main = {
     datasets : [
 		{
             label:' 종가변동',
-            data : close_price,
+            data : closeP,
 			borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,2],
   			lineTension:0.2
     	},
@@ -428,7 +470,7 @@ const data_main = {
 		{
             label:' 평균단가S',
             data : avge_s,
-			borderColor:'lightgreen', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',
+			borderColor:'lightgreen', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',
 			lineTension:0.2
         },
 		{
@@ -455,7 +497,7 @@ const data_main = {
     ]   
 };
 const options_main = {
-	animation : { duration:1000	},
+	animation : { duration:300},
 	// animation,
 	plugins : { legend: {display:false}, tooltip:{enabled:false}},
     responsive:false,
@@ -476,7 +518,81 @@ function chart_up_dn(opt) {
 	// "margin-top:473px"
 }
 
+
+
+function slice_chart(opt) {
+
+var s_date,e_date,new_s,new_e
+if(opt==1) { 
+	s_date = $("input[name='s_date']").val().slice(2); 
+	e_date = $("input[name='e_date']").val().slice(2); 
+	for(d=0; d<labels_main_ori.length; d++)     { if(labels_main_ori[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_main_ori[d]);break;}} 
+	for(d=labels_main_ori.length-1; d >=0; d--) { if(labels_main_ori[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_main_ori[d]);break;}} 
+} else if(opt==2){
+	s_date = new Date($("input[name='s_date']").val());
+	e_date = new Date($("input[name='e_date']").val());
+	s_date = new Date(s_date.setMonth(s_date.getMonth() + 1));
+	e_date = new Date(e_date.setMonth(e_date.getMonth() + 1));	
+	s_date = s_date.format("yyyy-MM-dd").slice(2);
+	e_date = e_date.format("yyyy-MM-dd").slice(2);
+	for(d=0; d<labels_main_ori.length; d++)     { if(labels_main_ori[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_main_ori[d]);break;}} 
+	for(d=labels_main_ori.length-1; d >=0; d--) { if(labels_main_ori[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_main_ori[d]);break;}} 
+} else if(opt==3){
+	s_date = new Date($("input[name='s_date']").val());
+	e_date = new Date($("input[name='e_date']").val());
+	s_date = new Date(s_date.setMonth(s_date.getMonth() - 1));
+	e_date = new Date(e_date.setMonth(e_date.getMonth() - 1));	
+	s_date = s_date.format("yyyy-MM-dd").slice(2);
+	e_date = e_date.format("yyyy-MM-dd").slice(2);
+	for(d=0; d<labels_main_ori.length; d++)     { if(labels_main_ori[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_main_ori[d]);break;}} 
+	for(d=labels_main_ori.length-1; d >=0; d--) { if(labels_main_ori[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_main_ori[d]);break;}} 
+} else {
+	s_date = "{{D['s_date']}}".slice(2)
+	e_date = "{{D['e_date']}}".slice(2)
+	$("input[name='s_date']").val("20{{D['s_date']}}"); 
+	$("input[name='e_date']").val("20{{D['e_date']}}");
+	new_s =0; new_e = labels_main_ori.length
+}
+end_date = $("input[name='e_date']").val().slice(2);
+
+myChart_main.config.data.labels = labels_main_ori.slice(new_s,new_e);
+data_count = myChart_main.config.data.labels.length
+
+myChart_main.config.data.datasets[0].data =  closeP_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[1].data =  avge_v_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[2].data =  avge_r_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[3].data =  avge_s_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[4].data =  eval_v_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[5].data =  eval_r_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[6].data =  eval_s_ori.slice(new_s,new_e);
+
+if(data_count > 100)  {	
+	myChart_main.config.data.datasets[1].data.fill(null); 	
+	myChart_main.config.data.datasets[2].data.fill(null); 
+	myChart_main.config.data.datasets[3].data.fill(null); 
+}
+if(data_count <= 100) { 
+	myChart_main.config.data.datasets[4].data.fill(null); 	
+	myChart_main.config.data.datasets[5].data.fill(null); 
+	myChart_main.config.data.datasets[6].data.fill(null); 
+}
+
+myChart_main.update();
+}
+
+$(".begin-date").click(function(){
+	b_date = '20'+ $(this).text();
+	$("input[name=시작일자]").val(b_date);
+});
+
+$(".begin-date").contextmenu(function(e){
+	e.preventDefault();
+	b_date = '20'+ $(this).text();
+	$("input[name=종료일자]").val(b_date);
+});
+
 {% endif %}
+
 
 function year_up_dn(opt) {
 	let date1 = $("input[name='시작일자']").val()
@@ -490,14 +606,42 @@ function year_up_dn(opt) {
 	date2 = year2 + year2_l; $("input[name='종료일자']").val(date2)
 }
 
-function oneYearSpan() {
+function YearSpan(opt) {
 	let date1 = $("input[name='종료일자']").val()
 	let now = new Date(date1)
 
-	let oneYearAgo = new Date(now.setDate(now.getDate() - 364)) 
-	let date2 = oneYearAgo.toISOString().split('T')[0]
+	let YearsAgo = new Date(now.setDate(now.getDate() - (365*opt-1))) 
+	let date2 = YearsAgo.toISOString().split('T')[0]
 	$("input[name='시작일자']").val(date2)
 }
+
+function startYearSpan() {
+	let date1 = $("input[name='종료일자']").val()
+	let date2 = date1.slice(0,4)+'-01-01'
+	$("input[name='시작일자']").val(date2)
+}
+
+function synchro(opt) {
+	let today =''
+	if(opt==1) {
+		today = new Date().format("yyyy-MM-dd");
+		$("input[name='종료일자']").val(today);
+	} else {
+		today = $("input[name='시작일자']").val();
+	}
+	let posturl = uri('linkurl') + 'pages-pajax/overall_test_sync';
+	$.post(posturl, { s_date : today },null,'json').done(function(data){
+		if(data.date=='None'){h_dialog.notice(data.msg);}
+		else {
+			h_dialog.notice("동기화 데이타가 입력되었습니다.")
+			$("input[name='시작일자']").val(data.date);
+			$("input[name='일반자금']").val(data.V_money);
+			$("input[name='기회자금']").val(data.R_money);
+			$("input[name='안정자금']").val(data.S_money);
+		}
+	});
+}
+
 //
 </script>
 {% endblock %}

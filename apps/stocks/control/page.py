@@ -92,27 +92,30 @@ class Page(Control) :
         M.test_it()
         D={'skin':f"{self.skin}/{self.D['bid']}.html"}
         return self.echo(D)
-
-    def VTRS(self) :
+    
+    def back_vrst(self) :
         self.M = {}
         
         self.D['종목코드'] = self.D['post']['종목코드']
-        self.D['시작자금'] = self.D['post']['시작자금']
-        self.D['타임자금'] = self.D['시작자금']
-        self.D['기회자금'] = self.D['시작자금']
-        self.D['안정자금'] = self.D['시작자금']
+        self.D['일반자금'] = self.D['post']['일반자금']
+        self.D['기회자금'] = self.D['post']['기회자금']
+        self.D['안정자금'] = self.D['post']['안정자금']
 
         self.D['시작일자'] = self.D['post']['시작일자']
         self.D['종료일자'] = self.D['post']['종료일자']
         # -------------------
-        self.D['타임지연'] = self.D['post']['타임지연']
-        self.D['타임시점'] = self.D['post']['타임시점']
         self.D['기회시점'] = self.D['post']['기회시점']
         self.D['기회회복'] = self.D['post']['기회회복']
         self.D['안정시점'] = self.D['post']['안정시점']
         self.D['안정회복'] = self.D['post']['안정회복']
 
-        M = self.model('backtest-backtest_VTRS')
+        self.D['수료적용'] = self.D['post'].get('chk_fee','off')
+        self.D['세금적용'] = self.D['post'].get('chk_tax','off')
+        self.D['일밸런싱'] = self.D['post'].get('chk_brs','off')
+        self.D['이밸런싱'] = self.D['post'].get('chk_bv0','off')
+        self.D['자금활용'] = self.D['post'].get('chk_dep','off')
+
+        M = self.model('backtest-backtest_vrst')
         M.get_start()
         M.test_it()
         D={'skin':f"{self.skin}/{self.D['bid']}.html"}
