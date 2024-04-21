@@ -6,7 +6,7 @@
 		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/back_vrst/back_vrst" onsubmit='return check_thisForm()'>
 		<br>
 		<div class="well clearfix" style="border-radius:0px;">
-    		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/overall_test/overall_test" onsubmit='return check_thisForm()'>
+    		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/back_vrst/back_vrst" onsubmit='return check_thisForm()'>
     			<div class="pull-left">
     				<div class='select' style='margin-right:10px;vertical-align:bottom'>
         				<input placeholder='종목코드' name='종목코드' type='text' value="{{D['종목코드']}}">
@@ -19,26 +19,31 @@
             			</div>
     				</div>
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 일반자금</div>
-						<input type='text' class="i-number" name='일반자금' style="width:80px;text-align:center;" value="{{D['일반자금']}}">
-					</div>
-					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 기회자금</div>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:40px;font-weight:bold;">R</div>
 						<input type='text' class="i-number" name="기회자금" style="width:80px;text-align:center;" value="{{D['기회자금']}}">
 					</div>
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 안정자금</div>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:40px;font-weight:bold;">S</div>
 						<input type='text' class="i-number" name="안정자금" style="width:80px;text-align:center;" value="{{D['안정자금']}}">
 					</div>
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 기회시점</div>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:40px;font-weight:bold;">T</div>
+						<input type='text' class="i-number" name='생활자금' style="width:80px;text-align:center;" value="{{D['생활자금']}}">
+					</div>
+					<div class='i-input-div'>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:40px">RP</div>
 						<input type='text' class="i-number" name="기회시점" style="width:50px;text-align:center;" value="{{D['기회시점']}}">
 						<input type='text' class="i-number" name="기회회복" style="width:50px;text-align:center;background-color:black;" value="{{D['기회회복']}}">
 					</div>
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:70px"> 안정시점</div>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:40px">SP</div>
 						<input type='text' class="i-number" name="안정시점" style="width:50px;text-align:center;" value="{{D['안정시점']}}">
 						<input type='text' class="i-number" name="안정회복" style="width:50px;text-align:center;background-color:black;" value="{{D['안정회복']}}">
+					</div>
+					<div class='i-input-div'>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:40px">TP</div>
+						<input type='text' class="i-number" name="생활시점" style="width:50px;text-align:center;" value="{{D['생활시점']}}">
+						<input type='text' class="i-number" name="생활회복" style="width:50px;text-align:center;background-color:black;" value="{{D['생활회복']}}">
 					</div>
 					<div id="synchro" style="display:inline-block;">
 						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro(0)" title="동기화"></i>
@@ -93,7 +98,7 @@
 					<input role="switch" type="checkbox" name="chk_tax" {{ 'checked' if D['세금적용'] =='on' else '' }}><span>Tax</span> 
 				</div>
 				<div class="toggle-block">
-					<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on' else '' }}><span>RS reb</span> 
+					<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on' else '' }}><span>RST=</span> 
 				</div>
 			</div>
 		</div>
@@ -128,12 +133,6 @@
 					<th style='text-align:right;width:60px'>종가</th>
 					<th style='text-align:right;width:60px'>변동</th>
 	
-					<th style='text-align:right;width:110px'>일반진행</th>
-					<th style='text-align:right;width:74px'>일반평균</th>
-					<th style='text-align:right;width:100px'>일반수익</th>
-					<th style='text-align:right;width:70px'>일반(%)</th>
-					<th style='text-align:right;width:110px'>일반잔액</th>
-	
 					<th style='text-align:right;width:110px'>기회진행</th>
 					<th style='text-align:right;width:74px'>기회평균</th>
 					<th style='text-align:right;width:100px'>기회수익</th>
@@ -144,7 +143,13 @@
 					<th style='text-align:right;width:74px'>안정평균</th>
 					<th style='text-align:right;width:100px'>안정수익</th>
 					<th style='text-align:right;width:70px'>안정(%)</th>
-					<th style='text-align:right;'>안정잔액</th>
+					<th style='text-align:right;width:110px'>안정잔액</th>
+
+					<th style='text-align:right;width:110px'>생활진행</th>
+					<th style='text-align:right;width:74px'>생활평균</th>
+					<th style='text-align:right;width:100px'>생활수익</th>
+					<th style='text-align:right;width:70px'>생활(%)</th>
+					<th style='text-align:right;'>생활잔액</th>
 				</tr>
 			</table>
 		</div>
@@ -195,12 +200,6 @@
 				<td class='ohlc-price' style='text-align:right;font-weight:bold;cursor:pointer;'>{{TR['당일종가']|safe}}</td>
 				<td style='text-align:right;font-weight:bold;'>{{TR['종가변동']|safe}}</td>
 
-				<td style='text-align:right;color:#F6CECE'>{{TR['일반진행']}}</td>
-				<td style='text-align:right'>{{TR['일반평균']|safe}}</td>
-				<td style='text-align:right'>{{TR['일반수익']|safe}}</td>
-				<td style='text-align:right;font-weight:bold'>{{TR['일반익률']|safe}}</td>
-				<td style='text-align:right;color:#CEF6CE'>{{TR['일반잔액']|safe}}</td>
-
 				<td style='text-align:right;color:#F6CECE'>{{TR['기회진행']}}</td>
 				<td style='text-align:right;color:#E6F8E0'>{{TR['기회평균']|safe}}</td>
 				<td style='text-align:right'>{{TR['기회수익']|safe}}</td>
@@ -211,7 +210,13 @@
 				<td style='text-align:right;color:#E6F8E0'>{{TR['안정평균']|safe}}</td>
 				<td style='text-align:right'>{{TR['안정수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['안정익률']|safe}}</td>
-				<td style='text-align:right;color:#CEF6CE'>{{TR['안정잔액']|safe}}</td>				
+				<td style='text-align:right;color:#CEF6CE'>{{TR['안정잔액']|safe}}</td>	
+
+				<td style='text-align:right;color:#F6CECE'>{{TR['생활진행']}}</td>
+				<td style='text-align:right;color:#E6F8E0'>{{TR['생활평균']|safe}}</td>
+				<td style='text-align:right'>{{TR['생활수익']|safe}}</td>
+				<td style='text-align:right;font-weight:bold'>{{TR['생활익률']|safe}}</td>
+				<td style='text-align:right;color:#CEF6CE'>{{TR['생활잔액']|safe}}</td>
 			</tr>
 			{%- endfor %}
 

@@ -97,9 +97,9 @@ class Page(Control) :
         self.M = {}
         
         self.D['종목코드'] = self.D['post']['종목코드']
-        self.D['일반자금'] = self.D['post']['일반자금']
         self.D['기회자금'] = self.D['post']['기회자금']
         self.D['안정자금'] = self.D['post']['안정자금']
+        self.D['생활자금'] = self.D['post']['생활자금']
 
         self.D['시작일자'] = self.D['post']['시작일자']
         self.D['종료일자'] = self.D['post']['종료일자']
@@ -108,6 +108,8 @@ class Page(Control) :
         self.D['기회회복'] = self.D['post']['기회회복']
         self.D['안정시점'] = self.D['post']['안정시점']
         self.D['안정회복'] = self.D['post']['안정회복']
+        self.D['생활시점'] = self.D['post']['생활시점']
+        self.D['생활회복'] = self.D['post']['생활회복']
 
         self.D['수료적용'] = self.D['post'].get('chk_fee','off')
         self.D['세금적용'] = self.D['post'].get('chk_tax','off')
