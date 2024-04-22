@@ -76,10 +76,10 @@ class M_backtest_vrst(Model) :
     def rebalance(self)  :
 
         if  self.D['일밸런싱'] == 'on' :
-            self.R['현재잔액'] = self.S['현재잔액'] = round((self.R['현재잔액'] + self.S['현재잔액']) /2,2)
+            self.R['현재잔액'] = self.S['현재잔액'] = self.T['현재잔액'] = round((self.R['현재잔액'] + self.S['현재잔액'] + self.T['현재잔액']) /3,2)
             
-        if  self.V['현재잔액'] >= self.M['이밸한도'] :
-            self.V['현재잔액']  = self.M['이밸한도']
+        # if  self.V['현재잔액'] >= self.M['이밸한도'] :
+        #     self.V['현재잔액']  = self.M['이밸한도']
             
         self.V['일매수금'] = int(self.V['현재잔액']/self.M['분할횟수']) 
         self.R['일매수금'] = int(self.R['현재잔액']/self.M['분할횟수']) 
@@ -143,7 +143,7 @@ class M_backtest_vrst(Model) :
 
     def today_buy_T(self) :
 
-        if  self.T['안정진행'] :
+        if  self.T['생활진행'] :
             self.T['매수수량'] = self.T['구매수량'] 
             self.T['매수금액'] = self.T['매수수량'] * self.M['당일종가']   
             self.T['거래코드'] = f"T{self.T['매수수량']}" if self.T['매수수량'] else ' '
@@ -261,7 +261,7 @@ class M_backtest_vrst(Model) :
 
         self.R['매수가격'] = 0.0;  self.R['기회진행'] = False; self.R['매수금액'] = 0.0; self.R['매수수량'] = 0
         self.S['매수가격'] = 0.0;  self.S['안정진행'] = False; self.S['매수금액'] = 0.0; self.S['매수수량'] = 0
-        self.T['매수가격'] = 0.0;  self.T['안정진행'] = False; self.T['매수금액'] = 0.0; self.T['매수수량'] = 0
+        self.T['매수가격'] = 0.0;  self.T['생활진행'] = False; self.T['매수금액'] = 0.0; self.T['매수수량'] = 0
 
         self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가'],0)
             
@@ -357,18 +357,24 @@ class M_backtest_vrst(Model) :
         최종자본3 = self.S['평가금액'] + self.S['현재잔액'] 
         최종수익3 = 최종자본3 - 초기자본3 
         self.D['s_profit'] = round((최종수익3/초기자본3) * 100,2)
+
+        초기자본4 = float(self.D['생활자금'].replace(',',''))
+        최종자본4 = self.T['평가금액'] + self.T['현재잔액'] 
+        최종수익4 = 최종자본4 - 초기자본4 
+        self.D['t_profit'] = round((최종수익4/초기자본4) * 100,2)
         
-        초기자본 = 초기자본1 + 초기자본2 + 초기자본3
-        최종자본 = 최종자본1 + 최종자본2 + 최종자본3
+        초기자본 = 초기자본2 + 초기자본3 + 초기자본4
+        최종자본 = 최종자본2 + 최종자본3 + 최종자본4
         최종수익 = 최종자본 - 초기자본 
-        self.D['t_profit'] = round((최종수익/초기자본) * 100,2)
+        self.D['profit_t'] = round((최종수익/초기자본) * 100,2)
         
+        style0 = "<span style='font-weight:bold;color:gray'>"
         style1 = "<span style='font-weight:bold;color:white'>"
         style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
         style3 = "<span style='font-weight:bold;color:#F6CECE'>"
         self.D['output']  = f"총 {style1}{self.D['days_span']:,}</span>일 "
         self.D['output'] += f"초기 {style1}${초기자본:,.0f}</span> 최종 {style1}${최종자본:,.2f}</span> "
-        self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 수익률은 {style3}{self.D['t_profit']:,.2f}( {self.D['v_profit']:,.2f} / {self.D['r_profit']:,.2f} / {self.D['s_profit']:,.2f} ) %</span>"
+        self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 수익률은 {style3}{self.D['profit_t']:,.2f}( {style0}{self.D['v_profit']:,.2f}</span> : {self.D['r_profit']:,.2f} / {self.D['s_profit']:,.2f} / {self.D['t_profit']:,.2f} ) %</span>"
 
         if self.D['c_date'] :
             self.D['s_date'] = self.D['c_date'][0]
@@ -429,7 +435,7 @@ class M_backtest_vrst(Model) :
         tx['안정잔액'] = f"{self.S['현재잔액']:,.2f}"
         #--------------------------------------------------------
         tx['생활진행'] = f"{round(self.T['매도금액'],4):,.2f}" if self.T['매도금액'] else self.T['거래코드']
-        tx['생활평균'] = f"<span class='avgs{self.M['기록시즌']}'>{round(self.T['평균단가'],4):,.4f}</span>" if self.T['평균단가'] else f"<span class='avgs{self.M['기록시즌']}'></span>"
+        tx['생활평균'] = f"<span class='avgt{self.M['기록시즌']}'>{round(self.T['평균단가'],4):,.4f}</span>" if self.T['평균단가'] else f"<span class='avgt{self.M['기록시즌']}'></span>"
         clr = "#F6CECE" if self.T['현수익률'] > 0 else "#CED8F6"
         tx['생활수익'] = f"<span style='color:{clr}'>{round(self.T['수익현황'],4):,.2f}</span>" 
         tx['생활익률'] = f"<span style='color:{clr}'>{round(self.T['현수익률'],4):,.2f}</span>"
@@ -447,13 +453,16 @@ class M_backtest_vrst(Model) :
         if avg_r := round(self.R['평균단가'],2) : self.D['avge_r'].append(avg_r)
         else : self.D['avge_r'].append('null')
         if avg_s := round(self.S['평균단가'],2) : self.D['avge_s'].append(avg_s)
-        else : self.D['avge_s'].append('null')        
+        else : self.D['avge_s'].append('null') 
+        if avg_t := round(self.T['평균단가'],2) : self.D['avge_t'].append(avg_t)
+        else : self.D['avge_t'].append('null')     
         
         self.D['c_date'].append(self.M['현재일자'][2:])
 
         self.D['eval_v'].append(round(self.V['현재잔액']+self.V['평가금액'],0))
         self.D['eval_r'].append(round(self.R['현재잔액']+self.R['평가금액'],0))
         self.D['eval_s'].append(round(self.S['현재잔액']+self.S['평가금액'],0))
+        self.D['eval_t'].append(round(self.T['현재잔액']+self.T['평가금액'],0))
         
         self.M['현재날수'] +=1
 
@@ -529,8 +538,8 @@ class M_backtest_vrst(Model) :
         # 챠트작성
         self.D['c_date'] = []
         self.D['clse_p'] = []
-        self.D['avge_v'] = []; self.D['avge_r'] = []; self.D['avge_s'] = []
-        self.D['eval_v'] = []; self.D['eval_r'] = []; self.D['eval_s'] = []
+        self.D['avge_v'] = []; self.D['avge_r'] = []; self.D['avge_s'] = []; self.D['avge_t'] = []
+        self.D['eval_v'] = []; self.D['eval_r'] = []; self.D['eval_s'] = []; self.D['eval_t'] = []
         self.D['일반횟수'] = 0
         self.D['전략횟수'] = 0
         self.D['기회전량'] = 0
@@ -557,6 +566,7 @@ class M_backtest_vrst(Model) :
         self.D['next_기회매수가'] = self.R['매수가격'] if self.R['매수가격'] and not self.R['기회진행'] else round(self.M['매수가격'],2)
         if self.M['현재날수'] == 2 : self.D['next_기회매수가'] = self.M['전일종가']
         self.D['next_안정매수가'] = self.S['매수가격'] if self.S['매수가격'] and not self.S['안정진행'] else round(self.M['매수가격'],2)
+        self.D['next_생활매수가'] = self.T['매수가격'] if self.T['매수가격'] and not self.T['생활진행'] else round(self.M['매수가격'],2)
         
         self.D['next_일매변동'] = round((self.D['next_일반매수가']/self.M['전일종가']- 1)*100,1)
         self.D['next_기매변동'] = round((self.D['next_기회매수가']/self.M['전일종가']- 1)*100,1)
@@ -574,10 +584,14 @@ class M_backtest_vrst(Model) :
         
         if   self.S['안정진행'] : self.D['next_안정매수량'] = self.S['구매수량']
         elif self.M['현재날수'] > 2 :  self.D['next_안정매수량'] = self.chance_qty(self.S['기초수량']) 
+
+        if   self.T['생활진행'] : self.D['next_생활매수량'] = self.T['구매수량']
+        elif self.M['현재날수'] > 2 :  self.D['next_생활매수량'] = self.chance_qty(self.T['기초수량'])
         
         self.D['next_일반매도량'] = self.V['보유수량']
         self.D['next_기회매도량'] = self.R['보유수량']
         self.D['next_안정매도량'] = self.S['보유수량']
+        self.D['next_생활매도량'] = self.T['보유수량']
         
         self.D['next_일반매도가'] = self.D['next_기회매도가'] = self.D['next_안정매도가'] =  self.M['매도가격']
         

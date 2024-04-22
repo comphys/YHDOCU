@@ -100,6 +100,9 @@
 				<div class="toggle-block">
 					<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on' else '' }}><span>RST=</span> 
 				</div>
+				<div class="toggle-block">
+					<input role="switch" type="checkbox" name="chk_von" {{ 'checked' if D['일반상황'] =='on' else '' }}><span>V_on</span> 
+				</div>
 			</div>
 		</div>
 	</form>
@@ -107,7 +110,8 @@
 		<div id="result-memo" style="position:fixed;left:84px;top:120px;color:gray;font-style:italic;">
 		V tactic  {{D['일정익절']}}:{{D['일정손절']}} , {{D['일회익절']}}:{{D['일회손절']}}&nbsp;&nbsp;
 		R tactic  {{D['기정익절']}}:{{D['기정손절']}} , {{D['기회익절']}}:{{D['기회손절']}}&nbsp;&nbsp;
-		S tactic  {{D['안정익절']}}:{{D['안정손절']}} , {{D['안회익절']}}:{{D['안회손절']}}
+		S tactic  {{D['안정익절']}}:{{D['안정손절']}} , {{D['안회익절']}}:{{D['안회손절']}}&nbsp;&nbsp;
+		T tactic  {{D['생정익절']}}:{{D['생정손절']}} , {{D['생회익절']}}:{{D['생회손절']}}
 		</div>
 		{% endif %}
 
@@ -132,19 +136,25 @@
 					<th style='text-align:center;width:80px'>일자</th>
 					<th style='text-align:right;width:60px'>종가</th>
 					<th style='text-align:right;width:60px'>변동</th>
-	
+					{% if D['일반상황']=='on' %}
+					<th style='text-align:right;width:110px'>일반진행</th>
+					<th style='text-align:right;width:74px'>일반평균</th>
+					<th style='text-align:right;width:100px'>일반수익</th>
+					<th style='text-align:right;width:70px'>일반(%)</th>
+					<th style='text-align:right;width:110px'>일반잔액</th>
+					{% endif %}
 					<th style='text-align:right;width:110px'>기회진행</th>
 					<th style='text-align:right;width:74px'>기회평균</th>
 					<th style='text-align:right;width:100px'>기회수익</th>
 					<th style='text-align:right;width:70px'>기회(%)</th>
 					<th style='text-align:right;width:110px'>기회잔액</th>
-	
+					{% if D['일반상황']=='off' %}
 					<th style='text-align:right;width:110px'>안정진행</th>
 					<th style='text-align:right;width:74px'>안정평균</th>
 					<th style='text-align:right;width:100px'>안정수익</th>
 					<th style='text-align:right;width:70px'>안정(%)</th>
 					<th style='text-align:right;width:110px'>안정잔액</th>
-
+					{% endif %}
 					<th style='text-align:right;width:110px'>생활진행</th>
 					<th style='text-align:right;width:74px'>생활평균</th>
 					<th style='text-align:right;width:100px'>생활수익</th>
@@ -199,19 +209,25 @@
 				<td class="begin-date">{{TR['기록일자']}}</td>
 				<td class='ohlc-price' style='text-align:right;font-weight:bold;cursor:pointer;'>{{TR['당일종가']|safe}}</td>
 				<td style='text-align:right;font-weight:bold;'>{{TR['종가변동']|safe}}</td>
-
+				{% if D['일반상황']=='on' %}
+				<td style='text-align:right;color:#F6CECE'>{{TR['일반진행']}}</td>
+				<td style='text-align:right;color:#E6F8E0'>{{TR['일반평균']|safe}}</td>
+				<td style='text-align:right'>{{TR['일반수익']|safe}}</td>
+				<td style='text-align:right;font-weight:bold'>{{TR['일반익률']|safe}}</td>
+				<td style='text-align:right;color:#CEF6CE'>{{TR['일반잔액']|safe}}</td>
+				{% endif %}
 				<td style='text-align:right;color:#F6CECE'>{{TR['기회진행']}}</td>
 				<td style='text-align:right;color:#E6F8E0'>{{TR['기회평균']|safe}}</td>
 				<td style='text-align:right'>{{TR['기회수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['기회익률']|safe}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['기회잔액']|safe}}</td>
-
+				{% if D['일반상황']=='off' %}
 				<td style='text-align:right;color:#F6CECE'>{{TR['안정진행']}}</td>
 				<td style='text-align:right;color:#E6F8E0'>{{TR['안정평균']|safe}}</td>
 				<td style='text-align:right'>{{TR['안정수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['안정익률']|safe}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['안정잔액']|safe}}</td>	
-
+				{% endif %}
 				<td style='text-align:right;color:#F6CECE'>{{TR['생활진행']}}</td>
 				<td style='text-align:right;color:#E6F8E0'>{{TR['생활평균']|safe}}</td>
 				<td style='text-align:right'>{{TR['생활수익']|safe}}</td>
@@ -288,21 +304,21 @@ const data_season = {
 
 		},
 		{
-			label:'V 평균',
+			label:'R 평균',
 			data : [3,6,7,8,5],
 			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'yellow',backgroundColor:'yellow',
 			lineTension:0.2
 
 		},
 		{
-			label:'R 평균',
+			label:'S 평균',
 			data : [3,6,7,8,5],
 			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',
 			lineTension:0.2
 
 		},
 		{
-			label:'S 평균',
+			label:'T 평균',
 			data : [3,6,7,8,5],
 			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'lightgray',backgroundColor:'lightgray',
 			lineTension:0.2
@@ -338,7 +354,7 @@ const data_side = {
   labels: labels_side,
   datasets: [{
     label: ' 수익률비교 ',
-    data: [ {{D['t_profit']}}, {{D['v_profit']}}, {{D['r_profit']}}, {{D['s_profit']}}],
+    data: [ {{D['v_profit']}}, {{D['r_profit']}}, {{D['s_profit']}}, {{D['t_profit']}}],
 	barThickness:40,
     backgroundColor: ['#283B42','#AEB404','#A67F78','#8F8681','#69491A','#003E19','#283B42'],
     borderColor: ['#000000','#000000','#000000','#000000','#000000','#000000','#000000'],
@@ -380,10 +396,10 @@ function show_chart(season) {
 	var avgv = [];
 	var avgr = [];
 	var avgs = [];
+	var avgt = [];
 	var dlne = [];
 
 	$(".clsp"+season).each(function() {clsp.push(parseFloat($(this).text()))});
-	$(".avgv"+season).each(function() {avgv.push(parseFloat($(this).text()))});
 	$(".avgr"+season).each(function() {
 		tmpv = parseFloat($(this).text());
 		tmpv = (tmpv)? avgr.push(tmpv) : avgr.push(null); 
@@ -391,6 +407,10 @@ function show_chart(season) {
 	$(".avgs"+season).each(function() {
 		tmpv = parseFloat($(this).text());
 		tmpv = (tmpv)? avgs.push(tmpv) : avgs.push(null); 
+	});
+	$(".avgt"+season).each(function() {
+		tmpv = parseFloat($(this).text());
+		tmpv = (tmpv)? avgt.push(tmpv) : avgt.push(null); 
 	});
 	
 	const t0 = 0.02;
@@ -401,15 +421,15 @@ function show_chart(season) {
 	var xticks = clsp.length
 	if (xticks < 30 ) { xticks = 30; }
 	var new_labels = Array.from(new Array(xticks),(x,i)=> i+1);
-	avgv[avgv.length - 1] = avgv[avgv.length - 2]
-	avgr[avgr.length - 1] = avgr[avgr.length - 2]
-	avgs[avgs.length - 1] = avgs[avgs.length - 2]
+	avgr[avgr.length - 1] = avgv[avgr.length - 2]
+	avgs[avgs.length - 1] = avgr[avgs.length - 2]
+	avgt[avgt.length - 1] = avgs[avgt.length - 2]
 
 	myChart_season.config.data.labels = new_labels;
 	myChart_season.config.data.datasets[0].data =  clsp;
-	myChart_season.config.data.datasets[1].data =  avgv;
-	myChart_season.config.data.datasets[2].data =  avgr;
-	myChart_season.config.data.datasets[3].data =  avgs;
+	myChart_season.config.data.datasets[1].data =  avgr;
+	myChart_season.config.data.datasets[2].data =  avgs;
+	myChart_season.config.data.datasets[3].data =  avgt;
 	myChart_season.config.data.datasets[4].data =  dlne;
 	myChart_season.update();
 }
@@ -423,18 +443,22 @@ let closeP_ori   = {{D['clse_p']|safe}};
 let avge_v_ori   = {{D['avge_v']|safe}};
 let avge_r_ori   = {{D['avge_r']|safe}};
 let avge_s_ori   = {{D['avge_s']|safe}};
+let avge_t_ori   = {{D['avge_t']|safe}};
 let eval_v_ori   = {{D['eval_v']|safe}};
 let eval_r_ori   = {{D['eval_r']|safe}};
 let eval_s_ori   = {{D['eval_s']|safe}};
+let eval_t_ori   = {{D['eval_t']|safe}};
 let labels_main_ori = {{D['c_date']|safe}};
 
 let closeP   = closeP_ori.slice(0);
 let avge_v   = avge_v_ori.slice(0);
 let avge_r   = avge_r_ori.slice(0);
 let avge_s   = avge_s_ori.slice(0);
+let avge_t   = avge_t_ori.slice(0);
 let eval_v   = eval_v_ori.slice(0);
 let eval_r   = eval_r_ori.slice(0);
 let eval_s   = eval_s_ori.slice(0);
+let eval_t   = eval_t_ori.slice(0);
 let labels_main = labels_main_ori.slice(0);
 
 let data_count = labels_main.length
@@ -442,13 +466,15 @@ let data_count = labels_main.length
 if(data_count > 100) {
 	avge_v.fill(null)
 	avge_r.fill(null) 
-	avge_s.fill(null) 
+	avge_s.fill(null)
+	avge_t.fill(null) 
 }
 
 if(data_count <= 100) {
 	eval_v.fill(null)
 	eval_r.fill(null) 
 	eval_s.fill(null) 
+	eval_t.fill(null) 
 }
 
 const data_main = {
@@ -461,12 +487,6 @@ const data_main = {
   			lineTension:0.2
     	},
 		{
-            label:' 평균단가V',
-            data : avge_v,
-			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
-			lineTension:0.2
-        },
-		{
             label:' 평균단가R',
             data : avge_r,
 			borderColor:'yellow', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',
@@ -475,26 +495,32 @@ const data_main = {
 		{
             label:' 평균단가S',
             data : avge_s,
-			borderColor:'lightgreen', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',
+			borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',
+			lineTension:0.2
+        },
+		{
+            label:' 평균단가T',
+            data : avge_t,
+			borderColor:'lightgreen', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'lightgreen',
 			lineTension:0.2
         },
 		{
             label:' 평가밸류V',
-            data : eval_v,
+            data : eval_r,
 			borderColor:'yellow', borderWidth:2,pointRadius:0,
 			lineTension:0.2,
 			yAxisID : 'y1'
         },
 		{
             label:' 평가밸류R',
-            data : eval_r,
+            data : eval_s,
 			borderColor:'#F5A9A9', borderWidth:2,pointRadius:0,borderDash:[2,2], 
 			lineTension:0.2,
 			yAxisID : 'y1'
         },
 		{
             label:' 평가밸류S',
-            data : eval_s,
+            data : eval_t,
 			borderColor:'lightgray', borderWidth:2,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
@@ -564,12 +590,12 @@ myChart_main.config.data.labels = labels_main_ori.slice(new_s,new_e);
 data_count = myChart_main.config.data.labels.length
 
 myChart_main.config.data.datasets[0].data =  closeP_ori.slice(new_s,new_e);
-myChart_main.config.data.datasets[1].data =  avge_v_ori.slice(new_s,new_e);
-myChart_main.config.data.datasets[2].data =  avge_r_ori.slice(new_s,new_e);
-myChart_main.config.data.datasets[3].data =  avge_s_ori.slice(new_s,new_e);
-myChart_main.config.data.datasets[4].data =  eval_v_ori.slice(new_s,new_e);
-myChart_main.config.data.datasets[5].data =  eval_r_ori.slice(new_s,new_e);
-myChart_main.config.data.datasets[6].data =  eval_s_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[1].data =  avge_r_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[2].data =  avge_s_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[3].data =  avge_t_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[4].data =  eval_r_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[5].data =  eval_s_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[6].data =  eval_t_ori.slice(new_s,new_e);
 
 if(data_count > 100)  {	
 	myChart_main.config.data.datasets[1].data.fill(null); 	

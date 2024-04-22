@@ -209,7 +209,7 @@ class M_dashboard2(Model) :
         self.D['총보유량'] = 0
         self.D['주가흐름'] = []
         
-        sk = self.DB.cast_key(['sub2','sub3','add9'],['sub19','sub20','add3','add18','add6','add17'],['sub1','sub12','add7','add4','add0','add8'])
+        sk = self.DB.cast_key(['sub2','sub3','add9'],['sub19','sub20','add3','add18','add6','add17'],['sub1','sub12','add7','add4','add0','add8','sub29'])
 
         for odr in [0,1,2] :
  
@@ -234,6 +234,7 @@ class M_dashboard2(Model) :
             self.D['평균단가'+key] = rst['add7']
             self.D['현금비중'+key] = rst['add4']
             self.D['현수익률'+key] = rst['add8']
+            self.D['진행상황'+key] = rst['sub29'][2:]
             self.D['현재가치'+key] = f"{rst['add17']:,.2f}"
             self.D['가치합계'] += rst['add17']
                         

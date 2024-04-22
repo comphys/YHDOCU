@@ -1,5 +1,5 @@
 from system.core.load import Model
-from datetime import datetime,date
+from datetime import date
 import system.core.my_utils as my
 
 class M_backtest_OVERALL(Model) :

@@ -114,8 +114,8 @@ class Page(Control) :
         self.D['수료적용'] = self.D['post'].get('chk_fee','off')
         self.D['세금적용'] = self.D['post'].get('chk_tax','off')
         self.D['일밸런싱'] = self.D['post'].get('chk_brs','off')
-        self.D['이밸런싱'] = self.D['post'].get('chk_bv0','off')
-        self.D['자금활용'] = self.D['post'].get('chk_dep','off')
+        self.D['일반상황'] = self.D['post'].get('chk_von','off')
+
 
         M = self.model('backtest-backtest_vrst')
         M.get_start()
