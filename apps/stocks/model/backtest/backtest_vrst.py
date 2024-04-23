@@ -64,10 +64,9 @@ class M_backtest_vrst(Model) :
             else : self.D[key+'정손절'] += 1   
 
     def commission(self,mm,opt) :
-        if  self.M['비용차감'] : 
-            fee = int(mm*0.07)/100
-            if opt==2 : fee += round(mm*0.0008)/100
-            return fee
+        fee = int(mm*0.07)/100
+        if opt==2 : fee += round(mm*0.0008)/100
+        return fee
         
     def tax(self,mm) :
         return int(mm*0.22) 
@@ -77,9 +76,6 @@ class M_backtest_vrst(Model) :
 
         if  self.D['일밸런싱'] == 'on' :
             self.R['현재잔액'] = self.S['현재잔액'] = self.T['현재잔액'] = round((self.R['현재잔액'] + self.S['현재잔액'] + self.T['현재잔액']) /3,2)
-            
-        # if  self.V['현재잔액'] >= self.M['이밸한도'] :
-        #     self.V['현재잔액']  = self.M['이밸한도']
             
         self.V['일매수금'] = int(self.V['현재잔액']/self.M['분할횟수']) 
         self.R['일매수금'] = int(self.R['현재잔액']/self.M['분할횟수']) 
@@ -108,52 +104,19 @@ class M_backtest_vrst(Model) :
             self.S['매도금액'] = self.M['당일종가'] * self.S['매도수량']
             self.T['매도금액'] = self.M['당일종가'] * self.T['매도수량']
 
-    def today_buy_R(self) :
+    def today_buy_RST(self,tac,key) :
 
-        if  self.M['현재날수'] == 2 :
-            self.R['거래코드'] = f"R{self.R['기초수량']}"
-            self.R['매수수량'] = self.R['기초수량']
-            self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가'] 
+        if  tac['진행시작'] :
+            tac['매수수량'] = tac['구매수량'] 
+            tac['매수금액'] = tac['매수수량'] * self.M['당일종가']   
+            tac['거래코드'] = f"{key}{tac['매수수량']}" if tac['매수수량'] else ' '
 
-        if  self.R['기회진행'] :
-            self.R['매수수량'] = self.R['구매수량'] 
-            self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']   
-            self.R['거래코드'] = f"R{self.R['매수수량']}" if self.R['매수수량'] else ' '
+        if  not tac['진행시작'] and self.M['현재날수'] > 2 and self.M['당일종가'] <= tac['매수가격'] :
+            tac['매수수량'] = self.chance_qty(tac['기초수량'])
+            tac['거래코드'] = f"{key}{tac['기초수량']}/{tac['매수수량']}" 
+            tac['매수금액'] = tac['매수수량'] * self.M['당일종가']
+            tac['진행시작'] = True
 
-        if  not self.R['기회진행'] and self.M['현재날수'] > 2 and self.M['당일종가'] <= self.R['매수가격'] :
-            매수수량R = self.chance_qty(self.R['기초수량'])
-            self.R['거래코드'] = f"R{self.R['기초수량']}/{매수수량R}" 
-            self.R['매수수량'] = 매수수량R
-            self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가']
-            self.R['기회진행'] = True
-
-    def today_buy_S(self) :
-
-        if  self.S['안정진행'] :
-            self.S['매수수량'] = self.S['구매수량'] 
-            self.S['매수금액'] = self.S['매수수량'] * self.M['당일종가']   
-            self.S['거래코드'] = f"S{self.S['매수수량']}" if self.S['매수수량'] else ' '
-    
-        if  not self.S['안정진행'] and self.M['현재날수'] > 2 and self.M['당일종가'] <= self.S['매수가격'] :
-            매수수량S = self.chance_qty(self.S['기초수량'])
-            self.S['거래코드'] = f"S{self.S['기초수량']}/{매수수량S}" 
-            self.S['매수수량'] = 매수수량S
-            self.S['매수금액'] = self.S['매수수량'] * self.M['당일종가']
-            self.S['안정진행'] = True 
-
-    def today_buy_T(self) :
-
-        if  self.T['생활진행'] :
-            self.T['매수수량'] = self.T['구매수량'] 
-            self.T['매수금액'] = self.T['매수수량'] * self.M['당일종가']   
-            self.T['거래코드'] = f"T{self.T['매수수량']}" if self.T['매수수량'] else ' '
-    
-        if  not self.T['생활진행'] and self.M['현재날수'] > 2 and self.M['당일종가'] <= self.T['매수가격'] :
-            매수수량T = self.chance_qty(self.T['기초수량'])
-            self.T['거래코드'] = f"T{self.S['기초수량']}/{매수수량T}" 
-            self.T['매수수량'] = 매수수량T
-            self.T['매수금액'] = self.T['매수수량'] * self.M['당일종가']
-            self.T['생활진행'] = True
 
     def today_buy(self) :
 
@@ -165,9 +128,9 @@ class M_backtest_vrst(Model) :
             self.M['진행상황']  = self.M['매수단계']
 
             # R 전략, S 전략의 매수가격은 V전략 매수가격 보다 같거나 작다.
-            self.today_buy_R()
-            self.today_buy_S()
-            self.today_buy_T()
+            self.today_buy_RST(self.R,'R')
+            self.today_buy_RST(self.S,'S')
+            self.today_buy_RST(self.T,'T')
             
     def chance_qty(self,basic_qty) :
 
@@ -177,49 +140,26 @@ class M_backtest_vrst(Model) :
                 찬스수량 += my.ceil( basic_qty *(i*1.25 + 1))
             return 찬스수량   
     
-    def tomorrow_step_R(self)  :
+    def tomorrow_step_RST(self,tac,key)  :
 
-        if  self.R['기회진행'] :
-            self.R['구매수량'] = my.ceil(self.R['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
+        if  tac['진행시작'] :
+            tac['구매수량'] = my.ceil(tac['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
 
-            if  self.R['현재잔액'] < self.R['구매수량'] * self.M['매수가격'] : 
-                self.R['구매수량'] = my.ceil(self.R['기초수량'] * self.M['위매비중']) 
-                if  self.R['현재잔액'] < self.R['구매수량'] * self.M['매수가격'] : 
-                    self.R['구매수량'] = 0
-        else :  
-            self.R['매수가격'] = self.take_chance('R')
+            if  tac['현재잔액'] < tac['구매수량'] * self.M['매수가격'] : 
+                tac['구매수량'] = my.ceil(tac['기초수량'] * self.M['위매비중']) 
+                if  tac['현재잔액'] < tac['구매수량'] * self.M['매수가격'] : 
+                    tac['구매수량'] = 0
+        
+        else :  tac['매수가격'] = self.take_chance(tac)
 
-    def tomorrow_step_S(self)  :
-
-        if  self.S['안정진행'] :
-            self.S['구매수량'] = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
-
-            if  self.S['구매수량'] * self.M['매수가격'] > self.S['현재잔액']   : 
-                self.S['구매수량'] = my.ceil(self.S['기초수량'] * self.M['위매비중'])
-                if  self.S['현재잔액'] < self.S['구매수량'] * self.M['매수가격'] : 
-                    self.S['구매수량'] = 0 
-        else : 
-            self.S['매수가격'] = self.take_chance('S')
-
-    def tomorrow_step_T(self)  :
-
-        if  self.T['생활진행'] :
-            self.T['구매수량'] = my.ceil(self.T['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
-
-            if  self.T['구매수량'] * self.M['매수가격'] > self.T['현재잔액']   : 
-                self.T['구매수량'] = my.ceil(self.T['기초수량'] * self.M['위매비중'])
-                if  self.T['현재잔액'] < self.T['구매수량'] * self.M['매수가격'] : 
-                    self.T['구매수량'] = 0 
-        else : 
-            self.T['매수가격'] = self.take_chance('T')
 
     def tomorrow_step(self)   :
         self.M['매수가격'] = round(self.M['당일종가']*self.M['평단가치'],2)
 
         # 2024.03.18. 사태에 의한 보완( 안정도 향상 )
         매도가격S=매도가격R=매도가격V = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
-        if self.R['기회진행'] : 매도가격R = my.round_up(self.R['평균단가'] * self.M['기회매도'])
-        if self.S['안정진행'] : 매도가격S = my.round_up(self.S['평균단가'] * self.M['안정매도'])
+        if self.R['진행시작'] : 매도가격R = my.round_up(self.R['평균단가'] * self.M['기회매도'])
+        if self.S['진행시작'] : 매도가격S = my.round_up(self.S['평균단가'] * self.M['안정매도'])
         self.M['매도가격'] = min(매도가격V,매도가격R,매도가격S)
         
         self.V['구매수량'] = my.ceil(self.V['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
@@ -241,27 +181,26 @@ class M_backtest_vrst(Model) :
         
         if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01 
 
-        self.tomorrow_step_R()
-        self.tomorrow_step_S()
-        self.tomorrow_step_T()
+        self.tomorrow_step_RST(self.R,'R')
+        self.tomorrow_step_RST(self.S,'S')
+        self.tomorrow_step_RST(self.T,'T')
         
-    def take_chance(self,opt) :
+    def take_chance(self,tac) :
         H = self.V['보유수량']
         n = self.V['구매수량']
         A = self.V['총매수금']
         if H == 0 : return 0
-        if opt == 'R' : p = self.R['기회회복'] if self.M['손실회수'] else self.R['기회시점']
-        if opt == 'S' : p = self.S['안정회복'] if self.M['손실회수'] else self.S['안정시점']
-        if opt == 'T' : p = self.T['생활회복'] if self.M['손실회수'] else self.T['생활시점']
+        p = tac['회복시점'] if self.M['손실회수'] else tac['진입시점']
+
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)
     
     def new_day(self) :
 
-        self.R['매수가격'] = 0.0;  self.R['기회진행'] = False; self.R['매수금액'] = 0.0; self.R['매수수량'] = 0
-        self.S['매수가격'] = 0.0;  self.S['안정진행'] = False; self.S['매수금액'] = 0.0; self.S['매수수량'] = 0
-        self.T['매수가격'] = 0.0;  self.T['생활진행'] = False; self.T['매수금액'] = 0.0; self.T['매수수량'] = 0
+        self.R['매수가격'] = 0.0;  self.R['진행시작'] = False; self.R['매수금액'] = 0.0; self.R['매수수량'] = 0
+        self.S['매수가격'] = 0.0;  self.S['진행시작'] = False; self.S['매수금액'] = 0.0; self.S['매수수량'] = 0
+        self.T['매수가격'] = 0.0;  self.T['진행시작'] = False; self.T['매수금액'] = 0.0; self.T['매수수량'] = 0
 
         self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가'],0)
             
@@ -269,26 +208,23 @@ class M_backtest_vrst(Model) :
             
             self.M['기록시즌'] += 1
             self.M['현재날수'] = 1
-            self.V['평균단가']  = self.M['당일종가']
             
-            self.V['기초수량']  = my.ceil(self.V['일매수금']/self.M['전일종가'])
-            self.R['기초수량']  = my.ceil(self.R['일매수금']/self.M['전일종가'])
-            self.S['기초수량']  = my.ceil(self.S['일매수금']/self.M['전일종가'])
-            self.T['기초수량']  = my.ceil(self.T['일매수금']/self.M['전일종가'])
+            for tac in (self.V,self.R,self.S,self.T) : tac['기초수량']  = my.ceil(tac['일매수금']/self.M['전일종가'])
             
-            self.V['매수수량']  = self.V['기초수량']
-            self.V['수익현황']  = self.V['현수익률'] = 0.0
-            self.V['보유수량']  = self.V['매수수량']
-            self.V['매수금액']  = self.M['당일종가'] * self.V['매수수량'] 
-            self.V['총매수금']  = self.V['평가금액'] = self.V['매수금액']
-            self.V['현재잔액'] -= self.V['매수금액']
-            
-            self.M['진행상황']  = '첫날매수'
-            self.M['첫날기록']  = False
-            self.V['거래코드']  = f"S{self.V['매수수량']}" 
-            self.M['매수단계'] = '일반매수'
+            for tac in (self.V,self.R) :
+                tac['매수수량']  = tac['기초수량']
+                tac['수익현황']  = tac['현수익률'] = 0.0
+                tac['보유수량']  = tac['매수수량']
+                tac['평균단가']  = self.M['당일종가'] 
+                tac['매수금액']  = self.M['당일종가'] * tac['매수수량']
+                tac['총매수금']  = tac['평가금액'] = tac['매수금액']
+                tac['현재잔액'] -= tac['매수금액']
+                tac['거래코드']  = f"S{tac['매수수량']}" 
+                if self.D['수료적용'] == 'on'  : tac['현재잔액'] -=  self.commission(tac['매수금액'],1)
 
-            if  self.M['비용차감'] : self.V['현재잔액'] -=  self.commission(self.V['매수금액'],1)
+            self.M['진행상황'] = '첫날매수'    
+            self.M['매수단계'] = '일반매수'
+            self.M['첫날기록'] = False
  
             return True
 
@@ -495,7 +431,6 @@ class M_backtest_vrst(Model) :
         self.M['손실회수']  = False  
         self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
         self.M['매수단계']  = '일반매수'
-        self.M['비용차감']  = True # 수수료 계산날수 초과 후 강매선택
         self.M['기록시즌']  = 0
          
         self.V['현재잔액']  = my.sv(ST['054'])
@@ -517,15 +452,17 @@ class M_backtest_vrst(Model) :
         self.M['최대일수']  = 0   # 최고 오래 지속된 시즌의 일수
         
         self.M['첫날기록']  = False
-        self.R['기회진행']  = False 
-        self.R['기회시점']  = float(self.D['기회시점']) 
-        self.R['기회회복']  = float(self.D['기회회복']) 
-        self.S['안정진행']  = False 
-        self.S['안정시점']  = float(self.D['안정시점']) 
-        self.S['안정회복']  = float(self.D['안정회복']) 
-        self.T['생활진행']  = False 
-        self.T['생활시점']  = float(self.D['생활시점']) 
-        self.T['생활회복']  = float(self.D['생활회복'])
+        self.R['진행시작']  = False 
+        self.S['진행시작']  = False 
+        self.T['진행시작']  = False
+        
+        self.R['진입시점']  = float(self.D['기회시점']) 
+        self.S['진입시점']  = float(self.D['안정시점']) 
+        self.T['진입시점']  = float(self.D['생활시점'])
+        self.R['회복시점']  = float(self.D['기회회복']) 
+        self.S['회복시점']  = float(self.D['안정회복']) 
+        self.T['회복시점']  = float(self.D['생활회복'])
+
         self.M['전일종가']  = 0.0
         
         self.set_value(['매수수량','매도수량','구매수량','보유수량'],0)
@@ -564,10 +501,10 @@ class M_backtest_vrst(Model) :
         self.D['next_안정기초'] = self.S['기초수량']
         
         self.D['next_일반매수가'] = round(self.M['매수가격'],2)
-        self.D['next_기회매수가'] = self.R['매수가격'] if self.R['매수가격'] and not self.R['기회진행'] else round(self.M['매수가격'],2)
+        self.D['next_기회매수가'] = self.R['매수가격'] if self.R['매수가격'] and not self.R['진행시작'] else round(self.M['매수가격'],2)
         if self.M['현재날수'] == 2 : self.D['next_기회매수가'] = self.M['전일종가']
-        self.D['next_안정매수가'] = self.S['매수가격'] if self.S['매수가격'] and not self.S['안정진행'] else round(self.M['매수가격'],2)
-        self.D['next_생활매수가'] = self.T['매수가격'] if self.T['매수가격'] and not self.T['생활진행'] else round(self.M['매수가격'],2)
+        self.D['next_안정매수가'] = self.S['매수가격'] if self.S['매수가격'] and not self.S['진행시작'] else round(self.M['매수가격'],2)
+        self.D['next_생활매수가'] = self.T['매수가격'] if self.T['매수가격'] and not self.T['진행시작'] else round(self.M['매수가격'],2)
         
         self.D['next_일매변동'] = round((self.D['next_일반매수가']/self.M['전일종가']- 1)*100,1)
         self.D['next_기매변동'] = round((self.D['next_기회매수가']/self.M['전일종가']- 1)*100,1)
@@ -578,15 +515,15 @@ class M_backtest_vrst(Model) :
         self.D['next_기회매수량'] = 0
         self.D['next_안정매수량'] = 0
         
-        if self.R['기회진행'] : self.D['next_기회매수량'] = self.R['구매수량']
+        if self.R['진행시작'] : self.D['next_기회매수량'] = self.R['구매수량']
         else :
              if   self.M['현재날수'] == 2 : self.D['next_기회매수량'] = self.R['기초수량'] 
              elif self.M['현재날수']  > 2 : self.D['next_기회매수량'] = self.chance_qty(self.R['기초수량'])
         
-        if   self.S['안정진행'] : self.D['next_안정매수량'] = self.S['구매수량']
+        if   self.S['진행시작'] : self.D['next_안정매수량'] = self.S['구매수량']
         elif self.M['현재날수'] > 2 :  self.D['next_안정매수량'] = self.chance_qty(self.S['기초수량']) 
 
-        if   self.T['생활진행'] : self.D['next_생활매수량'] = self.T['구매수량']
+        if   self.T['진행시작'] : self.D['next_생활매수량'] = self.T['구매수량']
         elif self.M['현재날수'] > 2 :  self.D['next_생활매수량'] = self.chance_qty(self.T['기초수량'])
         
         self.D['next_일반매도량'] = self.V['보유수량']

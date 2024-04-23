@@ -63,10 +63,9 @@ class M_backtest_OVERALL(Model) :
             else : self.D[key+'정손절'] += 1   
 
     def commission(self,mm,opt) :
-        if  self.M['비용차감'] : 
-            fee = int(mm*0.07)/100
-            if opt==2 : fee += round(mm*0.0008)/100
-            return fee
+        fee = int(mm*0.07)/100
+        if opt==2 : fee += round(mm*0.0008)/100
+        return fee
         
     def tax(self,mm) :
         return int(mm*0.22) 
@@ -257,7 +256,7 @@ class M_backtest_OVERALL(Model) :
             self.V['거래코드']  = f"S{self.V['매수수량']}" 
             self.M['매수단계'] = '일반매수'
 
-            if  self.M['비용차감'] : self.V['현재잔액'] -=  self.commission(self.V['매수금액'],1)
+            if  self.D['수료적용'] == 'on' : self.V['현재잔액'] -=  self.commission(self.V['매수금액'],1)
  
             return True
 
@@ -444,7 +443,6 @@ class M_backtest_OVERALL(Model) :
         self.M['손실회수']  = False  
         self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
         self.M['매수단계']  = '일반매수'
-        self.M['비용차감']  = True # 수수료 계산날수 초과 후 강매선택
         self.M['기록시즌']  = 0
          
         self.V['현재잔액']  = my.sv(self.D['일반자금'])
