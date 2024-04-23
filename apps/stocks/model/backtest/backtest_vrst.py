@@ -106,16 +106,22 @@ class M_backtest_vrst(Model) :
 
     def today_buy_RST(self,tac,key) :
 
+        if  self.M['현재날수'] == 2 and key == 'R':
+            self.R['매수수량'] = my.ceil(self.R['기초수량'] * (self.M['비중조절'] + 1))
+            self.R['거래코드'] = f"R{self.R['매수수량']}"
+            self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가'] 
+
         if  tac['진행시작'] :
             tac['매수수량'] = tac['구매수량'] 
             tac['매수금액'] = tac['매수수량'] * self.M['당일종가']   
             tac['거래코드'] = f"{key}{tac['매수수량']}" if tac['매수수량'] else ' '
 
-        if  not tac['진행시작'] and self.M['현재날수'] > 2 and self.M['당일종가'] <= tac['매수가격'] :
-            tac['매수수량'] = self.chance_qty(tac['기초수량'])
-            tac['거래코드'] = f"{key}{tac['기초수량']}/{tac['매수수량']}" 
-            tac['매수금액'] = tac['매수수량'] * self.M['당일종가']
-            tac['진행시작'] = True
+        else :
+            if  self.M['현재날수'] > 2 and self.M['당일종가'] <= tac['매수가격'] :
+                tac['매수수량'] = self.chance_qty(tac['기초수량'])
+                tac['거래코드'] = f"{key}{tac['매수수량']}/{tac['기초수량']}" 
+                tac['매수금액'] = tac['매수수량'] * self.M['당일종가']
+                tac['진행시작'] = True
 
 
     def today_buy(self) :
@@ -219,7 +225,7 @@ class M_backtest_vrst(Model) :
                 tac['매수금액']  = self.M['당일종가'] * tac['매수수량']
                 tac['총매수금']  = tac['평가금액'] = tac['매수금액']
                 tac['현재잔액'] -= tac['매수금액']
-                tac['거래코드']  = f"S{tac['매수수량']}" 
+                tac['거래코드']  = f"{tac['매수수량']}" 
                 if self.D['수료적용'] == 'on'  : tac['현재잔액'] -=  self.commission(tac['매수금액'],1)
 
             self.M['진행상황'] = '첫날매수'    
