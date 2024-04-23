@@ -342,6 +342,7 @@ class M_backtest_vrst(Model) :
         self.D['MDD1'] = f"{self.V['진최하락']:.2f}"; self.D['MDD_DAY1'] = self.V['최하일자'][2:]
         self.D['MDD2'] = f"{self.R['진최하락']:.2f}"; self.D['MDD_DAY2'] = self.R['최하일자'][2:]
         self.D['MDD3'] = f"{self.S['진최하락']:.2f}"; self.D['MDD_DAY3'] = self.S['최하일자'][2:]
+        self.D['MDD4'] = f"{self.T['진최하락']:.2f}"; self.D['MDD_DAY4'] = self.T['최하일자'][2:]
         
         초기자본1 = float(self.D['일반자금'].replace(',','')) 
         최종자본1 = self.V['평가금액'] + self.V['현재잔액'] 
