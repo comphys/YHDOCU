@@ -109,9 +109,9 @@
 		{% if D['일정익절'] %}
 		<div id="result-memo" style="position:fixed;left:84px;top:120px;color:gray;font-style:italic;">
 		V tactic  {{D['일정익절']}}:{{D['일정손절']}} , {{D['일회익절']}}:{{D['일회손절']}}&nbsp;&nbsp;
-		R tactic  {{D['기정익절']}}:{{D['기정손절']}} , {{D['기회익절']}}:{{D['기회손절']}}&nbsp;&nbsp;
-		S tactic  {{D['안정익절']}}:{{D['안정손절']}} , {{D['안회익절']}}:{{D['안회손절']}}&nbsp;&nbsp;
-		T tactic  {{D['생정익절']}}:{{D['생정손절']}} , {{D['생회익절']}}:{{D['생회손절']}}
+		<span style="color:#F6CECE">R tactic  {{D['기정익절']}}:{{D['기정손절']}} , {{D['기회익절']}}:{{D['기회손절']}}</span>&nbsp;&nbsp;
+		<span style="color:yellow">S tactic  {{D['안정익절']}}:{{D['안정손절']}} , {{D['안회익절']}}:{{D['안회손절']}}</span>&nbsp;&nbsp;
+		<span style="color:#CEF6CE">T tactic  {{D['생정익절']}}:{{D['생정손절']}} , {{D['생회익절']}}:{{D['생회손절']}}</span>
 		</div>
 		{% endif %}
 
@@ -254,15 +254,15 @@
 		<li>진행일자 : {{D['next_일자']}}</li>
 		<li>전일종가 : $ {{D['next_종가']}}/({{D['next_변동']}}%)</li>
 		<li>현재단계 : {{D['next_단계']}}</li>
-		<li>기초수량 : {{D['next_일반기초']}}/{{D['next_기회기초']}}/{{D['next_안정기초']}}</li>
+		<li>기초수량 : {{D['next_기회기초']}}/{{D['next_안정기초']}}/{{D['next_생활기초']}}</li>
 		<li>---------------------------------------</li>
-		<li>일반매수 : {{D['next_일반매수량']}} for {{D['next_일반매수가']}}({{D['next_일매변동']}}%)</li>
-		<li>기회매수 : {{D['next_기회매수량']}} for {{D['next_기회매수가']}}({{D['next_기매변동']}}%)</li>
-		<li>안정매수 : {{D['next_안정매수량']}} for {{D['next_안정매수가']}}({{D['next_안매변동']}}%)</li>
+		<li>기회매수 : <sapn style="display:inline-block;width:50px;text-align:right;">{{D['next_기회매수량']}}</sapn> for {{D['next_기회매수가']}}</li>
+		<li>안정매수 : <sapn style="display:inline-block;width:50px;text-align:right;">{{D['next_안정매수량']}}</sapn> for {{D['next_안정매수가']}}</li>
+		<li>생활매수 : <sapn style="display:inline-block;width:50px;text-align:right;">{{D['next_생활매수량']}}</sapn> for {{D['next_생활매수가']}}</li>
 		<li>---------------------------------------</li>
-		<li>일반매도 : {{D['next_일반매도량']}} for {{D['next_일반매도가']}}</li>
-		<li>기회매도 : {{D['next_기회매도량']}} for {{D['next_기회매도가']}}</li>
-		<li>안정매도 : {{D['next_안정매도량']}} for {{D['next_안정매도가']}}</li>
+		<li>기회매도 : <sapn style="display:inline-block;width:50px;text-align:right;">{{D['next_기회매도량']}}</sapn> for {{D['next_기회매도가']}}</li>
+		<li>안정매도 : <sapn style="display:inline-block;width:50px;text-align:right;">{{D['next_안정매도량']}}</sapn> for {{D['next_안정매도가']}}</li>
+		<li>생활매도 : <sapn style="display:inline-block;width:50px;text-align:right;">{{D['next_생활매도량']}}</sapn> for {{D['next_생활매도가']}}</li>
 	</ul>
 </div>
 
@@ -503,23 +503,23 @@ const data_main = {
 			lineTension:0.2
         },
 		{
-            label:' 평가밸류V',
+            label:' 평가밸류R',
             data : eval_r,
 			borderColor:'#F5A9A9', borderWidth:2,pointRadius:0,
 			lineTension:0.2,
 			yAxisID : 'y1'
         },
 		{
-            label:' 평가밸류R',
+            label:' 평가밸류S',
             data : eval_s,
 			borderColor:'yellow', borderWidth:2,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
         },
 		{
-            label:' 평가밸류S',
+            label:' 평가밸류T',
             data : eval_t,
-			borderColor:'lightgray', borderWidth:2,pointRadius:0, 
+			borderColor:'#CEF6CE', borderWidth:2,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
         },

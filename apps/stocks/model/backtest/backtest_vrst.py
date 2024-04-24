@@ -502,19 +502,17 @@ class M_backtest_vrst(Model) :
         self.D['next_변동'] = round(self.M['종가변동'],2)
 
         self.D['next_단계'] = self.M['매수단계']
-        self.D['next_일반기초'] = self.V['기초수량']
+
         self.D['next_기회기초'] = self.R['기초수량']
         self.D['next_안정기초'] = self.S['기초수량']
-        
+        self.D['next_생활기초'] = self.T['기초수량']
+
         self.D['next_일반매수가'] = round(self.M['매수가격'],2)
         self.D['next_기회매수가'] = self.R['매수가격'] if self.R['매수가격'] and not self.R['진행시작'] else round(self.M['매수가격'],2)
-        if self.M['현재날수'] == 2 : self.D['next_기회매수가'] = self.M['전일종가']
+        if  self.M['현재날수'] <= 2 : 
+            self.D['next_기회매수가'] = self.M['매수가격']
         self.D['next_안정매수가'] = self.S['매수가격'] if self.S['매수가격'] and not self.S['진행시작'] else round(self.M['매수가격'],2)
         self.D['next_생활매수가'] = self.T['매수가격'] if self.T['매수가격'] and not self.T['진행시작'] else round(self.M['매수가격'],2)
-        
-        self.D['next_일매변동'] = round((self.D['next_일반매수가']/self.M['전일종가']- 1)*100,1)
-        self.D['next_기매변동'] = round((self.D['next_기회매수가']/self.M['전일종가']- 1)*100,1)
-        self.D['next_안매변동'] = round((self.D['next_안정매수가']/self.M['전일종가']- 1)*100,1)
         
         self.D['next_일반매수량'] = self.V['구매수량'] 
         
@@ -523,7 +521,8 @@ class M_backtest_vrst(Model) :
         
         if self.R['진행시작'] : self.D['next_기회매수량'] = self.R['구매수량']
         else :
-             if   self.M['현재날수'] == 2 : self.D['next_기회매수량'] = self.R['기초수량'] 
+             if   self.M['현재날수'] == 1 : self.D['next_기회매수량'] = self.R['기초수량'] 
+             if   self.M['현재날수'] == 2 : self.D['next_기회매수량'] = my.ceil(self.R['기초수량'] * (self.M['비중조절'] + 1))
              elif self.M['현재날수']  > 2 : self.D['next_기회매수량'] = self.chance_qty(self.R['기초수량'])
         
         if   self.S['진행시작'] : self.D['next_안정매수량'] = self.S['구매수량']
@@ -532,32 +531,31 @@ class M_backtest_vrst(Model) :
         if   self.T['진행시작'] : self.D['next_생활매수량'] = self.T['구매수량']
         elif self.M['현재날수'] > 2 :  self.D['next_생활매수량'] = self.chance_qty(self.T['기초수량'])
         
-        self.D['next_일반매도량'] = self.V['보유수량']
         self.D['next_기회매도량'] = self.R['보유수량']
         self.D['next_안정매도량'] = self.S['보유수량']
         self.D['next_생활매도량'] = self.T['보유수량']
         
-        self.D['next_일반매도가'] = self.D['next_기회매도가'] = self.D['next_안정매도가'] =  self.M['매도가격']
+        self.D['next_기회매도가'] = self.D['next_안정매도가'] = self.D['next_생활매도가'] = self.M['매도가격']
         
         if  self.M['첫날기록'] :
             self.rebalance()
             self.D['next_일자'] = 1
             self.D['next_단계'] = '첫날매수'
             
-            V_qty  = my.ceil(self.V['일매수금']/self.M['당일종가'])
             R_qty  = my.ceil(self.R['일매수금']/self.M['당일종가'])
             S_qty  = my.ceil(self.S['일매수금']/self.M['당일종가'])
-            
-            self.D['next_일반기초'] = V_qty
+            T_qty  = my.ceil(self.T['일매수금']/self.M['당일종가'])
+
             self.D['next_기회기초'] = R_qty
             self.D['next_안정기초'] = S_qty
+            self.D['next_생활기초'] = T_qty
             
-            self.D['next_일반매수가'] = round(self.M['전일종가'] * self.M['큰단가치'],2)
-            self.D['next_기회매수가'] = self.D['next_안정매수가'] = 0.0
+            self.D['next_기회매수가'] = round(self.M['전일종가'] * self.M['큰단가치'],2)
+            self.D['next_안정매수가'] = self.D['next_생활매수가'] = 0.0
             
-            self.D['next_일반매수량'] = V_qty
-            self.D['next_기회매수량'] = self.D['next_안정매수량'] = 0
+            self.D['next_기회매수량'] = T_qty
+            self.D['next_안정매수량'] = self.D['next_생활매수량'] = 0
             
-            self.D['next_일반매도량'] = self.D['next_기회매도량'] = self.D['next_안정매도량'] = 0 
-            self.D['next_일반매도가'] = self.D['next_기회매도가'] = self.D['next_안정매도가'] = 0.0
+            self.D['next_기회매도량'] = self.D['next_안정매도량'] = self.D['next_생활매도량'] = 0 
+            self.D['next_기회매도가'] = self.D['next_안정매도가'] = self.D['next_생활매도가'] = 0.0
 
