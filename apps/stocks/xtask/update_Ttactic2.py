@@ -104,9 +104,9 @@ class update_Ttactic2 :
 
     def rst_rebalance(self) :
         if  self.M['GD']['sub29'] == '전량매도' :
-            기회잔액 = self.DB.one(f"SELECT add3 FROM {self.rtact} WHERE add0='{self.D['today']}'")
-            안정잔액 = self.DB.one(f"SELECT add3 FROM {self.stact} WHERE add0='{self.D['today']}'")
-            토탈금액 = 기회잔액+안정잔액+self.M['현재잔액']
+            기회잔액 = self.DB.one(f"SELECT CAST(add3 as FLOAT) FROM {self.rtact} WHERE add0='{self.D['today']}'")
+            안정잔액 = self.DB.one(f"SELECT CAST(add3 as FLOAT) FROM {self.stact} WHERE add0='{self.D['today']}'")
+            토탈금액 = 기회잔액 + 안정잔액 + self.M['현재잔액']
             self.M['현재잔액'] = round(토탈금액/3,2)
             self.M['일매수금'] = int(self.M['현재잔액']/self.M['분할횟수'])
             self.M['기초수량'] = my.ceil(self.M['일매수금']/float(self.M['기초종가']))
@@ -174,7 +174,7 @@ class update_Ttactic2 :
         self.guide = ST['035']
         self.rtact = ST['036']
         self.stact = ST['037']
-
+        
         self.M['진행일자'] = self.D['today']
         # 가이드 데이타 가져오기
         select_cols = self.DB.table_cols(self.guide,('no', 'brother', 'add0', 'tle_color', 'uid', 'uname', 'content', 'reply', 'hit', 'wdate', 'mdate'))
@@ -329,5 +329,5 @@ week_day = my.dayofdate(today)
 if week_day in ['일','월'] : pass
 else :
     B = update_Ttactic2()
-    B.bid = 'T240400'
+    B.bid = 'T240426'
     B.oneWrite()

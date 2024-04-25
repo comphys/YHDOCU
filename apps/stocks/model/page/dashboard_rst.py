@@ -1,11 +1,11 @@
 from system.core.load import Model
 import system.core.my_utils as my
 
-class M_dashboard2(Model) :
+class M_dashboard_rst(Model) :
 
     def view(self) :
         ST = self.DB.parameters_dict('매매전략/VRS')
-        self.M['boards'] = [ST['035'],ST['036'],ST['037']]
+        self.M['boards'] = [ST['035'],ST['036'],ST['037'],['039']]
         self.M['monthlyProfit'] = {}
         self.M['eachSellTotal'] = {} 
 
@@ -266,7 +266,7 @@ class M_dashboard2(Model) :
             self.D['매수수량1']  = '+' 
             self.D['매수가격1']  = '↓'
         
-        if  self.D['매수가격2'] == self.D['매수가격3'] and self.D['매수수량2']: 
+        if  self.D['매수가격2'] == self.D['매수가격3'] : 
             self.D['매수수량3'] += self.D['매수수량2']
             self.D['매수수량2']  = '+'
             self.D['매수가격2']  = '↓'
