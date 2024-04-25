@@ -115,7 +115,7 @@ class M_backtest_vrst(Model) :
 
         else :
             if  self.M['현재날수'] > 2 and self.M['당일종가'] <= tac['매수가격'] :
-                tac['매수수량'] = self.chance_qty(tac['기초수량'])
+                tac['매수수량'] = self.chance_qty(tac['기초수량'],key)
                 tac['거래코드'] = f"{key}{tac['매수수량']}/{tac['기초수량']}" 
                 tac['매수금액'] = tac['매수수량'] * self.M['당일종가']
                 tac['진행시작'] = True
@@ -135,15 +135,16 @@ class M_backtest_vrst(Model) :
             self.today_buy_RST(self.S,'S')
             self.today_buy_RST(self.T,'T')
             
-    def chance_qty(self,basic_qty) :
+    def chance_qty(self,basic_qty,key) :
 
-            찬스수량 = 0    
-            day_count = min(self.M['현재날수']+self.M['찬스일가'],6)
+            찬스수량 = 0   
+            day_limit = 7 
+            day_count = min(self.M['현재날수']+self.M['찬스일가'],day_limit)
             for i in range(0,day_count) : 
                 찬스수량 += my.ceil( basic_qty *(i*1.25 + 1))
             return 찬스수량   
     
-    def tomorrow_step_RST(self,tac,key)  :
+    def tomorrow_step_RST(self,tac)  :
 
         if  tac['진행시작'] :
             tac['구매수량'] = my.ceil(tac['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
@@ -184,9 +185,9 @@ class M_backtest_vrst(Model) :
         
         if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01 
 
-        self.tomorrow_step_RST(self.R,'R')
-        self.tomorrow_step_RST(self.S,'S')
-        self.tomorrow_step_RST(self.T,'T')
+        self.tomorrow_step_RST(self.R)
+        self.tomorrow_step_RST(self.S)
+        self.tomorrow_step_RST(self.T)
         
     def take_chance(self,tac) :
         H = self.V['보유수량']
@@ -520,13 +521,13 @@ class M_backtest_vrst(Model) :
         else :
              if   self.M['현재날수'] == 1 : self.D['next_기회매수량'] = self.R['기초수량'] 
              if   self.M['현재날수'] == 2 : self.D['next_기회매수량'] = my.ceil(self.R['기초수량'] * (self.M['비중조절'] + 1))
-             elif self.M['현재날수']  > 2 : self.D['next_기회매수량'] = self.chance_qty(self.R['기초수량'])
+             elif self.M['현재날수']  > 2 : self.D['next_기회매수량'] = self.chance_qty(self.R['기초수량'],'R')
         
         if   self.S['진행시작'] : self.D['next_안정매수량'] = self.S['구매수량']
-        elif self.M['현재날수'] > 2 :  self.D['next_안정매수량'] = self.chance_qty(self.S['기초수량']) 
+        elif self.M['현재날수'] > 2 :  self.D['next_안정매수량'] = self.chance_qty(self.S['기초수량'],'S') 
 
         if   self.T['진행시작'] : self.D['next_생활매수량'] = self.T['구매수량']
-        elif self.M['현재날수'] > 2 :  self.D['next_생활매수량'] = self.chance_qty(self.T['기초수량'])
+        elif self.M['현재날수'] > 2 :  self.D['next_생활매수량'] = self.chance_qty(self.T['기초수량'],'T')
         
         self.D['next_기회매도량'] = self.R['보유수량']
         self.D['next_안정매도량'] = self.S['보유수량']
