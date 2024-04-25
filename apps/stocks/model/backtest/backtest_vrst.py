@@ -76,12 +76,9 @@ class M_backtest_vrst(Model) :
 
         if  self.D['일밸런싱'] == 'on' :
             self.R['현재잔액'] = self.S['현재잔액'] = self.T['현재잔액'] = round((self.R['현재잔액'] + self.S['현재잔액'] + self.T['현재잔액']) /3,2)
-            
-        self.V['일매수금'] = int(self.V['현재잔액']/self.M['분할횟수']) 
-        self.R['일매수금'] = int(self.R['현재잔액']/self.M['분할횟수']) 
-        self.S['일매수금'] = int(self.S['현재잔액']/self.M['분할횟수']) 
-        self.T['일매수금'] = int(self.T['현재잔액']/self.M['분할횟수']) 
 
+        for tac in (self.V,self.R,self.S,self.T) :   
+            tac['일매수금'] = int(tac['현재잔액']/self.M['분할횟수']) 
 
     def today_sell(self) :
         
