@@ -5,7 +5,7 @@ class M_dashboard_rst(Model) :
 
     def view(self) :
         ST = self.DB.parameters_dict('매매전략/VRS')
-        self.M['boards'] = [ST['035'],ST['036'],ST['037'],['039']]
+        self.M['boards'] = [ST['035'],ST['036'],ST['037'],ST['039']]
         self.M['monthlyProfit'] = {}
         self.M['eachSellTotal'] = {} 
 
@@ -60,8 +60,8 @@ class M_dashboard_rst(Model) :
 
             self.D['chart_date']  = [x['add0'][2:] for x in chart_data]
             self.D['close_price'] = [float(x['add14']) for x in chart_data]; 
-            self.D['Vtactic_avg'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
-            self.D['Vtactic_pro'] = [float(x['add8']) for x in chart_data]   
+            # self.D['Vtactic_avg'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
+            # self.D['Vtactic_pro'] = [float(x['add8']) for x in chart_data]   
 
             self.D['최종종가'] = self.D['close_price'][-1]
             self.D['종가변동'] = self.percent_diff(self.D['close_price'][-2],self.D['최종종가'])
@@ -69,6 +69,8 @@ class M_dashboard_rst(Model) :
             cond = f"add0 BETWEEN '{first_date}' AND '{last_date}'"
             RD = self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add7 as FLOAT),CAST(add8 as FLOAT),CAST(add9 as INT) FROM {self.M['boards'][1]} WHERE {cond}") 
             SD = self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add7 as FLOAT),CAST(add8 as FLOAT),CAST(add9 as INT) FROM {self.M['boards'][2]} WHERE {cond}") 
+            TD = self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add7 as FLOAT),CAST(add8 as FLOAT),CAST(add9 as INT) FROM {self.M['boards'][3]} WHERE {cond}") 
+            self.info(TD)
 
             cx = {};dx = {}
             self.D['Rtactic_avg'] = []; self.D['Rtactic_pro'] = []
@@ -85,6 +87,14 @@ class M_dashboard_rst(Model) :
                     if c[3] : cx[c[0]] = c[1]
                     if c[2] or c[3] : dx[c[0]] = c[2]
                 for x in self.D['chart_date'] : self.D['Stactic_avg'].append(cx.get(x,'null')); self.D['Stactic_pro'].append(dx.get(x,'null'))
+
+            cx.clear();dx.clear()
+            self.D['Ttactic_avg'] = []; self.D['Ttactic_pro'] = []
+            if TD :
+                for c in TD : 
+                    if c[3] : cx[c[0]] = c[1]
+                    if c[2] or c[3] : dx[c[0]] = c[2]
+                for x in self.D['chart_date'] : self.D['Ttactic_avg'].append(cx.get(x,'null')); self.D['Ttactic_pro'].append(dx.get(x,'null'))
                 
             # 매도한 날 매도금 합 가져오기
             for bid in self.M['boards'] :
@@ -128,7 +138,7 @@ class M_dashboard_rst(Model) :
 
 
     def monthlyProfitTotal(self) :
-
+        # <= 20240425 <
         for bid in self.M['boards'] :
             qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {bid} WHERE CAST(add12 as float) > 0 "
             if  self.M['구간종료'] : 
@@ -159,7 +169,7 @@ class M_dashboard_rst(Model) :
         self.D['환율표기']  = f"{self.D['현재환율']:,.1f}"
 
         self.D['처음순증'] = []
-        for odr in [0,1,2] :
+        for odr in [1,2,3] :
             cond = f"WHERE add0 <= '{self.D['s_date']}'"  
             qry = f"SELECT add17, sub25, sub26 FROM {self.M['boards'][odr]} {cond} ORDER BY add0 DESC LIMIT 1"
             qrs = self.DB.exe(qry)
@@ -175,7 +185,7 @@ class M_dashboard_rst(Model) :
 
         self.D['나중순증'] = []
         self.D['자산분배'] = self.DB.parameters_des('038')
-        for odr in [0,1,2] :
+        for odr in [1,2,3] :
             cond = f"WHERE add0 <= '{self.D['e_date']}'" 
             qry = f"SELECT add17, sub25, sub26 FROM {self.M['boards'][odr]} {cond} ORDER BY add0 DESC LIMIT 1"
             qrs = self.DB.exe(qry)
@@ -193,9 +203,10 @@ class M_dashboard_rst(Model) :
     def show_strategy(self,ST) :
 
         if self.M['구간종료'] : return
-        self.D['전략구분1'] = ST['031']; self.D['식별색상1'] = "#f78181"
-        self.D['전략구분2'] = ST['032']; self.D['식별색상2'] = "yellow" 
-        self.D['전략구분3'] = ST['033']; self.D['식별색상3'] = "lightgreen"
+        self.D['전략구분0'] = ST['031']; self.D['식별색상0'] = "gray"
+        self.D['전략구분1'] = ST['032']; self.D['식별색상1'] = "#f78181" 
+        self.D['전략구분2'] = ST['033']; self.D['식별색상2'] = "yellow"
+        self.D['전략구분3'] = ST['040']; self.D['식별색상3'] = "lightgreen"
 
         today = self.DB.one("SELECT add0 FROM h_stockHistory_board WHERE add1='SOXL' ORDER BY add0 DESC LIMIT 1")
         
@@ -211,12 +222,12 @@ class M_dashboard_rst(Model) :
         
         sk = self.DB.cast_key(['sub2','sub3','add9'],['sub19','sub20','add3','add18','add6','add17'],['sub1','sub12','add7','add4','add0','add8','sub29'])
 
-        for odr in [0,1,2] :
+        for odr in [0,1,2,3] :
  
             qry = f"SELECT {sk} "
             qry+= f"FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
             rst = self.DB.line(qry)
-            key = str(odr+1)
+            key = str(odr)
             if today != rst['add0'] : self.D['전략구분'+key] = "확인필요"
 
             self.D['매수수량'+key] = rst['sub2'] if rst['sub2'] else ''
@@ -236,19 +247,20 @@ class M_dashboard_rst(Model) :
             self.D['현수익률'+key] = rst['add8']
             self.D['진행상황'+key] = rst['sub29'][2:]
             self.D['현재가치'+key] = f"{rst['add17']:,.2f}"
-            self.D['가치합계'] += rst['add17']
-                        
-            self.D['매수수합'] += rst['sub2']
-            self.D['매도수합'] += rst['sub3']
-            self.D['잔액합산'] += rst['add3']
-            self.D['수익금합'] += rst['add18']
-            self.D['현매수합'] += rst['add6']
-            self.D['총보유량'] += rst['add9']
             
-            # 추정이익 계산
-            추정손익 = rst['sub3']*rst['sub20'] - rst['add6']
-            self.D['추정합계'] += 추정손익
-            self.D['추정손익'+key] = f"{추정손익:,.2f}" if rst['sub3'] else ''
+            if  odr :
+                self.D['가치합계'] += rst['add17']             
+                self.D['매수수합'] += rst['sub2']
+                self.D['매도수합'] += rst['sub3']
+                self.D['잔액합산'] += rst['add3']
+                self.D['수익금합'] += rst['add18']
+                self.D['현매수합'] += rst['add6']
+                self.D['총보유량'] += rst['add9']
+                
+                # 추정이익 계산
+                추정손익 = rst['sub3']*rst['sub20'] - rst['add6']
+                self.D['추정합계'] += 추정손익
+                self.D['추정손익'+key] = f"{추정손익:,.2f}" if rst['sub3'] else ''
         
         self.D['전현비중'] = f"{self.D['잔액합산']/self.D['가치합계']*100:.2f}"
         self.D['가치합계'] = f"{self.D['가치합계']:,.2f}" 

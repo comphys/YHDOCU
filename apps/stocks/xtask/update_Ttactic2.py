@@ -103,19 +103,24 @@ class update_Ttactic2 :
         self.M['현재잔액'] -= fee
 
     def rst_rebalance(self) :
+
         if  self.M['GD']['sub29'] == '전량매도' :
+
             기회잔액 = self.DB.one(f"SELECT CAST(add3 as FLOAT) FROM {self.rtact} WHERE add0='{self.D['today']}'")
             안정잔액 = self.DB.one(f"SELECT CAST(add3 as FLOAT) FROM {self.stact} WHERE add0='{self.D['today']}'")
             토탈금액 = 기회잔액 + 안정잔액 + self.M['현재잔액']
+            
             self.M['현재잔액'] = round(토탈금액/3,2)
             self.M['일매수금'] = int(self.M['현재잔액']/self.M['분할횟수'])
             self.M['기초수량'] = my.ceil(self.M['일매수금']/float(self.M['기초종가']))
             
             UD  = {'add3':self.M['현재잔액'],'add17':self.M['현재잔액'],'sub4':self.M['일매수금'],'sub18':self.M['기초수량']}
-            qry = self.DB.qry_update(self.rtact,UD,f"add0='{self.D['today']}'") 
-            self.DB.exe(qry)
             qry = self.DB.qry_update(self.stact,UD,f"add0='{self.D['today']}'") 
             self.DB.exe(qry)
+            UD['sub2'] = self.M['기초수량'] # Rtactic 의 바끠어진 룰(첫날부터 매수) 
+            qry = self.DB.qry_update(self.rtact,UD,f"add0='{self.D['today']}'") 
+            self.DB.exe(qry)
+
     
     def calculate(self)  :
 
@@ -243,6 +248,9 @@ class update_Ttactic2 :
 
         U['add11']  = round(self.M['매수금액'],2)
         U['add12']  = round(self.M['매도금액'],2)
+
+        if  self.M['GD']['sub29'] == '전량매도' : U['sub4']  = self.M['일매수금']
+
         if  U['add11'] :
             U['sub14'] = round(float(U['sub14']) + U['add11'],2) #매수누적
             U['add6']  = round(float(U['add6'])  + U['add11'],2) #현매수금

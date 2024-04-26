@@ -60,23 +60,41 @@
           <th style="text-align:right">현수익률</th><th style="text-align:right">현수익</th>
           <th style="text-align:right">현재잔액</th><th style="text-align:right">현금비중</th><th style="text-align:right">현재가치</th>
         </tr>
+        <tr style="color:gray">
+          <td>{{D['전략구분0']}}</td>
+          <td style="text-align:right;">{{D['현재시즌0']}}-{{D['현재일수0']}}</td>
+          <td style="text-align:right;">{{D['매수수량0']}}</td>
+          <td style="text-align:right;">{{D['매수가격0']}}</td>
+          <td style="text-align:right;">{{D['타겟지점0']}}</td>
+          <td style="text-align:right;">{{D['매도수량0']}}</td>
+          <td style="text-align:right;">{{D['매도가격0']}}</td>
+          <td style="text-align:right;">{{D['추정손익0']}}</td>
+          <td style="text-align:right;">{{D['현매수금0']}}</td>
+          <td style="text-align:right;">{{D['평균단가0']}}</td>
+          <td style="text-align:right;">{{D['현수익률0']}}%</td>
+          <td style="text-align:right;">{{D['현수익금0']}}</td>
+          <td style="text-align:right;">{{D['현재잔액0']}}</td>
+          <td style="text-align:right;">{{D['현금비중0']}}%</td>
+          <td style="text-align:right;">{{D['현재가치0']}}</td>
+        </tr>  
+        <tr><td colspan="15" style="font-size:2px;line-height:2px">&nbsp;</td></tr>      
         {% for key in ['1','2','3'] %}
         <tr>
           <td style="color:{{D['식별색상'+key]}}">{{D['전략구분'+key]}}</td>
           <td style="text-align:right;">{{D['현재시즌'+key]}}-{{D['현재일수'+key]}}</td>
           <td style="text-align:right;color:#f78181" class="k2">{{D['매수수량'+key]}}</td>
           <td style="text-align:right;color:#f78181" class="ko">{{D['매수가격'+key]}}</td>
-          <td style="text-align:right;color:gray">{{D['타겟지점'+key]}}</td>
-          <td style="text-align:right;color:#58ACFA">{{D['매도수량'+key]}}</td>
-          <td style="text-align:right;color:#58ACFA" class="ko">{{D['매도가격'+key]}}</td>
-          <td style="text-align:right;color:yellow"  class="ko">{{D['추정손익'+key]}}</td>
-          <td style="text-align:right;color:gray" class="ko">{{D['현매수금'+key]}}</td>
-          <td style="text-align:right;color:gray" class="ko">{{D['평균단가'+key]}}</td>
-          <td style="text-align:right;color:gray">{{D['현수익률'+key]}}%</td>
-          <td style="text-align:right;color:gray" class="ko">{{D['현수익금'+key]}}</td>
-          <td style="text-align:right;color:gray" class="ko">{{D['현재잔액'+key]}}</td>
-          <td style="text-align:right;color:gray">{{D['현금비중'+key]}}%</td>
-          <td style="text-align:right;color:gray" class="ko">{{D['현재가치'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8">{{D['타겟지점'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8">{{D['매도수량'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8" class="ko">{{D['매도가격'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8"  class="ko">{{D['추정손익'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8" class="ko">{{D['현매수금'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8" class="ko">{{D['평균단가'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8">{{D['현수익률'+key]}}%</td>
+          <td style="text-align:right;color:#D8D8D8" class="ko">{{D['현수익금'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8" class="ko">{{D['현재잔액'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8">{{D['현금비중'+key]}}%</td>
+          <td style="text-align:right;color:#D8D8D8" class="ko">{{D['현재가치'+key]}}</td>
         </tr>
         {% endfor %}
         <tr>
@@ -132,8 +150,8 @@
 
     let labels_origin   = {{D['chart_date']|safe}}		    // labels main origin
     let close_origin    = {{D['close_price']|safe}} 	    // soxl close price origin 
-    let v_avg_origin    = {{D['Vtactic_avg']|safe}}	      // soxl average in v tactic
-    let v_pro_origin    = {{D['Vtactic_pro']|safe}}	      // soxl profits in v tactic
+    let t_avg_origin    = {{D['Ttactic_avg']|safe}}	      // soxl average in v tactic
+    let t_pro_origin    = {{D['Ttactic_pro']|safe}}	      // soxl profits in v tactic
     let r_avg_origin    = {{D['Rtactic_avg']|safe}}
     let r_pro_origin    = {{D['Rtactic_pro']|safe}}
     let s_avg_origin    = {{D['Stactic_avg']|safe}}	
@@ -145,8 +163,8 @@
 
     let labels_main     =  labels_origin.slice(ChartStart); let span_start = labels_main[0]; $("input[name='s_date']").val('20'+span_start)
     let close_price     =  close_origin.slice(ChartStart)	
-    let v_avg_value     =  v_avg_origin.slice(ChartStart)  
-    let v_pro_value     =  v_pro_origin.slice(ChartStart)	
+    let t_avg_value     =  t_avg_origin.slice(ChartStart)  
+    let t_pro_value     =  t_pro_origin.slice(ChartStart)	
     let r_avg_value     =  r_avg_origin.slice(ChartStart)	
     let r_pro_value     =  r_pro_origin.slice(ChartStart)
     let s_avg_value     =  s_avg_origin.slice(ChartStart)	
@@ -158,9 +176,9 @@
         labels : labels_main,
         datasets : [
             {   label:' 종가변동',data : close_price,borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],lineTension:0.2},
-            {   label:' 평균단가',data : v_avg_value,borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
-            {   label:' 기회평균',data : r_avg_value,borderColor:'yellow', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
-            {   label:' 안정평균',data : s_avg_value,borderColor:'lightgreen', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
+            {   label:' 생활평균',data : t_avg_value,borderColor:'lightgreen', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
+            {   label:' 기회평균',data : r_avg_value,borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
+            {   label:' 안정평균',data : s_avg_value,borderColor:'yellow', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
             {   label:' 매도수익',data : t_sel_value,barThickness:3,borderColor:'rgb(255, 205, 86)', backgroundColor:'rgba(255, 205, 86, 0.4)',type:'bar',yAxisID:'y1'},
         ]   
     };
@@ -186,7 +204,7 @@ const data_sub = {
 	labels : labels_main,
 	datasets : [
 		{label:' 종가변동',data : close_price,borderColor:'cyan',    	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
-		{label:' 평균변동',data : v_pro_value,borderColor:'#f78181', 	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 생활변동',data : t_pro_value,borderColor:'#f78181', 	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
 		{label:' 기회변동',data : r_pro_value,borderColor:'yellow',	 	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
 		{label:' 안정변동',data : s_pro_value,borderColor:'lightgreen', borderWidth:3,pointRadius:0,lineTension:0.2,},
     {label:' 가치합계',data : total_value,borderColor:'cornsilk', borderWidth:2,borderDash:[3,1],pointRadius:0,lineTension:0.2,},
@@ -254,7 +272,7 @@ function slice_chart(opt) {
 	if(second_chart) {
 		myChart_main.config.data.labels = labels_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[0].data =  close_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[1].data =  v_pro_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[1].data =  t_pro_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[2].data =  r_pro_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[3].data =  s_pro_origin.slice(new_s,new_e);
     myChart_main.config.data.datasets[4].data =  total_origin.slice(new_s,new_e);
@@ -266,7 +284,7 @@ function slice_chart(opt) {
 	} else {
 		myChart_main.config.data.labels = labels_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[0].data =  close_origin.slice(new_s,new_e);
-		myChart_main.config.data.datasets[1].data =  v_avg_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[1].data =  t_avg_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[2].data =  r_avg_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[3].data =  s_avg_origin.slice(new_s,new_e);
     myChart_main.config.data.datasets[4].data =  t_sel_origin.slice(new_s,new_e);
