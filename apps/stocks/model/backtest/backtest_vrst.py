@@ -138,7 +138,7 @@ class M_backtest_vrst(Model) :
     def chance_qty(self,basic_qty,key) :
 
             찬스수량 = 0   
-            day_limit = 7 
+            day_limit = 6 if key == 'R' else 7 
             day_count = min(self.M['현재날수']+self.M['찬스일가'],day_limit)
             for i in range(0,day_count) : 
                 찬스수량 += my.ceil( basic_qty *(i*1.25 + 1))
