@@ -97,6 +97,7 @@ class Page(Control) :
         self.M = {}
         
         self.D['종목코드'] = self.D['post']['종목코드']
+        self.D['일반자금'] = self.D['post']['일반자금']
         self.D['기회자금'] = self.D['post']['기회자금']
         self.D['안정자금'] = self.D['post']['안정자금']
         self.D['생활자금'] = self.D['post']['생활자금']

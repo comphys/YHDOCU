@@ -4,7 +4,8 @@
 <div class="row-row">
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
 		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/back_vrst/back_vrst" onsubmit='return check_thisForm()'>
-		<br>
+			<br>
+			<input type='hidden' class="i-number" name="일반자금" value="{{D['일반자금']}}">
 		<div class="well clearfix" style="border-radius:0px;">
     		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/back_vrst/back_vrst" onsubmit='return check_thisForm()'>
     			<div class="pull-left">
@@ -681,7 +682,7 @@ function synchro(opt) {
 	} else {
 		today = $("input[name='시작일자']").val();
 	}
-	let posturl = uri('linkurl') + 'pages-pajax/overall_test_sync';
+	let posturl = uri('linkurl') + 'pages-pajax/overall_test_sync2';
 	$.post(posturl, { s_date : today },null,'json').done(function(data){
 		if(data.date=='None'){h_dialog.notice(data.msg);}
 		else {
@@ -690,6 +691,7 @@ function synchro(opt) {
 			$("input[name='일반자금']").val(data.V_money);
 			$("input[name='기회자금']").val(data.R_money);
 			$("input[name='안정자금']").val(data.S_money);
+			$("input[name='생활자금']").val(data.T_money);
 		}
 	});
 }

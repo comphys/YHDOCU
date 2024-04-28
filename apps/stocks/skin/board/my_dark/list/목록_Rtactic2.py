@@ -217,7 +217,7 @@ class 목록_Rtactic2(SKIN) :
                         if money : 
                             tx[key] = f"<td class='list-normal' style='font-weight:bold;'>{money:,.2f}</td>" 
                         else : 
-                            tx[key] = "<td class='list-normal'>0.0</td>"                           
+                            tx[key] = "<td class='list-normal'>0.00</td>"                           
                     
                     elif key == 'add20': 
                         profit = float(txt)

@@ -437,8 +437,7 @@ class M_backtest_vrst(Model) :
         self.M['매수단계']  = '일반매수'
         self.M['기록시즌']  = 0
          
-        self.V['현재잔액']  = my.sv(ST['054'])
-        self.D['일반자금']  = ST['054']
+        self.V['현재잔액']  = my.sv(self.D['일반자금'])
         self.R['현재잔액']  = my.sv(self.D['기회자금'])
         self.S['현재잔액']  = my.sv(self.D['안정자금'])
         self.T['현재잔액']  = my.sv(self.D['생활자금'])
