@@ -6,6 +6,7 @@ class update_Stactic2 :
 
     def __init__(self) :
         self.D = {}
+        self.bid = ''
         self.DB = DB('stocks')
         self.skey = self.DB.store("slack_key")
 
@@ -41,32 +42,25 @@ class update_Stactic2 :
 
     def tomorrow_sell(self) :
 
-        if  self.M['경과일수'] ==  0 :
-            self.M['전매도량']  =  0
-            self.M['전매도가']  =  self.M['당일종가']
-            return
+        if  self.M['보유수량'] ==  0 : self.M['전매도량']  =  0; self.M['전매도가']  =  0.00; return
 
         self.M['전매도량'] = self.M['보유수량']
         self.M['전매도가'] = float(self.M['GD']['sub20'])
 
         if int(self.M['보유수량']) > int(self.M['기초수량']) and self.M['회복아님'] : 
-            매도가격S = my.round_up(self.M['평균단가'] * self.M['안정매도'])
-            if  매도가격S < self.M['전매도가'] : 
-                self.M['전매도가'] = 매도가격S
+            매도가격 = my.round_up(self.M['평균단가'] * self.M['안정매도'])
+            if  매도가격 < self.M['전매도가'] : 
+                self.M['전매도가'] = 매도가격
                 self.DB.exe(f"UPDATE {self.guide} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
                 self.DB.exe(f"UPDATE {self.rtact} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
 
 
     def tomorrow_buy(self)  :
 
-        if  self.M['경과일수'] == 0 :
+        if  self.M['경과일수'] <= 1 :
             self.M['전매수량'] = 0
-            self.M['전매수가'] = round(self.M['당일종가'] * self.M['큰단가치'],2)
+            self.M['전매수가'] = 0.00
         
-        elif self.M['경과일수'] == 1 :
-            self.M['전매수량'] = 0
-            self.M['전매수가'] = self.M['당일종가']
-
         elif self.M['경과일수'] >= 2 and int(self.M['보유수량']) <= int(self.M['기초수량']): 
             
             # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
@@ -84,6 +78,7 @@ class update_Stactic2 :
             self.M['전매수가'] = 찬스가격
             
         else : # 가이드 및 투자가 진행 중일 때
+
             매수단가 = float(self.M['GD']['sub19'])
             매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
 
@@ -169,9 +164,9 @@ class update_Stactic2 :
         self.M['안정시점']  = ST['023']  # S전략 일반 매수시점
         self.M['안정회복']  = ST['024']  # S전략 회복 매수시점
         self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
-        self.M['안정매도']  = ST['012']
+        self.M['안정매도']  = ST['012']  # S 전략의 안정매도 가격
         self.guide = ST['035']
-        self.rtact = ST['036']
+        self.rtact = ST['057']
 
         self.M['진행일자'] = self.D['today']
         # 가이드 데이타 가져오기
@@ -190,10 +185,9 @@ class update_Stactic2 :
         # 종가구하기
         self.M['당일종가'] = float(GD['add14'])
         self.M['전일종가'] = float(self.M['LD']['add14'])
-        p_change = self.DB.one(f"SELECT add8 FROM h_stockHistory_board WHERE add0='{self.M['진행일자']}' and add1='SOXL'")
-        self.M['종가변동'] = f"{float(p_change):.2f}"
         self.M['연속상승'] = GD['sub5']
         self.M['연속하락'] = GD['sub6']
+        self.M['종가변동'] = GD['add20']
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0
@@ -211,7 +205,6 @@ class update_Stactic2 :
         self.M['일매수금'] = int(LD['sub4'])
         self.M['경과일수'] = int(GD['sub12'])
         self.M['매매현황'] = ''
-        self.M['진행상황'] = '매도대기'
         self.M['보유수량'] = int(LD['add9'])
         self.M['현매수금'] = float(LD['add6'])
         self.M['현재잔액'] = float(LD['add3'])
@@ -327,5 +320,5 @@ week_day = my.dayofdate(today)
 if week_day in ['일','월'] : pass
 else :
     B = update_Stactic2()
-    B.bid = 'S231226'
+    B.bid = 'S240426'
     B.oneWrite()

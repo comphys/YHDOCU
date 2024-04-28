@@ -6,6 +6,7 @@ class update_Rtactic2 :
 
     def __init__(self) :
         self.D = {}
+        self.bid = ''
         self.DB = DB('stocks')
         self.skey = self.DB.store("slack_key")
         
@@ -40,24 +41,21 @@ class update_Rtactic2 :
 
     def tomorrow_sell(self) : 
 
-        if  self.M['경과일수'] ==  0 :
-            self.M['전매도량']  =  0
-            self.M['전매도가']  =  self.M['당일종가']
-            return
+        if  self.M['보유수량'] ==  0 : self.M['전매도량']  =  0; self.M['전매도가']  =  0.00; return
 
         self.M['전매도량'] = self.M['보유수량']
         self.M['전매도가'] = float(self.M['GD']['sub20'])
 
-        if int(self.M['보유수량']) > int(self.M['기초수량']) and self.M['회복아님'] : 
-            매도가격R = my.round_up(self.M['평균단가'] * self.M['기회매도'])
-            if  매도가격R < self.M['전매도가'] : 
-                self.M['전매도가'] = 매도가격R
+        if int(self.M['보유수량']) > int(self.M['기초수량'] * 5) and self.M['회복아님'] : # R 전략이 진행되고 있는지 판단
+            매도가격 = my.round_up(self.M['평균단가'] * self.M['기회매도'])
+            if  매도가격 < self.M['전매도가'] : 
+                self.M['전매도가'] = 매도가격
                 self.DB.exe(f"UPDATE {self.guide} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'" )
 
 
     def tomorrow_buy(self)  :
 
-        if  self.M['경과일수'] == 0 :
+        if  self.M['경과일수'] == 0 : 
             self.M['전매수량'] = self.M['기초수량']
             self.M['전매수가'] = round(self.M['당일종가'] * self.M['큰단가치'],2)
         
@@ -82,6 +80,7 @@ class update_Rtactic2 :
             self.M['전매수가'] = 찬스가격
             
         else : # 가이드 및 투자가 진행 중일 때
+            
             매수단가 = float(self.M['GD']['sub19'])
             매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
 
@@ -166,7 +165,7 @@ class update_Rtactic2 :
         self.M['기회시점']  = ST['021']  # S전략 일반 매수시점
         self.M['기회회복']  = ST['022']  # S전략 회복 매수시점
         self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
-        self.M['기회매도']  = ST['011']
+        self.M['기회매도']  = ST['011']  # R 전략의 기회매도 가격
         self.guide = ST['035']
         
         self.M['진행일자'] = self.D['today']
@@ -186,10 +185,9 @@ class update_Rtactic2 :
         # 종가구하기
         self.M['당일종가'] = float(GD['add14'])
         self.M['전일종가'] = float(self.M['LD']['add14'])
-        p_change = self.DB.one(f"SELECT add8 FROM h_stockHistory_board WHERE add0='{self.M['진행일자']}' and add1='SOXL'")
-        self.M['종가변동'] = f"{float(p_change):.2f}"
         self.M['연속상승'] = GD['sub5']
         self.M['연속하락'] = GD['sub6']
+        self.M['종가변동'] = GD['add20']
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0
@@ -211,7 +209,6 @@ class update_Rtactic2 :
         self.M['보유수량'] = int(LD['add9'])
         self.M['현매수금'] = float(LD['add6'])
         self.M['현재잔액'] = float(LD['add3'])
-        self.M['진행상황'] = '매도대기'
         self.M['회복아님'] = False if float(GD['sub7']) else True
         
         # 기초수량 구하기
@@ -271,6 +268,7 @@ class update_Rtactic2 :
         U['add16']  = round(U['add15'] / U['add17'] * 100,2)
 
         if self.M['경과일수'] !=0 and self.M['전매수가'] >= self.M['전매도가'] : self.M['전매수가'] = self.M['전매도가'] - 0.01
+        
         U['sub2']   = self.M['전매수량']
         U['sub19']  = self.M['전매수가']
         U['sub3']   = self.M['전매도량']
@@ -323,5 +321,5 @@ week_day = my.dayofdate(today)
 if week_day in ['일','월'] : pass
 else :
     B = update_Rtactic2()
-    B.bid = 'R230831'
+    B.bid = 'R240426'
     B.oneWrite()

@@ -5,7 +5,7 @@ class M_dashboard_rst(Model) :
 
     def view(self) :
         ST = self.DB.parameters_dict('매매전략/VRS')
-        self.M['boards'] = [ST['035'],ST['036'],ST['037'],ST['039']]
+        self.M['boards'] = [ST['035'],ST['057'],ST['058'],ST['059']]
         self.M['monthlyProfit'] = {}
         self.M['eachSellTotal'] = {} 
 
@@ -42,7 +42,7 @@ class M_dashboard_rst(Model) :
         if  self.M['구간시작'] : 
             self.DB.wre += f" AND add0 >= '{self.M['구간시작']}'"
         else : 
-            self.DB.lmt = '200'        
+            self.DB.lmt = '200' 
         
         chart_data = self.DB.get("add0,add14,add7,sub28,add8",assoc=True)
         if chart_data :
@@ -60,8 +60,6 @@ class M_dashboard_rst(Model) :
 
             self.D['chart_date']  = [x['add0'][2:] for x in chart_data]
             self.D['close_price'] = [float(x['add14']) for x in chart_data]; 
-            # self.D['Vtactic_avg'] = ['null' if not float(x['add7']) else float(x['add7']) for x in chart_data]
-            # self.D['Vtactic_pro'] = [float(x['add8']) for x in chart_data]   
 
             self.D['최종종가'] = self.D['close_price'][-1]
             self.D['종가변동'] = self.percent_diff(self.D['close_price'][-2],self.D['최종종가'])
@@ -70,7 +68,6 @@ class M_dashboard_rst(Model) :
             RD = self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add7 as FLOAT),CAST(add8 as FLOAT),CAST(add9 as INT) FROM {self.M['boards'][1]} WHERE {cond}") 
             SD = self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add7 as FLOAT),CAST(add8 as FLOAT),CAST(add9 as INT) FROM {self.M['boards'][2]} WHERE {cond}") 
             TD = self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add7 as FLOAT),CAST(add8 as FLOAT),CAST(add9 as INT) FROM {self.M['boards'][3]} WHERE {cond}") 
-            self.info(TD)
 
             cx = {};dx = {}
             self.D['Rtactic_avg'] = []; self.D['Rtactic_pro'] = []
@@ -97,7 +94,7 @@ class M_dashboard_rst(Model) :
                 for x in self.D['chart_date'] : self.D['Ttactic_avg'].append(cx.get(x,'null')); self.D['Ttactic_pro'].append(dx.get(x,'null'))
                 
             # 매도한 날 매도금 합 가져오기
-            for bid in self.M['boards'] :
+            for bid in self.M['boards'][1:] :
                 qry = f"SELECT SUBSTR(add0,3,10), CAST(add18 as float) FROM {bid} WHERE CAST(add12 as float) > 0 and {cond}"
                 eachSellTotal = dict(self.DB.exe(qry))
                 self.merge_dict(self.M['eachSellTotal'],eachSellTotal)
@@ -105,41 +102,10 @@ class M_dashboard_rst(Model) :
             self.D['eachSellTotal'] = []
             for x in self.D['chart_date'] : self.D['eachSellTotal'].append(self.M['eachSellTotal'].get(x,'null'))
 
-        self.totalValue()
-            
-    def totalValue(self) :
-
-        s_date = '20'+self.D['chart_date'][0]
-        e_date = '20'+self.D['chart_date'][-1]
-
-        r_m = self.DB.exe(f"SELECT add0,CAST(add17 as float) FROM {self.M['boards'][1]} WHERE add0 <= '{s_date}' ORDER BY add0 LIMIT 1")
-        s_m = self.DB.exe(f"SELECT add0,CAST(add17 as float) FROM {self.M['boards'][2]} WHERE add0 <= '{s_date}' ORDER BY add0 LIMIT 1")
-        r_min = r_m[0][1] if r_m else 0
-        s_min = s_m[0][1] if s_m else 0
-
-        vd = dict(self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add17 as float) FROM {self.M['boards'][0]} WHERE add0 BETWEEN '{s_date}' AND '{e_date}'"))
-        rd = dict(self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add17 as float) FROM {self.M['boards'][1]} WHERE add0 BETWEEN '{s_date}' AND '{e_date}'"))
-        sd = dict(self.DB.exe(f"SELECT SUBSTR(add0,3,10),CAST(add17 as float) FROM {self.M['boards'][2]} WHERE add0 BETWEEN '{s_date}' AND '{e_date}'"))
-
-        tv = {}
-
-        for key in self.D['chart_date'] :
-
-            tv[key] = vd[key] 
-
-            if key in rd : tv[key] += rd[key]; r_min = rd[key]
-            else : tv[key] += r_min
-
-            if key in sd : tv[key] += sd[key]; s_min = sd[key]
-            else : tv[key] += s_min
-
-
-        self.D['totalValues'] = list(tv.values()) 
-
 
     def monthlyProfitTotal(self) :
-        # <= 20240425 <
-        for bid in self.M['boards'] :
+
+        for bid in self.M['boards'][1:] :
             qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {bid} WHERE CAST(add12 as float) > 0 "
             if  self.M['구간종료'] : 
                 qry += f" AND add0 BETWEEN '{self.M['구간시작']}' AND '{self.M['구간종료']}' "
@@ -175,7 +141,7 @@ class M_dashboard_rst(Model) :
             qrs = self.DB.exe(qry)
             if not qrs : qrs=[('0','0','0'),]
             rst = qrs[0] 
-            key = str(odr+1)
+            key = str(odr)
             self.M['S자산총액'+key] = float(rst[0])
             self.M['S총입금액'+key] = float(rst[1])
             self.M['S총출금액'+key] = float(rst[2])
@@ -191,22 +157,21 @@ class M_dashboard_rst(Model) :
             qrs = self.DB.exe(qry)
             if not qrs : qrs=[('0','0','0'),]
             rst = qrs[0] 
-            key = str(odr+1)
-            
+            key = str(odr)
             self.D['E자산총액'+key] = float(rst[0])
             self.M['E총입금액'+key] = float(rst[1])
             self.M['E총출금액'+key] = float(rst[2])
             self.M['E순자증액'+key] = self.D['E자산총액'+key]-self.M['E총입금액'+key]+self.M['E총출금액'+key]
             self.D['나중순증'].append(self.M['E순자증액'+key])
         
-            
+
     def show_strategy(self,ST) :
 
         if self.M['구간종료'] : return
         self.D['전략구분0'] = ST['031']; self.D['식별색상0'] = "gray"
         self.D['전략구분1'] = ST['032']; self.D['식별색상1'] = "#f78181" 
         self.D['전략구분2'] = ST['033']; self.D['식별색상2'] = "yellow"
-        self.D['전략구분3'] = ST['040']; self.D['식별색상3'] = "lightgreen"
+        self.D['전략구분3'] = ST['034']; self.D['식별색상3'] = "lightgreen"
 
         today = self.DB.one("SELECT add0 FROM h_stockHistory_board WHERE add1='SOXL' ORDER BY add0 DESC LIMIT 1")
         
@@ -273,12 +238,12 @@ class M_dashboard_rst(Model) :
         self.D['현매수합'] = f"{self.D['현매수합']:,.2f}"
         
         # 매수수량 합산
-        if  self.D['매수가격1'] == self.D['매수가격2'] : 
+        if  self.D['매수가격1'] == self.D['매수가격2'] and self.D['매수가격3'] : 
             self.D['매수수량2'] += self.D['매수수량1']
             self.D['매수수량1']  = '+' 
             self.D['매수가격1']  = '↓'
         
-        if  self.D['매수가격2'] == self.D['매수가격3'] : 
+        if  self.D['매수가격2'] == self.D['매수가격3'] and self.D['매수가격3'] : 
             self.D['매수수량3'] += self.D['매수수량2']
             self.D['매수수량2']  = '+'
             self.D['매수가격2']  = '↓'
@@ -297,7 +262,7 @@ class M_dashboard_rst(Model) :
          
        
         # 시작일점과의 변동률
-        chk_season = self.D['현재시즌1'] if int(self.D['현재일수1']) else int(self.D['현재시즌1']) - 1
+        chk_season = self.D['현재시즌0'] if int(self.D['현재일수0']) else int(self.D['현재시즌0']) - 1
         self.D['시즌시가'] = self.DB.one(f"SELECT add14 FROM {self.M['boards'][0]} WHERE sub1='{chk_season}' and sub12='1'") 
         self.D['시즌변동'] = self.percent_diff(self.D['시즌시가'],self.D['최종종가'])
                

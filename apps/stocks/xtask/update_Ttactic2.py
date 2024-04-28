@@ -6,6 +6,7 @@ class update_Ttactic2 :
 
     def __init__(self) :
         self.D = {}
+        self.bid = ''
         self.DB = DB('stocks')
         self.skey = self.DB.store("slack_key")
 
@@ -42,10 +43,7 @@ class update_Ttactic2 :
 
     def tomorrow_sell(self) :
 
-        if  self.M['경과일수'] ==  0 :
-            self.M['전매도량']  =  0
-            self.M['전매도가']  =  self.M['당일종가']
-            return
+        if  self.M['보유수량'] ==  0 : self.M['전매도량']  =  0; self.M['전매도가']  =  self.M['당일종가']; return
 
         self.M['전매도량'] = self.M['보유수량']
         self.M['전매도가'] = float(self.M['GD']['sub20'])
@@ -53,14 +51,10 @@ class update_Ttactic2 :
 
     def tomorrow_buy(self)  :
 
-        if  self.M['경과일수'] == 0 :
+        if  self.M['경과일수'] <= 1 :
             self.M['전매수량'] = 0
-            self.M['전매수가'] = round(self.M['당일종가'] * self.M['큰단가치'],2)
+            self.M['전매수가'] = 0.0
         
-        elif self.M['경과일수'] == 1 :
-            self.M['전매수량'] = 0
-            self.M['전매수가'] = self.M['당일종가']
-
         elif self.M['경과일수'] >= 2 and int(self.M['보유수량']) <= int(self.M['기초수량']): 
             
             # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
@@ -117,7 +111,8 @@ class update_Ttactic2 :
             UD  = {'add3':self.M['현재잔액'],'add17':self.M['현재잔액'],'sub4':self.M['일매수금'],'sub18':self.M['기초수량']}
             qry = self.DB.qry_update(self.stact,UD,f"add0='{self.D['today']}'") 
             self.DB.exe(qry)
-            UD['sub2'] = self.M['기초수량'] # Rtactic 의 바끠어진 룰(첫날부터 매수) 
+
+            UD['sub2'] = self.M['기초수량'] # 래밸런싱에 의한 기초수량 변경으로 R 전략의 첫날 매수량을 변경된 기초수량으로 반영
             qry = self.DB.qry_update(self.rtact,UD,f"add0='{self.D['today']}'") 
             self.DB.exe(qry)
 
@@ -177,8 +172,8 @@ class update_Ttactic2 :
         self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
 
         self.guide = ST['035']
-        self.rtact = ST['036']
-        self.stact = ST['037']
+        self.rtact = ST['057']
+        self.stact = ST['058']
         
         self.M['진행일자'] = self.D['today']
         # 가이드 데이타 가져오기
@@ -197,10 +192,9 @@ class update_Ttactic2 :
         # 종가구하기
         self.M['당일종가'] = float(GD['add14'])
         self.M['전일종가'] = float(self.M['LD']['add14'])
-        p_change = self.DB.one(f"SELECT add8 FROM h_stockHistory_board WHERE add0='{self.M['진행일자']}' and add1='SOXL'")
-        self.M['종가변동'] = f"{float(p_change):.2f}"
         self.M['연속상승'] = GD['sub5']
         self.M['연속하락'] = GD['sub6']
+        self.M['종가변동'] = GD['add20']
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0
@@ -222,7 +216,6 @@ class update_Ttactic2 :
         self.M['보유수량'] = int(LD['add9'])
         self.M['현매수금'] = float(LD['add6'])
         self.M['현재잔액'] = float(LD['add3'])
-        self.M['진행상황'] = '매도대기'
         self.M['회복아님'] = False if float(GD['sub7']) else True
         
         # 기초수량 구하기

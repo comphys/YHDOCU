@@ -38,7 +38,7 @@
         </div>
     </div> <br>
 
-    <div id="next_strategy" style="position:absolute;top:458px;left:34px;width:1076px;height:349px;padding:20px;background-color:#000000;opacity:0.9;display:none;" ondblclick="$(this).hide()">
+    <div id="next_strategy" style="position:absolute;top:458px;left:34px;width:1076px;height:349px;padding:20px;background-color:#000000;opacity:0.9;" ondblclick="$(this).hide()">
       <div style="font-style:italic;color:gray;margin-bottom:20px;">
         The Strategy for <span style="color:yellow">{{D['오늘날자']}}({{D['오늘요일']}})</span> 
         from <span style="color:white">{{D['최종날자']}}({{D['최종요일']}})</span>.
@@ -77,17 +77,17 @@
           <td style="text-align:right;">{{D['현금비중0']}}%</td>
           <td style="text-align:right;">{{D['현재가치0']}}</td>
         </tr>  
-        <tr><td colspan="15" style="font-size:2px;line-height:2px">&nbsp;</td></tr>      
+        <!-- <tr><td colspan="15" style="font-size:2px;line-height:2px">&nbsp;</td></tr> -->
         {% for key in ['1','2','3'] %}
         <tr>
           <td style="color:{{D['식별색상'+key]}}">{{D['전략구분'+key]}}</td>
           <td style="text-align:right;">{{D['현재시즌'+key]}}-{{D['현재일수'+key]}}</td>
           <td style="text-align:right;color:#f78181" class="k2">{{D['매수수량'+key]}}</td>
           <td style="text-align:right;color:#f78181" class="ko">{{D['매수가격'+key]}}</td>
-          <td style="text-align:right;color:#D8D8D8">{{D['타겟지점'+key]}}</td>
-          <td style="text-align:right;color:#D8D8D8">{{D['매도수량'+key]}}</td>
-          <td style="text-align:right;color:#D8D8D8" class="ko">{{D['매도가격'+key]}}</td>
-          <td style="text-align:right;color:#D8D8D8"  class="ko">{{D['추정손익'+key]}}</td>
+          <td style="text-align:right;color:#f78181">{{D['타겟지점'+key]}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['매도수량'+key]}}</td>
+          <td style="text-align:right;color:#58ACFA" class="ko">{{D['매도가격'+key]}}</td>
+          <td style="text-align:right;color:yellow"  class="ko">{{D['추정손익'+key]}}</td>
           <td style="text-align:right;color:#D8D8D8" class="ko">{{D['현매수금'+key]}}</td>
           <td style="text-align:right;color:#D8D8D8" class="ko">{{D['평균단가'+key]}}</td>
           <td style="text-align:right;color:#D8D8D8">{{D['현수익률'+key]}}%</td>
@@ -100,9 +100,9 @@
         <tr>
           <td colspan="2">&nbsp;</td>
           <td colspan="2" style="text-align:center;color:gray">{{D['진행상황1']}}/{{D['진행상황2']}}/{{D['진행상황3']}}</td>
-          <td style="text-align:right;color:white">{{D['필요상승']}}</td>
-          <td style="text-align:right;color:white">{{D['매도수합']}}</td>
-          <td style="text-align:right;color:white">{{D['매도가격0']}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['필요상승']}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['매도수합']}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['매도가격0']}}</td>
           <td style="text-align:right;color:yellow" class="ko">{{D['추정합계']}}</td>
           <td style="text-align:right;color:white"  class="ko">{{D['현매수합']}}</td>
           <td style="text-align:right;color:white"  class="ko">{{D['종합평단']}}</td>
@@ -157,7 +157,6 @@
     let s_avg_origin    = {{D['Stactic_avg']|safe}}	
     let s_pro_origin    = {{D['Stactic_pro']|safe}}
     let t_sel_origin    = {{D['eachSellTotal']|safe}}
-    let total_origin    = {{D['totalValues']|safe}}
 
     let ChartStart      = {{D['chart_start']}};	
 
@@ -170,7 +169,6 @@
     let s_avg_value     =  s_avg_origin.slice(ChartStart)	
     let s_pro_value     =  s_pro_origin.slice(ChartStart)
     let t_sel_value     =  t_sel_origin.slice(ChartStart)
-    let total_value     =  total_origin.slice(ChartStart)
 
     const data_main = {
         labels : labels_main,
@@ -207,7 +205,6 @@ const data_sub = {
 		{label:' 생활변동',data : t_pro_value,borderColor:'#f78181', 	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
 		{label:' 기회변동',data : r_pro_value,borderColor:'yellow',	 	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
 		{label:' 안정변동',data : s_pro_value,borderColor:'lightgreen', borderWidth:3,pointRadius:0,lineTension:0.2,},
-    {label:' 가치합계',data : total_value,borderColor:'cornsilk', borderWidth:2,borderDash:[3,1],pointRadius:0,lineTension:0.2,},
 	]   
 }
 
@@ -275,10 +272,8 @@ function slice_chart(opt) {
 		myChart_main.config.data.datasets[1].data =  t_pro_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[2].data =  r_pro_origin.slice(new_s,new_e);
 		myChart_main.config.data.datasets[3].data =  s_pro_origin.slice(new_s,new_e);
-    myChart_main.config.data.datasets[4].data =  total_origin.slice(new_s,new_e);
 
 		base=myChart_main.config.data.datasets[0].data[0]; myChart_main.config.data.datasets[0].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})
-    base=myChart_main.config.data.datasets[4].data[0]; myChart_main.config.data.datasets[4].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})
 			
 
 	} else {
@@ -421,7 +416,7 @@ const myChart_side = new Chart(ctx_side, config_side);
 // ------------------------------------------------------------
 // Bottom Chart
 // ------------------------------------------------------------
-var tactics_name = ['V','R','S']
+var tactics_name = ['R','S','T']
 var tactics_From = {{D['처음순증']}};
 var tactics_toto = {{D['나중순증']}};
 var tactics_diff = []

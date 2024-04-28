@@ -136,27 +136,33 @@
 					<th style='text-align:center;width:80px'>일자</th>
 					<th style='text-align:right;width:60px'>종가</th>
 					<th style='text-align:right;width:60px'>변동</th>
+					
 					{% if D['일반상황']=='on' %}
-					<th style='text-align:right;width:110px'>일반진행</th>
-					<th style='text-align:right;width:74px'>일반평균</th>
-					<th style='text-align:right;width:100px'>일반수익</th>
+					<th style='text-align:right;width:100px'>일반진행</th>
+					<th style='text-align:right;width:90px'>일반수익</th>
 					<th style='text-align:right;width:70px'>일반(%)</th>
-					<th style='text-align:right;width:110px'>일반잔액</th>
 					{% endif %}
+
 					<th style='text-align:right;width:110px'>기회진행</th>
+					{% if D['일반상황']=='off' %}
 					<th style='text-align:right;width:74px'>기회평균</th>
+					{% endif %}
 					<th style='text-align:right;width:100px'>기회수익</th>
 					<th style='text-align:right;width:70px'>기회(%)</th>
 					<th style='text-align:right;width:110px'>기회잔액</th>
-					{% if D['일반상황']=='off' %}
+					
 					<th style='text-align:right;width:110px'>안정진행</th>
+					{% if D['일반상황']=='off' %}
 					<th style='text-align:right;width:74px'>안정평균</th>
+					{% endif %}
 					<th style='text-align:right;width:100px'>안정수익</th>
 					<th style='text-align:right;width:70px'>안정(%)</th>
 					<th style='text-align:right;width:110px'>안정잔액</th>
-					{% endif %}
+					
 					<th style='text-align:right;width:110px'>생활진행</th>
+					{% if D['일반상황']=='off' %}
 					<th style='text-align:right;width:74px'>생활평균</th>
+					{% endif %}
 					<th style='text-align:right;width:100px'>생활수익</th>
 					<th style='text-align:right;width:70px'>생활(%)</th>
 					<th style='text-align:right;'>생활잔액</th>
@@ -176,24 +182,36 @@
 			<col style="width:80px;"> <!-- 일자 -->
 			<col style="width:60px;"> <!-- 당일종가 -->
 			<col style="width:60px;border-right:3px solid #424242"> <!-- 종가변동 -->
-
-			<col style="width:110px"> <!-- 일반진행 -->
-			<col style="width:74px"> <!-- 일반평균 -->
-			<col style="width:100px"> <!-- 일반수익 -->
-			<col style="width:70px"> <!-- 일반(%) -->
-			<col style="width:110px;border-right:3px solid #424242"> <!-- 일반잔액 -->
+			
+			{% if D['일반상황']=='on' %}
+			<col style="width:100px"> <!-- 일반진행 -->
+			<col style="width:90px"> <!-- 일반수익 -->
+			<col style="width:70px;border-right:3px solid #424242"> <!-- 일반(%) -->
+			{% endif %}
 
 			<col style="width:110px"> <!-- 기회진행 -->
+			{% if D['일반상황']=='off' %}
 			<col style="width:74px"> <!-- 기회평균 -->
+			{% endif %}
 			<col style="width:100px"> <!-- 기회수익 -->
 			<col style="width:70px"> <!-- 기회(%) -->
 			<col style="width:110px;border-right:3px solid #424242"> <!-- 기회잔액 -->
 
 			<col style="width:110px"> <!-- 안정진행 -->
+			{% if D['일반상황']=='off' %}
 			<col style="width:74px"> <!-- 안정평균 -->
+			{% endif %}
 			<col style="width:100px"> <!-- 안정수익 -->
 			<col style="width:70px"> <!-- 안정(%) -->
-			<col>
+			<col style="width:110px;border-right:3px solid #424242"> <!-- 안정잔액 -->
+
+			<col style="width:110px"> <!-- 생활진행 -->
+			{% if D['일반상황']=='off' %}
+			<col style="width:74px"> <!-- 생활평균 -->
+			{% endif %}
+			<col style="width:100px"> <!-- 생활수익 -->
+			<col style="width:70px"> <!-- 생활(%) -->
+			<col> <!-- 생활잔액 -->
 		</colgroup>
 
 
@@ -211,25 +229,30 @@
 				<td style='text-align:right;font-weight:bold;'>{{TR['종가변동']|safe}}</td>
 				{% if D['일반상황']=='on' %}
 				<td style='text-align:right;color:#F6CECE'>{{TR['일반진행']}}</td>
-				<td style='text-align:right;color:#E6F8E0'>{{TR['일반평균']|safe}}</td>
-				<td style='text-align:right'>{{TR['일반수익']|safe}}</td>
+				<td style='text-align:right;font-weight:bold'>{{TR['일반수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['일반익률']|safe}}</td>
-				<td style='text-align:right;color:#CEF6CE'>{{TR['일반잔액']|safe}}</td>
 				{% endif %}
+
 				<td style='text-align:right;color:#F6CECE'>{{TR['기회진행']}}</td>
+				{% if D['일반상황']=='off' %}
 				<td style='text-align:right;color:#E6F8E0'>{{TR['기회평균']|safe}}</td>
+				{% endif %}
 				<td style='text-align:right'>{{TR['기회수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['기회익률']|safe}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['기회잔액']|safe}}</td>
-				{% if D['일반상황']=='off' %}
+
 				<td style='text-align:right;color:#F6CECE'>{{TR['안정진행']}}</td>
+				{% if D['일반상황']=='off' %}
 				<td style='text-align:right;color:#E6F8E0'>{{TR['안정평균']|safe}}</td>
+				{% endif %}
 				<td style='text-align:right'>{{TR['안정수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['안정익률']|safe}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['안정잔액']|safe}}</td>	
-				{% endif %}
+
 				<td style='text-align:right;color:#F6CECE'>{{TR['생활진행']}}</td>
+				{% if D['일반상황']=='off' %}
 				<td style='text-align:right;color:#E6F8E0'>{{TR['생활평균']|safe}}</td>
+				{% endif %}
 				<td style='text-align:right'>{{TR['생활수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['생활익률']|safe}}</td>
 				<td style='text-align:right;color:#CEF6CE'>{{TR['생활잔액']|safe}}</td>
