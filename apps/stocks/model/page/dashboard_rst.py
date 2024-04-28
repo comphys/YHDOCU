@@ -136,10 +136,10 @@ class M_dashboard_rst(Model) :
 
         self.D['처음순증'] = []
         for odr in [1,2,3] :
-            cond = f"WHERE add0 <= '{self.D['s_date']}'"  
-            qry = f"SELECT add17, sub25, sub26 FROM {self.M['boards'][odr]} {cond} ORDER BY add0 DESC LIMIT 1"
+            con = f"WHERE add0 <= '{self.D['s_date']}'"  
+            qry = f"SELECT add17, sub25, sub26 FROM {self.M['boards'][odr]} {con} ORDER BY add0 DESC LIMIT 1"
             qrs = self.DB.exe(qry)
-            if not qrs : qrs=[('0','0','0'),]
+            if not qrs : qrs=[('0.00','0.00','0.00'),]
             rst = qrs[0] 
             key = str(odr)
             self.M['S자산총액'+key] = float(rst[0])
@@ -152,10 +152,10 @@ class M_dashboard_rst(Model) :
         self.D['나중순증'] = []
         self.D['자산분배'] = self.DB.parameters_des('038')
         for odr in [1,2,3] :
-            cond = f"WHERE add0 <= '{self.D['e_date']}'" 
-            qry = f"SELECT add17, sub25, sub26 FROM {self.M['boards'][odr]} {cond} ORDER BY add0 DESC LIMIT 1"
+            con = f"WHERE add0 <= '{self.D['e_date']}'" 
+            qry = f"SELECT add17, sub25, sub26 FROM {self.M['boards'][odr]} {con} ORDER BY add0 DESC LIMIT 1"
             qrs = self.DB.exe(qry)
-            if not qrs : qrs=[('0','0','0'),]
+            if not qrs : qrs=[('0.00','0.00','0.00'),]
             rst = qrs[0] 
             key = str(odr)
             self.D['E자산총액'+key] = float(rst[0])
