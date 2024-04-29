@@ -75,7 +75,7 @@
 		</div> 
 
 		<div id="myChart_main-div" class="clearfix" style="height:370px;background-color:#24272d;padding:10px;border:2px solid black;">
-			<div class="pull-left">
+			<div class="pull-left" onclick="$('#monthlyProfit').show()">
 				<canvas id="myChart_main"  style="width:1230px;height:350px;background-color:#24272d;"></canvas>
 			</div>
 			<div class="pull-left" ondblclick="$('#Next-Strategy').show()" style="margin-left:10px">
@@ -268,8 +268,12 @@
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
 {% endif %}
 
-<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1230px;background-color:#24272d;padding:10px;border:2px solid black;opacity:0.9">
+<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1230px;background-color:#24272d;padding:10px;border:2px solid black;opacity:0.9;z-index:7;">
 	<canvas id="mybackTestChart" style="width:1200px;height:330px;background-color:#24272d"></canvas>
+</div>
+
+<div id='monthlyProfit' style="position:fixed;left:22px;top:102px;width:1242px;background-color:#24272d;padding:10px;border:2px solid black;opacity:0.9;z-index:3;" onclick="$(this).hide()">
+	<canvas id="monthlyProfitChart" style="width:1200px;height:340px;background-color:#24272d"></canvas>
 </div>
 
 <div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;width:320px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
@@ -467,6 +471,7 @@ function show_chart(season) {
 	myChart_season.config.data.datasets[2].data =  avgs;
 	myChart_season.config.data.datasets[3].data =  avgt;
 	myChart_season.config.data.datasets[4].data =  dlne;
+	// $("#monthlyProfit").hide();/
 	myChart_season.update();
 }
 
@@ -646,6 +651,67 @@ if(data_count <= 100) {
 
 myChart_main.update();
 }
+
+// MonthlyProfitChart Begin
+{% if D['월별구분']|safe %}
+
+	const ctx_monthly= $id('monthlyProfitChart');
+
+	ctx_monthly.style.backgroundColor = '#33363b';
+	ctx_monthly.style.border = '2px solid black';
+
+	let labels_monthly = {{D['월별구분']|safe}};
+	let monthlyProfits = {{D['월별이익']|safe}};
+	let backColor = new Array(labels_monthly.length-1);
+	let boreColor = new Array(labels_monthly.length-1);
+	backColor.fill('rgba(75, 192, 192, 0.4)');
+	backColor.push('#8F8681');
+	// backColor.push('rgba(255, 205, 86, 0.4)');
+	boreColor.fill('rgb(75, 192, 192)');
+	boreColor.push('#000000');
+	// boreColor.push('rgb(255, 205, 86)');
+
+	const data_monthly = {
+	labels: labels_monthly,
+	datasets: [{
+		label: ' 월별수익금 ',
+		data: monthlyProfits,
+		backgroundColor: backColor,
+		borderColor: boreColor,
+		borderWidth: 1
+	}]
+	};
+
+	const config_monthly = {
+	type: 'bar',
+	data: data_monthly,
+	plugins:[ChartDataLabels],
+	options: {
+		animation : {duration:500},
+		layout:{padding:10},
+		plugins : { legend: {display:false},
+					title:{display:true,color:'#F7F8E0',align:'end',font:{size:14,style:'italic',weight:'normal'},text:"{{D['손익합계']}}"},
+					tooltip : {enabled:false},
+					datalabels : {color:'white', anchor:'end', align:'end', offset: 3, font:{size:12}}			
+		},
+		scales: {
+		x: { ticks : {color:'white'}, grid:{color:'#272727'}},
+		y: {
+			grid : {
+				lineWidth:2,
+				color: function(context) {
+					if(context.tick.value == 0 ) { return '#071418'} else { return '' }
+				}
+			},
+			beginAtZero: true
+		}
+		}
+	},
+	};
+	const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
+	$("#monthlyProfit").hide()
+{% endif %}
+// MonthlyProfitChart End
 
 $(".begin-date").click(function(){
 	b_date = '20'+ $(this).text();

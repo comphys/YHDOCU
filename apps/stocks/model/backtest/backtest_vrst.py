@@ -78,6 +78,10 @@ class M_backtest_vrst(Model) :
         pbase = my.sv(self.D['손익통계'][-1][1])
         difft = total - pbase
         diffp = difft/pbase * 100
+
+        diffd = self.D['월익통계'][-1][0][:7] 
+        if   self.M['현재일자'][0:7] == diffd : self.D['월익통계'][-1][1] += difft 
+        else : self.D['월익통계'].append([self.M['현재일자'][0:7],difft])
     
         if  self.D['일밸런싱'] == 'on' :
             self.R['현재잔액'] = self.S['현재잔액'] = self.T['현재잔액'] = round( total /3,2)
@@ -331,6 +335,20 @@ class M_backtest_vrst(Model) :
             self.D['s_date'] = self.D['c_date'][0]
             self.D['e_date'] = self.D['c_date'][-1]
 
+        # 월별 수익금 
+        self.D['월별구분'] = [ x[0] for x in self.D['월익통계']][-28:]
+        self.D['월별이익'] = [ round(x[1]) for x in self.D['월익통계']][-28:]
+
+        if  self.D['월별이익'][0] == 0 :
+            self.D['월별구분'].pop(0)
+            self.D['월별이익'].pop(0)
+
+        monthly_total = sum(self.D['월별이익'])
+        monthly_lenth = len(self.D['월별이익'])
+        
+        self.D['월별구분'].append('AVG')
+        self.D['월별이익'].append(round(monthly_total/monthly_lenth))
+
 
     def get_start(self) :
 
@@ -503,6 +521,7 @@ class M_backtest_vrst(Model) :
         self.D['일회손절'] = 0; self.D['기회손절'] = 0; self.D['안회손절'] = 0; self.D['생회손절'] = 0
         # 통계자료
         self.D['손익통계'] = [[self.D['시작일자'],f"{self.R['현재잔액']+self.S['현재잔액']+self.T['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE"]]
+        self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
 
         
     def nextStep(self) :
