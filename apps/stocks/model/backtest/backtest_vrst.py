@@ -179,7 +179,7 @@ class M_backtest_vrst(Model) :
         if  self.V['현재잔액'] < self.V['구매수량'] * self.M['매수가격'] :
             self.V['구매수량'] = my.ceil(self.V['기초수량'] * self.M['위매비중'])
             self.M['매수단계'] = '매수제한' 
-            self.M['매도가격'] = min(my.round_up(self.V['평균단가'] * self.M['둘매가치']),self.M['매도가격'])
+            self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
 
 
             if  self.V['현재잔액'] < self.V['구매수량'] * self.M['매수가격'] : 
