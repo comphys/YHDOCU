@@ -84,7 +84,7 @@
 					{% endif %}
 				</div>
 			</div>
-			<div class="pull-left" style="padding:10px 5px;margin-right:0px">
+			<div class="pull-left" style="padding:10px 5px;margin-right:0px;height:350px;" ondblclick="$('#statistics-profits').show()">
 				Options
 				<div class="toggle-block" style="margin-top:20px">
 					<input role="switch" type="checkbox" name="chk_fee" {{ 'checked' if D['수료적용'] =='on' else '' }}><span>fee</span> 
@@ -248,6 +248,20 @@
 	</ul>
 </div>
 
+<div id="statistics-profits" 
+     style="display:none;position:fixed;left:1270px;top:112px;width:410px;height:350px;padding:20px;background-color:black;overflow-y:scroll;border:1px solid gray" 
+	 ondblclick="$('#statistics-profits').hide()">
+	 <table class='table table-striped'>
+	 {% for TR in D['손익통계'] %}
+	 <tr>
+		<td style="width:90px;">{{TR[0]}}</td>
+		<td style="text-align:right;color:#CEF6CE">{{TR[1]}}</td>
+		<td style="text-align:right;"><span style="color:{{TR[4]}}">{{TR[2]}}</span></td>
+		<td style="text-align:right;"><span style="color:{{TR[4]}}">{{TR[3]}}</span></td>
+	 </tr>
+	 {% endfor %}
+	 </table>
+</div>
 
 <script src="/sys/chart/chart.min.js"></script>
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>

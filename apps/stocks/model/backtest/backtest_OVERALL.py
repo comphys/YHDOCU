@@ -73,6 +73,11 @@ class M_backtest_OVERALL(Model) :
         
     def rebalance(self)  :
 
+        total = self.V['현재잔액'] + self.R['현재잔액'] + self.S['현재잔액']
+        pbase = my.sv(self.D['손익통계'][-1][1])
+        difft = total - pbase
+        diffp = difft/pbase * 100
+
         if  self.D['일밸런싱'] == 'on' :
             self.R['현재잔액'] = self.S['현재잔액'] = round((self.R['현재잔액'] + self.S['현재잔액']) /2,2)
             
@@ -86,6 +91,9 @@ class M_backtest_OVERALL(Model) :
         self.V['일매수금'] = int(self.V['현재잔액']/self.M['분할횟수']) 
         self.R['일매수금'] = int(self.R['현재잔액']/self.M['분할횟수']) 
         self.S['일매수금'] = int(self.S['현재잔액']/self.M['분할횟수']) 
+
+        clr = "#F6CECE" if difft >= 0 else "#CED8F6"
+        self.D['손익통계'].append([self.M['현재일자'],f"{total:,.2f}",f"{difft:,.2f}",f"{diffp:.2f}",clr])
 
 
     def today_sell(self) :
@@ -490,6 +498,9 @@ class M_backtest_OVERALL(Model) :
         self.D['일정손절'] = 0; self.D['기정손절'] = 0; self.D['안정손절'] = 0
         self.D['일회익절'] = 0; self.D['기회익절'] = 0; self.D['안회익절'] = 0
         self.D['일회손절'] = 0; self.D['기회손절'] = 0; self.D['안회손절'] = 0
+
+        # 통계자료
+        self.D['손익통계'] = [[self.D['시작일자'],f"{self.V['현재잔액']+self.R['현재잔액']+self.S['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE"]]
         
     def nextStep(self) :
         self.M['전일종가'] = self.M['당일종가']
