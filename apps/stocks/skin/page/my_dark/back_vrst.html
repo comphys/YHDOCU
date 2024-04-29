@@ -78,7 +78,7 @@
 			<div class="pull-left" onclick="$('#monthlyProfit').show()">
 				<canvas id="myChart_main"  style="width:1230px;height:350px;background-color:#24272d;"></canvas>
 			</div>
-			<div class="pull-left" ondblclick="$('#Next-Strategy').show()" style="margin-left:10px">
+			<div class="pull-left" ondblclick="$('#statistics-profits').show()" style="margin-left:10px">
 				<canvas id="myChart_side" style="width:300px;height:330px;background-color:#24272d;"></canvas>
 				<div style="text-align:right;">
 					{% if D['s_date'] %}
@@ -90,7 +90,7 @@
 					{% endif %}
 				</div>
 			</div>
-			<div class="pull-left" style="padding:10px 5px;margin-right:0px;height:350px;" ondblclick="$('#statistics-profits').show()">
+			<div class="pull-left" style="padding:10px 5px;margin-right:0px;height:350px;" ondblclick="$('#Next-Strategy').show()">
 				Options
 				<div class="toggle-block" style="margin-top:20px">
 					<input role="switch" type="checkbox" name="chk_fee" {{ 'checked' if D['수료적용'] =='on' else '' }}><span>fee</span> 
@@ -272,8 +272,8 @@
 	<canvas id="mybackTestChart" style="width:1200px;height:330px;background-color:#24272d"></canvas>
 </div>
 
-<div id='monthlyProfit' style="position:fixed;left:22px;top:102px;width:1242px;background-color:#24272d;padding:10px;border:2px solid black;opacity:0.9;z-index:3;" onclick="$(this).hide()">
-	<canvas id="monthlyProfitChart" style="width:1200px;height:340px;background-color:#24272d"></canvas>
+<div id='monthlyProfit' style="position:fixed;left:22px;top:103px;width:1250px;background-color:#24272d;padding:10px 10px 5px 10px;opacity:0.9;z-index:3;" onclick="$(this).hide()">
+	<canvas id="monthlyProfitChart" style="width:1245px;height:355px;"></canvas>
 </div>
 
 <div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;width:320px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
@@ -348,7 +348,7 @@ const data_season = {
 		{
 			label:'R 평균',
 			data : [3,6,7,8,5],
-			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',
+			pointStyle:'circle', borderWidth:4,pointRadius:1,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',
 			lineTension:0.2
 
 		},
@@ -362,7 +362,7 @@ const data_season = {
 		{
 			label:'T 평균',
 			data : [3,6,7,8,5],
-			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'lightgray',backgroundColor:'lightgray',
+			pointStyle:'circle', borderWidth:4,pointRadius:3,pointHoverRadius:15,borderColor:'lightgray',backgroundColor:'lightgray',
 			lineTension:0.2
 
 		},
@@ -471,7 +471,6 @@ function show_chart(season) {
 	myChart_season.config.data.datasets[2].data =  avgs;
 	myChart_season.config.data.datasets[3].data =  avgt;
 	myChart_season.config.data.datasets[4].data =  dlne;
-	// $("#monthlyProfit").hide();/
 	myChart_season.update();
 }
 
@@ -709,8 +708,8 @@ myChart_main.update();
 	},
 	};
 	const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
-	$("#monthlyProfit").hide()
 {% endif %}
+
 // MonthlyProfitChart End
 
 $(".begin-date").click(function(){
@@ -776,6 +775,7 @@ function synchro(opt) {
 	});
 }
 
+$("#monthlyProfit").hide();
 //
 </script>
 {% endblock %}

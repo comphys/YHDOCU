@@ -96,10 +96,10 @@ class M_backtest_vrst(Model) :
     def today_sell(self) :
         
         if  self.M['당일종가'] >= self.M['매도가격'] : 
-            self.V['매도수량']  = self.V['보유수량'] 
-            self.R['매도수량']  = self.R['보유수량'] 
-            self.S['매도수량']  = self.S['보유수량']
-            self.T['매도수량']  = self.T['보유수량']
+            for tac in (self.V,self.R,self.S,self.T) : 
+                tac['매도수량'] = tac['보유수량']
+                tac['매도금액'] = tac['매도수량'] * self.M['당일종가']
+
             self.M['진행상황']  = '익절매도' 
             self.M['회복전략']  = self.M['손실회수']
             
@@ -109,10 +109,6 @@ class M_backtest_vrst(Model) :
             else :
                 self.M['손실회수'] = False
 
-            self.V['매도금액'] = self.M['당일종가'] * self.V['매도수량']
-            self.R['매도금액'] = self.M['당일종가'] * self.R['매도수량']
-            self.S['매도금액'] = self.M['당일종가'] * self.S['매도수량']
-            self.T['매도금액'] = self.M['당일종가'] * self.T['매도수량']
 
     def today_buy_RST(self,tac,key) :
 
@@ -171,6 +167,7 @@ class M_backtest_vrst(Model) :
 
 
     def tomorrow_step(self)   :
+        
         self.M['매수가격'] = round(self.M['당일종가']*self.M['평단가치'],2)
         self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
         
@@ -568,7 +565,7 @@ class M_backtest_vrst(Model) :
         self.D['next_기회매도가'] = self.D['next_안정매도가'] = self.D['next_생활매도가'] = self.M['매도가격']
         
         if  self.M['첫날기록'] :
-            self.rebalance()
+            # self.rebalance()
             self.D['next_일자'] = 1
             self.D['next_단계'] = '첫날매수'
             
