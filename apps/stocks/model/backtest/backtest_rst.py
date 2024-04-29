@@ -119,7 +119,7 @@ class M_backtest_rst(Model) :
 
         if  tac['진행시작'] :
             tac['매수수량'] = tac['구매수량'] 
-            tac['매수금액'] = tac['매수수량'] * self.M['당일종가']   
+            tac['매수금액'] = tac['매수수량'] * self.M['당일종가']
             tac['거래코드'] = f"{key}{tac['매수수량']}" if tac['매수수량'] else ' '
 
         else :
@@ -134,7 +134,7 @@ class M_backtest_rst(Model) :
 
         if  self.M['당일종가'] <= self.M['매수가격'] : 
             self.V['매수수량']  = self.V['구매수량']
-            거래코드 = 'L' if self.M['매수단계'] is '매수제한' else 'B'
+            거래코드 = 'L' if self.M['매수단계'] == '매수제한' else 'B'
             self.V['거래코드']  = 거래코드 + str(self.V['매수수량']) if self.V['구매수량'] else ' '
             self.V['매수금액']  = self.V['매수수량'] * self.M['당일종가']
             self.M['진행상황']  = self.M['매수단계']
