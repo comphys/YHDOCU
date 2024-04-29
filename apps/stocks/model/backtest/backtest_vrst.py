@@ -168,33 +168,25 @@ class M_backtest_vrst(Model) :
 
     def tomorrow_step(self)   :
         self.M['매수가격'] = round(self.M['당일종가']*self.M['평단가치'],2)
-
-        # 2024.03.18. 사태에 의한 보완( 안정도 향상 )
-        매도가격S=매도가격R=매도가격V=매도가격T = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
-        if self.R['진행시작'] : 매도가격R = my.round_up(self.R['평균단가'] * self.M['기회매도'])
-        if self.S['진행시작'] : 매도가격S = my.round_up(self.S['평균단가'] * self.M['안정매도'])
-        if self.T['진행시작'] : 매도가격T = my.round_up(self.T['평균단가'] * self.M['생활매도']) # 2019.05.06 사태
-        self.M['매도가격'] = min(매도가격V,매도가격R,매도가격S,매도가격T)
+        self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
         
         self.V['구매수량'] = my.ceil(self.V['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
         
         if  self.V['현재잔액'] < self.V['구매수량'] * self.M['매수가격'] :
             self.V['구매수량'] = my.ceil(self.V['기초수량'] * self.M['위매비중'])
             self.M['매수단계'] = '매수제한' 
-            self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
-            
-            # 2019.05.02 사태
-            if  self.T['진행시작'] : 
-                매도가격T =  my.round_up(self.T['평균단가'] * self.M['생활매도']) # maybe 1.08 
-                self.M['매도가격'] = min(self.M['매도가격'],매도가격T)
+            self.M['매도가격'] = min(my.round_up(self.V['평균단가'] * self.M['둘매가치']),self.M['매도가격'])
+
 
             if  self.V['현재잔액'] < self.V['구매수량'] * self.M['매수가격'] : 
                 self.V['구매수량'] = 0
                 self.M['매수단계'] = '매수중단' 
 
-        
+        # R,S 보정 2024.03.18. / T 보정 2019.05.02. 2019.05.06. 
+        for tac in (self.R,self.S,self.T) : 
+            if tac['진행시작'] : 매도가격 = my.round_up(tac['평균단가'] * tac['매도보정']); self.M['매도가격'] = min(self.M['매도가격'],매도가격)
+
         # 내일날자(현재날자+1)
-        
         if  self.M['손실회수']  and self.M['현재날수']+1  <= self.M['매도대기'] : 
             self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['전화위복'])
 
@@ -442,9 +434,9 @@ class M_backtest_vrst(Model) :
         self.M['강매시작']  = ST['008']  # 강매시작 일(24) 
         self.M['강매가치']  = ST['007']  # 손절가 범위(0.7)
         self.M['위매비중']  = ST['010']  # 매수제한 시 매수범위 기본수량의 (3)
-        self.M['기회매도']  = ST['011']
-        self.M['안정매도']  = ST['012']
-        self.M['생활매도']  = ST['014']
+        self.R['매도보정']  = ST['011']
+        self.S['매도보정']  = ST['012']
+        self.T['매도보정']  = ST['014']
         self.M['매도대기']  = ST['006']  # 매도대기(18)
         self.M['전화위복']  = ST['009']  # 손절 이후 매도 이율(1.12)
         self.M['분할횟수']  = ST['001']  # 분할 횟수

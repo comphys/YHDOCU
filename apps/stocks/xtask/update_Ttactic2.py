@@ -48,6 +48,14 @@ class update_Ttactic2 :
         self.M['전매도량'] = self.M['보유수량']
         self.M['전매도가'] = float(self.M['GD']['sub20'])
 
+        if int(self.M['보유수량']) > int(self.M['기초수량']) and self.M['회복아님'] : 
+            매도가격 = my.round_up(self.M['평균단가'] * self.M['생활매도'])
+            if  매도가격 < self.M['전매도가'] : 
+                self.M['전매도가'] = 매도가격
+                self.DB.exe(f"UPDATE {self.guide} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
+                self.DB.exe(f"UPDATE {self.rtact} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
+                self.DB.exe(f"UPDATE {self.stact} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
+
 
     def tomorrow_buy(self)  :
 
@@ -167,8 +175,9 @@ class update_Ttactic2 :
         self.M['비중조절']  = ST['025']  # 매매일수 에 따른 구매수량 가중치(1.25)
         self.M['큰단가치']  = ST['002']  # 첫날매수 시 가중치(1.12)
         self.M['위매비중']  = ST['010']  # 매수제한 시 매수범위 기본수량의 (3)
-        self.M['생활시점']  = ST['055']  # S전략 일반 매수시점
-        self.M['생활회복']  = ST['056']  # S전략 회복 매수시점
+        self.M['생활매도']  = ST['014']  # T전략에 의한 매도값 변경
+        self.M['생활시점']  = ST['055']  # T전략 일반 매수시점
+        self.M['생활회복']  = ST['056']  # T전략 회복 매수시점
         self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
 
         self.guide = ST['035']
