@@ -62,7 +62,6 @@ class update_Stactic2 :
             self.M['전매수가'] = 0.00
         
         elif self.M['경과일수'] >= 2 and int(self.M['보유수량']) <= int(self.M['기초수량']): 
-            
             # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
             찬스수량 = 0
             day_count = min(int(self.M['GD']['sub12'])+1+self.M['날수가산'],7)
@@ -73,12 +72,10 @@ class update_Stactic2 :
 
             찬스가격 = cpc if float(self.M['GD']['sub7']) else cpn
             찬스가격 = min(float(self.M['GD']['sub19']),찬스가격)
-            
             self.M['전매수량'] = 찬스수량
             self.M['전매수가'] = 찬스가격
             
         else : # 가이드 및 투자가 진행 중일 때
-
             매수단가 = float(self.M['GD']['sub19'])
             매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
 
@@ -174,7 +171,7 @@ class update_Stactic2 :
         self.DB.wre =  f"add0='{self.D['today']}'"
         self.DB.tbl = self.guide
         GD = self.M['GD'] = self.DB.get_line(select_cols)
-                
+        
         self.DB.tbl = f"h_{self.bid}_board"
         self.DB.wre = f"add0='{self.D['prev_date']}'"
         LD = self.M['LD'] = self.DB.get_line('*')

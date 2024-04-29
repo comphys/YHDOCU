@@ -18,7 +18,6 @@ class update_Rtactic2 :
             self.D['today'] = self.DB.one(f"SELECT min(add0) FROM h_stockHistory_board WHERE add0 > '{self.D['prev_date']}'")
             
         if self.D['today'] :
-
             self.init_value()
             self.check_sell()
             self.check_buy()
@@ -63,8 +62,8 @@ class update_Rtactic2 :
             self.M['전매수량'] = my.ceil(self.M['기초수량'] * (self.M['비중조절'] + 1))
             self.M['전매수가'] = float(self.M['GD']['sub19'])
 
-        elif self.M['경과일수'] >= 2 and int(self.M['보유수량']) <= int(self.M['기초수량']): 
-            
+        elif self.M['경과일수'] >= 2 and int(self.M['보유수량']) <= int(self.M['기초수량']*3.5): 
+
             # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
             찬스수량 = 0
             day_count = min(int(self.M['GD']['sub12'])+1+self.M['날수가산'],6)
@@ -80,7 +79,7 @@ class update_Rtactic2 :
             self.M['전매수가'] = 찬스가격
             
         else : # 가이드 및 투자가 진행 중일 때
-            
+
             매수단가 = float(self.M['GD']['sub19'])
             매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
 
