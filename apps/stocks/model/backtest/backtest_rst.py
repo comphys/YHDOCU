@@ -2,7 +2,7 @@ from system.core.load import Model
 from datetime import datetime,date
 import system.core.my_utils as my
 
-class M_backtest_vrst(Model) :
+class M_backtest_rst(Model) :
 
 # 변동성을 이용한 올타임 전략 V(일반) / R(기회) / S(안정)
     def calculate_sub(self,tac,key) :

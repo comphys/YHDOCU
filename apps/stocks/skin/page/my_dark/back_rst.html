@@ -3,11 +3,10 @@
 {% block contents_page  %}
 <div class="row-row">
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
-		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/back_vrst/back_vrst" onsubmit='return check_thisForm()'>
+		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/back_rst/back_rst" onsubmit='return check_thisForm()'>
 			<br>
 			<input type='hidden' class="i-number" name="일반자금" value="{{D['일반자금']}}">
-		<div class="well clearfix" style="border-radius:0px;">
-    		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/back_vrst/back_vrst" onsubmit='return check_thisForm()'>
+			<div class="well clearfix" style="border-radius:0px;">
     			<div class="pull-left">
     				<div class='select' style='margin-right:10px;vertical-align:bottom'>
         				<input placeholder='종목코드' name='종목코드' type='text' value="{{D['종목코드']}}">

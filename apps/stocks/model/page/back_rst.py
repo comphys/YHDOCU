@@ -1,7 +1,7 @@
 from system.core.load import Model
 import system.core.my_utils as my
 
-class M_back_vrst(Model) :
+class M_back_rst(Model) :
 
     def view(self) :
         

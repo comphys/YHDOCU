@@ -93,7 +93,7 @@ class Page(Control) :
         D={'skin':f"{self.skin}/{self.D['bid']}.html"}
         return self.echo(D)
     
-    def back_vrst(self) :
+    def back_rst(self) :
         self.M = {}
         
         self.D['종목코드'] = self.D['post']['종목코드']
@@ -118,7 +118,7 @@ class Page(Control) :
         self.D['일반상황'] = self.D['post'].get('chk_von','off')
 
 
-        M = self.model('backtest-backtest_vrst')
+        M = self.model('backtest-backtest_rst')
         M.get_start()
         M.test_it()
         D={'skin':f"{self.skin}/{self.D['bid']}.html"}
