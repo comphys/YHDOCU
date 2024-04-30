@@ -43,11 +43,10 @@ class update_Rtactic2 :
         if  self.M['보유수량'] ==  0 : self.M['전매도량']  =  0; self.M['전매도가']  =  0.00; return
 
         self.M['전매도량'] = self.M['보유수량']
-        self.M['전매도가'] = float(self.M['GD']['sub20'])
 
         if int(self.M['보유수량']) > int(self.M['기초수량'] * 5) and self.M['회복아님'] : # R 전략이 진행되고 있는지 판단
             매도가격 = my.round_up(self.M['평균단가'] * self.M['기회매도'])
-            if  매도가격 < self.M['전매도가'] : 
+            if  매도가격 < float(self.M['전매도가']) : 
                 self.M['전매도가'] = 매도가격
                 self.DB.exe(f"UPDATE {self.guide} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'" )
 
@@ -187,6 +186,7 @@ class update_Rtactic2 :
         self.M['연속상승'] = GD['sub5']
         self.M['연속하락'] = GD['sub6']
         self.M['종가변동'] = GD['add20']
+        self.M['전매도가'] = GD['sub20'] # 전매도가는 V전략에서 가져와서 초기화
 
         # 매수 매도 초기화
         self.M['매수금액']=0.0
@@ -195,7 +195,6 @@ class update_Rtactic2 :
         self.M['매수수량'] = 0
         self.M['매도수량'] = 0
         self.M['전매도량'] = 0
-        self.M['전매도가'] = 0.0
         self.M['현재손익'] = 0.0
         self.M['수수료등'] = 0.0
 
@@ -266,12 +265,12 @@ class update_Rtactic2 :
         U['add4']   = round(U['add3']  / U['add17'] * 100,2)
         U['add16']  = round(U['add15'] / U['add17'] * 100,2)
 
-        if self.M['경과일수'] !=0 and self.M['전매수가'] >= self.M['전매도가'] : self.M['전매수가'] = self.M['전매도가'] - 0.01
+        if self.M['전매도량'] and self.M['전매수가'] >= self.M['전매도가'] : self.M['전매수가'] = self.M['전매도가'] - 0.01
         
         U['sub2']   = self.M['전매수량']
         U['sub19']  = self.M['전매수가']
         U['sub3']   = self.M['전매도량']
-        if self.M['전매도가'] <= self.M['전매수가'] : self.M['전매도가'] = self.M['전매수가'] + 0.01 # 첫 날 큰수매일 경우에 적용됨
+        if self.M['전매도량'] and self.M['전매도가'] <= self.M['전매수가'] : self.M['전매도가'] = self.M['전매수가'] + 0.01 # 첫 날 큰수매일 경우에 적용됨
         U['sub20']  = self.M['전매도가']
         U['sub29']  = self.M['진행상황']
         U['sub30']  = self.M['수수료등']
