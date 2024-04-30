@@ -48,7 +48,7 @@ class update_Stactic2 :
 
         if int(self.M['보유수량']) > int(self.M['기초수량']) and self.M['회복아님'] : 
             매도가격 = my.round_up(self.M['평균단가'] * self.M['안정매도'])
-            if  매도가격 < float(self.M['전매도가']) : 
+            if  매도가격 < self.M['전매도가'] : 
                 self.M['전매도가'] = 매도가격
                 self.DB.exe(f"UPDATE {self.guide} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
                 self.DB.exe(f"UPDATE {self.rtact} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
@@ -184,7 +184,7 @@ class update_Stactic2 :
         self.M['연속상승'] = GD['sub5']
         self.M['연속하락'] = GD['sub6']
         self.M['종가변동'] = GD['add20']
-        self.M['전매도가'] = GD['sub20']
+        self.M['전매도가'] = float(GD['sub20'])
         
         # 매수 매도 초기화
         self.M['매수금액']=0.0

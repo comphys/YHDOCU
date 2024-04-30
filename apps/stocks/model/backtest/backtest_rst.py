@@ -343,8 +343,9 @@ class M_backtest_rst(Model) :
         monthly_total = sum(self.D['월별이익'])
         monthly_lenth = len(self.D['월별이익'])
         
-        self.D['월별구분'].append('AVG')
-        self.D['월별이익'].append(round(monthly_total/monthly_lenth))
+        if monthly_lenth : 
+            self.D['월별구분'].append('AVG')
+            self.D['월별이익'].append(round(monthly_total/monthly_lenth))
 
 
     def get_start(self) :

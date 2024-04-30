@@ -270,10 +270,11 @@
 <div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1230px;background-color:#24272d;padding:10px;border:2px solid black;opacity:0.9;z-index:7;">
 	<canvas id="mybackTestChart" style="width:1200px;height:330px;background-color:#24272d"></canvas>
 </div>
-
-<div id='monthlyProfit' style="position:fixed;left:22px;top:103px;width:1250px;background-color:#24272d;padding:10px 10px 5px 10px;opacity:0.9;z-index:3;" onclick="$(this).hide()">
-	<canvas id="monthlyProfitChart" style="width:1245px;height:355px;"></canvas>
+{% if D['월별이익'] %}
+<div id='monthlyProfit' style="position:fixed;left:22px;top:103px;background-color:#24272d;padding:10px 10px 5px 10px;opacity:0.9;z-index:3;" onclick="$(this).hide()">
+	<canvas id="monthlyProfitChart" style="width:1230px;height:355px;"></canvas>
 </div>
+{% endif %}
 
 <div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;width:320px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
     <span style="font-style: italic"> Next Strategy</span><br><br>
@@ -651,7 +652,7 @@ myChart_main.update();
 }
 
 // MonthlyProfitChart Begin
-{% if D['월별구분']|safe %}
+{% if D['월별이익']|safe %}
 
 	const ctx_monthly= $id('monthlyProfitChart');
 
