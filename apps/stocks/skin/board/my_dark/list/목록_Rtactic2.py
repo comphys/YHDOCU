@@ -130,7 +130,6 @@ class 목록_Rtactic2(SKIN) :
                 self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"
                 self.D['V_tact_value'] = [VD['sub20']] * chart_len
                 self.D['chance_value'] = [찬스가격] * chart_len
-                self.info(self.D['chance_value'])
                 
             else : # 가이드 및 투자가 진행 중일 때
                 self.D['매수갯수'] = int(LD['sub2'])
