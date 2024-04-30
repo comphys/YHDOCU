@@ -78,6 +78,10 @@ class M_backtest_OVERALL(Model) :
         difft = total - pbase
         diffp = difft/pbase * 100
 
+        diffd = self.D['월익통계'][-1][0][:7] 
+        if   self.M['현재일자'][0:7] == diffd : self.D['월익통계'][-1][1] += difft 
+        else : self.D['월익통계'].append([self.M['현재일자'][0:7],difft])
+
         if  self.D['일밸런싱'] == 'on' :
             self.R['현재잔액'] = self.S['현재잔액'] = round((self.R['현재잔액'] + self.S['현재잔액']) /2,2)
             
@@ -88,9 +92,8 @@ class M_backtest_OVERALL(Model) :
             self.R['현재잔액'] += toRS/2
             self.S['현재잔액'] += toRS/2
                
-        self.V['일매수금'] = int(self.V['현재잔액']/self.M['분할횟수']) 
-        self.R['일매수금'] = int(self.R['현재잔액']/self.M['분할횟수']) 
-        self.S['일매수금'] = int(self.S['현재잔액']/self.M['분할횟수']) 
+        for tac in (self.V,self.R,self.S) :   
+            tac['일매수금'] = int(tac['현재잔액']/self.M['분할횟수'])
 
         clr = "#F6CECE" if difft >= 0 else "#CED8F6"
         self.D['손익통계'].append([self.M['현재일자'],f"{total:,.2f}",f"{difft:,.2f}",f"{diffp:.2f}",clr])
@@ -348,6 +351,21 @@ class M_backtest_OVERALL(Model) :
             self.D['s_date'] = self.D['c_date'][0]
             self.D['e_date'] = self.D['c_date'][-1]
 
+        # 월별 수익금 
+        self.D['월별구분'] = [ x[0] for x in self.D['월익통계']][-28:]
+        self.D['월별이익'] = [ round(x[1]) for x in self.D['월익통계']][-28:]
+
+        if  self.D['월별이익'][0] == 0 :
+            self.D['월별구분'].pop(0)
+            self.D['월별이익'].pop(0)
+
+        monthly_total = sum(self.D['월별이익'])
+        monthly_lenth = len(self.D['월별이익'])
+        
+        if monthly_lenth : 
+            self.D['월별구분'].append('AVG')
+            self.D['월별이익'].append(round(monthly_total/monthly_lenth))
+
 
     def get_start(self) :
 
@@ -501,6 +519,7 @@ class M_backtest_OVERALL(Model) :
 
         # 통계자료
         self.D['손익통계'] = [[self.D['시작일자'],f"{self.V['현재잔액']+self.R['현재잔액']+self.S['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE"]]
+        self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
         
     def nextStep(self) :
         self.M['전일종가'] = self.M['당일종가']
@@ -543,7 +562,6 @@ class M_backtest_OVERALL(Model) :
         self.D['next_일반매도가'] = self.D['next_기회매도가'] = self.D['next_안정매도가'] =  self.M['매도가격']
         
         if  self.M['첫날기록'] :
-            self.rebalance()
             self.D['next_일자'] = 1
             self.D['next_단계'] = '첫날매수'
             
