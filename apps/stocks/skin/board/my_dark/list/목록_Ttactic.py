@@ -122,12 +122,13 @@ class 목록_Ttactic(SKIN) :
                 day_count = min(int(VD['sub12'])+1+self.DB.parameters('026'),6)
                 for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
                     
-                cpc = self.take_chance(self.DB.parameters('024'),int(VD['add9']),int(VD['sub2']),float(VD['add6']))
-                cpn = self.take_chance(self.DB.parameters('023'),int(VD['add9']),int(VD['sub2']),float(VD['add6']))
+                cpn = self.take_chance(self.DB.parameters('055'),int(VD['add9']),int(VD['sub2']),float(VD['add6']))
+                cpc = self.take_chance(self.DB.parameters('056'),int(VD['add9']),int(VD['sub2']),float(VD['add6']))
+
                 
                 찬스가격 = cpc if float(VD['sub7']) else cpn
                 찬스가격 = min(float(VD['sub19']),찬스가격)
-                
+
                 self.D['매수갯수'] = f"{찬스수량:,}"
                 self.D['매수단가'] = f"{찬스가격:,.2f}"
                 self.D['매수예상'] = f"{찬스수량 * 찬스가격:,.2f}"

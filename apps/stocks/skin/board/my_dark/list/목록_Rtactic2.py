@@ -106,14 +106,14 @@ class 목록_Rtactic2(SKIN) :
                 self.D['V_tact_value'] = [VD['sub20']] * chart_len 
                 self.D['chance_value'] = [LD['sub19']] * chart_len                
             
-            elif 타겟일수 >= 2 and int(LD['add9']) <= int(LD['sub18']): 
+            elif 타겟일수 >= 2 and int(LD['add9']) <= int(LD['sub18'])*3.5: 
                 # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
                 찬스수량 = 0
                 day_count = min(int(VD['sub12'])+1+self.DB.parameters('026'),6)
                 for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
-                    
+
+                cpn = self.take_chance(self.DB.parameters('021'),int(VD['add9']),int(VD['sub2']),float(VD['add6']))    
                 cpc = self.take_chance(self.DB.parameters('022'),int(VD['add9']),int(VD['sub2']),float(VD['add6']))
-                cpn = self.take_chance(self.DB.parameters('021'),int(VD['add9']),int(VD['sub2']),float(VD['add6']))
 
                 #  p = 0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
                 # 찬스가격 = cp00 if (float(VD['add8']) < -2.2 or float(VD['sub7'])) else cp22
@@ -130,6 +130,7 @@ class 목록_Rtactic2(SKIN) :
                 self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"
                 self.D['V_tact_value'] = [VD['sub20']] * chart_len
                 self.D['chance_value'] = [찬스가격] * chart_len
+                self.info(self.D['chance_value'])
                 
             else : # 가이드 및 투자가 진행 중일 때
                 self.D['매수갯수'] = int(LD['sub2'])
