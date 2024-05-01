@@ -218,9 +218,9 @@
 
 			{% for TR in D['TR'] %}
 			{% if TR['진행상황'] == '익절매도'  %}
-			<tr style="border-top:1px solid #424242;border-bottom:1px solid #424242;background-color:black;font-weight:bold" onclick="show_chart({{TR['기록시즌']}})"> 
+			<tr style="border-top:1px solid #424242;border-bottom:1px solid #424242;background-color:black;font-weight:bold" onclick="show_chart(this,{{TR['기록시즌']}})"> 
 			{% elif TR['진행상황'] == '손절매도' %}
-			<tr style="border-top:1px solid #A9D0F5;border-bottom:1px solid #A9D0F5;background-color:black;" onclick="show_chart({{TR['기록시즌']}})">
+			<tr style="border-top:1px solid #A9D0F5;border-bottom:1px solid #A9D0F5;background-color:black;" onclick="show_chart(this,{{TR['기록시즌']}})">
 			{% else %}
 			<tr>
 			{% endif %}
@@ -267,7 +267,8 @@
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
 {% endif %}
 
-<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1230px;background-color:#24272d;padding:10px;border:2px solid black;opacity:0.9;z-index:7;">
+<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1230px;background-color:#24272d;padding:10px;border:2px solid black;z-index:7;">
+	<div id='backTestingChart-notice' style="position:absolute;top:11px;left:74px;color:gray;font-style:italic">&nbsp;</div>
 	<canvas id="mybackTestChart" style="width:1200px;height:330px;background-color:#24272d"></canvas>
 </div>
 {% if D['월별이익'] %}
@@ -432,7 +433,8 @@ function check_thisForm() {
     if($("input[name='시작일자']").val() > $("input[name='종료일자']").val() ) { h_dialog.notice("종료 일자는 시작일보다 나중이어야 합니다"); return false; }
 }
 
-function show_chart(season) {
+function show_chart(sel,season) {
+	
 	$('#backTestingChart').css({top:'110px',left:'32px'}).show();
 	var clsp = [];
 	var avgv = [];
@@ -464,14 +466,20 @@ function show_chart(season) {
 	if (xticks < 30 ) { xticks = 30; }
 	var new_labels = Array.from(new Array(xticks),(x,i)=> i+1);
 
+	myChart_season.data.labels = new_labels;
+	myChart_season.data.datasets[0].data =  clsp;
+	myChart_season.data.datasets[1].data =  avgr;
+	myChart_season.data.datasets[2].data =  avgs;
+	myChart_season.data.datasets[3].data =  avgt;
+	myChart_season.data.datasets[4].data =  dlne;
 
-	myChart_season.config.data.labels = new_labels;
-	myChart_season.config.data.datasets[0].data =  clsp;
-	myChart_season.config.data.datasets[1].data =  avgr;
-	myChart_season.config.data.datasets[2].data =  avgs;
-	myChart_season.config.data.datasets[3].data =  avgt;
-	myChart_season.config.data.datasets[4].data =  dlne;
 	myChart_season.update();
+
+	var p_date    = $(sel).children("td:eq(1)").text();
+	var s_profits = $("#statistics-profits table tr td:contains('"+p_date+"')")
+	var p_profit  = s_profits.next().next().text();
+	var p_rate    = s_profits.next().next().next().text();
+	$("#backTestingChart-notice").text("20"+p_date+" profit : $ "+p_profit+" ( "+p_rate+"% )")
 }
 
 // 본챠트 그리기
