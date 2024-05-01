@@ -138,34 +138,35 @@
 					<th style='text-align:right;width:60px'>Change</th>
 					
 					{% if D['일반상황']=='on' %}
-					<th style='text-align:right;width:100px;color:grey'>V process</th>
-					<th style='text-align:right;width:90px;color:gray'>V profit</th>
-					<th style='text-align:right;width:70px;color:gray'>V rate</th>
+					<th style='text-align:right;width:110px;color:grey'>V process</th>
+					<th style='text-align:center;width:90px;color:gray'>V avg</th>
+					<th style='text-align:right;width:94px;color:gray'>V profit</th>
+					<th style='text-align:right;width:74px;color:gray'>V rate</th>
 					{% endif %}
 
 					<th style='text-align:right;width:110px;color:#F6CECE'>R process</th>
-					{% if D['일반상황']=='off' %}
-					<th style='text-align:right;width:74px'>R avg</th>
-					{% endif %}
+					<th style='text-align:center;width:74px'>R avg</th>
 					<th style='text-align:right;width:100px'>R profit</th>
 					<th style='text-align:right;width:70px'>R rate</th>
-					<th style='text-align:right;width:110px'>R balance</th>
-					
-					<th style='text-align:right;width:110px;color:#F2F5A9'>S process</th>
 					{% if D['일반상황']=='off' %}
-					<th style='text-align:right;width:74px'>S avg</th>
+					<th style='text-align:right;width:110px'>R balance</th>
 					{% endif %}
+
+					<th style='text-align:right;width:110px;color:#F2F5A9'>S process</th>
+					<th style='text-align:center;width:74px'>S avg</th>
 					<th style='text-align:right;width:100px'>S profit</th>
 					<th style='text-align:right;width:70px'>S rate</th>
-					<th style='text-align:right;width:110px'>S balance</th>
-					
-					<th style='text-align:right;width:110px;color:#CEF6CE'>T process</th>
 					{% if D['일반상황']=='off' %}
-					<th style='text-align:right;width:74px'>T avg</th>
+					<th style='text-align:right;width:110px'>S balance</th>
 					{% endif %}
+
+					<th style='text-align:right;width:110px;color:#CEF6CE'>T process</th>
+					<th style='text-align:center;width:74px'>T avg</th>
 					<th style='text-align:right;width:100px'>T profit</th>
 					<th style='text-align:right;width:70px'>T rate</th>
+					{% if D['일반상황']=='off' %}
 					<th style='text-align:right;'>T balance</th>
+					{% endif %}
 				</tr>
 			</table>
 		</div>
@@ -184,34 +185,34 @@
 			<col style="width:60px;border-right:3px solid #424242"> <!-- 종가변동 -->
 			
 			{% if D['일반상황']=='on' %}
-			<col style="width:100px"> <!-- 일반진행 -->
-			<col style="width:90px"> <!-- 일반수익 -->
-			<col style="width:70px;border-right:3px solid #424242"> <!-- 일반(%) -->
+			<col style="width:110px"> <!-- 일반진행 -->
+			<col style="width:90px"> <!-- 일반평균 -->
+			<col style="width:94px"> <!-- 일반수익 -->
+			<col style="width:74px;border-right:3px solid #424242"> <!-- 일반(%) -->
 			{% endif %}
 
 			<col style="width:110px"> <!-- 기회진행 -->
-			{% if D['일반상황']=='off' %}
 			<col style="width:74px"> <!-- 기회평균 -->
-			{% endif %}
 			<col style="width:100px"> <!-- 기회수익 -->
 			<col style="width:70px"> <!-- 기회(%) -->
-			<col style="width:110px;border-right:3px solid #424242"> <!-- 기회잔액 -->
-
-			<col style="width:110px"> <!-- 안정진행 -->
 			{% if D['일반상황']=='off' %}
-			<col style="width:74px"> <!-- 안정평균 -->
+			<col style="width:110px;"> <!-- 기회잔액 -->
 			{% endif %}
+
+			<col style="width:110px;border-left:3px solid #424242"> <!-- 안정진행 -->
+			<col style="width:74px"> <!-- 안정평균 -->
 			<col style="width:100px"> <!-- 안정수익 -->
 			<col style="width:70px"> <!-- 안정(%) -->
-			<col style="width:110px;border-right:3px solid #424242"> <!-- 안정잔액 -->
-
-			<col style="width:110px"> <!-- 생활진행 -->
 			{% if D['일반상황']=='off' %}
-			<col style="width:74px"> <!-- 생활평균 -->
+			<col style="width:110px;"> <!-- 안정잔액 -->
 			{% endif %}
+			<col style="width:110px;border-left:3px solid #424242"> <!-- 생활진행 -->
+			<col style="width:74px"> <!-- 생활평균 -->
 			<col style="width:100px"> <!-- 생활수익 -->
 			<col style="width:70px"> <!-- 생활(%) -->
+			{% if D['일반상황']=='off' %}
 			<col> <!-- 생활잔액 -->
+			{% endif %}
 		</colgroup>
 
 
@@ -229,33 +230,32 @@
 				<td style='text-align:right;font-weight:bold;'>{{TR['종가변동']|safe}}</td>
 				{% if D['일반상황']=='on' %}
 				<td style='text-align:right;color:#F6CECE'>{{TR['일반진행']}}</td>
+				<td style='text-align:right;color:#E6F8E0'>{{TR['일반평균']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['일반수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['일반익률']|safe}}</td>
 				{% endif %}
 
 				<td style='text-align:right;color:#F6CECE'>{{TR['기회진행']}}</td>
-				{% if D['일반상황']=='off' %}
 				<td style='text-align:right;color:#E6F8E0'>{{TR['기회평균']|safe}}</td>
-				{% endif %}
 				<td style='text-align:right'>{{TR['기회수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['기회익률']|safe}}</td>
-				<td style='text-align:right;color:#CEF6CE'>{{TR['기회잔액']|safe}}</td>
-
-				<td style='text-align:right;color:#F6CECE'>{{TR['안정진행']}}</td>
 				{% if D['일반상황']=='off' %}
-				<td style='text-align:right;color:#E6F8E0'>{{TR['안정평균']|safe}}</td>
+				<td style='text-align:right;color:#CEF6CE'>{{TR['기회잔액']|safe}}</td>
 				{% endif %}
+				<td style='text-align:right;color:#F6CECE'>{{TR['안정진행']}}</td>
+				<td style='text-align:right;color:#E6F8E0'>{{TR['안정평균']|safe}}</td>
 				<td style='text-align:right'>{{TR['안정수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['안정익률']|safe}}</td>
-				<td style='text-align:right;color:#CEF6CE'>{{TR['안정잔액']|safe}}</td>	
-
-				<td style='text-align:right;color:#F6CECE'>{{TR['생활진행']}}</td>
 				{% if D['일반상황']=='off' %}
-				<td style='text-align:right;color:#E6F8E0'>{{TR['생활평균']|safe}}</td>
+				<td style='text-align:right;color:#CEF6CE'>{{TR['안정잔액']|safe}}</td>	
 				{% endif %}
+				<td style='text-align:right;color:#F6CECE'>{{TR['생활진행']}}</td>
+				<td style='text-align:right;color:#E6F8E0'>{{TR['생활평균']|safe}}</td>
 				<td style='text-align:right'>{{TR['생활수익']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['생활익률']|safe}}</td>
+				{% if D['일반상황']=='off' %}
 				<td style='text-align:right;color:#CEF6CE'>{{TR['생활잔액']|safe}}</td>
+				{% endif %}
 			</tr>
 			{%- endfor %}
 
