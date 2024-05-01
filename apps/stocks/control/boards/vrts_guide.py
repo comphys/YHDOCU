@@ -42,7 +42,8 @@ class Vrts_guide(Control) :
         self.D['today'] = self.DB.one(f"SELECT min(add0) FROM h_stockHistory_board WHERE add0 > '{self.D['prev_date']}'")
             
         if self.D['today'] :
-            subprocess.call(f"python.exe apps/stocks/xtask/update_{key}.py",shell=False)
+            # subprocess.call(f"python.exe apps/stocks/xtask/update_{key}.py",shell=False)
+            subprocess.call(f"python /home/comphys/mytask/update_{key}.py",shell=False)
             self.set_message(f"{self.D['today']}일 자료를 업데이트 하였습니다")
             return self.moveto(f"board/list/{self.bid}")
 
