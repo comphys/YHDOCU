@@ -8,8 +8,10 @@ class M_backtest_rst(Model) :
     def calculate_sub(self,tac,key) :
         
         if  tac['매수수량'] : 
-            tac['현재잔액'] -=  tac['매수금액'];  tac['보유수량'] += tac['매수수량'];  tac['총매수금'] += tac['매수금액']
-            tac['평균단가']  =  tac['총매수금'] / tac['보유수량'] 
+            tac['현재잔액'] -= tac['매수금액']
+            tac['보유수량'] += tac['매수수량']
+            tac['총매수금'] += tac['매수금액']
+            tac['평균단가'] =  tac['총매수금'] / tac['보유수량'] 
             if self.D['수료적용'] == 'on' : tac['현재잔액'] -=  self.commission(tac['매수금액'],1)
         
         if  tac['매도수량'] :
@@ -178,20 +180,20 @@ class M_backtest_rst(Model) :
             self.M['매수단계'] = '매수제한' 
             self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
 
-
             if  self.V['현재잔액'] < self.V['구매수량'] * self.M['매수가격'] : 
                 self.V['구매수량'] = 0
                 self.M['매수단계'] = '매수중단' 
 
         # R,S 보정 2024.03.18. / T 보정 2019.05.02. 2019.05.06. 
         for tac in (self.R,self.S,self.T) : 
-            if tac['진행시작'] : 매도가격 = my.round_up(tac['평균단가'] * tac['매도보정']); self.M['매도가격'] = min(self.M['매도가격'],매도가격)
+            if  tac['진행시작'] : 
+                self.M['매도가격'] = min(self.M['매도가격'],my.round_up(tac['평균단가'] * tac['매도보정']))
 
         # 내일날자(현재날자+1)
         if  self.M['손실회수']  and self.M['현재날수']+1  <= self.M['매도대기'] : 
             self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['전화위복'])
 
-        if  self.M['현재날수']+1 >= self.M['강매시작'] :                        
+        if  self.M['강매시작'] <= self.M['현재날수']+1 :                        
             self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['강매가치'])
         
         if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01 
@@ -457,7 +459,6 @@ class M_backtest_rst(Model) :
         self.M['전화위복']  = ST['009']  # 손절 이후 매도 이율(1.12)
         self.M['분할횟수']  = ST['001']  # 분할 횟수
         self.M['찬스일가']  = ST['026']  # V,R 전략 시 찬스 수량 계산 가중일
-        self.M['이밸한도']  = ST['028']
 
         self.M['손실회수']  = False  
         self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
@@ -469,7 +470,6 @@ class M_backtest_rst(Model) :
         self.S['현재잔액']  = my.sv(self.D['안정자금'])
         self.T['현재잔액']  = my.sv(self.D['생활자금'])
 
-        
         self.V['일매수금']  = int(self.V['현재잔액'] / self.M['분할횟수'])
         self.R['일매수금']  = int(self.R['현재잔액'] / self.M['분할횟수'])
         self.S['일매수금']  = int(self.S['현재잔액'] / self.M['분할횟수'])

@@ -137,7 +137,7 @@ class 목록_Ttactic(SKIN) :
                 예상이익 = float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))
                 self.D['예상이익'] = f"{예상이익:,.2f}"
                 self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"
-                self.D['target_value'] = [VD['sub20']] * chart_len
+                self.D['target_value'] = ['null'] * chart_len
                 self.D['chance_value'] = [찬스가격] * chart_len
                 
             else : # 가이드 및 투자가 진행 중일 때

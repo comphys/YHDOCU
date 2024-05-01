@@ -131,41 +131,41 @@
 		{% if D['TR'] %}
 		<div>
 			<table class='table table-striped table-hover' style="border:2px solid black;">
-				<tr style="background-color:#393f4a;border-bottom:1px solid black">
-					<th style='text-align:center;width:50px'>날수</th>
-					<th style='text-align:center;width:80px'>일자</th>
-					<th style='text-align:right;width:60px'>종가</th>
-					<th style='text-align:right;width:60px'>변동</th>
+				<tr style="background-color:#393f4a;border-bottom:1px solid black;font-style:italic;">
+					<th style='text-align:center;width:50px'>No</th>
+					<th style='text-align:center;width:80px'>Date</th>
+					<th style='text-align:right;width:60px'>Price</th>
+					<th style='text-align:right;width:60px'>Change</th>
 					
 					{% if D['일반상황']=='on' %}
-					<th style='text-align:right;width:100px'>일반진행</th>
-					<th style='text-align:right;width:90px'>일반수익</th>
-					<th style='text-align:right;width:70px'>일반(%)</th>
+					<th style='text-align:right;width:100px;color:grey'>V process</th>
+					<th style='text-align:right;width:90px;color:gray'>V profit</th>
+					<th style='text-align:right;width:70px;color:gray'>V rate</th>
 					{% endif %}
 
-					<th style='text-align:right;width:110px'>기회진행</th>
+					<th style='text-align:right;width:110px;color:#F6CECE'>R process</th>
 					{% if D['일반상황']=='off' %}
-					<th style='text-align:right;width:74px'>기회평균</th>
+					<th style='text-align:right;width:74px'>R avg</th>
 					{% endif %}
-					<th style='text-align:right;width:100px'>기회수익</th>
-					<th style='text-align:right;width:70px'>기회(%)</th>
-					<th style='text-align:right;width:110px'>기회잔액</th>
+					<th style='text-align:right;width:100px'>R profit</th>
+					<th style='text-align:right;width:70px'>R rate</th>
+					<th style='text-align:right;width:110px'>R balance</th>
 					
-					<th style='text-align:right;width:110px'>안정진행</th>
+					<th style='text-align:right;width:110px;color:#F2F5A9'>S process</th>
 					{% if D['일반상황']=='off' %}
-					<th style='text-align:right;width:74px'>안정평균</th>
+					<th style='text-align:right;width:74px'>S avg</th>
 					{% endif %}
-					<th style='text-align:right;width:100px'>안정수익</th>
-					<th style='text-align:right;width:70px'>안정(%)</th>
-					<th style='text-align:right;width:110px'>안정잔액</th>
+					<th style='text-align:right;width:100px'>S profit</th>
+					<th style='text-align:right;width:70px'>S rate</th>
+					<th style='text-align:right;width:110px'>S balance</th>
 					
-					<th style='text-align:right;width:110px'>생활진행</th>
+					<th style='text-align:right;width:110px;color:#CEF6CE'>T process</th>
 					{% if D['일반상황']=='off' %}
-					<th style='text-align:right;width:74px'>생활평균</th>
+					<th style='text-align:right;width:74px'>T avg</th>
 					{% endif %}
-					<th style='text-align:right;width:100px'>생활수익</th>
-					<th style='text-align:right;width:70px'>생활(%)</th>
-					<th style='text-align:right;'>생활잔액</th>
+					<th style='text-align:right;width:100px'>T profit</th>
+					<th style='text-align:right;width:70px'>T rate</th>
+					<th style='text-align:right;'>T balance</th>
 				</tr>
 			</table>
 		</div>

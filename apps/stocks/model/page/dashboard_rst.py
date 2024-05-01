@@ -250,9 +250,10 @@ class M_dashboard_rst(Model) :
 
         # 매도 타겟점
         self.D['매도가격0']   = self.D['매도가격1']
-        self.D['매도가격1']  = self.percent_diff(self.D['평균단가1'],self.D['매도가격1']) if self.D['매도수량1'] else ''
-        self.D['매도가격2']  = self.percent_diff(self.D['평균단가2'],self.D['매도가격2']) if self.D['매도수량2'] else ''
-        self.D['매도가격3']  = self.percent_diff(self.D['평균단가3'],self.D['매도가격3']) if self.D['매도수량3'] else ''
+        self.D['매도지점0']  = self.percent_diff(self.D['평균단가0'],self.D['매도가격0']) if self.D['매도수량0'] else ''
+        self.D['매도지점1']  = self.percent_diff(self.D['평균단가1'],self.D['매도가격1']) if self.D['매도수량1'] else ''
+        self.D['매도지점2']  = self.percent_diff(self.D['평균단가2'],self.D['매도가격2']) if self.D['매도수량2'] else ''
+        self.D['매도지점3']  = self.percent_diff(self.D['평균단가3'],self.D['매도가격3']) if self.D['매도수량3'] else ''
         self.D['필요상승']   = self.percent_diff(self.D['최종종가'], self.D['매도가격0']) if self.D['매도가격0'] else ''
 
         # 시즌기간 주가 

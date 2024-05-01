@@ -142,7 +142,7 @@ class 목록_Rtactic2(SKIN) :
                 self.D['예상이익'] = f"{예상이익:,.2f}"
                 self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"
                 self.D['V_tact_value'] = [VD['sub20']] * chart_len
-                self.D['chance_value'] = [VD['sub19']] * chart_len
+                self.D['chance_value'] = ['null'] * chart_len
             
             self.D['연속상승'] = VD['sub5']
             self.D['연속하락'] = VD['sub6']
