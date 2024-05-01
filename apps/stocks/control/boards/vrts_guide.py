@@ -1,6 +1,6 @@
 from system.core.load import Control
 import system.core.my_utils as my
-import subprocess
+import subprocess,platform
 
 class Vrts_guide(Control) : 
 
@@ -32,6 +32,9 @@ class Vrts_guide(Control) :
 
     def oneWrite(self) :
         
+        if  platform.system() == "Linux" : 
+            self.set_message("현재환경에서는 업데이트를 실행할 수 없습니다")
+            return self.moveto(f"board/list/{self.bid}")            
         key = self.parm[1]
         self.D['prev_date'] = self.DB.one(f"SELECT max(add0) FROM h_{self.bid}_board")
         
@@ -42,8 +45,8 @@ class Vrts_guide(Control) :
         self.D['today'] = self.DB.one(f"SELECT min(add0) FROM h_stockHistory_board WHERE add0 > '{self.D['prev_date']}'")
             
         if self.D['today'] :
-            # subprocess.call(f"python.exe apps/stocks/xtask/update_{key}.py",shell=False)
-            subprocess.call(f"python /home/comphys/mytask/update_{key}.py",shell=False)
+            subprocess.call(f"python apps/stocks/xtask/update_{key}.py",shell=False)
+            # subprocess.call(f"python /home/comphys/mytask/update_{key}.py",shell=False)/
             self.set_message(f"{self.D['today']}일 자료를 업데이트 하였습니다")
             return self.moveto(f"board/list/{self.bid}")
 

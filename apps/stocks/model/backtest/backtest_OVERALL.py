@@ -155,7 +155,7 @@ class M_backtest_OVERALL(Model) :
 
         if  self.M['당일종가'] <= self.M['매수가격'] : 
             self.V['매수수량']  = self.V['구매수량']
-            거래코드 = 'L' if self.M['매수단계'] is '매수제한' else 'B'
+            거래코드 = 'L' if self.M['매수단계'] == '매수제한' else 'B'
             self.V['거래코드']  = 거래코드 + str(self.V['매수수량']) if self.V['구매수량'] else ' '
             self.V['매수금액']  = self.V['매수수량'] * self.M['당일종가']
             self.M['진행상황']  = self.M['매수단계']
