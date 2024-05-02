@@ -149,7 +149,7 @@
 					<th style='text-align:right;width:100px'>R profit</th>
 					<th style='text-align:right;width:70px'>R rate</th>
 					{% if D['일반상황']=='off' %}
-					<th style='text-align:right;width:110px'>R balance</th>
+					<th style='text-align:right;width:110px'>R balance&nbsp;&nbsp;</th>
 					{% endif %}
 
 					<th style='text-align:right;width:110px;color:#F2F5A9'>S process</th>
@@ -157,7 +157,7 @@
 					<th style='text-align:right;width:100px'>S profit</th>
 					<th style='text-align:right;width:70px'>S rate</th>
 					{% if D['일반상황']=='off' %}
-					<th style='text-align:right;width:110px'>S balance</th>
+					<th style='text-align:right;width:110px'>S balance&nbsp;&nbsp;</th>
 					{% endif %}
 
 					<th style='text-align:right;width:110px;color:#CEF6CE'>T process</th>
@@ -301,7 +301,7 @@
 	 <table class='table table-striped'>
 	 {% for TR in D['손익통계'] %}
 	 <tr>
-		<td style="width:90px;">{{TR[0]}}</td>
+		<td style="width:90px;" onclick="show_spanChart('{{TR[0]}}')">{{TR[0]}}</td>
 		<td style="text-align:right;color:#CEF6CE">{{TR[1]}}</td>
 		<td style="text-align:right;"><span style="color:{{TR[4]}}">{{TR[2]}}</span></td>
 		<td style="text-align:right;"><span style="color:{{TR[4]}}">{{TR[3]}}</span></td>
@@ -479,7 +479,7 @@ function show_chart(sel,season) {
 	var s_profits = $("#statistics-profits table tr td:contains('"+p_date+"')")
 	var p_profit  = s_profits.next().next().text();
 	var p_rate    = s_profits.next().next().next().text();
-	$("#backTestingChart-notice").text("20"+p_date+" profit : $ "+p_profit+" ( "+p_rate+"% )")
+	$("#backTestingChart-notice").html("20"+p_date+" : $<b> "+p_profit+"</b> ( "+p_rate+"% )")
 }
 
 // 본챠트 그리기
@@ -720,16 +720,24 @@ myChart_main.update();
 
 // MonthlyProfitChart End
 
-$(".begin-date").click(function(){
-	b_date = '20'+ $(this).text();
-	$("input[name=시작일자]").val(b_date);
-});
 
 $(".begin-date").contextmenu(function(e){
 	e.preventDefault();
-	b_date = '20'+ $(this).text();
-	$("input[name=종료일자]").val(b_date);
+	pick_date = '20'+ $(this).text();
+	show_spanChart(pick_date)
 });
+
+function show_spanChart(pick_date) {
+	e_date = pick_date
+	p_date = new Date(pick_date)
+	s_date = new Date(p_date.setDate(p_date.getDate()-100))
+	s_date = s_date.format("yyyy-MM-dd") 
+
+	$("input[name=s_date]").val(s_date);
+	$("input[name=e_date]").val(e_date);
+
+	slice_chart(1)
+}
 
 {% endif %}
 
