@@ -212,6 +212,10 @@ class M_dashboard_rst(Model) :
             self.D['현수익률'+key] = rst['add8']
             self.D['진행상황'+key] = rst['sub29'][2:]
             self.D['현재가치'+key] = f"{rst['add17']:,.2f}"
+
+            # 추정이익 계산
+            추정손익 = rst['sub3']*rst['sub20'] - rst['add6']
+            self.D['추정손익'+key] = f"{추정손익:,.2f}" if rst['sub3'] else ''
             
             if  odr :
                 self.D['가치합계'] += rst['add17']             
@@ -221,11 +225,8 @@ class M_dashboard_rst(Model) :
                 self.D['수익금합'] += rst['add18']
                 self.D['현매수합'] += rst['add6']
                 self.D['총보유량'] += rst['add9']
+                self.D['추정합계'] += 추정손익 
                 
-                # 추정이익 계산
-                추정손익 = rst['sub3']*rst['sub20'] - rst['add6']
-                self.D['추정합계'] += 추정손익
-                self.D['추정손익'+key] = f"{추정손익:,.2f}" if rst['sub3'] else ''
         
         self.D['전현비중'] = f"{self.D['잔액합산']/self.D['가치합계']*100:.2f}"
         self.D['가치합계'] = f"{self.D['가치합계']:,.2f}" 
