@@ -696,7 +696,6 @@ myChart_main.update();
 	},
 	};
 	const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
-{% endif %}
 
 // MonthlyProfitChart End
 
@@ -720,6 +719,8 @@ function show_spanChart(pick_date) {
 	$('#backTestingChart').hide();
 	slice_chart(1)
 }
+
+{% endif %}
 
 {% endif %}
 
