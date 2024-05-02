@@ -383,7 +383,7 @@ class M_backtest_rst(Model) :
         tx['종가변동'] = f"<span style='color:{clr}'>{self.M['종가변동']:,.2f}</span>"
         #--------------------------------------------------------
         tx['일반진행'] = f"{round(self.V['매도금액'],4):,.2f}" if self.V['매도금액'] else self.V['거래코드']
-        tx['일반평균'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.V['평균단가'],4):,.4f}</span>" if self.V['평균단가'] else f"<span class='avgv{self.M['기록시즌']}'></span>"
+        # tx['일반평균'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.V['평균단가'],4):,.4f}</span>" if self.V['평균단가'] else f"<span class='avgv{self.M['기록시즌']}'></span>"
         clr = "#F6CECE" if self.V['현수익률'] > 0 else "#CED8F6"
         tx['일반수익'] = f"<span style='color:{clr}'>{round(self.V['수익현황'],4):,.2f}</span>"
         tx['일반익률'] = f"<span style='color:{clr}'>{round(self.V['현수익률'],4):,.2f}</span>"
@@ -428,7 +428,7 @@ class M_backtest_rst(Model) :
         
         self.D['c_date'].append(self.M['현재일자'][2:])
 
-        self.D['eval_v'].append(round(self.V['현재잔액']+self.V['평가금액'],0))
+        # self.D['eval_v'].append(round(self.V['현재잔액']+self.V['평가금액'],0))
         self.D['eval_r'].append(round(self.R['현재잔액']+self.R['평가금액'],0))
         self.D['eval_s'].append(round(self.S['현재잔액']+self.S['평가금액'],0))
         self.D['eval_t'].append(round(self.T['현재잔액']+self.T['평가금액'],0))
