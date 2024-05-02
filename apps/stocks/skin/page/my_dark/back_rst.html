@@ -83,8 +83,6 @@
 					{% if D['s_date'] %}
 					<input type='text' name='s_date' class="i-date_1" style="width:90px;text-align:center;background:none;border:none" placeholder='시작일자' value="20{{D['s_date']}}"> -
 					<input type='text' name='e_date' class="i-date_2" style="width:90px;text-align:center;background:none;border:none" placeholder='종료일자' value="20{{D['e_date']}}">
-					<span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="slice_chart(3)" title="한달앞으로"><i class="fa fa-arrow-circle-left"></i></span>
-					<span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="slice_chart(2)" title="한달뒤로"><i class="fa fa-arrow-circle-right"></i></span>
 					<span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="slice_chart(0)" title="전체시즌"><i class="fa fa-home"></i></span>
 					{% endif %}
 				</div>
@@ -605,24 +603,6 @@ var s_date,e_date,new_s,new_e
 if(opt==1) { 
 	s_date = $("input[name='s_date']").val().slice(2); 
 	e_date = $("input[name='e_date']").val().slice(2); 
-	for(d=0; d<labels_main_ori.length; d++)     { if(labels_main_ori[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_main_ori[d]);break;}} 
-	for(d=labels_main_ori.length-1; d >=0; d--) { if(labels_main_ori[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_main_ori[d]);break;}} 
-} else if(opt==2){
-	s_date = new Date($("input[name='s_date']").val());
-	e_date = new Date($("input[name='e_date']").val());
-	s_date = new Date(s_date.setMonth(s_date.getMonth() + 1));
-	e_date = new Date(e_date.setMonth(e_date.getMonth() + 1));	
-	s_date = s_date.format("yyyy-MM-dd").slice(2);
-	e_date = e_date.format("yyyy-MM-dd").slice(2);
-	for(d=0; d<labels_main_ori.length; d++)     { if(labels_main_ori[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_main_ori[d]);break;}} 
-	for(d=labels_main_ori.length-1; d >=0; d--) { if(labels_main_ori[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_main_ori[d]);break;}} 
-} else if(opt==3){
-	s_date = new Date($("input[name='s_date']").val());
-	e_date = new Date($("input[name='e_date']").val());
-	s_date = new Date(s_date.setMonth(s_date.getMonth() - 1));
-	e_date = new Date(e_date.setMonth(e_date.getMonth() - 1));	
-	s_date = s_date.format("yyyy-MM-dd").slice(2);
-	e_date = e_date.format("yyyy-MM-dd").slice(2);
 	for(d=0; d<labels_main_ori.length; d++)     { if(labels_main_ori[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_main_ori[d]);break;}} 
 	for(d=labels_main_ori.length-1; d >=0; d--) { if(labels_main_ori[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_main_ori[d]);break;}} 
 } else {
