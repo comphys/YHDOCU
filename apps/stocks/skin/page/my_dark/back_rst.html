@@ -342,6 +342,12 @@ const data_season = {
 			data : [2,5,6,3,8],
 			borderColor:'#58ACFA', borderWidth:2,borderDash: [2,2], pointStyle:'circle', pointRadius:0, pointHoverRadius:0, backgroundColor:'#58ACFA',
 			lineTension:0.2
+		},
+		{
+			label:'V 평균',
+			data : [3,6,7,8,5],
+			borderColor:'rgb(0,255,255,0.2)',borderWidth:3,pointRadius:0,lineTension:0.2,
+			lineTension:0.2
 
 		},
 		{
@@ -442,18 +448,11 @@ function show_chart(sel,season) {
 	var dlne = [];
 
 	$(".clsp"+season).each(function() {clsp.push(parseFloat($(this).text()))});
-	$(".avgr"+season).each(function() {
-		tmpv = parseFloat($(this).text());
-		tmpv = (tmpv)? avgr.push(tmpv) : avgr.push(null); 
-	});
-	$(".avgs"+season).each(function() {
-		tmpv = parseFloat($(this).text());
-		tmpv = (tmpv)? avgs.push(tmpv) : avgs.push(null); 
-	});
-	$(".avgt"+season).each(function() {
-		tmpv = parseFloat($(this).text());
-		tmpv = (tmpv)? avgt.push(tmpv) : avgt.push(null); 
-	});
+
+	$(".avgv"+season).each(function() {tmpv = parseFloat($(this).text());tmpv = (tmpv)? avgv.push(tmpv) : avgv.push(null); });
+	$(".avgr"+season).each(function() {tmpv = parseFloat($(this).text());tmpv = (tmpv)? avgr.push(tmpv) : avgr.push(null); });
+	$(".avgs"+season).each(function() {tmpv = parseFloat($(this).text());tmpv = (tmpv)? avgs.push(tmpv) : avgs.push(null); });
+	$(".avgt"+season).each(function() {tmpv = parseFloat($(this).text());tmpv = (tmpv)? avgt.push(tmpv) : avgt.push(null); });
 	
 	const t0 = 0.02;
 	const a0 = clsp[0];	const d0 = 1-t0;
@@ -466,10 +465,11 @@ function show_chart(sel,season) {
 
 	myChart_season.data.labels = new_labels;
 	myChart_season.data.datasets[0].data =  clsp;
-	myChart_season.data.datasets[1].data =  avgr;
-	myChart_season.data.datasets[2].data =  avgs;
-	myChart_season.data.datasets[3].data =  avgt;
-	myChart_season.data.datasets[4].data =  dlne;
+	myChart_season.data.datasets[1].data =  avgv;
+	myChart_season.data.datasets[2].data =  avgr;
+	myChart_season.data.datasets[3].data =  avgs;
+	myChart_season.data.datasets[4].data =  avgt;
+	myChart_season.data.datasets[5].data =  dlne;
 
 	myChart_season.update();
 
