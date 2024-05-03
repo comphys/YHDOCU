@@ -216,9 +216,9 @@
 
 			{% for TR in D['TR'] %}
 			{% if TR['진행상황'] == '익절매도'  %}
-			<tr style="border-top:1px solid #424242;border-bottom:1px solid #424242;background-color:black;font-weight:bold" onclick="show_chart(this,{{TR['기록시즌']}})"> 
+			<tr style="border-top:1px solid #424242;border-bottom:1px solid #424242;background-color:black;font-weight:bold" onclick="show_chart({{TR['기록시즌']}},this)"> 
 			{% elif TR['진행상황'] == '손절매도' %}
-			<tr style="border-top:1px solid #A9D0F5;border-bottom:1px solid #A9D0F5;background-color:black;" onclick="show_chart(this,{{TR['기록시즌']}})">
+			<tr style="border-top:1px solid #A9D0F5;border-bottom:1px solid #A9D0F5;background-color:black;" onclick="show_chart({{TR['기록시즌']}},this)">
 			{% else %}
 			<tr>
 			{% endif %}
@@ -300,7 +300,7 @@
 	 {% for TR in D['손익통계'] %}
 	 <tr>
 		<td style="width:90px;cursor:pointer;" onclick="show_spanChart('{{TR[0]}}')">{{TR[0]}}</td>
-		<td style="text-align:right;color:#CEF6CE">{{TR[1]}}</td>
+		<td style="text-align:right;color:#CEF6CE;cursor:pointer;" onclick="show_chart('{{TR[5]}}','{{TR[0]}}','{{TR[2]}}','{{TR[3]}}')">{{TR[1]}}</td>
 		<td style="text-align:right;"><span style="color:{{TR[4]}}">{{TR[2]}}</span></td>
 		<td style="text-align:right;"><span style="color:{{TR[4]}}">{{TR[3]}}</span></td>
 	 </tr>
@@ -360,14 +360,14 @@ const data_season = {
 		{
 			label:'S 평균',
 			data : [3,6,7,8,5],
-			pointStyle:'circle', borderWidth:4,pointRadius:2,pointHoverRadius:15,borderColor:'yellow',backgroundColor:'yellow',
+			pointStyle:'circle', borderWidth:4,pointRadius:1,pointHoverRadius:15,borderColor:'yellow',backgroundColor:'yellow',
 			lineTension:0.2
 
 		},
 		{
 			label:'T 평균',
 			data : [3,6,7,8,5],
-			pointStyle:'circle', borderWidth:4,pointRadius:3,pointHoverRadius:15,borderColor:'lightgreen',backgroundColor:'lightgreen',
+			pointStyle:'rect', borderWidth:4,pointRadius:3,pointHoverRadius:15,borderColor:'lightgreen',backgroundColor:'lightgreen',
 			lineTension:0.2
 
 		},
@@ -437,7 +437,7 @@ function check_thisForm() {
     if($("input[name='시작일자']").val() > $("input[name='종료일자']").val() ) { h_dialog.notice("종료 일자는 시작일보다 나중이어야 합니다"); return false; }
 }
 
-function show_chart(sel,season) {
+function show_chart(season,sel,profit=null,rate=null) {
 	
 	$('#backTestingChart').css({top:'110px',left:'32px'}).show();
 	var clsp = [];
@@ -473,11 +473,18 @@ function show_chart(sel,season) {
 
 	myChart_season.update();
 
-	var p_date    = $(sel).children("td:eq(1)").text();
-	var s_profits = $("#statistics-profits table tr td:contains('"+p_date+"')")
-	var p_profit  = s_profits.next().next().text();
-	var p_rate    = s_profits.next().next().next().text();
-	$("#backTestingChart-notice").html("20"+p_date+" : $<b> "+p_profit+"</b> ( "+p_rate+"% )")
+	if(typeof sel =='object') {
+		var p_date    = '20'+$(sel).children("td:eq(1)").text();
+		var s_profits = $("#statistics-profits table tr td:contains('"+p_date+"')")
+		var p_profit  = s_profits.next().next().text();
+		var p_rate    = s_profits.next().next().next().text();
+	} else {
+		var p_date    = sel;
+		var p_profit  = profit;
+		var p_rate    = rate;
+	}
+	$("#backTestingChart-notice").html(p_date+" : $<b> "+p_profit+"</b> ( "+p_rate+"% )");
+	
 }
 
 // 본챠트 그리기
