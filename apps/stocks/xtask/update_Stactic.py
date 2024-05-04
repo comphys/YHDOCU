@@ -41,9 +41,9 @@ class update_Stactic :
 
     def tomorrow_sell(self) :
 
-        if  self.M['경과일수'] ==  0 :
+        if  self.M['경과일수'] ==  0 or self.M['보유수량'] == 0 :
             self.M['전매도량']  =  0
-            self.M['전매도가']  =  self.M['당일종가']
+            self.M['전매도가']  =  0.00
             return
 
         self.M['전매도량'] = self.M['보유수량']

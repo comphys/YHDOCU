@@ -235,8 +235,8 @@ class M_dashboard_rst(Model) :
         self.D['매도수합'] = f"{self.D['매도수합']:,}" if self.D['매도수합'] else ''
         self.D['수익금합'] = f"{self.D['수익금합']:,.2f}"
         self.D['종합평단'] = f"{self.D['현매수합']/self.D['총보유량']:.4f}" if self.D['총보유량'] else ''
-        self.D['총수익률'] = self.percent_diff(self.D['종합평단'],self.D['최종종가'])
-        self.D['현매수합'] = f"{self.D['현매수합']:,.2f}"
+        self.D['총수익률'] = self.percent_diff(self.D['종합평단'],self.D['최종종가']) if self.D['종합평단'] else ''
+        self.D['현매수합'] = f"{self.D['현매수합']:,.2f}" if self.D['현매수합'] else ''
         
         # 매수수량 합산
         if  self.D['매수가격1'] == self.D['매수가격2'] and self.D['매수가격3'] : 
@@ -278,7 +278,7 @@ class M_dashboard_rst(Model) :
        
 
     def percent_diff(self,a,b) :
-        if not a or not b : return ''
+        if not float(a) or not float(b) : return ''
         return f"{(float(b)/float(a) - 1) * 100:.2f}%"        
     
     def merge_dict(self,A,B) :
