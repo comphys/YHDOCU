@@ -275,21 +275,21 @@
 </div>
 {% endif %}
 
-<div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;width:320px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
+<div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;width:300px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
     <span style="font-style: italic"> Next Strategy</span><br><br>
 	<ul style="margin-left:10px">
-		<li>진행일자 : {{D['next_일자']}}</li>
-		<li>전일종가 : $ {{D['next_종가']}}/({{D['next_변동']}}%)</li>
-		<li>현재단계 : {{D['next_단계']}}</li>
-		<li>기초수량 : {{D['next_기회기초']}}/{{D['next_안정기초']}}/{{D['next_생활기초']}}</li>
-		<li>---------------------------------------</li>
-		<li>기회매수 : <sapn style="display:inline-block;width:50px;text-align:right;">{{D['next_기회매수량']}}</sapn> for {{D['next_기회매수가']}}</li>
-		<li>안정매수 : <sapn style="display:inline-block;width:50px;text-align:right;">{{D['next_안정매수량']}}</sapn> for {{D['next_안정매수가']}}</li>
-		<li>생활매수 : <sapn style="display:inline-block;width:50px;text-align:right;">{{D['next_생활매수량']}}</sapn> for {{D['next_생활매수가']}}</li>
-		<li>---------------------------------------</li>
-		<li>기회매도 : <sapn style="display:inline-block;width:50px;text-align:right;">{{D['next_기회매도량']}}</sapn> for {{D['next_기회매도가']}}</li>
-		<li>안정매도 : <sapn style="display:inline-block;width:50px;text-align:right;">{{D['next_안정매도량']}}</sapn> for {{D['next_안정매도가']}}</li>
-		<li>생활매도 : <sapn style="display:inline-block;width:50px;text-align:right;">{{D['next_생활매도량']}}</sapn> for {{D['next_생활매도가']}}</li>
+		<li>Days &nbsp;: {{D['next_일자']}}</li>
+		<li>Last &nbsp;&nbsp;: ${{D['next_종가']}}/({{D['next_변동']}}%)</li>
+		<li>Stage : {{D['next_단계']}}</li>
+		<li>B qty : {{D['next_기회기초']}}/{{D['next_안정기초']}}/{{D['next_생활기초']}}</li>
+		<li>-----------------------------</li>
+		<li>R buy : <sapn style="display:inline-block;width:40px;text-align:right;">{{D['next_기회매수량']}}</sapn> for {{D['next_기회매수가']}}</li>
+		<li>S buy : <sapn style="display:inline-block;width:40px;text-align:right;">{{D['next_안정매수량']}}</sapn> for {{D['next_안정매수가']}}</li>
+		<li>T buy : <sapn style="display:inline-block;width:40px;text-align:right;">{{D['next_생활매수량']}}</sapn> for {{D['next_생활매수가']}}</li>
+		<li>-----------------------------</li>
+		<li>R sell : <sapn style="display:inline-block;width:40px;text-align:right;">{{D['next_기회매도량']}}</sapn> for {{D['next_기회매도가']}}</li>
+		<li>S sell : <sapn style="display:inline-block;width:40px;text-align:right;">{{D['next_안정매도량']}}</sapn> for {{D['next_안정매도가']}}</li>
+		<li>T sell : <sapn style="display:inline-block;width:40px;text-align:right;">{{D['next_생활매도량']}}</sapn> for {{D['next_생활매도가']}}</li>
 	</ul>
 </div>
 
@@ -457,7 +457,7 @@ function show_chart(season,sel,profit=null,rate=null) {
 	const t0 = 0.02;
 	const a0 = clsp[0];	const d0 = 1-t0;
 
-	for(let x=0; x < clsp.length; x++) { dlne.push(a0*(1-x*t0));}
+	for(let x=0; x < 16; x++) { dlne.push(a0*(1-x*t0));} // clsp.length -> 16 (dn to 30%)
 
 	var xticks = clsp.length
 	if (xticks < 30 ) { xticks = 30; }
