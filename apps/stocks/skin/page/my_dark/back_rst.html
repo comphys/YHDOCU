@@ -299,7 +299,7 @@
 	 <table class='table table-striped'>
 	 {% for TR in D['손익통계'] %}
 	 <tr>
-		<td style="width:90px;cursor:pointer;" onclick="show_spanChart('{{TR[0]}}')">{{TR[0]}}</td>
+		<td style="width:90px;cursor:pointer;" onclick="show_spanChart('{{TR[0]}}',1)">{{TR[0]}}</td>
 		<td style="text-align:right;color:#CEF6CE;cursor:pointer;" onclick="show_chart('{{TR[5]}}','{{TR[0]}}','{{TR[2]}}','{{TR[3]}}')">{{TR[1]}}</td>
 		<td style="text-align:right;"><span style="color:{{TR[4]}}">{{TR[2]}}</span></td>
 		<td style="text-align:right;"><span style="color:{{TR[4]}}">{{TR[3]}}</span></td>
@@ -713,12 +713,14 @@ $(".begin-date").click(function(e){
 	show_spanChart(pick_date)
 });
 
-function show_spanChart(pick_date) {
+function show_spanChart(pick_date,opt=0) {
 
-	pickTr = $(".begin-date:contains('"+pick_date.slice(2)+"')") 
-	offSet = $(pickTr).offset()
-	offTop = (offSet)? offSet.top : 0
-	$(document).scrollTop(offTop-800);
+	if(opt) {
+		pickTr = $(".begin-date:contains('"+pick_date.slice(2)+"')") 
+		offSet = $(pickTr).offset()
+		offTop = (offSet)? offSet.top : 0
+		$(document).scrollTop(offTop-800);
+	}
 
 	p_date = new Date(pick_date)
 	s_date = new Date(p_date.setDate(p_date.getDate()-100))
