@@ -716,7 +716,8 @@ $(".begin-date").click(function(e){
 function show_spanChart(pick_date) {
 
 	pickTr = $(".begin-date:contains('"+pick_date.slice(2)+"')") 
-	offTop = $(pickTr).offset().top
+	offSet = $(pickTr).offset()
+	offTop = (offSet)? offSet.top : 0
 	$(document).scrollTop(offTop-800);
 
 	p_date = new Date(pick_date)
