@@ -714,13 +714,17 @@ $(".begin-date").click(function(e){
 });
 
 function show_spanChart(pick_date) {
-	e_date = pick_date
+
+	pickTr = $(".begin-date:contains('"+pick_date.slice(2)+"')") 
+	offTop = $(pickTr).offset().top
+	$(document).scrollTop(offTop-800);
+
 	p_date = new Date(pick_date)
 	s_date = new Date(p_date.setDate(p_date.getDate()-100))
 	s_date = s_date.format("yyyy-MM-dd") 
 
 	$("input[name=s_date]").val(s_date);
-	$("input[name=e_date]").val(e_date);
+	$("input[name=e_date]").val(pick_date);
 	
 	$("#monthlyProfit").hide();
 	$('#backTestingChart').hide();
