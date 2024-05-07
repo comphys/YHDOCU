@@ -294,15 +294,16 @@
 </div>
 
 <div id="statistics-profits" 
-     style="display:none;position:fixed;left:1270px;top:112px;width:410px;height:350px;padding:20px;background-color:black;overflow-y:scroll;border:1px solid gray" 
+     style="display:none;position:fixed;left:1270px;top:112px;width:420px;height:350px;padding:0px;background-color:black;overflow-y:scroll;border:1px solid gray" 
 	 ondblclick="$('#statistics-profits').hide()">
-	 <table class='table table-striped'>
+	 <table class='table table-striped' style="padding:0px">
 	 {% for TR in D['손익통계'] %}
 	 <tr>
-		<td style="width:90px;cursor:pointer;" onclick="show_spanChart('{{TR[0]}}',1)">{{TR[0]}}</td>
+		<td style="cursor:pointer;" onclick="show_spanChart('{{TR[0]}}',1)">{{TR[0][2:]}}</td>
 		<td style="text-align:right;color:#CEF6CE;cursor:pointer;" onclick="show_chart('{{TR[5]}}','{{TR[0]}}','{{TR[2]}}','{{TR[3]}}')">{{TR[1]}}</td>
-		<td style="text-align:right;"><span style="color:{{TR[4]}}">{{TR[2]}}</span></td>
-		<td style="text-align:right;"><span style="color:{{TR[4]}}">{{TR[3]}}</span></td>
+		<td style="text-align:right;color:{{TR[4]}}">{{TR[2]}}</td>
+		<td style="text-align:right;color:{{TR[4]}}">{{TR[3]}}</td>
+		<td style="text-align:right;color:lightgoldenrodyellow">{{TR[6]}}</td>
 	 </tr>
 	 {% endfor %}
 	 </table>
@@ -597,9 +598,21 @@ const myChart_main = new Chart(ctx_main, config_main);
 
 
 function chart_up_dn(opt) {
-	if(opt==1) { $("#myChart_main-div").hide(); $("#result-memo").hide(); $("#backTesting-table").css("marginTop",'100px'); }
-	else {$("#myChart_main-div").show(); $("#result-memo").show(); $("#backTesting-table").css("marginTop",'470px');}
-	// "margin-top:473px"
+	if(opt==1) { 
+		$("#myChart_main-div").hide(); 
+		$("#result-memo").hide(); 
+		$("#monthlyProfit").hide();
+		$('#statistics-profits').hide();
+		$('#Next-Strategy').hide();
+		$('#backTestingChart').hide();
+		$("#backTesting-table").css("marginTop",'100px'); 
+	}
+	else {
+		$("#myChart_main-div").show(); 
+		$("#result-memo").show(); 
+		$("#monthlyProfit").show();
+		$("#backTesting-table").css("marginTop",'470px');
+	}
 }
 
 
