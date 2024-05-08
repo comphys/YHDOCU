@@ -158,7 +158,9 @@ class M_backtest_rst(Model) :
                 찬스수량 += my.ceil( basic_qty *(i*1.25 + 1))
             return 찬스수량   
     
-    def tomorrow_step_RST(self,tac)  :
+    def tomorrow_step_RST(self,tac,key)  :
+        
+        if  not tac['현재잔액'] : tac['구매수량'] = 0; return
 
         if  tac['진행시작'] :
             tac['구매수량'] = my.ceil(tac['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
@@ -167,6 +169,9 @@ class M_backtest_rst(Model) :
                 tac['구매수량'] = my.ceil(tac['기초수량'] * self.M['위매비중']) 
                 if  tac['현재잔액'] < tac['구매수량'] * self.M['매수가격'] : 
                     tac['구매수량'] = 0
+                    if  key in ('R','S') :
+                        self.T['현재잔액'] += tac['현재잔액']
+                        tac['현재잔액'] = 0.0
         
         else :  tac['매수가격'] = self.take_chance(tac)
 
@@ -201,9 +206,9 @@ class M_backtest_rst(Model) :
         
         if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01 
 
-        self.tomorrow_step_RST(self.R)
-        self.tomorrow_step_RST(self.S)
-        self.tomorrow_step_RST(self.T)
+        self.tomorrow_step_RST(self.R,'R')
+        self.tomorrow_step_RST(self.S,'S')
+        self.tomorrow_step_RST(self.T,'T')
         
     def take_chance(self,tac) :
         H = self.V['보유수량']

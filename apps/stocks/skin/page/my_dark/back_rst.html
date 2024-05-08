@@ -475,7 +475,7 @@ function show_chart(season,sel,profit=null,rate=null) {
 	myChart_season.update();
 
 	if(typeof sel =='object') {
-		var p_date    = '20'+$(sel).children("td:eq(1)").text();
+		var p_date    = $(sel).children("td:eq(1)").text();
 		var s_profits = $("#statistics-profits table tr td:contains('"+p_date+"')")
 		var p_profit  = s_profits.next().next().text();
 		var p_rate    = s_profits.next().next().next().text();
