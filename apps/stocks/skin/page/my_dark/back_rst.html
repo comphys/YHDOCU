@@ -482,6 +482,7 @@ function show_chart(season,sel,profit=null,rate=null) {
 		var s_profits = $("#statistics-profits table tr td:contains('"+p_date+"')")
 		var p_profit  = s_profits.next().next().text();
 		var p_rate    = s_profits.next().next().next().text();
+		p_date = '20'+p_date;
 	} else {
 		var p_date    = sel;
 		var p_profit  = profit;
