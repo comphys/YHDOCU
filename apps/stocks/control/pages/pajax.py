@@ -76,23 +76,27 @@ class Pajax(Control) :
             RST = {'date':V_sdate,'V_money':f"{float(V_money):,.2f}",'R_money':f"{float(R_money):,.2f}",'S_money':f"{float(S_money):,.2f}"}
         return self.json(RST)
     
+    # for RST strategy
     def overall_test_sync2(self) :
-        s_date  = self.D['post']['s_date']
+        s_date   = self.D['post']['s_date']
+        s_begin  = self.D['post']['begin']
         
+        order = 'add0 DESC' if s_begin == 'pick' else 'add0 ASC'
+
         V_board = self.DB.parameters('035')
         R_board = self.DB.parameters('057')
         S_board = self.DB.parameters('058')
         T_board = self.DB.parameters('059')
 
-        V_sdate = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 < '{s_date}' and sub12 = '1' ORDER BY add0 DESC LIMIT 1")
+        V_date = self.DB.one(f"SELECT add0 FROM {R_board} WHERE add0 < '{s_date}' and sub12 = '1' ORDER BY {order} LIMIT 1")
   
-        V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_sdate}' and sub12 = '0' ORDER BY add0 DESC LIMIT 1")
-        R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_sdate}' and sub12 = '0' ORDER BY add0 DESC LIMIT 1")
-        S_money = self.DB.one(f"SELECT add3 FROM {S_board} WHERE add0 < '{V_sdate}' and sub12 = '0' ORDER BY add0 DESC LIMIT 1")
-        T_money = self.DB.one(f"SELECT add3 FROM {T_board} WHERE add0 < '{V_sdate}' and sub12 = '0' ORDER BY add0 DESC LIMIT 1")
+        V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12= '0' ORDER BY {order} LIMIT 1")
+        R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12= '0' ORDER BY {order} LIMIT 1")
+        S_money = self.DB.one(f"SELECT add3 FROM {S_board} WHERE add0 < '{s_date}' and add5 = '0' and add9  = '0' ORDER BY {order} LIMIT 1")
+        T_money = self.DB.one(f"SELECT add3 FROM {T_board} WHERE add0 < '{s_date}' and add5 = '0' and add9  = '0' ORDER BY {order} LIMIT 1")
         
-        if  not (V_sdate and V_money and R_money and S_money) : 
+        if  not (V_date and V_money and R_money and S_money) : 
             RST = {'date':'None','msg':f"주어진 날자 이전의 동기화된 데이타는 존재하지 않습니다."}
         else :
-            RST = {'date':V_sdate,'V_money':f"{float(V_money):,.2f}",'R_money':f"{float(R_money):,.2f}",'S_money':f"{float(S_money):,.2f}",'T_money':f"{float(T_money):,.2f}"}
+            RST = {'date':V_date,'V_money':f"{float(V_money):,.2f}",'R_money':f"{float(R_money):,.2f}",'S_money':f"{float(S_money):,.2f}",'T_money':f"{float(T_money):,.2f}"}
         return self.json(RST)
