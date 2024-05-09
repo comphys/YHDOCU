@@ -227,6 +227,10 @@ class update_Ttactic2 :
         self.M['보유수량'] = int(LD['add9'])
         self.M['현매수금'] = float(LD['add6'])
         self.M['현재잔액'] = float(LD['add3'])
+        if  t_money_add := float(self.DB.store('rst_tmoney_add')) :
+            self.M['현재잔액'] += t_money_add
+            self.DB.store_update('rst_tmoney_add','0')
+        
         self.M['회복아님'] = False if float(GD['sub7']) else True
         
         # 기초수량 구하기

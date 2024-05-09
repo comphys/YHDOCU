@@ -2,7 +2,7 @@ from myutils.DB import DB
 import myutils.my_utils as my
 
 
-class update_Rtactic2 :
+class update_RST :
 
     def __init__(self) :
         self.D = {}
@@ -85,17 +85,12 @@ class update_Rtactic2 :
             매수단가 = float(self.M['GD']['sub19'])
             매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
 
-            if  self.M['현재잔액'] == 0.0 :
+            if  self.M['현재잔액'] < 매수수량 * 매수단가 :
+                매수수량 = self.M['기초수량'] * self.M['위매비중']
+                self.M['진행상황'] = '매수제한'
+            if  self.M['현재잔액'] < 매수수량 * 매수단가 :
                 매수수량 = 0
-            else :
-                if  self.M['현재잔액'] < 매수수량 * 매수단가 :
-                    매수수량 = self.M['기초수량'] * self.M['위매비중']
-                    self.M['진행상황'] = '매수제한'
-                if  self.M['현재잔액'] < 매수수량 * 매수단가 :
-                    매수수량 = 0
-                    self.M['진행상황'] = '매수금지'
-                    self.DB.store_update('rst_tmoney_add',self.M['현재잔액'])
-                    self.M['현재잔액'] = 0.0
+                self.M['진행상황'] = '매수금지'
 
             self.M['전매수량'] = 매수수량
             self.M['전매수가'] = 매수단가
@@ -161,6 +156,8 @@ class update_Rtactic2 :
 
     def init_value(self) :
         self.M = {}
+        self.R = {}
+        self.T = {}
 
         # 매매전략 가져오기
         ST = self.DB.parameters_dict('매매전략/VRS')
@@ -168,11 +165,19 @@ class update_Rtactic2 :
         self.M['비중조절']  = ST['025']  # 매매일수 에 따른 구매수량 가중치(1.25)
         self.M['큰단가치']  = ST['002']  # 첫날매수 시 가중치(1.12)
         self.M['위매비중']  = ST['010']  # 매수제한 시 매수범위 기본수량의 (3)
-        self.M['기회시점']  = ST['021']  # S전략 일반 매수시점
-        self.M['기회회복']  = ST['022']  # S전략 회복 매수시점
+        self.M['기회시점']  = ST['021']  # R전략 일반 매수시점
+        self.M['기회회복']  = ST['022']  # R전략 회복 매수시점
+        self.M['안정시점']  = ST['023']  # S전략 일반 매수시점
+        self.M['안정회복']  = ST['024']  # S전략 회복 매수시점
+        self.M['생활시점']  = ST['055']  # S전략 일반 매수시점
+        self.M['생활회복']  = ST['056']  # S전략 회복 매수시점               
         self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
         self.M['기회매도']  = ST['011']  # R 전략의 기회매도 가격
+        self.M['안정매도']  = ST['012']  # R 전략의 기회매도 가격
+        self.M['생활매도']  = ST['014']
         self.guide = ST['035']
+        self.rtact = ST['057']
+        self.stact = ST['058']
         
         self.M['진행일자'] = self.D['today']
         # 가이드 데이타 가져오기
@@ -180,13 +185,13 @@ class update_Rtactic2 :
         self.DB.wre =  f"add0='{self.D['today']}'"
         self.DB.tbl = self.guide
         GD = self.M['GD'] = self.DB.get_line(select_cols)
-                
-        self.DB.tbl = f"h_{self.bid}_board"
-        self.DB.wre = f"add0='{self.D['prev_date']}'"
-        LD = self.M['LD'] = self.DB.get_line('*')
-        self.M['업데이트'] = float(LD['add1']) == 0 and float(LD['add2']) == 0 and float(LD['add11']) == 0 and float(LD['add12']) == 0 and int(LD['add9']) == 0
-        self.M['현재잔액'] = float(LD['add3'])
-        self.M['최종매도'] = float(LD['add12'])
+
+        self.DB.wre = f"add0='{self.D['prev_date']}'"        
+        self.DB.tbl = f"h_{self.bid}_board"; LDR = self.M['LDR'] = self.DB.get_line('*')
+
+        self.R['업데이트'] = float(LDR['add1']) == 0 and float(LDR['add2']) == 0 and float(LDR['add11']) == 0 and float(LDR['add12']) == 0 and int(LDR['add9']) == 0
+        self.R['현재잔액'] = float(LDR['add3'])
+        self.R['최종매도'] = float(LDR['add12'])
 
         # 종가구하기
         self.M['당일종가'] = float(GD['add14'])
@@ -206,20 +211,20 @@ class update_Rtactic2 :
         self.M['현재손익'] = 0.0
         self.M['수수료등'] = 0.0
 
-        self.M['시즌'] = int(LD['sub1'])
-        self.M['평균단가'] = float(LD['add7'])
-        self.M['일매수금'] = int(LD['sub4'])
+        self.R['시즌'] = int(LDR['sub1'])
+        self.R['평균단가'] = float(LDR['add7'])
+        self.R['일매수금'] = int(LDR['sub4'])
         self.M['경과일수'] = int(GD['sub12'])
         self.M['매매현황'] = ''
         self.M['진행상황'] = '매도대기'
-        self.M['보유수량'] = int(LD['add9'])
-        self.M['현매수금'] = float(LD['add6'])
-        self.M['현재잔액'] = float(LD['add3'])
+        self.R['보유수량'] = int(LDR['add9'])
+        self.R['현매수금'] = float(LDR['add6'])
+        self.R['현재잔액'] = float(LDR['add3'])
         self.M['회복아님'] = False if float(GD['sub7']) else True
         
         # 기초수량 구하기
         self.M['기초종가'] = self.DB.one(f"SELECT add14 FROM {self.guide} WHERE sub12='0' and add0 <= '{self.M['진행일자']}' ORDER BY add0 DESC LIMIT 1")
-        self.M['기초수량'] = my.ceil(self.M['일매수금']/float(self.M['기초종가']))
+        self.R['기초수량'] = my.ceil(self.R['일매수금']/float(self.M['기초종가']))
 
 
     def update_value(self) :
@@ -325,7 +330,3 @@ today = my.timestamp_to_date(opt=7)
 week_day = my.dayofdate(today)
 
 if week_day in ['일','월'] : pass
-else :
-    B = update_Rtactic2()
-    B.bid = 'R240426'
-    B.oneWrite()

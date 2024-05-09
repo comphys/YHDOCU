@@ -81,12 +81,20 @@ class update_Stactic2 :
             매수단가 = float(self.M['GD']['sub19'])
             매수수량 = my.ceil(self.M['기초수량'] * (self.M['경과일수']*self.M['비중조절'] + 1))
 
-            if  self.M['현재잔액'] < 매수수량 * 매수단가 :
-                매수수량 = self.M['기초수량'] * self.M['위매비중']
-                self.M['진행상황'] = '매수제한'
-            if  self.M['현재잔액'] < 매수수량 * 매수단가 :
+            if  self.M['현재잔액'] == 0.0 :
                 매수수량 = 0
-                self.M['진행상황'] = '매수금지'
+            else :
+                if  self.M['현재잔액'] < 매수수량 * 매수단가 :
+                    매수수량 = self.M['기초수량'] * self.M['위매비중']
+                    self.M['진행상황'] = '매수제한'
+                if  self.M['현재잔액'] < 매수수량 * 매수단가 :
+                    매수수량 = 0
+                    self.M['진행상황'] = '매수금지'
+                    t_money_add = float(self.DB.store('rst_tmoney_add'))
+                    t_money_add+= self.M['현재잔액']
+                    self.DB.store_update('rst_tmoney_add',t_money_add)
+                    self.M['현재잔액'] = 0.0
+
 
             self.M['전매수량'] = 매수수량
             self.M['전매수가'] = 매수단가
