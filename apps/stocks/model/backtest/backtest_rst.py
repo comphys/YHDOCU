@@ -169,7 +169,7 @@ class M_backtest_rst(Model) :
                 tac['구매수량'] = my.ceil(tac['기초수량'] * self.M['위매비중']) 
                 if  tac['현재잔액'] < tac['구매수량'] * self.M['매수가격'] : 
                     tac['구매수량'] = 0
-                    if  key in ('R','S') :
+                    if  self.D['이밸런싱'] == 'on' and key in ('R','S') :
                         self.T['현재잔액'] += tac['현재잔액']
                         tac['현재잔액'] = 0.0
         

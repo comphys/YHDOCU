@@ -22,6 +22,7 @@ class M_back_rst(Model) :
         self.D['수료적용'] = 'on'
         self.D['세금적용'] = 'off'
         self.D['일밸런싱'] = 'on'
+        self.D['이밸런싱'] = 'on'
         self.D['일반상황'] = 'off'
 
         # 기간 설정(최근 2년간)
