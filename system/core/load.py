@@ -38,7 +38,7 @@ class Control :
         모든 컨트롤러의 부모 컨트롤이다. 
         초기 셋팅값, DB연결, POST값의 dict 변환, 로깅 설정이 이루어진다.  
         '''
-        self.V = V   # index.py 로 부터 전달받은 초기 파라미터
+        self.I = V   # index.py 로 부터 전달받은 초기 파라미터
         self.D = {}  # view에 전달하기 위한 변수 
         
         imd = ImmutableMultiDict(V['_pos'])
@@ -66,10 +66,10 @@ class Control :
     def __parm(self) :
         self.parm = []
         self.gets = {}
-        if  self.V['_opt'] :
-            self.parm = self.V['_opt'].split('/')
+        if  self.I['_opt'] :
+            self.parm = self.I['_opt'].split('/')
 
-            if  self.V['_opt'].find('=') != -1 : 
+            if  self.I['_opt'].find('=') != -1 : 
                 for temp in self.parm :
                     pos = temp.find('=')
                     if pos != -1 : self.gets[temp[:pos]] = temp[pos+1:]        
@@ -103,15 +103,15 @@ class Control :
         return self.D  
 
     def moveto(self,path,short=True) :
-        self.D['_redirect'] = '/' + self.V['_app'] + '/' + path if short else '/' + path
+        self.D['_redirect'] = '/' + self.I['_app'] + '/' + path if short else '/' + path
         return self.D
 
     def model(self,module_name):
         if '-' in module_name : 
             folder, classn = module_name.split("-")
-            module = 'apps.'+ self.V['_app'] +'.model.' + folder + '.' + classn   
+            module = 'apps.'+ self.I['_app'] +'.model.' + folder + '.' + classn   
         else : 
-            module = 'apps.'+ self.V['_app'] +'.model.' + module_name
+            module = 'apps.'+ self.I['_app'] +'.model.' + module_name
             classn =  module_name       
         
         classn = 'M_' + classn
@@ -132,7 +132,7 @@ class Control :
         return tmp
 
     def load_app_lib(self,module_name):
-        module = f"apps.{self.V['_app']}.lib.{module_name}"
+        module = f"apps.{self.I['_app']}.lib.{module_name}"
         classn =  module_name.upper()      
         
         mod = __import__('%s' %(module), fromlist=[classn])
@@ -140,7 +140,7 @@ class Control :
 
     def load_skin(self,opt='list') :
         classn = os.path.splitext(self.D['BCONFIG']['sub_'+ opt ])[0]
-        module = f"apps.{self.V['_app']}.skin.board.{self.D['BCONFIG']['skin']}.{opt}.{classn}"
+        module = f"apps.{self.I['_app']}.skin.board.{self.D['BCONFIG']['skin']}.{opt}.{classn}"
         mod = __import__('%s' %(module), fromlist=[classn])
         return getattr( mod, classn )(self)
 
