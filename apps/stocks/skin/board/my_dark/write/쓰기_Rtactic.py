@@ -7,7 +7,7 @@ class 쓰기_Rtactic(SKIN) :
         self.D['BODY'] = OBODY
         self.D['TR_add'] = []
         self.D['TR_cat'] = []
-        self.D['method'] = self.SYS.V['_mtd']
+        self.D['method'] = self.SYS.I['_mtd']
         w_width = 1000
         self.D['w_width1'] = str(w_width + 80)+'px'
         self.D['w_width2'] = str(w_width) + 'px'
