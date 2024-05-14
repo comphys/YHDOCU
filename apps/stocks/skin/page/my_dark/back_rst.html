@@ -335,6 +335,7 @@ $(".ohlc-price").click(function(){
 	h_dialog.load(url,o)		
 });
 
+let labels_monthly = {{D['월별구분']|safe}};
 // 챠트 객체 생성
 const ctx_season = $id('mybackTestChart');
 ctx_season.style.backgroundColor = '#33363b';
@@ -674,7 +675,6 @@ myChart_main.update();
 	ctx_monthly.style.backgroundColor = '#33363b';
 	ctx_monthly.style.border = '2px solid black';
 
-	let labels_monthly = {{D['월별구분']|safe}};
 	let monthlyProfits = {{D['월별이익']|safe}};
 	let backColor = new Array(labels_monthly.length-1);
 	let boreColor = new Array(labels_monthly.length-1);
@@ -754,6 +754,7 @@ function show_spanChart(pick_date,opt=0) {
 	slice_chart(1)
 }
 
+if(labels_monthly.length < 10 ) {$("#monthlyProfit").hide();}
 {% endif %}
 
 {% endif %}
