@@ -251,6 +251,7 @@ class M_dashboard_rst(Model) :
 
         # 매도 타겟점
         self.D['매도가격0']   = self.D['매도가격1']
+
         self.D['매도지점0']  = self.percent_diff(self.D['평균단가0'],self.D['매도가격0']) if self.D['매도수량0'] else ''
         self.D['매도지점1']  = self.percent_diff(self.D['평균단가1'],self.D['매도가격1']) if self.D['매도수량1'] else ''
         self.D['매도지점2']  = self.percent_diff(self.D['평균단가2'],self.D['매도가격2']) if self.D['매도수량2'] else ''
@@ -278,7 +279,8 @@ class M_dashboard_rst(Model) :
        
 
     def percent_diff(self,a,b) :
-        if not float(a) or not float(b) : return ''
+        if not a or not b : return ''
+        if not float(a) or not float(b): return ''
         return f"{(float(b)/float(a) - 1) * 100:.2f}%"        
     
     def merge_dict(self,A,B) :
