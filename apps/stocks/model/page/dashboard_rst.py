@@ -239,12 +239,12 @@ class M_dashboard_rst(Model) :
         self.D['현매수합'] = f"{self.D['현매수합']:,.2f}" if self.D['현매수합'] else ''
         
         # 매수수량 합산
-        if  self.D['매수가격1'] == self.D['매수가격2'] and self.D['매수가격3'] : 
+        if  self.D['매수가격1'] == self.D['매수가격2'] and self.D['매수수량1'] : 
             self.D['매수수량2'] += self.D['매수수량1']
             self.D['매수수량1']  = '+' 
             self.D['매수가격1']  = '↓'
         
-        if  self.D['매수가격2'] == self.D['매수가격3'] and self.D['매수가격3'] : 
+        if  self.D['매수가격2'] == self.D['매수가격3'] and self.D['매수수량2'] : 
             self.D['매수수량3'] += self.D['매수수량2']
             self.D['매수수량2']  = '+'
             self.D['매수가격2']  = '↓'
