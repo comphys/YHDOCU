@@ -92,8 +92,9 @@ class Pajax(Control) :
   
         V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12= '0' ORDER BY {order} LIMIT 1")
         R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12= '0' ORDER BY {order} LIMIT 1")
-        S_money = self.DB.one(f"SELECT add3 FROM {S_board} WHERE add0 < '{s_date}' and add5 = '0' and add9  = '0' ORDER BY {order} LIMIT 1")
-        T_money = self.DB.one(f"SELECT add3 FROM {T_board} WHERE add0 < '{s_date}' and add5 = '0' and add9  = '0' ORDER BY {order} LIMIT 1")
+        # S_money = self.DB.one(f"SELECT add3 FROM {S_board} WHERE add0 < '{s_date}' and add5 = '0' and add9  = '0' ORDER BY {order} LIMIT 1")
+        # T_money = self.DB.one(f"SELECT add3 FROM {T_board} WHERE add0 < '{s_date}' and add5 = '0' and add9  = '0' ORDER BY {order} LIMIT 1")
+        S_money = T_money = R_money
         
         if  not (V_date and V_money and R_money and S_money) : 
             RST = {'date':'None','msg':f"주어진 날자 이전의 동기화된 데이타는 존재하지 않습니다."}
