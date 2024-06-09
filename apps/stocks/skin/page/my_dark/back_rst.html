@@ -491,6 +491,12 @@ function show_chart(season,sel,profit=null,rate=null) {
 		var p_date    = sel;
 		var p_profit  = profit;
 		var p_rate    = rate;
+
+		pickTr = $(".begin-date:contains('"+p_date.slice(2)+"')"); 
+		offSet = $(pickTr).offset();
+		offTop = (offSet)? offSet.top : 0;
+		$(document).scrollTop(offTop-800);
+	
 	}
 	$("#backTestingChart-notice").html(p_date+" : $<b> "+p_profit+"</b> ( "+p_rate+"% )");
 	
