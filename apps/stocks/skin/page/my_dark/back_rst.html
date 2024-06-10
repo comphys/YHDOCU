@@ -124,6 +124,7 @@
 				{% if D['max_days'] %}
 				최장 : <b>{{D['max_days']}}</b>일( {{D['max_date']}} ) &nbsp;
 				MDD : <b>{{D['MDD2']}}%</b>( {{D['MDD_DAY2']}} )  / <b>{{D['MDD3']}}%</b>( {{D['MDD_DAY3']}} ) / <b>{{D['MDD4']}}%</b>( {{D['MDD_DAY4']}} )&nbsp;
+				LP : <b>{{D['손익저점']}}%</b>( {{D['저점날자'][2:]}} )
 				<i class="fa fa-arrow-up" onclick="chart_up_dn(1)"></i>
 				<i class="fa fa-arrow-down" onclick="chart_up_dn(2)"></i>
 				{% endif %}

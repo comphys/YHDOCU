@@ -84,6 +84,8 @@ class M_backtest_rst(Model) :
         diffp = difft/pbase * 100
         diff0 = diffz/pzero * 100
 
+        if diffp <= self.D['손익저점'] : self.D['손익저점'] = diffp; self.D['저점날자'] = self.M['현재일자']
+
         diffd = self.D['월익통계'][-1][0][:7] 
         if   self.M['현재일자'][0:7] == diffd : self.D['월익통계'][-1][1] += difft 
         else : self.D['월익통계'].append([self.M['현재일자'][0:7],difft])
@@ -335,8 +337,8 @@ class M_backtest_rst(Model) :
         style2 = "<span style='font-weight:bold;color:#CEF6CE'>"
         style3 = "<span style='font-weight:bold;color:#F6CECE'>"
         self.D['output']  = f"총 {style1}{self.D['days_span']:,}</span>일 "
-        self.D['output'] += f"초기 {style1}${초기자본:,.0f}</span> 최종 {style1}${최종자본:,.2f}</span> "
-        self.D['output'] += f"수익은 {style2}${최종수익:,.2f}</span> 수익률은 {style3}{self.D['profit_t']:,.2f}( {style0}{self.D['v_profit']:,.2f}</span> : {self.D['r_profit']:,.2f} / {self.D['s_profit']:,.2f} / {self.D['t_profit']:,.2f} ) %</span>"
+        self.D['output'] += f"{style1}{초기자본:,.0f}</span> ▶ {style1}{최종자본:,.2f}</span> "
+        self.D['output'] += f"수익 {style2}{최종수익:,.2f}</span> 수익률 {style3}{self.D['profit_t']:,.2f}( {style0}{self.D['v_profit']:,.2f}</span> : {self.D['r_profit']:,.2f} / {self.D['s_profit']:,.2f} / {self.D['t_profit']:,.2f} ) %</span>"
 
         if self.D['c_date'] :
             self.D['s_date'] = self.D['c_date'][0]
@@ -356,6 +358,8 @@ class M_backtest_rst(Model) :
         if monthly_lenth : 
             self.D['월별구분'].append('AVG')
             self.D['월별이익'].append(round(monthly_total/monthly_lenth))
+
+        self.D['손익저점'] = f"{self.D['손익저점']:.2f}"
 
 
     def get_start(self) :
@@ -528,6 +532,8 @@ class M_backtest_rst(Model) :
         # 통계자료
         self.D['손익통계'] = [[self.D['시작일자'],f"{self.R['현재잔액']+self.S['현재잔액']+self.T['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE",'','0.00']]
         self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
+        self.D['손익저점'] = 0.0
+        self.D['저점날자'] = ''
 
         
     def nextStep(self) :
