@@ -32,7 +32,6 @@ class SU :
             ohlc[i][8]  = ohlc[i-1][8]+1 if ohlc[i][4] <  ohlc[i-1][4] else 0
 
         rst3 = ohlc[1:]
-        print(rst3)
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
 
@@ -58,7 +57,7 @@ today = my.timestamp_to_date(opt=7)
 week_day = my.dayofdate(today)
 
 A = SU()
-# A.forex_update()
+A.forex_update()
 
 if week_day in ['일','월'] :
     message = f"[{today}] {week_day}요일 : Good morning !"
@@ -68,11 +67,7 @@ if week_day in ['일','월'] :
 else :
     A.stocks_update('soxl')
 
-# B = DB('stocks')
-# app_key = B.store("stockdio_key")
-# symbol = 'SOXL'
-# dfrom = '2024-06-20'
-# dto   = '2024-06-27'
-# sp = my.get_stock_price(app_key,symbol,dfrom,dto)
-# print(sp)
+
+
+
 

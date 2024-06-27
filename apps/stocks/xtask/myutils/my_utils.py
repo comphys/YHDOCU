@@ -85,10 +85,14 @@ def get_history(code,minDate) :
     return(SH[::-1])
 
 def get_usd_krw():
-    url = 'https://quotation-api-cdn.dunamu.com/v1/forex/recent?codes=FRX.KRWUSD'
-    exchange =requests.get(url).json()
-    return (exchange[0]['date'],exchange[0]['basePrice'])
-#exchangeList > li.on > a.head.usd > div > span.value
+    headers = {'User-Agent' : ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36')}
+    url = "https://finance.naver.com/marketindex/?tabSel=exchange"
+    temp = requests.get(url, headers=headers)
+    soup = bs(temp.text,'lxml')
+    html_value = soup.select("#exchangeList > li.on > a.head.usd > div > span.value")[0]
+    html_date  = soup.select("#exchangeList > li.on > div > span.time")[0]
+    html_date  = html_date.text.replace('.','-')
+    return (html_date[:10],sv(html_value.text))
 
 def get_stockdio_price(app_key,symbol,dfrom,dto) :
     url  = f"https://api.stockdio.com/data/financial/prices/v1/GetHistoricalPrices?app-key={app_key}&symbol={symbol}&from={dfrom}&to={dto}"
