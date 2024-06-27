@@ -88,3 +88,17 @@ def get_usd_krw():
     url = 'https://quotation-api-cdn.dunamu.com/v1/forex/recent?codes=FRX.KRWUSD'
     exchange =requests.get(url).json()
     return (exchange[0]['date'],exchange[0]['basePrice'])
+#exchangeList > li.on > a.head.usd > div > span.value
+
+def get_stockdio_price(app_key,symbol,dfrom,dto) :
+    url  = f"https://api.stockdio.com/data/financial/prices/v1/GetHistoricalPrices?app-key={app_key}&symbol={symbol}&from={dfrom}&to={dto}"
+    temp = requests.get(url).json()
+    ohlc = temp['data']['prices']['values']
+    
+    SH = []
+    for row in ohlc :
+        tdate = row[0][:10]
+        if tdate < dfrom : break
+        SH.append([tdate,row[1],row[2],row[3],row[4],row[5],0.0,0,0])
+
+    return SH

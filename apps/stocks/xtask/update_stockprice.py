@@ -10,15 +10,18 @@ class SU :
         cdx = cdx.upper()
 
         time_now = my.now_timestamp()
+        today = my.timestamp_to_date(ts='now',opt=7)
 
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.DB.get_one("max(add0)")
 
         self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
+        # add0 = date / add1 = code / add2 = alias / add4 = open / add5 = high / add6 = low / add7 = volume / add8 = change / add9 = up / add10 = dn
         one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10',many=1,assoc=False)
         the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
 
-        ohlc = my.get_history(cdx,b_date)
+        app_key = self.DB.store("stockdio_key")
+        ohlc = my.get_stockdio_price(app_key,cdx,b_date,today)
         if not ohlc : return
 
         ohlc[0] = the_first_data
@@ -29,6 +32,7 @@ class SU :
             ohlc[i][8]  = ohlc[i-1][8]+1 if ohlc[i][4] <  ohlc[i-1][4] else 0
 
         rst3 = ohlc[1:]
+        print(rst3)
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
 
@@ -54,7 +58,7 @@ today = my.timestamp_to_date(opt=7)
 week_day = my.dayofdate(today)
 
 A = SU()
-A.forex_update()
+# A.forex_update()
 
 if week_day in ['일','월'] :
     message = f"[{today}] {week_day}요일 : Good morning !"
@@ -64,4 +68,11 @@ if week_day in ['일','월'] :
 else :
     A.stocks_update('soxl')
 
+# B = DB('stocks')
+# app_key = B.store("stockdio_key")
+# symbol = 'SOXL'
+# dfrom = '2024-06-20'
+# dto   = '2024-06-27'
+# sp = my.get_stock_price(app_key,symbol,dfrom,dto)
+# print(sp)
 
