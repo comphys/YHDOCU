@@ -6,6 +6,24 @@ class SU :
         self.DB = DB('stocks')
         self.skey = self.DB.store("slack_key")
 
+    def stocks_update2(self,cdx) :
+        cdx = cdx.upper()
+
+        time_now = my.now_timestamp()
+        today = my.timestamp_to_date(ts='now',opt=7)
+
+        self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
+        b_date = self.DB.get_one("max(add0)")
+
+        self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
+        one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10',many=1,assoc=False)
+        the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
+
+        app_key = self.DB.store("polygon.io")
+        ohlc = my.get_polygon_price(app_key,cdx,today)
+        
+
+
     def stocks_update(self,cdx) :
         cdx = cdx.upper()
 
@@ -53,19 +71,26 @@ class SU :
         self.DB.exe(qry)
 
 
+# --------------------------------------------------------------------------------------------------
 today = my.timestamp_to_date(opt=7)
 week_day = my.dayofdate(today)
 
 A = SU()
-A.forex_update()
+chk_holiday = A.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
+chk_off = chk_holiday[0][0] if chk_holiday else ''
 
-if week_day in ['일','월'] :
-    message = f"[{today}] {week_day}요일 : Good morning !"
+skip = (week_day in ['일','월']) and chk_off
+
+if  skip :
+    message = f"Today is a holiday !" if chk_off else f"[{today}] {week_day}요일 : Good morning !"
     if A.DB.system == 'Linux' : my.post_slack(A.skey,message)
     else : print(message)
 
 else :
     A.stocks_update('soxl')
+    A.forex_update()
+
+
 
 
 

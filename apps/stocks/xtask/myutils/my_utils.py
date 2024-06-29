@@ -106,3 +106,12 @@ def get_stockdio_price(app_key,symbol,dfrom,dto) :
         SH.append([tdate,row[1],row[2],row[3],row[4],row[5],0.0,0,0])
 
     return SH
+
+def get_polygon_price(app_key,symbol,dfrom) :
+    url = f"https://api.polygon.io/v1/open-close/{symbol}/{dfrom}?adjusted=false&apiKey={app_key}"
+    temp = requests.get(url).json()
+    ohlc = [temp['from'],temp['open'],temp['high'],temp['low'],temp['close'],temp['volume'],0.0,0,0]
+
+    return ohlc
+
+
