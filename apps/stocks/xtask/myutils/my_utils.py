@@ -42,6 +42,18 @@ def timestamp_to_date(ts='now',opt=1) :
 
     return datetime.fromtimestamp(ts,kst).strftime(t_format)
 
+
+def kor_loc_date(opt) :
+
+    loc = timezone('Asia/Seoul') if opt == 'kor' else timezone('US/Eastern')
+
+    ts = int(datetime.now().timestamp())
+    t_format = "%Y-%m-%d %H:%M:%S"
+        
+    loc_time = datetime.fromtimestamp(ts,loc).strftime(t_format)
+    
+    return (loc_time)
+
 def dayofdate(theday,delta=0) :
     dow = ('월','화','수','목','금','토','일')
     a = datetime.strptime(theday,'%Y-%m-%d')
