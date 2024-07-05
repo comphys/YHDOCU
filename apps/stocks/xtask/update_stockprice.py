@@ -6,7 +6,6 @@ class SU :
         self.DB = DB('stocks')
         self.skey = self.DB.store("slack_key")
 
-       
     def send_message(self,message) :
         if self.DB.system == "Linux" : my.post_slack(self.skey,message)
         else : print(message)
@@ -26,7 +25,6 @@ class SU :
 
         app_key = self.DB.store("stockdio_key")
         ohlc = my.get_stockdio_price(app_key,cdx,b_date,today)
-
 
         ohlc[0] = the_first_data
 
@@ -61,6 +59,7 @@ class SU :
 
 
 # --------------------------------------------------------------------------------------------------
+
 today = my.kor_loc_date('US/Eastern')[0:10]
 weekd = my.dayofdate(today)
 A = SU()

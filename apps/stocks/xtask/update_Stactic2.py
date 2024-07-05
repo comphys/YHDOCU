@@ -321,11 +321,20 @@ class update_Stactic2 :
         k = N / (1+p/100)
         return round(A/(k-n),2)
 
-today = my.timestamp_to_date(opt=7)
-week_day = my.dayofdate(today)
+   
+# -----------------------------------------------------------------------------
+today = my.kor_loc_date('US/Eastern')[0:10]
+weekd = my.dayofdate(today)
 
-if week_day in ['일','월'] : pass
+B = update_Stactic2()
+chk_holiday = B.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
+chk_off = chk_holiday[0][0] if chk_holiday else ''
+
+skip = (weekd in ['토','일']) or chk_off
+
+if  skip :
+    pass
+
 else :
-    B = update_Stactic2()
     B.bid = 'S240426'
     B.oneWrite()

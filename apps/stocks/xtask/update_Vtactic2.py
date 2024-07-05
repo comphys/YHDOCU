@@ -1,5 +1,5 @@
 from update_RST import RST
-
+import myutils.my_utils as my
 
 class update_Vtactic(RST) :
 
@@ -81,9 +81,20 @@ class update_Vtactic(RST) :
 
         self.send_message(f"{self.bid} {self.D['today']} 업데이트")
 
-    
+# --------------------------------------------------------------------------------------------------------    
+
+today = my.kor_loc_date('US/Eastern')[0:10]
+weekd = my.dayofdate(today)
+
 B = update_Vtactic()
-if B.week_day in ['일','월'] : pass
+chk_holiday = B.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
+chk_off = chk_holiday[0][0] if chk_holiday else ''
+
+skip = (weekd in ['토','일']) or chk_off
+
+if  skip :
+    pass
+
 else :
     B.bid = 'IGUIDE'
     B.oneWrite()
