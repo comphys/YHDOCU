@@ -1,6 +1,6 @@
 from myutils.DB import DB
 import myutils.my_utils as my
-
+# stockdio 의 업데이트가 지연되고 있음
 class SU :
     def __init__(self) :
         self.DB = DB('stocks')
