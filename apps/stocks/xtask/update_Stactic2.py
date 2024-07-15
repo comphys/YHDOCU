@@ -74,6 +74,8 @@ class update_Stactic2 :
 
             찬스가격 = cpc if float(self.M['GD']['sub7']) else cpn
             찬스가격 = min(float(self.M['GD']['sub19']),찬스가격)
+            if 찬스가격 * 찬스수량 > self.M['현재잔액'] : 찬스수량 = int(self.M['현재잔액'] / 찬스가격)
+            
             self.M['전매수량'] = 찬스수량
             self.M['전매수가'] = 찬스가격
             

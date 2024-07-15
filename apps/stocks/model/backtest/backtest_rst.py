@@ -132,6 +132,8 @@ class M_backtest_rst(Model) :
         else :
             if  self.M['현재날수'] > 2 and self.M['당일종가'] <= tac['매수가격'] :
                 tac['매수수량'] = self.chance_qty(tac['기초수량'],key)
+                # 2024.07.15
+                if tac['매수수량'] * tac['매수가격'] > tac['현재잔액'] : tac['매수수량'] = int(tac['현재잔액']/tac['매수가격'])
                 tac['거래코드'] = f"{key}{tac['매수수량']}/{tac['기초수량']}" 
                 tac['매수금액'] = tac['매수수량'] * self.M['당일종가']
                 tac['진행시작'] = True
