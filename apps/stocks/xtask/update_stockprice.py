@@ -23,8 +23,8 @@ class SU :
         one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10',many=1,assoc=False)
         the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
 
-        app_key = self.DB.store("stockdio_key")
-        ohlc = my.get_stockdio_price(app_key,cdx,b_date,today)
+        app_key = self.DB.store("alphavantage")
+        ohlc = my.get_alphavantage_price(app_key,cdx,b_date,today)
 
         ohlc[0] = the_first_data
 

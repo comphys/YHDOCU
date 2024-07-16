@@ -114,6 +114,8 @@ class 목록_Stactic2(SKIN) :
                 
                 찬스가격 = cpc if float(VD['sub7']) else cpn
                 찬스가격 = min(float(VD['sub19']),찬스가격)
+
+                if 찬스가격 * 찬스수량 > float(LD['add3']) : 찬스수량 = int(float(LD['add3'])/찬스가격)
                 
                 self.D['매수갯수'] = f"{찬스수량:,}"
                 self.D['매수단가'] = f"{찬스가격:,.2f}"
