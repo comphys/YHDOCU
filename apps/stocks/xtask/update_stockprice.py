@@ -22,11 +22,10 @@ class SU :
         # add0 = date / add1 = code / add2 = alias / add4 = open / add5 = high / add6 = low / add7 = volume / add8 = change / add9 = up / add10 = dn
         one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10',many=1,assoc=False)
         the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
-
         app_key = self.DB.store("alphavantage")
-        ohlc = my.get_alphavantage_price(app_key,cdx,b_date,today)
-
-        ohlc[0] = the_first_data
+        ohlc = []
+        ohlc.append(the_first_data)
+        ohlc.append(my.get_alphavantage_price(app_key,cdx,today))
 
         for i in range(1,len(ohlc)) :
             ohlc[i][6]  = round((ohlc[i][4] - ohlc[i-1][4])/ohlc[i-1][4]*100,2)
@@ -72,7 +71,6 @@ skip = (weekd in ['토','일']) or chk_off
 if  skip :
     message = f"Today is a holiday !" if chk_off else f"[{today}] {weekd}요일 : Good morning !"
     A.send_message(message)
-
 
 else :
     A.stocks_update('soxl',today)
