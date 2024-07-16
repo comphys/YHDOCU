@@ -126,4 +126,17 @@ def get_polygon_price(app_key,symbol,dfrom) :
 
     return ohlc
 
+def get_alphavantage_price(app_key,symbol,dfrom) :
+    url  = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={app_key}"
+    temp = requests.get(url).json()
+
+    tmp1 = dict(temp["Time Series (Daily)"])
+
+    if  dfrom in tmp1 :
+        tmp2 = list(tmp1[dfrom].values()) #ohlcv
+        ohlc = [dfrom,float(tmp2[0]),float(tmp2[1]),float(tmp2[2]),float(tmp2[3]),int(tmp2[4]),0.0,0,0] 
+    else : ohlc = []
+
+    return ohlc
+
 
