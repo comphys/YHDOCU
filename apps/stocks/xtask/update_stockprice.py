@@ -13,8 +13,6 @@ class SU :
     def stocks_update(self,cdx,today) :
         cdx = cdx.upper()
 
-        time_now = my.now_timestamp()
-
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.DB.get_one("max(add0)")
 
@@ -23,9 +21,16 @@ class SU :
         one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10',many=1,assoc=False)
         the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
         app_key = self.DB.store("alphavantage")
+  
+        new_data = my.get_alphavantage_price(app_key,cdx,today)
+
+        if  not new_data : 
+            self.send_message("No data updated")
+            return
+        
         ohlc = []
-        ohlc.append(the_first_data)
-        ohlc.append(my.get_alphavantage_price(app_key,cdx,today))
+        ohlc.append(the_first_data)        
+        ohlc.append(new_data)
 
         for i in range(1,len(ohlc)) :
             ohlc[i][6]  = round((ohlc[i][4] - ohlc[i-1][4])/ohlc[i-1][4]*100,2)
@@ -33,21 +38,19 @@ class SU :
             ohlc[i][8]  = ohlc[i-1][8]+1 if ohlc[i][4] <  ohlc[i-1][4] else 0
 
         rst3 = ohlc[1:]
-        if  not rst3 : 
-            self.send_message("No data updated")
-        else :
 
-            db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
+        db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
+        time_now = my.now_timestamp()
 
-            for row in rst3 :
-                row2 = list(row)
-                row2 += [cdx,cdx,'comphys','정용훈',time_now,time_now]
-                values = str(row2)[1:-1]
-                sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
-                self.DB.exe(sql)
+        for row in rst3 :
+            row2 = list(row)
+            row2 += [cdx,cdx,'comphys','정용훈',time_now,time_now]
+            values = str(row2)[1:-1]
+            sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
+            self.DB.exe(sql)
 
-            lday = rst3[-1][0]
-            self.send_message(f"{lday} 주가 업데이트 완료")
+        lday = rst3[-1][0]
+        self.send_message(f"{lday} 주가 업데이트 완료")
 
 
     def forex_update(self) :

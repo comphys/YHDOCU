@@ -135,7 +135,7 @@ def get_alphavantage_price(app_key,symbol,dfrom) :
     if  dfrom in tmp1 :
         tmp2 = list(tmp1[dfrom].values()) #ohlcv
         ohlc = [dfrom,float(tmp2[0]),float(tmp2[1]),float(tmp2[2]),float(tmp2[3]),int(tmp2[4]),0.0,0,0] 
-    else : ohlc = []
+    else : ohlc = None
 
     return ohlc
 
