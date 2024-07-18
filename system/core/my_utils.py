@@ -144,3 +144,14 @@ def diff_day(day1,day2='') :
     b = datetime.now() if not day2 else datetime.strptime(day2,'%Y-%m-%d')
     c = b-a
     return c.days 
+
+def kor_loc_date(opt) :
+
+    loc = timezone('Asia/Seoul') if opt == 'kor' else timezone('US/Eastern')
+
+    ts = int(datetime.now().timestamp())
+    t_format = "%Y-%m-%d %H:%M:%S"
+        
+    loc_time = datetime.fromtimestamp(ts,loc).strftime(t_format)
+    
+    return (loc_time)

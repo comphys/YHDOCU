@@ -117,6 +117,7 @@ class Page(Control) :
         self.D['일밸런싱'] = self.D['post'].get('chk_brs','off')
         self.D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
         self.D['일반상황'] = self.D['post'].get('chk_von','off')
+        self.D['가상손실'] = self.D['post'].get('chk_chx','off')
 
 
         M = self.model('backtest-backtest_rst')

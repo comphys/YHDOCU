@@ -475,6 +475,7 @@ class M_backtest_rst(Model) :
         self.M['찬스일가']  = ST['026']  # V,R 전략 시 찬스 수량 계산 가중일
 
         self.M['손실회수']  = False  
+        if self.D['가상손실'] == 'on' : self.M['손실회수']  = True 
         self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
         self.M['매수단계']  = '일반매수'
         self.M['기록시즌']  = 0

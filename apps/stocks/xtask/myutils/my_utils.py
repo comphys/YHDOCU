@@ -139,4 +139,18 @@ def get_alphavantage_price(app_key,symbol,dfrom) :
 
     return ohlc
 
+def get_tiingo_price(app_key,symbol,dfrom,dto) :
+    symbol = symbol.lower()
+    headers = { 'Content-Type' : 'application/json' }
+    url = f"https://api.tiingo.com/tiingo/daily/{symbol}/prices?startDate={dfrom}&endDate={dto}&token={app_key}"
+    
+    ohlc = requests.get(url,headers).json()
+    
+    SH = []
+    for row in ohlc :
+        tdate = row['date'][:10]
+        if tdate < dfrom : break
+        SH.append([tdate,row['open'],row['high'],row['low'],row['close'],row['volume'],0.0,0,0])
 
+    return SH
+    

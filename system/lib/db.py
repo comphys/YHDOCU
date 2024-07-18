@@ -1,4 +1,4 @@
-import sqlite3 
+import sqlite3,platform 
 
 class DB :
     def __init__(self,SYS) :
@@ -12,6 +12,7 @@ class DB :
         self.num = 0
         self.tbl = ''
         self.err = ''
+        self.system = platform.system()
 
     def clear(self) :
         self.wre =  self.odr = self.lmt = self.qry = self.tbl = self.err = ''

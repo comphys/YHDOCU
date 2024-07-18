@@ -12,31 +12,28 @@ class SU :
 
     def stocks_update(self,cdx,today) :
         cdx = cdx.upper()
-
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.DB.get_one("max(add0)")
-
+        
         self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
         # add0 = date / add1 = code / add2 = alias / add4 = open / add5 = high / add6 = low / add7 = volume / add8 = change / add9 = up / add10 = dn
         one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10',many=1,assoc=False)
         the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
-        app_key = self.DB.store("alphavantage")
+        app_key = self.DB.store("tiingo")
   
-        new_data = my.get_alphavantage_price(app_key,cdx,today)
+        ohlc = my.get_tiingo_price(app_key,cdx,b_date,today)
 
-        if  not new_data : 
+        if  not ohlc : 
             self.send_message("No data updated")
             return
         
-        ohlc = []
-        ohlc.append(the_first_data)        
-        ohlc.append(new_data)
-
+        ohlc[0] = the_first_data
+            
         for i in range(1,len(ohlc)) :
             ohlc[i][6]  = round((ohlc[i][4] - ohlc[i-1][4])/ohlc[i-1][4]*100,2)
             ohlc[i][7]  = ohlc[i-1][7]+1 if ohlc[i][4] >= ohlc[i-1][4] else 0
             ohlc[i][8]  = ohlc[i-1][8]+1 if ohlc[i][4] <  ohlc[i-1][4] else 0
-
+            
         rst3 = ohlc[1:]
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
@@ -78,6 +75,7 @@ if  skip :
 else :
     A.stocks_update('soxl',today)
     A.forex_update()
+
 
 
 

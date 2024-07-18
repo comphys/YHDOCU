@@ -8,26 +8,29 @@ class STOCK :
         self.SYS = SYS
         self.headers = {'User-Agent' : ('Mozilla/5.0 (Windows NT 10.0;Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36')} 
 
-    def get_history(self,code,minDate) :
-        url = f"https://finance.yahoo.com/quote/{code}/history"
-        temp = requests.get(url, headers=self.headers)
-        soup = bs(temp.text,'lxml')
-        html = soup.select("#nimbus-app > section > section > section > article > div.container > div.table-container > table > tbody > tr")[0:20]
-
-        today = my.timestamp_to_date(ts='now',opt=7)
-        SH = []
-   
-        for trs in html :
-            tds = trs.select('td')
-            if (len(tds)) < 3 : continue
-            tdate = my.date_format_change(tds[0].text,"%b %d, %Y","%Y-%m-%d")
-            if tdate >= today    : continue
-            if tdate <  minDate  : break
-            SH.append([tdate,my.sv(tds[1].text),my.sv(tds[2].text),my.sv(tds[3].text),my.sv(tds[4].text),my.sv(tds[6].text,'i'),0.0,0,0])
-        
-        return(SH[::-1])
     
-    def get_usd_krw(self):
-        url = 'https://quotation-api-cdn.dunamu.com/v1/forex/recent?codes=FRX.KRWUSD'
-        exchange =requests.get(url).json()
-        return (exchange[0]['date'],exchange[0]['basePrice'])
+    def get_usd_krw():
+        headers = {'User-Agent' : ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36')}
+        url = "https://finance.naver.com/marketindex/?tabSel=exchange"
+        temp = requests.get(url, headers=headers)
+        soup = bs(temp.text,'lxml')
+        html_value = soup.select("#exchangeList > li.on > a.head.usd > div > span.value")[0]
+        html_date  = soup.select("#exchangeList > li.on > div > span.time")[0]
+        html_date  = html_date.text.replace('.','-')
+        return (html_date[:10],my.sv(html_value.text))
+    
+
+    def get_tiingo_price(self,app_key,symbol,dfrom,dto) :
+        symbol = symbol.lower()
+        headers = { 'Content-Type' : 'application/json' }
+        url = f"https://api.tiingo.com/tiingo/daily/{symbol}/prices?startDate={dfrom}&endDate={dto}&token={app_key}"
+        
+        ohlc = requests.get(url,headers).json()
+        
+        SH = []
+        for row in ohlc :
+            tdate = row['date'][:10]
+            if tdate < dfrom : break
+            SH.append([tdate,row['open'],row['high'],row['low'],row['close'],row['volume'],0.0,0,0])
+
+        return SH

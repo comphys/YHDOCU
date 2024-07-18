@@ -8,6 +8,10 @@ class Stock_update(Control) :
         self.DB = self.db('stocks')
         self.stock = self.load_app_lib('stock')
 
+    def send_message(self,message) :
+        if self.DB.system == "Linux" : my.post_slack(self.skey,message)
+        else : print(message)
+
     def update_stock(self) :
 
         self.DB.tbl, self.DB.wre = ("h_user_list",f"no={session['N_NO']}")
@@ -16,14 +20,22 @@ class Stock_update(Control) :
         cdx = 'SOXL'
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.DB.get_one("max(add0)") 
+        today = my.kor_loc_date('US/Eastern')[0:10]
         if not b_date : b_date = '2015-01-01'
         
         self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
         # add4 : Open, add5 : High, add6 : Low, add3 : Close, add7 : Vol, add8 : Change, add9 : Up, add10 : Dn
         one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10',many=1,assoc=False) 
         the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
+        app_key = self.DB.store("tiingo")
+        
+        new_data = self.stock.get_tiingo_price(app_key,cdx,b_date,today)
+        
+        if  not new_data : 
+            self.send_message("No data updated")
+            return
 
-        ohlc = self.stock.get_history(cdx,b_date)
+        ohlc = self.stock.get_tiingo_price(app_key,cdx,b_date,today)
         if not ohlc : return
 
         ohlc[0]= the_first_data
