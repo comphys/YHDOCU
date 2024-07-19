@@ -119,13 +119,6 @@ def get_stockdio_price(app_key,symbol,dfrom,dto) :
 
     return SH
 
-def get_polygon_price(app_key,symbol,dfrom) :
-    url = f"https://api.polygon.io/v1/open-close/{symbol}/{dfrom}?adjusted=false&apiKey={app_key}"
-    temp = requests.get(url).json()
-    ohlc = [temp['from'],temp['open'],temp['high'],temp['low'],temp['close'],temp['volume'],0.0,0,0]
-
-    return ohlc
-
 def get_alphavantage_price(app_key,symbol,dfrom) :
     url  = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={app_key}"
     temp = requests.get(url).json()

@@ -1,7 +1,7 @@
 from system.core.load import Control
 import system.core.my_utils as my
 
-class Update_Vtactic2(Control) :
+class Update_vtactic2(Control) :
     
     def _auto(self) :
         self.DB = self.db('stocks')
@@ -270,7 +270,7 @@ class Update_Vtactic2(Control) :
 
     def oneWrite(self) :
     
-        self.init_each(self)
+        self.init_each()
         
         if self.D['today'] :
             self.init_value()
@@ -281,9 +281,9 @@ class Update_Vtactic2(Control) :
             self.tomorrow_sell()
             self.tomorrow_buy()
             self.update_value()
+            return self.moveto(f"board/list/{self.bid}")
 
         else :
             self.send_message(f"{self.bid} {self.D['prev_date']} 이후 업데이트된 정보가 없습니다")
-            return
+            return self.moveto(f"board/list/{self.bid}")
 
-        self.send_message(f"{self.bid} {self.D['today']} 업데이트")
