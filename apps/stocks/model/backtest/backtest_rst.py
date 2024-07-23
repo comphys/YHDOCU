@@ -205,7 +205,7 @@ class M_backtest_rst(Model) :
         if  self.M['손실회수']  and self.M['현재날수']+1  <= self.M['매도대기'] : 
             # R 보정 2024.07.01
             매도가1 = my.round_up(self.V['평균단가'] * self.M['전화위복'])
-            매도가2 = my.round_up(self.R['평균단가'] * 1.21)
+            매도가2 = my.round_up(self.R['평균단가'] * self.R['위기탈출'])
             self.M['매도가격'] = min(매도가1,매도가2)
 
         if  self.M['강매시작'] <= self.M['현재날수']+1 :                        
@@ -472,6 +472,7 @@ class M_backtest_rst(Model) :
         self.R['매도보정']  = ST['011']
         self.S['매도보정']  = ST['012']
         self.T['매도보정']  = ST['014']
+        self.R['위기탈출']  = ST['015']
         self.M['매도대기']  = ST['006']  # 매도대기(18)
         self.M['전화위복']  = ST['009']  # 손절 이후 매도 이율(1.12)
         self.M['분할횟수']  = ST['001']  # 분할 횟수

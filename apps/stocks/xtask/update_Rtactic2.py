@@ -44,14 +44,19 @@ class update_Rtactic2 :
             self.M['전매도량']  =  0
             self.M['전매도가']  =  0.00
             return
-
+        
+        매도가격 = self.M['전매도가']
         self.M['전매도량'] = self.M['보유수량']
 
         if int(self.M['보유수량']) > int(self.M['기초수량'] * 5) and self.M['회복아님'] : # R 전략이 진행되고 있는지 판단
             매도가격 = my.round_up(self.M['평균단가'] * self.M['기회매도'])
-            if  매도가격 < self.M['전매도가'] : 
-                self.M['전매도가'] = 매도가격
-                self.DB.exe(f"UPDATE {self.guide} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'" )
+        
+        else :
+            매도가격 = my.round_up(self.M['평균단가'] * self.M['위기탈출'])
+        
+        if  매도가격 < self.M['전매도가'] : 
+            self.M['전매도가'] = 매도가격
+            self.DB.exe(f"UPDATE {self.guide} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'" )
 
 
     def tomorrow_buy(self)  :
@@ -172,6 +177,7 @@ class update_Rtactic2 :
         self.M['기회회복']  = ST['022']  # S전략 회복 매수시점
         self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
         self.M['기회매도']  = ST['011']  # R 전략의 기회매도 가격
+        self.M['위기탈출']  = ST['015']  # R 전략 평균단가에 의한 위기탈출 매도값
         self.guide = ST['035']
         
         self.M['진행일자'] = self.D['today']
