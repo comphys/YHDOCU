@@ -204,14 +204,18 @@ class M_backtest_rst(Model) :
         # 내일날자(현재날자+1)
         if  self.M['손실회수']  and self.M['현재날수']+1  <= self.M['매도대기'] : 
             # R 보정 2024.07.01
-            매도가1 = my.round_up(self.V['평균단가'] * self.M['전화위복'])
-            매도가2 = my.round_up(self.R['평균단가'] * self.R['위기탈출'])
-            self.M['매도가격'] = min(매도가1,매도가2)
+            # 매도가1 = my.round_up(self.V['평균단가'] * self.M['전화위복'])
+            # 매도가2 = my.round_up(self.R['평균단가'] * self.R['위기탈출'])
+            self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['전화위복'])
 
         if  self.M['강매시작'] <= self.M['현재날수']+1 :                        
             self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['강매가치'])
         
         if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01 
+
+        # R 보정 2024.07.01
+        매도가3 = my.round_up(self.M['당일종가'] * 1.10)
+        self.M['매도가격'] = min(self.M['매도가격'],매도가3)
 
         self.tomorrow_step_RST(self.R,'R')
         self.tomorrow_step_RST(self.S,'S')
