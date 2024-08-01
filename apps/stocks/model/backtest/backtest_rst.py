@@ -203,7 +203,7 @@ class M_backtest_rst(Model) :
 
         # 내일날자(현재날자+1)
         if  self.M['손실회수']  and self.M['현재날수']+1  <= self.M['매도대기'] : 
-            # R 보정 2024.07.01
+            # R 보정 2024.07.10
             매도가1 = my.round_up(self.V['평균단가'] * self.M['전화위복'])
             매도가2 = my.round_up(self.R['평균단가'] * self.R['위기탈출'])
             self.M['매도가격'] = min(매도가1,매도가2)
@@ -213,9 +213,9 @@ class M_backtest_rst(Model) :
         
         if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01 
 
-        # R 보정 2024.07.01
-        매도가3 = my.round_up(self.M['당일종가'] * 1.10)
-        self.M['매도가격'] = min(self.M['매도가격'],매도가3)
+        # 2024.06.18 이후 폭락장 보정
+        종가상승 = my.round_up(self.M['당일종가'] * self.M['종가상승'])
+        self.M['매도가격'] = min(self.M['매도가격'],종가상승)
 
         self.tomorrow_step_RST(self.R,'R')
         self.tomorrow_step_RST(self.S,'S')
@@ -477,6 +477,7 @@ class M_backtest_rst(Model) :
         self.S['매도보정']  = ST['012']
         self.T['매도보정']  = ST['014']
         self.R['위기탈출']  = ST['015']
+        self.M['종가상승']  = ST['016']  # 종가상승 폭이 설정 수치 이상일 경우 전체 매도 가격
         self.M['매도대기']  = ST['006']  # 매도대기(18)
         self.M['전화위복']  = ST['009']  # 손절 이후 매도 이율(1.12)
         self.M['분할횟수']  = ST['001']  # 분할 횟수
