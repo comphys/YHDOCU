@@ -743,22 +743,31 @@ $(".begin-date").click(function(e){
 	show_spanChart(pick_date)
 });
 
+$(".begin-date").contextmenu(function(e){
+	e.preventDefault();
+	pick_date = '20'+ $(this).text();
+	show_spanChart(pick_date,2)
+});
+
 function show_spanChart(pick_date,opt=0) {
 
-	if(opt) {
+	if(opt==1) {
 		pickTr = $(".begin-date:contains('"+pick_date.slice(2)+"')") 
 		offSet = $(pickTr).offset()
 		offTop = (offSet)? offSet.top : 0
 		$(document).scrollTop(offTop-800);
 	}
-
-	p_date = new Date(pick_date)
-	s_date = new Date(p_date.setDate(p_date.getDate()-100))
-	s_date = s_date.format("yyyy-MM-dd") 
+	if(opt==2) {
+		s_date = new Date(pick_date)
+		s_date = s_date.format("yyyy-MM-dd")
+	} else {
+		p_date = new Date(pick_date)
+		s_date = new Date(p_date.setDate(p_date.getDate()-100))
+		s_date = s_date.format("yyyy-MM-dd") 
+		$("input[name=e_date]").val(pick_date);
+	}
 
 	$("input[name=s_date]").val(s_date);
-	$("input[name=e_date]").val(pick_date);
-	
 	$("#monthlyProfit").hide();
 	$('#backTestingChart').hide();
 	slice_chart(1)
