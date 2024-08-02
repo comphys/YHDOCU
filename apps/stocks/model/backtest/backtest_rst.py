@@ -180,6 +180,15 @@ class M_backtest_rst(Model) :
         else :  tac['매수가격'] = self.take_chance(tac)
 
 
+    def tomorrow_sell(self) :
+        pass
+    
+
+    def tomorrow_buy(self) :
+        pass
+    
+    
+
     def tomorrow_step(self)   :
         
         self.M['매수가격'] = round(self.M['당일종가']*self.M['평단가치'],2)
@@ -211,11 +220,11 @@ class M_backtest_rst(Model) :
         if  self.M['강매시작'] <= self.M['현재날수']+1 :                        
             self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['강매가치'])
         
-        if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01 
-
         # 2024.06.18 이후 폭락장 보정
         종가상승 = my.round_up(self.M['당일종가'] * self.M['종가상승'])
         self.M['매도가격'] = min(self.M['매도가격'],종가상승)
+        
+        if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01 
 
         self.tomorrow_step_RST(self.R,'R')
         self.tomorrow_step_RST(self.S,'S')
