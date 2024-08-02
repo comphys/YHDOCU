@@ -34,10 +34,6 @@ class update_Vtactic(RST) :
         self.M['전매도량'] = self.M['보유수량']
         self.M['전매도가'] = round(매도단가,2)
         
-        # 2024.06.18 이후 폭락장 보정
-        종가상승 = my.round_up(self.M['당일종가'] * self.M['종가상승'])
-        self.M['전매도가'] = min(self.M['전매도가'],종가상승)
-
 
     def tomorrow_buy(self)  :
 
