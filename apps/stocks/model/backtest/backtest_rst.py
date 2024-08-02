@@ -180,15 +180,6 @@ class M_backtest_rst(Model) :
         else :  tac['매수가격'] = self.take_chance(tac)
 
 
-    def tomorrow_sell(self) :
-        pass
-    
-
-    def tomorrow_buy(self) :
-        pass
-    
-    
-
     def tomorrow_step(self)   :
         
         self.M['매수가격'] = round(self.M['당일종가']*self.M['평단가치'],2)
