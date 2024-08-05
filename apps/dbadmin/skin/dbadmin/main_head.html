@@ -37,8 +37,8 @@
                 </div>
             </li>
             <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" style="cursor:pointer">테이블 선택 <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
+                <a class="dropdown-toggle" data-toggle="dropdown" style="cursor:pointer">테이블 <b class="caret"></b></a>
+                    <ul class="dropdown-menu" style="max-height:700px;overflow: auto;">
                     {% for tbls in D['db_tables'] %}
                         <li><a href="{{D['_bse']}}dbadmin/list/{{tbls}}">{{tbls}}</a></li>
                     {% endfor %}
