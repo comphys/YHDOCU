@@ -1,7 +1,7 @@
 from update_RST import RST
 import myutils.my_utils as my
 
-class update_Vtactic(RST) :
+class update_Vtactic3(RST) :
 
     def check_sell(self) :
         if  not self.M['경과일수'] : return #첫날일 경우 리턴
@@ -86,7 +86,7 @@ class update_Vtactic(RST) :
 today = my.kor_loc_date('US/Eastern')[0:10]
 weekd = my.dayofdate(today)
 
-B = update_Vtactic()
+B = update_Vtactic3()
 chk_holiday = B.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
 chk_off = chk_holiday[0][0] if chk_holiday else ''
 
@@ -98,6 +98,6 @@ if  skip :
 else :
     B.bid = 'IGUIDE'
     B.oneWrite()
-    B.bid = 'V230831'
+    B.bid = 'V240805'
     B.oneWrite()
         

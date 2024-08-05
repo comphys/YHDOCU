@@ -7,17 +7,17 @@ class M_back_rst(Model) :
         
         # 기본 값
         self.D['종목코드'] = 'SOXL'
-        self.D['일반자금'] = self.DB.parameters('051')
-        self.D['기회자금'] = self.DB.parameters('052')
-        self.D['안정자금'] = self.DB.parameters('053')
-        self.D['생활자금'] = self.DB.parameters('054')
+        self.D['일반자금'] = self.DB.parameters('05100')
+        self.D['기회자금'] = self.DB.parameters('05200')
+        self.D['안정자금'] = self.DB.parameters('05300')
+        self.D['생활자금'] = self.DB.parameters('05400')
 
-        self.D['기회시점'] = self.DB.parameters('021')
-        self.D['기회회복'] = self.DB.parameters('022')
-        self.D['안정시점'] = self.DB.parameters('023')
-        self.D['안정회복'] = self.DB.parameters('024')
-        self.D['생활시점'] = self.DB.parameters('055')
-        self.D['생활회복'] = self.DB.parameters('056')
+        self.D['기회시점'] = self.DB.parameters('02100')
+        self.D['기회회복'] = self.DB.parameters('02200')
+        self.D['안정시점'] = self.DB.parameters('02300')
+        self.D['안정회복'] = self.DB.parameters('02400')
+        self.D['생활시점'] = self.DB.parameters('02401')
+        self.D['생활회복'] = self.DB.parameters('02402')
 
         self.D['수료적용'] = 'on'
         self.D['세금적용'] = 'off'

@@ -61,9 +61,9 @@ class Pajax(Control) :
     
     def overall_test_sync(self) :
         s_date  = self.D['post']['s_date']
-        V_board = self.DB.parameters('035')
-        R_board = self.DB.parameters('036')
-        S_board = self.DB.parameters('037')
+        V_board = self.DB.parameters('03500')
+        R_board = self.DB.parameters('03600')
+        S_board = self.DB.parameters('03700')
         V_sdate = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 < '{s_date}' and sub12 = '1' ORDER BY add0 DESC LIMIT 1")
   
         V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_sdate}' and sub12 = '0' ORDER BY add0 DESC LIMIT 1")
@@ -83,10 +83,9 @@ class Pajax(Control) :
         
         order = 'add0 DESC' if s_begin == 'pick' else 'add0 ASC'
 
-        V_board = self.DB.parameters('035')
-        R_board = self.DB.parameters('057')
-        S_board = self.DB.parameters('058')
-        T_board = self.DB.parameters('059')
+        V_board = self.DB.parameters('03500')
+        R_board = self.DB.parameters('03501')
+
 
         V_date = self.DB.one(f"SELECT add0 FROM {R_board} WHERE add0 < '{s_date}' and sub12 = '1' ORDER BY {order} LIMIT 1")
   

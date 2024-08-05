@@ -106,11 +106,11 @@ class 목록_Stactic(SKIN) :
             elif 타겟일수 >= 2 and int(LD['add9']) <= int(LD['sub18']): 
                 # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
                 찬스수량 = 0
-                day_count = min(int(TD['sub12'])+1+self.DB.parameters('026'),6)
+                day_count = min(int(TD['sub12'])+1+self.DB.parameters('01002'),6)
                 for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
                     
-                cpc = self.take_chance(self.DB.parameters('024'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
-                cpn = self.take_chance(self.DB.parameters('023'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                cpc = self.take_chance(self.DB.parameters('02400'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
+                cpn = self.take_chance(self.DB.parameters('02300'),int(TD['add9']),int(TD['sub2']),float(TD['add6']))
                 
                 찬스가격 = cpc if float(TD['sub7']) else cpn
                 찬스가격 = min(float(TD['sub19']),찬스가격)
@@ -142,7 +142,7 @@ class 목록_Stactic(SKIN) :
             self.D['연속상승'] = TD['sub5']
             self.D['연속하락'] = TD['sub6']
             self.D['현재환율'] = f"{현재환율:,.2f}"
-            self.D['자산배분'] = self.DB.parameters_des('038')
+            self.D['자산배분'] = self.DB.parameters_des('03800')
             self.D['가치합계'] = round(float(LD['add17']))
 
             # GD : Guide Data

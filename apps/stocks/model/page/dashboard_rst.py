@@ -5,7 +5,7 @@ class M_dashboard_rst(Model) :
 
     def view(self) :
         ST = self.DB.parameters_dict('매매전략/VRS')
-        self.M['boards'] = [ST['035'],ST['057'],ST['058'],ST['059']]
+        self.M['boards'] = [ST['03500'],ST['03501'],ST['03502'],ST['03503']]
         self.M['monthlyProfit'] = {}
         self.M['eachSellTotal'] = {} 
 
@@ -150,7 +150,7 @@ class M_dashboard_rst(Model) :
 
 
         self.D['나중순증'] = []
-        self.D['자산분배'] = self.DB.parameters_des('038')
+        self.D['자산분배'] = self.DB.parameters_des('03800')
         for odr in [1,2,3] :
             con = f"WHERE add0 <= '{self.D['e_date']}'" 
             qry = f"SELECT add17, sub25, sub26 FROM {self.M['boards'][odr]} {con} ORDER BY add0 DESC LIMIT 1"
@@ -168,10 +168,10 @@ class M_dashboard_rst(Model) :
     def show_strategy(self,ST) :
 
         if self.M['구간종료'] : return
-        self.D['전략구분0'] = ST['031']; self.D['식별색상0'] = "gray"
-        self.D['전략구분1'] = ST['032']; self.D['식별색상1'] = "#f78181" 
-        self.D['전략구분2'] = ST['033']; self.D['식별색상2'] = "yellow"
-        self.D['전략구분3'] = ST['034']; self.D['식별색상3'] = "lightgreen"
+        self.D['전략구분0'] = ST['03100']; self.D['식별색상0'] = "gray"
+        self.D['전략구분1'] = ST['03200']; self.D['식별색상1'] = "#f78181" 
+        self.D['전략구분2'] = ST['03300']; self.D['식별색상2'] = "yellow"
+        self.D['전략구분3'] = ST['03400']; self.D['식별색상3'] = "lightgreen"
 
         today = self.DB.one("SELECT add0 FROM h_stockHistory_board WHERE add1='SOXL' ORDER BY add0 DESC LIMIT 1")
         

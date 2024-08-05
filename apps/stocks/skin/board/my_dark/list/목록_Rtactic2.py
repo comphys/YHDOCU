@@ -13,7 +13,7 @@ class 목록_Rtactic2(SKIN) :
     def chart(self) :
         
         last_date = self.DB.one(f"SELECT max(add0) FROM {self.D['tbl']}")
-        VtacBoard = self.DB.parameters('035') 
+        VtacBoard = self.DB.parameters('03500') 
         
         self.DB.clear()
         self.DB.tbl = VtacBoard
@@ -109,11 +109,11 @@ class 목록_Rtactic2(SKIN) :
             elif 타겟일수 >= 2 and int(LD['add9']) <= int(LD['sub18'])*3.5: 
                 # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
                 찬스수량 = 0
-                day_count = min(int(VD['sub12'])+1+self.DB.parameters('026'),6)
+                day_count = min(int(VD['sub12'])+1+self.DB.parameters('01002'),6)
                 for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
 
-                cpn = self.take_chance(self.DB.parameters('021'),int(VD['add9']),int(VD['sub2']),float(VD['add6']))    
-                cpc = self.take_chance(self.DB.parameters('022'),int(VD['add9']),int(VD['sub2']),float(VD['add6']))
+                cpn = self.take_chance(self.DB.parameters('02100'),int(VD['add9']),int(VD['sub2']),float(VD['add6']))    
+                cpc = self.take_chance(self.DB.parameters('02200'),int(VD['add9']),int(VD['sub2']),float(VD['add6']))
 
                 #  p = 0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
                 # 찬스가격 = cp00 if (float(VD['add8']) < -2.2 or float(VD['sub7'])) else cp22
@@ -147,7 +147,7 @@ class 목록_Rtactic2(SKIN) :
             self.D['연속상승'] = VD['sub5']
             self.D['연속하락'] = VD['sub6']
             self.D['현재환율'] = f"{현재환율:,.2f}"
-            self.D['자산배분'] = self.DB.parameters_des('038')
+            self.D['자산배분'] = self.DB.parameters_des('03800')
             self.D['가치합계'] = round(float(LD['add17']))
 
             # GD : Guide Data
