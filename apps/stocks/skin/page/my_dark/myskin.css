@@ -24,3 +24,10 @@
 .dash-table tr td:nth-child(5) {padding:0px;width:60px}
 .dash-table tr td:nth-child(6) {padding:0px;width:80px}
 
+.positioning_date {cursor: pointer;}
+.positioning_date:hover {font-weight:bold;color:yellow;}
+
+.pointing_sd1 {cursor: pointer;}
+.pointing_sd2 {cursor: pointer; text-align:right;color:#CEF6CE;}
+
+.pointing_sd1:hover, .pointing_sd2:hover {font-weight:bold;color:yellow;}
