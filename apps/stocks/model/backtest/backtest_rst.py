@@ -417,7 +417,7 @@ class M_backtest_rst(Model) :
         tx['종가변동'] = f"<span style='color:{clr}'>{self.M['종가변동']:,.2f}</span>"
         #--------------------------------------------------------
         tx['일반진행'] = f"{round(self.V['매도금액'],4):,.2f}" if self.V['매도금액'] else self.V['거래코드']
-        tx['일반평균'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.V['평균단가'],4):,.4f}</span>" if self.V['평균단가'] else f"<span class='avgv{self.M['기록시즌']}'></span>"
+        tx['일반평균'] = f"{round(self.V['평균단가'],4):,.4f}" if self.V['평균단가'] else ""
         clr = "#F6CECE" if self.V['현수익률'] > 0 else "#CED8F6"
         tx['일반수익'] = f"<span style='color:{clr}'>{round(self.V['수익현황'],4):,.2f}</span>"
         tx['일반익률'] = f"<span style='color:{clr}'>{round(self.V['현수익률'],4):,.2f}</span>"
@@ -451,8 +451,6 @@ class M_backtest_rst(Model) :
         # 챠트 기록용
         self.D['clse_p'].append(self.M['당일종가'])
 
-        if avg_v := round(self.V['평균단가'],2) : self.D['avge_v'].append(avg_v)
-        else : self.D['avge_v'].append('null')
         if avg_r := round(self.R['평균단가'],2) : self.D['avge_r'].append(avg_r)
         else : self.D['avge_r'].append('null')
         if avg_s := round(self.S['평균단가'],2) : self.D['avge_s'].append(avg_s)
@@ -462,10 +460,10 @@ class M_backtest_rst(Model) :
         
         self.D['c_date'].append(self.M['현재일자'][2:])
 
-        # self.D['eval_v'].append(round(self.V['현재잔액']+self.V['평가금액'],0))
-        self.D['eval_r'].append(round(self.R['현재잔액']+self.R['평가금액'],0))
-        self.D['eval_s'].append(round(self.S['현재잔액']+self.S['평가금액'],0))
-        self.D['eval_t'].append(round(self.T['현재잔액']+self.T['평가금액'],0))
+        # self.D['eval_r'].append(round(self.R['현재잔액']+self.R['평가금액'],0))
+        # self.D['eval_s'].append(round(self.S['현재잔액']+self.S['평가금액'],0))
+        # self.D['eval_t'].append(round(self.T['현재잔액']+self.T['평가금액'],0))
+        self.D['totalV'].append(round(self.R['현재잔액']+self.R['평가금액']+self.S['현재잔액']+self.S['평가금액']+self.T['현재잔액']+self.T['평가금액'],0))
         
         self.M['현재날수'] +=1
 
@@ -543,8 +541,9 @@ class M_backtest_rst(Model) :
         # 챠트작성
         self.D['c_date'] = []
         self.D['clse_p'] = []
-        self.D['avge_v'] = []; self.D['avge_r'] = []; self.D['avge_s'] = []; self.D['avge_t'] = []
-        self.D['eval_v'] = []; self.D['eval_r'] = []; self.D['eval_s'] = []; self.D['eval_t'] = []
+        self.D['avge_r'] = []; self.D['avge_s'] = []; self.D['avge_t'] = []
+        # self.D['eval_r'] = []; self.D['eval_s'] = []; self.D['eval_t'] = []
+        self.D['totalV'] = []
         self.D['일반횟수'] = 0
         self.D['전략횟수'] = 0
         self.D['기회전량'] = 0

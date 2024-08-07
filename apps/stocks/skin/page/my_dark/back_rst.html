@@ -512,41 +512,33 @@ ctx_main.style.backgroundColor = '#33363b';
 ctx_main.style.border = '2px solid black';
 
 let closeP_ori   = {{D['clse_p']|safe}};
-let avge_v_ori   = {{D['avge_v']|safe}};
+
 let avge_r_ori   = {{D['avge_r']|safe}};
 let avge_s_ori   = {{D['avge_s']|safe}};
 let avge_t_ori   = {{D['avge_t']|safe}};
-let eval_v_ori   = {{D['eval_v']|safe}};
-let eval_r_ori   = {{D['eval_r']|safe}};
-let eval_s_ori   = {{D['eval_s']|safe}};
-let eval_t_ori   = {{D['eval_t']|safe}};
+let totalV_ori   = {{D['totalV']|safe}};
 let labels_main_ori = {{D['c_date']|safe}};
 
 let closeP   = closeP_ori.slice(0);
-let avge_v   = avge_v_ori.slice(0);
+
 let avge_r   = avge_r_ori.slice(0);
 let avge_s   = avge_s_ori.slice(0);
 let avge_t   = avge_t_ori.slice(0);
-let eval_v   = eval_v_ori.slice(0);
-let eval_r   = eval_r_ori.slice(0);
-let eval_s   = eval_s_ori.slice(0);
-let eval_t   = eval_t_ori.slice(0);
+
+let totalV   = totalV_ori.slice(0);
 let labels_main = labels_main_ori.slice(0);
 
 let data_count = labels_main.length
 
 if(data_count > 100) {
-	avge_v.fill(null)
 	avge_r.fill(null) 
 	avge_s.fill(null)
 	avge_t.fill(null) 
 }
 
 if(data_count <= 100) {
-	eval_v.fill(null)
-	eval_r.fill(null) 
-	eval_s.fill(null) 
-	eval_t.fill(null) 
+
+	totalV.fill(null)
 }
 
 const data_main = {
@@ -578,22 +570,8 @@ const data_main = {
         },
 		{
             label:' 평가밸류R',
-            data : eval_r,
+            data : totalV,
 			borderColor:'#F5A9A9', borderWidth:2,pointRadius:0,
-			lineTension:0.2,
-			yAxisID : 'y1'
-        },
-		{
-            label:' 평가밸류S',
-            data : eval_s,
-			borderColor:'yellow', borderWidth:2,pointRadius:0, 
-			lineTension:0.2,
-			yAxisID : 'y1'
-        },
-		{
-            label:' 평가밸류T',
-            data : eval_t,
-			borderColor:'#CEF6CE', borderWidth:2,pointRadius:0, 
 			lineTension:0.2,
 			yAxisID : 'y1'
         },
@@ -659,9 +637,8 @@ myChart_main.config.data.datasets[0].data =  closeP_ori.slice(new_s,new_e);
 myChart_main.config.data.datasets[1].data =  avge_r_ori.slice(new_s,new_e);
 myChart_main.config.data.datasets[2].data =  avge_s_ori.slice(new_s,new_e);
 myChart_main.config.data.datasets[3].data =  avge_t_ori.slice(new_s,new_e);
-myChart_main.config.data.datasets[4].data =  eval_r_ori.slice(new_s,new_e);
-myChart_main.config.data.datasets[5].data =  eval_s_ori.slice(new_s,new_e);
-myChart_main.config.data.datasets[6].data =  eval_t_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[4].data =  totalV_ori.slice(new_s,new_e);
+
 
 if(data_count > 100)  {	
 	myChart_main.config.data.datasets[1].data.fill(null); 	
@@ -670,8 +647,6 @@ if(data_count > 100)  {
 }
 if(data_count <= 100) { 
 	myChart_main.config.data.datasets[4].data.fill(null); 	
-	myChart_main.config.data.datasets[5].data.fill(null); 
-	myChart_main.config.data.datasets[6].data.fill(null); 
 }
 
 myChart_main.update();
