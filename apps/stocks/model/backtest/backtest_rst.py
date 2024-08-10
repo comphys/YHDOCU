@@ -5,6 +5,7 @@ import system.core.my_utils as my
 class M_backtest_rst(Model) :
 
 # 변동성을 이용한 올타임 전략 V(일반) / R(기회) / S(안정)
+
     def calculate_sub(self,tac,key) :
         
         if  tac['매수수량'] : 
@@ -556,7 +557,7 @@ class M_backtest_rst(Model) :
         # 통계자료
         self.D['손익통계'] = [[self.D['시작일자'],f"{self.R['현재잔액']+self.S['현재잔액']+self.T['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE",'','0.00']]
         self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
-        self.D['손익저점'] = 0.0
+        self.D['손익저점'] = 100.0
         self.D['저점날자'] = ''
 
         
