@@ -590,6 +590,7 @@ class M_backtest_rst(Model) :
             self.D['next_기회매도가'] = self.D['next_안정매도가'] = self.D['next_생활매도가'] = 0.0
 
         else : 
+            
             self.next_buy_RST()
 
             self.D['next_기회기초'] = self.R['기초수량']
@@ -612,7 +613,9 @@ class M_backtest_rst(Model) :
 
 
     def next_buy_RST(self) :
-  
+
+        self.M['매수가격'] = round(self.M['당일종가']*self.M['평단가치'],2)
+
         for (tac,key) in [(self.R,'R'),(self.S,'S'),(self.T,'T')] :
 
             if  self.M['현재날수'] == 2 and key == 'R' : self.R['매수수량'] = my.ceil(self.R['기초수량'] * (self.M['비중조절'] + 1))
@@ -621,12 +624,12 @@ class M_backtest_rst(Model) :
 
             else :
                 if  self.M['현재날수'] > 2  :
+                    
+                    tac['매수가격'] = self.take_chance(tac)
+                    if tac['매수가격'] > self.M['매수가격'] : tac['매수가격'] = self.M['매수가격']
+                    
                     tac['매수수량'] = self.chance_qty(tac['기초수량'],key)
                     if tac['매수수량'] * tac['매수가격'] > tac['현재잔액'] : tac['매수수량'] = int(tac['현재잔액']/tac['매수가격'])
-
-       
-
-
-
-
+                else :
+                    tac['매수가격'] = self.M['매수가격']
 
