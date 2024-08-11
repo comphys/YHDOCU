@@ -563,54 +563,64 @@ class M_backtest_rst(Model) :
         
     def nextStep(self) :
 
-        self.D['next_일자'] = self.M['현재날수'] 
-        self.D['next_종가'] = self.M['당일종가']
-        self.D['next_변동'] = round(self.M['종가변동'],2)
-        self.D['next_단계'] = self.M['매수단계']
+        self.D['N_일자'] = self.M['현재날수'] 
+        self.D['N_종가'] = self.M['당일종가']
+        self.D['N_변동'] = round(self.M['종가변동'],2)
+        self.D['N_단계'] = self.M['매수단계']
 
         if  self.M['첫날기록'] : 
 
-            self.D['next_일자'] = 1 
-            self.D['next_기회기초'] = my.ceil(self.R['일매수금']/self.M['당일종가'])
-            self.D['next_안정기초'] = my.ceil(self.S['일매수금']/self.M['당일종가'])
-            self.D['next_생활기초'] = my.ceil(self.T['일매수금']/self.M['당일종가'])
+            self.D['N_일자'] = 1 
+            self.D['N_기회기초'] = my.ceil(self.R['일매수금']/self.M['당일종가'])
+            self.D['N_안정기초'] = my.ceil(self.S['일매수금']/self.M['당일종가'])
+            self.D['N_생활기초'] = my.ceil(self.T['일매수금']/self.M['당일종가'])
             
-            self.D['next_기회매수가'] = round(self.M['당일종가'] * self.M['큰단가치'],2)
-            self.D['next_안정매수가'] = 0.0
-            self.D['next_생활매수가'] = 0.0
+            self.D['N_기회매수가'] = round(self.M['당일종가'] * self.M['큰단가치'],2)
+            self.D['N_안정매수가'] = 0.0
+            self.D['N_생활매수가'] = 0.0
             
-            self.D['next_기회매수량'] = self.D['next_기회기초']
-            self.D['next_안정매수량'] = 0
-            self.D['next_생활매수량'] = 0
+            self.D['N_기회매수량'] = self.D['N_기회기초']
+            self.D['N_안정매수량'] = 0
+            self.D['N_생활매수량'] = 0
 
-            self.D['next_기회매도량'] = 0
-            self.D['next_안정매도량'] = 0
-            self.D['next_생활매도량'] = 0
+            self.D['N_기회매도량'] = 0
+            self.D['N_안정매도량'] = 0
+            self.D['N_생활매도량'] = 0
 
-            self.D['next_기회매도가'] = self.D['next_안정매도가'] = self.D['next_생활매도가'] = 0.0
+            self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = 0.0
 
         else : 
             
             self.next_buy_RST()
 
-            self.D['next_기회기초'] = self.R['기초수량']
-            self.D['next_안정기초'] = self.S['기초수량']
-            self.D['next_생활기초'] = self.T['기초수량']
+            self.D['N_기회기초'] = self.R['기초수량']
+            self.D['N_안정기초'] = self.S['기초수량']
+            self.D['N_생활기초'] = self.T['기초수량']
             
-            self.D['next_기회매수가'] = self.M['매수가격'] if self.R['진행시작'] else self.R['매수가격']
-            self.D['next_안정매수가'] = self.M['매수가격'] if self.S['진행시작'] else self.S['매수가격']
-            self.D['next_생활매수가'] = self.M['매수가격'] if self.T['진행시작'] else self.T['매수가격']
+            self.D['N_기회매수가'] = self.M['매수가격'] if self.R['진행시작'] else self.R['매수가격'] 
+            self.D['N_기회평대비'] = self.next_percent(self.R['평균단가'],self.D['N_기회매수가']);       self.D['N_기회종대비'] = self.next_percent(self.M['당일종가'],self.D['N_기회매수가'])
+            self.D['N_안정매수가'] = self.M['매수가격'] if self.S['진행시작'] else self.S['매수가격']
+            self.D['N_안정평대비'] = self.next_percent(self.S['평균단가'],self.D['N_안정매수가']);       self.D['N_안정종대비'] = self.next_percent(self.M['당일종가'],self.D['N_안정매수가'])
+            self.D['N_생활매수가'] = self.M['매수가격'] if self.T['진행시작'] else self.T['매수가격']
+            self.D['N_생활평대비'] = self.next_percent(self.T['평균단가'],self.D['N_생활매수가']);       self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
             
-            self.D['next_기회매수량'] = self.R['매수수량']
-            self.D['next_안정매수량'] = self.S['매수수량']
-            self.D['next_생활매수량'] = self.T['매수수량']
+            self.D['N_기회매수량'] = self.R['매수수량']
+            self.D['N_안정매수량'] = self.S['매수수량']
+            self.D['N_생활매수량'] = self.T['매수수량']
 
-            self.D['next_기회매도량'] = self.R['보유수량']
-            self.D['next_안정매도량'] = self.S['보유수량']
-            self.D['next_생활매도량'] = self.T['보유수량']
+            self.D['N_기회매도량'] = self.R['보유수량']
+            self.D['N_안정매도량'] = self.S['보유수량']
+            self.D['N_생활매도량'] = self.T['보유수량']
 
-            self.D['next_기회매도가'] = self.D['next_안정매도가'] = self.D['next_생활매도가'] = self.M['매도가격']
+            self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = self.M['매도가격']
+            self.D['N_기회도평비'] = self.next_percent(self.R['평균단가'],self.D['N_기회매도가'])
+            self.D['N_안정도평비'] = self.next_percent(self.S['평균단가'],self.D['N_안정매도가'])
+            self.D['N_생활도평비'] = self.next_percent(self.T['평균단가'],self.D['N_생활매도가'])
+            self.D['N_공통종대비'] = self.next_percent(self.M['당일종가'],self.D['N_기회매도가'])
 
+    def next_percent(self,a,b) :
+        if not a : return 0.0
+        return round((b/a-1)*100,2)
 
     def next_buy_RST(self) :
 

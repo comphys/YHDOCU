@@ -31,3 +31,5 @@
 .pointing_sd2 {cursor: pointer; text-align:right;color:#CEF6CE;}
 
 .pointing_sd1:hover, .pointing_sd2:hover {font-weight:bold;color:yellow;}
+.ib {display: inline-block; text-align:right; width:48px;}
+.iby {display: inline-block; text-align:right; width:48px; color:white;}

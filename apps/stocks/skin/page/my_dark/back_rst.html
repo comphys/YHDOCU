@@ -285,21 +285,21 @@
 </div>
 {% endif %}
 
-<div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;width:300px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
+<div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
     <span style="font-style: italic"> Next Strategy</span><br><br>
 	<ul style="margin-left:10px">
-		<li>Days &nbsp;: {{D['next_일자']}}</li>
-		<li>Last &nbsp;&nbsp;: ${{D['next_종가']}}/({{D['next_변동']}}%)</li>
-		<li>Stage : {{D['next_단계']}}</li>
-		<li>B qty : {{D['next_기회기초']}}/{{D['next_안정기초']}}/{{D['next_생활기초']}}</li>
-		<li>-----------------------------</li>
-		<li>R buy : <sapn style="display:inline-block;width:40px;text-align:right;">{{D['next_기회매수량']}}</sapn> for {{D['next_기회매수가']}}</li>
-		<li>S buy : <sapn style="display:inline-block;width:40px;text-align:right;">{{D['next_안정매수량']}}</sapn> for {{D['next_안정매수가']}}</li>
-		<li>T buy : <sapn style="display:inline-block;width:40px;text-align:right;">{{D['next_생활매수량']}}</sapn> for {{D['next_생활매수가']}}</li>
-		<li>-----------------------------</li>
-		<li>R sell : <sapn style="display:inline-block;width:40px;text-align:right;">{{D['next_기회매도량']}}</sapn> for {{D['next_기회매도가']}}</li>
-		<li>S sell : <sapn style="display:inline-block;width:40px;text-align:right;">{{D['next_안정매도량']}}</sapn> for {{D['next_안정매도가']}}</li>
-		<li>T sell : <sapn style="display:inline-block;width:40px;text-align:right;">{{D['next_생활매도량']}}</sapn> for {{D['next_생활매도가']}}</li>
+		<li>Days &nbsp;: {{D['N_일자']}}</li>
+		<li>Last &nbsp;&nbsp;: {{D['N_종가']}} / ({{D['N_변동']}}%)</li>
+		<!-- <li>Stage : {{D['N_단계']}}</li> -->
+		<li>B qty : {{D['N_기회기초']}} / {{D['N_안정기초']}} / {{D['N_생활기초']}}</li>
+		<li>--------------------------------------------</li>
+		<li>R buy : <sapn class="ib">{{D['N_기회매수량']}}</sapn> <span class="iby">{{D['N_기회매수가']}}</span><span class="ib">{{D['N_기회평대비']}}</span><span class="ib">{{D['N_기회종대비']}}</span></li>
+		<li>S buy : <sapn class="ib">{{D['N_안정매수량']}}</sapn> <span class="iby">{{D['N_안정매수가']}}</span><span class="ib">{{D['N_안정평대비']}}</span><span class="ib">{{D['N_안정종대비']}}</span></li>
+		<li>T buy : <sapn class="ib">{{D['N_생활매수량']}}</sapn> <span class="iby">{{D['N_생활매수가']}}</span><span class="ib">{{D['N_생활평대비']}}</span><span class="ib">{{D['N_생활종대비']}}</span></li>
+		<li>--------------------------------------------</li>
+		<li>R sell : <sapn class="ib">{{D['N_기회매도량']}}</sapn> <span class="iby">{{D['N_기회매도가']}}</span><span class="ib">{{D['N_기회도평비']}}</span><span class="ib">{{D['N_공통종대비']}}</span></li>
+		<li>S sell : <sapn class="ib">{{D['N_안정매도량']}}</sapn> <span class="iby">{{D['N_안정매도가']}}</span><span class="ib">{{D['N_안정도평비']}}</span><span class="ib">{{D['N_공통종대비']}}</span></li>
+		<li>T sell : <sapn class="ib">{{D['N_생활매도량']}}</sapn> <span class="iby">{{D['N_생활매도가']}}</span><span class="ib">{{D['N_생활도평비']}}</span><span class="ib">{{D['N_공통종대비']}}</span></li>
 	</ul>
 </div>
 
