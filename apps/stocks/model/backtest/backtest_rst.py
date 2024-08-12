@@ -396,7 +396,7 @@ class M_backtest_rst(Model) :
         asispm = sum(asis_p) / asispc if asispc else 0.0
         asisum = sum(asis_u) / asisuc if asisuc else 0.0
 
-        win_p = asispc / asis_c * 100
+        win_p = asispc / asis_c * 100 if asis_c else 0.0
 
         self.D['asisC'] = f"{asis_c}({asispc}/{asisuc})"
         self.D['asisW'] = f"{win_p:.2f}"
