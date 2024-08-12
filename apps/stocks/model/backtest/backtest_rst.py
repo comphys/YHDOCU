@@ -384,7 +384,27 @@ class M_backtest_rst(Model) :
 
         self.D['손익저점'] = f"{self.D['손익저점']:.2f}"
 
+        # 손익통계 분석
+        asis = [float(x[3]) for x in self.D['손익통계']]
+        asis = asis[1:]
+ 
+        asis_c = len(asis)
+        asis_p = [x for x in asis if x >= 0.0 ]
+        asis_u = [x for x in asis if x < 0.0]
+        asispc = len(asis_p)
+        asisuc = len(asis_u)
+        asispm = sum(asis_p) / asispc if asispc else 0.0
+        asisum = sum(asis_u) / asisuc if asisuc else 0.0
 
+        win_p = asispc / asis_c * 100
+
+        self.D['asisC'] = f"{asis_c}({asispc}/{asisuc})"
+        self.D['asisW'] = f"{win_p:.2f}"
+        self.D['asisP'] = f"{asispm:.2f}"
+        self.D['asisU'] = f"{asisum:.2f}"
+
+
+   
     def get_start(self) :
 
         # 매매전략 가져오기
