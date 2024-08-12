@@ -193,27 +193,35 @@ class M_backtest_rst(Model) :
                 self.M['매수단계'] = '매수중단'
 
 
-    def tomorrow_sell(self) : 
-
-        # 경우에 따른 평균가*가중치 매도가격 설정
-        if  self.M['매수단계'] in ('매수제한','매수중단') :  
-            self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
-        else :
-            self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])  
-
-        # R,S 보정 2024.03.18. / T 보정 2019.05.02. 2019.05.06. 
-        for tac in (self.R,self.S,self.T) : 
-            if  tac['진행시작'] : 
-                self.M['매도가격'] = min(self.M['매도가격'],my.round_up(tac['평균단가'] * tac['매도보정']))
-
-        # 내일날자(현재날자+1)
-        if  self.M['손실회수']  and self.M['현재날수']+1  <= self.M['매도대기'] : 
+    def tomorrow_sell(self) :
+        
+        if  self.M['손실회수'] :
             
-            매도가1 = my.round_up(self.V['평균단가'] * self.M['전화위복'])
-            # R 보정 2024.07.10
-            매도가2 = my.round_up(self.R['평균단가'] * self.R['위기탈출'])
-            self.M['매도가격'] = min(매도가1,매도가2)
+            if  self.M['현재날수'] + 1 <= self.M['매도대기'] :
+                
+                매도가1 = my.round_up(self.V['평균단가'] * self.M['전화위복'])
+                # R 보정 2024.06.18 -> 2024.07.10
+                매도가2 = my.round_up(self.R['평균단가'] * self.R['위기탈출'])  
+                self.M['매도가격'] = min(매도가1,매도가2)
+                # S 보정 2021.08.30 -> 2021.10.12
+                if  self.S['진행시작']  : 
+                    매도가3 = my.round_up(self.S['평균단가'] * self.M['회복탈출'])
+                    self.M['매도가격'] = min(self.M['매도가격'],매도가3)
+            else :
+                self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
+                    
+        else :
+            
+            if  self.M['매수단계'] in ('매수제한','매수중단') :  
+                self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
+            else :
+                self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])  
 
+            # R,S 보정 2024.03.18. / T 보정 2019.05.02. 2019.05.06. 
+            for tac in (self.R,self.S,self.T) : 
+                if  tac['진행시작'] : 
+                    self.M['매도가격'] = min(self.M['매도가격'],my.round_up(tac['평균단가'] * tac['매도보정']))
+                    
         if  self.M['강매시작'] <= self.M['현재날수']+1 :                        
             self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['강매가치'])
         
@@ -221,7 +229,8 @@ class M_backtest_rst(Model) :
         종가상승 = my.round_up(self.M['당일종가'] * self.M['종가상승'])
         self.M['매도가격'] = min(self.M['매도가격'],종가상승)
         
-        if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01 
+        if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01
+            
 
     def tomorrow_step(self)   :
         
@@ -245,6 +254,7 @@ class M_backtest_rst(Model) :
         N = H + n
         k = N / (1+p/100)
         return round(A/(k-n),2)
+    
     
     def new_day(self) :
 
@@ -512,6 +522,7 @@ class M_backtest_rst(Model) :
         self.M['종가상승']  = ST['01600']  # 종가상승 폭이 설정 수치 이상일 경우 전체 매도 가격
         self.M['매도대기']  = ST['00600']  # 매도대기(18)
         self.M['전화위복']  = ST['00900']  # 손절 이후 매도 이율(1.12)
+        self.M['회복탈출']  = ST['00901']  # 손절 이후 S, T 평균값의 10% 이상시 매도
         self.M['분할횟수']  = ST['00100']  # 분할 횟수
         self.M['찬스일가']  = ST['01002']  # V,R 전략 시 찬스 수량 계산 가중일
 

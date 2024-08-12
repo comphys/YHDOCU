@@ -48,13 +48,20 @@ class update_Stactic3 :
             return
 
         self.M['전매도량'] = self.M['보유수량']
+        매도가격 = self.M['전매도가']
 
-        if int(self.M['보유수량']) > int(self.M['기초수량']) and self.M['회복아님'] : 
-            매도가격 = my.round_up(self.M['평균단가'] * self.M['안정매도'])
-            if  매도가격 < self.M['전매도가'] : 
-                self.M['전매도가'] = 매도가격
-                self.DB.exe(f"UPDATE {self.guide} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
-                self.DB.exe(f"UPDATE {self.rtact} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
+        if int(self.M['보유수량']) > int(self.M['기초수량']) :
+            
+            if self.M['회복아님'] : 
+                매도가격 = my.round_up(self.M['평균단가'] * self.M['안정매도'])
+
+            else :
+                매도가격 = my.round_up(self.M['평균단가'] * self.M['회복탈출'])
+
+        if  매도가격 < self.M['전매도가'] : 
+            self.M['전매도가'] = 매도가격
+            self.DB.exe(f"UPDATE {self.guide} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
+            self.DB.exe(f"UPDATE {self.rtact} SET sub20='{self.M['전매도가']}' WHERE add0='{self.D['today']}'")
 
 
     def tomorrow_buy(self)  :
@@ -174,6 +181,8 @@ class update_Stactic3 :
         self.M['안정회복']  = ST['02400']  # S전략 회복 매수시점
         self.M['날수가산']  = ST['01002']  # day_count 계산 시 날수 가산
         self.M['안정매도']  = ST['01200']  # S 전략의 안정매도 가격
+        self.M['회복탈출']  = ST['00901']  # 손절 이후 S, T 평균값의 10% 이상시 매도
+        
         self.guide = ST['03500']
         self.rtact = ST['03501']
 
