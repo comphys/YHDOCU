@@ -307,6 +307,13 @@
      style="display:none;position:fixed;left:1270px;top:112px;width:420px;height:350px;padding:0px;background-color:black;overflow-y:scroll;border:1px solid gray" 
 	 ondblclick="$('#statistics-profits').hide()">
 	 <table class='table table-striped' style="padding:0px">
+		<tr style="background-color: #000000;font-weight:bold;color:white;">
+			<td style="text-align:left;">결과분석</td>
+			<td style="text-align:right;">{{D['asisC']}}</td>
+			<td style="text-align:right;">{{D['asisW']}}%</td>
+			<td style="text-align:right;">{{D['asisP']}}%</td>
+			<td style="text-align:right;">{{D['asisU']}}%</td>
+		 </tr>
 	 {% for TR in D['손익통계'] %}
 	 <tr>
 		<td class="pointing_sd1" onclick="show_spanChart('{{TR[0]}}',1)">{{TR[0][2:]}}</td>
@@ -316,13 +323,6 @@
 		<td style="text-align:right;color:lightgoldenrodyellow">{{TR[6]}}</td>
 	 </tr>
 	 {% endfor %}
-	 <tr style="background-color: #000000;font-weight:bold;color:white;">
-		<td style="text-align:left;">최종분석</td>
-		<td style="text-align:right;">{{D['asisC']}}</td>
-		<td style="text-align:right;">{{D['asisW']}}%</td>
-		<td style="text-align:right;">{{D['asisP']}}%</td>
-		<td style="text-align:right;">{{D['asisU']}}%</td>
-	 </tr>
 	 </table>
 </div>
 
