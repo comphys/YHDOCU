@@ -6,6 +6,10 @@ class M_backtest_rst(Model) :
 
 # 변동성을 이용한 올타임 전략 V(일반) / R(기회) / S(안정)
 
+# things to solve
+# 2022.03.29. -> 2022.04.28. 
+
+
     def calculate_sub(self,tac,key) :
         
         if  tac['매수수량'] : 
