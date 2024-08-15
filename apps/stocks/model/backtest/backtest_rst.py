@@ -203,36 +203,39 @@ class M_backtest_rst(Model) :
             
             if  self.M['현재날수'] + 1 <= self.M['매도대기'] :
                 
-                TPRICE1 = my.round_up(self.V['평균단가'] * self.M['전화위복'])
+                UPRICE1 = my.round_up(self.V['평균단가'] * self.M['전화위복'])
                 # R 보정 2024.06.18 -> 2024.07.10
-                TPRICE2 = my.round_up(self.R['평균단가'] * self.R['위기탈출'])  
-                self.M['매도가격'] = min(TPRICE1,TPRICE2)
+                UPRICE2 = my.round_up(self.R['평균단가'] * self.R['위기탈출'])  
+                self.M['매도가격'] = min(UPRICE1,UPRICE2)
                 # S 보정 2021.08.30 -> 2021.10.12
                 if  self.S['진행시작']  : 
-                    TPRICE3 = my.round_up(self.S['평균단가'] * self.M['회복탈출'])
-                    self.M['매도가격'] = min(self.M['매도가격'],TPRICE3)
+                    UPRICE3 = my.round_up(self.S['평균단가'] * self.M['회복탈출'])
+                    self.M['매도가격'] = min(self.M['매도가격'],UPRICE3)
             else :
                 self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
                     
         else :
-            
+            # LPRICE
             if  self.M['매수단계'] in ('매수제한','매수중단') :  
                 self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
+            # UPRICE
             else :
                 self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])  
         
         # [희박한 확률]----------------------------------------------------------------------------------------
             # R,S 보정 2024.03.18. / T 보정 2019.05.02. 2019.05.06. 
+            # UPRICE
             for tac in (self.R,self.S,self.T) : 
                 if  tac['진행시작'] : 
                     self.M['매도가격'] = min(self.M['매도가격'],my.round_up(tac['평균단가'] * tac['매도보정']))
-                    
+        # LPRICE            
         if  self.M['강매시작'] <= self.M['현재날수']+1 :                        
             self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['강매가치'])
         # ----------------------------------------------------------------------------------------------------
         
         # 2024.06.18 이후 폭락장 보정, 종가상승의 우선권으로, R,S보정 및 강매가치에 의한 매도 확률은 희박해짐
-        self.M['매도가격'] = min(self.M['매도가격'],my.round_up(self.M['당일종가'] * self.M['종가상승']))
+        TPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승'])
+        self.M['매도가격'] = min(self.M['매도가격'],TPRICE)
         
         if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01
             
