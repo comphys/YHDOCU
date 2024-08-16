@@ -137,9 +137,11 @@ class M_dashboard_rst(Model) :
             self.D['profits'] = profits
 
             self.D['day_cnt'] = f"{diff_day:,}"
+            self.D['ini_bal'] = f"{a_bal:,.2f}"
+            self.D['sum_tot'] = f"{sum_w+sum_d:,.2f}"
             self.D['sum_win'] = f"{sum_w:,.2f}"
             self.D['sum_def'] = f"{sum_d:,.2f}"
-            self.D['sum_tot'] = f"{sum_w+sum_d:,.2f}"
+            
 
     def monthlyProfitTotal(self) :
 
