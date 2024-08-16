@@ -101,8 +101,8 @@ class M_backtest_rst(Model) :
         for tac in (self.V,self.R,self.S,self.T) :   
             tac['일매수금'] = int(tac['현재잔액']/self.M['분할횟수']) 
 
-        clr = "#F6CECE" if difft >= 0 else "#CED8F6"
-        self.D['손익통계'].append([self.M['현재일자'],f"{total:,.2f}",f"{difft:,.2f}",f"{diffp:.2f}",clr,self.M['기록시즌'],f"{diff0:.2f}"])
+        color = "#F6CECE" if difft >= 0 else "#CED8F6"
+        self.D['손익통계'].append([self.M['현재일자'],f"{total:,.2f}",f"{difft:,.2f}",f"{diffp:.2f}",color,self.M['기록시즌'],f"{diff0:.2f}"])
 
 
     def today_sell(self) :

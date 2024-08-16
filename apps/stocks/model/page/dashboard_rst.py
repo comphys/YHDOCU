@@ -94,14 +94,43 @@ class M_dashboard_rst(Model) :
                 for x in self.D['chart_date'] : self.D['Ttactic_avg'].append(cx.get(x,'null')); self.D['Ttactic_pro'].append(dx.get(x,'null'))
                 
             # 매도한 날 매도금 합 가져오기
+            
             for bid in self.M['boards'][1:] :
-                qry = f"SELECT SUBSTR(add0,3,10), CAST(add18 as float) FROM {bid} WHERE CAST(add12 as float) > 0 and {cond}"
+                qry = f"SELECT SUBSTR(add0,3,10), CAST(add18-sub31 as float) FROM {bid} WHERE CAST(add12 as float) > 0 and {cond}"
                 eachSellTotal = dict(self.DB.exe(qry))
                 self.merge_dict(self.M['eachSellTotal'],eachSellTotal)
-            
+
             self.D['eachSellTotal'] = []
             for x in self.D['chart_date'] : self.D['eachSellTotal'].append(self.M['eachSellTotal'].get(x,'null'))
 
+            # 누적 수익현황
+            profits = [['24-08-01','36,735.00','0.00','0.00','0.00',""]]; i_bal = my.sv(profits[0][1]); a_bal = i_bal
+            cnt_p = cnt_m = cnt_t = pro_p = pro_m =0
+
+            for k,v in self.M['eachSellTotal'].items() :
+                c_pro = v/a_bal*100
+                a_bal += v
+                a_pro = (a_bal/i_bal-1)*100
+
+                if  v >=0 :
+                    color = "#F6CECE"
+                    cnt_p +=1
+                    pro_p += c_pro
+                else :
+                    color = "#CED8F6"
+                    cnt_m +=1                    
+                    pro_m += c_pro
+                profits.append([k,f"{a_bal:,.2f}",f"{v:,.2f}",f"{c_pro:.2f}",f"{a_pro:.2f}",color])
+            
+            profits.reverse()
+            cnt_t = cnt_p + cnt_m
+            pro_w = pro_p/cnt_p if cnt_p else 0.00 
+            pro_d = pro_m/cnt_m if cnt_m else 0.00 
+            self.D['rst_cnt'] = f"{cnt_t}({cnt_p}/{cnt_m})"
+            self.D['rst_win'] = f"{cnt_p/cnt_t*100:.2f}"
+            self.D['pro_win'] = f"{pro_w:.2f}"
+            self.D['pro_def'] = f"{pro_d:.2f}"
+            self.D['profits'] = profits
 
     def monthlyProfitTotal(self) :
 
