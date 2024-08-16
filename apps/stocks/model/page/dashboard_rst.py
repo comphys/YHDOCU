@@ -127,7 +127,7 @@ class M_dashboard_rst(Model) :
             pro_w = pro_p/cnt_p if cnt_p else 0.00 
             pro_d = pro_m/cnt_m if cnt_m else 0.00 
             self.D['rst_cnt'] = f"{cnt_t}({cnt_p}/{cnt_m})"
-            self.D['rst_win'] = f"{cnt_p/cnt_t*100:.2f}"
+            self.D['rst_win'] = f"{cnt_p/cnt_t*100:.1f}"
             self.D['pro_win'] = f"{pro_w:.2f}"
             self.D['pro_def'] = f"{pro_d:.2f}"
             self.D['profits'] = profits
