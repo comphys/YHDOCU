@@ -9,8 +9,8 @@
         <div class="pull-left" style="border:1px solid black;">
             <canvas id="myChart_main"  style="width:1078px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
         </div>
-        <div class="pull-left" style="width:380px;border:1px solid black;margin-left:10px;padding:10px;">
-          <div style="height:300px;">
+        <div class="pull-left" style="width:380px;height:350px;border:1px solid black;margin-left:10px;padding:10px;">
+          <div style="height:310px;overflow-y:auto;">
             <table class='table table-striped table-hover'>
                 <tr style="border-bottom:1px solid gray;font-weight:bold;">
                   <td style="width:85px">진행결과</td>
@@ -28,6 +28,13 @@
                   <td style="text-align:right;color:lightgoldenrodyellow">{{TR[4]}}</td>
                 </tr>
               {% endfor %}
+              <tr style="border-top:1px solid gray;font-weight:bold;">
+                <td style="text-align:center;">{{D['day_cnt']}}</td>
+                <td style="width:100px;text-align:right;">{{D['sum_tot']}}</td>
+                <td style="text-align:right;">{{D['sum_win']}}</td>
+                <td style="text-align:right;">{{D['sum_def']}}</td>
+                <td style="text-align:right;">&nbsp;</td>
+              </tr>
               </table>
             </div>
             <div style="margin-top:2px;margin-left:30px;text-align:center;">
@@ -407,36 +414,12 @@ string += "</table>"
 $("#vrs_progress").html(string)
 //
 
-const data_side = {
-  labels: allot_key,
-  datasets: [{
-    label: ' 자산배분비율 ',
-    data: allot_val,
-    barThickness:54,
-    backgroundColor: ['#A67F78','#8F8681','#32435F','#283B42','#69491A','#003E19','#283B42'],
-    borderColor: ['#000000','#000000','#000000','#000000','#000000','#000000','#000000'],
-    borderWidth: 1
-  }]
-};
 
-const config_side = {
-  type: 'bar',
-  data: data_side,
-  plugins:[ChartDataLabels],
-  options: {
-    animation : {duration:500},
-    plugins : { legend: {display:false},
-                tooltip : {enabled:false},
-                datalabels : {color:'white', anchor:'start', align:'end', offset: 3, font:{size:12}}			
-    }
-    }
-}
-const myChart_side = new Chart(ctx_side, config_side);
 
 // ------------------------------------------------------------
 // 우측 하단 -2 
 // ------------------------------------------------------------
-var tactics_name = ['R','S','T']
+var tactics_name = ['R3','S3','T3']
 var tactics_From = {{D['처음순증']}};
 var tactics_toto = {{D['나중순증']}};
 var tactics_diff = []
@@ -450,7 +433,7 @@ var sum_diff = tactics_diff.reduce((acc,cur) => acc+cur,0);
 string  ="<span style='font-style:italic;color:gray;'>Net asset increase</span>"
 string +="<table style='width:100%'>"
 string +="<tr style='border-bottom:1px solid gray;height:23px;'>"
-string +="<td>T</td><td style='text-align:right'>From </td>"
+string +="<td>Tactics</td><td style='text-align:right'>From </td>"
 string +="<td style='text-align:right'>To </td>"
 string +="<td style='text-align:right'>Pro</td></tr>"
 for(i=0;i<tactics_name.length;i++) {

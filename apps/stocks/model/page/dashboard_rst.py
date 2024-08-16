@@ -105,7 +105,7 @@ class M_dashboard_rst(Model) :
 
             # 누적 수익현황
             profits = [['24-08-01','36,735.00','0.00','0.00','0.00',""]]; i_bal = my.sv(profits[0][1]); a_bal = i_bal
-            cnt_p = cnt_m = cnt_t = pro_p = pro_m =0
+            cnt_p = cnt_m = cnt_t = pro_p = pro_m = sum_w = sum_d = 0
 
             for k,v in self.M['eachSellTotal'].items() :
                 c_pro = v/a_bal*100
@@ -116,21 +116,30 @@ class M_dashboard_rst(Model) :
                     color = "#F6CECE"
                     cnt_p +=1
                     pro_p += c_pro
+                    sum_w += v
                 else :
                     color = "#CED8F6"
                     cnt_m +=1                    
                     pro_m += c_pro
+                    sum_d += v
                 profits.append([k,f"{a_bal:,.2f}",f"{v:,.2f}",f"{c_pro:.2f}",f"{a_pro:.2f}",color])
             
             profits.reverse()
             cnt_t = cnt_p + cnt_m
             pro_w = pro_p/cnt_p if cnt_p else 0.00 
             pro_d = pro_m/cnt_m if cnt_m else 0.00 
+            diff_day = my.diff_day('20'+profits[-1][0],'20'+profits[0][0])
+
             self.D['rst_cnt'] = f"{cnt_t}({cnt_p}/{cnt_m})"
             self.D['rst_win'] = f"{cnt_p/cnt_t*100:.1f}"
             self.D['pro_win'] = f"{pro_w:.2f}"
             self.D['pro_def'] = f"{pro_d:.2f}"
             self.D['profits'] = profits
+
+            self.D['day_cnt'] = f"{diff_day:,}"
+            self.D['sum_win'] = f"{sum_w:,.2f}"
+            self.D['sum_def'] = f"{sum_d:,.2f}"
+            self.D['sum_tot'] = f"{sum_w+sum_d:,.2f}"
 
     def monthlyProfitTotal(self) :
 
