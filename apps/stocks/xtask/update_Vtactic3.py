@@ -29,8 +29,6 @@ class update_Vtactic3(RST) :
             매도단가 = self.my_roundup(self.M['평균단가']*self.M['둘매가치'])
         if self.M['회복전략'] and self.M['경과일수'] +1 <= self.M['매도대기'] : 매도단가 = self.my_roundup(self.M['평균단가']* self.M['전략가치'])
 
-        if self.M['경과일수']+1 >= self.M['강매시작'] : 매도단가 = self.my_roundup(self.M['평균단가']*self.M['강매가치'])
-
         self.M['전매도량'] = self.M['보유수량']
         self.M['전매도가'] = round(매도단가,2)
         

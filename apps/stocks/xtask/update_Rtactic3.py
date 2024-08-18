@@ -56,7 +56,9 @@ class update_Rtactic3 :
 
         # 2024.06.18 이후 폭락장 보정
         종가상승 = my.round_up(self.M['당일종가'] * self.M['종가상승'])
-        매도가격 = min(매도가격, 종가상승)            
+        종가하한 = my.round_up(float(self.M['GD']['add7'])*self.M['강매가치']) 
+        
+        if 종가상승 >= 종가하한 : 매도가격 = min(매도가격, 종가상승)            
         
         if  매도가격 < self.M['전매도가'] : 
             self.M['전매도가'] = 매도가격
@@ -183,6 +185,7 @@ class update_Rtactic3 :
         self.M['기회매도']  = ST['01100']  # R 전략의 기회매도 가격
         self.M['위기탈출']  = ST['01500']  # R 전략 평균단가에 의한 위기탈출 매도값
         self.M['종가상승']  = ST['01600']  # 종가상승 폭이 설정 수치 이상일 경우 전체 매도 가격
+        self.M['강매가치']  = ST['00700']  # 손절가 범위(0.7)
         self.guide = ST['03500']
         
         self.M['진행일자'] = self.D['today']
