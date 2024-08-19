@@ -227,11 +227,12 @@ class M_backtest_rst(Model) :
         # [최종결정]---------------------------------------------------------------------------------------------
         # 2024.06.18 이후 폭락장 보정
         LPRICE = my.round_up(self.V['평균단가'] * self.M['강매가치'])
+        if self.M['강매시작'] <= self.M['현재날수'] + 1 : self.M['매도가격'] = LPRICE
+
         CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승'])
+        if  CPRICE > LPRICE : self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
 
-        if  CPRICE >= LPRICE : self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
-
-        if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01
+        if self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01
             
 
     def tomorrow_step(self)   :
@@ -651,9 +652,15 @@ class M_backtest_rst(Model) :
             self.D['N_생활도평비'] = self.next_percent(self.T['평균단가'],self.D['N_생활매도가'])
             self.D['N_공통종대비'] = self.next_percent(self.M['당일종가'],self.D['N_기회매도가'])
 
+            # formating...
+            self.D['N_기회매수가'] = f"{self.D['N_기회매수가']:.2f}"
+            self.D['N_안정매수가'] = f"{self.D['N_안정매수가']:.2f}"
+            self.D['N_생활매수가'] = f"{self.D['N_생활매수가']:.2f}"
+            self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = f"{self.M['매도가격']:.2f}"
+
     def next_percent(self,a,b) :
-        if not a : return 0.0
-        return round((b/a-1)*100,2)
+        if not a : return '0.00'
+        return f"{(b/a-1)*100:.2f}"
 
     def next_buy_RST(self) :
 
