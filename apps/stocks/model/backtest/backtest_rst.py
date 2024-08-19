@@ -201,20 +201,21 @@ class M_backtest_rst(Model) :
 
         # [일반진행]---------------------------------------------------------------------------------------------
         if  not self.M['손실회수'] :
-            if  self.M['매수단계'] in ('매수제한','매수중단') :  
-                self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
+            
+            if  self.M['매수단계'] not in ('매수제한','매수중단') :  
+                self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
+                
+                # R,S 보정 2024.03.18. / T 보정 2019.05.02. 2019.05.06. 
+                for tac in (self.R,self.S,self.T) : 
+                    if  tac['진행시작'] : 
+                        self.M['매도가격'] = min(self.M['매도가격'],my.round_up(tac['평균단가'] * tac['매도보정']))
             else :
-                self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])  
-        
-            # R,S 보정 2024.03.18. / T 보정 2019.05.02. 2019.05.06. 
-            for tac in (self.R,self.S,self.T) : 
-                if  tac['진행시작'] : 
-                    self.M['매도가격'] = min(self.M['매도가격'],my.round_up(tac['평균단가'] * tac['매도보정']))
+                self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])  
         
         # [전략진행]---------------------------------------------------------------------------------------------
         else :
            
-            if  self.M['현재날수'] + 1 <= self.M['매도대기'] :
+            if  self.M['현재날수'] <= self.M['매도대기'] -1 :
                 
                 # R 보정 2024.06.18 -> 2024.07.10
                 self.M['매도가격'] = min(my.round_up(self.V['평균단가'] * self.M['전화위복']),my.round_up(self.R['평균단가'] * self.R['위기탈출']))
@@ -225,12 +226,16 @@ class M_backtest_rst(Model) :
                 self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
                     
         # [최종결정]---------------------------------------------------------------------------------------------
-        # 2024.06.18 이후 폭락장 보정
         LPRICE = my.round_up(self.V['평균단가'] * self.M['강매가치'])
-        if self.M['강매시작'] <= self.M['현재날수'] + 1 : self.M['매도가격'] = LPRICE
+        
+        if  self.M['현재날수'] >= self.M['강매시작'] -1 : 
+            self.M['매도가격']  = LPRICE
 
+        # 2024.06.18 이후 폭락장 보정
         CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승'])
-        if  CPRICE > LPRICE : self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
+        
+        if  CPRICE > LPRICE : 
+            self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
 
         if self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01
             
@@ -667,7 +672,7 @@ class M_backtest_rst(Model) :
         self.M['매수가격'] = round(self.M['당일종가']*self.M['평단가치'],2)
 
         for (tac,key) in [(self.R,'R'),(self.S,'S'),(self.T,'T')] :
-
+            # 이틀 째까지는 전략 V 와 같은 패턴
             if  self.M['현재날수'] == 2 and key == 'R' : self.R['매수수량'] = my.ceil(self.R['기초수량'] * (self.M['비중조절'] + 1))
 
             if  tac['진행시작'] : tac['매수수량'] = tac['구매수량'] 
