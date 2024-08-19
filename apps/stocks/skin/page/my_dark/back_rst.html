@@ -3,7 +3,7 @@
 {% block contents_page  %}
 <div class="row-row">
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
-		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/back_rst/back_rst" onsubmit='return check_thisForm()'>
+		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/back_rst/back_rst" >
 			<br>
 			<input type='hidden' class="i-number" name="일반자금" value="{{D['일반자금']}}">
 			<div class="well clearfix" style="border-radius:0px;">
@@ -813,6 +813,7 @@ function synchro(opt,begin='pick') {
 			$("input[name='기회자금']").val(data.R_money);
 			$("input[name='안정자금']").val(data.S_money);
 			$("input[name='생활자금']").val(data.T_money);
+			if(opt==2) {$("form[name=stock_back_testing]").submit();}
 		}
 	});
 }
