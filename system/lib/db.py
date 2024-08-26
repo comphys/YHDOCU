@@ -40,7 +40,7 @@ class DB :
         if  rst := self.rst.fetchone() : return rst[0] 
         return None
     
-    def col(self,qry,opt=1) :
+    def col(self,qry) :
         self.rst = self.cur.execute(qry)
         if  rst := self.rst.fetchall() : 
             rst = [x[0] for x in rst]
