@@ -350,11 +350,11 @@ class RST :
         self.D['R_초기자본'] = f"{초기자본:,.0f}"
         self.D['R_최종자본'] = f"{최종자본:,.2f}"
         self.D['R_최종수익'] = f"{최종수익:,.2f}"
-        self.D['R_종수익률'] = f"{self.D['profit_t']:,.2f}"
-        self.D['RV종수익률'] = f"{self.D['v_profit']:,.2f}"
-        self.D['RR종수익률'] = f"{self.D['r_profit']:,.2f}"
-        self.D['RS종수익률'] = f"{self.D['s_profit']:,.2f}"
-        self.D['RT종수익률'] = f"{self.D['t_profit']:,.2f}"
+        self.D['R_최종익률'] = f"{self.D['profit_t']:,.2f}"
+        self.D['R_일반익률'] = f"{self.D['v_profit']:,.2f}"
+        self.D['R_기회익률'] = f"{self.D['r_profit']:,.2f}"
+        self.D['R_안정익률'] = f"{self.D['s_profit']:,.2f}"
+        self.D['R_생활익률'] = f"{self.D['t_profit']:,.2f}"
 
     
     def new_day(self) :
@@ -424,73 +424,73 @@ class RST :
         self.M['현재날수'] +=1    
             
 
+    def get_start(self) :
 
-    def get_start(self,start_date,end_date) :
-
-        old_date = my.dayofdate(start_date,-7)[0]
-        self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='SOXL' AND add0 BETWEEN '{old_date}' AND '{end_date}'",'add0')
-        self.B = self.DB.get('add0,add3,add8') # 날자, 종가, 증감        
+        self.D['종목코드']  = 'SOXL'
+        old_date = my.dayofdate(self.D['시작일자'],-7)[0]
+        self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{self.D['종료일자']}'",'add0')
+        self.B = self.DB.get('add0,add3,add8') # 날자, 종가, 증감 
 
         # 데이타 존재 여부 확인
-        self.DB.tbl, self.DB.wre = ("h_stockHistory_board",f"add1='SOXL'")
+        self.DB.tbl, self.DB.wre = ("h_stockHistory_board",f"add1='{self.D['종목코드']}'")
         chk_data = self.DB.get_one("min(add0)")
-        if chk_data > start_date : 
-            self.D['NOTICE'] = f" {start_date} 에서 {end_date} 까지 분석을 위한 데이타가 부족합니다. 시작 날자를 {chk_data} 이후 3일 뒤로 조정하시기 바랍니다."
-            return "NOTICE"
-        
-        self.D['시작일자'] = start_date
+        if chk_data > self.D['시작일자'] : 
+            self.D['NOTICE'] = f" {self.D['시작일자']} 에서 {self.D['종료일자']} 까지 분석을 위한 데이타가 부족합니다. 시작 날자를 {chk_data} 이후 3일 뒤로 조정하시기 바랍니다."
+            return
 
         # 기간 계산하기
-        self.D['s_day'] = s_day = start_date  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
-        self.D['e_day'] = e_day = end_date    ; d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
+        self.D['s_day'] = s_day = self.D['시작일자']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
+        self.D['e_day'] = e_day = self.D['종료일자']  ; d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
         delta = d1-d0
         self.D['days_span'] = delta.days
 
-    def get_date_serial(self,start_date,end_date) :
-        qry = f"SELECT add0 FROM h_stockHistory_board WHERE add1='SOXL' AND add0 BETWEEN '{start_date}' AND '{end_date}' ORDER BY add0"
-        return self.DB.col(qry)
-
-
-    def init_capital(self,V,R,S,T) :
-        
-        self.V['현재잔액']  = V; self.V['일매수금']  = int(self.V['현재잔액'] / self.M['분할횟수'])
-        self.R['현재잔액']  = R; self.R['일매수금']  = int(self.R['현재잔액'] / self.M['분할횟수'])
-        self.S['현재잔액']  = S; self.S['일매수금']  = int(self.S['현재잔액'] / self.M['분할횟수'])
-        self.T['현재잔액']  = T; self.T['일매수금']  = int(self.T['현재잔액'] / self.M['분할횟수'])
-
-        
     def init_value(self) :
 
-        ST = self.DB.parameters_dict('매매전략/VRS')
-        
-        self.M['비중조절']  = ST['01001']  # 매매일수 에 따른 구매수량 가중치(1.25)
-        self.M['평단가치']  = ST['00300']  # 매수시 가중치(1.022)
-        self.M['큰단가치']  = ST['00200']  # 첫날매수 시 가중치(1.12)
-        self.M['첫매가치']  = ST['00400']  # 일반매도 시 이율(1.022) 
-        self.M['둘매가치']  = ST['00500']  # 매수제한 시 이율(0.939) 
-        self.M['강매시작']  = ST['00800']  # 강매시작 일(24) 
-        self.M['강매가치']  = ST['00700']  # 손절가 범위(0.7)
-        self.M['위매비중']  = ST['01000']  # 매수제한 시 매수범위 기본수량의 (3)
-        self.R['매도보정']  = ST['01100']
-        self.S['매도보정']  = ST['01200']
-        self.T['매도보정']  = ST['01400']
-        self.R['위기탈출']  = ST['01500']
-        self.M['종가상승']  = ST['01600']  # 종가상승 폭이 설정 수치 이상일 경우 전체 매도 가격
-        self.M['매도대기']  = ST['00600']  # 매도대기(18)
-        self.M['전화위복']  = ST['00900']  # 손절 이후 매도 이율(1.12)
-        self.M['회복탈출']  = ST['00901']  # 손절 이후 S, T 평균값의 10% 이상시 매도
-        self.M['분할횟수']  = ST['00100']  # 분할 횟수
-        self.M['찬스일가']  = ST['01002']  # V,R 전략 시 찬스 수량 계산 가중일
+        if '비중조절' not in self.M :
+            
+            ST = self.DB.parameters_dict('매매전략/VRS')
+            
+            self.M['비중조절']  = ST['01001']  # 매매일수 에 따른 구매수량 가중치(1.25)
+            self.M['평단가치']  = ST['00300']  # 매수시 가중치(1.022)
+            self.M['큰단가치']  = ST['00200']  # 첫날매수 시 가중치(1.12)
+            self.M['첫매가치']  = ST['00400']  # 일반매도 시 이율(1.022) 
+            self.M['둘매가치']  = ST['00500']  # 매수제한 시 이율(0.939) 
+            self.M['강매시작']  = ST['00800']  # 강매시작 일(24) 
+            self.M['강매가치']  = ST['00700']  # 손절가 범위(0.7)
+            self.M['위매비중']  = ST['01000']  # 매수제한 시 매수범위 기본수량의 (3)
+            self.R['매도보정']  = ST['01100']
+            self.S['매도보정']  = ST['01200']
+            self.T['매도보정']  = ST['01400']
+            self.R['위기탈출']  = ST['01500']
+            self.M['종가상승']  = ST['01600']  # 종가상승 폭이 설정 수치 이상일 경우 전체 매도 가격
+            self.M['매도대기']  = ST['00600']  # 매도대기(18)
+            self.M['전화위복']  = ST['00900']  # 손절 이후 매도 이율(1.12)
+            self.M['회복탈출']  = ST['00901']  # 손절 이후 S, T 평균값의 10% 이상시 매도
+            self.M['분할횟수']  = ST['00100']  # 분할 횟수
+            self.M['찬스일가']  = ST['01002']  # V,R 전략 시 찬스 수량 계산 가중일
+            self.R['진입시점']  = ST['02100'] 
+            self.R['회복시점']  = ST['02200'] 
+            self.S['진입시점']  = ST['02300'] 
+            self.S['회복시점']  = ST['02400'] 
+            self.T['진입시점']  = ST['02401']
+            self.T['회복시점']  = ST['02402']
+            
+            self.D['수료적용']  = 'on'
+            self.D['세금적용']  = 'off'
+            self.D['일밸런싱']  = 'on'
+            self.D['이밸런싱']  = 'on'
+            
+        if '일반자금' not in self.D :
+            
+            self.D['일반자금']  = ST['05100']
+            self.D['기회자금']  = ST['05200']
+            self.D['안정자금']  = ST['05300']
+            self.D['생활자금']  = ST['05400']
 
         self.M['손실회수']  = False  
         self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
         self.M['매수단계']  = '일반매수'
         self.M['기록시즌']  = 0
-
-        self.D['일반자금']  = ST['05100']
-        self.D['기회자금']  = ST['05200']
-        self.D['안정자금']  = ST['05300']
-        self.D['생활자금']  = ST['05400']        
 
         self.V['현재잔액']  = my.sv(self.D['일반자금'])
         self.R['현재잔액']  = my.sv(self.D['기회자금'])
@@ -512,18 +512,6 @@ class RST :
         self.R['진행시작']  = False 
         self.S['진행시작']  = False 
         self.T['진행시작']  = False
-        
-        self.R['진입시점']  = float(ST['02100']) 
-        self.R['회복시점']  = float(ST['02200']) 
-        self.S['진입시점']  = float(ST['02300']) 
-        self.S['회복시점']  = float(ST['02400']) 
-        self.T['진입시점']  = float(ST['02401'])
-        self.T['회복시점']  = float(ST['02402'])
-
-        self.D['수료적용']  = 'on'
-        self.D['세금적용']  = 'off'
-        self.D['일밸런싱']  = 'on'
-        self.D['이밸런싱']  = 'on'
 
         self.M['전일종가']  = 0.0
         
@@ -564,4 +552,26 @@ class RST :
             self.T[k] = val
 
     
+#    Public definition ---------------------------------------------------------------------------------------------------------------------------------
 
+    def get_simulated_result(self,start='',end='') :
+        
+        self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board") if not end else end
+        self.D['시작일자'] = my.dayofdate(self.D['종료일자'],delta=-365*2)[0] if not start else start 
+        
+        self.get_start()
+        self.init_value()
+        self.simulate()
+        self.result()
+        
+    def init_capital(self,V,R,S,T) :
+        
+        self.D['일반자금'] = f"{V:,.2f}" 
+        self.D['기회자금'] = f"{R:,.2f}" 
+        self.D['안정자금'] = f"{S:,.2f}" 
+        self.D['생활자금'] = f"{T:,.2f}" 
+        
+    def get_date_list(self,start_date,end_date) :
+        
+        qry = f"SELECT add0 FROM h_stockHistory_board WHERE add1='SOXL' AND add0 BETWEEN '{start_date}' AND '{end_date}' ORDER BY add0"
+        return self.DB.col(qry)
