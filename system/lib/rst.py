@@ -24,14 +24,18 @@ class RST :
             tac['보유수량'] += tac['매수수량']
             tac['총매수금'] += tac['매수금액']
             tac['평균단가'] =  tac['총매수금'] / tac['보유수량'] 
-            if self.D['수료적용'] == 'on' : tac['현재잔액'] -=  self.commission(tac['매수금액'],1)
+            if  self.D['수료적용'] == 'on' : 
+                tac['수수료등']  = self.commission(tac['매수금액'],1)
+                tac['현재잔액'] -= tac['수수료등']
         
         if  tac['매도수량'] :
             tac['실현수익']  = (self.M['당일종가'] - tac['평균단가']) * tac['매도수량']
             tac['보유수량'] -=  tac['매도수량'];  tac['현재잔액'] += tac['매도금액']; tac['총매수금'] = 0.00
             tac['수익현황']  =  tac['실현수익']
             
-            if self.D['수료적용'] == 'on' : tac['현재잔액'] -=  self.commission(tac['매도금액'],2)
+            if  self.D['수료적용'] == 'on' : 
+                tac['수수료등']  = self.commission(tac['매도금액'],2)
+                tac['현재잔액'] -= tac['수수료등'] 
             if self.D['세금적용'] == 'on' : tac['현재잔액'] -=  self.tax(tac['실현수익'])
             
             self.rstCount(tac['실현수익'],key)
@@ -89,7 +93,6 @@ class RST :
 
         return int(mm*0.22) 
         
-        
     def rebalance(self)  :
 
         total = self.R['현재잔액'] + self.S['현재잔액'] + self.T['현재잔액']
@@ -115,7 +118,6 @@ class RST :
         color = "#F6CECE" if difft >= 0 else "#CED8F6"
         self.D['손익통계'].append([self.M['현재일자'],f"{total:,.2f}",f"{difft:,.2f}",f"{diffp:.2f}",color,self.M['기록시즌'],f"{diff0:.2f}"])
 
-
     def today_sell(self) :
         
         if  self.M['당일종가'] >= self.M['매도가격'] : 
@@ -131,7 +133,6 @@ class RST :
                 self.M['손실회수'] = True
             else :
                 self.M['손실회수'] = False
-
 
     def today_buy_RST(self,tac,key) :
 
@@ -153,7 +154,6 @@ class RST :
                 tac['거래코드'] = f"{key}{tac['매수수량']}/{tac['기초수량']}" 
                 tac['매수금액'] = tac['매수수량'] * self.M['당일종가']
                 tac['진행시작'] = True
-
 
     def today_buy(self) :
 
@@ -208,7 +208,6 @@ class RST :
                 self.V['구매수량'] = 0
                 self.M['매수단계'] = '매수중단'
 
-
     def tomorrow_sell(self) :
 
         # [일반진행]---------------------------------------------------------------------------------------------
@@ -250,7 +249,6 @@ class RST :
             self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
 
         if self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01
-            
 
     def tomorrow_step(self)   :
         
@@ -262,7 +260,6 @@ class RST :
         self.tomorrow_step_RST(self.T,'T')
 
         if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01
-
         
     def take_chance(self,tac) :
         H = self.V['보유수량']
@@ -275,43 +272,6 @@ class RST :
         k = N / (1+p/100)
         return round(A/(k-n),2)
     
-    
-    def new_day(self) :
-
-        self.R['매수가격'] = 0.0;  self.R['진행시작'] = False; self.R['매수금액'] = 0.0; self.R['매수수량'] = 0
-        self.S['매수가격'] = 0.0;  self.S['진행시작'] = False; self.S['매수금액'] = 0.0; self.S['매수수량'] = 0
-        self.T['매수가격'] = 0.0;  self.T['진행시작'] = False; self.T['매수금액'] = 0.0; self.T['매수수량'] = 0
-
-        self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가'],0)
-            
-        if  self.M['당일종가'] <  round(self.M['전일종가'] * self.M['큰단가치'],2) :
-            
-            self.M['기록시즌'] += 1
-            self.M['현재날수'] = 1
-            
-            for tac in (self.V,self.R,self.S,self.T) : tac['기초수량']  = my.ceil(tac['일매수금']/self.M['전일종가'])
-            
-            for tac in (self.V,self.R) :
-                tac['매수수량']  = tac['기초수량']
-                tac['수익현황']  = tac['현수익률'] = 0.0
-                tac['보유수량']  = tac['매수수량']
-                tac['평균단가']  = self.M['당일종가'] 
-                tac['매수금액']  = self.M['당일종가'] * tac['매수수량']
-                tac['총매수금']  = tac['평가금액'] = tac['매수금액']
-                tac['현재잔액'] -= tac['매수금액']
-                tac['거래코드']  = f"{tac['매수수량']}" 
-                if self.D['수료적용'] == 'on'  : tac['현재잔액'] -=  self.commission(tac['매수금액'],1)
-
-            self.M['진행상황'] = '첫날매수'    
-            self.M['매수단계'] = '일반매수'
-            self.M['첫날기록'] = False
- 
-            return True
-
-        else : 
-            return False
-        
-
     def result(self) :
 
         self.D['최대일수'] = self.M['최대일수']
@@ -356,7 +316,6 @@ class RST :
         self.D['R_안정익률'] = f"{self.D['s_profit']:,.2f}"
         self.D['R_생활익률'] = f"{self.D['t_profit']:,.2f}"
 
-    
     def new_day(self) :
 
         self.R['매수가격'] = 0.0;  self.R['진행시작'] = False; self.R['매수금액'] = 0.0; self.R['매수수량'] = 0
@@ -381,7 +340,9 @@ class RST :
                 tac['총매수금']  = tac['평가금액'] = tac['매수금액']
                 tac['현재잔액'] -= tac['매수금액']
                 tac['거래코드']  = f"{tac['매수수량']}" 
-                if self.D['수료적용'] == 'on'  : tac['현재잔액'] -=  self.commission(tac['매수금액'],1)
+                if  self.D['수료적용'] == 'on'  : 
+                    tac['수수료등']  = self.commission(tac['매수금액'],1)
+                    tac['현재잔액'] -= tac['수수료등']
 
             self.M['진행상황'] = '첫날매수'    
             self.M['매수단계'] = '일반매수'
@@ -422,7 +383,6 @@ class RST :
     def add_day(self) :
         if not self.V['보유수량'] and not self.V['매도수량']: return
         self.M['현재날수'] +=1    
-            
 
     def get_start(self) :
 
@@ -516,7 +476,7 @@ class RST :
         self.M['전일종가']  = 0.0
         
         self.set_value(['매수수량','매도수량','구매수량','보유수량'],0)
-        self.set_value(['매수금액','매도금액','실현수익','총매수금','평균단가','수익현황','현수익률','평가금액','매수가격'],0.0)
+        self.set_value(['매수금액','매도금액','실현수익','총매수금','평균단가','수익현황','현수익률','평가금액','매수가격','수수료등'],0.0)
 
         self.set_value(['진최하락'],0)
         self.set_value(['최하일자'],'')
@@ -575,3 +535,19 @@ class RST :
         
         qry = f"SELECT add0 FROM h_stockHistory_board WHERE add1='SOXL' AND add0 BETWEEN '{start_date}' AND '{end_date}' ORDER BY add0"
         return self.DB.col(qry)
+
+    
+    def get_sync_data(self,backto='') :
+        
+        s_date = self.DB.one("SELECT max(add0) FROM h_stockHistory_board") if not backto else backto
+        self.info(s_date)
+        order = 'add0 DESC' 
+
+        V_board = self.DB.parameters('03500')
+        R_board = self.DB.parameters('03501')
+
+        V_date  = self.DB.one(f"SELECT add0 FROM {R_board} WHERE add0 <='{s_date}' and sub12='1' ORDER BY {order} LIMIT 1")
+        V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
+        R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
+        
+        return [V_date,float(V_money),float(R_money)]
