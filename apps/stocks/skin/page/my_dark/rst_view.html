@@ -137,6 +137,8 @@
 				수익 <span style='font-weight:bold;color:#CEF6CE'>{{D['R_최종수익']}}</span>
 				수익률 <span style='font-weight:bold;color:#F6CECE'>{{D['R_최종익률']}}(<span style='font-weight:bold;color:gray'> {{D['R_일반익률']}}</span> : {{D['R_기회익률']}} / {{D['R_안정익률']}} / {{D['R_생활익률']}} ) % </span>
 			</div>
+			{% else %}
+			<div style="font-style:italic;color:gray"> New season just starts...</div>
 			{% endif %}
 		</div>
 		{% if D['TR'] %}
