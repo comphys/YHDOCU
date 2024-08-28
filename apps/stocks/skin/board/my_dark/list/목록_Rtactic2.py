@@ -5,6 +5,7 @@ class 목록_Rtactic2(SKIN) :
 
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)
+        self.RST = self.SYS.load_lib('rst')
 
     def head(self) : 
         return
@@ -43,7 +44,6 @@ class 목록_Rtactic2(SKIN) :
             self.DB.tbl = self.D['tbl']
             self.DB.wre = f"add0='{last_date}'"
             LD = self.DB.get_line('add3,add4,add6,add7,add9,add14,add16,add17,sub2,sub3,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub28')
-            
             RD = self.DB.exe(f"SELECT add0, CAST(add7 as FLOAT), CAST(add8 as FLOAT), CAST(add9 as INT) FROM {self.DB.tbl} WHERE add0 BETWEEN '{first_date}' AND '{last_date}'") 
                  
             cx = {};dx = {}
@@ -57,14 +57,8 @@ class 목록_Rtactic2(SKIN) :
                     self.D['Rtactic_avg'].append(cx.get(x,'null')) 
                     self.D['Rtactic_pro'].append(dx.get(x,'null'))
             
-            # ------------- taget record 불러오기
-            self.DB.clear()
-            self.DB.tbl = VtacBoard
-            self.DB.wre = f"add0 = '{last_date}'"
-            VD = self.DB.get_line("add0,add1,add2,add3,add4,add5,add6,add7,add8,add9,add11,add12,add14,add15,add16,add17,add18,sub1,sub2,sub4,sub5,sub6,sub7,sub12,sub18,sub19,sub20,sub28,sub29")
-            
+  
             chart_len = len(chart_data)
-            # --------------
             현재환율 = self.DB.one("SELECT CAST(usd_krw AS FLOAT) FROM usd_krw ORDER BY rowid DESC LIMIT 1")
             
             총투자금 = float(LD['sub25']) - float(LD['sub26'])
@@ -77,85 +71,25 @@ class 목록_Rtactic2(SKIN) :
             self.D['총수익금'] = f"{총수익금:,.0f}"
             self.D['총수익률'] = f"{총수익률:.2f}"
 
-            # -- extra-info by invest guide
-            타겟일수 = int(VD['sub12']) 
-            기초수량 = int(LD['sub18'])
-  
-            if  타겟일수 == 0 :
-                self.D['매수갯수'] = 기초수량
-                self.D['매수단가'] = LD['sub19']
-                self.D['매수예상'] = f"{기초수량 * float(LD['sub19']):,.2f}"
-                self.D['매도갯수'] = '0' 
-                self.D['매도단가'] = '0.00' 
-                self.D['매도예상'] = '0.00'
-                self.D['예상이익'] = '0.00'
-                self.D['원화예상'] = '0'
-                self.D['V_tact_value'] = [VD['sub20']] * chart_len 
-                self.D['chance_value'] = [LD['sub19']] * chart_len 
+            nX = self.RST.get_nextStrategy('R')
+            self.D['매수갯수'] = nX['buy_q']
+            self.D['매수단가'] = f"{nX['buy_p']:,.2f}"
+            self.D['매수예상'] = f"{nX['buy_q'] * nX['buy_p']:,.2f}"
+            self.D['매도갯수'] = nX['sel_q']
+            self.D['매도단가'] = f"{nX['sel_p']:,.2f}"
+            self.D['매도예상'] = f"{nX['sel_q'] * nX['sel_p']:,.2f}"
+            예상이익 = float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))
+            self.D['예상이익'] = f"{예상이익:,.2f}"
+            self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"
+            self.D['V_tact_value'] = [nX['sel_p']] * chart_len if nX['sel_p'] else ['null'] * chart_len
+            self.D['chance_value'] = [nX['buy_p']] * chart_len if nX['buy_p'] else ['null'] * chart_len
             
-            elif 타겟일수 == 1 :
-                self.D['매수갯수'] = int(LD['sub2'])
-                self.D['매수단가'] = f"{float(LD['sub19']):,.2f}"
-                self.D['매수예상'] = f"{(int(LD['sub2']) * float(LD['sub19'])):,.2f}"
-                self.D['매도갯수'] = int(LD['sub3'])
-                self.D['매도단가'] = f"{float(LD['sub20']):,.2f}"
-                self.D['매도예상'] = f"{(int(LD['sub3']) * float(LD['sub20'])):,.2f}"
-                예상이익 = float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))
-                self.D['예상이익'] = f"{예상이익:,.2f}" 
-                self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"
-                self.D['V_tact_value'] = [VD['sub20']] * chart_len 
-                self.D['chance_value'] = [LD['sub19']] * chart_len                
-            
-            elif 타겟일수 >= 2 and int(LD['add9']) <= int(LD['sub18'])*3.5: 
-                # 테스트 상 많이 사는 것이 유리함(수량을 하루 치 더 삼, 어제일수 + 1 +1(추가분))
-                찬스수량 = 0
-                day_count = min(int(VD['sub12'])+1+self.DB.parameters('01002'),6)
-                for i in range(0,day_count) : 찬스수량 += my.ceil(기초수량 *(i*1.25 + 1))
-
-                cpn = self.take_chance(self.DB.parameters('02100'),int(VD['add9']),int(VD['sub2']),float(VD['add6']))    
-                cpc = self.take_chance(self.DB.parameters('02200'),int(VD['add9']),int(VD['sub2']),float(VD['add6']))
-
-                #  p = 0 if (self.M['수익률'] < self.R['기회시점'] or self.M['손실회수']) else self.R['기회시점']
-                # 찬스가격 = cp00 if (float(VD['add8']) < -2.2 or float(VD['sub7'])) else cp22
-                찬스가격 = cpc if float(VD['sub7']) else cpn
-                찬스가격 = min(float(VD['sub19']),찬스가격)
-                
-                self.D['매수갯수'] = f"{찬스수량:,}"
-                self.D['매수단가'] = f"{찬스가격:,.2f}"
-                self.D['매수예상'] = f"{찬스수량 * 찬스가격:,.2f}"
-                self.D['매도갯수'] = LD['add9']; self.D['매도단가'] = VD['sub20']; 
-                self.D['매도예상'] = f"{(int(LD['add9']) * float(VD['sub20'])):,.2f}"
-                예상이익 = float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))
-                self.D['예상이익'] = f"{예상이익:,.2f}"
-                self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"
-                self.D['V_tact_value'] = [VD['sub20']] * chart_len
-                self.D['chance_value'] = [찬스가격] * chart_len
-                
-            else : # 가이드 및 투자가 진행 중일 때
-                self.D['매수갯수'] = int(LD['sub2'])
-                self.D['매수단가'] = f"{float(LD['sub19']):,.2f}"
-                self.D['매수예상'] = f"{(int(LD['sub2']) * float(LD['sub19'])):,.2f}"
-                self.D['매도갯수'] = int(LD['sub3'])
-                self.D['매도단가'] = f"{float(LD['sub20']):,.2f}"
-                self.D['매도예상'] = f"{(int(LD['sub3']) * float(LD['sub20'])):,.2f}"
-                예상이익 = float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))
-                self.D['예상이익'] = f"{예상이익:,.2f}"
-                self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"
-                self.D['V_tact_value'] = [VD['sub20']] * chart_len
-                self.D['chance_value'] = ['null'] * chart_len
-            
-            self.D['연속상승'] = VD['sub5']
-            self.D['연속하락'] = VD['sub6']
             self.D['현재환율'] = f"{현재환율:,.2f}"
             self.D['자산배분'] = self.DB.parameters_des('03800')
             self.D['가치합계'] = round(float(LD['add17']))
 
-            # GD : Guide Data
-            yy = my.sv(VD['add14'])
-            bb = my.sv(self.D['매수단가'])
-            ss = my.sv(self.D['매도단가'])
-            self.D['yx_b'] = f"{round(bb/yy - 1,4) * 100:.2f}" if bb else ''
-            self.D['yx_s'] = f"{round(ss/yy - 1,4) * 100:.2f}" if ss else ''
+            self.D['yx_b'] = nX['yx_b']
+            self.D['yx_s'] = nX['yx_s']
             
             # 월별 실현손익
             qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {self.D['tbl']} WHERE CAST(add12 as float) > 0 "
@@ -177,11 +111,6 @@ class 목록_Rtactic2(SKIN) :
                 self.D['월별이익'].append(round(monthly_total/monthly_lenth))
                 self.D['손익합계'] = f"$ {monthly_total:,.0f} ({monthly_total*현재환율:,.0f}원)"         
 
-    def take_chance(self,p,H,n,A) :
-        if H == 0 : return 0
-        N = H + n
-        k = N / (1+p/100)
-        return round(A/(k-n),2)
 
     def list(self) :
 

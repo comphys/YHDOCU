@@ -73,13 +73,14 @@ class RST :
             self.M['최장일자'] = self.M['현재일자']
         
     def rstCount(self,profit,key) :
-
-        if  profit >= 0 : 
-            if self.M['회복전략'] : self.D[key+'회익절'] += 1
-            else : self.D[key+'정익절'] += 1  
-        else : 
-            if self.M['회복전략'] : self.D[key+'회손절'] += 1
-            else : self.D[key+'정손절'] += 1   
+        
+        if self.chart :
+            if  profit >= 0 : 
+                if self.M['회복전략'] : self.D[key+'회익절'] += 1
+                else : self.D[key+'정익절'] += 1  
+            else : 
+                if self.M['회복전략'] : self.D[key+'회손절'] += 1
+                else : self.D[key+'정손절'] += 1   
 
     def commission(self,mm,opt) :
 
@@ -376,7 +377,7 @@ class RST :
         최종수익 = 최종자본 - 초기자본 
         self.D['profit_t'] = round((최종수익/초기자본) * 100,2)
         
-        self.D['R_총경과일'] = f"{self.D['days_span']:,}"
+        
         self.D['R_초기자본'] = f"{초기자본:,.0f}"
         self.D['R_최종자본'] = f"{최종자본:,.2f}"
         self.D['R_최종수익'] = f"{최종수익:,.2f}"
@@ -445,7 +446,7 @@ class RST :
         s_day = self.D['시작일자']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
         e_day = self.D['종료일자']  ; d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
         delta = d1-d0
-        self.D['days_span'] = delta.days
+        self.D['R_총경과일'] = f"{delta.days:,}"
 
     def print_backtest(self) :
 
@@ -586,9 +587,9 @@ class RST :
         self.set_value(['진최하락'],0)
         self.set_value(['최하일자'],'')
 
-        self.D['TR'] = []
-
         if  self.chart : # 챠트작성
+            
+            self.D['TR'] = []
             self.D['c_date'] = []
             self.D['clse_p'] = []
             self.D['avge_r'] = []; self.D['avge_s'] = []; self.D['avge_t'] = []
@@ -619,32 +620,36 @@ class RST :
         if  self.M['첫날기록'] : 
 
             self.D['N_일자'] = 1 
+            self.D['N_일반기초'] = my.ceil(self.V['일매수금']/self.M['당일종가'])
             self.D['N_기회기초'] = my.ceil(self.R['일매수금']/self.M['당일종가'])
             self.D['N_안정기초'] = my.ceil(self.S['일매수금']/self.M['당일종가'])
             self.D['N_생활기초'] = my.ceil(self.T['일매수금']/self.M['당일종가'])
             
-            self.D['N_기회매수가'] = round(self.M['당일종가'] * self.M['큰단가치'],2)
-            self.D['N_안정매수가'] = 0.0
-            self.D['N_생활매수가'] = 0.0
+            self.D['N_일반매수가'] = self.D['N_기회매수가'] = round(self.M['당일종가'] * self.M['큰단가치'],2)
+            self.D['N_안정매수가'] = self.D['N_생활매수가'] = 0.0
             
+            self.D['N_일반매수량'] = self.D['N_일반기초']
             self.D['N_기회매수량'] = self.D['N_기회기초']
-            self.D['N_안정매수량'] = 0
-            self.D['N_생활매수량'] = 0
+            self.D['N_안정매수량'] = self.D['N_생활매수량'] = 0
 
-            self.D['N_기회매도량'] = 0
-            self.D['N_안정매도량'] = 0
-            self.D['N_생활매도량'] = 0
+            self.D['N_일반매도량'] = self.D['N_기회매도량'] = self.D['N_안정매도량'] = self.D['N_생활매도량'] = 0
 
-            self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = 0.0
+            self.D['N_일반매도가'] = self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = 0.0
+            self.D['N_일반종대비'] = self.D['N_기회종대비'] = self.next_percent(self.M['당일종가'],self.D['N_기회매수가'])
+            self.D['N_안정종대비'] = self.D['N_생활종대비'] = self.D['N_공통종대비'] = ''
+            
 
         else : 
             
             self.next_buy_RST()
 
+            self.D['N_일반기초'] = self.V['기초수량']
             self.D['N_기회기초'] = self.R['기초수량']
             self.D['N_안정기초'] = self.S['기초수량']
             self.D['N_생활기초'] = self.T['기초수량']
             
+            self.D['N_일반매수가'] = self.M['매수가격']
+            self.D['N_일반평대비'] = self.next_percent(self.V['평균단가'],self.D['N_일반매수가']);       self.D['N_일반종대비'] = self.next_percent(self.M['당일종가'],self.D['N_일반매수가'])
             self.D['N_기회매수가'] = self.M['매수가격'] if self.R['진행시작'] else self.R['매수가격'] 
             self.D['N_기회평대비'] = self.next_percent(self.R['평균단가'],self.D['N_기회매수가']);       self.D['N_기회종대비'] = self.next_percent(self.M['당일종가'],self.D['N_기회매수가'])
             self.D['N_안정매수가'] = self.M['매수가격'] if self.S['진행시작'] else self.S['매수가격']
@@ -652,34 +657,37 @@ class RST :
             self.D['N_생활매수가'] = self.M['매수가격'] if self.T['진행시작'] else self.T['매수가격']
             self.D['N_생활평대비'] = self.next_percent(self.T['평균단가'],self.D['N_생활매수가']);       self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
             
+            self.D['N_일반매수량'] = self.V['매수수량']
             self.D['N_기회매수량'] = self.R['매수수량']
             self.D['N_안정매수량'] = self.S['매수수량']
             self.D['N_생활매수량'] = self.T['매수수량']
 
+            self.D['N_일반매도량'] = self.V['보유수량']
             self.D['N_기회매도량'] = self.R['보유수량']
             self.D['N_안정매도량'] = self.S['보유수량']
             self.D['N_생활매도량'] = self.T['보유수량']
 
-            self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = self.M['매도가격']
+            self.D['N_일반매도가'] = self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = self.M['매도가격']
+            self.D['N_일반도평비'] = self.next_percent(self.V['평균단가'],self.D['N_일반매도가'])
             self.D['N_기회도평비'] = self.next_percent(self.R['평균단가'],self.D['N_기회매도가'])
             self.D['N_안정도평비'] = self.next_percent(self.S['평균단가'],self.D['N_안정매도가'])
             self.D['N_생활도평비'] = self.next_percent(self.T['평균단가'],self.D['N_생활매도가'])
             self.D['N_공통종대비'] = self.next_percent(self.M['당일종가'],self.D['N_기회매도가'])
 
             # formating...
+            self.D['N_일반매수가'] = f"{self.D['N_일반매수가']:.2f}"
             self.D['N_기회매수가'] = f"{self.D['N_기회매수가']:.2f}"
             self.D['N_안정매수가'] = f"{self.D['N_안정매수가']:.2f}"
             self.D['N_생활매수가'] = f"{self.D['N_생활매수가']:.2f}"
-            self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = f"{self.M['매도가격']:.2f}"
+            self.D['N_일반매도가'] = self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = f"{self.M['매도가격']:.2f}"
 
 
     def next_percent(self,a,b) :
         if not a : return '0.00'
         return f"{(b/a-1)*100:.2f}"
 
+       
     def next_buy_RST(self) :
-
-        self.M['매수가격'] = round(self.M['당일종가']*self.M['평단가치'],2)
 
         for (tac,key) in [(self.R,'R'),(self.S,'S'),(self.T,'T')] :
             # 이틀 째까지는 전략 V 와 같은 패턴
@@ -710,8 +718,6 @@ class RST :
         self.init_value()
         self.simulate()
         self.result()
-
-        self.info(self.D)
     
     def get_thisYearResult(self) :
 
@@ -755,5 +761,22 @@ class RST :
         V_date  = self.DB.one(f"SELECT add0 FROM {R_board} WHERE add0 < '{s_date}' and sub12='1' ORDER BY {order} LIMIT 1")
         V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
         R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
+        V_mode  = self.DB.one(f"SELECT sub7 FROM {V_board} WHERE add0 = '{V_date}'")
         
-        return [V_date,float(V_money),float(R_money)]
+        return (V_date,float(V_money),float(R_money),float(V_mode))
+    
+    def get_nextStrategy(self,tactic) :
+        
+        (V_date,V_money,R_money,V_mode) = self.get_syncData()
+        self.put_initCapital(V_money,R_money,R_money,R_money)
+        if V_mode : self.D['가상손실'] = 'on'
+        self.get_simResult(V_date)
+        self.nextStep()
+
+        if   tactic == 'V' : return {'buy_p':self.D['N_일반매수가'],'buy_q':self.D['N_일반매수량'],'yx_b':self.D['N_일반종대비'],'sel_p':self.D['N_일반매도가'],'sel_q':self.D['N_일반매도량'],'yx_s':self.D['N_공통종대비']}
+        elif tactic == 'R' : return {'buy_p':self.D['N_기회매수가'],'buy_q':self.D['N_기회매수량'],'yx_b':self.D['N_기회종대비'],'sel_p':self.D['N_기회매도가'],'sel_q':self.D['N_기회매도량'],'yx_s':self.D['N_공통종대비']}
+        elif tactic == 'S' : return {'buy_p':self.D['N_안정매수가'],'buy_q':self.D['N_안정매수량'],'yx_b':self.D['N_안정종대비'],'sel_p':self.D['N_안정매도가'],'sel_q':self.D['N_안정매도량'],'yx_s':self.D['N_공통종대비']}
+        elif tactic == 'T' : return {'buy_p':self.D['N_생활매수가'],'buy_q':self.D['N_생활매수량'],'yx_b':self.D['N_생활종대비'],'sel_p':self.D['N_생활매도가'],'sel_q':self.D['N_생활매도량'],'yx_s':self.D['N_공통종대비']}
+        else : return
+        
+        
