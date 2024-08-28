@@ -442,8 +442,8 @@ class RST :
             return
 
         # 기간 계산하기
-        self.D['s_day'] = s_day = self.D['시작일자']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
-        self.D['e_day'] = e_day = self.D['종료일자']  ; d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
+        s_day = self.D['시작일자']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
+        e_day = self.D['종료일자']  ; d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
         delta = d1-d0
         self.D['days_span'] = delta.days
 
@@ -588,24 +588,21 @@ class RST :
 
         self.D['TR'] = []
 
-        if self.chart : # 챠트작성
+        if  self.chart : # 챠트작성
             self.D['c_date'] = []
             self.D['clse_p'] = []
             self.D['avge_r'] = []; self.D['avge_s'] = []; self.D['avge_t'] = []
 
-        self.D['totalV'] = []
-        self.D['일반횟수'] = 0
-        self.D['전략횟수'] = 0
-        self.D['기회전량'] = 0
-        self.D['기회전략'] = 0
-        # 결과작성
-        self.D['일정익절'] = 0; self.D['기정익절'] = 0; self.D['안정익절'] = 0; self.D['생정익절'] = 0
-        self.D['일정손절'] = 0; self.D['기정손절'] = 0; self.D['안정손절'] = 0; self.D['생정손절'] = 0
-        self.D['일회익절'] = 0; self.D['기회익절'] = 0; self.D['안회익절'] = 0; self.D['생회익절'] = 0
-        self.D['일회손절'] = 0; self.D['기회손절'] = 0; self.D['안회손절'] = 0; self.D['생회손절'] = 0
-        
+
         # 통계자료
         if  self.stat :
+
+            self.D['totalV'] = []
+            self.D['일정익절'] = 0; self.D['기정익절'] = 0; self.D['안정익절'] = 0; self.D['생정익절'] = 0
+            self.D['일정손절'] = 0; self.D['기정손절'] = 0; self.D['안정손절'] = 0; self.D['생정손절'] = 0
+            self.D['일회익절'] = 0; self.D['기회익절'] = 0; self.D['안회익절'] = 0; self.D['생회익절'] = 0
+            self.D['일회손절'] = 0; self.D['기회손절'] = 0; self.D['안회손절'] = 0; self.D['생회손절'] = 0
+
             self.D['손익통계'] = [[self.D['시작일자'],f"{self.R['현재잔액']+self.S['현재잔액']+self.T['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE",'','0.00']]
             self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
             self.D['손익저점'] = 100.0
@@ -724,7 +721,9 @@ class RST :
         return self.D['R_최종익률']
     
     def do_viewChart(self) :
+
         self.chart = True
+        self.stat  = True
         self.get_start()
         self.init_value()
         self.simulate()
