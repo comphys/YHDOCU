@@ -126,6 +126,39 @@ class Page(Control) :
         D={'skin':f"{self.skin}/{self.D['bid']}.html"}
         return self.echo(D)
 
+    def rst_view(self) :
+
+        self.D['종목코드'] = self.D['post']['종목코드']
+        self.D['일반자금'] = self.D['post']['일반자금']
+        self.D['기회자금'] = self.D['post']['기회자금']
+        self.D['안정자금'] = self.D['post']['안정자금']
+        self.D['생활자금'] = self.D['post']['생활자금']
+
+        self.D['시작일자'] = self.D['post']['시작일자']
+        self.D['종료일자'] = self.D['post']['종료일자']
+        # -------------------
+        self.D['기회시점'] = self.D['post']['기회시점']
+        self.D['기회회복'] = self.D['post']['기회회복']
+        self.D['안정시점'] = self.D['post']['안정시점']
+        self.D['안정회복'] = self.D['post']['안정회복']
+        self.D['생활시점'] = self.D['post']['생활시점']
+        self.D['생활회복'] = self.D['post']['생활회복']
+
+        self.D['수료적용'] = self.D['post'].get('chk_fee','off')
+        self.D['세금적용'] = self.D['post'].get('chk_tax','off')
+        self.D['일밸런싱'] = self.D['post'].get('chk_brs','off')
+        self.D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
+        self.D['일반상황'] = self.D['post'].get('chk_von','off')
+        self.D['가상손실'] = self.D['post'].get('chk_chx','off')
+        
+        RST = self.load_lib('rst')
+        RST.D |= self.D
+
+        RST.do_viewChart()
+
+        RST.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
+        return self.echo(RST.D)
+
 
     def get_ohlc(self) :
         code = self.gets['code']
