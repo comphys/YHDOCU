@@ -93,12 +93,13 @@ class Control :
         self.D |= D
         return self.D
 
-    def test(self,Test) :
+    def test(self,Test,D) :
         '''
         디버깅을 위해서 Test 값의 내용을 확인하고자 할 때 호출한다.  
         '''  
         self.D['skin'] = 'sys_test.html'
         self.D['test'] =  pprint.pformat(Test,indent=2,width=80)
+        self.D |= D
         if self.DB : self.DB.close()
         return self.D  
 

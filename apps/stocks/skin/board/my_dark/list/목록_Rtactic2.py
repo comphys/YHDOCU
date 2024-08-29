@@ -73,11 +73,11 @@ class 목록_Rtactic2(SKIN) :
 
             nX = self.RST.get_nextStrategy('R')
             self.D['매수갯수'] = nX['buy_q']
-            self.D['매수단가'] = f"{nX['buy_p']:,.2f}"
-            self.D['매수예상'] = f"{nX['buy_q'] * nX['buy_p']:,.2f}"
+            self.D['매수단가'] = nX['buy_p']
+            self.D['매수예상'] = f"{int(nX['buy_q']) * float(nX['buy_p']):,.2f}"
             self.D['매도갯수'] = nX['sel_q']
-            self.D['매도단가'] = f"{nX['sel_p']:,.2f}"
-            self.D['매도예상'] = f"{nX['sel_q'] * nX['sel_p']:,.2f}"
+            self.D['매도단가'] = nX['sel_p']
+            self.D['매도예상'] = f"{int(nX['sel_q']) * float(nX['sel_p']):,.2f}"
             예상이익 = float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))
             self.D['예상이익'] = f"{예상이익:,.2f}"
             self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"

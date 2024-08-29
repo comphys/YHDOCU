@@ -4,8 +4,23 @@
 <title>Debugger</title>
 </head>
 <body style='font-family:Malgun Gothic;background-color:gray;'>
-<textarea style="width:100%;height:800px;color:white;background-color: black;">
+<textarea style="width:100%;height:500px;color:white;background-color: black;">
 {{D['test']|safe}}
 </textarea>
+{{D['현재일자']}}
+<table style="background-color:black;color:bisque;">
+    <tr><td style="width:100px">입금</td><td style="width:100px">{{D['add1']}}</td><td style="width:100px">출금</td><td style="width:100px">{{D['add2']}}</td><td style="width:100px">잔액</td><td style="width:100px">{{D['add3']}}</td><td style="width:100px">현금비중</td><td style="width:100px">{{D['add4']}}</td></tr>
+
+    <tr><td>매수금</td><td>{{D['add11']}}</td><td>매도금</td><td>{{D['add12']}}</td><td>변동수량</td><td>{{D['add5']}}</td><td>현수익률</td><td>{{D['add8']}}</td></tr>
+    <tr><td>종가</td><td>{{D['add14']}}</td><td>가치</td><td>{{D['add15']}}</td><td>보유수량</td><td>{{D['add9']}}</td><td>레버비중</td><td>{{D['add16']}}</td></tr>
+    <tr><td>평균단가</td><td>{{D['add7']}}</td><td>매도누적</td><td>{{D['sub15']}}</td><td>매수누적</td><td>{{D['sub14']}}</td><td>현매수금</td><td>{{D['add6']}}</td></tr>
+    <tr><td>연속상승</td><td>{{D['sub5']}}</td><td>연속하락</td><td>{{D['sub6']}}</td><td>종가변동</td><td>{{D['add20']}}</td><td>현재손익</td><td>{{D['add18']}}</td></tr>
+
+    <tr><td>현재시즌</td><td>{{D['sub1']}}</td><td>일매수금</td><td>{{D['sub4']}}</td><td>매수수량</td><td>{{D['sub2']}}</td><td>매도수량</td><td>{{D['sub3']}}</td></tr>
+    <tr><td>경과일수</td><td>{{D['sub12']}}</td><td>기초수량</td><td>{{D['sub18']}}</td><td>매수가격</td><td>{{D['sub19']}}</td><td>매도가격</td><td>{{D['sub20']}}</td></tr>
+    <tr><td>가치합계</td><td>{{D['add17']}}</td><td>입금합계</td><td>{{D['sub25']}}</td><td>출금합계</td><td>{{D['sub26']}}</td><td>회복전략</td><td>{{D['sub7']}}</td></tr>
+    <tr><td>진행상황</td><td>{{D['sub29']}}</td><td>수수료등</td><td>{{D['sub30']}}</td><td>누적수수료</td><td>{{D['sub31']}}</td><td>양도세금</td><td>{{D['sub11']}}</td></tr>
+
+</table>
 </body>
 </html>

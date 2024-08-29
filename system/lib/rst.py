@@ -187,8 +187,10 @@ class RST :
 
             if  tac['현재잔액'] < tac['구매수량'] * self.M['매수가격'] : 
                 tac['구매수량'] = my.ceil(tac['기초수량'] * self.M['위매비중']) 
+                tac['매수단계'] = '매수제한'
                 if  tac['현재잔액'] < tac['구매수량'] * self.M['매수가격'] : 
                     tac['구매수량'] = 0
+                    tac['매수단계'] = '매수중단'
                     if  self.D['이밸런싱'] == 'on' and key in ('R','S') :
                         self.T['현재잔액'] += tac['현재잔액']
                         tac['현재잔액'] = 0.0
@@ -671,12 +673,12 @@ class RST :
             self.D['N_생활도평비'] = self.next_percent(self.T['평균단가'],self.D['N_생활매도가'])
             self.D['N_공통종대비'] = self.next_percent(self.M['당일종가'],self.D['N_기회매도가'])
 
-            # formating...
-            self.D['N_일반매수가'] = f"{self.D['N_일반매수가']:.2f}"
-            self.D['N_기회매수가'] = f"{self.D['N_기회매수가']:.2f}"
-            self.D['N_안정매수가'] = f"{self.D['N_안정매수가']:.2f}"
-            self.D['N_생활매수가'] = f"{self.D['N_생활매수가']:.2f}"
-            self.D['N_일반매도가'] = self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = f"{self.M['매도가격']:.2f}"
+        # formating...
+        self.D['N_일반매수가'] = f"{self.D['N_일반매수가']:.2f}"
+        self.D['N_기회매수가'] = f"{self.D['N_기회매수가']:.2f}"
+        self.D['N_안정매수가'] = f"{self.D['N_안정매수가']:.2f}"
+        self.D['N_생활매수가'] = f"{self.D['N_생활매수가']:.2f}"
+        self.D['N_일반매도가'] = self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = f"{self.M['매도가격']:.2f}"
 
 
     def next_percent(self,a,b) :
@@ -685,6 +687,13 @@ class RST :
 
        
     def next_buy_RST(self) :
+
+        self.V['매수수량']  = my.ceil(self.V['기초수량'] * ((self.M['현재날수']-1)*self.M['비중조절'] + 1))
+
+        if  self.V['현재잔액'] < self.V['매수수량'] * self.M['매수가격'] : 
+            self.V['매수수량'] = my.ceil(self.V['기초수량'] * self.M['위매비중'])
+            if  self.V['현재잔액'] < self.V['매수수량'] * self.M['매수가격'] : self.V['구매수량'] = 0
+            
 
         for (tac,key) in [(self.R,'R'),(self.S,'S'),(self.T,'T')] :
             # 이틀 째까지는 전략 V 와 같은 패턴
@@ -776,54 +785,76 @@ class RST :
         elif tactic == 'T' : return {'buy_p':self.D['N_생활매수가'],'buy_q':self.D['N_생활매수량'],'yx_b':self.D['N_생활종대비'],'sel_p':self.D['N_생활매도가'],'sel_q':self.D['N_생활매도량'],'yx_s':self.D['N_공통종대비']}
         else : return
 
-    def get_tacticLog(self) :
+    def get_tacticLog(self,preDate) :
+        
+        V_board = self.DB.parameters('03500')
+        R_board = self.DB.parameters('03501')
+        S_board = self.DB.parameters('03502')
+        T_board = self.DB.parameters('03503')
+        
+        curDate = self.DB.one(f"SELECT min(add0) FROM h_stockHistory_board WHERE add0 > '{preDate}'")
+        self.DB.tbl, self.DB.wre = V_board, f"add0='{preDate}'"
+        LD = self.DB.get_line('*'); del LD['no']
+                
         (V_date,V_money,R_money,V_mode) = self.get_syncData(origin=True)
         if V_mode : self.D['가상손실'] = 'on'
         self.put_initCapital(V_money,R_money,R_money,R_money)
-        self.get_simResult(V_date,'2024-08-20')
-        L={'진행일자':self.M['현재일자'],'입금':'0.00','출금':'0.00'}
-        L['잔액'] = 0
-        L['현금비중'] = 0
+        self.get_simResult(V_date,curDate)
         
-        L['매수금'] = 0
-        L['매도금'] = 0
-        L['변동수량'] = 0
-        L['현수익률'] = 0
+        LD['add0'] = curDate
+        LD['add3'] = f"{self.V['현재잔액']:.2f}"
+        LD['add4'] = f"{self.V['현재잔액']/(self.V['현재잔액'] + self.V['평가금액']) * 100:.2f}"
         
-        L['종가'] = 0
-        L['가치'] = 0
-        L['보유수량'] = 0
-        L['레버비중'] = 0
+        LD['add11'] = f"{self.V['매수금액']:.2f}"
+        LD['add12'] = f"{self.V['매도금액']:.2f}"
+        LD['add5']  = self.V['매수수량'] 
+        if self.V['매도금액'] : LD['add5'] = -self.V['매도수량']
+        LD['add8']  = f"{self.V['현수익률']:.2f}"
         
-        L['평균단가'] = 0
-        L['매도누적'] = 0
-        L['매수누적'] = 0
-        L['현매수금'] = 0
+        LD['add14'] = self.M['당일종가']
+        LD['add15'] = f"{self.V['평가금액']:.2f}"
+        LD['add9']  = self.V['보유수량']
+        LD['add16'] = f"{self.V['평가금액']/(self.V['현재잔액'] + self.V['평가금액']) * 100:.2f}"
+        
+        LD['add7']  = f"{self.V['평균단가']:.4f}"
+        LD['sub15'] = f"{float(LD['sub15'])+self.V['매도금액']:.2f}"
+        LD['sub14'] = f"{float(LD['sub14'])+self.V['매수금액']:.2f}"
+        LD['add6']  = f"{self.V['총매수금']:.2f}"
+        
+        LD['sub5']  = int(LD['sub5']) + 1 if self.M['당일종가'] >= self.M['전일종가'] else 0
+        LD['sub6']  = int(LD['sub6']) + 1 if self.M['당일종가'] <  self.M['전일종가'] else 0
+        LD['add20'] = self.M['종가변동']
+        LD['add18'] = f"{self.V['수익현황']:.2f}"
+        
+        LD['sub1']  = int(LD['sub1']) + 1 if self.V['매도금액'] else LD['sub1'] 
+        LD['sub4']  = self.V['일매수금']
+        
+        LD['sub12']  = 0 if self.M['첫날기록'] else self.M['현재날수'] - 1 
+        
+        LD['add17']  = f"{self.V['현재잔액'] + self.V['평가금액']:.2f}"
+        LD['sub7']   = LD['sub7']
+        
+        LD['sub29']  = '전량매도' if self.M['첫날기록'] else self.M['매수단계'] 
+        LD['sub30']  = self.V['수수료등'] if LD['add5'] else '0.00'
+        LD['sub31']  = f"{self.V['수수료등'] + float(LD['sub31']):.2f}" if LD['add5'] else LD['sub31']
+        if  self.M['현재날수'] -1 == 1 : 
+            LD['sub29'] = '첫날매수'
+            LD['sub31'] = LD['sub30']
+        
+        # next Step --------------
+        self.nextStep()
+        LD['sub18'] = self.D['N_일반기초']
+        LD['sub2']  = self.D['N_일반매수량']
+        LD['sub3']  = self.D['N_일반매도량']
+        LD['sub19'] = self.D['N_일반매수가']
+        LD['sub20'] = self.D['N_일반매도가']
+        
+        
+        return LD
+        
+        
+        
 
-        L['연속상승'] = 0
-        L['연속하락'] = 0
-        L['종가변동'] = 0
-        L['현재손익'] = 0
-
-        L['현재시즌'] = 0
-        L['일매수금'] = 0
-        L['매수수량'] = 0
-        L['매도수량'] = 0
-
-        L['경과일수'] = 0
-        L['기초수량'] = 0
-        L['매수가격'] = 0
-        L['매도가격'] = 0
-
-        L['가치합계'] = 0
-        L['입금합계'] = 0
-        L['출금합계'] = 0
-        L['보존금액'] = 0
-
-        L['진행상황'] = ''
-        L['수수료등'] = 0
-        L['누적수수료'] = 0
-        L['양도세금'] = 0
 
 
 
