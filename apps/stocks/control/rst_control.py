@@ -12,9 +12,11 @@ class Rst_control(Control) :
         # RST.get_simulated_result('2024-08-24')
         # syncD = RST.get_sync_data(origin=True)
 
-        rst = RST.get_nextStrategy('V')
+        # RST.get_thisYearResult()
+        # RST.result()
 
-        self.info(rst)
-        return self.echo("JOB's DONE")
+        RST.get_tacticLog()
+
+        return self.test(RST.M)
 
 

@@ -775,5 +775,61 @@ class RST :
         elif tactic == 'S' : return {'buy_p':self.D['N_안정매수가'],'buy_q':self.D['N_안정매수량'],'yx_b':self.D['N_안정종대비'],'sel_p':self.D['N_안정매도가'],'sel_q':self.D['N_안정매도량'],'yx_s':self.D['N_공통종대비']}
         elif tactic == 'T' : return {'buy_p':self.D['N_생활매수가'],'buy_q':self.D['N_생활매수량'],'yx_b':self.D['N_생활종대비'],'sel_p':self.D['N_생활매도가'],'sel_q':self.D['N_생활매도량'],'yx_s':self.D['N_공통종대비']}
         else : return
+
+    def get_tacticLog(self) :
+        (V_date,V_money,R_money,V_mode) = self.get_syncData(origin=True)
+        if V_mode : self.D['가상손실'] = 'on'
+        self.put_initCapital(V_money,R_money,R_money,R_money)
+        self.get_simResult(V_date,'2024-08-20')
+        L={'진행일자':self.M['현재일자'],'입금':'0.00','출금':'0.00'}
+        L['잔액'] = 0
+        L['현금비중'] = 0
         
+        L['매수금'] = 0
+        L['매도금'] = 0
+        L['변동수량'] = 0
+        L['현수익률'] = 0
+        
+        L['종가'] = 0
+        L['가치'] = 0
+        L['보유수량'] = 0
+        L['레버비중'] = 0
+        
+        L['평균단가'] = 0
+        L['매도누적'] = 0
+        L['매수누적'] = 0
+        L['현매수금'] = 0
+
+        L['연속상승'] = 0
+        L['연속하락'] = 0
+        L['종가변동'] = 0
+        L['현재손익'] = 0
+
+        L['현재시즌'] = 0
+        L['일매수금'] = 0
+        L['매수수량'] = 0
+        L['매도수량'] = 0
+
+        L['경과일수'] = 0
+        L['기초수량'] = 0
+        L['매수가격'] = 0
+        L['매도가격'] = 0
+
+        L['가치합계'] = 0
+        L['입금합계'] = 0
+        L['출금합계'] = 0
+        L['보존금액'] = 0
+
+        L['진행상황'] = ''
+        L['수수료등'] = 0
+        L['누적수수료'] = 0
+        L['양도세금'] = 0
+
+
+
+
+
+      
+
+
         
