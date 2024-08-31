@@ -170,13 +170,13 @@ class update_Stactic :
 
         # 매매전략 가져오기
         ST = self.DB.parameters_dict('매매전략/VRS')
-        self.M['분할횟수']  = ST['001']  # 분할 횟수
-        self.M['비중조절']  = ST['025']  # 매매일수 에 따른 구매수량 가중치(1.25)
-        self.M['큰단가치']  = ST['002']  # 첫날매수 시 가중치(1.12)
-        self.M['위매비중']  = ST['010']  # 매수제한 시 매수범위 기본수량의 (3)
-        self.M['안정시점']  = ST['023']  # S전략 일반 매수시점
-        self.M['안정회복']  = ST['024']  # S전략 회복 매수시점
-        self.M['날수가산']  = ST['026']  # day_count 계산 시 날수 가산
+        self.M['분할횟수']  = ST['001']
+        self.M['비중조절']  = ST['025']
+        self.M['큰단가치']  = ST['002']
+        self.M['위매비중']  = ST['010']
+        self.M['안정시점']  = ST['023']
+        self.M['안정회복']  = ST['024']
+        self.M['날수가산']  = ST['026']
         self.M['안정매도']  = ST['012']
         self.guide = ST['035']
         self.rtact = ST['036']

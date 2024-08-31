@@ -14,10 +14,15 @@ class Rst_control(Control) :
 
         # RST.get_thisYearResult()
         # RST.result()
+        theDate = '2024-08-30'
+        tactic  = 'T'
 
-        D = RST.get_tacticLog('2024-08-27')
-
-        return self.test(RST.M,D)
+        RST.do_tacticsLog(theDate)
+        D = RST.get_tacticLog(theDate,tactic)
+        RST.nextStep()
+        X = RST.get_nextStrategyLog(tactic)
+        D |= X
+        return self.test(D,D)
    
 
 

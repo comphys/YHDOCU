@@ -173,15 +173,15 @@ class update_Stactic3 :
 
         # 매매전략 가져오기
         ST = self.DB.parameters_dict('매매전략/VRS')
-        self.M['분할횟수']  = ST['00100']  # 분할 횟수
-        self.M['비중조절']  = ST['01001']  # 매매일수 에 따른 구매수량 가중치(1.25)
-        self.M['큰단가치']  = ST['00200']  # 첫날매수 시 가중치(1.12)
-        self.M['위매비중']  = ST['01000']  # 매수제한 시 매수범위 기본수량의 (3)
-        self.M['안정시점']  = ST['02300']  # S전략 일반 매수시점
-        self.M['안정회복']  = ST['02400']  # S전략 회복 매수시점
-        self.M['날수가산']  = ST['01002']  # day_count 계산 시 날수 가산
-        self.M['안정매도']  = ST['01200']  # S 전략의 안정매도 가격
-        self.M['회복탈출']  = ST['00901']  # 손절 이후 S, T 평균값의 10% 이상시 매도
+        self.M['분할횟수']  = ST['00100']
+        self.M['비중조절']  = ST['01001']
+        self.M['큰단가치']  = ST['00200']
+        self.M['위매비중']  = ST['01000']
+        self.M['안정시점']  = ST['02300']
+        self.M['안정회복']  = ST['02400']
+        self.M['날수가산']  = ST['01002']
+        self.M['안정매도']  = ST['01200']
+        self.M['회복탈출']  = ST['00901']
         
         self.guide = ST['03500']
         self.rtact = ST['03501']
@@ -315,6 +315,7 @@ class update_Stactic3 :
         U.update({k:'' for k,v in U.items() if v == None})
 
         board = f"h_{self.bid}_board"
+        
         if  self.M['업데이트'] :
             qry=self.DB.qry_update(board,U,f"add0='{self.D['prev_date']}'")
             self.DB.exe(qry)

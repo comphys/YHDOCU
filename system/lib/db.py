@@ -49,6 +49,10 @@ class DB :
 
     def line(self,qry) :
         return self.exe(qry,many=1,assoc=True)
+    
+    def last_record(self,tbl) :
+        qry = f"SELECT * FROM {tbl} order by rowid desc LIMIT 1"
+        return self.line(qry)
 
     def oneline(self,qry,assoc=False) :
         return self.exe(qry,many=1,assoc=assoc)
