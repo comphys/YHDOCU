@@ -543,6 +543,11 @@ class RST :
             self.T['진입시점']  = ST['02401']
             self.T['회복시점']  = ST['02402']
             
+            self.M['일반보드']  = ST['03500']
+            self.M['기회보드']  = ST['03501']
+            self.M['안정보드']  = ST['03502']
+            self.M['생활보드']  = ST['03503']
+            
         if '가상손실' in self.D and self.D['가상손실'] == 'on' : self.M['손실회수']  = True     
         if '수료적용' not in self.D :   self.D['수료적용']  = 'on'
         if '세금적용' not in self.D :   self.D['세금적용']  = 'off'
@@ -764,10 +769,8 @@ class RST :
         s_date = my.timestamp_to_date(opt=7) if not backto else backto
 
         order = 'add0 ASC' if origin else 'add0 DESC' 
-
         V_board = self.DB.parameters('03500')
         R_board = self.DB.parameters('03501')
-
         V_date  = self.DB.one(f"SELECT add0 FROM {R_board} WHERE add0 < '{s_date}' and sub12='1' ORDER BY {order} LIMIT 1")
         V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
         R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
@@ -775,7 +778,7 @@ class RST :
         
         return (V_date,float(V_money),float(R_money),float(V_mode))
     
-    def get_nextStrategy(self,tactic) :
+    def get_nextStrategy(self,tac) :
         
         (V_date,V_money,R_money,V_mode) = self.get_syncData()
         self.put_initCapital(V_money,R_money,R_money,R_money)
@@ -783,7 +786,8 @@ class RST :
         self.get_simResult(V_date)
         self.nextStep()
         tN = {'V':'일반','R':'기회','S':'안정','T':'생활'}
-        return {'buy_p':self.D['N_'+tN['tactic']+'매수가'],'buy_q':self.D['N_'+tN['tactic']+'매수량'],'yx_b': self.D['N_'+tN['tactic']+'종대비'],'sel_p':self.D['N_'+tN['tactic']+'매도가'],'sel_q':self.D['N_'+tN['tactic']+'매도량'],'yx_s':self.D['N_공통종대비']}
+        return {'buy_p':self.D['N_'+tN[tac]+'매수가'],'buy_q':self.D['N_'+tN[tac]+'매수량'],'yx_b': self.D['N_'+tN[tac]+'종대비'],
+                'sel_p':self.D['N_'+tN[tac]+'매도가'],'sel_q':self.D['N_'+tN[tac]+'매도량'],'yx_s': self.D['N_공통종대비']}
       
 
     def do_tacticsLog(self,theDate) :
@@ -796,15 +800,14 @@ class RST :
 
     def get_tacticLog(self,theDate,tactic) :
         
-        if   tactic == 'V' : tac =  self.V ; RST_board = self.DB.parameters('03500')
-        elif tactic == 'R' : tac =  self.R ; RST_board = self.DB.parameters('03501')
-        elif tactic == 'S' : tac =  self.S ; RST_board = self.DB.parameters('03502')
-        elif tactic == 'T' : tac =  self.T ; RST_board = self.DB.parameters('03503')
+        if   tactic == 'V' : tac = self.V ; RST_board = self.M['일반보드']
+        elif tactic == 'R' : tac = self.R ; RST_board = self.M['기회보드']
+        elif tactic == 'S' : tac = self.S ; RST_board = self.M['안정보드']
+        elif tactic == 'T' : tac = self.T ; RST_board = self.M['생활보드']
 
         preDate = self.DB.one(f"SELECT max(add0) FROM {RST_board} WHERE add0 < '{theDate}'")
         if not preDate : return 
         LD = self.DB.line(f"SELECT * FROM {RST_board} WHERE add0='{preDate}'")
-        stockHistory = self.DB.oneline(f"SELECT add9,add10 FROM h_stockHistory_board WHERE add0='{theDate}'")
         
         LD['add0'] = theDate
         LD['wdate']= LD['mdate']= my.now_timestamp()
@@ -828,8 +831,7 @@ class RST :
         LD['sub14'] = f"{float(LD['sub14'])+tac['매수금액']:.2f}"
         LD['add6']  = f"{tac['총매수금']:.2f}"
         
-        LD['sub5']  = stockHistory[0]
-        LD['sub6']  = stockHistory[1]
+        LD['sub5'], LD['sub6'] = self.DB.oneline(f"SELECT add9,add10 FROM h_stockHistory_board WHERE add0='{theDate}'")
         LD['add20'] = self.M['종가변동']
         LD['add18'] = f"{tac['수익현황']:.2f}"
         
@@ -850,17 +852,13 @@ class RST :
         if  not tac['보유수량'] and not tac['매도금액'] : LD['sub31'] = '0.00'
         if  not tac['매수금액'] and not tac['매도금액'] and LD['sub12'] : LD['sub29'] = '매도대기'
         
+        LD['content'] ="<div><p>Written by Auto</p></div>"
         del LD['no']
         return LD
     
-    def get_nextStrategyLog(self,tactic) :
+    def get_nextStrategyLog(self,tac) :
 
         nX = {'V':'일반','R':'기회','S':'안정','T':'생활'}
-        NSL = {}
-        NSL['sub18'] = self.D['N_'+nX[tactic]+'기초']
-        NSL['sub2']  = self.D['N_'+nX[tactic]+'매수량']
-        NSL['sub3']  = self.D['N_'+nX[tactic]+'매도량']
-        NSL['sub19'] = self.D['N_'+nX[tactic]+'매수가']
-        NSL['sub20'] = self.D['N_'+nX[tactic]+'매도가']
-
-        return NSL
+        nS = {'sub18':self.D['N_'+nX[tac]+'기초'],'sub2' :self.D['N_'+nX[tac]+'매수량'],'sub3':self.D['N_'+nX[tac]+'매도량'],
+              'sub19':self.D['N_'+nX[tac]+'매수가'],'sub20':self.D['N_'+nX[tac]+'매도가']}
+        return nS
