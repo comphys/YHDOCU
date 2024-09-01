@@ -97,6 +97,5 @@ if  skip :
 else :
     B.bid = 'IGUIDE'
     B.oneWrite()
-    B.bid = 'V240805'
-    B.oneWrite()
+
         

@@ -900,11 +900,6 @@ else :
     DS |= NS; DS.update({k:'' for k,v in DS.items() if v == None})
     DT |= NT; DT.update({k:'' for k,v in DT.items() if v == None})
 
-    # print(DV); print('----------------------------')
-    # print(DR); print('----------------------------')
-    # print(DS); print('----------------------------')
-    # print(DT)
-
     qry=RST.DB.qry_insert(RST.M['일반보드'],DV); RST.DB.exe(qry)
     qry=RST.DB.qry_insert(RST.M['기회보드'],DR); RST.DB.exe(qry)
 

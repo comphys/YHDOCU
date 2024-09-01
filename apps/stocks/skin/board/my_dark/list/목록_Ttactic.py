@@ -106,8 +106,8 @@ class 목록_Ttactic(SKIN) :
             예상이익 = float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))
             self.D['예상이익'] = f"{예상이익:,.2f}"
             self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"
-            self.D['target_value'] = [nX['sel_p']] * chart_len if nX['sel_p'] else ['null'] * chart_len
-            self.D['chance_value'] = [nX['buy_p']] * chart_len if nX['buy_p'] else ['null'] * chart_len
+            self.D['target_value'] = [nX['sel_p']] * chart_len if float(nX['sel_p']) else ['null'] * chart_len
+            self.D['chance_value'] = [nX['buy_p']] * chart_len if float(nX['buy_p']) else ['null'] * chart_len
                 
             self.D['현재환율'] = f"{현재환율:,.2f}"
             self.D['자산배분'] = self.DB.parameters_des('03800')
