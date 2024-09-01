@@ -22,7 +22,8 @@ class Rst_control(Control) :
         RST.nextStep()
         X = RST.get_nextStrategyLog(tactic)
         D |= X
-        return self.test(D,D)
+        
+        return self.test(RST.D,D)
    
 
 

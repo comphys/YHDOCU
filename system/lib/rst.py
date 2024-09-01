@@ -62,7 +62,8 @@ class RST :
 
 
     def realMDD(self) :
-
+        
+        if not self.stat : return
         for tac in (self.V,self.R,self.S,self.T) :
             tac['실최하락'] = (tac['평가금액']-tac['총매수금']) / (tac['현재잔액'] + tac['총매수금']) * 100
             if  tac['실최하락'] < tac['진최하락'] : 
@@ -74,13 +75,13 @@ class RST :
         
     def rstCount(self,profit,key) :
         
-        if self.chart :
-            if  profit >= 0 : 
-                if self.M['회복전략'] : self.D[key+'회익절'] += 1
-                else : self.D[key+'정익절'] += 1  
-            else : 
-                if self.M['회복전략'] : self.D[key+'회손절'] += 1
-                else : self.D[key+'정손절'] += 1   
+        if not self.stat : return
+        if  profit >= 0 : 
+            if self.M['회복전략'] : self.D[key+'회익절'] += 1
+            else : self.D[key+'정익절'] += 1  
+        else : 
+            if self.M['회복전략'] : self.D[key+'회손절'] += 1
+            else : self.D[key+'정손절'] += 1   
 
     def commission(self,mm,opt) :
 
