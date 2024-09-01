@@ -1,15 +1,15 @@
+from myutils.DB import DB
 from datetime import date
-import system.core.my_utils as my
+import myutils.my_utils as my
 
-class RST :
+class update_Log :
 
-    def __init__(self,SYS) :
-        self.SYS   = SYS
-        self.info  = SYS.info
-        self.D     = SYS.D
-        self.DB    = SYS.DB
+    def __init__(self) :
+
+        self.DB    = DB('stocks')
         self.chart = False
         self.stat  = False
+        self.skey = self.DB.store("slack_key")
 
         self.B = {}
         self.V = {}
@@ -17,8 +17,13 @@ class RST :
         self.S = {}
         self.T = {}
         self.M = {}
-  
+        self.D = {}
 
+    def send_message(self,message) :
+        if self.DB.system == "Linux" : my.post_slack(self.skey,message)
+        else : print(message)  
+
+#   ------------------------------------------------------------------------------------------------------------------------------------
     def calculate_sub(self,tac,key) :
         
         if  tac['매수수량'] : 
@@ -812,7 +817,7 @@ class RST :
         
         LD['add0'] = theDate
         LD['wdate']= LD['mdate']= my.now_timestamp()
-   
+
         LD['add3'] = f"{tac['현재잔액']:.2f}"
         LD['add4'] = f"{tac['현재잔액']/(tac['현재잔액'] + tac['평가금액']) * 100:.2f}"
         
@@ -852,7 +857,7 @@ class RST :
             LD['sub29'] = '첫날매수'
             LD['sub31'] = LD['sub30']
         if  not tac['보유수량'] and not tac['매도금액'] : LD['sub31'] = '0.00'
-        if  not tac['매수금액'] and not tac['매도금액'] and LD['sub12'] : LD['sub29'] = '매도대기'
+        if  not tac['매수금액'] and not tac['매도금액'] : LD['sub29'] = '매도대기'
         
         del LD['no']
         return LD
@@ -868,3 +873,79 @@ class RST :
         NSL['sub20'] = self.D['N_'+nX[tactic]+'매도가']
 
         return NSL
+
+
+
+# --------------------------------------------------------------------------------------------------------
+
+# today = my.kor_loc_date('US/Eastern')[0:10]
+today = '2024-08-30'
+weekd = my.dayofdate(today)
+RST = update_Log()
+
+ck_holiday = RST.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
+is_holiday = ck_holiday[0][0] if ck_holiday else ''
+
+skip = (weekd in ['토','일']) or is_holiday
+
+if  skip :
+    pass
+
+else :
+    RST.do_tacticsLog(today)
+    DV = RST.get_tacticLog(today,'V')
+    DR = RST.get_tacticLog(today,'R')
+    DS = RST.get_tacticLog(today,'S')
+    DT = RST.get_tacticLog(today,'T')
+
+    RST.nextStep()
+
+    NV = RST.get_nextStrategyLog('V')
+    NR = RST.get_nextStrategyLog('R')
+    NS = RST.get_nextStrategyLog('S')
+    NT = RST.get_nextStrategyLog('T')
+
+    DV |= NV; DV.update({k:'' for k,v in DV.items() if v == None})
+    DR |= NR; DR.update({k:'' for k,v in DR.items() if v == None})
+    DS |= NS; DS.update({k:'' for k,v in DS.items() if v == None})
+    DT |= NT; DT.update({k:'' for k,v in DT.items() if v == None})
+
+    for k,v in DV.items() : print(f"{k} : {v}")
+    print('----------------------------')
+    for k,v in DR.items() : print(f"{k} : {v}")
+    print('----------------------------')
+    for k,v in DS.items() : print(f"{k} : {v}")
+    print('----------------------------')
+    for k,v in DT.items() : print(f"{k} : {v}")
+
+
+    # board = RST.DB.parameters('03500'); qry=RST.DB.qry_insert(board,DV); RST.DB.exe(qry)
+    # board = RST.DB.parameters('03501'); qry=RST.DB.qry_insert(board,DR); RST.DB.exe(qry)
+
+    # board = RST.DB.parameters('03502')
+    # upDate = float(DS['add1']) == 0 and float(DS['add2']) == 0 and float(DS['add11']) == 0 and float(DS['add12']) == 0 and int(DS['add9']) == 0
+    # if  upDate :
+    #     preDate = RST.DB.one(f"SELECT max(add0) FROM {board}")
+    #     qry=RST.DB.qry_update(board,DS,f"add0='{preDate}'")
+    #     RST.DB.exe(qry)
+    # else :
+    #     qry=RST.DB.qry_insert(board,DS)
+    #     RST.DB.exe(qry)
+
+    # board = RST.DB.parameters('03503')
+    # upDate = float(DS['add1']) == 0 and float(DS['add2']) == 0 and float(DS['add11']) == 0 and float(DS['add12']) == 0 and int(DS['add9']) == 0
+    # if  upDate :
+    #     preDate = RST.DB.one(f"SELECT max(add0) FROM {board}")
+    #     qry=RST.DB.qry_update(board,DT,f"add0='{preDate}'")
+    #     RST.DB.exe(qry)
+    # else :
+    #     qry=RST.DB.qry_insert(board,DT)
+    #     RST.DB.exe(qry)
+
+    # RST.send_message(f"{today}일 VRST 정보를 업데이트 하였습니다")
+
+
+
+
+
+

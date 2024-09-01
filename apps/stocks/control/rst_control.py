@@ -14,8 +14,8 @@ class Rst_control(Control) :
 
         # RST.get_thisYearResult()
         # RST.result()
-        theDate = '2024-08-30'
-        tactic  = 'T'
+        theDate = self.parm[1]
+        tactic  = self.parm[0]
 
         RST.do_tacticsLog(theDate)
         D = RST.get_tacticLog(theDate,tactic)
