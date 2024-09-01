@@ -121,14 +121,14 @@ class RST :
     def today_sell(self) :
         
         if  self.M['당일종가'] >= self.M['매도가격'] : 
+
+            self.M['회복전략']  = self.M['손실회수']
+
             for tac in (self.V,self.R,self.S,self.T) : 
                 tac['매도수량'] = tac['보유수량']
                 tac['매도금액'] = tac['매도수량'] * self.M['당일종가']
                 tac['진행상황'] = '익절매도' 
 
-            
-            self.M['회복전략']  = self.M['손실회수']
-            
             if  self.M['당일종가'] < self.V['평균단가'] : 
                 self.set_value(['진행상황'],'손절매도')
                 self.M['손실회수'] = True
@@ -642,7 +642,6 @@ class RST :
             self.D['N_일반종대비'] = self.D['N_기회종대비'] = self.next_percent(self.M['당일종가'],self.D['N_기회매수가'])
             self.D['N_안정종대비'] = self.D['N_생활종대비'] = self.D['N_공통종대비'] = ''
             
-
         else : 
             
             self.next_buy_RST()
@@ -783,12 +782,9 @@ class RST :
         if V_mode : self.D['가상손실'] = 'on'
         self.get_simResult(V_date)
         self.nextStep()
-
-        if   tactic == 'V' : return {'buy_p':self.D['N_일반매수가'],'buy_q':self.D['N_일반매수량'],'yx_b':self.D['N_일반종대비'],'sel_p':self.D['N_일반매도가'],'sel_q':self.D['N_일반매도량'],'yx_s':self.D['N_공통종대비']}
-        elif tactic == 'R' : return {'buy_p':self.D['N_기회매수가'],'buy_q':self.D['N_기회매수량'],'yx_b':self.D['N_기회종대비'],'sel_p':self.D['N_기회매도가'],'sel_q':self.D['N_기회매도량'],'yx_s':self.D['N_공통종대비']}
-        elif tactic == 'S' : return {'buy_p':self.D['N_안정매수가'],'buy_q':self.D['N_안정매수량'],'yx_b':self.D['N_안정종대비'],'sel_p':self.D['N_안정매도가'],'sel_q':self.D['N_안정매도량'],'yx_s':self.D['N_공통종대비']}
-        elif tactic == 'T' : return {'buy_p':self.D['N_생활매수가'],'buy_q':self.D['N_생활매수량'],'yx_b':self.D['N_생활종대비'],'sel_p':self.D['N_생활매도가'],'sel_q':self.D['N_생활매도량'],'yx_s':self.D['N_공통종대비']}
-        else : return
+        tN = {'V':'일반','R':'기회','S':'안정','T':'생활'}
+        return {'buy_p':self.D['N_'+tN['tactic']+'매수가'],'buy_q':self.D['N_'+tN['tactic']+'매수량'],'yx_b': self.D['N_'+tN['tactic']+'종대비'],'sel_p':self.D['N_'+tN['tactic']+'매도가'],'sel_q':self.D['N_'+tN['tactic']+'매도량'],'yx_s':self.D['N_공통종대비']}
+      
 
     def do_tacticsLog(self,theDate) :
         
