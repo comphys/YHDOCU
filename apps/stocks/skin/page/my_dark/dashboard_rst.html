@@ -321,13 +321,13 @@ function specific_span(opt) {
     var toto_date = $("input[name='toto_date']").val();
     if(from_date < '2023-08-30') from_date = '2023-08-30';
     if(toto_date < '2023-09-30') toto_date = '2023-09-30'; 
-    location.href = uri('linkurl') + '/page/view/dashboard2/ss='+from_date+'/se='+toto_date;
+    location.href = uri('linkurl') + '/page/view/dashboard_rst/ss='+from_date+'/se='+toto_date;
   } else if(opt==2){
     var today = new Date().format("yyyy-MM-dd")
     from_date = today.substring(0,5) + '01-02'
-    location.href = uri('linkurl') + '/page/view/dashboard2/ss='+from_date+'/se='+today;
+    location.href = uri('linkurl') + '/page/view/dashboard_rst/ss='+from_date+'/se='+today;
   }
-  else { location.href = uri('linkurl') + '/page/view/dashboard2'; }
+  else { location.href = uri('linkurl') + '/page/view/dashboard_rst'; }
 }
 
 

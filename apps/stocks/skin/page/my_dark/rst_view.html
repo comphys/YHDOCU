@@ -808,7 +808,7 @@ function synchro(opt,begin='pick') {
 		$("input[name='종료일자']").val(today);
 	} else if(opt==1){	today = $("input[name='시작일자']").val();} 
 
-	let posturl = uri('linkurl') + 'pages-pajax/overall_test_sync2';
+	let posturl = uri('linkurl') + 'pages-pajax/rst_sync';
 	$.post(posturl, { s_date : today, begin : begin },null,'json').done(function(data){
 		if(data.date=='None'){h_dialog.notice(data.msg);}
 		else {
