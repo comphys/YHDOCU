@@ -871,7 +871,6 @@ class update_Log :
 # --------------------------------------------------------------------------------------------------------
 
 today = my.kor_loc_date('US/Eastern')[0:10]
-today = '2024-08-30'
 weekd = my.dayofdate(today)
 RST = update_Log()
 
