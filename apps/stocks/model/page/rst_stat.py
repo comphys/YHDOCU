@@ -29,5 +29,5 @@ class M_rst_stat(Model) :
         # 기간 설정(최근 2년간)
         # self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)
         self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")
-        self.D['시작일자'] = my.dayofdate(self.D['종료일자'],delta=-365*2)[0]
+        self.D['통계시작'] = my.dayofdate(self.D['종료일자'],delta=-365*2)[0]
         

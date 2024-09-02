@@ -64,7 +64,7 @@
 					<div class='label label-info' style="cursor:pointer" onclick="startYearSpan()">S</div>&nbsp;
 					<div class='i-input-div'>
 						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(0)"> 시작</div>
-						<input type='text' name='시작일자' class="i-date" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
+						<input type='text' name='통계시작' class="i-date" value="{{D['통계시작']}}" style="width:110px;text-align:center;">
 					</div>
 					<div class='i-input-div'>
 						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(1)"> 종료</div>
@@ -89,28 +89,27 @@
 
 		<div>
 			<table class='table table-striped table-hover' style="border:2px solid black;">
-				<tr style="background-color:#393f4a;border-bottom:1px solid black;font-style:italic;">
-					<th style='text-align:center;width:50px'>No</th>
-					<th style='text-align:center;width:80px'>시작일</th>
-					<th style='text-align:right;width:60px'>종료일</th>
-					<th style='text-align:right;width:60px'>경과일</th>
+				<tr style="background-color:#393f4a;border-bottom:1px solid black;">
+					<th style='text-align:center;width:60px;'>No</th>
+					<th style='text-align:center;width:90px;'>시작일</th>
+					<th style='text-align:right;width:60px;'>경과</th>
 					
-					<th style='text-align:right;width:110px;color:#F6CECE'>수익</th>
-					<th style='text-align:center;width:74px'>수익률</th>
-					<th style='text-align:right;width:100px'>최장일</th>
-					<th style='text-align:right;width:70px'>MDD(R)</th>
-
-					<th style='text-align:right;width:110px;color:#F2F5A9'>MDD(S)</th>
-					<th style='text-align:center;width:74px'>MDD(T)</th>
-					<th style='text-align:right;width:100px'>LP</th>
-					<th style='text-align:right;width:70px'>게임횟수</th>
-
-					<th style='text-align:right;width:110px;color:#CEF6CE'>게임승률</th>
-					<th style='text-align:center;width:74px'>평균익률</th>
-					<th style='text-align:right;width:100px'>평균손률</th>
-					<th style='text-align:right;width:70px'>R counts</th>
-					<th style='text-align:right;width:70px'>S counts</th>
-					<th style='text-align:right;width:70px'>T counts</th>
+					<th style='text-align:right;width:100px;'>수익</th>
+					<th style='text-align:right;width:70px;'>수익률</th>
+					
+					<th style='text-align:center;width:100px'>최장일</th>
+					<th style='text-align:center;width:140px'>MDD(R)</th>
+					<th style='text-align:center;width:140px'>MDD(S)</th>
+					<th style='text-align:center;width:140px'>MDD(T)</th>
+					<th style='text-align:center;width:140px'>LP</th>
+					
+					<th style='text-align:right;width:100px'>게임횟수</th>
+					<th style='text-align:right;width:80px'>게임승률</th>
+					<th style='text-align:center;width:80px;'>평균익률</th>
+					<th style='text-align:right;width:80px'>평균손률</th>
+					<th style='text-align:right;width:100px'>R counts</th>
+					<th style='text-align:right;width:100px'>S counts</th>
+					<th style='text-align:right;'>T counts</th>
 
 				</tr>
 			</table>
@@ -118,73 +117,58 @@
 	</div> <!--postion:fixed-->
 </div> <!--rowrow clearfix-->
 
-{% if D['TR'] %}
-<div id="backTesting-table" class="row-row clearfix" style="width:{{D['xwidth']}};margin-top:470px">
+{% if D['SR'] %}
+<div id="backTesting-table" class="row-row clearfix" style="width:{{D['xwidth']}};margin-top:110px">
 	
 	<table class='table table-striped table-hover' style="border:2px solid black">
 		<colgroup>
-			<col style="width:50px;"> <!-- 날수 -->
-			<col style="width:80px;"> <!-- 일자 -->
-			<col style="width:60px;"> <!-- 당일종가 -->
-			<col style="width:60px;border-right:3px solid #424242"> <!-- 종가변동 -->
+			<col style="width:60px"> <!-- No -->
+			<col style="width:90px"> <!-- 시작일 -->
+			<col style="width:60px"> <!-- 경과 -->
+
+			<col style="width:100px"> <!-- 수익 -->
+			<col style="width:70px"> <!-- 수익률 -->
 			
-			<col style="width:110px"> <!-- 기회진행 -->
-			<col style="width:74px"> <!-- 기회평균 -->
-			<col style="width:100px"> <!-- 기회수익 -->
-			<col style="width:70px"> <!-- 기회(%) -->
-
-			<col style="width:110px;border-left:3px solid #424242"> <!-- 안정진행 -->
-			<col style="width:74px"> <!-- 안정평균 -->
-			<col style="width:100px"> <!-- 안정수익 -->
-			<col style="width:70px"> <!-- 안정(%) -->
-
-			<col style="width:110px;border-left:3px solid #424242"> <!-- 생활진행 -->
-			<col style="width:74px"> <!-- 생활평균 -->
-			<col style="width:100px"> <!-- 생활수익 -->
-			<col style="width:70px"> <!-- 생활(%) -->
+			<col style="width:100px"> <!-- 최장일 -->
+			<col style="width:140px"> <!-- MDD(R) -->
+			<col style="width:140px"> <!-- MDD(S) -->
+			<col style="width:140px"> <!-- MDD(T) -->
+			<col style="width:140px"> <!-- LP -->
+			
+			<col style="width:100px">
+			<col style="width:80px">
+			<col style="width:80px">
+			<col style="width:80px">
+			
+			<col style="width:100px">
+			<col style="width:100px">
+			<col>
 		</colgroup>
 
 
-			{% for TR in D['TR'] %}
-			{% if TR['진행상황'] == '익절매도'  %}
-			<tr style="border-top:1px solid #424242;border-bottom:1px solid #424242;background-color:black;font-weight:bold" onclick="show_chart({{TR['기록시즌']}},this)"> 
-			{% elif TR['진행상황'] == '손절매도' %}
-			<tr style="border-top:1px solid #A9D0F5;border-bottom:1px solid #A9D0F5;background-color:black;" onclick="show_chart({{TR['기록시즌']}},this)">
-			{% else %}
+			{% for S in D['SR'] %}
 			<tr>
-			{% endif %}
-				<td style='text-align:center'>{{TR['현재날수']}}</td>
-				<td class="begin-date" style="cursor:pointer;">{{TR['기록일자']}}</td>
-				<td class='ohlc-price' style='text-align:right;font-weight:bold;cursor:pointer;'>{{TR['당일종가']|safe}}</td>
-				<td style='text-align:right;font-weight:bold;'>{{TR['종가변동']|safe}}</td>
-				{% if D['일반상황']=='on' %}
-				<td style='text-align:right;color:#F6CECE'>{{TR['일반진행']}}</td>
-				<td style='text-align:right;color:#E6F8E0'>{{TR['일반평균']|safe}}</td>
-				<td style='text-align:right;font-weight:bold'>{{TR['일반수익']|safe}}</td>
-				<td style='text-align:right;font-weight:bold'>{{TR['일반익률']|safe}}</td>
-				{% endif %}
+				<td style='text-align:center'>{{loop.index}}</td>
+				<td>{{S['시작일자']}}</td>
+				<td style="text-align:right">{{S['경과일자']}}</td>
 
-				<td style='text-align:right;color:#F6CECE'>{{TR['기회진행']}}</td>
-				<td style='text-align:right;color:#E6F8E0'>{{TR['기회평균']|safe}}</td>
-				<td style='text-align:right'>{{TR['기회수익']|safe}}</td>
-				<td style='text-align:right;font-weight:bold'>{{TR['기회익률']|safe}}</td>
-				{% if D['일반상황']=='off' %}
-				<td style='text-align:right;color:#CEF6CE'>{{TR['기회잔액']|safe}}</td>
-				{% endif %}
-				<td style='text-align:right;color:#F6CECE'>{{TR['안정진행']}}</td>
-				<td style='text-align:right;color:#E6F8E0'>{{TR['안정평균']|safe}}</td>
-				<td style='text-align:right'>{{TR['안정수익']|safe}}</td>
-				<td style='text-align:right;font-weight:bold'>{{TR['안정익률']|safe}}</td>
-				{% if D['일반상황']=='off' %}
-				<td style='text-align:right;color:#CEF6CE'>{{TR['안정잔액']|safe}}</td>	
-				{% endif %}
-				<td style='text-align:right;color:#F6CECE'>{{TR['생활진행']}}</td>
-				<td style='text-align:right;color:#E6F8E0'>{{TR['생활평균']|safe}}</td>
-				<td style='text-align:right'>{{TR['생활수익']|safe}}</td>
-				<td style='text-align:right;font-weight:bold'>{{TR['생활익률']|safe}}</td>
-				{% if D['일반상황']=='off' %}
-				<td style='text-align:right;color:#CEF6CE'>{{TR['생활잔액']|safe}}</td>
-				{% endif %}
+				<td style="text-align:right">{{S['최종수익']}}</td>
+				<td style="text-align:right">{{S['종수익률']}}</td>
+				<td>{{S['최장기록']}}</td>
+				
+				<td style="text-align:right">{{S['기회최락']}}</td>
+				<td style="text-align:right">{{S['안정최락']}}</td>
+				<td style="text-align:right">{{S['생활최락']}}</td>
+				<td style="text-align:right">{{S['저점기록']}}</td>
+
+				<td style="text-align:right">{{S['게임횟수']}}</td>
+				<td style="text-align:right">{{S['게임승률']}}</td>
+				<td style="text-align:right">{{S['게임익평']}}</td>
+				<td style="text-align:right">{{S['게임손평']}}</td>
+				
+				<td style="text-align:right">{{S['기회갯수']}}</td>
+				<td style="text-align:right">{{S['안정갯수']}}</td>
+				<td style="text-align:right">{{S['생활갯수']}}</td>
 			</tr>
 			{%- endfor %}
 
@@ -192,64 +176,7 @@
 </div>
 {% endif %}
 
-{% if D['NOTICE'] %}
-<div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
-{% endif %}
 
-<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1230px;background-color:#24272d;padding:10px;border:2px solid black;z-index:7;">
-	<div id='backTestingChart-notice' style="position:absolute;top:11px;left:74px;color:gray;font-style:italic">&nbsp;</div>
-	<canvas id="mybackTestChart" style="width:1200px;height:330px;background-color:#24272d"></canvas>
-</div>
-{% if D['월별이익'] %}
-<div id='monthlyProfit' style="position:fixed;left:27px;top:108px;background-color:#24272d;padding:5px;opacity:0.9;z-index:3;" onclick="$(this).hide()">
-	<canvas id="monthlyProfitChart" style="width:1230px;height:350px;"></canvas>
-</div>
-{% endif %}
-
-<div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
-    <span style="font-style: italic"> Next Strategy</span>
-	<ul style="margin-left:10px;margin-top:10px">
-		<li>Days &nbsp;: {{D['N_일자']}}</li>
-		<li>Last &nbsp;&nbsp;: {{D['N_종가']}} / ({{D['N_변동']}}%)</li>
-		<!-- <li>Stage : {{D['N_단계']}}</li> -->
-		<li>B qty : {{D['N_기회기초']}} / {{D['N_안정기초']}} / {{D['N_생활기초']}}</li>
-	</ul>
-	<table class="table" style="text-align:right;margin-top:10px;width:260px">
-		<tr style="font-style:italic;border-bottom:1px solid gray"><td style="text-align:left;">Tactic</td><td>qty</td><td>price</td><td>ppm</td><td>ppl</td></tr>
-		<tr><td style="text-align:left;">R buy</td><td>{{D['N_기회매수량']}}</td><td>{{D['N_기회매수가']}}</td><td>{{D['N_기회평대비']}}</td><td>{{D['N_기회종대비']}}</td></tr>
-		<tr><td style="text-align:left;">S buy</td><td>{{D['N_안정매수량']}}</td><td>{{D['N_안정매수가']}}</td><td>{{D['N_안정평대비']}}</td><td>{{D['N_안정종대비']}}</td></tr>
-		<tr style="border-bottom:1px solid gray"><td style="text-align:left;">T buy</td><td>{{D['N_생활매수량']}}</td><td>{{D['N_생활매수가']}}</td><td>{{D['N_생활평대비']}}</td><td>{{D['N_생활종대비']}}</td></tr>
-		<tr><td style="text-align:left;">R sell</td><td>{{D['N_기회매도량']}}</td><td>{{D['N_기회매도가']}}</td><td>{{D['N_기회도평비']}}</td><td>{{D['N_공통종대비']}}</td></tr>
-		<tr><td style="text-align:left;">S sell</td><td>{{D['N_안정매도량']}}</td><td>{{D['N_안정매도가']}}</td><td>{{D['N_안정도평비']}}</td><td>{{D['N_공통종대비']}}</td></tr>
-		<tr><td style="text-align:left;">T sell</td><td>{{D['N_생활매도량']}}</td><td>{{D['N_생활매도가']}}</td><td>{{D['N_생활도평비']}}</td><td>{{D['N_공통종대비']}}</td></tr>
-	</table>
-</div>
-
-<div id="statistics-profits" 
-     style="display:none;position:fixed;left:1270px;top:112px;width:420px;height:350px;padding:0px;background-color:black;overflow-y:scroll;border:1px solid gray" 
-	 ondblclick="$('#statistics-profits').hide()">
-	 <table class='table table-striped' style="padding:0px">
-		<tr style="background-color: #000000;font-weight:bold;color:white;">
-			<td style="text-align:left;">결과분석</td>
-			<td style="text-align:right;">{{D['R_총매도수']}}({{D['R_총익절수']}}/{{D['R_총손절수']}})</td>
-			<td style="text-align:right;">{{D['R_총익승률']}}%</td>
-			<td style="text-align:right;">{{D['R_익절평균']}}%</td>
-			<td style="text-align:right;">{{D['R_손절평균']}}%</td>
-		 </tr>
-	 {% for TR in D['손익통계'] %}
-	 <tr>
-		<td class="pointing_sd1" onclick="show_spanChart('{{TR[0]}}',1)">{{TR[0][2:]}}</td>
-		<td class="pointing_sd2" onclick="show_chart('{{TR[5]}}','{{TR[0]}}','{{TR[2]}}','{{TR[3]}}')">{{TR[1]}}</td>
-		<td style="text-align:right;color:{{TR[4]}}">{{TR[2]}}</td>
-		<td style="text-align:right;color:{{TR[4]}}">{{TR[3]}}</td>
-		<td style="text-align:right;color:lightgoldenrodyellow">{{TR[6]}}</td>
-	 </tr>
-	 {% endfor %}
-	 </table>
-</div>
-
-<script src="/sys/chart/chart.min.js"></script>
-<script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 <script>
 
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
@@ -259,21 +186,21 @@ $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_ico
 
 function check_thisForm() {
     if(! $("input[name='종목코드']").val() ) { h_dialog.notice("코드 입력은 필수입니다"); return false; }
-    if(! $("input[name='시작일자']").val() ) { h_dialog.notice("시작 일자가 입력되지않았습니다"); return false; }  
+    if(! $("input[name='통계시작']").val() ) { h_dialog.notice("시작 일자가 입력되지않았습니다"); return false; }  
     if(! $("input[name='종료일자']").val() ) { h_dialog.notice("종료 일자가 입력되지않았습니다"); return false; }  
-    if($("input[name='시작일자']").val() > $("input[name='종료일자']").val() ) { h_dialog.notice("종료 일자는 시작일보다 나중이어야 합니다"); return false; }
+    if($("input[name='통계시작']").val() > $("input[name='종료일자']").val() ) { h_dialog.notice("종료 일자는 시작일보다 나중이어야 합니다"); return false; }
 }
 
 
 function year_up_dn(opt) {
-	let date1 = $("input[name='시작일자']").val()
+	let date1 = $("input[name='통계시작']").val()
 	let date2 = $("input[name='종료일자']").val()
 	year1 = date1.slice(0,4); year1_l = date1.slice(4);
 	year2 = date2.slice(0,4); year2_l = date2.slice(4);
 	if(opt) {year1 = parseInt(year1)+1; year2 = parseInt(year2)+1; }
 	else    {year1 = parseInt(year1)-1; year2 = parseInt(year2)-1; }
 
-	date1 = year1 + year1_l; $("input[name='시작일자']").val(date1)
+	date1 = year1 + year1_l; $("input[name='통계시작']").val(date1)
 	date2 = year2 + year2_l; $("input[name='종료일자']").val(date2)
 }
 
@@ -283,13 +210,13 @@ function YearSpan(opt) {
 
 	let YearsAgo = new Date(now.setDate(now.getDate() - (365*opt-1))) 
 	let date2 = YearsAgo.toISOString().split('T')[0]
-	$("input[name='시작일자']").val(date2)
+	$("input[name='통계시작']").val(date2)
 }
 
 function startYearSpan() {
 	let date1 = $("input[name='종료일자']").val()
 	let date2 = date1.slice(0,4)+'-01-01'
-	$("input[name='시작일자']").val(date2)
+	$("input[name='통계시작']").val(date2)
 }
 
 function synchro(opt,begin='pick') {
@@ -297,14 +224,14 @@ function synchro(opt,begin='pick') {
 	if(opt==2 || opt==0) {
 		today = new Date().format("yyyy-MM-dd");
 		$("input[name='종료일자']").val(today);
-	} else if(opt==1){	today = $("input[name='시작일자']").val();} 
+	} else if(opt==1){	today = $("input[name='통계시작']").val();} 
 
 	let posturl = uri('linkurl') + 'pages-pajax/rst_sync';
 	$.post(posturl, { s_date : today, begin : begin },null,'json').done(function(data){
 		if(data.date=='None'){h_dialog.notice(data.msg);}
 		else {
 			h_dialog.notice("동기화 데이타가 입력되었습니다.")
-			$("input[name='시작일자']").val(data.date);
+			$("input[name='통계시작']").val(data.date);
 			$("input[name='일반자금']").val(data.V_money);
 			$("input[name='기회자금']").val(data.R_money);
 			$("input[name='안정자금']").val(data.S_money);

@@ -458,26 +458,25 @@ class RST :
         sx = {}
 
         sx['시작일자'] = self.D['시작일자']
-        sx['종료일자'] = self.D['종료일자']
         sx['경과일자'] = self.D['R_총경과일']
 
         sx['최종수익'] = self.D['R_최종수익']
         sx['종수익률'] = self.D['R_최종익률']
-        sx['최장기록'] = f"{self.D['최장일수']}({self.D['최장일자']})"
+        sx['최장기록'] = f"{self.D['최장일수']}({self.D['최장일자'][2:]})"
 
-        sx['기회최락'] = ''
-        sx['안정최락'] = ''
-        sx['생활최락'] = ''
-        sx['손익최락'] = ''
+        sx['기회최락'] = f"{self.D['MDD2']}({self.D['MDD_DAY2']})"
+        sx['안정최락'] = f"{self.D['MDD3']}({self.D['MDD_DAY3']})"    if self.D['MDD_DAY3'] else ''
+        sx['생활최락'] = f"{self.D['MDD4']}({self.D['MDD_DAY4']})"    if self.D['MDD_DAY4'] else ''
+        sx['저점기록'] = f"{self.D['손익저점']}({self.D['저점날자'][2:]})" if self.D['저점날자'] else ''
 
-        sx['게임횟수'] = ''
-        sx['게임승률'] = ''
-        sx['평균익률'] = ''
-        sx['평균손률'] = ''
+        sx['게임횟수'] = f"{self.D['R_총매도수']}({self.D['R_총익절수']}/{self.D['R_총손절수']})"
+        sx['게임승률'] = self.D['R_총익승률']
+        sx['게임익평'] = self.D['R_익절평균']
+        sx['게임손평'] = self.D['R_손절평균']
 
-        sx['기회숫자'] = ''
-        sx['안정숫자'] = ''
-        sx['생활숫자'] = ''
+        sx['기회갯수'] = f"{self.D['기정익절']}-{self.D['기정손절']} : {self.D['기회익절']}-{self.D['기회손절']}"
+        sx['안정갯수'] = f"{self.D['안정익절']}-{self.D['안정손절']} : {self.D['안회익절']}-{self.D['안회손절']}"
+        sx['생활갯수'] = f"{self.D['생정익절']}-{self.D['생정손절']} : {self.D['생회익절']}-{self.D['생회손절']}"
 
         return sx
 
@@ -904,5 +903,7 @@ class RST :
             self.simulate()
             self.result()
             self.D['SR'].append(self.get_backDateStat())
+            
+        self.D['SR'].pop()    
         
 
