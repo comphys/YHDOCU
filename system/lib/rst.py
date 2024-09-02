@@ -432,9 +432,10 @@ class RST :
             self.D['R_익절평균'] = f"{asispm:.2f}"
             self.D['R_손절평균'] = f"{asisum:.2f}"        
 
-    def get_start(self) :
+    def get_start(self,b='') :
 
         self.D['종목코드']  = 'SOXL'
+        if b : self.D['시작일자'] = b
         old_date = my.dayofdate(self.D['시작일자'],-7)[0]
         self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{self.D['종료일자']}'",'add0')
         self.B = self.DB.get('add0,add3,add8') # 날자, 종가, 증감 
@@ -451,6 +452,35 @@ class RST :
         e_day = self.D['종료일자']  ; d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
         delta = d1-d0
         self.D['R_총경과일'] = f"{delta.days:,}"
+
+    def get_backDateStat(self) :
+
+        sx = {}
+
+        sx['시작일자'] = self.D['시작일자']
+        sx['종료일자'] = self.D['종료일자']
+        sx['경과일자'] = self.D['R_총경과일']
+
+        sx['최종수익'] = self.D['R_최종수익']
+        sx['종수익률'] = self.D['R_최종익률']
+        sx['최장기록'] = f"{self.D['최장일수']}({self.D['최장일자']})"
+
+        sx['기회최락'] = ''
+        sx['안정최락'] = ''
+        sx['생활최락'] = ''
+        sx['손익최락'] = ''
+
+        sx['게임횟수'] = ''
+        sx['게임승률'] = ''
+        sx['평균익률'] = ''
+        sx['평균손률'] = ''
+
+        sx['기회숫자'] = ''
+        sx['안정숫자'] = ''
+        sx['생활숫자'] = ''
+
+        return sx
+
 
     def print_backtest(self) :
 
@@ -496,22 +526,19 @@ class RST :
               
             self.D['TR'].append(tx)
             
-            if  self.chart : # 챠트 기록용
-                
-                self.D['clse_p'].append(self.M['당일종가'])
+            self.D['clse_p'].append(self.M['당일종가'])
 
-                if avg_r := round(self.R['평균단가'],2) : self.D['avge_r'].append(avg_r)
-                else : self.D['avge_r'].append('null')
-                if avg_s := round(self.S['평균단가'],2) : self.D['avge_s'].append(avg_s)
-                else : self.D['avge_s'].append('null') 
-                if avg_t := round(self.T['평균단가'],2) : self.D['avge_t'].append(avg_t)
-                else : self.D['avge_t'].append('null')     
-                
-                self.D['c_date'].append(self.M['현재일자'][2:])
-                self.D['totalV'].append(round(self.R['현재잔액']+self.R['평가금액']+self.S['현재잔액']+self.S['평가금액']+self.T['현재잔액']+self.T['평가금액'],0))
+            if avg_r := round(self.R['평균단가'],2) : self.D['avge_r'].append(avg_r)
+            else : self.D['avge_r'].append('null')
+            if avg_s := round(self.S['평균단가'],2) : self.D['avge_s'].append(avg_s)
+            else : self.D['avge_s'].append('null') 
+            if avg_t := round(self.T['평균단가'],2) : self.D['avge_t'].append(avg_t)
+            else : self.D['avge_t'].append('null')     
+            
+            self.D['c_date'].append(self.M['현재일자'][2:])
+            self.D['totalV'].append(round(self.R['현재잔액']+self.R['평가금액']+self.S['현재잔액']+self.S['평가금액']+self.T['현재잔액']+self.T['평가금액'],0))
         
         self.M['현재날수'] +=1
-
 
     def init_value(self) :
 
@@ -863,3 +890,19 @@ class RST :
         nS = {'sub18':self.D['N_'+nX[tac]+'기초'],'sub2' :self.D['N_'+nX[tac]+'매수량'],'sub3':self.D['N_'+nX[tac]+'매도량'],
               'sub19':self.D['N_'+nX[tac]+'매수가'],'sub20':self.D['N_'+nX[tac]+'매도가']}
         return nS
+    
+    def do_viewStat(self) :
+
+        self.chart = False
+        self.stat  = True
+        B = self.get_dateList(self.D['시작일자'],self.D['종료일자'])
+        
+        self.D['SR'] = []
+        for b in B :
+            self.get_start(b)
+            self.init_value()
+            self.simulate()
+            self.result()
+            self.D['SR'].append(self.get_backDateStat())
+        
+

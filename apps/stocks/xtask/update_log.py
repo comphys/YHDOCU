@@ -501,19 +501,17 @@ class update_Log :
               
             self.D['TR'].append(tx)
             
-            if  self.chart : # 챠트 기록용
-                
-                self.D['clse_p'].append(self.M['당일종가'])
+            self.D['clse_p'].append(self.M['당일종가'])
 
-                if avg_r := round(self.R['평균단가'],2) : self.D['avge_r'].append(avg_r)
-                else : self.D['avge_r'].append('null')
-                if avg_s := round(self.S['평균단가'],2) : self.D['avge_s'].append(avg_s)
-                else : self.D['avge_s'].append('null') 
-                if avg_t := round(self.T['평균단가'],2) : self.D['avge_t'].append(avg_t)
-                else : self.D['avge_t'].append('null')     
-                
-                self.D['c_date'].append(self.M['현재일자'][2:])
-                self.D['totalV'].append(round(self.R['현재잔액']+self.R['평가금액']+self.S['현재잔액']+self.S['평가금액']+self.T['현재잔액']+self.T['평가금액'],0))
+            if avg_r := round(self.R['평균단가'],2) : self.D['avge_r'].append(avg_r)
+            else : self.D['avge_r'].append('null')
+            if avg_s := round(self.S['평균단가'],2) : self.D['avge_s'].append(avg_s)
+            else : self.D['avge_s'].append('null') 
+            if avg_t := round(self.T['평균단가'],2) : self.D['avge_t'].append(avg_t)
+            else : self.D['avge_t'].append('null')     
+            
+            self.D['c_date'].append(self.M['현재일자'][2:])
+            self.D['totalV'].append(round(self.R['현재잔액']+self.R['평가금액']+self.S['현재잔액']+self.S['평가금액']+self.T['현재잔액']+self.T['평가금액'],0))
         
         self.M['현재날수'] +=1
 
@@ -919,5 +917,5 @@ else :
         qry=RST.DB.qry_insert(RST.M['생활보드'],DT)
         RST.DB.exe(qry)
 
-    RST.send_message(f"{today}일 VRST 정보를 업데이트 하였습니다")
+    RST.send_message(f"{today}일 VRST 업데이트 완료")
 
