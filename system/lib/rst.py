@@ -564,18 +564,20 @@ class RST :
             self.M['회복탈출']  = ST['00901']  
             self.M['분할횟수']  = ST['00100']  
             self.M['찬스일가']  = ST['01002']  
-            self.R['진입시점']  = ST['02100'] 
-            self.R['회복시점']  = ST['02200'] 
-            self.S['진입시점']  = ST['02300'] 
-            self.S['회복시점']  = ST['02400'] 
-            self.T['진입시점']  = ST['02401']
-            self.T['회복시점']  = ST['02402']
-            
             self.M['일반보드']  = ST['03500']
             self.M['기회보드']  = ST['03501']
             self.M['안정보드']  = ST['03502']
             self.M['생활보드']  = ST['03503']
-            
+        
+    
+        self.R['진입시점']  = float(self.D['기회시점'])
+        self.R['회복시점']  = float(self.D['기회회복'])
+        self.S['진입시점']  = float(self.D['안정시점'])
+        self.S['회복시점']  = float(self.D['안정회복'])
+        self.T['진입시점']  = float(self.D['생활시점'])
+        self.T['회복시점']  = float(self.D['생활회복'])
+        
+        
         if '가상손실' in self.D and self.D['가상손실'] == 'on' : self.M['손실회수']  = True     
         if '수료적용' not in self.D :   self.D['수료적용']  = 'on'
         if '세금적용' not in self.D :   self.D['세금적용']  = 'off'
