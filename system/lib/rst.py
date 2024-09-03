@@ -251,7 +251,6 @@ class RST :
 
         # 2024.06.18 이후 폭락장 보정
         CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승'])
-        
         if  CPRICE > LPRICE : 
             self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
 
@@ -462,12 +461,14 @@ class RST :
 
         sx['최종수익'] = self.D['R_최종수익']
         sx['종수익률'] = self.D['R_최종익률']
-        sx['최장기록'] = f"{self.D['최장일수']}({self.D['최장일자'][2:]})"
+        sx['최장기록'] = f"{self.D['최장일수']}<span style='color:gray'>({self.D['최장일자'][2:]})</span>"
 
-        sx['기회최락'] = f"{self.D['MDD2']}({self.D['MDD_DAY2']})"
-        sx['안정최락'] = f"{self.D['MDD3']}({self.D['MDD_DAY3']})"    if self.D['MDD_DAY3'] else ''
-        sx['생활최락'] = f"{self.D['MDD4']}({self.D['MDD_DAY4']})"    if self.D['MDD_DAY4'] else ''
-        sx['저점기록'] = f"{self.D['손익저점']}({self.D['저점날자'][2:]})" if self.D['저점날자'] else ''
+        sx['기회최락'] = f"{self.D['MDD2']}<span style='color:gray'>({self.D['MDD_DAY2']})</span>"    if self.D['MDD_DAY2'] else ''
+        sx['안정최락'] = f"{self.D['MDD3']}<span style='color:gray'>({self.D['MDD_DAY3']})</span>"    if self.D['MDD_DAY3'] else ''
+        sx['생활최락'] = f"{self.D['MDD4']}<span style='color:gray'>({self.D['MDD_DAY4']})</span>"    if self.D['MDD_DAY4'] else ''
+        sx['저점기록'] = f"<b>{self.D['손익저점']}</b><span style='color:gray'>({self.D['저점날자'][2:]})</span>" if self.D['저점날자'] else ''
+        
+        if float(self.D['MaxDP']) >= float(self.D['손익저점']) : self.D['MaxDP'] = self.D['손익저점']; self.D['MaxDD'] = self.D['시작일자']
 
         sx['게임횟수'] = f"{self.D['R_총매도수']}({self.D['R_총익절수']}/{self.D['R_총손절수']})"
         sx['게임승률'] = self.D['R_총익승률']
@@ -896,7 +897,10 @@ class RST :
         self.stat  = True
         B = self.get_dateList(self.D['시작일자'],self.D['종료일자'])
         
+        self.D['MaxDP'] = 100.0
+        self.D['MaxDD'] = ''
         self.D['SR'] = []
+        
         for b in B :
             self.get_start(b)
             self.init_value()
@@ -905,5 +909,6 @@ class RST :
             self.D['SR'].append(self.get_backDateStat())
             
         self.D['SR'].pop()    
-        
+
+
 

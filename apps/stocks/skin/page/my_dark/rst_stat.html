@@ -97,11 +97,11 @@
 					<th style='text-align:right;width:100px;'>수익</th>
 					<th style='text-align:right;width:70px;'>수익률</th>
 					
-					<th style='text-align:center;width:100px'>최장일</th>
+					<th style='text-align:center;width:110px'>최장일</th>
+					<th style='text-align:center;width:140px'>LP</th>
 					<th style='text-align:center;width:140px'>MDD(R)</th>
 					<th style='text-align:center;width:140px'>MDD(S)</th>
 					<th style='text-align:center;width:140px'>MDD(T)</th>
-					<th style='text-align:center;width:140px'>LP</th>
 					
 					<th style='text-align:right;width:100px'>게임횟수</th>
 					<th style='text-align:right;width:80px'>게임승률</th>
@@ -124,42 +124,46 @@
 		<colgroup>
 			<col style="width:60px"> <!-- No -->
 			<col style="width:90px"> <!-- 시작일 -->
-			<col style="width:60px"> <!-- 경과 -->
+			<col style="width:60px;border-right:1px solid gray"> <!-- 경과 -->
 
 			<col style="width:100px"> <!-- 수익 -->
 			<col style="width:70px"> <!-- 수익률 -->
 			
-			<col style="width:100px"> <!-- 최장일 -->
+			<col style="width:110px"> <!-- 최장일 -->
+			<col style="width:140px;border-right:1px solid gray"> <!-- LP -->
 			<col style="width:140px"> <!-- MDD(R) -->
 			<col style="width:140px"> <!-- MDD(S) -->
-			<col style="width:140px"> <!-- MDD(T) -->
-			<col style="width:140px"> <!-- LP -->
+			<col style="width:140px;border-right:1px solid gray"> <!-- MDD(T) -->
 			
-			<col style="width:100px">
-			<col style="width:80px">
-			<col style="width:80px">
-			<col style="width:80px">
+			<col style="width:100px"><!-- 게임횟수 -->
+			<col style="width:80px"><!-- 게임승률 -->
+			<col style="width:80px"><!-- 평균익률 -->
+			<col style="width:80px;border-right:1px solid gray"><!-- 평균손률 -->
 			
-			<col style="width:120px">
-			<col style="width:100px">
-			<col>
+			<col style="width:120px"><!-- R counts -->
+			<col style="width:100px"><!-- S counts -->
+			<col><!-- T counts -->
 		</colgroup>
 
 
 			{% for S in D['SR'] %}
+			{% if S['시작일자'] == D['MaxDD'] %}
+			<tr style="border-top:1px solid #F8E6E0;border-bottom:1px solid #F8E6E0;background-color:black;">
+			{% else %}
 			<tr>
+			{% endif %}
 				<td style='text-align:center'>{{loop.index}}</td>
 				<td>{{S['시작일자']}}</td>
 				<td style="text-align:right">{{S['경과일자']}}</td>
 
 				<td style="text-align:right">{{S['최종수익']}}</td>
-				<td style="text-align:right">{{S['종수익률']}}</td>
-				<td>{{S['최장기록']}}</td>
+				<td style="text-align:right;color:#CEF6CE">{{S['종수익률']}}</td>
+				<td style="text-align:right">{{S['최장기록']|safe}}</td>
 				
-				<td style="text-align:right">{{S['기회최락']}}</td>
-				<td style="text-align:right">{{S['안정최락']}}</td>
-				<td style="text-align:right">{{S['생활최락']}}</td>
-				<td style="text-align:right">{{S['저점기록']}}</td>
+				<td style="text-align:right">{{S['저점기록']|safe}}</td>
+				<td style="text-align:right">{{S['기회최락']|safe}}</td>
+				<td style="text-align:right">{{S['안정최락']|safe}}</td>
+				<td style="text-align:right">{{S['생활최락']|safe}}</td>
 
 				<td style="text-align:right">{{S['게임횟수']}}</td>
 				<td style="text-align:right">{{S['게임승률']}}</td>
