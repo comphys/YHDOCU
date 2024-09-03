@@ -570,12 +570,12 @@ class RST :
             self.M['생활보드']  = ST['03503']
         
     
-        self.R['진입시점']  = float(self.D['기회시점'])
-        self.R['회복시점']  = float(self.D['기회회복'])
-        self.S['진입시점']  = float(self.D['안정시점'])
-        self.S['회복시점']  = float(self.D['안정회복'])
-        self.T['진입시점']  = float(self.D['생활시점'])
-        self.T['회복시점']  = float(self.D['생활회복'])
+        self.R['진입시점']  = float(self.D['기회시점']) if '기회시점' in self.D else ST['02100']
+        self.R['회복시점']  = float(self.D['기회회복']) if '기회회복' in self.D else ST['02200']
+        self.S['진입시점']  = float(self.D['안정시점']) if '안정시점' in self.D else ST['02300']
+        self.S['회복시점']  = float(self.D['안정회복']) if '안정회복' in self.D else ST['02400']
+        self.T['진입시점']  = float(self.D['생활시점']) if '생활시점' in self.D else ST['02401']
+        self.T['회복시점']  = float(self.D['생활회복']) if '생활회복' in self.D else ST['02402']
         
         
         if '가상손실' in self.D and self.D['가상손실'] == 'on' : self.M['손실회수']  = True     
@@ -758,7 +758,7 @@ class RST :
         
         self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board") if not end else end
         self.D['시작일자'] = my.dayofdate(self.D['종료일자'],delta=-365*2)[0] if not start else start 
-
+        
         self.get_start()
         self.init_value()
         self.simulate()
