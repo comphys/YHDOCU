@@ -23,7 +23,9 @@ class update_Log :
         if self.DB.system == "Linux" : my.post_slack(self.skey,message)
         else : print(message)  
 
-#   ------------------------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------------------------------
+    # From rst.py in sytem lib
+    # ------------------------------------------------------------------------------------------------------------------------------------------
     def calculate_sub(self,tac,key) :
         
         if  tac['매수수량'] : 
@@ -256,11 +258,9 @@ class update_Log :
 
         # 2024.06.18 이후 폭락장 보정
         CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승'])
-        
         if  CPRICE > LPRICE : 
             self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
 
-        if self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01
 
     def tomorrow_step(self)   :
         
@@ -321,7 +321,7 @@ class update_Log :
             return False
     
     
-    def simulate(self) :
+    def simulate(self,printOut=False) :
 
         for idx,BD in enumerate(self.B) : 
             if BD['add0'] < self.D['시작일자'] : idxx = idx; continue
@@ -333,16 +333,16 @@ class update_Log :
             self.V['거래코드'] = self.R['거래코드'] = self.S['거래코드'] = self.T['거래코드'] = ' '
             self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률'],0)
             
-            # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정(12%)값 이상으로 상승 시 건너뛰기 위함
+            # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정값 이상으로 상승 시 건너뛰기 위함
             if  idx == idxx + 1 or self.M['첫날기록'] : 
-                if  self.new_day() : self.tomorrow_step(); self.print_backtest(); continue
+                if  self.new_day() : self.tomorrow_step(); self.increase_count(printOut); continue
                 else : self.M['첫날기록'] = True; continue
 
             self.today_sell()
             self.today_buy()
             self.calculate()
             self.tomorrow_step()
-            self.print_backtest()
+            self.increase_count(printOut)
     
     def set_value(self,key,val) :
 
@@ -361,31 +361,13 @@ class update_Log :
         self.D['MDD3'] = f"{self.S['진최하락']:.2f}"; self.D['MDD_DAY3'] = self.S['최하일자'][2:]
         self.D['MDD4'] = f"{self.T['진최하락']:.2f}"; self.D['MDD_DAY4'] = self.T['최하일자'][2:]
         
-        초기자본1 = float(self.D['일반자금'].replace(',','')) 
-        최종자본1 = self.V['평가금액'] + self.V['현재잔액'] 
-        최종수익1 = 최종자본1 - 초기자본1 
-        self.D['v_profit'] = round((최종수익1/초기자본1) * 100,2)      
+        초기자본1 = float(self.D['일반자금'].replace(',','')); 최종자본1=self.V['평가금액']+self.V['현재잔액']; 최종수익1=최종자본1-초기자본1; self.D['v_profit']=round((최종수익1/초기자본1)*100,2)
+        초기자본2 = float(self.D['기회자금'].replace(',','')); 최종자본2=self.R['평가금액']+self.R['현재잔액']; 최종수익2=최종자본2-초기자본2; self.D['r_profit']=round((최종수익2/초기자본2)*100,2)
+        초기자본3 = float(self.D['안정자금'].replace(',','')); 최종자본3=self.S['평가금액']+self.S['현재잔액']; 최종수익3=최종자본3-초기자본3; self.D['s_profit']=round((최종수익3/초기자본3)*100,2)
+        초기자본4 = float(self.D['생활자금'].replace(',','')); 최종자본4=self.T['평가금액']+self.T['현재잔액']; 최종수익4=최종자본4-초기자본4; self.D['t_profit']=round((최종수익4/초기자본4)*100,2)
         
-        초기자본2 = float(self.D['기회자금'].replace(',',''))
-        최종자본2 = self.R['평가금액'] + self.R['현재잔액'] 
-        최종수익2 = 최종자본2 - 초기자본2 
-        self.D['r_profit'] = round((최종수익2/초기자본2) * 100,2)
-
-        초기자본3 = float(self.D['안정자금'].replace(',',''))
-        최종자본3 = self.S['평가금액'] + self.S['현재잔액'] 
-        최종수익3 = 최종자본3 - 초기자본3 
-        self.D['s_profit'] = round((최종수익3/초기자본3) * 100,2)
-
-        초기자본4 = float(self.D['생활자금'].replace(',',''))
-        최종자본4 = self.T['평가금액'] + self.T['현재잔액'] 
-        최종수익4 = 최종자본4 - 초기자본4 
-        self.D['t_profit'] = round((최종수익4/초기자본4) * 100,2)
-        
-        초기자본 = 초기자본2 + 초기자본3 + 초기자본4
-        최종자본 = 최종자본2 + 최종자본3 + 최종자본4
-        최종수익 = 최종자본 - 초기자본 
+        초기자본 = 초기자본2 + 초기자본3 + 초기자본4; 최종자본 = 최종자본2 + 최종자본3 + 최종자본4; 최종수익 = 최종자본 - 초기자본 
         self.D['profit_t'] = round((최종수익/초기자본) * 100,2)
-        
         
         self.D['R_초기자본'] = f"{초기자본:,.0f}"
         self.D['R_최종자본'] = f"{최종자본:,.2f}"
@@ -395,6 +377,7 @@ class update_Log :
         self.D['R_기회익률'] = f"{self.D['r_profit']:,.2f}"
         self.D['R_안정익률'] = f"{self.D['s_profit']:,.2f}"
         self.D['R_생활익률'] = f"{self.D['t_profit']:,.2f}"
+        self.D['R_총경과일'] = f"{my.diff_day(self.D['시작일자'],self.D['종료일자']):,}"
 
         if self.chart and self.D['c_date'] : self.D['s_date'] = self.D['c_date'][0]; self.D['e_date'] = self.D['c_date'][-1]
 
@@ -429,13 +412,8 @@ class update_Log :
 
             win_p = asispc / asis_c * 100 if asis_c else 0.0
 
-            self.D['R_총매도수'] = asis_c
-            self.D['R_총익절수'] = asispc
-            self.D['R_총손절수'] = asisuc
-
-            self.D['R_총익승률'] = f"{win_p:.2f}"
-            self.D['R_익절평균'] = f"{asispm:.2f}"
-            self.D['R_손절평균'] = f"{asisum:.2f}"        
+            self.D['R_총매도수'] = asis_c; self.D['R_총익절수'] = asispc; self.D['R_총손절수'] = asisuc
+            self.D['R_총익승률'] = f"{win_p:.2f}" ; self.D['R_익절평균'] = f"{asispm:.2f}"; self.D['R_손절평균'] = f"{asisum:.2f}"         
 
     def get_start(self) :
 
@@ -447,74 +425,14 @@ class update_Log :
         # 데이타 존재 여부 확인
         self.DB.tbl, self.DB.wre = ("h_stockHistory_board",f"add1='{self.D['종목코드']}'")
         chk_data = self.DB.get_one("min(add0)")
-        if chk_data > self.D['시작일자'] : 
+        if  chk_data > self.D['시작일자'] : 
             self.D['NOTICE'] = f" {self.D['시작일자']} 에서 {self.D['종료일자']} 까지 분석을 위한 데이타가 부족합니다. 시작 날자를 {chk_data} 이후 3일 뒤로 조정하시기 바랍니다."
-            return
 
-        # 기간 계산하기
-        s_day = self.D['시작일자']  ; d0 = date(int(s_day[0:4]),int(s_day[5:7]),int(s_day[8:10]))
-        e_day = self.D['종료일자']  ; d1 = date(int(e_day[0:4]),int(e_day[5:7]),int(e_day[8:10]))
-        delta = d1-d0
-        self.D['R_총경과일'] = f"{delta.days:,}"
-
-    def print_backtest(self) :
-
-        if not self.V['보유수량'] and not self.V['매도수량']: return
-        if self.chart :
-            tx = {}
-            #--------------------------------------------------------
-            tx['현재날수'] = self.M['현재날수']; tx['기록시즌'] = self.M['기록시즌']
-            tx['기록일자'] = self.M['현재일자'][2:]
-            tx['당일종가'] = f"<span class='clsp{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
-            clr = "#F6CECE" if self.M['종가변동'] >= 0 else "#CED8F6"
-            tx['종가변동'] = f"<span style='color:{clr}'>{self.M['종가변동']:,.2f}</span>"
-            #--------------------------------------------------------
-            tx['일반진행'] = f"{round(self.V['매도금액'],4):,.2f}" if self.V['매도금액'] else self.V['거래코드']
-            tx['일반평균'] = f"{round(self.V['평균단가'],4):,.4f}" if self.V['평균단가'] else ""
-            clr = "#F6CECE" if self.V['현수익률'] > 0 else "#CED8F6"
-            tx['일반수익'] = f"<span style='color:{clr}'>{round(self.V['수익현황'],4):,.2f}</span>"
-            tx['일반익률'] = f"<span style='color:{clr}'>{round(self.V['현수익률'],4):,.2f}</span>"
-            tx['일반잔액'] = f"{self.V['현재잔액']:,.2f}"
-            #--------------------------------------------------------
-            tx['기회진행'] = f"{round(self.R['매도금액'],4):,.2f}" if self.R['매도금액'] else self.R['거래코드']
-            tx['기회평균'] = f"<span class='avgr{self.M['기록시즌']}'>{round(self.R['평균단가'],4):,.4f}</span>" if self.R['평균단가'] else f"<span class='avgr{self.M['기록시즌']}'></span>"
-            clr = "#F6CECE" if self.R['현수익률'] > 0 else "#CED8F6"
-            tx['기회수익'] = f"<span style='color:{clr}'>{round(self.R['수익현황'],4):,.2f}</span>" 
-            tx['기회익률'] = f"<span style='color:{clr}'>{round(self.R['현수익률'],4):,.2f}</span>" 
-            tx['기회잔액'] = f"{self.R['현재잔액']:,.2f}"
-            #--------------------------------------------------------
-            tx['안정진행'] = f"{round(self.S['매도금액'],4):,.2f}" if self.S['매도금액'] else self.S['거래코드']
-            tx['안정평균'] = f"<span class='avgs{self.M['기록시즌']}'>{round(self.S['평균단가'],4):,.4f}</span>" if self.S['평균단가'] else f"<span class='avgs{self.M['기록시즌']}'></span>"
-            clr = "#F6CECE" if self.S['현수익률'] > 0 else "#CED8F6"
-            tx['안정수익'] = f"<span style='color:{clr}'>{round(self.S['수익현황'],4):,.2f}</span>" 
-            tx['안정익률'] = f"<span style='color:{clr}'>{round(self.S['현수익률'],4):,.2f}</span>"
-            tx['안정잔액'] = f"{self.S['현재잔액']:,.2f}"
-            #--------------------------------------------------------
-            tx['생활진행'] = f"{round(self.T['매도금액'],4):,.2f}" if self.T['매도금액'] else self.T['거래코드']
-            tx['생활평균'] = f"<span class='avgt{self.M['기록시즌']}'>{round(self.T['평균단가'],4):,.4f}</span>" if self.T['평균단가'] else f"<span class='avgt{self.M['기록시즌']}'></span>"
-            clr = "#F6CECE" if self.T['현수익률'] > 0 else "#CED8F6"
-            tx['생활수익'] = f"<span style='color:{clr}'>{round(self.T['수익현황'],4):,.2f}</span>" 
-            tx['생활익률'] = f"<span style='color:{clr}'>{round(self.T['현수익률'],4):,.2f}</span>"
-            tx['생활잔액'] = f"{self.T['현재잔액']:,.2f}"
-            #--------------------------------------------------------
-            tx['진행상황'] = self.V['진행상황']
-              
-            self.D['TR'].append(tx)
-            
-            self.D['clse_p'].append(self.M['당일종가'])
-
-            if avg_r := round(self.R['평균단가'],2) : self.D['avge_r'].append(avg_r)
-            else : self.D['avge_r'].append('null')
-            if avg_s := round(self.S['평균단가'],2) : self.D['avge_s'].append(avg_s)
-            else : self.D['avge_s'].append('null') 
-            if avg_t := round(self.T['평균단가'],2) : self.D['avge_t'].append(avg_t)
-            else : self.D['avge_t'].append('null')     
-            
-            self.D['c_date'].append(self.M['현재일자'][2:])
-            self.D['totalV'].append(round(self.R['현재잔액']+self.R['평가금액']+self.S['현재잔액']+self.S['평가금액']+self.T['현재잔액']+self.T['평가금액'],0))
+    def increase_count(self,printOut=False) :
         
+        if not self.V['보유수량'] and not self.V['매도수량']: return
+        if printOut : self.print_backtest()
         self.M['현재날수'] +=1
-
 
     def init_value(self) :
 
@@ -540,30 +458,28 @@ class update_Log :
             self.M['회복탈출']  = ST['00901']  
             self.M['분할횟수']  = ST['00100']  
             self.M['찬스일가']  = ST['01002']  
-            self.R['진입시점']  = ST['02100'] 
-            self.R['회복시점']  = ST['02200'] 
-            self.S['진입시점']  = ST['02300'] 
-            self.S['회복시점']  = ST['02400'] 
-            self.T['진입시점']  = ST['02401']
-            self.T['회복시점']  = ST['02402']
-            
             self.M['일반보드']  = ST['03500']
             self.M['기회보드']  = ST['03501']
             self.M['안정보드']  = ST['03502']
             self.M['생활보드']  = ST['03503']
+        
+        self.R['진입시점']  = float(self.D['기회시점']) if '기회시점' in self.D else ST['02100']
+        self.R['회복시점']  = float(self.D['기회회복']) if '기회회복' in self.D else ST['02200']
+        self.S['진입시점']  = float(self.D['안정시점']) if '안정시점' in self.D else ST['02300']
+        self.S['회복시점']  = float(self.D['안정회복']) if '안정회복' in self.D else ST['02400']
+        self.T['진입시점']  = float(self.D['생활시점']) if '생활시점' in self.D else ST['02401']
+        self.T['회복시점']  = float(self.D['생활회복']) if '생활회복' in self.D else ST['02402']
+
+        if '가상손실' in self.D  and  self.D['가상손실'] == 'on' : self.M['손실회수']  = True     
+        if '수료적용' not in self.D : self.D['수료적용']  = 'on'
+        if '세금적용' not in self.D : self.D['세금적용']  = 'off'
+        if '일밸런싱' not in self.D : self.D['일밸런싱']  = 'on'
+        if '이밸런싱' not in self.D : self.D['이밸런싱']  = 'on'
             
-        if '가상손실' in self.D and self.D['가상손실'] == 'on' : self.M['손실회수']  = True     
-        if '수료적용' not in self.D :   self.D['수료적용']  = 'on'
-        if '세금적용' not in self.D :   self.D['세금적용']  = 'off'
-        if '일밸런싱' not in self.D :   self.D['일밸런싱']  = 'on'
-        if '이밸런싱' not in self.D :   self.D['이밸런싱']  = 'on'
-            
-        if '일반자금' not in self.D :
-            
-            self.D['일반자금']  = ST['05100']
-            self.D['기회자금']  = ST['05200']
-            self.D['안정자금']  = ST['05300']
-            self.D['생활자금']  = ST['05400']
+        if '일반자금' not in self.D : self.D['일반자금']  = ST['05100']
+        if '기회자금' not in self.D : self.D['기회자금']  = ST['05200']
+        if '안정자금' not in self.D : self.D['안정자금']  = ST['05300']
+        if '생활자금' not in self.D : self.D['생활자금']  = ST['05400']
 
         self.M['손실회수']  = False  
         self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
@@ -588,9 +504,7 @@ class update_Log :
         self.M['최장일수']  = 0   # 최고 오래 지속된 시즌의 일수
         
         self.M['첫날기록']  = False
-        self.R['진행시작']  = False 
-        self.S['진행시작']  = False 
-        self.T['진행시작']  = False
+        self.R['진행시작']  = self.S['진행시작'] = self.T['진행시작']  = False
 
         self.M['전일종가']  = 0.0
         
@@ -606,7 +520,6 @@ class update_Log :
             self.D['c_date'] = []
             self.D['clse_p'] = []
             self.D['avge_r'] = []; self.D['avge_s'] = []; self.D['avge_t'] = []
-
 
         # 통계자료
         if  self.stat :
@@ -698,7 +611,6 @@ class update_Log :
         if not a : return '0.00'
         return f"{(b/a-1)*100:.2f}"
 
-       
     def next_buy_RST(self) :
 
         self.V['매수수량']  = my.ceil(self.V['기초수량'] * ((self.M['현재날수']-1)*self.M['비중조절'] + 1))
@@ -707,7 +619,6 @@ class update_Log :
             self.V['매수수량'] = my.ceil(self.V['기초수량'] * self.M['위매비중'])
             if  self.V['현재잔액'] < self.V['매수수량'] * self.M['매수가격'] : self.V['구매수량'] = 0
             
-
         for (tac,key) in [(self.R,'R'),(self.S,'S'),(self.T,'T')] :
             # 이틀 째까지는 전략 V 와 같은 패턴
             if  self.M['현재날수'] == 2 and key == 'R' : self.R['매수수량'] = my.ceil(self.R['기초수량'] * (self.M['비중조절'] + 1))
@@ -726,7 +637,9 @@ class update_Log :
                     tac['매수가격'] = self.M['매수가격']
 
     
-#    Public definition ---------------------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------------------------------
+    # From rst.py END
+    # ------------------------------------------------------------------------------------------------------------------------------------------
 
     def get_simResult(self,start='',end='') :
         
@@ -866,7 +779,7 @@ class update_Log :
         nS = {'sub18':self.D['N_'+nX[tac]+'기초'],'sub2' :self.D['N_'+nX[tac]+'매수량'],'sub3':self.D['N_'+nX[tac]+'매도량'],
               'sub19':self.D['N_'+nX[tac]+'매수가'],'sub20':self.D['N_'+nX[tac]+'매도가']}
         return nS
-# --------------------------------------------------------------------------------------------------------
+
 
 today = my.kor_loc_date('US/Eastern')[0:10]
 weekd = my.dayofdate(today)
