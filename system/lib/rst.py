@@ -18,7 +18,9 @@ class RST :
         self.T = {}
         self.M = {}
   
-
+    # ------------------------------------------------------------------------------------------------------------------------------------------
+    # same with xtask BEGIN
+    # ------------------------------------------------------------------------------------------------------------------------------------------ 
     def calculate_sub(self,tac,key) :
         
         if  tac['매수수량'] : 
@@ -452,36 +454,6 @@ class RST :
         delta = d1-d0
         self.D['R_총경과일'] = f"{delta.days:,}"
 
-    def get_backDateStat(self) :
-
-        sx = {}
-
-        sx['시작일자'] = self.D['시작일자']
-        sx['경과일자'] = self.D['R_총경과일']
-
-        sx['최종수익'] = self.D['R_최종수익']
-        sx['종수익률'] = self.D['R_최종익률']
-        sx['최장기록'] = f"{self.D['최장일수']}<span style='color:gray'>({self.D['최장일자'][2:]})</span>"
-
-        sx['기회최락'] = f"{self.D['MDD2']}<span style='color:gray'>({self.D['MDD_DAY2']})</span>"    if self.D['MDD_DAY2'] else ''
-        sx['안정최락'] = f"{self.D['MDD3']}<span style='color:gray'>({self.D['MDD_DAY3']})</span>"    if self.D['MDD_DAY3'] else ''
-        sx['생활최락'] = f"{self.D['MDD4']}<span style='color:gray'>({self.D['MDD_DAY4']})</span>"    if self.D['MDD_DAY4'] else ''
-        sx['저점기록'] = f"<b>{self.D['손익저점']}</b><span style='color:gray'>({self.D['저점날자'][2:]})</span>" if self.D['저점날자'] else ''
-        
-        if float(self.D['MaxDP']) >= float(self.D['손익저점']) : self.D['MaxDP'] = self.D['손익저점']; self.D['MaxDD'] = self.D['시작일자']
-
-        sx['게임횟수'] = f"{self.D['R_총매도수']}({self.D['R_총익절수']}/{self.D['R_총손절수']})"
-        sx['게임승률'] = self.D['R_총익승률']
-        sx['게임익평'] = self.D['R_익절평균']
-        sx['게임손평'] = self.D['R_손절평균']
-
-        sx['기회갯수'] = f"{self.D['기정익절']}-{self.D['기정손절']} : {self.D['기회익절']}-{self.D['기회손절']}"
-        sx['안정갯수'] = f"{self.D['안정익절']}-{self.D['안정손절']} : {self.D['안회익절']}-{self.D['안회손절']}"
-        sx['생활갯수'] = f"{self.D['생정익절']}-{self.D['생정손절']} : {self.D['생회익절']}-{self.D['생회손절']}"
-
-        return sx
-
-
     def print_backtest(self) :
 
         if not self.V['보유수량'] and not self.V['매도수량']: return
@@ -576,7 +548,7 @@ class RST :
         self.S['회복시점']  = float(self.D['안정회복']) if '안정회복' in self.D else ST['02400']
         self.T['진입시점']  = float(self.D['생활시점']) if '생활시점' in self.D else ST['02401']
         self.T['회복시점']  = float(self.D['생활회복']) if '생활회복' in self.D else ST['02402']
-        
+
         
         if '가상손실' in self.D and self.D['가상손실'] == 'on' : self.M['손실회수']  = True     
         if '수료적용' not in self.D :   self.D['수료적용']  = 'on'
@@ -584,12 +556,10 @@ class RST :
         if '일밸런싱' not in self.D :   self.D['일밸런싱']  = 'on'
         if '이밸런싱' not in self.D :   self.D['이밸런싱']  = 'on'
             
-        if '일반자금' not in self.D :
-            
-            self.D['일반자금']  = ST['05100']
-            self.D['기회자금']  = ST['05200']
-            self.D['안정자금']  = ST['05300']
-            self.D['생활자금']  = ST['05400']
+        if '일반자금' not in self.D : self.D['일반자금']  = ST['05100']
+        if '기회자금' not in self.D : self.D['기회자금']  = ST['05200']
+        if '안정자금' not in self.D : self.D['안정자금']  = ST['05300']
+        if '생활자금' not in self.D : self.D['생활자금']  = ST['05400']
 
         self.M['손실회수']  = False  
         self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
@@ -648,6 +618,10 @@ class RST :
             self.D['손익저점'] = 100.0
             self.D['저점날자'] = ''
 
+    def next_percent(self,a,b) :
+        
+        if not a : return '0.00'
+        return f"{(b/a-1)*100:.2f}"
 
     def nextStep(self) :
 
@@ -720,11 +694,6 @@ class RST :
         self.D['N_일반매도가'] = self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = f"{self.M['매도가격']:.2f}"
 
 
-    def next_percent(self,a,b) :
-        if not a : return '0.00'
-        return f"{(b/a-1)*100:.2f}"
-
-       
     def next_buy_RST(self) :
 
         self.V['매수수량']  = my.ceil(self.V['기초수량'] * ((self.M['현재날수']-1)*self.M['비중조절'] + 1))
@@ -752,9 +721,11 @@ class RST :
                     tac['매수가격'] = self.M['매수가격']
 
     
-#    Public definition ---------------------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------------------------------
+    # same with xtask END
+    # ------------------------------------------------------------------------------------------------------------------------------------------
 
-    def get_simResult(self,start='',end='') :
+    def get_simResult(self,start='',end='',result=False) :
         
         self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board") if not end else end
         self.D['시작일자'] = my.dayofdate(self.D['종료일자'],delta=-365*2)[0] if not start else start 
@@ -762,13 +733,13 @@ class RST :
         self.get_start()
         self.init_value()
         self.simulate()
-        self.result()
+        if result : self.result()
     
     def get_thisYearResult(self) :
 
         end   = my.timestamp_to_date(opt=7)
         start = end[:4]+'-01-01'
-        self.get_simResult(start,end) 
+        self.get_simResult(start,end,result=True) 
         return self.D['R_최종익률']
     
     def do_viewChart(self) :
@@ -779,7 +750,7 @@ class RST :
         self.init_value()
         self.simulate()
         self.result()
-        self.nextStep()
+        self.get_nextStep()
 
     def put_initCapital(self,V,R,S,T) :
         
@@ -893,6 +864,35 @@ class RST :
               'sub19':self.D['N_'+nX[tac]+'매수가'],'sub20':self.D['N_'+nX[tac]+'매도가']}
         return nS
     
+    def get_backDateStat(self) :
+
+        sx = {}
+
+        sx['시작일자'] = self.D['시작일자']
+        sx['경과일자'] = self.D['R_총경과일']
+
+        sx['최종수익'] = self.D['R_최종수익']
+        sx['종수익률'] = self.D['R_최종익률']
+        sx['최장기록'] = f"{self.D['최장일수']}<span style='color:gray'>({self.D['최장일자'][2:]})</span>"
+
+        sx['기회최락'] = f"{self.D['MDD2']}<span style='color:gray'>({self.D['MDD_DAY2']})</span>"    if self.D['MDD_DAY2'] else ''
+        sx['안정최락'] = f"{self.D['MDD3']}<span style='color:gray'>({self.D['MDD_DAY3']})</span>"    if self.D['MDD_DAY3'] else ''
+        sx['생활최락'] = f"{self.D['MDD4']}<span style='color:gray'>({self.D['MDD_DAY4']})</span>"    if self.D['MDD_DAY4'] else ''
+        sx['저점기록'] = f"<b>{self.D['손익저점']}</b><span style='color:gray'>({self.D['저점날자'][2:]})</span>" if self.D['저점날자'] else ''
+        
+        if float(self.D['MaxDP']) >= float(self.D['손익저점']) : self.D['MaxDP'] = self.D['손익저점']; self.D['MaxDD'] = self.D['시작일자']
+
+        sx['게임횟수'] = f"{self.D['R_총매도수']}({self.D['R_총익절수']}/{self.D['R_총손절수']})"
+        sx['게임승률'] = self.D['R_총익승률']
+        sx['게임익평'] = self.D['R_익절평균']
+        sx['게임손평'] = self.D['R_손절평균']
+
+        sx['기회갯수'] = f"{self.D['기정익절']}-{self.D['기정손절']} : {self.D['기회익절']}-{self.D['기회손절']}"
+        sx['안정갯수'] = f"{self.D['안정익절']}-{self.D['안정손절']} : {self.D['안회익절']}-{self.D['안회손절']}"
+        sx['생활갯수'] = f"{self.D['생정익절']}-{self.D['생정손절']} : {self.D['생회익절']}-{self.D['생회손절']}"
+
+        return sx
+
     def do_viewStat(self) :
 
         self.chart = False
@@ -911,6 +911,3 @@ class RST :
             self.D['SR'].append(self.get_backDateStat())
             
         self.D['SR'].pop()    
-
-
-
