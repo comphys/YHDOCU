@@ -55,20 +55,23 @@ class Update_tactics(Control) :
                 self.DB.exe(qry)
 
             self.set_message(f"{self.theDate}일 정보를 업데이트 하였습니다")
-            return self.moveto(f"board/list/{self.bid}")
         
         else :
             self.set_message(f"{self.bid} {self.preDate} 이후 업데이트된 정보가 없습니다")
-            return self.moveto(f"board/list/{self.bid}")
+
 
     def update_v(self) :
         self.update_vr('V')
+        return self.moveto(f"board/list/{self.bid}")
 
-    def updat_r(self) :
+    def update_r(self) :
         self.update_vr('R')
+        return self.moveto(f"board/list/{self.bid}")
 
     def update_s(self) :
         self.update_st('S')
+        return self.moveto(f"board/list/{self.bid}")
 
     def update_t(self) :
         self.update_st('T')
+        return self.moveto(f"board/list/{self.bid}")
