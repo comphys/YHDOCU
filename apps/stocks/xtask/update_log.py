@@ -1,5 +1,4 @@
 from myutils.DB import DB
-from datetime import date
 import myutils.my_utils as my
 
 class update_Log :
