@@ -67,9 +67,10 @@ class update_Vtactic3() :
 
     def init_each(self,bid) :
         self.D['prev_date'] = self.DB.one(f"SELECT max(add0) FROM h_{bid}_board")
+        print("prev date : "+ self.D['prev_date'] )
         if  self.D['prev_date'] :
             self.D['today'] = self.DB.one(f"SELECT min(add0) FROM h_stockHistory_board WHERE add0 > '{self.D['prev_date']}'")
-        
+            print("today : "+ self.D['today'] )
         self.M['진행일자'] = self.D['today']
         self.DB.tbl = f"h_{bid}_board"
         self.DB.wre = f"add0='{self.D['prev_date']}'"
@@ -284,6 +285,11 @@ class update_Vtactic3() :
         U['sub19']  = f"{U['sub19']:.2f}"
         U['sub30']  = f"{U['sub30']:.2f}"
 
+        # DATA INSERT OR UPDATE
+        U.update({k:'' for k,v in U.items() if v == None})
+
+        qry=self.DB.qry_insert(f"h_{self.bid}_board",U)
+        self.DB.exe(qry)
 # --------------------------------------------------------------------------------------------------------    
 
 today = my.kor_loc_date('US/Eastern')[0:10]
