@@ -1,24 +1,28 @@
-import system.core.my_utils as my
+from myutils.DB import DB
+import myutils.my_utils as my
 
-class VTACTIC :
+class update_iguide :
 
-    def __init__(self,SYS) :
-        self.SYS   = SYS
-        self.info  = SYS.info
-        self.D     = SYS.D
-        self.DB    = SYS.DB
-        self.board = 'h_IGUIDE_board'
+    def __init__(self) :
+
+        self.DB    = DB('stocks')
         self.chart = False
         self.stat  = False
+        self.skey  = self.DB.store("slack_key")
+        self.board = 'h_IGUIDE_board'
 
         self.B = {}
         self.V = {}
         self.M = {}
-  
+        self.D = {}
+
+    def send_message(self,message) :
+        if self.DB.system == "Linux" : my.post_slack(self.skey,message)
+        else : print(message)  
+
     # ------------------------------------------------------------------------------------------------------------------------------------------
     # 
-    # ------------------------------------------------------------------------------------------------------------------------------------------ 
-
+    # ------------------------------------------------------------------------------------------------------------------------------------------
     def calculate(self)  :
 
         if  self.V['매수수량'] : 
@@ -318,7 +322,7 @@ class VTACTIC :
             self.M['비중조절']  = ST['01001']  
             self.M['평단가치']  = ST['00300']  
             self.M['큰단가치']  = ST['00200']  
-            self.M['첫매가치']  = ST['00400']
+            self.M['첫매가치']  = ST['00400'] 
             self.M['둘매가치']  = ST['00500']  
             self.M['강매시작']  = ST['00800']  
             self.M['강매가치']  = ST['00700']  
@@ -616,4 +620,27 @@ class VTACTIC :
             self.D['SR'].append(self.get_backDateStat())
             
         self.D['SR'].pop()    
+
+    # ------------------------------------------------------------------------------------------------------------------------------------------
+    # 
+    # ------------------------------------------------------------------------------------------------------------------------------------------
+
+today = my.kor_loc_date('US/Eastern')[0:10]
+weekd = my.dayofdate(today)
+V = update_iguide()
+
+ck_holiday = V.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
+is_holiday = ck_holiday[0][0] if ck_holiday else ''
+
+skip = (weekd in ['토','일']) or is_holiday
+
+if  skip :
+    pass
+
+else :
+    V.do_tacticsLog(today)
+    D = V.get_tacticLog(today)
+    qry=V.DB.qry_insert(V.board,D); V.DB.exe(qry)
+
+    V.send_message(f"{today}일 VRST 업데이트 완료")
 

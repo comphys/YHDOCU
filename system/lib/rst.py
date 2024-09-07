@@ -1,4 +1,3 @@
-from datetime import date
 import system.core.my_utils as my
 
 class RST :
@@ -459,6 +458,12 @@ class RST :
             self.M['기회보드']  = ST['03501']
             self.M['안정보드']  = ST['03502']
             self.M['생활보드']  = ST['03503']
+
+        self.M['손실회수']  = False  
+        self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
+        self.V['매수단계']  = self.R['매수단계'] = self.S['매수단계'] = self.T['매수단계'] = '일반매수'
+        self.V['진행상황']  = self.R['진행상황'] = self.S['진행상황'] = self.T['진행상황'] = '매수대기'
+        self.M['기록시즌']  = 0
         
         self.R['진입시점']  = float(self.D['기회시점']) if '기회시점' in self.D else ST['02100']
         self.R['회복시점']  = float(self.D['기회회복']) if '기회회복' in self.D else ST['02200']
@@ -477,12 +482,6 @@ class RST :
         if '기회자금' not in self.D : self.D['기회자금']  = ST['05200']
         if '안정자금' not in self.D : self.D['안정자금']  = ST['05300']
         if '생활자금' not in self.D : self.D['생활자금']  = ST['05400']
-
-        self.M['손실회수']  = False  
-        self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
-        self.V['매수단계']  = self.R['매수단계'] = self.S['매수단계'] = self.T['매수단계'] = '일반매수'
-        self.V['진행상황']  = self.R['진행상황'] = self.S['진행상황'] = self.T['진행상황'] = '매수대기'
-        self.M['기록시즌']  = 0
 
         self.V['현재잔액']  = my.sv(self.D['일반자금'])
         self.R['현재잔액']  = my.sv(self.D['기회자금'])

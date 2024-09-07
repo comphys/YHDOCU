@@ -18,6 +18,16 @@ class Rst_control(Control) :
         D |= X
         
         return self.test(RST.D,D)
+    
+    def vtac(self) :
+        self.DB = self.db('stocks')
+        V = self.load_lib('vtactic')
+        theDate = self.parm[0]
+
+        V.do_tacticsLog(theDate)
+        D = V.get_tacticLog(theDate)
+
+        return self.test(V.M,D)
    
 
 

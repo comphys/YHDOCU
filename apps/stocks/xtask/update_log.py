@@ -124,7 +124,6 @@ class update_Log :
             color = "#F6CECE" if difft >= 0 else "#CED8F6"
             self.D['손익통계'].append([self.M['현재일자'],f"{total:,.2f}",f"{difft:,.2f}",f"{diffp:.2f}",color,self.M['기록시즌'],f"{diff0:.2f}"])
     
-
     def today_sell(self) :
         
         if  self.M['당일종가'] >= self.M['매도가격'] : 
@@ -259,6 +258,7 @@ class update_Log :
         CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승'])
         if  CPRICE > LPRICE : 
             self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
+
 
 
     def tomorrow_step(self)   :
@@ -412,11 +412,12 @@ class update_Log :
             win_p = asispc / asis_c * 100 if asis_c else 0.0
 
             self.D['R_총매도수'] = asis_c; self.D['R_총익절수'] = asispc; self.D['R_총손절수'] = asisuc
-            self.D['R_총익승률'] = f"{win_p:.2f}" ; self.D['R_익절평균'] = f"{asispm:.2f}"; self.D['R_손절평균'] = f"{asisum:.2f}"         
+            self.D['R_총익승률'] = f"{win_p:.2f}" ; self.D['R_익절평균'] = f"{asispm:.2f}"; self.D['R_손절평균'] = f"{asisum:.2f}"        
 
-    def get_start(self) :
+    def get_start(self,b='') :
 
         self.D['종목코드']  = 'SOXL'
+        if b : self.D['시작일자'] = b
         old_date = my.dayofdate(self.D['시작일자'],-7)[0]
         self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{self.D['종료일자']}'",'add0')
         self.B = self.DB.get('add0,add3,add8') # 날자, 종가, 증감 
@@ -431,8 +432,9 @@ class update_Log :
         
         if not self.V['보유수량'] and not self.V['매도수량']: return
         if printOut : self.print_backtest()
+        # if not self.V['매수수량'] and not self.V['매도수량']: return
         self.M['현재날수'] +=1
-
+        
     def init_value(self) :
 
         if '비중조절' not in self.M :
@@ -461,6 +463,12 @@ class update_Log :
             self.M['기회보드']  = ST['03501']
             self.M['안정보드']  = ST['03502']
             self.M['생활보드']  = ST['03503']
+
+        self.M['손실회수']  = False  
+        self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
+        self.V['매수단계']  = self.R['매수단계'] = self.S['매수단계'] = self.T['매수단계'] = '일반매수'
+        self.V['진행상황']  = self.R['진행상황'] = self.S['진행상황'] = self.T['진행상황'] = '매수대기'
+        self.M['기록시즌']  = 0
         
         self.R['진입시점']  = float(self.D['기회시점']) if '기회시점' in self.D else ST['02100']
         self.R['회복시점']  = float(self.D['기회회복']) if '기회회복' in self.D else ST['02200']
@@ -479,12 +487,6 @@ class update_Log :
         if '기회자금' not in self.D : self.D['기회자금']  = ST['05200']
         if '안정자금' not in self.D : self.D['안정자금']  = ST['05300']
         if '생활자금' not in self.D : self.D['생활자금']  = ST['05400']
-
-        self.M['손실회수']  = False  
-        self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
-        self.V['매수단계']  = self.R['매수단계'] = self.S['매수단계'] = self.T['매수단계'] = '일반매수'
-        self.V['진행상황']  = self.R['진행상황'] = self.S['진행상황'] = self.T['진행상황'] = '매수대기'
-        self.M['기록시즌']  = 0
 
         self.V['현재잔액']  = my.sv(self.D['일반자금'])
         self.R['현재잔액']  = my.sv(self.D['기회자금'])
@@ -533,7 +535,6 @@ class update_Log :
             self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
             self.D['손익저점'] = 100.0
             self.D['저점날자'] = ''
-
 
     def nextStep(self) :
 
@@ -605,11 +606,11 @@ class update_Log :
         self.D['N_생활매수가'] = f"{self.D['N_생활매수가']:.2f}"
         self.D['N_일반매도가'] = self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = f"{self.M['매도가격']:.2f}"
 
-
     def next_percent(self,a,b) :
+        
         if not a : return '0.00'
         return f"{(b/a-1)*100:.2f}"
-
+    
     def next_buy_RST(self) :
 
         self.V['매수수량']  = my.ceil(self.V['기초수량'] * ((self.M['현재날수']-1)*self.M['비중조절'] + 1))
@@ -635,7 +636,6 @@ class update_Log :
                 else :
                     tac['매수가격'] = self.M['매수가격']
 
-    
     # ------------------------------------------------------------------------------------------------------------------------------------------
     # From rst.py END
     # ------------------------------------------------------------------------------------------------------------------------------------------

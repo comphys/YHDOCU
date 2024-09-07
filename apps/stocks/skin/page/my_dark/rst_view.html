@@ -752,6 +752,7 @@ function show_spanChart(pick_date,opt=0) {
 		offSet = $(pickTr).offset()
 		offTop = (offSet)? offSet.top : 0
 		$(document).scrollTop(offTop-800);
+		//curTd  = $(".pointing_sd1:contains('"+pick_date.slice(2)+"')")
 	}
 	if(opt==2) {
 		s_date = new Date(pick_date)
