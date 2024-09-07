@@ -156,7 +156,7 @@ class update_Vtactic3() :
         LD = self.M['LD']
 
         self.M['현재잔액'] = float(LD['add3'])
-        
+
         ST = self.DB.parameters_dict('매매전략/VRS')
         self.M['분할횟수']  = ST['00100']
         self.M['비중조절']  = ST['01001']
@@ -295,11 +295,11 @@ chk_off = chk_holiday[0][0] if chk_holiday else ''
 
 skip = (weekd in ['토','일']) or chk_off
 
-if  skip :
-    pass
+# if  skip :
+#     pass
 
-else :
-    B.bid = 'IGUIDE'
-    B.oneWrite()
+# else :
+B.bid = 'IGUIDE'
+B.oneWrite()
 
         
