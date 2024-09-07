@@ -150,8 +150,13 @@ class update_Vtactic3() :
 
         self.send_message(f"{self.bid} {self.D['today']} 업데이트")
 
-    def getStrategy(self) :
-        # 매매전략 가져오기
+
+    def init_value(self) :
+
+        LD = self.M['LD']
+
+        self.M['현재잔액'] = float(LD['add3'])
+        
         ST = self.DB.parameters_dict('매매전략/VRS')
         self.M['분할횟수']  = ST['00100']
         self.M['비중조절']  = ST['01001']
@@ -164,12 +169,6 @@ class update_Vtactic3() :
         self.M['위매비중']  = ST['01000']
         self.M['매도대기']  = ST['00600']
         self.M['전략가치']  = ST['00900']
-
-    def init_value(self) :
-
-        LD = self.M['LD']
-
-        self.M['현재잔액'] = float(LD['add3'])
 
         # 종가구하기
         self.DB.clear()
