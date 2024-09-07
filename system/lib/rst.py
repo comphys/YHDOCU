@@ -354,6 +354,12 @@ class RST :
         self.D['MDD2'] = f"{self.R['진최하락']:.2f}"; self.D['MDD_DAY2'] = self.R['최하일자'][2:]
         self.D['MDD3'] = f"{self.S['진최하락']:.2f}"; self.D['MDD_DAY3'] = self.S['최하일자'][2:]
         self.D['MDD4'] = f"{self.T['진최하락']:.2f}"; self.D['MDD_DAY4'] = self.T['최하일자'][2:]
+
+        총매입금  = self.R['총매수금'] + self.S['총매수금'] + self.T['총매수금']
+        총보유량  = self.R['보유수량'] + self.S['보유수량'] + self.T['보유수량']
+        총평가금  = self.M['당일종가'] * 총보유량
+        평가손익  = 총평가금 - 총매입금
+        평가익률  = self.next_percent(총매입금,총평가금) 
         
         초기자본1 = float(self.D['일반자금'].replace(',','')); 최종자본1=self.V['평가금액']+self.V['현재잔액']; 최종수익1=최종자본1-초기자본1; self.D['v_profit']=round((최종수익1/초기자본1)*100,2)
         초기자본2 = float(self.D['기회자금'].replace(',','')); 최종자본2=self.R['평가금액']+self.R['현재잔액']; 최종수익2=최종자본2-초기자본2; self.D['r_profit']=round((최종수익2/초기자본2)*100,2)
@@ -363,6 +369,12 @@ class RST :
         초기자본 = 초기자본2 + 초기자본3 + 초기자본4; 최종자본 = 최종자본2 + 최종자본3 + 최종자본4; 최종수익 = 최종자본 - 초기자본 
         self.D['profit_t'] = round((최종수익/초기자본) * 100,2)
         
+        self.D['R_총매입금'] = f"{총매입금:,.2f}"
+        self.D['R_총평가금'] = f"{총평가금:,.2f}"
+        self.D['R_총보유량'] = f"{총보유량:,}"
+        self.D['R_평가손익'] = f"{평가손익:,.2f}"
+        self.D['R_평가익률'] = self.next_percent(총매입금,총평가금)
+
         self.D['R_초기자본'] = f"{초기자본:,.0f}"
         self.D['R_최종자본'] = f"{최종자본:,.2f}"
         self.D['R_최종수익'] = f"{최종수익:,.2f}"
