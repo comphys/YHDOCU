@@ -51,7 +51,7 @@ class RST :
         
         if  self.V['매도수량'] :
             self.M['첫날기록'] = True
-            self.M['회복전략'] = self.M['손실회수']
+            self.M['회복상태'] = self.M['손실회수']
             self.set_value(['매수단계'],'일반매수')
             self.set_value(['평균단가'],0.0)
             self.rebalance() 
@@ -78,10 +78,10 @@ class RST :
         
         if not self.stat : return
         if  profit >= 0 : 
-            if self.M['회복전략'] : self.D[key+'회익절'] += 1
+            if self.M['회복상태'] : self.D[key+'회익절'] += 1
             else : self.D[key+'정익절'] += 1  
         else : 
-            if self.M['회복전략'] : self.D[key+'회손절'] += 1
+            if self.M['회복상태'] : self.D[key+'회손절'] += 1
             else : self.D[key+'정손절'] += 1   
 
     def commission(self,mm,opt) :
@@ -123,7 +123,7 @@ class RST :
         
         if  self.M['당일종가'] >= self.M['매도가격'] : 
 
-            self.M['회복전략']  = self.M['손실회수']
+            self.M['회복상태']  = self.M['손실회수']
 
             for tac in (self.V,self.R,self.S,self.T) : 
                 tac['매도수량'] = tac['보유수량']
@@ -473,7 +473,7 @@ class RST :
             self.M['생활보드']  = ST['03503']
 
         self.M['손실회수']  = False  
-        self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
+        self.M['회복상태']  = False # 손실회수는 매도시 상태 결정, 회복상태은 진행중인 상태
         self.V['매수단계']  = self.R['매수단계'] = self.S['매수단계'] = self.T['매수단계'] = '일반매수'
         self.V['진행상황']  = self.R['진행상황'] = self.S['진행상황'] = self.T['진행상황'] = '매수대기'
         self.M['기록시즌']  = 0
