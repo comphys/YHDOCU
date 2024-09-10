@@ -75,6 +75,7 @@ if  skip :
 else :
     A.stocks_update('soxl',today)
     A.forex_update()
+    A.send_message(f"{today} 주가 업데이트 완료")
 
 
 

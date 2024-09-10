@@ -642,5 +642,5 @@ else :
     D = V.get_tacticLog(today)
     qry=V.DB.qry_insert(V.board,D); V.DB.exe(qry)
 
-    V.send_message(f"{today}일 VRST 업데이트 완료")
+    V.send_message(f"{today}일 IGUIDE 업데이트 완료")
 
