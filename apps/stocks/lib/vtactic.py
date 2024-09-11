@@ -506,15 +506,12 @@ class VTACTIC :
                 'sel_p':self.D['N_일반매도가'],'sel_q':self.D['N_일반매도량'],'yx_s': self.D['N_공통종대비']}
       
 
-    def do_tacticsLog(self,theDate) :
+    def get_tacticLog(self,theDate) :
         
         (V_date,V_money,V_mode) = self.get_syncData(theDate)
         if V_mode : self.D['가상손실'] = 'on'
         self.put_initCapital(V_money)
         self.get_simResult(V_date,theDate)
-        
-
-    def get_tacticLog(self,theDate) :
         
         preDate = self.DB.one(f"SELECT max(add0) FROM {self.board} WHERE add0 < '{theDate}'")
         if not preDate : return 

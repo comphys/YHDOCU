@@ -15,8 +15,8 @@ class SU :
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.DB.get_one("max(add0)")
         
-        self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
         # add0 = date / add1 = code / add2 = alias / add4 = open / add5 = high / add6 = low / add7 = volume / add8 = change / add9 = up / add10 = dn
+        self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
         one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10',many=1,assoc=False)
         the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
         app_key = self.DB.store("tiingo")
@@ -58,13 +58,11 @@ class SU :
 
 
 # --------------------------------------------------------------------------------------------------
-
 today = my.kor_loc_date('US/Eastern')[0:10]
 weekd = my.dayofdate(today)
 A = SU()
 chk_holiday = A.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
 chk_off = chk_holiday[0][0] if chk_holiday else ''
-
 
 skip = (weekd in ['토','일']) or chk_off
 
@@ -75,12 +73,3 @@ if  skip :
 else :
     A.stocks_update('soxl',today)
     A.forex_update()
-    A.send_message(f"{today} 주가 업데이트 완료")
-
-
-
-
-
-
-
-

@@ -861,7 +861,7 @@ class RST :
         
         if float(self.D['MaxDP']) >= float(self.D['손익저점']) : self.D['MaxDP'] = self.D['손익저점']; self.D['MaxDD'] = self.D['시작일자']
 
-        sx['게임횟수'] = f"{self.D['R_총매도수']}({self.D['R_총익절수']}/{self.D['R_총손절수']})"
+        sx['게임횟수'] = f"{self.D['R_총매도수']}<span style='color:gray'>({self.D['R_총익절수']}/{self.D['R_총손절수']})</span>"
         sx['게임승률'] = self.D['R_총익승률']
         sx['게임익평'] = self.D['R_익절평균']
         sx['게임손평'] = self.D['R_손절평균']
@@ -889,4 +889,10 @@ class RST :
             self.result()
             self.D['SR'].append(self.get_backDateStat())
             
-        self.D['SR'].pop()    
+        self.D['SR'].pop()
+        
+        self.D['chart_dte'] = [x['시작일자'] for x in self.D['SR']]
+        self.D['chart_val'] = [my.sv(x['종수익률']) for x in self.D['SR']]
+        
+        self.D['chart_dte'].reverse()
+        self.D['chart_val'].reverse()

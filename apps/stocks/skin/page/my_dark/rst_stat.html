@@ -84,6 +84,9 @@
 				<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on' else '' }}>&nbsp;<span>RST=</span>&nbsp;&nbsp; 
 				<input role="switch" type="checkbox" name="chk_rs_" {{ 'checked' if D['이밸런싱'] =='on' else '' }}>&nbsp;<span>RS>T</span>&nbsp;&nbsp; 
 			</div>
+			<div class="pull-right" style="padding:10px 5px;margin-right:0px;height:42px;">
+				<i class="fa fa-line-chart" onclick="$('#backTestingChart').toggle()"></i>
+			</div>
 		</div>
 	</form>
 
@@ -165,7 +168,7 @@
 				<td style="text-align:right">{{S['안정최락']|safe}}</td>
 				<td style="text-align:right">{{S['생활최락']|safe}}</td>
 
-				<td style="text-align:right">{{S['게임횟수']}}</td>
+				<td style="text-align:right">{{S['게임횟수']|safe}}</td>
 				<td style="text-align:right">{{S['게임승률']}}</td>
 				<td style="text-align:right">{{S['게임익평']}}</td>
 				<td style="text-align:right">{{S['게임손평']}}</td>
@@ -178,16 +181,51 @@
 
 	</table>
 </div>
+
+<div id='backTestingChart' style="position:fixed;left:20px;top:150px;width:1700px;background-color:#24272d;padding:10px;border:2px solid black;">
+	<canvas id="mybackTestChart" style="width:1680px;height:380px;background-color:#24272d"></canvas>
+</div>
 {% endif %}
 
-
+<script src="/sys/chart/chart.min.js"></script>
 <script>
-
-$(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
-$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+$(document).ready(function(){ 
+	$('#backTestingChart').bind('dblclick',function(){$(this).hide();}).draggable().hide();
+	$(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+	$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+});
 
 // --------------------------------------------------------------------------------------
+let label_timeSeries = {{D['chart_dte']|safe}};
+let timeSeries_data  = {{D['chart_val']|safe}};
+const ctx_timeSeries = $id('mybackTestChart');
+ctx_timeSeries.style.backgroundColor = '#33363b';
+ctx_timeSeries.style.border = '2px solid black';
+const data_timeSeries = {
+	labels : label_timeSeries,
+	datasets : [
+		{
+			label:'최종수익률',
+			data : timeSeries_data,
+			pointStyle:'circle', borderWidth:2,pointRadius:0,pointHoverRadius:0,borderColor:'#f78181',backgroundColor:'#f78181',
+			lineTension:0.2
 
+		}
+	]   
+};
+const options_timeSeries = {
+	animation : {duration:0},
+	plugins : { legend: {display:false} },
+	responsive:false,
+	layout:{padding:20},
+	scales:{
+		x:{ ticks : {color:'gray'}, grid:{color:'#272727'}},
+		y:{ ticks : {color:'gray'}, grid:{color:'#272727'}}
+	}
+};
+const config_timeSeries  = {type:'line',data:data_timeSeries,options:options_timeSeries};
+const myChart_timeSeries = new Chart(ctx_timeSeries, config_timeSeries);
+// --------------------------------------------------------------------------------------
 function check_thisForm() {
     if(! $("input[name='종목코드']").val() ) { h_dialog.notice("코드 입력은 필수입니다"); return false; }
     if(! $("input[name='통계시작']").val() ) { h_dialog.notice("시작 일자가 입력되지않았습니다"); return false; }  

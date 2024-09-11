@@ -7,7 +7,7 @@ class Rst_control(Control) :
         if not 'N_NO' in session : return self.moveto('board/login')
         self.DB = self.db('stocks')
         
-        RST = self.load_lib('rst')
+        RST = self.load_app_lib('rst')
         theDate = self.parm[1]
         tactic  = self.parm[0]
 
@@ -21,10 +21,9 @@ class Rst_control(Control) :
     
     def vtac(self) :
         self.DB = self.db('stocks')
-        V = self.load_lib('vtactic')
+        V = self.load_app_lib('vtactic')
         theDate = self.parm[0]
 
-        V.do_tacticsLog(theDate)
         D = V.get_tacticLog(theDate)
 
         return self.test(V.M,D)

@@ -5,7 +5,7 @@ class Update_tactics(Control) :
     def _auto(self) :
         self.DB = self.db('stocks')
         self.bid = self.parm[0]
-        self.RST = self.load_lib('rst')
+        self.RST = self.load_app_lib('rst')
         self.theDate = ''
         self.preDate = self.DB.one(f"SELECT max(add0) FROM h_{self.bid}_board")
         if  self.preDate :
