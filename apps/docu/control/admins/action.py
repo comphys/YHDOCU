@@ -15,7 +15,7 @@ class Action(Control) :
         return self.moveto('admin/board')
 
     def board_delete(self) :
-        self.log.info(self.D['post'])
+
         bid     = self.D['post']['d_bid']
         empty   = self.D['post'].get('empty',None)
 

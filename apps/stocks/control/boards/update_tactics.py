@@ -23,6 +23,7 @@ class Update_tactics(Control) :
             
             D.update({k:'' for k,v in D.items() if v == None})
             board = f"h_{self.bid}_board"
+            del D['Update']
             qry=self.DB.qry_insert(board,D)
             self.DB.exe(qry)
             self.set_message(f"{self.theDate}일 정보를 업데이트 하였습니다")

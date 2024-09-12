@@ -813,7 +813,9 @@ else :
     DS |= NS; DS.update({k:'' for k,v in DS.items() if v == None})
     DT |= NT; DT.update({k:'' for k,v in DT.items() if v == None})
 
+    del DV['Update']
     qry=RST.DB.qry_insert(RST.M['일반보드'],DV); RST.DB.exe(qry)
+    del DR['Update']
     qry=RST.DB.qry_insert(RST.M['기회보드'],DR); RST.DB.exe(qry)
 
     isDsUpdate = DS['Update']; del DS['Update']
@@ -826,7 +828,6 @@ else :
     else :
         qry=RST.DB.qry_insert(RST.M['안정보드'],DS)
         RST.DB.exe(qry)
-
     if  isDtUpdate :
         preDate = RST.DB.one(f"SELECT max(add0) FROM {RST.M['생활보드']}")
         qry=RST.DB.qry_update(RST.M['생활보드'],DT,f"add0='{preDate}'")
@@ -835,6 +836,5 @@ else :
         qry=RST.DB.qry_insert(RST.M['생활보드'],DT)
         RST.DB.exe(qry)
 
-    RST.info(qry)
     RST.send_message(f"{today}일 VRST 업데이트 완료")
 

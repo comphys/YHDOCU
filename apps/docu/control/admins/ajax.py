@@ -7,7 +7,6 @@ class Ajax(Control) :
         
     def board_list(self) :
         section = self.D['post']['section']
-        self.log.info(section)
         target  = self.D['post']['target']
         board_list = self.DB.exe(f"SELECT bid, title FROM h_board_config WHERE section='{section}' ORDER BY bposition", assoc=True)
 
