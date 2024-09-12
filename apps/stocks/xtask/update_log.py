@@ -726,7 +726,8 @@ class update_Log :
         preDate = self.DB.one(f"SELECT max(add0) FROM {RST_board} WHERE add0 < '{theDate}'")
         if not preDate : return 
         LD = self.DB.line(f"SELECT * FROM {RST_board} WHERE add0='{preDate}'")
-        
+        LD['Update'] = float(LD['add1'])==0 and float(LD['add2'])==0 and float(LD['add11'])==0 and float(LD['add12'])==0 and int(LD['add9'])==0
+
         LD['add0'] = theDate
         LD['wdate']= LD['mdate']= my.now_timestamp()
    
@@ -815,7 +816,10 @@ else :
     qry=RST.DB.qry_insert(RST.M['일반보드'],DV); RST.DB.exe(qry)
     qry=RST.DB.qry_insert(RST.M['기회보드'],DR); RST.DB.exe(qry)
 
-    if  float(DS['add1']) == 0 and float(DS['add2']) == 0 and float(DS['add11']) == 0 and float(DS['add12']) == 0 and int(DS['add9']) == 0 :
+    isDsUpdate = DS['Update']; del DS['Update']
+    isDtUpdate = DT['Update']; del DT['Update']
+
+    if  isDsUpdate :
         preDate = RST.DB.one(f"SELECT max(add0) FROM {RST.M['안정보드']}")
         qry=RST.DB.qry_update(RST.M['안정보드'],DS,f"add0='{preDate}'")
         RST.DB.exe(qry)
@@ -823,7 +827,7 @@ else :
         qry=RST.DB.qry_insert(RST.M['안정보드'],DS)
         RST.DB.exe(qry)
 
-    if  float(DT['add1']) == 0 and float(DT['add2']) == 0 and float(DT['add11']) == 0 and float(DT['add12']) == 0 and int(DT['add9']) == 0 :
+    if  isDtUpdate :
         preDate = RST.DB.one(f"SELECT max(add0) FROM {RST.M['생활보드']}")
         qry=RST.DB.qry_update(RST.M['생활보드'],DT,f"add0='{preDate}'")
         RST.DB.exe(qry)
@@ -831,5 +835,6 @@ else :
         qry=RST.DB.qry_insert(RST.M['생활보드'],DT)
         RST.DB.exe(qry)
 
+    RST.info(qry)
     RST.send_message(f"{today}일 VRST 업데이트 완료")
 

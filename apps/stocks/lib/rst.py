@@ -788,6 +788,7 @@ class RST :
         preDate = self.DB.one(f"SELECT max(add0) FROM {RST_board} WHERE add0 < '{theDate}'")
         if not preDate : return 
         LD = self.DB.line(f"SELECT * FROM {RST_board} WHERE add0='{preDate}'")
+        LD['Update'] = float(LD['add1'])==0 and float(LD['add2'])==0 and float(LD['add11'])==0 and float(LD['add12'])==0 and int(LD['add9'])==0
         
         LD['add0'] = theDate
         LD['wdate']= LD['mdate']= my.now_timestamp()

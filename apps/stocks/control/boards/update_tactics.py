@@ -43,10 +43,11 @@ class Update_tactics(Control) :
             D |= X
             
             D.update({k:'' for k,v in D.items() if v == None})
-            
-            upDate = float(D['add1']) == 0 and float(D['add2']) == 0 and float(D['add11']) == 0 and float(D['add12']) == 0 and int(D['add9']) == 0
+            isUpdate = D['Update']
+            del D['Update']
+
             board = f"h_{self.bid}_board"
-            if  upDate :
+            if  isUpdate :
                 qry=self.DB.qry_update(board,D,f"add0='{self.preDate}'")
                 self.DB.exe(qry)
 
