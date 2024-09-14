@@ -35,7 +35,7 @@ class update_Log :
             if self.D['수료적용'] == 'on' :  tac['수수료등']  = self.commission(tac['매수금액'],1); tac['현재잔액'] -= tac['수수료등']
         
         if  tac['매도수량'] :
-            tac['실현수익']  = (self.M['당일종가'] - tac['평균단가']) * tac['매도수량']
+            tac['실현수익']  =  tac['매도금액'] - tac['총매수금']
             tac['보유수량'] -=  tac['매도수량'];  tac['현재잔액'] += tac['매도금액']; tac['총매수금'] = 0.00
             tac['수익현황']  =  tac['실현수익']
             
@@ -55,12 +55,19 @@ class update_Log :
         self.calculate_sub(self.V,'일')
         
         if  self.V['매도수량'] :
+
+            if  self.M['당일종가']>= self.V['평균단가'] : 
+                self.M['손실회수'] = False
+                self.set_value(['진행상황'],'익절매도')
+            else :
+                self.M['손실회수'] = True
+                self.set_value(['진행상황'],'손절매도')
+            
             self.M['첫날기록'] = True
-            self.M['회복전략'] = self.M['손실회수']
             self.set_value(['매수단계'],'일반매수')
             self.set_value(['평균단가'],0.0)
-            self.rebalance() 
-            
+            self.rebalance()
+
         else  : 
             for tac in [self.V,self.R,self.S,self.T] : tac['수익현황'] = tac['평가금액'] - tac['총매수금']
 
@@ -83,10 +90,10 @@ class update_Log :
         
         if not self.stat : return
         if  profit >= 0 : 
-            if self.M['회복전략'] : self.D[key+'회익절'] += 1
+            if self.M['손실회수'] : self.D[key+'회익절'] += 1
             else : self.D[key+'정익절'] += 1  
         else : 
-            if self.M['회복전략'] : self.D[key+'회손절'] += 1
+            if self.M['손실회수'] : self.D[key+'회손절'] += 1
             else : self.D[key+'정손절'] += 1   
 
     def commission(self,mm,opt) :
@@ -128,18 +135,10 @@ class update_Log :
         
         if  self.M['당일종가'] >= self.M['매도가격'] : 
 
-            self.M['회복전략']  = self.M['손실회수']
-
             for tac in (self.V,self.R,self.S,self.T) : 
                 tac['매도수량'] = tac['보유수량']
                 tac['매도금액'] = tac['매도수량'] * self.M['당일종가']
-                tac['진행상황'] = '익절매도' 
 
-            if  self.M['당일종가'] < self.V['평균단가'] : 
-                self.set_value(['진행상황'],'손절매도')
-                self.M['손실회수'] = True
-            else :
-                self.M['손실회수'] = False
 
     def today_buy_RST(self,tac,key) :
 
@@ -185,7 +184,7 @@ class update_Log :
             day_limit = 6 if key == 'R' else 7 
             day_count = min(self.M['현재날수']+self.M['찬스일가'],day_limit)
             for i in range(0,day_count) : 
-                찬스수량 += my.ceil( basic_qty *(i*1.25 + 1))
+                찬스수량 += my.ceil( basic_qty *(i*self.M['비중조절'] + 1))
             return 찬스수량   
     
     def tomorrow_step_RST(self,tac,key)  :
@@ -258,8 +257,6 @@ class update_Log :
         CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승'])
         if  CPRICE > LPRICE : 
             self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
-
-
 
     def tomorrow_step(self)   :
         
@@ -355,10 +352,17 @@ class update_Log :
 
         self.D['최장일수'] = self.M['최장일수']
         self.D['최장일자'] = self.M['최장일자']
+        self.D['현재일자'] = self.M['현재일자']
         self.D['MDD1'] = f"{self.V['진최하락']:.2f}"; self.D['MDD_DAY1'] = self.V['최하일자'][2:]
         self.D['MDD2'] = f"{self.R['진최하락']:.2f}"; self.D['MDD_DAY2'] = self.R['최하일자'][2:]
         self.D['MDD3'] = f"{self.S['진최하락']:.2f}"; self.D['MDD_DAY3'] = self.S['최하일자'][2:]
         self.D['MDD4'] = f"{self.T['진최하락']:.2f}"; self.D['MDD_DAY4'] = self.T['최하일자'][2:]
+
+        총매입금  = self.R['총매수금'] + self.S['총매수금'] + self.T['총매수금']
+        총보유량  = self.R['보유수량'] + self.S['보유수량'] + self.T['보유수량']
+        총평가금  = self.M['당일종가'] * 총보유량
+        평가손익  = 총평가금 - 총매입금
+        평가익률  = self.next_percent(총매입금,총평가금) 
         
         초기자본1 = float(self.D['일반자금'].replace(',','')); 최종자본1=self.V['평가금액']+self.V['현재잔액']; 최종수익1=최종자본1-초기자본1; self.D['v_profit']=round((최종수익1/초기자본1)*100,2)
         초기자본2 = float(self.D['기회자금'].replace(',','')); 최종자본2=self.R['평가금액']+self.R['현재잔액']; 최종수익2=최종자본2-초기자본2; self.D['r_profit']=round((최종수익2/초기자본2)*100,2)
@@ -368,6 +372,12 @@ class update_Log :
         초기자본 = 초기자본2 + 초기자본3 + 초기자본4; 최종자본 = 최종자본2 + 최종자본3 + 최종자본4; 최종수익 = 최종자본 - 초기자본 
         self.D['profit_t'] = round((최종수익/초기자본) * 100,2)
         
+        self.D['R_총매입금'] = f"{총매입금:,.2f}"
+        self.D['R_총평가금'] = f"{총평가금:,.2f}"
+        self.D['R_총보유량'] = f"{총보유량:,}"
+        self.D['R_평가손익'] = f"{평가손익:,.2f}"
+        self.D['R_평가익률'] = self.next_percent(총매입금,총평가금)
+
         self.D['R_초기자본'] = f"{초기자본:,.0f}"
         self.D['R_최종자본'] = f"{최종자본:,.2f}"
         self.D['R_최종수익'] = f"{최종수익:,.2f}"
@@ -465,7 +475,6 @@ class update_Log :
             self.M['생활보드']  = ST['03503']
 
         self.M['손실회수']  = False  
-        self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
         self.V['매수단계']  = self.R['매수단계'] = self.S['매수단계'] = self.T['매수단계'] = '일반매수'
         self.V['진행상황']  = self.R['진행상황'] = self.S['진행상황'] = self.T['진행상황'] = '매수대기'
         self.M['기록시즌']  = 0

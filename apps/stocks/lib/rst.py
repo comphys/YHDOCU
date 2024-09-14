@@ -30,7 +30,7 @@ class RST :
             if self.D['수료적용'] == 'on' :  tac['수수료등']  = self.commission(tac['매수금액'],1); tac['현재잔액'] -= tac['수수료등']
         
         if  tac['매도수량'] :
-            tac['실현수익']  = (self.M['당일종가'] - tac['평균단가']) * tac['매도수량']
+            tac['실현수익']  =  tac['매도금액'] - tac['총매수금']
             tac['보유수량'] -=  tac['매도수량'];  tac['현재잔액'] += tac['매도금액']; tac['총매수금'] = 0.00
             tac['수익현황']  =  tac['실현수익']
             
@@ -50,12 +50,19 @@ class RST :
         self.calculate_sub(self.V,'일')
         
         if  self.V['매도수량'] :
+
+            if  self.M['당일종가']>= self.V['평균단가'] : 
+                self.M['손실회수'] = False
+                self.set_value(['진행상황'],'익절매도')
+            else :
+                self.M['손실회수'] = True
+                self.set_value(['진행상황'],'손절매도')
+            
             self.M['첫날기록'] = True
-            self.M['회복상태'] = self.M['손실회수']
             self.set_value(['매수단계'],'일반매수')
             self.set_value(['평균단가'],0.0)
-            self.rebalance() 
-            
+            self.rebalance()
+
         else  : 
             for tac in [self.V,self.R,self.S,self.T] : tac['수익현황'] = tac['평가금액'] - tac['총매수금']
 
@@ -78,10 +85,10 @@ class RST :
         
         if not self.stat : return
         if  profit >= 0 : 
-            if self.M['회복상태'] : self.D[key+'회익절'] += 1
+            if self.M['손실회수'] : self.D[key+'회익절'] += 1
             else : self.D[key+'정익절'] += 1  
         else : 
-            if self.M['회복상태'] : self.D[key+'회손절'] += 1
+            if self.M['손실회수'] : self.D[key+'회손절'] += 1
             else : self.D[key+'정손절'] += 1   
 
     def commission(self,mm,opt) :
@@ -123,18 +130,10 @@ class RST :
         
         if  self.M['당일종가'] >= self.M['매도가격'] : 
 
-            self.M['회복상태']  = self.M['손실회수']
-
             for tac in (self.V,self.R,self.S,self.T) : 
                 tac['매도수량'] = tac['보유수량']
                 tac['매도금액'] = tac['매도수량'] * self.M['당일종가']
-                tac['진행상황'] = '익절매도' 
 
-            if  self.M['당일종가'] < self.V['평균단가'] : 
-                self.set_value(['진행상황'],'손절매도')
-                self.M['손실회수'] = True
-            else :
-                self.M['손실회수'] = False
 
     def today_buy_RST(self,tac,key) :
 
@@ -180,7 +179,7 @@ class RST :
             day_limit = 6 if key == 'R' else 7 
             day_count = min(self.M['현재날수']+self.M['찬스일가'],day_limit)
             for i in range(0,day_count) : 
-                찬스수량 += my.ceil( basic_qty *(i*1.25 + 1))
+                찬스수량 += my.ceil( basic_qty *(i*self.M['비중조절'] + 1))
             return 찬스수량   
     
     def tomorrow_step_RST(self,tac,key)  :
@@ -253,8 +252,6 @@ class RST :
         CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승'])
         if  CPRICE > LPRICE : 
             self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
-
-
 
     def tomorrow_step(self)   :
         
@@ -473,7 +470,6 @@ class RST :
             self.M['생활보드']  = ST['03503']
 
         self.M['손실회수']  = False  
-        self.M['회복상태']  = False # 손실회수는 매도시 상태 결정, 회복상태은 진행중인 상태
         self.V['매수단계']  = self.R['매수단계'] = self.S['매수단계'] = self.T['매수단계'] = '일반매수'
         self.V['진행상황']  = self.R['진행상황'] = self.S['진행상황'] = self.T['진행상황'] = '매수대기'
         self.M['기록시즌']  = 0
