@@ -21,6 +21,8 @@ class VTACTIC :
 
     def calculate(self)  :
 
+        self.V['진행상황'] = self.V['매수단계']
+
         if  self.V['매수수량'] : 
             self.V['현재잔액'] -= self.V['매수금액']
             self.V['보유수량'] += self.V['매수수량']
@@ -29,7 +31,7 @@ class VTACTIC :
             if self.D['수료적용'] == 'on' :  self.V['수수료등']  = self.commission(self.V['매수금액'],1); self.V['현재잔액'] -= self.V['수수료등']
         
         if  self.V['매도수량'] :
-            self.V['실현수익']  = (self.M['당일종가'] - self.V['평균단가']) * self.V['매도수량']
+            self.V['실현수익']  =  self.V['매도금액'] - self.V['총매수금']
             self.V['보유수량'] -=  self.V['매도수량'];  self.V['현재잔액'] += self.V['매도금액']; self.V['총매수금'] = 0.00
             self.V['수익현황']  =  self.V['실현수익']
             
@@ -42,10 +44,17 @@ class VTACTIC :
         self.V['현수익률'] = (self.M['당일종가'] / self.V['평균단가'] -1) * 100  if self.V['평균단가'] else 0.00        
 
         if  self.V['매도수량'] :
+
+            if  self.M['당일종가']>= self.V['평균단가'] : 
+                self.M['손실회수'] = False
+                self.V['진행상황'] = '익절매도'
+            else :
+                self.M['손실회수'] = True
+                self.V['진행상황'] = '손절매도'
+            
             self.M['첫날기록'] = True
-            self.M['회복전략'] = self.M['손실회수']
-            self.set_value(['매수단계'],'일반매수')
-            self.set_value(['평균단가'],0.0)
+            self.V['매수단계'] ='일반매수'
+            self.V['평균단가'] = 0.0
             self.rebalance() 
             
         else  : 
@@ -70,10 +79,10 @@ class VTACTIC :
         
         if not self.stat : return
         if  profit >= 0 : 
-            if self.M['회복전략'] : self.D['일회익절'] += 1
+            if self.M['손실회수'] : self.D['일회익절'] += 1
             else : self.D['일정익절'] += 1  
         else : 
-            if self.M['회복전략'] : self.D['일회손절'] += 1
+            if self.M['손실회수'] : self.D['일회손절'] += 1
             else : self.D['일정손절'] += 1   
 
     def commission(self,mm,opt) :
@@ -110,17 +119,8 @@ class VTACTIC :
         
         if  self.M['당일종가'] >= self.M['매도가격'] : 
 
-            self.M['회복전략']  = self.M['손실회수']
-
             self.V['매도수량'] = self.V['보유수량']
             self.V['매도금액'] = self.V['매도수량'] * self.M['당일종가']
-            self.V['진행상황'] = '익절매도' 
-
-            if  self.M['당일종가'] < self.V['평균단가'] : 
-                self.V['진행상황'] = '손절매도'
-                self.M['손실회수'] = True
-            else :
-                self.M['손실회수'] = False
 
     def today_buy(self) :
 
@@ -162,11 +162,21 @@ class VTACTIC :
                 self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['전략가치'])
             else :
                 self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
+
+        # [최종결정]---------------------------------------------------------------------------------------------
+        LPRICE = my.round_up(self.V['평균단가'] * self.M['강매가치'])
+        
+        if  self.M['현재날수'] >= self.M['강매시작'] : 
+            self.M['매도가격']  = LPRICE
+
+        # 2024.06.18 이후 폭락장 보정
+        CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승'])
+        if  CPRICE >= LPRICE : 
+            self.M['매도가격'] = min(self.M['매도가격'],CPRICE)   
                     
 
     def tomorrow_step(self)   :
 
-        self.V['진행상황'] = self.V['매수단계']
         self.tomorrow_buy()
         self.tomorrow_sell()
         
@@ -249,8 +259,7 @@ class VTACTIC :
         self.D['R_초기자본'] = f"{초기자본:,.0f}"
         self.D['R_최종자본'] = f"{최종자본:,.2f}"
         self.D['R_최종수익'] = f"{최종수익:,.2f}"
-        self.D['R_최종익률'] = f"{self.D['profit_t']:,.2f}"
-        self.D['R_일반익률'] = f"{self.D['v_profit']:,.2f}"
+        self.D['R_최종익률'] = f"{self.D['v_profit']:,.2f}"
         self.D['R_총경과일'] = f"{my.diff_day(self.D['시작일자'],self.D['종료일자']):,}"
 
         if self.chart and self.D['c_date'] : self.D['s_date'] = self.D['c_date'][0]; self.D['e_date'] = self.D['c_date'][-1]
@@ -330,7 +339,6 @@ class VTACTIC :
             self.M['찬스일가']  = ST['01002']  
 
         self.M['손실회수']  = False  
-        self.M['회복전략']  = False      # 현재 진행 중인 상황이 손실회수 상태인지 아닌지를 구분( for 통계정보 )
         self.V['매수단계']  = '일반매수'
         self.V['진행상황']  = '매수대기'
         self.M['기록시즌']  = 0
@@ -363,7 +371,7 @@ class VTACTIC :
             self.D['TR'] = []
             self.D['c_date'] = []
             self.D['clse_p'] = []
-            self.D['avge_r'] = []; self.D['avge_s'] = []; self.D['avge_t'] = []
+            self.D['avge_v'] = []
 
         # 통계자료
         if  self.stat :
@@ -373,7 +381,7 @@ class VTACTIC :
 
             self.D['손익통계'] = [[self.D['시작일자'],f"{self.V['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE",'','0.00']]
             self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
-            self.D['손익저점'] = 100.0
+            self.D['손익저점'] = 0
             self.D['저점날자'] = ''
 
     def nextStep(self) :
@@ -432,20 +440,38 @@ class VTACTIC :
         clr = "#F6CECE" if self.M['종가변동'] >= 0 else "#CED8F6"
         tx['종가변동'] = f"<span style='color:{clr}'>{self.M['종가변동']:,.2f}</span>"
         #--------------------------------------------------------
-        tx['일반진행'] = f"{round(self.V['매도금액'],4):,.2f}" if self.V['매도금액'] else self.V['거래코드']
-        tx['일반평균'] = f"{round(self.V['평균단가'],4):,.4f}" if self.V['평균단가'] else ""
-        clr = "#F6CECE" if self.V['현수익률'] > 0 else "#CED8F6"
-        tx['일반수익'] = f"<span style='color:{clr}'>{round(self.V['수익현황'],4):,.2f}</span>"
-        tx['일반익률'] = f"<span style='color:{clr}'>{round(self.V['현수익률'],4):,.2f}</span>"
+        가치합계 = self.V['현재잔액'] + self.V['평가금액']
         tx['일반잔액'] = f"{self.V['현재잔액']:,.2f}"
-        #--------------------------------------------------------
+        tx['잔액비중'] = f"{self.V['현재잔액']/가치합계*100:,.1f}"
         tx['진행상황'] = self.V['진행상황']
+        
+        tx['매수수량'] = self.V['매수수량']
+        tx['매수금액'] = f"{self.V['매수금액']:,.2f}"
+        tx['평균단가'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.V['평균단가'],4):,.4f}</span>" if self.V['평균단가'] else f"<span class='avgv{self.M['기록시즌']}'></span>"
+        tx['보유수량'] = f"{self.V['보유수량']:,}"
+        
+        clr = "#F6CECE" if self.V['현수익률'] > 0 else "#CED8F6"
+        tx['총매수금'] = f"{self.V['총매수금']:,.2f}"
+        tx['매도금액'] = f"<span style='color:{clr}'>{round(self.V['매도금액'],4):,.2f}</span>"
+        tx['평가금액'] = f"{self.V['평가금액']:,.2f}" if self.V['평가금액'] else tx['매도금액']
+        tx['수익현황'] = f"<span style='color:{clr}'>{round(self.V['수익현황'],4):,.2f}</span>"
+        tx['현수익률'] = f"<span style='color:{clr}'>{round(self.V['현수익률'],4):,.2f}</span>"
+
+
+        
+        #--------------------------------------------------------
+        
+        
+        tx['가치합계'] = f"{가치합계:,.2f}"
             
         self.D['TR'].append(tx)
         
         self.D['clse_p'].append(self.M['당일종가'])
+        if avg_v := round(self.V['평균단가'],2) : self.D['avge_v'].append(avg_v)
+        else : self.D['avge_v'].append('null')
+    
         self.D['c_date'].append(self.M['현재일자'][2:])
-        self.D['totalV'].append(round(self.V['현재잔액']+self.V['평가금액'],0))
+        self.D['totalV'].append(round(가치합계,0))
         
 
     def get_simResult(self,start='',end='',result=False) :

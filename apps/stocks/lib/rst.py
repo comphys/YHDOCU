@@ -134,7 +134,6 @@ class RST :
                 tac['매도수량'] = tac['보유수량']
                 tac['매도금액'] = tac['매도수량'] * self.M['당일종가']
 
-
     def today_buy_RST(self,tac,key) :
 
         if  self.M['현재날수'] == 2 and key == 'R':
@@ -182,7 +181,7 @@ class RST :
                 찬스수량 += my.ceil( basic_qty *(i*self.M['비중조절'] + 1))
             return 찬스수량   
     
-    def tomorrow_step_RST(self,tac,key)  :
+    def tomorrow_buy_RST(self,tac,key)  :
         
         if  not tac['현재잔액'] : tac['구매수량'] = 0; return
 
@@ -192,9 +191,11 @@ class RST :
             if  tac['현재잔액'] < tac['구매수량'] * self.M['매수가격'] : 
                 tac['구매수량'] = my.ceil(tac['기초수량'] * self.M['위매비중']) 
                 tac['매수단계'] = '매수제한'
+                
                 if  tac['현재잔액'] < tac['구매수량'] * self.M['매수가격'] : 
                     tac['구매수량'] = 0
                     tac['매수단계'] = '매수중단'
+                    
                     if  self.D['이밸런싱'] == 'on' and key in ('R','S') :
                         self.T['현재잔액'] += tac['현재잔액']
                         tac['현재잔액'] = 0.0
@@ -241,7 +242,8 @@ class RST :
                     self.M['매도가격'] = min(self.M['매도가격'],my.round_up(self.S['평균단가'] * self.M['회복탈출']))
             else :
                 self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
-                    
+        
+        
         # [최종결정]---------------------------------------------------------------------------------------------
         LPRICE = my.round_up(self.V['평균단가'] * self.M['강매가치'])
         
@@ -250,7 +252,7 @@ class RST :
 
         # 2024.06.18 이후 폭락장 보정
         CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승'])
-        if  CPRICE > LPRICE : 
+        if  CPRICE >= LPRICE : 
             self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
 
     def tomorrow_step(self)   :
@@ -258,9 +260,9 @@ class RST :
         self.tomorrow_buy()
         self.tomorrow_sell()
 
-        self.tomorrow_step_RST(self.R,'R')
-        self.tomorrow_step_RST(self.S,'S')
-        self.tomorrow_step_RST(self.T,'T')
+        self.tomorrow_buy_RST(self.R,'R')
+        self.tomorrow_buy_RST(self.S,'S')
+        self.tomorrow_buy_RST(self.T,'T')
 
         if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01
         
@@ -287,7 +289,7 @@ class RST :
         if  self.M['당일종가'] <  round(self.M['전일종가'] * self.M['큰단가치'],2) :
             
             self.M['기록시즌'] += 1
-            self.M['현재날수'] = 1
+            self.M['현재날수']  = 1
             
             for tac in (self.V,self.R,self.S,self.T) : tac['기초수량']  = my.ceil(tac['일매수금']/self.M['전일종가'])
             
@@ -300,7 +302,7 @@ class RST :
                 tac['총매수금']  = tac['평가금액'] = tac['매수금액']
                 tac['현재잔액'] -= tac['매수금액']
                 tac['거래코드']  = f"{tac['매수수량']}" 
-                if self.D['수료적용'] == 'on' : tac['수수료등']  = self.commission(tac['매수금액'],1); tac['현재잔액'] -= tac['수수료등']
+                if self.D['수료적용'] == 'on' : tac['수수료등'] = self.commission(tac['매수금액'],1); tac['현재잔액'] -= tac['수수료등']
 
             self.V['매수단계'] = '일반매수'
             self.V['진행상황'] = '첫날매수'
