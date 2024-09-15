@@ -614,16 +614,13 @@ function synchro(opt,begin='pick') {
 		$("input[name='종료일자']").val(today);
 	} else if(opt==1){	today = $("input[name='시작일자']").val();} 
 
-	let posturl = uri('linkurl') + 'pages-pajax/rst_sync';
+	let posturl = uri('linkurl') + 'pages-pajax/vtac_sync';
 	$.post(posturl, { s_date : today, begin : begin },null,'json').done(function(data){
 		if(data.date=='None'){h_dialog.notice(data.msg);}
 		else {
 			h_dialog.notice("동기화 데이타가 입력되었습니다.")
 			$("input[name='시작일자']").val(data.date);
 			$("input[name='일반자금']").val(data.V_money);
-			$("input[name='기회자금']").val(data.R_money);
-			$("input[name='안정자금']").val(data.S_money);
-			$("input[name='생활자금']").val(data.T_money);
 			if(opt==2||opt==0) {$("form[name=stock_back_testing]").submit();}
 		}
 	});
