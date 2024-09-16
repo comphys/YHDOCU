@@ -54,7 +54,7 @@
 					<div style="display:inline-block;">
 						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro(1,'pick')" title="동기화(back)"></i>
 					</div>
-					<div style="display:inline-block;">
+					<div style="display:inline-block;margin-right:10px;">
 						<i class="fa fa-superpowers fa-lg" style="color:cadetblue;cursor:pointer;" onclick="synchro(2,'pick')" title="동기화(최근시즌)"></i>
 					</div>
     				<button class="btn btn-red-s3" style="vertical-align:middle;user-select:none;">테스팅</button>
@@ -201,7 +201,7 @@
 </div>
 {% if D['TR'] %}
 <div id="statistics-profits" class="scrollbar"
-     style="position:fixed;left:1190px;top:112px;width:420px;height:350px;padding:0px;background-color:#24272d;overflow-y:scroll;border:1px solid gray">
+     style="position:fixed;left:1190px;top:112px;width:420px;height:350px;padding:0px;background-color:#24272d;overflow-y:scroll;">
 	 <table class='table table-hover' style="padding:0px">
 		<tr style="background-color: #000000;font-weight:bold;color:white;">
 			<td style="text-align:left;">결과분석</td>
@@ -421,17 +421,15 @@ const myChart_main = new Chart(ctx_main, config_main);
 function chart_up_dn(opt) {
 	if(opt==1) { 
 		$("#myChart_main-div").hide(); 
-		$("#result-memo").hide(); 
 		$("#monthlyProfit").hide();
 		$('#statistics-profits').hide();
-		$('#Next-Strategy').hide();
 		$('#backTestingChart').hide();
 		$("#backTesting-table").css("marginTop",'100px'); 
 	}
 	else {
 		$("#myChart_main-div").show(); 
-		$("#result-memo").show(); 
 		$("#monthlyProfit").show();
+		$('#statistics-profits').show();
 		$("#backTesting-table").css("marginTop",'470px');
 	}
 }
@@ -621,6 +619,7 @@ function synchro(opt,begin='pick') {
 			h_dialog.notice("동기화 데이타가 입력되었습니다.")
 			$("input[name='시작일자']").val(data.date);
 			$("input[name='일반자금']").val(data.V_money);
+			if(data.V_mode) { $("input[name=chk_chx]").prop('checked',true);}
 			if(opt==2||opt==0) {$("form[name=stock_back_testing]").submit();}
 		}
 	});
