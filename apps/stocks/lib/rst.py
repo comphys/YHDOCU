@@ -1,4 +1,5 @@
 import system.core.my_utils as my
+from random import sample
 
 class RST :
 
@@ -52,10 +53,10 @@ class RST :
         if  self.V['매도수량'] :
 
             if  self.M['당일종가']>= self.V['평균단가'] : 
-                self.M['손실회수'] = False
+                self.M['기본진행'] = True
                 self.set_value(['진행상황'],'익절매도')
             else :
-                self.M['손실회수'] = True
+                self.M['기본진행'] = False
                 self.set_value(['진행상황'],'손절매도')
             
             self.M['첫날기록'] = True
@@ -85,11 +86,11 @@ class RST :
         
         if not self.stat : return
         if  profit >= 0 : 
-            if self.M['손실회수'] : self.D[key+'회익절'] += 1
-            else : self.D[key+'정익절'] += 1  
+            if self.M['기본진행'] : self.D[key+'정익절'] += 1
+            else : self.D[key+'회익절'] += 1  
         else : 
-            if self.M['손실회수'] : self.D[key+'회손절'] += 1
-            else : self.D[key+'정손절'] += 1   
+            if self.M['기본진행'] : self.D[key+'정손절'] += 1
+            else : self.D[key+'회손절'] += 1   
 
     def commission(self,mm,opt) :
 
@@ -217,8 +218,8 @@ class RST :
 
     def tomorrow_sell(self) :
 
-        # [일반진행]---------------------------------------------------------------------------------------------
-        if  not self.M['손실회수'] :
+        # [기본진행]---------------------------------------------------------------------------------------------
+        if  self.M['기본진행'] :
             
             if  self.V['매수단계'] not in ('매수제한','매수중단') :  
                 self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
@@ -243,7 +244,6 @@ class RST :
             else :
                 self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
         
-        
         # [최종결정]---------------------------------------------------------------------------------------------
         LPRICE = my.round_up(self.V['평균단가'] * self.M['강매가치'])
         
@@ -259,7 +259,6 @@ class RST :
         
         self.tomorrow_buy()
         self.tomorrow_sell()
-
         self.tomorrow_buy_RST(self.R,'R')
         self.tomorrow_buy_RST(self.S,'S')
         self.tomorrow_buy_RST(self.T,'T')
@@ -272,7 +271,7 @@ class RST :
         n = self.V['구매수량']
         A = self.V['총매수금']
         if H == 0 : return 0
-        p = tac['회복시점'] if self.M['손실회수'] else tac['진입시점']
+        p = tac['진입시점'] if self.M['기본진행'] else tac['회복시점']
 
         N = H + n
         k = N / (1+p/100)
@@ -359,7 +358,6 @@ class RST :
         총보유량  = self.R['보유수량'] + self.S['보유수량'] + self.T['보유수량']
         총평가금  = self.M['당일종가'] * 총보유량
         평가손익  = 총평가금 - 총매입금
-        평가익률  = self.next_percent(총매입금,총평가금) 
         
         초기자본1 = float(self.D['일반자금'].replace(',','')); 최종자본1=self.V['평가금액']+self.V['현재잔액']; 최종수익1=최종자본1-초기자본1; self.D['v_profit']=round((최종수익1/초기자본1)*100,2)
         초기자본2 = float(self.D['기회자금'].replace(',','')); 최종자본2=self.R['평가금액']+self.R['현재잔액']; 최종수익2=최종자본2-초기자본2; self.D['r_profit']=round((최종수익2/초기자본2)*100,2)
@@ -471,7 +469,7 @@ class RST :
             self.M['안정보드']  = ST['03502']
             self.M['생활보드']  = ST['03503']
 
-        self.M['손실회수']  = False  
+        self.M['기본진행']  = True  
         self.V['매수단계']  = self.R['매수단계'] = self.S['매수단계'] = self.T['매수단계'] = '일반매수'
         self.V['진행상황']  = self.R['진행상황'] = self.S['진행상황'] = self.T['진행상황'] = '매수대기'
         self.M['기록시즌']  = 0
@@ -483,11 +481,12 @@ class RST :
         self.T['진입시점']  = float(self.D['생활시점']) if '생활시점' in self.D else ST['02401']
         self.T['회복시점']  = float(self.D['생활회복']) if '생활회복' in self.D else ST['02402']
 
-        if '가상손실' in self.D  and  self.D['가상손실'] == 'on' : self.M['손실회수']  = True     
+        if '가상손실' in self.D  and  self.D['가상손실'] == 'on' : self.M['기본진행']  = False     
         if '수료적용' not in self.D : self.D['수료적용']  = 'on'
         if '세금적용' not in self.D : self.D['세금적용']  = 'off'
         if '일밸런싱' not in self.D : self.D['일밸런싱']  = 'on'
         if '이밸런싱' not in self.D : self.D['이밸런싱']  = 'on'
+        if '랜덤종가' not in self.D : self.D['랜덤종가']  = 'off'
             
         if '일반자금' not in self.D : self.D['일반자금']  = ST['05100']
         if '기회자금' not in self.D : self.D['기회자금']  = ST['05200']
@@ -723,7 +722,7 @@ class RST :
 
         self.chart = True
         self.stat  = True
-        self.get_start()
+        self.get_start_virtual() if self.D['랜덤종가'] == 'on' else self.get_start()
         self.init_value()
         self.simulate(printOut=True)
         self.result()
@@ -895,3 +894,22 @@ class RST :
         
         self.D['chart_dte'].reverse()
         self.D['chart_val'].reverse()
+
+# ------------------------------------------------------------------------------------
+    def get_start_virtual(self) :
+
+        old_date = my.dayofdate(self.D['시작일자'],-7)[0]
+        qry = f"SELECT add0 FROM h_stockHistory_board WHERE add1='SOXL' AND add0 BETWEEN '{old_date}' AND '{self.D['종료일자']}'"
+        B = self.DB.col(qry) 
+        cnt = len(B)
+        qry = f"SELECT add8 FROM h_stockHistory_board WHERE add0 >='2010-05-01' ORDER BY add0 DESC"
+        R = self.DB.col(qry)
+
+        C = [10.0]*cnt; P=[0.0]*cnt; self.B = []
+        P = sample(R,cnt)
+
+        for i in range(1,cnt) :
+            r = float(P[i])/100
+            C[i] = round(C[i-1]*(1+r),2)
+            self.B.append({'add0':B[i],'add3':C[i],'add8':P[i]})
+        
