@@ -85,7 +85,7 @@
 				<input role="switch" type="checkbox" name="chk_rs_" {{ 'checked' if D['이밸런싱'] =='on' else '' }}>&nbsp;<span>RS>T</span>&nbsp;&nbsp; 
 			</div>
 			<div class="pull-right" style="padding:10px 5px;margin-right:0px;height:42px;">
-				<i class="fa fa-line-chart" onclick="$('#backTestingChart').toggle()"></i>
+				<i class="fa fa-line-chart" onclick="show_timeSeries_chart()"></i>
 			</div>
 		</div>
 	</form>
@@ -182,7 +182,7 @@
 	</table>
 </div>
 
-<div id='backTestingChart' style="position:fixed;left:20px;top:150px;width:1700px;background-color:#24272d;padding:10px;border:2px solid black;">
+<div id='backTestingChart' style="display:none;position:fixed;left:20px;top:150px;width:1700px;background-color:#24272d;padding:10px;border:2px solid black;">
 	<canvas id="mybackTestChart" style="width:1680px;height:380px;background-color:#24272d"></canvas>
 </div>
 {% endif %}
@@ -190,12 +190,13 @@
 <script src="/sys/chart/chart.min.js"></script>
 <script>
 $(document).ready(function(){ 
-	$('#backTestingChart').bind('dblclick',function(){$(this).hide();}).draggable().hide();
+	$('#backTestingChart').bind('dblclick',function(){$(this).hide();}).draggable();
 	$(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 	$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 });
 
 // --------------------------------------------------------------------------------------
+{% if D['chart_dte'] %}
 let label_timeSeries = {{D['chart_dte']|safe}};
 let timeSeries_data  = {{D['chart_val']|safe}};
 const ctx_timeSeries = $id('mybackTestChart');
@@ -224,7 +225,11 @@ const options_timeSeries = {
 	}
 };
 const config_timeSeries  = {type:'line',data:data_timeSeries,options:options_timeSeries};
-const myChart_timeSeries = new Chart(ctx_timeSeries, config_timeSeries);
+function show_timeSeries_chart() {
+	$('#backTestingChart').toggle()
+	const myChart_timeSeries = new Chart(ctx_timeSeries, config_timeSeries);
+}
+{% endif %}
 // --------------------------------------------------------------------------------------
 function check_thisForm() {
     if(! $("input[name='종목코드']").val() ) { h_dialog.notice("코드 입력은 필수입니다"); return false; }
