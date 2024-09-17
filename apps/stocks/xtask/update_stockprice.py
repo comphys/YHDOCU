@@ -47,7 +47,7 @@ class SU :
             self.DB.exe(sql)
 
         lday = rst3[-1][0]
-        self.send_message(f"{lday} 주가 업데이트 완료")
+        self.send_message(f"{lday}일 주가 업데이트 완료")
 
 
     def forex_update(self) :
