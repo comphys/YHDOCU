@@ -169,9 +169,9 @@ class RST :
             self.V['진행상황']  = '일반매수'
 
             # R 전략, S 전략의 매수가격은 V전략 매수가격 보다 같거나 작다.
-            self.today_buy_RST(self.R,'R')
-            self.today_buy_RST(self.S,'S')
             self.today_buy_RST(self.T,'T')
+            self.today_buy_RST(self.S,'S')
+            self.today_buy_RST(self.R,'R')
             
     def chance_qty(self,basic_qty,key) :
             
