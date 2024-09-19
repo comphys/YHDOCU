@@ -169,9 +169,9 @@ class RST :
             self.V['진행상황']  = '일반매수'
 
             # R 전략, S 전략의 매수가격은 V전략 매수가격 보다 같거나 작다.
-            self.today_buy_RST(self.T,'T')
-            self.today_buy_RST(self.S,'S')
             self.today_buy_RST(self.R,'R')
+            self.today_buy_RST(self.S,'S')
+            self.today_buy_RST(self.T,'T')
             
     def chance_qty(self,basic_qty,key) :
             
@@ -577,43 +577,24 @@ class RST :
             self.D['N_기회기초'] = self.R['기초수량']
             self.D['N_안정기초'] = self.S['기초수량']
             self.D['N_생활기초'] = self.T['기초수량']
-            
-            self.D['N_일반매수가'] = self.M['매수가격']
-            self.D['N_일반평대비'] = self.next_percent(self.V['평균단가'],self.D['N_일반매수가']);       self.D['N_일반종대비'] = self.next_percent(self.M['당일종가'],self.D['N_일반매수가'])
-            self.D['N_기회매수가'] = self.M['매수가격'] if self.R['진행시작'] else self.R['매수가격'] 
-            self.D['N_기회평대비'] = self.next_percent(self.R['평균단가'],self.D['N_기회매수가']);       self.D['N_기회종대비'] = self.next_percent(self.M['당일종가'],self.D['N_기회매수가'])
-            self.D['N_안정매수가'] = self.M['매수가격'] if self.S['진행시작'] else self.S['매수가격']
-            self.D['N_안정평대비'] = self.next_percent(self.S['평균단가'],self.D['N_안정매수가']);       self.D['N_안정종대비'] = self.next_percent(self.M['당일종가'],self.D['N_안정매수가'])
-            self.D['N_생활매수가'] = self.M['매수가격'] if self.T['진행시작'] else self.T['매수가격']
-            self.D['N_생활평대비'] = self.next_percent(self.T['평균단가'],self.D['N_생활매수가']);       self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
-            
-            self.D['N_일반매수량'] = self.V['매수수량']
-            self.D['N_기회매수량'] = self.R['매수수량']
-            self.D['N_안정매수량'] = self.S['매수수량']
-            self.D['N_생활매수량'] = self.T['매수수량']
 
-            self.D['N_일반매도량'] = self.V['보유수량']
-            self.D['N_기회매도량'] = self.R['보유수량']
-            self.D['N_안정매도량'] = self.S['보유수량']
-            self.D['N_생활매도량'] = self.T['보유수량']
+            self.V['진행시작'] = True
+            for (tac,key) in [(self.V,'일반'),(self.R,'기회'),(self.S,'안정'),(self.T,'생활')] : 
+                self.D['N_'+key+'매수량'] = tac['매수수량']
+                self.D['N_'+key+'매수가'] = self.M['매수가격'] if tac['진행시작'] else tac['매수가격']
+                self.D['N_'+key+'평대비'] = self.next_percent(tac['평균단가'],self.D['N_'+key+'매수가'])
+                self.D['N_'+key+'종대비'] = self.next_percent(self.M['당일종가'],self.D['N_'+key+'매수가'])
+                self.D['N_'+key+'매수가'] = f"{self.D['N_'+key+'매수가']:,.2f}"
 
-            self.D['N_일반매도가'] = self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = self.M['매도가격']
-            self.D['N_일반도평비'] = self.next_percent(self.V['평균단가'],self.D['N_일반매도가'])
-            self.D['N_기회도평비'] = self.next_percent(self.R['평균단가'],self.D['N_기회매도가'])
-            self.D['N_안정도평비'] = self.next_percent(self.S['평균단가'],self.D['N_안정매도가'])
-            self.D['N_생활도평비'] = self.next_percent(self.T['평균단가'],self.D['N_생활매도가'])
-            self.D['N_공통종대비'] = self.next_percent(self.M['당일종가'],self.D['N_기회매도가'])
+                self.D['N_'+key+'매도량'] = tac['보유수량']
+                self.D['N_'+key+'매도가'] = f"{self.M['매도가격']:.2f}"
+                self.D['N_'+key+'도평비'] = self.next_percent(tac['평균단가'],self.M['매도가격'])
+                self.D['N_'+key+'도종비'] = self.next_percent(self.M['당일종가'],self.M['매도가격'])
 
-        # formating...
-        self.D['N_일반매수가'] = f"{self.D['N_일반매수가']:.2f}"
-        self.D['N_기회매수가'] = f"{self.D['N_기회매수가']:.2f}"
-        self.D['N_안정매수가'] = f"{self.D['N_안정매수가']:.2f}"
-        self.D['N_생활매수가'] = f"{self.D['N_생활매수가']:.2f}"
-        self.D['N_일반매도가'] = self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = f"{self.M['매도가격']:.2f}"
 
     def next_percent(self,a,b) :
         
-        if not a : return '0.00'
+        if not a : return ''
         return f"{(b/a-1)*100:.2f}"
     
     def next_buy_RST(self) :
@@ -764,7 +745,7 @@ class RST :
         self.nextStep()
         tN = {'V':'일반','R':'기회','S':'안정','T':'생활'}
         return {'buy_p':self.D['N_'+tN[tac]+'매수가'],'buy_q':self.D['N_'+tN[tac]+'매수량'],'yx_b': self.D['N_'+tN[tac]+'종대비'],
-                'sel_p':self.D['N_'+tN[tac]+'매도가'],'sel_q':self.D['N_'+tN[tac]+'매도량'],'yx_s': self.D['N_공통종대비']}
+                'sel_p':self.D['N_'+tN[tac]+'매도가'],'sel_q':self.D['N_'+tN[tac]+'매도량'],'yx_s': self.D['N_'+tN[tac]+'도종비']}
       
 
     def do_tacticsLog(self,theDate) :
