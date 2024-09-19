@@ -631,7 +631,8 @@ class RST :
 
         tx = {}
         #--------------------------------------------------------
-        tx['현재날수'] = self.M['현재날수']; tx['기록시즌'] = self.M['기록시즌']
+        tx['현재날수'] = self.M['현재날수'] 
+        tx['기록시즌'] = self.M['기록시즌']
         tx['기록일자'] = self.M['현재일자'][2:]
         tx['당일종가'] = f"<span class='clsp{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
         clr = "#F6CECE" if self.M['종가변동'] >= 0 else "#CED8F6"
@@ -644,26 +645,13 @@ class RST :
         tx['일반익률'] = f"<span style='color:{clr}'>{round(self.V['현수익률'],4):,.2f}</span>"
         tx['일반잔액'] = f"{self.V['현재잔액']:,.2f}"
         #--------------------------------------------------------
-        tx['기회진행'] = f"{round(self.R['매도금액'],4):,.2f}" if self.R['매도금액'] else self.R['거래코드']
-        tx['기회평균'] = f"<span class='avgr{self.M['기록시즌']}'>{round(self.R['평균단가'],4):,.4f}</span>" if self.R['평균단가'] else f"<span class='avgr{self.M['기록시즌']}'></span>"
-        clr = "#F6CECE" if self.R['현수익률'] > 0 else "#CED8F6"
-        tx['기회수익'] = f"<span style='color:{clr}'>{round(self.R['수익현황'],4):,.2f}</span>" 
-        tx['기회익률'] = f"<span style='color:{clr}'>{round(self.R['현수익률'],4):,.2f}</span>" 
-        tx['기회잔액'] = f"{self.R['현재잔액']:,.2f}"
-        #--------------------------------------------------------
-        tx['안정진행'] = f"{round(self.S['매도금액'],4):,.2f}" if self.S['매도금액'] else self.S['거래코드']
-        tx['안정평균'] = f"<span class='avgs{self.M['기록시즌']}'>{round(self.S['평균단가'],4):,.4f}</span>" if self.S['평균단가'] else f"<span class='avgs{self.M['기록시즌']}'></span>"
-        clr = "#F6CECE" if self.S['현수익률'] > 0 else "#CED8F6"
-        tx['안정수익'] = f"<span style='color:{clr}'>{round(self.S['수익현황'],4):,.2f}</span>" 
-        tx['안정익률'] = f"<span style='color:{clr}'>{round(self.S['현수익률'],4):,.2f}</span>"
-        tx['안정잔액'] = f"{self.S['현재잔액']:,.2f}"
-        #--------------------------------------------------------
-        tx['생활진행'] = f"{round(self.T['매도금액'],4):,.2f}" if self.T['매도금액'] else self.T['거래코드']
-        tx['생활평균'] = f"<span class='avgt{self.M['기록시즌']}'>{round(self.T['평균단가'],4):,.4f}</span>" if self.T['평균단가'] else f"<span class='avgt{self.M['기록시즌']}'></span>"
-        clr = "#F6CECE" if self.T['현수익률'] > 0 else "#CED8F6"
-        tx['생활수익'] = f"<span style='color:{clr}'>{round(self.T['수익현황'],4):,.2f}</span>" 
-        tx['생활익률'] = f"<span style='color:{clr}'>{round(self.T['현수익률'],4):,.2f}</span>"
-        tx['생활잔액'] = f"{self.T['현재잔액']:,.2f}"
+        for tac,key in [(self.R,'기회'),(self.S,'안정'),(self.T,'생활')] :
+            tx[key+'진행'] = f"{round(tac['매도금액'],4):,.2f}" if tac['매도금액'] else tac['거래코드']
+            tx[key+'평균'] = f"<span class='avgr{self.M['기록시즌']}'>{round(tac['평균단가'],4):,.4f}</span>" if tac['평균단가'] else f"<span class='avgr{self.M['기록시즌']}'></span>"
+            clr = "#F6CECE" if tac['현수익률'] > 0 else "#CED8F6"
+            tx[key+'수익'] = f"<span style='color:{clr}'>{round(tac['수익현황'],4):,.2f}</span>" 
+            tx[key+'익률'] = f"<span style='color:{clr}'>{round(tac['현수익률'],4):,.2f}</span>" 
+            tx[key+'잔액'] = f"{tac['현재잔액']:,.2f}"
         #--------------------------------------------------------
         tx['진행상황'] = self.V['진행상황']
             
