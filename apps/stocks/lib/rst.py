@@ -548,6 +548,9 @@ class RST :
         self.D['N_변동'] = round(self.M['종가변동'],2)
         self.D['N_단계'] = self.V['매수단계']
 
+        # 변수초기화
+        self.D['N_기회도종비'] = self.D['N_안정도종비'] = self.D['N_생활도종비'] = ''
+
         if  self.M['첫날기록'] : 
 
             self.D['N_일자'] = 1 
@@ -730,6 +733,7 @@ class RST :
         self.put_initCapital(V_money,R_money,R_money,R_money)
         if V_mode : self.D['가상손실'] = 'on'
         self.get_simResult(V_date)
+ 
         self.nextStep()
         tN = {'V':'일반','R':'기회','S':'안정','T':'생활'}
         return {'buy_p':self.D['N_'+tN[tac]+'매수가'],'buy_q':self.D['N_'+tN[tac]+'매수량'],'yx_b': self.D['N_'+tN[tac]+'종대비'],
