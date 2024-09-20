@@ -648,9 +648,9 @@ class RST :
         tx['일반익률'] = f"<span style='color:{clr}'>{round(self.V['현수익률'],4):,.2f}</span>"
         tx['일반잔액'] = f"{self.V['현재잔액']:,.2f}"
         #--------------------------------------------------------
-        for tac,key in [(self.R,'기회'),(self.S,'안정'),(self.T,'생활')] :
+        for tac,key,key2 in [(self.R,'기회','r'),(self.S,'안정','s'),(self.T,'생활','t')] :
             tx[key+'진행'] = f"{round(tac['매도금액'],4):,.2f}" if tac['매도금액'] else tac['거래코드']
-            tx[key+'평균'] = f"<span class='avgr{self.M['기록시즌']}'>{round(tac['평균단가'],4):,.4f}</span>" if tac['평균단가'] else f"<span class='avgr{self.M['기록시즌']}'></span>"
+            tx[key+'평균'] = f"<span class='avg{key2}{self.M['기록시즌']}'>{round(tac['평균단가'],4):,.4f}</span>" if tac['평균단가'] else f"<span class='avg{key2}{self.M['기록시즌']}'></span>"
             clr = "#F6CECE" if tac['현수익률'] > 0 else "#CED8F6"
             tx[key+'수익'] = f"<span style='color:{clr}'>{round(tac['수익현황'],4):,.2f}</span>" 
             tx[key+'익률'] = f"<span style='color:{clr}'>{round(tac['현수익률'],4):,.2f}</span>" 
