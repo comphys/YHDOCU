@@ -411,13 +411,26 @@ const data_season = {
 
 		},
 		{
-			label:'추세하향선',
+			label:'추세-10',
 			data : [4,7,5,3,4],
-			borderWidth:2,borderColor:'darkgray',borderDash: [2,5],backgroundColor:'darkgray',pointRadius:2,pointHoverRadius:15,
+			borderWidth:1,borderColor:'#CEF6F5',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
+			lineTension:0.2
+
+		},
+		{
+			label:'추세-20',
+			data : [4,7,5,3,4],
+			borderWidth:1,borderColor:'#CEF6F5',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
+			lineTension:0.2
+
+		},
+		{
+			label:'추세-30',
+			data : [4,7,5,3,4],
+			borderWidth:1,borderColor:'#CEF6F5',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
 			lineTension:0.2
 
 		}
-
 	]   
 };
 const options_season = {
@@ -466,7 +479,7 @@ const myChart_side = new Chart(ctx_side, config_side);
 var selected_tr = null
 $(document).ready(function(){ 
 	$('#backTestingChart').bind('dblclick',function(){$(this).hide();}).draggable().hide();
-	$("#monthlyProfit").hide();
+//	$("#monthlyProfit").hide();
 });	
 
 function check_thisForm() {
@@ -484,7 +497,8 @@ function show_chart(season,sel,profit=null,rate=null) {
 	var avgr = [];
 	var avgs = [];
 	var avgt = [];
-	var dlne = [];
+	var dl10 = []; var dl20 = []; var dl30 = []; 
+
 
 	$(".clsp"+season).each(function() {clsp.push(parseFloat($(this).text()))});
 
@@ -496,7 +510,11 @@ function show_chart(season,sel,profit=null,rate=null) {
 	const t0 = 0.02;
 	const a0 = clsp[0];	const d0 = 1-t0;
 
-	for(let x=0; x < 16; x++) { dlne.push(a0*(1-x*t0));} // clsp.length -> 16 (dn to 30%)
+	// for(let x=0; x < 16; x++) { dlne.push(a0*(1-x*t0));} // clsp.length -> 16 (dn to 30%)
+	for(let x=0; x < 10; x++) { dl10.push(a0*0.9);}
+	for(let x=0; x < 20; x++) { dl20.push(a0*0.8);}
+	for(let x=0; x < 30; x++) { dl30.push(a0*0.7);}
+
 
 	var xticks = clsp.length
 	if (xticks < 30 ) { xticks = 30; }
@@ -508,7 +526,9 @@ function show_chart(season,sel,profit=null,rate=null) {
 	myChart_season.data.datasets[2].data =  avgr;
 	myChart_season.data.datasets[3].data =  avgs;
 	myChart_season.data.datasets[4].data =  avgt;
-	myChart_season.data.datasets[5].data =  dlne;
+	myChart_season.data.datasets[5].data =  dl10;
+	myChart_season.data.datasets[6].data =  dl20;
+	myChart_season.data.datasets[7].data =  dl30;
 
 	myChart_season.update();
 
