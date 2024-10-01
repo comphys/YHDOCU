@@ -556,7 +556,9 @@ class update_iguide :
         LD['sub12']  = 0 if self.M['첫날기록'] else self.M['현재날수'] - 1 
         
         LD['add17']  = f"{self.V['현재잔액'] + self.V['평가금액']:.2f}"
-        LD['sub7']   = LD['sub7']
+        LD['sub7']   = LD['sub7'] 
+        if  self.V['매도금액'] :
+            LD['sub7'] = '0.00' if self.V['실현수익'] else '1.12'
         
         LD['sub29']  = '전량매도' if self.M['첫날기록'] else self.V['진행상황'] 
         LD['sub30']  = f"{self.V['수수료등']:.2f}" if LD['add5'] else '0.00'
@@ -626,6 +628,7 @@ class update_iguide :
     # ------------------------------------------------------------------------------------------------------------------------------------------
 
 today = my.kor_loc_date('US/Eastern')[0:10]
+today = '2024-09-30'
 weekd = my.dayofdate(today)
 V = update_iguide()
 
