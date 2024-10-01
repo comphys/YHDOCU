@@ -640,7 +640,7 @@ if  skip :
     pass
 
 else :
-    V.do_tacticsLog(today)1002 0741
+    V.do_tacticsLog(today)
     D = V.get_tacticLog(today)
     qry=V.DB.qry_insert(V.board,D); V.DB.exe(qry)
 
