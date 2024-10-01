@@ -6,7 +6,6 @@ class Board(Control) :
     def index(self) :
         return self.moveto('board/list')
 
-
     def _auto(self) :
 
         self.DB = self.db('stocks')

@@ -628,7 +628,6 @@ class update_iguide :
     # ------------------------------------------------------------------------------------------------------------------------------------------
 
 today = my.kor_loc_date('US/Eastern')[0:10]
-today = '2024-09-30'
 weekd = my.dayofdate(today)
 V = update_iguide()
 
@@ -641,7 +640,7 @@ if  skip :
     pass
 
 else :
-    V.do_tacticsLog(today)
+    V.do_tacticsLog(today)1002 0741
     D = V.get_tacticLog(today)
     qry=V.DB.qry_insert(V.board,D); V.DB.exe(qry)
 
