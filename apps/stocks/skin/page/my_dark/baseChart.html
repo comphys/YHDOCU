@@ -619,7 +619,7 @@ function synchro(opt,begin='pick') {
 			h_dialog.notice("동기화 데이타가 입력되었습니다.")
 			$("input[name='시작일자']").val(data.date);
 			$("input[name='일반자금']").val(data.V_money);
-			if(data.V_mode) { $("input[name=chk_chx]").prop('checked',true);}
+			if(parseFloat(data.V_mode)) { $("input[name=chk_chx]").prop('checked',true);}
 			if(opt==2||opt==0) {$("form[name=stock_back_testing]").submit();}
 		}
 	});
