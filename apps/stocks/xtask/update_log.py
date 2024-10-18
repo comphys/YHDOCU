@@ -442,6 +442,7 @@ class update_Log :
         if not self.V['보유수량'] and not self.V['매도수량']: return
         if printOut : self.print_backtest()
         if self.V['매수수량'] or self.V['매도수량']: self.M['현재날수'] +=1
+        # self.M['현재날수'] +=1
         
     def init_value(self) :
 
@@ -550,6 +551,9 @@ class update_Log :
         self.D['N_종가'] = self.M['당일종가']
         self.D['N_변동'] = round(self.M['종가변동'],2)
         self.D['N_단계'] = self.V['매수단계']
+
+        # 변수초기화
+        self.D['N_기회도종비'] = self.D['N_안정도종비'] = self.D['N_생활도종비'] = ''
 
         if  self.M['첫날기록'] : 
 
