@@ -437,8 +437,7 @@ class RST :
         
         if not self.V['보유수량'] and not self.V['매도수량']: return
         if printOut : self.print_backtest()
-        if self.V['매수수량'] or self.V['매도수량']: self.M['현재날수'] +=1
-        # self.M['현재날수'] +=1
+        self.M['현재날수'] +=1
         
     def init_value(self) :
 
