@@ -36,7 +36,7 @@ class RST :
             tac['수익현황']  =  tac['실현수익']
             
             if self.D['수료적용'] == 'on' : tac['수수료등']  = self.commission(tac['매도금액'],2); tac['현재잔액'] -= tac['수수료등'] 
-            if self.D['세금적용'] == 'on' : tac['현재잔액'] -=  self.tax(tac['실현수익'])
+            if self.D['세금적용'] == 'on' : tac['현재잔액'] -= self.tax(tac['실현수익'])
             
             self.rstCount(tac['실현수익'],key)
 
