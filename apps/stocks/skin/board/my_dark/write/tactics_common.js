@@ -13,8 +13,6 @@ function commission(mm,opt) {
 }
 function ctv(key,opt='f') {a=$("input[name='"+key+"']" ).val(); if(!a) return 0 ;  a = a.replace(/,/g,'');  if(opt=='i') return parseInt(a);  else return parseFloat(a);}
 
-function round_up(n,decimals=2){ multiplier = 10 ** decimals;   return Math.ceil(n * multiplier) / multiplier; }
-
 function show_add_info(opt) {
 	let title=''
 	let content=''

@@ -442,3 +442,5 @@ function html_pretty(str) {
 function src_filter(str) {
 	return str.replace(/[\(\)\:\[\]\;\|]/g,'');
 }
+
+function round_up(n,decimals=2){ multiplier = 10 ** decimals;   return Math.ceil(n * multiplier) / multiplier; }

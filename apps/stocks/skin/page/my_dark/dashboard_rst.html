@@ -166,8 +166,9 @@
     $("#next_strategy table td.k2").click(function(){
        var qt = $(this).text().replace(/,/g,'');
        var mo = $(this).next().text();
-       var ko = parseInt(us_kor * qt * mo)
-       h_dialog.notice((ko.toLocaleString()+'원'),{x:mouse_X-20,y:mouse_Y-70});
+       var us = round_up(qt*mo,2);
+       var ko = parseInt(us_kor * us)
+       h_dialog.notice('$'+us.toLocaleString()+' ( '+ko.toLocaleString()+'원 )',{x:mouse_X-20,y:mouse_Y-70});
     });
 
     
