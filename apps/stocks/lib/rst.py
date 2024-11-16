@@ -136,8 +136,10 @@ class RST :
                 tac['매도금액'] = tac['매도수량'] * self.M['당일종가']
 
     def today_buy_RST(self,tac,key) :
+        
+        days = 2 if key == 'R' else self.M['대기전략']
 
-        if  self.M['현재날수'] == self.M['대기전략'] and key == 'R':
+        if  self.M['현재날수'] == days and key == 'R':
             self.R['매수수량'] = my.ceil(self.R['기초수량'] * (self.M['비중조절'] + 1))
             self.R['거래코드'] = f"R{self.R['매수수량']}"
             self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가'] 
@@ -151,7 +153,7 @@ class RST :
 
         else :
             
-            if  self.M['현재날수'] > self.M['대기전략'] and self.M['당일종가'] <= tac['매수가격'] :
+            if  self.M['현재날수'] > days and self.M['당일종가'] <= tac['매수가격'] :
                 tac['매수수량'] = self.chance_qty(tac['기초수량'],key)
                 # 2024.07.15
                 if tac['매수수량'] * tac['매수가격'] > tac['현재잔액'] : tac['매수수량'] = int(tac['현재잔액']/tac['매수가격'])
@@ -611,12 +613,14 @@ class RST :
             
         for (tac,key) in [(self.R,'R'),(self.S,'S'),(self.T,'T')] :
             # 이틀 째까지는 전략 V 와 같은 패턴
-            if  self.M['현재날수'] == self.M['대기전략'] and key == 'R' : self.R['매수수량'] = my.ceil(self.R['기초수량'] * (self.M['비중조절'] + 1))
+            days = 2 if key == 'R' else self.M['대기전략']
+            
+            if  self.M['현재날수'] == days and key == 'R' : self.R['매수수량'] = my.ceil(self.R['기초수량'] * (self.M['비중조절'] + 1))
 
             if  tac['진행시작'] : tac['매수수량'] = tac['구매수량'] 
 
             else :
-                if  self.M['현재날수'] > self.M['대기전략']  :
+                if  self.M['현재날수'] > days  :
                     
                     tac['매수가격'] = self.take_chance(tac)
                     if tac['매수가격'] > self.M['매수가격'] : tac['매수가격'] = self.M['매수가격']
@@ -625,8 +629,6 @@ class RST :
                     if tac['매수수량'] * tac['매수가격'] > tac['현재잔액'] : tac['매수수량'] = int(tac['현재잔액']/tac['매수가격'])
                 else :
                     tac['매수가격'] = self.M['매수가격']
-
-    
     # ------------------------------------------------------------------------------------------------------------------------------------------
     # same with xtask END
     # ------------------------------------------------------------------------------------------------------------------------------------------
