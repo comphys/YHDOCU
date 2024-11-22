@@ -577,7 +577,7 @@ class VTACTIC :
         LD['add17']  = f"{self.V['현재잔액'] + self.V['평가금액']:.2f}"
         LD['sub7']   = LD['sub7']
         if  self.V['매도금액'] :
-            LD['sub7'] = '0.00' if self.V['실현수익'] > 0 else '1.12'
+            LD['sub7'] = '0.00' if self.V['실현수익'] > 0 else self.M['전략가치']
         
         LD['sub29']  = '전량매도' if self.M['첫날기록'] else self.V['진행상황'] 
         LD['sub30']  = f"{self.V['수수료등']:.2f}" if LD['add5'] else '0.00'

@@ -244,7 +244,7 @@ class update_Log :
             if  self.M['현재날수'] < self.M['매도대기'] :
                 
                 # R 보정 2024.06.18 -> 2024.07.10
-                self.M['매도가격'] = min(my.round_up(self.V['평균단가'] * self.M['전화위복']),my.round_up(self.R['평균단가'] * self.R['위기탈출']))
+                self.M['매도가격'] = min(my.round_up(self.V['평균단가'] * self.M['전략가치']),my.round_up(self.R['평균단가'] * self.R['위기탈출']))
                 # S(=T) 보정 2021.08.30 -> 2021.10.12
                 if  self.S['진행시작']  : 
                     self.M['매도가격'] = min(self.M['매도가격'],my.round_up(self.S['평균단가'] * self.M['회복탈출']))
@@ -467,7 +467,7 @@ class update_Log :
             self.R['위기탈출']  = ST['01500']
             self.M['종가상승']  = ST['01600']  
             self.M['매도대기']  = ST['00600']  
-            self.M['전화위복']  = ST['00900']  
+            self.M['전략가치']  = ST['00900']  
             self.M['회복탈출']  = ST['00901']  
             self.M['분할횟수']  = ST['00100']  
             self.M['찬스일가']  = ST['01002']  
@@ -758,6 +758,8 @@ class update_Log :
         
         LD['add17']  = f"{tac['현재잔액'] +tac['평가금액']:.2f}"
         LD['sub7']   = LD['sub7']
+        if  tactic == 'V' and self.V['매도금액'] : 
+            LD['sub7'] = '0.00' if self.V['실현수익'] > 0 else self.M['전략가치']
         
         LD['sub29']  = '전량매도' if self.M['첫날기록'] else tac['진행상황'] 
         LD['sub30']  = f"{tac['수수료등']:.2f}" if LD['add5'] else '0.00'
