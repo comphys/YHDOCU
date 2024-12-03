@@ -39,15 +39,18 @@ class SU :
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
         time_now = my.now_timestamp()
 
-        for row in rst3 :
-            row2 = list(row)
-            row2 += [cdx,cdx,'comphys','정용훈',time_now,time_now]
-            values = str(row2)[1:-1]
-            sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
-            self.DB.exe(sql)
+        if rst3 :
+            for row in rst3 :
+                row2 = list(row)
+                row2 += [cdx,cdx,'comphys','정용훈',time_now,time_now]
+                values = str(row2)[1:-1]
+                sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
+                self.DB.exe(sql)
 
-        lday = rst3[-1][0]
-        self.send_message(f"{lday}일 주가 업데이트 완료")
+            lday = rst3[-1][0]
+            self.send_message(f"{lday}일 주가 업데이트 완료")
+        else :
+            self.send_message(f"No data to update...")
 
 
     def forex_update(self) :
