@@ -131,6 +131,7 @@
 				최장 : <b>{{D['최장일수']}}</b>일( <span class="positioning_date">{{D['최장일자'][2:]}}</span> ) &nbsp;
 				MDD : <b>{{D['MDD2']}}%</b>( <span class="positioning_date">{{D['MDD_DAY2']}}</span> )  / <b>{{D['MDD3']}}%</b>( <span class="positioning_date">{{D['MDD_DAY3']}}</span> ) / <b>{{D['MDD4']}}%</b>( <span class="positioning_date">{{D['MDD_DAY4']}}</span> )&nbsp;
 				LP : <b>{{D['손익저점']}}%</b>( <span class="positioning_date">{{D['저점날자'][2:]}}</span> )
+				<span style="color:gray">fee : {{ "${:,.2f}".format(D['총수수료']) }} </span>
 				<i class="fa fa-arrow-up" onclick="chart_up_dn(1)"></i>
 				<i class="fa fa-arrow-down" onclick="chart_up_dn(2)"></i>
 			</div>

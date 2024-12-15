@@ -96,6 +96,7 @@ class RST :
 
         fee = int(mm*0.07)/100
         if opt==2 : fee += round(mm*0.0008)/100
+        self.D['총수수료'] += fee
         return fee
         
     def tax(self,mm) :
@@ -543,6 +544,7 @@ class RST :
             self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
             self.D['손익저점'] = 100.0
             self.D['저점날자'] = ''
+            self.D['총수수료'] = 0.0
 
     def nextStep(self) :
 
