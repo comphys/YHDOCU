@@ -205,7 +205,9 @@ class RST :
                         self.T['현재잔액'] += tac['현재잔액']
                         tac['현재잔액'] = 0.0
         
-        else :  tac['매수가격'] = self.take_chance(tac)
+        else :  
+            tac['매수가격'] = self.take_chance(tac)
+
 
     def tomorrow_buy(self) :
 
@@ -477,6 +479,7 @@ class RST :
         self.V['매수단계']  = self.R['매수단계'] = self.S['매수단계'] = self.T['매수단계'] = '일반매수'
         self.V['진행상황']  = self.R['진행상황'] = self.S['진행상황'] = self.T['진행상황'] = '매수대기'
         self.M['기록시즌']  = 0
+        self.D['총수수료'] = 0.0
         
         self.R['진입시점']  = float(self.D['기회시점']) if '기회시점' in self.D else ST['02100']
         self.R['회복시점']  = float(self.D['기회회복']) if '기회회복' in self.D else ST['02200']
@@ -486,7 +489,7 @@ class RST :
         self.T['회복시점']  = float(self.D['생활회복']) if '생활회복' in self.D else ST['02402']
 
         if '가상손실' in self.D  and  self.D['가상손실'] == 'on' : self.M['기본진행']  = False     
-        if '수료적용' not in self.D : self.D['수료적용']  = 'on'
+        if '수료적용' not in self.D : self.D['수료적용']  = 'on' 
         if '세금적용' not in self.D : self.D['세금적용']  = 'off'
         if '일밸런싱' not in self.D : self.D['일밸런싱']  = 'on'
         if '이밸런싱' not in self.D : self.D['이밸런싱']  = 'on'
@@ -544,7 +547,7 @@ class RST :
             self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
             self.D['손익저점'] = 100.0
             self.D['저점날자'] = ''
-            self.D['총수수료'] = 0.0
+            
 
     def nextStep(self) :
 
