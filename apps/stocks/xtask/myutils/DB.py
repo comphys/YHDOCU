@@ -228,3 +228,7 @@ class DB :
             else : D[k] = v
             
         return D
+    
+    def parameters_des(self,key) :
+        parm = self.one(f"SELECT description FROM parameters WHERE key='{key}' LIMIT 1")
+        return parm
