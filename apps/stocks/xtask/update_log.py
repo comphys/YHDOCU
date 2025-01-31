@@ -841,8 +841,10 @@ else :
     
     AD = {}
     AD['add0'] = DR['add0']
+
     preDate = RST.DB.one(f"SELECT max(add0) FROM h_my_Asset_board WHERE add0 < '{AD['add0']}'")
     LD = RST.DB.one(f"SELECT add18 FROM h_my_Asset_board WHERE add0='{preDate}'")
+    LD = float(LD)
     AD['add18'] = float(DR['add6']) + float(DS['add6']) + float(DT['add6']) # 현매수금 
     
     AD['add1'] = DR['add0'][:4]
@@ -854,12 +856,13 @@ else :
     AD['add6'] = float(DR['add15']) + float(DS['add15']) + float(DT['add15']) # 가치
 
     AD['add7'] = float(DR['add18']) + float(DS['add18']) + float(DT['add18']) # 현재손익
+    AD['add7'] = round(AD['add7'],2)
     
-    AD['add8'] = round(AD['add7']/LD['add18'] * 100,2) if AD['add3'] == '수익실현' else round(AD['add7']/AD['add18'] * 100,2) 
+    AD['add8'] = round(AD['add7']/LD * 100,2) if AD['add3'] == '수익실현' else round(AD['add7']/AD['add18'] * 100,2) 
     AD['add9'] = float(DR['add3']) + float(DS['add3'])  + float(DT['add3']) # 현금 
     
     AD['add10'] = AD['add6'] + AD['add9']
-    AD['add11'] = AD['add10'] - 36734 # 누적수익
+    AD['add11'] = round(AD['add10'] - 36734,2) # 누적수익
     AD['add12'] = round(AD['add11']/36734 * 100,2)
     AD['add13'] = float(RST.DB.one(f"SELECT usd_krw FROM usd_krw WHERE date <='{AD['add0']}' ORDER BY rowid DESC LIMIT 1"))
 
@@ -873,6 +876,3 @@ else :
     AD['wdate'] = AD['mdate'] = my.now_timestamp() 
     qry=RST.DB.qry_insert('h_my_Asset_board',AD); RST.DB.exe(qry)
     
-
-    
-
