@@ -31,8 +31,8 @@ function send_to_mobile_file() {
 }
 
 function open_backtest_folder() {
-	var _fol = '';
-	var url = uri('linkurl')+'filemanager/move/개인자료/주식투자/백테스트';
+
+	var url = uri('linkurl')+'filemanager/home';
 
 	winopen2(url,1200,640);	
 }
