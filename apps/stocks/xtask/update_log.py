@@ -866,7 +866,7 @@ else :
     AD['add10'] = AD['add6'] + AD['add9']
     AD['add11'] = round(AD['add10'] - 36734,2) # 누적수익
     AD['add12'] = round(AD['add11']/36734 * 100,2)
-    AD['add13'] = float(RST.DB.one(f"SELECT usd_krw FROM usd_krw WHERE date <='{AD['add0']}' ORDER BY rowid DESC LIMIT 1"))
+    AD['add13'] = float(RST.DB.one(f"SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
 
     AD['add14'] = int(AD['add10'] * AD['add13'])
     AD['add15'] = int(AD['add14'] * 0.30)
