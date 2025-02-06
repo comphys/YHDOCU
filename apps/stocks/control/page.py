@@ -38,9 +38,9 @@ class Page(Control) :
         
         return self.echo(D)
 
-    # ----------------------------------------------------
-    # respond to form submit, prefix rpd_
-    # ----------------------------------------------------
+    # -------------------------------------------------------
+    # respond to form submit, prefix rpd_, rpd means respond
+    # -------------------------------------------------------
 
     def rpd_viewChart(self) :
 

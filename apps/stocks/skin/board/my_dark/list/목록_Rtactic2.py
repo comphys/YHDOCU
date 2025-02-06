@@ -85,7 +85,7 @@ class 목록_Rtactic2(SKIN) :
             self.D['chance_value'] = [nX['buy_p']] * chart_len if float(nX['buy_p']) else ['null'] * chart_len
             
             self.D['현재환율'] = f"{현재환율:,.2f}"
-            self.D['자산배분'] = self.DB.parameters_des('03800')
+            self.D['자산배분'] = self.DB.parameters_des('03800') if self.D['bid'] == 'R240805' else self.DB.parameters_des('03801')
             self.D['가치합계'] = round(float(LD['add17']))
 
             self.D['yx_b'] = nX['yx_b']

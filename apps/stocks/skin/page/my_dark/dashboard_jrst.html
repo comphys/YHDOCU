@@ -1,0 +1,454 @@
+{% extends D['_skn'] + 'page/my_dark/main_layout.html' %}
+
+{% block contents_page  %}
+<div>
+    <script src="/sys/chart/chart.min.js"></script>
+    <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
+    
+    <div class="clearfix" style="background-color:#24272d;padding:10px;border:2px solid black;">
+        <div class="pull-left" style="border:1px solid black;">
+            <canvas id="myChart_main"  style="width:1078px;height:350px;background-color:#24272d;" onclick="chart_toggle()"></canvas>
+        </div>
+        <div class="pull-left" style="width:430px;height:350px;border:1px solid gray;margin-left:10px;padding:0px;background-color:black;">
+          <div class="scrollbar" style="height:310px;overflow-y:auto;">
+            <table class='table table-striped table-hover'>
+                <tr style="border-bottom:1px solid gray;font-weight:bold;">
+                  <td style="width:85px">실현손익</td>
+                  <td style="text-align:right;">{{D['rst_cnt']}}</td>
+                  <td style="text-align:right;">{{D['rst_win']}}%</td>
+                  <td style="text-align:right;">{{D['pro_win']}}%</td>
+                  <td style="text-align:right;">{{D['pro_def']}}%</td>
+                </tr>
+              {% for TR in D['profits'] %}
+                <tr>
+                  <td class="pointing_sd1">{{TR[0]}}</td>
+                  <td class="pointing_sd2">{{TR[1]}}</td>
+                  <td style="text-align:right;color:{{TR[5]}};">{{TR[2]}}</td>
+                  <td style="text-align:right;color:{{TR[5]}};">{{TR[3]}}</td>
+                  <td style="text-align:right;color:lightgoldenrodyellow">{{TR[4]}}</td>
+                </tr>
+              {% endfor %}
+              <tr style="border-top:1px solid gray;font-weight:bold;">
+                <td style="text-align:left;">{{D['day_cnt']}} days</td>
+                <td style="text-align:right;">{{D['ini_bal']}}</td>
+                <td style="text-align:right;">{{D['sum_tot']}}</td>
+                <td style="text-align:right;">{{D['sum_win']}}</td>
+                <td style="text-align:right;">{{D['sum_def']}}</td>
+              </tr>
+              </table>
+            </div>
+            <div style="margin-top:2px;margin-left:30px;text-align:center;">
+                <input type='text' name='s_date' class="i-date_1" style="width:90px;text-align:center;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}"> -
+                <input type='text' name='e_date' class="i-date_2" style="width:90px;text-align:center;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}">
+                <span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="slice_chart(2)" title="설정구간"><i class="fa fa-bars"></i></span>
+                <span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="slice_chart(0)" title="전체시즌"><i class="fa fa-home"></i></span>
+            </div>
+        </div>
+    </div>
+
+    <div>&nbsp;</div>   
+
+    <div class="clearfix" style="background-color:#24272d;padding:10px;border:2px solid black;">
+        <div id="monthlyProfitDiv" class="pull-left" style="border:1px solid black;width:1078px;height:350px;"  onclick="$('#next_strategy').show()">
+            <canvas id="monthlyProfitChart"  style="background-color:#24272d;width:1078px;height:350px;"></canvas>
+        </div>
+        <div class="pull-left" style="border:1px solid black;margin-left:10px;width:430px;height:350px;padding:10px;">
+            <div id="vrs_progress"></div>
+            <div style="margin-top:10px;text-align:right;">
+              <input type='text' name='from_date' class="i-date_3" style="width:90px;color:lightskyblue;background:none;border:none" placeholder='시작일자' value="{{D['s_date']}}">-
+              <input type='text' name='toto_date' class="i-date_4" style="width:90px;color:lightskyblue;background:none;border:none" placeholder='종료일자' value="{{D['e_date']}}"> 
+              <span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="specific_span(1)" title="특정일자기준"><i class="fa fa-calendar"></i></span>
+              <span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="specific_span(2)" title="년초기준"><i class="fa fa-hand-o-right"></i></i></span>
+              <span style="cursor:pointer;color:gray;vertical-align:middle;" onclick="specific_span(0)" title="전체일자기준 리셋"><i class="fa fa-refresh"></i></span>             
+            </div>
+        </div>
+    </div> <br>
+
+    <div id="next_strategy" style="position:absolute;top:458px;left:32px;width:1078px;height:349px;padding:20px;background-color:#000000;opacity:0.9;" ondblclick="$(this).hide()">
+      <div style="font-style:italic;color:gray;margin-bottom:20px;">
+        The Strategy for <span style="color:yellow">{{D['오늘날자']}}({{D['오늘요일']}})</span> 
+        from <span style="color:white">{{D['최종날자']}}({{D['최종요일']}})</span>.
+        The last price is <span style="color:white">{{D['최종종가']}}({{D['종가변동']}})</span>. 
+        The change of closing price is <span style="color:white">{{D['시즌변동']}}</span> from {{D['시즌시가']}} at the beginning. 
+      </div>
+      <div style="text-align:center;color:gold;font-style:italic;">{{D['chk_off']}}</div>
+      <table class="table table-bordered" style="width:1020px;">
+        <tr style="color:gray;">
+          <th></th><th></th>
+          <th colspan="3" style="text-align:center">매수전략</th><th colspan="3" style="text-align:center">매도전략</th>
+          <th colspan="5">기타정보</th>
+        </tr>
+        <tr>
+          <th style="text-align:left">&nbsp;</th><th>시즌</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
+          <th style="text-align:right">타겟점</th><th style="text-align:right">수량</th><th style="text-align:right">가격</th>
+          <th style="text-align:right">추정이익</th><th style="text-align:right">매수금</th>
+          <th style="text-align:right">평균단가</th>
+          <th style="text-align:right">현수익률</th><th style="text-align:right">현수익</th>
+          <th style="text-align:right">현재잔액</th><th style="text-align:right">현금비중</th><th style="text-align:right">현재가치</th>
+        </tr>
+        <tr style="color:gray">
+          <td>{{D['전략구분0']}}</td>
+          <td style="text-align:right;">{{D['현재시즌0']}}-{{D['현재일수0']}}</td>
+          <td style="text-align:right;">{{D['매수수량0']}}</td>
+          <td style="text-align:right;">{{D['매수가격0']}}</td>
+          <td style="text-align:right;">{{D['타겟지점0']}}</td>
+          <td style="text-align:right;">{{D['매도수량0']}}</td>
+          <td style="text-align:right;">{{D['매도지점0']}}</td>
+          <td style="text-align:right;">{{D['추정손익0']}}</td>
+          <td style="text-align:right;">{{D['현매수금0']}}</td>
+          <td style="text-align:right;">{{D['평균단가0']}}</td>
+          <td style="text-align:right;">{{D['현수익률0']}}%</td>
+          <td style="text-align:right;">{{D['현수익금0']}}</td>
+          <td style="text-align:right;">{{D['현재잔액0']}}</td>
+          <td style="text-align:right;">{{D['현금비중0']}}%</td>
+          <td style="text-align:right;">{{D['현재가치0']}}</td>
+        </tr>  
+        <!-- <tr><td colspan="15" style="font-size:2px;line-height:2px">&nbsp;</td></tr> -->
+        {% for key in ['1','2','3'] %}
+        <tr>
+          <td style="color:{{D['식별색상'+key]}}">{{D['전략구분'+key]}}</td>
+          <td style="text-align:right;">{{D['현재시즌'+key]}}-{{D['현재일수'+key]}}</td>
+          <td style="text-align:right;color:#f78181" class="k2">{{D['매수수량'+key]}}</td>
+          <td style="text-align:right;color:#f78181" class="ko">{{D['매수가격'+key]}}</td>
+          <td style="text-align:right;color:gray">{{D['타겟지점'+key]}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['매도수량'+key]}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['매도지점'+key]}}</td>
+          <td style="text-align:right;color:yellow"  class="ko">{{D['추정손익'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8" class="ko">{{D['현매수금'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8" class="ko">{{D['평균단가'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8">{{D['현수익률'+key]}}%</td>
+          <td style="text-align:right;color:#D8D8D8" class="ko">{{D['현수익금'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8" class="ko">{{D['현재잔액'+key]}}</td>
+          <td style="text-align:right;color:#D8D8D8">{{D['현금비중'+key]}}%</td>
+          <td style="text-align:right;color:#D8D8D8" class="ko">{{D['현재가치'+key]}}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <td colspan="2">&nbsp;</td>
+          <td colspan="2" style="text-align:center;color:gray">{{D['진행상황1']}}/{{D['진행상황2']}}/{{D['진행상황3']}}</td>
+          <td style="text-align:right;color:gray">{{D['필요상승']}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['매도수합']}}</td>
+          <td style="text-align:right;color:#58ACFA">{{D['매도가격0']}}</td>
+          <td style="text-align:right;color:yellow" class="ko">{{D['추정합계']}}</td>
+          <td style="text-align:right;color:white"  class="ko">{{D['현매수합']}}</td>
+          <td style="text-align:right;color:white"  class="ko">{{D['종합평단']}}</td>
+          <td style="text-align:right;color:white">{{D['총수익률']}}</td>
+          <td style="text-align:right;color:yellow" class="ko">{{D['수익금합']}}</td>
+          <td style="text-align:right;color:white"  class="ko">{{D['잔액합산']}}</td>
+          <td style="text-align:right;color:white">{{D['전현비중']}}%</td>
+          <td style="text-align:right;color:yellow" class="ko">{{D['가치합계']}}</td>
+        </tr>
+      </table>
+      <br>
+      <div style="color:gray;font-style: italic;">
+      시즌 종가(최근순) : &nbsp;
+      {% for cp in D['주가흐름'] %}
+      {{cp[0]}}({{cp[1]}}%)&nbsp;&nbsp;
+      {% endfor %}
+      </div>
+    </div>
+</div>
+
+<script>
+  let us_kor = {{D['현재환율']}};  
+
+    $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+    $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+
+    $(".i-date_3").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false});
+    $(".i-date_4").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false});
+    $("#next_strategy table td.ko").click(function(){
+       var us = $(this).text().replace(/,/g,'');
+       var ko = parseInt(us_kor * us)
+       h_dialog.notice((ko.toLocaleString()+'원'),{x:mouse_X-20,y:mouse_Y-70});
+    });
+
+    $("#next_strategy table td.k2").click(function(){
+       var qt = $(this).text().replace(/,/g,'');
+       var mo = $(this).next().text();
+       var us = round_up(qt*mo,2);
+       var ko = parseInt(us_kor * us)
+       h_dialog.notice('$'+us.toLocaleString()+' ( '+ko.toLocaleString()+'원 )',{x:mouse_X-20,y:mouse_Y-70});
+    });
+
+    
+    const ctx_main = $id('myChart_main');
+    ctx_main.style.backgroundColor = '#33363b';
+    ctx_main.style.border = '2px solid black';
+
+    let labels_origin   = {{D['chart_date']|safe}}		    // labels main origin
+    let close_origin    = {{D['close_price']|safe}} 	    // soxl close price origin 
+    let t_avg_origin    = {{D['Ttactic_avg']|safe}}	      // soxl average in v tactic
+    let t_pro_origin    = {{D['Ttactic_pro']|safe}}	      // soxl profits in v tactic
+    let r_avg_origin    = {{D['Rtactic_avg']|safe}}
+    let r_pro_origin    = {{D['Rtactic_pro']|safe}}
+    let s_avg_origin    = {{D['Stactic_avg']|safe}}	
+    let s_pro_origin    = {{D['Stactic_pro']|safe}}
+    let t_sel_origin    = {{D['eachSellTotal']|safe}}
+
+    let ChartStart      = {{D['chart_start']}};	
+
+    let labels_main     =  labels_origin.slice(ChartStart); let span_start = labels_main[0]; $("input[name='s_date']").val('20'+span_start)
+    let close_price     =  close_origin.slice(ChartStart)	
+    let t_avg_value     =  t_avg_origin.slice(ChartStart)  
+    let t_pro_value     =  t_pro_origin.slice(ChartStart)	
+    let r_avg_value     =  r_avg_origin.slice(ChartStart)	
+    let r_pro_value     =  r_pro_origin.slice(ChartStart)
+    let s_avg_value     =  s_avg_origin.slice(ChartStart)	
+    let s_pro_value     =  s_pro_origin.slice(ChartStart)
+    let t_sel_value     =  t_sel_origin.slice(ChartStart)
+
+    const data_main = {
+        labels : labels_main,
+        datasets : [
+            {   label:' 종가변동',data : close_price,borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],lineTension:0.2},
+            {   label:' 생활평균',data : t_avg_value,borderColor:'lightgreen', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
+            {   label:' 기회평균',data : r_avg_value,borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
+            {   label:' 안정평균',data : s_avg_value,borderColor:'yellow', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
+            {   label:' 매도수익',data : t_sel_value,barThickness:3,borderColor:'rgb(255, 205, 86)', backgroundColor:'rgba(255, 205, 86, 0.4)',type:'bar',yAxisID:'y1'},
+        ]   
+    };
+    const options_main = {
+        animation : { duration:500},
+    
+        plugins : { legend: {display:false}, tooltip:{enabled:true}},
+        responsive:false,
+        layout:{padding:20},
+        scales:{
+            x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+            y: { ticks : {color:'lightgray'}, grid:{color:'#272727'},position:'right'},
+            y1: { ticks : {color:'gray'}, grid:{color:function(context) {if(context.tick.value == 0 ) return '#000000'; else return null;}},position:'left'},
+        }
+    };
+    const config_main  = {type:'line',data:data_main,options:options_main};
+    const myChart_main = new Chart(ctx_main, config_main); 
+
+// ------------------------------------------------------------
+// Sub Chart
+// ------------------------------------------------------------
+const data_sub = {
+	labels : labels_main,
+	datasets : [
+		{label:' 종가변동',data : close_price,borderColor:'cyan',    	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 생활변동',data : t_pro_value,borderColor:'lightgreen', 	borderWidth:2,pointRadius:0,lineTension:0.2,},
+		{label:' 기회변동',data : r_pro_value,borderColor:'#f78181',	 	borderWidth:2,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+		{label:' 안정변동',data : s_pro_value,borderColor:'yellow', borderWidth:3,borderDash:[3,2],pointRadius:0,lineTension:0.2,},
+	]   
+}
+
+
+const options_sub = {
+	animation : { duration:500},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:false} },
+	responsive:false,
+	layout:{padding:20},
+	scales:{
+		x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+		y: { ticks : {color:'gray'}, 
+		grid:{
+			color:function(context) {
+				if( context.tick.value == 0 ) { return 'gray'}
+				else if(context.tick.value % 10 == 0 ) { return 'black'} },
+			lineWidth: function(context) {if(context.tick.value %10 == 0 ) { return 1 } else return 0},
+		},
+		position:'right'},
+	}
+}
+
+
+let second_chart = false;
+
+function chart_toggle() {
+	if(! second_chart ) {
+		myChart_main.config.data = data_sub;
+		myChart_main.config.options = options_sub;
+	} else {
+		myChart_main.config.data = data_main;
+		myChart_main.config.options = options_main;
+	}
+	second_chart = ! second_chart;
+	slice_chart(1)
+}
+
+function slice_chart(opt) {
+
+	var s_date,e_date,new_s,new_e
+	if(opt==1) { 
+		s_date = $("input[name='s_date']").val().slice(2); 
+		e_date = $("input[name='e_date']").val().slice(2); 
+		for(d=0; d<labels_origin.length; d++)     { if(labels_origin[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_origin[d]);break;}} 
+		for(d=labels_origin.length-1; d >=0; d--) { if(labels_origin[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_origin[d]);break;}} 
+	} else if(opt==2){
+		s_date = span_start; 
+		e_date = "{{D['e_date']}}".slice(2) 
+		for(d=0; d<labels_origin.length; d++)     { if(labels_origin[d] >= s_date) { new_s = d;   $("input[name='s_date']").val('20'+labels_origin[d]);break;}} 
+		for(d=labels_origin.length-1; d >=0; d--) { if(labels_origin[d] <= e_date) { new_e = d+1; $("input[name='e_date']").val('20'+labels_origin[d]);break;}} 		
+	} else {
+		s_date = "{{D['s_date']}}".slice(2)
+		e_date = "{{D['e_date']}}".slice(2)
+		$("input[name='s_date']").val("{{D['s_date']}}"); 
+		$("input[name='e_date']").val("{{D['e_date']}}");
+		new_s =0; new_e = labels_origin.length
+	}
+	end_date = $("input[name='e_date']").val().slice(2);
+	
+	let base;
+	if(second_chart) {
+		myChart_main.config.data.labels = labels_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[0].data =  close_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[1].data =  t_pro_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[2].data =  r_pro_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[3].data =  s_pro_origin.slice(new_s,new_e);
+
+		base=myChart_main.config.data.datasets[0].data[0]; myChart_main.config.data.datasets[0].data.forEach((item,index,arr)=>{arr[index]= (arr[index]/base-1) *100 ;})
+			
+
+	} else {
+		myChart_main.config.data.labels = labels_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[0].data =  close_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[1].data =  t_avg_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[2].data =  r_avg_origin.slice(new_s,new_e);
+		myChart_main.config.data.datasets[3].data =  s_avg_origin.slice(new_s,new_e);
+    myChart_main.config.data.datasets[4].data =  t_sel_origin.slice(new_s,new_e);
+	}
+	myChart_main.update();
+}
+
+function specific_span(opt) {
+
+  if(opt==1){ 
+    var from_date = $("input[name='from_date']").val(); 	
+    var toto_date = $("input[name='toto_date']").val();
+    if(from_date < '2023-08-30') from_date = '2023-08-30';
+    if(toto_date < '2023-09-30') toto_date = '2023-09-30'; 
+    location.href = uri('linkurl') + '/page/view/dashboard_rst/ss='+from_date+'/se='+toto_date;
+  } else if(opt==2){
+    var today = new Date().format("yyyy-MM-dd")
+    from_date = today.substring(0,5) + '01-02'
+    location.href = uri('linkurl') + '/page/view/dashboard_rst/ss='+from_date+'/se='+today;
+  }
+  else { location.href = uri('linkurl') + '/page/view/dashboard_rst'; }
+}
+
+
+{% if D['월별구분']|safe %}
+	const ctx_monthly= $id('monthlyProfitChart');
+	ctx_monthly.style.backgroundColor = '#33363b';
+	ctx_monthly.style.border = '2px solid black';
+
+	let labels_monthly = {{D['월별구분']|safe}};
+	let monthlyProfits = {{D['월별이익']|safe}};
+	let backColor = new Array(labels_monthly.length-1);
+	let boreColor = new Array(labels_monthly.length-1);
+	backColor.fill('rgba(75, 192, 192, 0.4)');
+	backColor.push('#8F8681');
+	boreColor.fill('rgb(75, 192, 192)');
+	boreColor.push('#000000');
+
+	const data_monthly = {
+	 labels: labels_monthly,
+	 datasets: [{label: ' 월별수익금 ',data: monthlyProfits,backgroundColor: backColor,borderColor: boreColor,borderWidth: 1}]
+	};
+
+	const config_monthly = {
+	type: 'bar',
+	data: data_monthly,
+	plugins:[ChartDataLabels],
+	options: {
+		animation : {duration:500},
+		layout:{padding:10},
+		plugins : { legend: {display:false},
+					title:{display:true,color:'#F7F8E0',align:'end',font:{size:14,style:'italic',weight:'normal'},text:"{{D['손익합계']}}"},
+					tooltip : {enabled:false},
+					datalabels : {color:'white', anchor:'end', align:'end', offset: 3, font:{size:12}}			
+		},
+		scales: {
+		 x: { ticks : {color:'white'}, grid:{color:'#272727'}},
+		 y: { grid : { lineWidth:2,	color: function(context) { if(context.tick.value == 0 ) { return '#071418'} else { return '' }}},beginAtZero: true}
+		}
+	},
+	};
+	const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
+{% else %}
+  $("#monthlyProfitDiv").html("<div style='text-align:center;margin-top:100px;'>현재의 구간엔 월별 수입내역이 없습니다.</div>")
+{% endif %}
+
+// ------------------------------------------------------------
+// 우측 하단 -1
+// ------------------------------------------------------------
+const ctx_side = $id('myChart_side');
+
+var allot = {{D['자산분배']}}; 
+var cur_total1 = {{D['E자산총액1']}}; var cur_total2 = {{D['E자산총액2']}}; var cur_total3 = {{D['E자산총액3']}}; 
+var usd_to_krw = {{D['현재환율']}}
+
+var allot_val = []
+var cur_total = cur_total1+cur_total2+cur_total3
+
+var allot_key  = Object.keys(allot);
+var allot_val  = Object.values(allot);
+
+var allot_ori  = allot_val.slice();
+var allot_sum0 = allot_ori.reduce((acc,cur) => acc+cur,0); 
+
+allot_val.forEach((val,idx,arr)=>{arr[idx]=Math.floor((val/allot_sum0)*cur_total);});
+var allot_sum1 = allot_val.reduce((acc,cur) => acc+cur,0);
+//
+string  ="<span style='font-style:italic;color:gray;'>Equity Stake</span>"
+string +="<table style='width:100%'>"
+string +="<tr style='border-bottom:1px solid gray;height:23px;'>"
+string +="<td>Holder</td><td style='text-align:right'>Principal</td>"
+string +="<td style='text-align:right'>Current</td>"
+string +="<td style='text-align:right'>Kor("+usd_to_krw.toLocaleString()+"₩/$)</td></tr>"
+for(i=0;i<allot_key.length;i++) {
+  string += "<tr style='height:23px'><td>" + allot_key[i] +"</td>"
+  string += "<td style='text-align:right'>"+ allot_ori[i].toLocaleString() +"</td>"
+  string += "<td style='text-align:right'>"+ allot_val[i].toLocaleString() +"</td>"
+  string += "<td style='text-align:right'>"+ parseInt(allot_val[i] * usd_to_krw).toLocaleString() +"</td></tr>"
+}
+string += "<tr style='border-top:1px solid gray;height:23px;font-weight:bold'><td>Total</td>"
+string += "<td style='text-align:right'>"+ allot_sum0.toLocaleString() +"</td>"
+string += "<td style='text-align:right'>"+ allot_sum1.toLocaleString() +"</td>"
+string += "<td style='text-align:right'>"+ parseInt(allot_sum1 * usd_to_krw).toLocaleString() +"</td></tr>"
+string += "</table>"
+$("#vrs_progress").html(string)
+//
+
+
+
+// ------------------------------------------------------------
+// 우측 하단 -2 
+// ------------------------------------------------------------
+var tactics_name = ['R3','S3','T3']
+var tactics_From = {{D['처음순증']}};
+var tactics_toto = {{D['나중순증']}};
+var tactics_diff = []
+
+for(i=0;i<tactics_From.length;i++) { tactics_diff[i] = tactics_toto[i] - tactics_From[i]; }
+
+var sum_From = tactics_From.reduce((acc,cur) => acc+cur,0); 
+var sum_toto = tactics_toto.reduce((acc,cur) => acc+cur,0); 
+var sum_diff = tactics_diff.reduce((acc,cur) => acc+cur,0); 
+
+string  ="<span style='font-style:italic;color:gray;'>Net asset increase</span>"
+string +="<table style='width:100%'>"
+string +="<tr style='border-bottom:1px solid gray;height:23px;'>"
+string +="<td>Tactics</td><td style='text-align:right'>From </td>"
+string +="<td style='text-align:right'>To </td>"
+string +="<td style='text-align:right'>Pro</td></tr>"
+for(i=0;i<tactics_name.length;i++) {
+  string += "<tr style='height:23px'><td>" + tactics_name[i] +"</td>"
+  string += "<td style='text-align:right'>"+ parseInt(tactics_From[i]).toLocaleString() +"</td>"
+  string += "<td style='text-align:right'>"+ parseInt(tactics_toto[i]).toLocaleString() +"</td>"
+  string += "<td style='text-align:right'>"+ parseInt(tactics_diff[i]).toLocaleString() +"</td></tr>"
+}
+string += "<tr style='border-top:1px solid gray;height:23px;font-weight:bold'><td>Total</td>"
+string += "<td style='text-align:right'>"+ parseInt(sum_From).toLocaleString() +"</td>"
+string += "<td style='text-align:right'>"+ parseInt(sum_toto).toLocaleString() +"</td>"
+string += "<td style='text-align:right'>"+ parseInt(sum_diff).toLocaleString() +"</td></tr>"
+string += "</table>"
+$("#vrs_progress").append(string)
+
+</script>
+{% endblock %}
