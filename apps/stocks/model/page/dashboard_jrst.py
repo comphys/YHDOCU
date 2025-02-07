@@ -104,7 +104,7 @@ class M_dashboard_jrst(Model) :
             for x in self.D['chart_date'] : self.D['eachSellTotal'].append(self.M['eachSellTotal'].get(x,'null'))
 
             # 누적 수익현황
-            profits = [['25-02-06','86,750.00','0.00','0.00','0.00',""]]; i_bal = my.sv(profits[0][1]); a_bal = i_bal
+            profits = [['25-02-06','84,750.00','0.00','0.00','0.00',""]]; i_bal = my.sv(profits[0][1]); a_bal = i_bal
             cnt_p = cnt_m = cnt_t = pro_p = pro_m = sum_w = sum_d = 0
 
             for k,v in self.M['eachSellTotal'].items() :

@@ -840,7 +840,12 @@ else :
 
     RST.send_message(f"{today}일 VRST 업데이트 완료")
     
-    #자산현황 업데이트
+    # 자산현황 업데이트
+    # 초기값 설정
+    init_capital = 36734.2
+    jyh = 0.30
+    jyw = 0.35
+    jhj = 0.35
     
     AD = {}
     AD['add0'] = DR['add0']
@@ -865,14 +870,14 @@ else :
     AD['add9'] = float(DR['add3']) + float(DS['add3'])  + float(DT['add3']) # 현금 
     
     AD['add10'] = AD['add6'] + AD['add9']
-    AD['add11'] = round(AD['add10'] - 36734,2) # 누적수익
-    AD['add12'] = round(AD['add11']/36734 * 100,2)
+    AD['add11'] = round(AD['add10'] - init_capital,2) # 누적수익
+    AD['add12'] = round(AD['add11']/init_capital * 100,2)
     AD['add13'] = float(RST.DB.one(f"SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
 
     AD['add14'] = int(AD['add10'] * AD['add13'])
-    AD['add15'] = int(AD['add14'] * 0.30)
-    AD['add16'] = int(AD['add14'] * 0.35)
-    AD['add17'] = int(AD['add14'] * 0.35)
+    AD['add15'] = int(AD['add14'] * jyh)
+    AD['add16'] = int(AD['add14'] * jyw)
+    AD['add17'] = int(AD['add14'] * jhj)
     
     AD['uid']   = 'comphys'
     AD['uname'] = '정용훈'
