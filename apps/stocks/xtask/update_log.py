@@ -688,7 +688,7 @@ class update_Log :
         order = 'add0 ASC' if origin else 'add0 DESC' 
         V_board = self.DB.parameters('03500')
         R_board = self.DB.parameters('03501')
-        V_date  = self.DB.one(f"SELECT add0 FROM {R_board} WHERE add0 < '{s_date}' and sub12='1' ORDER BY {order} LIMIT 1")
+        V_date  = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 < '{s_date}' and sub12='1' ORDER BY {order} LIMIT 1")
         V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
         R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
         V_mode  = self.DB.one(f"SELECT sub7 FROM {V_board} WHERE add0 = '{V_date}'")
@@ -798,24 +798,25 @@ if  skip :
 
 else :
     RST.do_tacticsLog(today)
-    DV = RST.get_tacticLog(today,'V')
+    # DV = RST.get_tacticLog(today,'V')
     DR = RST.get_tacticLog(today,'R')
     DS = RST.get_tacticLog(today,'S')
     DT = RST.get_tacticLog(today,'T')
 
     RST.nextStep()
-    NV = RST.get_nextStrategyLog('V')
+    # NV = RST.get_nextStrategyLog('V')
     NR = RST.get_nextStrategyLog('R')
     NS = RST.get_nextStrategyLog('S')
     NT = RST.get_nextStrategyLog('T')
 
-    DV |= NV; DV.update({k:'' for k,v in DV.items() if v == None})
+    # DV |= NV; DV.update({k:'' for k,v in DV.items() if v == None})
     DR |= NR; DR.update({k:'' for k,v in DR.items() if v == None})
     DS |= NS; DS.update({k:'' for k,v in DS.items() if v == None})
     DT |= NT; DT.update({k:'' for k,v in DT.items() if v == None})
 
-    del DV['Update']; del DR['Update']
-    qry=RST.DB.qry_insert(RST.M['일반보드'],DV); RST.DB.exe(qry)
+    # del DV['Update']
+    del DR['Update']
+    # qry=RST.DB.qry_insert(RST.M['일반보드'],DV); RST.DB.exe(qry)
     qry=RST.DB.qry_insert(RST.M['기회보드'],DR); RST.DB.exe(qry)
 
     isDsUpdate = DS['Update']; del DS['Update']

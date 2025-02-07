@@ -687,8 +687,13 @@ class update_Logj :
 
         order = 'add0 ASC' if origin else 'add0 DESC' 
         V_board = self.DB.parameters('03500')
-        R_board = self.DB.parameters('03501')
-        V_date  = self.DB.one(f"SELECT add0 FROM {R_board} WHERE add0 < '{s_date}' and sub12='1' ORDER BY {order} LIMIT 1")
+        R_board = self.DB.parameters('03700')
+        # 진행되지 않은 초기자료 입력시에는 아래의 값들을 직접 지정해주어야 한다. 
+        # V_date  = '2025-02-06'
+        # V_money = '47142.30'
+        # R_money = '28250.0'
+        # V_mode  = '0.00'
+        V_date  = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 < '{s_date}' and sub12='1' ORDER BY {order} LIMIT 1")
         V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
         R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
         V_mode  = self.DB.one(f"SELECT sub7 FROM {V_board} WHERE add0 = '{V_date}'")
@@ -783,7 +788,9 @@ class update_Logj :
               'sub19':self.D['N_'+nX[tac]+'매수가'],'sub20':self.D['N_'+nX[tac]+'매도가']}
         return nS
 
-
+# --------------------------------------------------------------------------------------------------------------------------------
+# 
+# --------------------------------------------------------------------------------------------------------------------------------
 today = my.kor_loc_date('US/Eastern')[0:10]
 weekd = my.dayofdate(today)
 RST = update_Logj()
@@ -814,7 +821,8 @@ else :
     DS |= NS; DS.update({k:'' for k,v in DS.items() if v == None})
     DT |= NT; DT.update({k:'' for k,v in DT.items() if v == None})
 
-    del DV['Update']; del DR['Update']
+    del DV['Update'] 
+    del DR['Update']
     qry=RST.DB.qry_insert(RST.M['일반보드'],DV); RST.DB.exe(qry)
     qry=RST.DB.qry_insert(RST.M['기회보드'],DR); RST.DB.exe(qry)
 
