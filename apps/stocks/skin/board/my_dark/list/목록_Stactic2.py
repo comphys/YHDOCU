@@ -15,7 +15,7 @@ class 목록_Stactic2(SKIN) :
         
         last_date = self.DB.one(f"SELECT max(add0) FROM {self.D['tbl']}")
         VtacBoard = self.DB.parameters('03500')
-        RtacBoard = self.DB.parameters('03501') if self.D['bid'] == 'S240805' else self.DB.parameters('03700')
+        RtacBoard = self.DB.parameters('03501') if self.D['bid'] == 'S240805' else self.DB.parameters('03701')
         
         self.DB.clear()
         self.DB.tbl = VtacBoard

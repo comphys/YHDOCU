@@ -5,7 +5,7 @@ class M_dashboard_jrst(Model) :
 
     def view(self) :
         ST = self.DB.parameters_dict('매매전략/VRS')
-        self.M['boards'] = [ST['03500'],ST['03700'],ST['03701'],ST['03702']]
+        self.M['boards'] = [ST['03500'],ST['03701'],ST['03702'],ST['03703']]
         self.M['monthlyProfit'] = {}
         self.M['eachSellTotal'] = {} 
 

@@ -15,9 +15,13 @@ class 목록_Ttactic(SKIN) :
         
         last_date = self.DB.one(f"SELECT max(add0) FROM {self.D['tbl']}")
         VtacBoard = self.DB.parameters('03500')
-        RtacBoard = self.DB.parameters('03700') if self.D['bid'] == 'T240805' else self.DB.parameters('03700')
-        StacBoard = self.DB.parameters('03701') if self.D['bid'] == 'T240805' else self.DB.parameters('03701')
-        
+        if self.D['bid'] == 'T240805' :
+            RtacBoard = self.DB.parameters('03501')
+            StacBoard = self.DB.parameters('03502')
+        else :
+            self.DB.parameters('03701')
+            self.DB.parameters('03702')
+            
         self.DB.clear()
         self.DB.tbl = VtacBoard
         self.DB.wre = f"add0 <='{last_date}'"
