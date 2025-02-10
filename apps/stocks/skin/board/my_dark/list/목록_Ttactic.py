@@ -19,8 +19,8 @@ class 목록_Ttactic(SKIN) :
             RtacBoard = self.DB.parameters('03501')
             StacBoard = self.DB.parameters('03502')
         else :
-            self.DB.parameters('03701')
-            self.DB.parameters('03702')
+            RtacBoard = self.DB.parameters('03701')
+            StacBoard = self.DB.parameters('03702')
             
         self.DB.clear()
         self.DB.tbl = VtacBoard
