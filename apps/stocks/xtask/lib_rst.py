@@ -732,8 +732,9 @@ class update_Log :
         if not preDate : return 
         LD = self.DB.line(f"SELECT * FROM {RST_board} WHERE add0='{preDate}'")
         LD['Update'] = float(LD['add1'])==0 and float(LD['add2'])==0 and float(LD['add11'])==0 and float(LD['add12'])==0 and int(LD['add9'])==0
-
+        
         LD['add0'] = theDate
+        LD['add1'] = 0.0  # 입금이 있을 경우 수동 업데이트 필요
         LD['wdate']= LD['mdate']= my.now_timestamp()
    
         LD['add3'] = f"{tac['현재잔액']:.2f}"
