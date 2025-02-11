@@ -448,7 +448,7 @@ class update_Log :
         if printOut : self.print_backtest()
         self.M['현재날수'] +=1
         
-    def init_value(self,op) :
+    def init_value(self) :
 
         if '비중조절' not in self.M :
             
@@ -688,7 +688,7 @@ class update_Log :
 
         order = 'add0 ASC' if origin else 'add0 DESC' 
         V_board = self.DB.parameters('03500')
-        R_board = self.DB.parameters('03701')
+        R_board = self.DB.parameters('03701') if self.op == '001' else self.DB.parameters('03501')
         # 진행되지 않은 초기자료 입력시에는 아래의 값들을 직접 지정해주어야 한다. 
         # V_date  = '2025-02-06'
         # V_money = '47142.30'
