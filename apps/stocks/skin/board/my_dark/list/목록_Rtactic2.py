@@ -6,13 +6,14 @@ class 목록_Rtactic2(SKIN) :
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)
         self.RST = self.SYS.load_app_lib('rst')
+        self.RST.op = 'rst' if self.D['bid'] == 'R240805' else 'jrst'
 
     def head(self) : 
         return
         
 
     def chart(self) :
-        
+
         last_date = self.DB.one(f"SELECT max(add0) FROM {self.D['tbl']}")
         VtacBoard = self.DB.parameters('03500') 
         

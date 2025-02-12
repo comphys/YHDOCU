@@ -10,6 +10,7 @@ class RST :
         self.DB    = SYS.DB
         self.chart = False
         self.stat  = False
+        self.op    = 'rst'
 
         self.B = {}
         self.V = {}
@@ -471,9 +472,9 @@ class RST :
             self.M['분할횟수']  = ST['00100']  
             self.M['찬스일가']  = ST['01002']  
             self.M['일반보드']  = ST['03500']
-            self.M['기회보드']  = ST['03501']
-            self.M['안정보드']  = ST['03502']
-            self.M['생활보드']  = ST['03503']
+            self.M['기회보드']  = ST['03501'] if self.op=='rst' else ST['03701']
+            self.M['안정보드']  = ST['03502'] if self.op=='rst' else ST['03702']
+            self.M['생활보드']  = ST['03503'] if self.op=='rst' else ST['03703']
 
         self.M['기본진행']  = True  
         self.V['매수단계']  = self.R['매수단계'] = self.S['매수단계'] = self.T['매수단계'] = '일반매수'
@@ -727,7 +728,7 @@ class RST :
 
         order = 'add0 ASC' if origin else 'add0 DESC' 
         V_board = self.DB.parameters('03500')
-        R_board = self.DB.parameters('03501')
+        R_board = self.DB.parameters('03501') if self.op=='rst' else self.DB.parameters('03701')
         V_date  = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 < '{s_date}' and sub12='1' ORDER BY {order} LIMIT 1")
         V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
         R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")

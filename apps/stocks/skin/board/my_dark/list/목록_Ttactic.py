@@ -6,6 +6,7 @@ class 목록_Ttactic(SKIN) :
     def _auto(self) :
         self.TrCnt = self.D.get('Tr_cnt',0)
         self.RST = self.SYS.load_app_lib('rst')
+        self.RST.op = 'rst' if self.D['bid'] == 'T240805' else 'jrst'
 
     def head(self) : 
         return
