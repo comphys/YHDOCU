@@ -104,7 +104,8 @@ class M_dashboard_jrst(Model) :
             for x in self.D['chart_date'] : self.D['eachSellTotal'].append(self.M['eachSellTotal'].get(x,'null'))
 
             # 누적 수익현황
-            profits = [['25-02-06','84,750.00','0.00','0.00','0.00',""]]; i_bal = my.sv(profits[0][1]); a_bal = i_bal
+            # 투자금 변경시 profits 기본값 변경 (날자는 최초의 날자, 투자금은 변경된 투자금)
+            profits = [['25-02-06','178,443.00','0.00','0.00','0.00',""]]; i_bal = my.sv(profits[0][1]); a_bal = i_bal
             cnt_p = cnt_m = cnt_t = pro_p = pro_m = sum_w = sum_d = 0
 
             for k,v in self.M['eachSellTotal'].items() :
@@ -190,7 +191,7 @@ class M_dashboard_jrst(Model) :
 
 
         self.D['나중순증'] = []
-        self.D['자산분배'] = self.DB.parameters_des('03801')
+        self.D['자산분배'] = self.DB.parameters_des('03802') # 자금투자 변경 시 파라미터 변경
         for odr in [1,2,3] :
             con = f"WHERE add0 <= '{self.D['e_date']}'" 
             qry = f"SELECT add17, sub25, sub26 FROM {self.M['boards'][odr]} {con} ORDER BY add0 DESC LIMIT 1"
