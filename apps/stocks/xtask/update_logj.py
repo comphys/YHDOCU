@@ -58,11 +58,11 @@ else :
     RST.send_message(f"{today}일 VRST-001 업데이트 완료")
     
     # 자산현황 업데이트
-    # 초기값 설정
-    init_capital = 84750.0
-    jyh = 0.532
-    jyw = 0.234
-    jhj = 0.234
+    # 초기값 설정(1차변경 2025.02.06, 2차변경 2025.02.19)
+    init_capital = 178443.0
+    jyh = 0.77746
+    jyw = 0.11127
+    jhj = 0.11127
     
     AD = {}
     AD['add0'] = DR['add0']
