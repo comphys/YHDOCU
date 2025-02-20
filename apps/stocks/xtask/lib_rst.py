@@ -690,6 +690,7 @@ class update_Log :
         V_board = self.DB.parameters('03500')
         R_board = self.DB.parameters('03701') if self.op == '001' else self.DB.parameters('03501')
         
+        # jrst 에만 적용함
         init_sync = self.DB.parameters_des('07000') if self.op == '001' else ''
 
         if  init_sync :
