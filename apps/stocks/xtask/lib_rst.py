@@ -689,15 +689,20 @@ class update_Log :
         order = 'add0 ASC' if origin else 'add0 DESC' 
         V_board = self.DB.parameters('03500')
         R_board = self.DB.parameters('03701') if self.op == '001' else self.DB.parameters('03501')
-        # 진행되지 않은 초기자료 입력시에는 아래의 값들을 직접 지정해주어야 한다. 
-        # V_date  = '2025-02-06'
-        # V_money = '47142.30'
-        # R_money = '28250.0'
+        
+        init_sync = self.DB.parameters_des('07000')
+
+        if  init_sync :
+            V_date,V_money,R_money,V_mode = init_sync.split(',') 
+        else :
+        # V_date  = '2025-02-19'
+        # V_money = '47470.40'
+        # R_money = '59546.84'
         # V_mode  = '0.00'
-        V_date  = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 < '{s_date}' and sub12='1' ORDER BY {order} LIMIT 1")
-        V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
-        R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
-        V_mode  = self.DB.one(f"SELECT sub7 FROM {V_board} WHERE add0 = '{V_date}'")
+            V_date  = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 < '{s_date}' and sub12='1' ORDER BY {order} LIMIT 1")
+            V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
+            R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
+            V_mode  = self.DB.one(f"SELECT sub7 FROM {V_board} WHERE add0 = '{V_date}'")
         
         return (V_date,float(V_money),float(R_money),float(V_mode))
     
