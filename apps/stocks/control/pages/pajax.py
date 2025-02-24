@@ -88,7 +88,7 @@ class Pajax(Control) :
         order = 'add0 DESC' if s_begin == 'pick' else 'add0 ASC'
 
         V_board = self.DB.parameters('03500')
-        R_board = self.DB.parameters('03501')
+        R_board = self.DB.parameters('03701')
 
         V_date = self.DB.one(f"SELECT add0 FROM {R_board} WHERE add0 < '{s_date}' and sub12 = '1' ORDER BY {order} LIMIT 1")
   
