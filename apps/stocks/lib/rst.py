@@ -592,7 +592,7 @@ class RST :
 
             self.V['진행시작'] = True
             for (tac,key) in [(self.V,'일반'),(self.R,'기회'),(self.S,'안정'),(self.T,'생활')] : 
-                self.D['N_'+key+'매수량'] = tac['매수수량']
+                self.D['N_'+key+'매수량'] = tac['구매수량']
                 self.D['N_'+key+'매수가'] = self.M['매수가격'] if tac['진행시작'] else tac['매수가격']
                 self.D['N_'+key+'평대비'] = self.next_percent(tac['평균단가'],self.D['N_'+key+'매수가'])
                 self.D['N_'+key+'종대비'] = self.next_percent(self.M['당일종가'],self.D['N_'+key+'매수가'])
