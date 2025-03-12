@@ -258,7 +258,8 @@ class RST :
             self.M['매도가격']  = LPRICE
 
         # 2024.06.18 이후 폭락장 보정
-        CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승'])
+        CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승']) if self.M['현재날수'] <= 10 else my.round_up(self.M['당일종가'] * self.M['종가탈출'])
+
         if  CPRICE >= LPRICE : 
             self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
 
@@ -465,7 +466,9 @@ class RST :
             self.S['매도보정']  = ST['01200']
             self.T['매도보정']  = ST['01400']
             self.R['위기탈출']  = ST['01500']
-            self.M['종가상승']  = ST['01600']  
+            self.M['종가상승']  = ST['01600'] 
+            self.M['종가탈출']  = ST['01601']
+             
             self.M['매도대기']  = ST['00600']  
             self.M['전략가치']  = ST['00900']  
             self.M['회복탈출']  = ST['00901']  
