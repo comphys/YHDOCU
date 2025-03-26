@@ -145,6 +145,11 @@ def diff_day(day1,day2='') :
     c = b-a
     return c.days 
 
+def date_tomorrow(day1) :
+
+    tomorrow = datetime.strptime(day1,'%Y-%m-%d') + timedelta(days=1)
+    return tomorrow.strftime("%Y-%m-%d")
+
 def kor_loc_date(opt) :
 
     loc = timezone('Asia/Seoul') if opt == 'kor' else timezone('US/Eastern')

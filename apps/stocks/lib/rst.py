@@ -10,7 +10,7 @@ class RST :
         self.DB    = SYS.DB
         self.chart = False
         self.stat  = False
-        self.op    = 'rst'
+        self.op    = 'jrst'
 
         self.B = {}
         self.V = {}

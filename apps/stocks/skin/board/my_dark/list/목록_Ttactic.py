@@ -101,25 +101,27 @@ class 목록_Ttactic(SKIN) :
             self.D['총수익금'] = f"{총수익금:,.0f}"
             self.D['총수익률'] = f"{총수익률:.2f}"
 
-            nX = self.RST.get_nextStrategy('T')
-            self.D['매수갯수'] = nX['buy_q']
-            self.D['매수단가'] = nX['buy_p']
-            self.D['매수예상'] = f"{int(nX['buy_q']) * float(nX['buy_p']):,.2f}"
-            self.D['매도갯수'] = nX['sel_q']
-            self.D['매도단가'] = nX['sel_p']
-            self.D['매도예상'] = f"{int(nX['sel_q']) * float(nX['sel_p']):,.2f}"
+            # nX = self.RST.get_nextStrategy('S')
+            self.D['매수갯수'] = LD['sub2']
+            self.D['매수단가'] = LD['sub19']
+            self.D['매수예상'] = f"{int(LD['sub2']) * float(LD['sub19']):,.2f}"
+            self.D['매도갯수'] = LD['sub3']
+            self.D['매도단가'] = LD['sub20']
+            self.D['매도예상'] = f"{int(LD['sub3']) * float(LD['sub20']):,.2f}"
             예상이익 = float(self.D['매도예상'].replace(',','')) - float(LD['add6'].replace(',',''))
             self.D['예상이익'] = f"{예상이익:,.2f}"
             self.D['원화예상'] = f"{예상이익*현재환율:,.0f}"
-            self.D['target_value'] = [nX['sel_p']] * chart_len if float(nX['sel_p']) else ['null'] * chart_len
-            self.D['chance_value'] = [nX['buy_p']] * chart_len if float(nX['buy_p']) else ['null'] * chart_len
-                
+            self.D['target_value'] = [LD['sub20']] * chart_len if float(LD['sub20']) else ['null'] * chart_len
+            self.D['chance_value'] = [LD['sub19']] * chart_len if float(LD['sub19']) else ['null'] * chart_len
+            
             self.D['현재환율'] = f"{현재환율:,.2f}"
             self.D['자산배분'] = self.DB.parameters_des('03800') if self.D['bid'] == 'S240805' else self.DB.parameters_des('03802')
             self.D['가치합계'] = round(float(LD['add17']))
 
-            self.D['yx_b'] = nX['yx_b']
-            self.D['yx_s'] = nX['yx_s']
+            yx_b = (float(LD['sub19'])/float(LD['add14'])-1)*100
+            yx_s = (float(LD['sub20'])/float(LD['add14'])-1)*100
+            self.D['yx_b'] = f"{yx_b:.1f}" if int(LD['sub2']) else '0'
+            self.D['yx_s'] = f"{yx_s:.1f}" if int(LD['sub3']) else '0'
             
             # 월별 실현손익
             qry = f"SELECT SUBSTR(add0,1,7), sum( CAST(add18 as float)) FROM {self.D['tbl']} WHERE CAST(add12 as float) > 0 "

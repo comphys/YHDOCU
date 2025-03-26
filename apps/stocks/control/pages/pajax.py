@@ -1,35 +1,36 @@
 from system.core.load import Control
-import openai
+import system.core.my_utils as my
+# import openai
 
 class Pajax(Control) :
     def _auto(self) :
         self.DB = self.db('stocks')
         
-    def eng_reply(self) :
-        text = self.D['post']['txt']
-        opt  = self.D['post']['opt']
-        system_role = ''
+    # def eng_reply(self) :
+    #     text = self.D['post']['txt']
+    #     opt  = self.D['post']['opt']
+    #     system_role = ''
 
-        if  opt == 'eng_teacher' : 
-            system_role = self.DB.store('openai_english_teacher')
-            text = f'"{text}" 를 영어로 번역해 주세요.'
+    #     if  opt == 'eng_teacher' : 
+    #         system_role = self.DB.store('openai_english_teacher')
+    #         text = f'"{text}" 를 영어로 번역해 주세요.'
 
-        if  opt == 'kor_teacher' : 
-            system_role = self.DB.store('openai_kind_teacher')
-            text = f'"{text}" 를 한글로 번역해 주세요.'
+    #     if  opt == 'kor_teacher' : 
+    #         system_role = self.DB.store('openai_kind_teacher')
+    #         text = f'"{text}" 를 한글로 번역해 주세요.'
                     
-        elif opt == 'gen_teacher' :
-            system_role = self.DB.store('openai_kind_teacher')
+    #     elif opt == 'gen_teacher' :
+    #         system_role = self.DB.store('openai_kind_teacher')
             
-        messages=[{'role':'system','content':system_role}]
+    #     messages=[{'role':'system','content':system_role}]
         
-        openai.api_key = self.DB.store('openai_key')
+    #     openai.api_key = self.DB.store('openai_key')
         
-        messages.append({"role":"user","content":f"{text}"})
+    #     messages.append({"role":"user","content":f"{text}"})
         
-        completion = openai.chat.completions.create(model="gpt-3.5-turbo",temperature=0.7,messages=messages,max_tokens=2048)
-        assistant_content = completion.choices[0].message.content.strip()
-        return assistant_content
+    #     completion = openai.chat.completions.create(model="gpt-3.5-turbo",temperature=0.7,messages=messages,max_tokens=2048)
+    #     assistant_content = completion.choices[0].message.content.strip()
+    #     return assistant_content
     
     def update_parameters(self) :
 
@@ -90,11 +91,11 @@ class Pajax(Control) :
         V_board = self.DB.parameters('03500')
         R_board = self.DB.parameters('03701')
 
-        V_date = self.DB.one(f"SELECT add0 FROM {R_board} WHERE add0 < '{s_date}' and sub12 = '1' ORDER BY {order} LIMIT 1")
-  
+        V_date  = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 < '{s_date}' and sub12= '1' ORDER BY {order} LIMIT 1")
         V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12= '0' ORDER BY {order} LIMIT 1")
         R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12= '0' ORDER BY {order} LIMIT 1")
         S_money = T_money = R_money
+        
         
         if  not (V_date and V_money and R_money and S_money) : 
             RST = {'date':'None','msg':f"주어진 날자 이전의 동기화된 데이타는 존재하지 않습니다."}
@@ -110,7 +111,7 @@ class Pajax(Control) :
 
         V_board = 'h_IGUIDE_board'
 
-        V_date  = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 <= '{s_date}' and sub12 = '1' ORDER BY {order} LIMIT 1")
+        V_date  = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 <='{s_date}' and sub12= '1' ORDER BY {order} LIMIT 1")
         V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12= '0' ORDER BY {order} LIMIT 1")
         V_mode  = self.DB.one(f"SELECT sub7 FROM {V_board} WHERE add0 = '{V_date}'")
         
