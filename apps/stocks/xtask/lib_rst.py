@@ -260,7 +260,8 @@ class update_Log :
             self.M['매도가격']  = LPRICE
 
         # 2024.06.18 이후 폭락장 보정
-        CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승'])
+        CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승']) if self.M['현재날수'] <= 10 else my.round_up(self.M['당일종가'] * self.M['종가탈출'])
+        
         if  CPRICE >= LPRICE : 
             self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
 
@@ -467,7 +468,9 @@ class update_Log :
             self.S['매도보정']  = ST['01200']
             self.T['매도보정']  = ST['01400']
             self.R['위기탈출']  = ST['01500']
-            self.M['종가상승']  = ST['01600']  
+            self.M['종가상승']  = ST['01600'] 
+            self.M['종가상승']  = ST['01601'] 
+             
             self.M['매도대기']  = ST['00600']  
             self.M['전략가치']  = ST['00900']  
             self.M['회복탈출']  = ST['00901']  
@@ -639,6 +642,7 @@ class update_Log :
     # ------------------------------------------------------------------------------------------------------------------------------------------
     # From rst.py END
     # ------------------------------------------------------------------------------------------------------------------------------------------
+    
     def print_backtest(self) :
         return
     
@@ -688,22 +692,11 @@ class update_Log :
 
         order = 'add0 ASC' if origin else 'add0 DESC' 
         V_board = self.DB.parameters('03500')
-        R_board = self.DB.parameters('03701') if self.op == '001' else self.DB.parameters('03501')
-        
-        # jrst 에만 적용함
-        init_sync = self.DB.parameters_des('07000') if self.op == '001' else ''
-
-        if  init_sync :
-            V_date,V_money,R_money,V_mode = init_sync.split(',') 
-        else :
-        # V_date  = '2025-02-19'
-        # V_money = '47470.40'
-        # R_money = '59546.84'
-        # V_mode  = '0.00'
-            V_date  = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 < '{s_date}' and sub12='1' ORDER BY {order} LIMIT 1")
-            V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
-            R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
-            V_mode  = self.DB.one(f"SELECT sub7 FROM {V_board} WHERE add0 = '{V_date}'")
+        R_board = self.DB.parameters('03501') if self.op=='rst' else self.DB.parameters('03701')
+        V_date  = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 < '{s_date}' and sub12='1' ORDER BY {order} LIMIT 1")
+        V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
+        R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
+        V_mode  = self.DB.one(f"SELECT sub7 FROM {V_board} WHERE add0 = '{V_date}'")
         
         return (V_date,float(V_money),float(R_money),float(V_mode))
     
@@ -713,6 +706,7 @@ class update_Log :
         self.put_initCapital(V_money,R_money,R_money,R_money)
         if V_mode : self.D['가상손실'] = 'on'
         self.get_simResult(V_date)
+        
         self.nextStep()
         tN = {'V':'일반','R':'기회','S':'안정','T':'생활'}
         return {'buy_p':self.D['N_'+tN[tac]+'매수가'],'buy_q':self.D['N_'+tN[tac]+'매수량'],'yx_b': self.D['N_'+tN[tac]+'종대비'],
