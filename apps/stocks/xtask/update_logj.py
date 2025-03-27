@@ -1,9 +1,11 @@
 import myutils.my_utils as my
 from lib_rst import update_Log
 
+# 실행순서 : update_logj.py  >  update_log.py 
+
 today = my.kor_loc_date('US/Eastern')[0:10]
 weekd = my.dayofdate(today)
-RST = update_Log('001')
+RST = update_Log('jrst')
 
 ck_holiday = RST.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
 is_holiday = ck_holiday[0][0] if ck_holiday else ''

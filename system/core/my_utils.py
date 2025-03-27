@@ -150,6 +150,11 @@ def date_tomorrow(day1) :
     tomorrow = datetime.strptime(day1,'%Y-%m-%d') + timedelta(days=1)
     return tomorrow.strftime("%Y-%m-%d")
 
+def date_yesterday(day1) :
+
+    yesterday = datetime.strptime(day1,'%Y-%m-%d') + timedelta(days=-1)
+    return yesterday.strftime("%Y-%m-%d")
+
 def kor_loc_date(opt) :
 
     loc = timezone('Asia/Seoul') if opt == 'kor' else timezone('US/Eastern')
