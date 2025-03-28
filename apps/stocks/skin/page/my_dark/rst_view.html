@@ -855,6 +855,7 @@ function synchro(opt,begin='pick') {
 			$("input[name='기회자금']").val(data.R_money);
 			$("input[name='안정자금']").val(data.S_money);
 			$("input[name='생활자금']").val(data.T_money);
+			if(parseFloat(data.V_mode) > 0 ) {$("input[name='chk_chx']").prop('checked',true);}
 			if(opt==2||opt==0) {$("form[name=stock_back_testing]").submit();}
 		}
 	});
