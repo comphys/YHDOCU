@@ -234,7 +234,7 @@ class M_dashboard_jrst(Model) :
             qry+= f"FROM {self.M['boards'][odr]} ORDER BY add0 DESC LIMIT 1"
             rst = self.DB.line(qry)
             key = str(odr)
-            if today != rst['add0'] : self.D['전략구분'+key] = "확인필요"
+            if today != rst['add0'] : self.D['전략구분'+key] = "확필"
 
             self.D['매수수량'+key] = rst['sub2'] if rst['sub2'] else ''
             self.D['매수가격'+key] = f"{rst['sub19']:.2f}" if rst['sub2'] else ''
@@ -302,7 +302,7 @@ class M_dashboard_jrst(Model) :
         # 시즌기간 주가 
         if  day := int(self.D['현재일수1']) :
             qry = f"SELECT add14,add20 FROM {self.M['boards'][0]} ORDER BY add0 DESC LIMIT {day}"
-            self.D['주가흐름'] = self.DB.exe(qry)
+            self.D['주가흐름'] = (self.DB.exe(qry))[0:20]
          
        
         # 시작일점과의 변동률
