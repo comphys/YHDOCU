@@ -10,6 +10,7 @@ class update_Log :
         self.stat  = False
         self.skey = self.DB.store("slack_key")
         self.op   = op
+        self.mode = ''
 
         self.B = {}
         self.V = {}
@@ -563,6 +564,8 @@ class update_Log :
 
     def nextStep(self) :
 
+        if self.mode == '대기만성' : return
+        
         self.D['N_일자'] = self.M['현재날수'] 
         self.D['N_종가'] = self.M['당일종가']
         self.D['N_변동'] = round(self.M['종가변동'],2)
@@ -659,8 +662,15 @@ class update_Log :
 
         self.get_start()
         self.init_value()
-        self.simulate()
-        self.result()
+        
+        # 조정모드(진행상황 == '대기만성') 인지 판별
+        self.mode = self.DB.one(f"SELECT sub29 FROM {self.M['기회보드']} WHERE add0 < '{self.D['종료일자']}' ORDER BY add0 DESC LIMIT 1")
+
+        if  self.mode == '대기만성' :
+            self.simulate_mode()
+        else :    
+            self.simulate()
+            self.result()
     
     def get_thisYearResult(self) :
 
@@ -720,7 +730,7 @@ class update_Log :
       
 
     def do_tacticsLog(self,theDate) :
-        
+
         (V_date,V_money,R_money,V_mode) = self.get_syncData(theDate)
         if V_mode : self.D['가상손실'] = 'on'
         self.put_initCapital(V_money,R_money,R_money,R_money)
@@ -777,6 +787,7 @@ class update_Log :
             LD['sub7'] = '0.00' if self.V['실현수익'] > 0 else self.M['전략가치']
         
         LD['sub29']  = '전량매도' if self.M['첫날기록'] else tac['진행상황'] 
+        
         LD['sub30']  = f"{tac['수수료등']:.2f}" if LD['add5'] else '0.00'
         LD['sub31']  = f"{tac['수수료등'] + float(LD['sub31']):.2f}" if LD['add5'] else LD['sub31']
         if  self.M['현재날수'] -1 == 1 : 
@@ -786,16 +797,112 @@ class update_Log :
         if  not tac['매수금액'] and not tac['매도금액'] and LD['sub12'] : LD['sub29'] = '매도대기'
         
         LD['content'] ="<div><p>Written by Auto</p></div>"
+        if self.mode : LD['sub29'] = self.mode
+        
         del LD['no']
         return LD
     
     def get_nextStrategyLog(self,tac) :
 
-        nX = {'V':'일반','R':'기회','S':'안정','T':'생활'}
-        nS = {'sub18':self.D['N_'+nX[tac]+'기초'],'sub2' :self.D['N_'+nX[tac]+'매수량'],'sub3':self.D['N_'+nX[tac]+'매도량'],
-              'sub19':self.D['N_'+nX[tac]+'매수가'],'sub20':self.D['N_'+nX[tac]+'매도가']}
+        if  self.mode == '대기만성' :
+            if  tac == 'R' :
+                nS = {'sub18': self.R['sub18'], 'sub2' : self.R['sub2'], 'sub3': self.R['보유수량'], 'sub19': self.R['sub19'], 'sub20': self.R['sub20']} 
+            elif  tac == 'S' :
+                nS = {'sub18': self.S['sub18'], 'sub2' : self.S['sub2'], 'sub3': self.S['보유수량'], 'sub19': self.S['sub19'], 'sub20': self.S['sub20']}  
+            elif  tac == 'T' :
+                nS = {'sub18': self.T['sub18'], 'sub2' : self.T['sub2'], 'sub3': self.T['보유수량'], 'sub19': self.T['sub19'], 'sub20': self.T['sub20']} 
+        else :            
+            nX = {'V':'일반','R':'기회','S':'안정','T':'생활'}
+            nS = {'sub18':self.D['N_'+nX[tac]+'기초'],'sub2' :self.D['N_'+nX[tac]+'매수량'],'sub3':self.D['N_'+nX[tac]+'매도량'],
+                'sub19':self.D['N_'+nX[tac]+'매수가'],'sub20':self.D['N_'+nX[tac]+'매도가']}
         return nS
 
 # --------------------------------------------------------------------------------------------------------------------------------
-# 
+#  조정 모드
 # --------------------------------------------------------------------------------------------------------------------------------
+
+    def simulate_mode(self) :
+
+        self.M['현재일자'] = self.B[-1]['add0']
+        self.M['전일일자'] = self.B[-2]['add0']
+        self.M['당일종가'] = float(self.B[-1]['add3'])
+        self.M['종가변동'] = float(self.B[-1]['add8']) 
+        self.M['전일종가'] = float(self.B[-2]['add3'])  
+        self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률'],0)
+        
+        LDR = self.DB.line(f"SELECT * FROM {self.M['기회보드']} WHERE add0='{self.M['전일일자']}'")
+        LDS = self.DB.line(f"SELECT * FROM {self.M['안정보드']} WHERE add0='{self.M['전일일자']}'")
+        LDT = self.DB.line(f"SELECT * FROM {self.M['생활보드']} WHERE add0='{self.M['전일일자']}'")
+        
+        self.M['현재날수'] = my.sv(LDR['sub12'],'i') + 1
+        
+        self.M['매도가격'] = my.sv(LDR['sub20'])
+        self.R['보유수량'] = my.sv(LDR['add9'],'i') ;    self.S['보유수량'] = my.sv(LDS['add9'],'i') ;   self.T['보유수량'] = my.sv(LDT['add9'],'i') 
+        self.today_sell_mode() 
+        
+        self.R['매수가격'] = my.sv(LDR['sub19']) ;       self.S['매수가격'] = my.sv(LDS['sub19']) ;      self.T['매수가격'] = my.sv(LDT['sub19']) 
+        self.R['예정수량'] = my.sv(LDR['sub2'],'i') ;    self.S['예정수량'] = my.sv(LDS['sub2'],'i') ;   self.T['예정수량'] = my.sv(LDT['sub2'],'i') 
+        self.today_buy_mode()
+        
+        self.R['현재잔액'] = my.sv(LDR['add3']) ;        self.S['현재잔액'] = my.sv(LDS['add3']) ;       self.T['현재잔액'] = my.sv(LDT['add3']) 
+        self.R['총매수금'] = my.sv(LDR['add6']) ;        self.S['총매수금'] = my.sv(LDS['add6']) ;       self.T['총매수금'] = my.sv(LDT['add6']) 
+        self.R['평균단가'] = my.sv(LDR['add7']) ;        self.S['평균단가'] = my.sv(LDS['add7']) ;       self.T['평균단가'] = my.sv(LDT['add7'])
+        self.calculate_mode()
+        
+        # self.tomorrow_step_mode()
+        # self.increase_count(printOut)
+        self.M['현재날수'] +=1
+        
+        # self.get_nextStrategyLog 
+        self.R['sub2'] = LDR['sub2'] ;  self.S['sub2'] = LDS['sub2'] ; self.T['sub2'] = LDT['sub2']
+                
+        self.R['sub18'] = LDR['sub18'] ;  self.S['sub18'] = LDS['sub18'] ; self.T['sub18'] = LDT['sub18']
+        self.R['sub19'] = LDR['sub19'] ;  self.S['sub19'] = LDS['sub19'] ; self.T['sub19'] = LDT['sub19']
+        self.R['sub20'] = LDR['sub20'] ;  self.S['sub20'] = LDS['sub20'] ; self.T['sub20'] = LDT['sub20'] 
+        
+        
+        
+            
+    def today_sell_mode(self) :
+        
+        if  self.M['당일종가'] >= self.M['매도가격'] : 
+
+            for tac in (self.R,self.S,self.T) : 
+                tac['매도수량'] = tac['보유수량']
+                tac['매도금액'] = tac['매도수량'] * self.M['당일종가']
+                
+    def today_buy_mode(self) :
+    
+        for tac in (self.R,self.S,self.T) :
+            if  self.M['당일종가'] <= tac['매수가격'] :
+                tac['매수수량'] = tac['예정수량']
+                tac['매수금액'] = tac['매수수량'] * self.M['당일종가']
+                
+    def calculate_mode(self) :
+        
+        for tac in (self.R,self.S,self.T) :
+            
+            if  tac['매수수량'] : 
+                tac['현재잔액'] -= tac['매수금액']
+                tac['보유수량'] += tac['매수수량']
+                tac['총매수금'] += tac['매수금액']
+                tac['평균단가'] =  tac['총매수금'] / tac['보유수량'] 
+                if self.D['수료적용'] == 'on' :  tac['수수료등']  = self.commission(tac['매수금액'],1); tac['현재잔액'] -= tac['수수료등']
+            
+            if  tac['매도수량'] :
+                tac['실현수익']  =  tac['매도금액'] - tac['총매수금']
+                tac['보유수량'] -=  tac['매도수량'];  tac['현재잔액'] += tac['매도금액']; tac['총매수금'] = 0.00
+                tac['수익현황']  =  tac['실현수익']
+                
+                if self.D['수료적용'] == 'on' : tac['수수료등']  = self.commission(tac['매도금액'],2); tac['현재잔액'] -= tac['수수료등'] 
+                if self.D['세금적용'] == 'on' : tac['현재잔액'] -= self.tax(tac['실현수익'])
+                
+            tac['평가금액'] =  self.M['당일종가'] * tac['보유수량'] 
+            tac['현수익률'] = (self.M['당일종가'] / tac['평균단가'] -1) * 100  if tac['평균단가'] else 0.00
+            
+            if not tac['매도수량'] : tac['수익현황'] = tac['평가금액'] - tac['총매수금']
+
+
+
+
+
