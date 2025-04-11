@@ -57,7 +57,7 @@ else :
         qry=RST.DB.qry_insert(RST.M['생활보드'],DT)
         RST.DB.exe(qry)
 
-    RST.send_message(f"{today}일 VRST-001 업데이트 완료")
+    RST.send_message(f"{today}일 VRST-J 업데이트 완료")
     
     # 자산현황 업데이트
     # 초기값 설정(1차변경 2025.02.06, 2차변경 2025.02.19)
