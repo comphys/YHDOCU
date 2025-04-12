@@ -265,7 +265,7 @@ class RST :
         CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승']) if self.M['현재날수'] <= 10 else my.round_up(self.M['당일종가'] * self.M['종가탈출'])
 
         if  CPRICE >= LPRICE : 
-            self.M['매도가격'] = min(self.M['매도가격'],CPRICE)     
+            self.M['매도가격'] = min(self.M['매도가격'],CPRICE)    
 
     def tomorrow_step(self)   :
         
@@ -563,6 +563,13 @@ class RST :
         self.D['N_종가'] = self.M['당일종가']
         self.D['N_변동'] = round(self.M['종가변동'],2)
         self.D['N_단계'] = self.V['매수단계']
+
+        if  self.R['보유수량'] :
+            self.D['NT-AVG'] = round((self.R['총매수금']+self.S['총매수금']+self.T['총매수금'])/(self.R['보유수량']+self.S['보유수량']+self.T['보유수량']),2)
+        else :
+            self.D['NT-AVG'] = '0.00'
+        self.D['LPRICE'] = my.round_up(self.V['평균단가'] * self.M['강매가치'])
+        self.D['CPRICE'] = my.round_up(self.M['당일종가'] * self.M['종가상승']) if self.D['N_일자']-1  <= 10 else my.round_up(self.M['당일종가'] * self.M['종가탈출'])
 
         # 변수초기화
         self.D['N_기회도종비'] = self.D['N_안정도종비'] = self.D['N_생활도종비'] = ''

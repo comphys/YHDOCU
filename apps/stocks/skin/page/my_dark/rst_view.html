@@ -297,6 +297,7 @@
 <div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
 	<ul style="margin-left:10px;margin-bottom:10px">
 		<li> {{D['R_총보유량']}} <span style="color:gray">shares of stock</span></li>
+		<li> {{D['NT-AVG']}} <span style="color:gray">The average of RST total</span></li>
 		<li> {{D['현재일자']}} : {{D['R_평가손익']}} ( {{D['R_평가익률']}}% ) </li>
 		<li> {{D['R_총평가금']}} / {{D['R_총매입금']}} </li>
 	</ul>
@@ -313,7 +314,7 @@
 		<tr><td style="text-align:left;">T buy</td><td>{{D['N_생활매수량']}}</td><td>{{D['N_생활매수가']}}</td><td>{{D['N_생활평대비']}}</td><td>{{D['N_생활종대비']}}</td></tr>
 		{% endif %}
 		{% if D['N_일반매도량'] %}
-		<tr style="border-top:1px solid gray"><td style="text-align:left;border-top:1px solid gray">R sell</td><td>{{D['N_기회매도량']}}</td><td>{{D['N_기회매도가']}}</td><td>{{D['N_기회도평비']}}</td><td>{{D['N_기회도종비']}}</td></tr>
+		<tr style="border-top:1px solid gray"><td style="text-align:left;">R sell</td><td>{{D['N_기회매도량']}}</td><td>{{D['N_기회매도가']}}</td><td>{{D['N_기회도평비']}}</td><td>{{D['N_기회도종비']}}</td></tr>
 		{% endif %}
 		{% if D['N_안정매도량'] %}
 		<tr><td style="text-align:left;">S sell</td><td>{{D['N_안정매도량']}}</td><td>{{D['N_안정매도가']}}</td><td>{{D['N_안정도평비']}}</td><td>{{D['N_안정도종비']}}</td></tr>
@@ -321,6 +322,7 @@
 		{% if D['N_생활매도량'] %}
 		<tr><td style="text-align:left;">T sell</td><td>{{D['N_생활매도량']}}</td><td>{{D['N_생활매도가']}}</td><td>{{D['N_생활도평비']}}</td><td>{{D['N_생활도종비']}}</td></tr>
 		{% endif %}
+		<tr style="border-top:1px solid gray"><td style="text-align:left;">LP : </td><td>{{D['LPRICE']}}</td><td></td><td style="text-align:left;">CP : </td><td>{{D['CPRICE']}}</td></tr>
 	</table>
 </div>
 
