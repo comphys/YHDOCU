@@ -4,7 +4,7 @@ from lib_rst import update_Log
 # 실행순서 : update_logj.py  >  update_log.py 
 
 today = my.kor_loc_date('US/Eastern')[0:10]
-today = '2025-04-10'
+today = '2025-04-09'
 weekd = my.dayofdate(today)
 RST = update_Log('rst')
 

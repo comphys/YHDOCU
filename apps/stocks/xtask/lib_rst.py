@@ -778,7 +778,7 @@ class update_Log :
         
         LD['sub1']  = int(LD['sub1']) + 1 if tac['매도금액'] else LD['sub1'] 
         LD['sub4']  = tac['일매수금']
-        
+     
         LD['sub12']  = 0 if self.M['첫날기록'] else self.M['현재날수'] - 1 
         
         LD['add17']  = f"{tac['현재잔액'] +tac['평가금액']:.2f}"
@@ -797,8 +797,8 @@ class update_Log :
         if  not tac['매수금액'] and not tac['매도금액'] and LD['sub12'] : LD['sub29'] = '매도대기'
         
         LD['content'] ="<div><p>Written by Auto</p></div>"
-        if self.mode : LD['sub29'] = self.mode
-        
+        if self.mode == '대기만성' : LD['sub29'] = self.mode
+
         del LD['no']
         return LD
     
