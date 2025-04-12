@@ -4,7 +4,6 @@ from lib_rst import update_Log
 # 실행순서 : update_logj.py  >  update_log.py 
 
 today = my.kor_loc_date('US/Eastern')[0:10]
-today = '2025-04-09'
 weekd = my.dayofdate(today)
 RST = update_Log('rst')
 
@@ -73,7 +72,7 @@ else :
     preDate = RST.DB.one(f"SELECT max(add0) FROM h_my_Asset_board WHERE add0 < '{AD['add0']}'")
     LD = RST.DB.one(f"SELECT add18 FROM h_my_Asset_board WHERE add0='{preDate}'")
     LD = my.sv(LD)
-    print(LD)
+ 
     AD['add18'] = float(DR['add6']) + float(DS['add6']) + float(DT['add6']) # 현매수금 
     
     AD['add1'] = DR['add0'][:4]
