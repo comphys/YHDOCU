@@ -72,7 +72,8 @@ else :
 
     preDate = RST.DB.one(f"SELECT max(add0) FROM h_my_Asset_board WHERE add0 < '{AD['add0']}'")
     LD = RST.DB.one(f"SELECT add18 FROM h_my_Asset_board WHERE add0='{preDate}'")
-    LD = float(LD)
+    LD = my.sv(LD)
+    print(LD)
     AD['add18'] = float(DR['add6']) + float(DS['add6']) + float(DT['add6']) # 현매수금 
     
     AD['add1'] = DR['add0'][:4]
