@@ -127,3 +127,23 @@ class Page(Control) :
 
         VB.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
         return self.echo(VB.D)
+    
+    def rpd_testChart(self) :
+
+        self.D['종목코드'] = self.D['post']['종목코드']
+        self.D['일반자금'] = self.D['post']['일반자금']
+
+        self.D['시작일자'] = self.D['post']['시작일자']
+        self.D['종료일자'] = self.D['post']['종료일자']
+
+        self.D['수료적용'] = self.D['post'].get('chk_fee','off')
+        self.D['세금적용'] = self.D['post'].get('chk_tax','off')
+        self.D['가상손실'] = self.D['post'].get('chk_chx','off')
+        
+        VB = self.load_app_lib('n310')
+        VB.D |= self.D
+
+        VB.do_viewChart()
+
+        VB.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
+        return self.echo(VB.D)

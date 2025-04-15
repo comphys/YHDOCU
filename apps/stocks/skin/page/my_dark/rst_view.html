@@ -510,8 +510,7 @@ function show_chart(season,sel,profit=null,rate=null) {
 	$(".avgs"+season).each(function() {tmpv = parseFloat($(this).text());tmpv = (tmpv)? avgs.push(tmpv) : avgs.push(null); });
 	$(".avgt"+season).each(function() {tmpv = parseFloat($(this).text());tmpv = (tmpv)? avgt.push(tmpv) : avgt.push(null); });
 	
-	const t0 = 0.02;
-	const a0 = clsp[0];	const d0 = 1-t0;
+	const a0 = clsp[0];
 
 	// for(let x=0; x < 16; x++) { dlne.push(a0*(1-x*t0));} // clsp.length -> 16 (dn to 30%)
 	for(let x=0; x < 10; x++) { dl10.push(a0*0.9);}

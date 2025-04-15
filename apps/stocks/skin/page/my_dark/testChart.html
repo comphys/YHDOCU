@@ -3,7 +3,7 @@
 {% block contents_page  %}
 <div class="row-row">
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
-		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/rpd_baseChart/baseChart">
+		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/rpd_testChart/testChart">
 			<br>
 			<div class="well clearfix" style="border-radius:0px;">
     			<div class="pull-left">
@@ -31,6 +31,9 @@
 					<div style="display:inline-block;">
 						<input role="switch" type="checkbox" name="chk_chx" {{ 'checked' if D['가상손실'] =='on' else '' }}>&nbsp;chx 
 					</div>
+					<div style="display:inline-block;margin-left:50px;font-weight:bold;font-size:16px;font-style:italic">
+						{{D['전략명칭']}}
+					</div>
 
     			</div> <!--pull left-->
 
@@ -48,27 +51,19 @@
 						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(1)"> 종료</div>
 						<input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
 					</div>
-					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;" onclick="synchro(0,'start')" title="동기화(처음부터)"></i>
-					</div>
-					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro(1,'pick')" title="동기화(back)"></i>
-					</div>
-					<div style="display:inline-block;margin-right:10px;">
-						<i class="fa fa-superpowers fa-lg" style="color:cadetblue;cursor:pointer;" onclick="synchro(2,'pick')" title="동기화(최근시즌)"></i>
-					</div>
     				<button class="btn btn-red-s3" style="vertical-align:middle;user-select:none;">테스팅</button>
     			</div> <!--pull right-->
 
 
 		</div> 
+	</form>
 
+	<!-- 메인 챠트 -->
 		<div id="myChart_main-div" class="clearfix" style="height:370px;background-color:#24272d;padding:10px;border:2px solid black;">
 			<div class="pull-left" onclick="$('#monthlyProfit').show()">
-				<canvas id="myChart_main"  style="width:1150px;height:350px;background-color:#24272d;"></canvas>
+				<canvas id="myChart_main"  style="width:1250px;height:350px;background-color:#24272d;"></canvas>
 			</div>
 		</div>
-	</form>
 
 		<div class="clearfix" style="border-radius:0px;padding:10px;">
 			{% if D['최장일수'] %}
@@ -97,6 +92,7 @@
 					<th style='text-align:center;width:80px'>일자</th>
 					<th style='text-align:right;width:80px'>종가</th>
 					<th style='text-align:right;width:80px'>변동</th>
+					<th style='text-align:center;width:70px'>차수</th>
 					
 					<th style='text-align:right;width:120px;'>현재잔액</th>
 					<th style='text-align:right;width:80px'>비중</th>
@@ -127,7 +123,8 @@
 			<col style="width:70px;"> <!-- 날수 -->
 			<col style="width:80px;"> <!-- 일자 -->
 			<col style="width:80px;"> <!-- 당일종가 -->
-			<col style="width:80px;border-right:3px solid #424242"> <!-- 종가변동 -->
+			<col style="width:80px;"> <!-- 종가변동 -->
+			<col style="width:70px;border-right:3px solid #424242"> <!-- 차수 -->
 			
 			<col style="width:120px"> <!--현재잔액 -->
 			<col style="width:80px"> <!-- 잔액비율 -->
@@ -158,6 +155,7 @@
 				<td class="begin-date" style="cursor:pointer;">{{TR['기록일자']}}</td>
 				<td class='ohlc-price' style='text-align:right;font-weight:bold;cursor:pointer;'>{{TR['당일종가']|safe}}</td>
 				<td style='text-align:right;font-weight:bold;'>{{TR['종가변동']|safe}}</td>
+				<td style='text-align:center'>{{TR['현재차수']}}</td>
 
 				<td style='text-align:right;color:#CEF6CE'>{{TR['일반잔액']}}</td>
 				<td style='text-align:right;'>{{TR['잔액비중']|safe}}</td>
@@ -186,13 +184,13 @@
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
 {% endif %}
 
-<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1150px;background-color:#24272d;padding:10px;border:2px solid black;z-index:7;">
+<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1250px;background-color:#24272d;padding:10px;border:2px solid black;z-index:7;">
 	<div id='backTestingChart-notice' style="position:absolute;top:11px;left:74px;color:gray;font-style:italic">&nbsp;</div>
-	<canvas id="mybackTestChart" style="width:1125px;height:330px;background-color:#24272d"></canvas>
+	<canvas id="mybackTestChart" style="width:1225px;height:330px;background-color:#24272d"></canvas>
 </div>
 {% if D['월별이익'] %}
 <div id='monthlyProfit' style="position:fixed;left:27px;top:108px;background-color:#24272d;padding:5px;opacity:0.9;z-index:3;" onclick="$(this).hide()">
-	<canvas id="monthlyProfitChart" style="width:1150px;height:350px;"></canvas>
+	<canvas id="monthlyProfitChart" style="width:1250px;height:350px;"></canvas>
 </div>
 {% endif %}
 
@@ -201,7 +199,7 @@
 </div>
 {% if D['TR'] %}
 <div id="statistics-profits" class="scrollbar"
-     style="position:fixed;left:1190px;top:112px;width:420px;height:350px;padding:0px;background-color:#24272d;overflow-y:scroll;">
+     style="position:fixed;left:1290px;top:112px;width:420px;height:350px;padding:0px;background-color:#24272d;overflow-y:scroll;">
 	 <table class='table table-hover' style="padding:0px">
 		<tr style="background-color: #000000;font-weight:bold;color:white;">
 			<td style="text-align:left;">결과분석</td>
@@ -321,7 +319,7 @@ function show_chart(season,sel,profit=null,rate=null) {
 	$('#backTestingChart').css({top:'110px',left:'32px'}).show();
 	var clsp = [];
 	var avgv = [];
-	var dl10 = []; var dl20 = []; var dl30 = [];
+	var dl10 = []; var dl20 = []; var dl30 = []; 
 
 	$(".clsp"+season).each(function() {clsp.push(parseFloat($(this).text()))});
 
@@ -332,7 +330,6 @@ function show_chart(season,sel,profit=null,rate=null) {
 	for(let x=0; x < 10; x++) { dl10.push(a0*0.9);}
 	for(let x=0; x < 20; x++) { dl20.push(a0*0.8);}
 	for(let x=0; x < 30; x++) { dl30.push(a0*0.7);}
-
 
 	var xticks = clsp.length
 	if (xticks < 30 ) { xticks = 30; }
@@ -623,25 +620,6 @@ function startYearSpan() {
 	$("input[name='시작일자']").val(date2)
 }
 
-function synchro(opt,begin='pick') {
-	let today =''
-	if(opt==2 || opt==0) {
-		today = new Date().format("yyyy-MM-dd");
-		$("input[name='종료일자']").val(today);
-	} else if(opt==1){	today = $("input[name='시작일자']").val();} 
-
-	let posturl = uri('linkurl') + 'pages-pajax/vtac_sync';
-	$.post(posturl, { s_date : today, begin : begin },null,'json').done(function(data){
-		if(data.date=='None'){h_dialog.notice(data.msg);}
-		else {
-			h_dialog.notice("동기화 데이타가 입력되었습니다.")
-			$("input[name='시작일자']").val(data.date);
-			$("input[name='일반자금']").val(data.V_money);
-			if(parseFloat(data.V_mode)) { $("input[name=chk_chx]").prop('checked',true);}
-			if(opt==2||opt==0) {$("form[name=stock_back_testing]").submit();}
-		}
-	});
-}
 
 //
 </script>
