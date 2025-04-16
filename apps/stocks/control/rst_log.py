@@ -20,6 +20,22 @@ class Rst_log(Control) :
         
         return self.test(RST.D,D)
     
+    def rsn(self) :
+        if not 'N_NO' in session : return self.moveto('board/login')
+        self.DB = self.db('stocks')
+        
+        RSN = self.load_app_lib('rsn')
+        theDate = self.parm[1]
+        tactic  = self.parm[0].upper()
+
+        RSN.do_tacticsLog(theDate)
+        D = RSN.get_tacticLog(theDate,tactic)
+        RSN.nextStep()
+        X = RSN.get_nextStrategyLog(tactic)
+        D |= X
+        
+        return self.test(RSN.D,D)
+    
     def vtac(self) :
         self.DB = self.db('stocks')
         V = self.load_app_lib('vtactic')
