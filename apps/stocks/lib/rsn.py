@@ -451,8 +451,10 @@ class RSN :
                 self.T['총매수금']  = self.T['평가금액'] = self.T['매수금액']
                 self.T['현재잔액'] -= self.T['매수금액']
                 self.T['거래코드']  = f"1B{self.T['매수수량']}" 
+                self.T['매수차수']  = 1
+                
                 if self.D['수료적용'] == 'on' : self.T['수수료등'] = self.commission(self.T['매수금액'],1); self.T['현재잔액'] -= self.T['수수료등']
-                self.V['매수차수']  = 1
+                
             
             return True
 
