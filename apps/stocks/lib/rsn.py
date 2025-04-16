@@ -27,7 +27,6 @@ class RSN :
 
     def calculate_T(self) :
         
-        
         if  self.T['매수수량'] : 
             self.T['현재잔액'] -= self.T['매수금액']
             self.T['보유수량'] += self.T['매수수량']
