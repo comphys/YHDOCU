@@ -21,8 +21,6 @@ class M_rsn_view(Model) :
         self.D['기회회복'] = self.DB.parameters('02200')
         self.D['안정시점'] = self.DB.parameters('02300')
         self.D['안정회복'] = self.DB.parameters('02400')
-        self.D['생활시점'] = self.DB.parameters('02401')
-        self.D['생활회복'] = self.DB.parameters('02402')
 
         self.D['수료적용'] = 'on'
         self.D['세금적용'] = 'off'
@@ -30,7 +28,6 @@ class M_rsn_view(Model) :
         self.D['이밸런싱'] = 'on'
         self.D['일반상황'] = 'off'
         self.D['가상손실'] = 'off'
-        self.D['랜덤종가'] = 'off'
 
         # 기간 설정(최근 2년간)
         # self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)

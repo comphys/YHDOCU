@@ -94,19 +94,16 @@
 					<input role="switch" type="checkbox" name="chk_tax" {{ 'checked' if D['세금적용'] =='on' else '' }}><span>Tax</span> 
 				</div>
 				<div class="toggle-block">
-					<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on' else '' }}><span>RST=</span> 
+					<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on' else '' }}><span>RSN=</span> 
 				</div>
 				<div class="toggle-block">
-					<input role="switch" type="checkbox" name="chk_rs_" {{ 'checked' if D['이밸런싱'] =='on' else '' }}><span>RS>T</span> 
+					<input role="switch" type="checkbox" name="chk_rs_" {{ 'checked' if D['이밸런싱'] =='on' else '' }}><span>RS>N</span> 
 				</div>
 				<div class="toggle-block">
 					<input role="switch" type="checkbox" name="chk_von" {{ 'checked' if D['일반상황'] =='on' else '' }}><span>V_on</span> 
 				</div>
 				<div class="toggle-block">
 					<input role="switch" type="checkbox" name="chk_chx" {{ 'checked' if D['가상손실'] =='on' else '' }}><span>chx</span> 
-				</div>
-				<div class="toggle-block">
-					<input role="switch" type="checkbox" name="chk_rnd" {{ 'checked' if D['랜덤종가'] =='on' else '' }}><span>rnd</span> 
 				</div>
 			</div>
 		</div>
@@ -172,12 +169,12 @@
 					<th style='text-align:right;width:110px'>S balance&nbsp;&nbsp;</th>
 					{% endif %}
 
-					<th style='text-align:right;width:110px;color:#CEF6CE'>T process</th>
-					<th style='text-align:center;width:74px'>T avg</th>
-					<th style='text-align:right;width:100px'>T profit</th>
-					<th style='text-align:right;width:70px'>T rate</th>
+					<th style='text-align:right;width:110px;color:#CEF6CE'>N process</th>
+					<th style='text-align:center;width:74px'>N avg</th>
+					<th style='text-align:right;width:100px'>N profit</th>
+					<th style='text-align:right;width:70px'>N rate</th>
 					{% if D['일반상황']=='off' %}
-					<th style='text-align:right;'>T balance</th>
+					<th style='text-align:right;'>N balance</th>
 					{% endif %}
 				</tr>
 			</table>
@@ -291,9 +288,8 @@
 
 <div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
 	<ul style="margin-left:10px;margin-bottom:10px">
-		<li> {{D['R_총보유량']}} <span style="color:gray">shares of stock</span></li>
-		<li> {{D['NT-AVG']}} <span style="color:gray">The average of RST total</span></li>
-		<li> {{D['현재일자']}} : {{D['R_평가손익']}} ( {{D['R_평가익률']}}% ) </li>
+		<li> {{D['R_총보유량']}} <span style="color:gray">sotcks </span> {{D['NT-AVG']}} <span style="color:gray">total average</span></li>
+		<li> {{D['R_평가손익']}} ( {{D['R_평가익률']}}% ) </li>
 		<li> {{D['R_총평가금']}} / {{D['R_총매입금']}} </li>
 	</ul>
 	<span style="font-style: italic"> <span style="color:gray">Next Strategy</span></span>
@@ -306,7 +302,7 @@
 		<tr><td style="text-align:left;">S buy</td><td>{{D['N_안정매수량']}}</td><td>{{D['N_안정매수가']}}</td><td>{{D['N_안정평대비']}}</td><td>{{D['N_안정종대비']}}</td></tr>
 		{% endif %}
 		{% if D['N_생활매수량'] %}
-		<tr><td style="text-align:left;">T buy</td><td>{{D['N_생활매수량']}}</td><td>{{D['N_생활매수가']}}</td><td>{{D['N_생활평대비']}}</td><td>{{D['N_생활종대비']}}</td></tr>
+		<tr><td style="text-align:left;">N buy</td><td>{{D['N_생활매수량']}}</td><td>{{D['N_생활매수가']}}</td><td>{{D['N_생활평대비']}}</td><td>{{D['N_생활종대비']}}</td></tr>
 		{% endif %}
 		{% if D['N_일반매도량'] %}
 		<tr style="border-top:1px solid gray"><td style="text-align:left;">R sell</td><td>{{D['N_기회매도량']}}</td><td>{{D['N_기회매도가']}}</td><td>{{D['N_기회도평비']}}</td><td>{{D['N_기회도종비']}}</td></tr>
@@ -315,7 +311,7 @@
 		<tr><td style="text-align:left;">S sell</td><td>{{D['N_안정매도량']}}</td><td>{{D['N_안정매도가']}}</td><td>{{D['N_안정도평비']}}</td><td>{{D['N_안정도종비']}}</td></tr>
 		{% endif %}
 		{% if D['N_생활매도량'] %}
-		<tr><td style="text-align:left;">T sell</td><td>{{D['N_생활매도량']}}</td><td>{{D['N_생활매도가']}}</td><td>{{D['N_생활도평비']}}</td><td>{{D['N_생활도종비']}}</td></tr>
+		<tr><td style="text-align:left;">N sell</td><td>{{D['N_생활매도량']}}</td><td>{{D['N_생활매도가']}}</td><td>{{D['N_생활도평비']}}</td><td>{{D['N_생활도종비']}}</td></tr>
 		{% endif %}
 		<tr style="border-top:1px solid gray"><td style="text-align:left;">LP : </td><td>{{D['LPRICE']}}</td><td></td><td style="text-align:left;">CP : </td><td>{{D['CPRICE']}}</td></tr>
 	</table>

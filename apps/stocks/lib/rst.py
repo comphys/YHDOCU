@@ -33,7 +33,10 @@ class RST :
             tac['보유수량'] += tac['매수수량']
             tac['총매수금'] += tac['매수금액']
             tac['평균단가'] =  tac['총매수금'] / tac['보유수량'] 
+            
             if self.D['수료적용'] == 'on' :  tac['수수료등']  = self.commission(tac['매수금액'],1); tac['현재잔액'] -= tac['수수료등']
+        
+        tac['현수익률'] = (self.M['당일종가'] / tac['평균단가'] -1) * 100  if tac['평균단가'] else 0.00
         
         if  tac['매도수량'] :
             tac['실현수익']  =  tac['매도금액'] - tac['총매수금']
@@ -43,10 +46,12 @@ class RST :
             if self.D['수료적용'] == 'on' : tac['수수료등']  = self.commission(tac['매도금액'],2); tac['현재잔액'] -= tac['수수료등'] 
             if self.D['세금적용'] == 'on' : tac['현재잔액'] -= self.tax(tac['실현수익'])
             
+            tac['현수익률'] = (tac['현재잔액'] / tac['시초금액'] -1) * 100
+            
             self.rstCount(tac['실현수익'],key)
 
         tac['평가금액'] =  self.M['당일종가'] * tac['보유수량'] 
-        tac['현수익률'] = (self.M['당일종가'] / tac['평균단가'] -1) * 100  if tac['평균단가'] else 0.00
+        
 
     def calculate(self)  :
         
@@ -115,7 +120,12 @@ class RST :
             self.R['현재잔액'] = self.S['현재잔액'] = self.T['현재잔액'] = round( total /3,2)
 
         for tac in (self.V,self.R,self.S,self.T) :   
-            tac['일매수금'] = int(tac['현재잔액']/self.M['분할횟수']) 
+            tac['일매수금'] = int(tac['현재잔액']/self.M['분할횟수'])
+
+        self.V['시초금액']  = self.V['현재잔액']
+        self.R['시초금액']  = self.R['현재잔액']
+        self.S['시초금액']  = self.S['현재잔액']
+        self.T['시초금액']  = self.T['현재잔액'] 
 
         if  self.stat :
             pzero = my.sv(self.D['손익통계'][0][1])
@@ -508,19 +518,18 @@ class RST :
         if '안정자금' not in self.D : self.D['안정자금']  = ST['05300']
         if '생활자금' not in self.D : self.D['생활자금']  = ST['05400']
 
-        self.V['현재잔액']  = my.sv(self.D['일반자금'])
-        self.R['현재잔액']  = my.sv(self.D['기회자금'])
-        self.S['현재잔액']  = my.sv(self.D['안정자금'])
-        self.T['현재잔액']  = my.sv(self.D['생활자금'])
-
+        self.V['현재잔액']  = self.V['시초금액'] = my.sv(self.D['일반자금'])
+        self.R['현재잔액']  = self.R['시초금액'] = my.sv(self.D['기회자금'])
+        self.S['현재잔액']  = self.S['시초금액'] = my.sv(self.D['안정자금'])
+        self.T['현재잔액']  = self.T['시초금액'] = my.sv(self.D['생활자금'])
+        
         self.V['일매수금']  = int(self.V['현재잔액'] / self.M['분할횟수'])
         self.R['일매수금']  = int(self.R['현재잔액'] / self.M['분할횟수'])
         self.S['일매수금']  = int(self.S['현재잔액'] / self.M['분할횟수'])
-        self.T['일매수금']  = int(self.T['현재잔액'] / self.M['분할횟수'])
+        self.T['일매수금']  = int(self.T['현재잔액'] / self.M['분할횟수'])    
         
         self.M['거래코드']  = ' '
         self.M['최장일자']  = ' '
-
         self.M['현재날수']  = 1
         self.M['최장일수']  = 0   # 최고 오래 지속된 시즌의 일수
         
