@@ -289,11 +289,10 @@
 <div id="Next-Strategy" style="display:none;opacity:0.9;position:fixed;left:1270px;top:112px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
 	<ul style="margin-left:10px;margin-bottom:10px">
 		<li> {{D['R_총보유량']}} <span style="color:gray">sotcks </span> {{D['NT-AVG']}} <span style="color:gray">total average</span></li>
-		<li> {{D['R_평가손익']}} ( {{D['R_평가익률']}}% ) </li>
-		<li> {{D['R_총평가금']}} / {{D['R_총매입금']}} </li>
+		<li> {{D['R_총평가금']}} / {{D['R_총매입금']}} ( {{D['R_평가익률']}}% )</li>
 	</ul>
 	<span style="font-style: italic"> <span style="color:gray">Next Strategy</span></span>
-	<table class="table" style="text-align:right;width:260px">
+	<table class="table" style="text-align:right;width:280px">
 		{% if D['N_일반매수량'] %}
 		<tr style="font-style:italic;border-bottom:1px solid gray"><td style="text-align:left;">Tactic</td><td>qty</td><td>price</td><td>ppa</td><td>ppl</td></tr>
 		{% endif %}

@@ -241,7 +241,7 @@ class RSN :
 
     def today_buy_T(self) :
         
-        if  self.M['당일종가'] <= self.T['매수가격'] :
+        if  self.M['당일종가'] <= self.T['매수가격'] and self.T['예정수량'] :
             self.T['매수수량']  = self.T['예정수량']
             self.T['매수금액']  = self.T['매수수량'] * self.M['당일종가']
             self.T['매수차수'] += 1 
@@ -299,7 +299,7 @@ class RSN :
 
     def tomorrow_buy_T(self) :
         
-        if self.T['매수차수'] >= 5 : self.T['구매수량'] = 0; return
+        if self.T['매수차수'] >= 5 : self.T['예정수량'] = 0; return
         if self.T['매수차수'] == 4 : self.T['매금단계'][5] = self.T['현재잔액']
         
         if  self.T['보유수량'] :
