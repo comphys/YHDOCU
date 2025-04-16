@@ -11,7 +11,6 @@ class M_mytestChart(Model) :
  
         self.D['수료적용'] = 'on'
         self.D['세금적용'] = 'off'
-        self.D['가상손실'] = 'off'
 
         # 기간 설정(최근 2년간)
         # self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)
