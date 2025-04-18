@@ -15,8 +15,7 @@ class RSN :
         self.V = {}
         self.R = {}
         self.S = {}
-        self.T = {} # N 전략에 대한 변수값
-        self.N = {} # N 전략에 대한 초기값 및 설정값
+        self.N = {} # N 전략에 대한 변수값
         self.M = {}
   
     # ------------------------------------------------------------------------------------------------------------------------------------------
@@ -25,44 +24,44 @@ class RSN :
     # 매수수량 : 실제 매수한 수량, 매도수량 : 실제 매도한 수량
     # 예정수량 : 매수 예정 수량
 
-    def calculate_T(self) :
+    def calculate_N(self) :
         
-        if  self.T['매수수량'] : 
-            self.T['현재잔액'] -= self.T['매수금액']
-            self.T['보유수량'] += self.T['매수수량']
-            self.T['총매수금'] += self.T['매수금액']
-            self.T['평균단가'] =  self.T['총매수금'] / self.T['보유수량'] 
+        if  self.N['매수수량'] : 
+            self.N['현재잔액'] -= self.N['매수금액']
+            self.N['보유수량'] += self.N['매수수량']
+            self.N['총매수금'] += self.N['매수금액']
+            self.N['평균단가'] =  self.N['총매수금'] / self.N['보유수량'] 
             
-            if self.D['수료적용'] == 'on' :  self.T['수수료등']  = self.commission(self.T['매수금액'],1); self.T['현재잔액'] -= self.T['수수료등']
+            if self.D['수료적용'] == 'on' :  self.N['수수료등']  = self.commission(self.N['매수금액'],1); self.N['현재잔액'] -= self.N['수수료등']
         
-        self.T['현수익률'] = (self.M['당일종가'] / self.T['평균단가'] -1) * 100  if self.T['평균단가'] else 0.00    
-        self.T['평가금액'] =  self.M['당일종가'] * self.T['보유수량'] 
-        self.T['수익현황'] =  self.T['평가금액'] - self.T['총매수금']
+        self.N['현수익률'] = (self.M['당일종가'] / self.N['평균단가'] -1) * 100  if self.N['평균단가'] else 0.00    
+        self.N['평가금액'] =  self.M['당일종가'] * self.N['보유수량'] 
+        self.N['수익현황'] =  self.N['평가금액'] - self.N['총매수금']
         
-        if  self.T['매도수량'] :
+        if  self.N['매도수량'] :
 
-            if self.D['수료적용'] == 'on' : self.T['수수료등']  = self.commission(self.T['매도금액'],2); self.T['현재잔액'] -= self.T['수수료등'] 
-            if self.D['세금적용'] == 'on' : self.T['현재잔액'] -= self.tax(self.T['실현수익'])
+            if self.D['수료적용'] == 'on' : self.N['수수료등']  = self.commission(self.N['매도금액'],2); self.N['현재잔액'] -= self.N['수수료등'] 
+            if self.D['세금적용'] == 'on' : self.N['현재잔액'] -= self.tax(self.N['실현수익'])
             
-            self.T['보유수량'] -= self.T['매도수량']
-            self.T['현재잔액'] += self.T['매도금액']
-            self.T['중매합계'] += self.T['매도금액']
-            self.T['평균단가']  = 0.0
-            self.T['매수차수']  = 0
-            self.T['수익현황']  = self.T['매도금액'] - self.T['총매수금']
-            self.T['중익합계'] += self.T['수익현황']  
-            self.T['총매수금']  = 0.0
+            self.N['보유수량'] -= self.N['매도수량']
+            self.N['현재잔액'] += self.N['매도금액']
+            self.N['중매합계'] += self.N['매도금액']
+            self.N['평균단가']  = 0.0
+            self.N['매수차수']  = 0
+            self.N['수익현황']  = self.N['매도금액'] - self.N['총매수금']
+            self.N['중익합계'] += self.N['수익현황']  
+            self.N['총매수금']  = 0.0
             
-            self.T['현수익률']  = round( (self.T['현재잔액'] / self.T['매금단계'][0] -1) * 100, 2)
-            self.rebalanceT()
+            self.N['현수익률']  = round( (self.N['현재잔액'] / self.N['매금단계'][0] -1) * 100, 2)
+            self.rebalanceN()
             
         if  self.V['매도수량'] :
             
-            self.T['매도금액'] = self.T['중매합계']
-            self.T['수익현황'] = self.T['중익합계']
-            self.T['현수익률'] = round( (self.T['현재잔액'] / self.T['시초금액'] -1) * 100,2 )
+            self.N['매도금액'] = self.N['중매합계']
+            self.N['수익현황'] = self.N['중익합계']
+            self.N['현수익률'] = round( (self.N['현재잔액'] / self.N['시초금액'] -1) * 100,2 )
             
-            self.rstCount(self.T['실현수익'],'생')
+            self.rstCount(self.N['실현수익'],'생')
 
 
     def calculate_sub(self,tac,key) :
@@ -78,9 +77,11 @@ class RSN :
         tac['현수익률'] = (self.M['당일종가'] / tac['평균단가'] -1) * 100  if tac['평균단가'] else 0.00
         
         if  tac['매도수량'] :
-            tac['실현수익'] +=  tac['매도금액'] - tac['총매수금']
-            tac['보유수량'] -=  tac['매도수량'];  tac['현재잔액'] += tac['매도금액']; tac['총매수금'] = 0.00
+            tac['실현수익']  =  tac['매도금액'] - tac['총매수금']
+            tac['보유수량'] -=  tac['매도수량']
+            tac['현재잔액'] +=  tac['매도금액'] 
             tac['수익현황']  =  tac['실현수익']
+            tac['총매수금']  =  0
             
             if self.D['수료적용'] == 'on' : tac['수수료등']  = self.commission(tac['매도금액'],2); tac['현재잔액'] -= tac['수수료등'] 
             if self.D['세금적용'] == 'on' : tac['현재잔액'] -= self.tax(tac['실현수익'])
@@ -92,10 +93,9 @@ class RSN :
         tac['평가금액'] =  self.M['당일종가'] * tac['보유수량'] 
         
         
-
     def calculate(self)  :
         
-        self.calculate_T()
+        self.calculate_N()
         self.calculate_sub(self.S,'안')
         self.calculate_sub(self.R,'기')
         self.calculate_sub(self.V,'일')
@@ -111,19 +111,19 @@ class RSN :
             
             self.M['첫날기록'] = True
             self.set_value(['매수단계'],'일반매수')
-            self.set_value(['평균단가'],0.0)
+            self.set_value(['평균단가','평가금액'],0.0)
             self.rebalance()
 
         else  : 
             for tac in [self.V,self.R,self.S] : tac['수익현황'] = tac['평가금액'] - tac['총매수금']
-            
+        
         self.realMDD()
 
 
     def realMDD(self) :
         
         if not self.stat : return
-        for tac in (self.V,self.R,self.S,self.T) :
+        for tac in (self.V,self.R,self.S,self.N) :
             tac['실최하락'] = (tac['평가금액']-tac['총매수금']) / (tac['현재잔액'] + tac['총매수금']) * 100
             if  tac['실최하락'] < tac['진최하락'] : 
                 tac['진최하락'] = tac['실최하락']; tac['최하일자'] = self.M['현재일자']
@@ -153,19 +153,19 @@ class RSN :
 
         return int(mm*0.22) 
    
-    def rebalanceT(self) :
-        self.T['매금단계'][0] = self.T['현재잔액']   
-        self.T['매금단계'][1] = round(self.T['현재잔액'] * self.N['분할공일'],2)
-        self.T['매금단계'][2] = round(self.T['현재잔액'] * self.N['분할공이'],2)
-        self.T['매금단계'][3] = round(self.T['현재잔액'] * self.N['분할공삼'],2)
-        self.T['매금단계'][4] = round(self.T['현재잔액'] * self.N['분할공사'],2)
-        self.T['매수차수'] = 0        
+    def rebalanceN(self) :
+        self.N['매금단계'][0] = self.N['현재잔액']   
+        self.N['매금단계'][1] = round(self.N['현재잔액'] * self.M['분할공일'],2)
+        self.N['매금단계'][2] = round(self.N['현재잔액'] * self.M['분할공이'],2)
+        self.N['매금단계'][3] = round(self.N['현재잔액'] * self.M['분할공삼'],2)
+        self.N['매금단계'][4] = round(self.N['현재잔액'] * self.M['분할공사'],2)
+        self.N['매수차수'] = 0        
         
     def rebalance(self)  :
 
-        total = self.R['현재잔액'] + self.S['현재잔액'] + self.T['현재잔액']
+        total = self.R['현재잔액'] + self.S['현재잔액'] + self.N['현재잔액']
         if  self.D['일밸런싱'] == 'on' :
-            self.R['현재잔액'] = self.S['현재잔액'] = self.T['현재잔액'] = round( total /3,2)
+            self.R['현재잔액'] = self.S['현재잔액'] = self.N['현재잔액'] = round( total /3,2)
 
         for tac in (self.V,self.R,self.S) :   
             tac['일매수금'] = int(tac['현재잔액']/self.M['분할횟수']) 
@@ -173,9 +173,9 @@ class RSN :
         self.V['시초금액']  = self.V['현재잔액']
         self.R['시초금액']  = self.R['현재잔액']
         self.S['시초금액']  = self.S['현재잔액']
-        self.T['시초금액']  = self.T['현재잔액']        
+        self.N['시초금액']  = self.N['현재잔액']        
         
-        self.rebalanceT()
+        self.rebalanceN()
 
         if  self.stat :
             pzero = my.sv(self.D['손익통계'][0][1])
@@ -197,149 +197,172 @@ class RSN :
 # today_sell : 당일 매도를 체크한다
 # -------------------------------------------------------------------------------------------------------------------------------------------      
     def today_sell(self) :
-        
-        if  self.M['당일종가'] >= self.M['매도가격'] : 
 
-            for tac in (self.V,self.R,self.S) : 
+        for tac in (self.V,self.R,self.S) : 
+            
+            if  self.M['당일종가'] >= self.M['매도가격'] : 
                 tac['매도수량'] = tac['보유수량']
                 tac['매도금액'] = tac['매도수량'] * self.M['당일종가']
         
-        if  self.M['당일종가'] >= self.T['매도가격'] :  # T 매도가격은 M 매도가격과 같거나 작아야 한다.
-            self.T['매도수량']  = self.T['보유수량']
-            self.T['매도금액']  = self.T['매도수량'] * self.M['당일종가']
+        if  self.M['당일종가'] >= self.N['매도가격'] :  # T 매도가격은 M 매도가격과 같거나 작아야 한다.
+            self.N['매도수량']  = self.N['보유수량']
+            self.N['매도금액']  = self.N['매도수량'] * self.M['당일종가']
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
 # today_buy : 당일 매수를 체크한다
 # -------------------------------------------------------------------------------------------------------------------------------------------
-    def today_buy_RST(self,tac,key) :
-        
-        days = 2 if key == 'R' else self.M['대기전략']
 
-        if  self.M['현재날수'] == days and key == 'R':
-            self.R['매수수량'] = my.ceil(self.R['기초수량'] * (self.M['비중조절'] + 1))
-            self.R['거래코드'] = f"B{self.R['매수수량']}"
-            self.R['매수금액'] = self.R['매수수량'] * self.M['당일종가'] 
-            self.R['진행상황'] = '일반매수'
+    def today_buy_V(self) :
 
-        if  tac['진행시작'] :
-            tac['매수수량'] = tac['예정수량'] 
-            tac['매수금액'] = tac['매수수량'] * self.M['당일종가']
-            tac['거래코드'] = f"B{tac['매수수량']}" if tac['매수수량'] else ' '
-            tac['진행상황'] = '일반매수'
-
-        else :
-            
-            if  self.M['현재날수'] > days and self.M['당일종가'] <= tac['매수가격'] :
-                tac['매수수량'] = self.chance_qty(tac['기초수량'],key)
-                # 2024.07.15
-                if tac['매수수량'] * tac['매수가격'] > tac['현재잔액'] : tac['매수수량'] = int(tac['현재잔액']/tac['매수가격'])
-                tac['거래코드'] = f"B{tac['매수수량']}/{tac['기초수량']}" 
-                tac['매수금액'] = tac['매수수량'] * self.M['당일종가']
-                tac['진행시작'] = True
-                tac['진행상황'] = '전략매수'
-
-    def today_buy_T(self) :
-        
-        if  self.M['당일종가'] <= self.T['매수가격'] and self.T['예정수량'] :
-            self.T['매수수량']  = self.T['예정수량']
-            self.T['매수금액']  = self.T['매수수량'] * self.M['당일종가']
-            self.T['매수차수'] += 1 
-            self.T['거래코드']  = f"{self.T['매수차수']}B {self.T['매수수량']}"
-
-    def today_buy(self) :
-
-        if  self.M['당일종가'] <= self.M['매수가격'] : 
+        if  self.M['당일종가'] <= self.V['매수예가'] : 
             self.V['매수수량']  = self.V['예정수량']
-            self.V['거래코드']  = 'B' + str(self.V['매수수량']) if self.V['매수수량'] else ' '
+            self.V['거래코드']  = f"B{self.V['매수수량']}" if self.V['매수수량'] else ' '
             self.V['매수금액']  = self.V['매수수량'] * self.M['당일종가']
             self.V['진행상황']  = '일반매수'
+                
+    def today_buy_R(self) :
+        
+        if  self.M['당일종가'] <= self.R['매수예가'] and self.R['예정수량']: 
+            self.R['매수수량']  = self.R['예정수량']
+            self.R['매수금액']  = self.R['매수수량'] * self.M['당일종가']
+            self.R['거래코드'] = f"B{self.R['매수수량']}"
+            self.R['진행상황']  = '일반매수'        
+            
+            if  not self.R['진행시작'] and self.M['현재날수']> 2 :
+                self.R['거래코드'] = f"B{self.R['매수수량']}/{self.R['기초수량']}" 
+                self.R['진행시작'] = True
+    
+    def today_buy_S(self) :
+        
+        if  self.M['당일종가'] <= self.S['매수예가'] and self.S['예정수량']: 
+            self.S['매수수량']  = self.S['예정수량']
+            self.S['매수금액']  = self.S['매수수량'] * self.M['당일종가']
+            self.S['거래코드']  = f"B{self.S['매수수량']}" 
+            self.S['진행상황']  = '일반매수'
 
-            # R 전략, S 전략의 매수가격은 V전략 매수가격 보다 같거나 작다.
-            self.today_buy_RST(self.R,'R')
-            self.today_buy_RST(self.S,'S')
-            self.today_buy_T()
-            
-# -------------------------------------------------------------------------------------------------------------------------------------------
-# chance_qty : 매수 수량을 계산한다
-# -------------------------------------------------------------------------------------------------------------------------------------------            
-    def chance_qty(self,basic_qty,key) :
-            
-            찬스수량 = 0   
-            day_limit = 6 if key == 'R' else 7 
-            day_count = min(self.M['현재날수']+self.M['찬스일가'],day_limit)
-            for i in range(0,day_count) : 
-                찬스수량 += my.ceil( basic_qty *(i*self.M['비중조절'] + 1))
-            return 찬스수량   
+            if  not self.S['진행시작'] and self.M['현재날수']>self.M['대기전략'] :
+                self.S['거래코드'] = f"B{self.S['매수수량']}/{self.S['기초수량']}" 
+                self.S['진행시작'] = True
+
+    def today_buy_N(self) :
+        
+        if  self.M['당일종가'] <= self.N['매수예가'] and self.N['예정수량'] :
+            self.N['매수수량']  = self.N['예정수량']
+            self.N['매수금액']  = self.N['매수수량'] * self.M['당일종가']
+            self.N['매수차수'] += 1 
+            self.N['거래코드']  = f"{self.N['매수차수']}B {self.N['매수수량']}"
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
 # tomorrow_buy : 다음 날의 매수예정 수량을 계산한다 
-# -------------------------------------------------------------------------------------------------------------------------------------------    
-    def tomorrow_buy_RST(self,tac,key)  :
+# -------------------------------------------------------------------------------------------------------------------------------------------   
+    def take_chance(self,tac) :
+
+        H = self.V['보유수량']
+        n = self.V['예정수량']
+        A = self.V['총매수금']
+        if H == 0 : return 0
+        p = tac['진입시점'] if self.M['기본진행'] else tac['회복시점']
+
+        N = H + n
+        k = N / (1+p/100)
+        cp = round(A/(k-n),2)
+        # R,S 의 매수가는 V의 매수가보다 낮아야 한다
+        return cp if cp < self.V['매수예가'] else self.V['매수예가']
+    
+    def chance_qty(self,tac) :
         
-        if  not tac['현재잔액'] : tac['예정수량'] = 0; return
-
-        if  tac['진행시작'] :
-            tac['예정수량'] = my.ceil(tac['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
-
-            if  tac['현재잔액'] < tac['예정수량'] * self.M['매수가격'] : 
-                tac['예정수량'] = my.ceil(tac['기초수량'] * self.M['위매비중']) 
-                tac['매수단계'] = '매수제한'
-                
-                if  tac['현재잔액'] < tac['예정수량'] * self.M['매수가격'] : 
-                    tac['예정수량'] = 0
-                    tac['매수단계'] = '매수중단'
-                    
-                    if  self.D['이밸런싱'] == 'on' and key in ('R','S') :
-                        self.T['현재잔액'] += tac['현재잔액']
-                        tac['현재잔액'] = 0.0
+            cq = 0   
+            day_limit = 6 if tac == self.R else 7 
+            day_count = min(self.M['현재날수']+1+self.M['찬스일가'],day_limit)
+            for i in range(0,day_count) : cq += my.ceil( tac['기초수량'] *(i*self.M['비중조절'] + 1))
+            if cq * tac['매수예가'] > tac['현재잔액'] : cq = int(tac['현재잔액']/tac['매수예가'])
+            return cq   
+         
+    def check_balance(self,tac) :
         
-        else :  
-            tac['매수가격'] = self.take_chance(tac)
-
-    def tomorrow_buy_T(self) :
+        if  tac['현재잔액'] < tac['예정수량'] * tac['매수예가'] : 
+            tac['예정수량'] = my.ceil(tac['기초수량'] * self.M['위매비중']) 
+            tac['매수단계'] = '매수제한'
+            
+            if  tac['현재잔액'] < tac['예정수량'] * tac['매수예가'] : 
+                tac['예정수량'] = 0
+                tac['매수단계'] = '매수중단'
+                if self.D['이밸런싱'] == 'on' and tac in (self.R,self.S): self.N['현재잔액'] += tac['현재잔액']; tac['현재잔액'] = 0.0
         
-        if self.T['매수차수'] >= 5 : self.T['예정수량'] = 0; return
-        if self.T['매수차수'] == 4 : self.T['매금단계'][5] = self.T['현재잔액']
-        
-        if  self.T['보유수량'] :
-            self.T['매수가격'] = round( self.M['당일종가'] * self.N['평단가치'],2 ) 
-        else :
-            self.T['매수가격'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['당일연속'] == 2 else round(self.M['당일종가'] * self.N['진입가치'],2)    
-        
-        self.T['예정수량'] = int( self.T['매금단계'][self.T['매수차수']+1]/ self.T['매수가격'] )         
-
-
-    def tomorrow_buy(self) :
-
-        self.M['매수가격'] = round(self.M['당일종가']*self.M['평단가치'],2)
+    # V tactic
+    def tomorrow_buy_V(self) :
+        self.V['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
         self.V['예정수량'] = my.ceil(self.V['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
-        
-        if  self.V['현재잔액'] < self.V['예정수량'] * self.M['매수가격'] :
-            self.V['예정수량'] = my.ceil(self.V['기초수량'] * self.M['위매비중'])
-            self.V['매수단계'] = '매수제한' 
+        self.check_balance(self.V)                  
 
-            if  self.V['현재잔액'] < self.V['예정수량'] * self.M['매수가격'] : 
-                self.V['예정수량'] = 0
-                self.V['매수단계'] = '매수중단'
+
+    # R tactic
+    def tomorrow_buy_R(self) :
+        
+        if not self.R['현재잔액'] : self.R['예정수량'] = 0; return
+        
+        if  self.R['진행시작'] :
+            self.R['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
+            self.R['예정수량'] = my.ceil(self.R['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
+            
+        else :
+            if      self.M['현재날수'] == 1 :
+                    self.R['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
+                    self.R['예정수량'] = my.ceil(self.R['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
+                    
+            elif    self.M['현재날수'] >=2 : # 순서주의 ( 매수예가 부터 계산해야함 )
+                    self.R['매수예가'] = self.take_chance(self.R) 
+                    self.R['예정수량'] = self.chance_qty(self.R)
+        
+        self.check_balance(self.R)    
+    
+    # S tactic    
+    def tomorrow_buy_S(self) :
+        
+        if not self.S['현재잔액'] : self.R['예정수량'] = 0; return
+        
+        if  self.S['진행시작'] :
+            self.S['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
+            self.S['예정수량'] = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
+            
+        else :
+            if  self.M['현재날수'] >= self.M['대기전략'] : # 순서주의 ( 매수예가 부터 계산해야함 )
+                self.S['매수예가'] = self.take_chance(self.S) 
+                self.S['예정수량'] = self.chance_qty(self.S)
+                
+        self.check_balance(self.S)        
+    
+    # NT tactic               
+    def tomorrow_buy_N(self) :
+        
+        if self.N['매수차수'] >= 5 : self.N['예정수량'] = 0; return
+        if self.N['매수차수'] == 4 : self.N['매금단계'][5] = self.N['현재잔액']
+        
+        if  self.N['보유수량'] :
+            self.N['매수예가'] = round( self.M['당일종가'] * self.M['매수가치'],2 ) 
+        else :
+            self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['당일연속'] == 2 else round(self.M['당일종가'] * self.M['진입가치'],2)    
+        
+        self.N['예정수량'] = int( self.N['매금단계'][self.N['매수차수']+1]/ self.N['매수예가'] ) 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
 # tomorrow_sell : 다음 날의 매도가격을 계산한다 
 # -------------------------------------------------------------------------------------------------------------------------------------------
-    def tomorrow_sell_T(self) :
+    def tomorrow_sel_N(self) :
         
-        if   self.T['매수차수'] == 2 : self.T['매도가격'] = my.round_up(self.T['평균단가'] * self.N['이매가치'] )
-        elif self.T['매수차수'] == 3 : self.T['매도가격'] = my.round_up(self.T['평균단가'] * self.N['삼매가치'] )
-        elif self.T['매수차수'] == 4 : self.T['매도가격'] = my.round_up(self.T['평균단가'] * self.N['사매가치'] )
-        elif self.T['매수차수'] == 5 : self.T['매도가격'] = my.round_up(self.T['평균단가'] * self.N['오매가치'] )
-        else : self.T['매도가격'] = my.round_up(self.T['평균단가'] * self.N['일매가치'] )
+        if      self.N['매수차수'] == 2 : self.N['매도가격'] = my.round_up(self.N['평균단가'] * self.M['이매가치'] )
+        elif    self.N['매수차수'] == 3 : self.N['매도가격'] = my.round_up(self.N['평균단가'] * self.M['삼매가치'] )
+        elif    self.N['매수차수'] == 4 : self.N['매도가격'] = my.round_up(self.N['평균단가'] * self.M['사매가치'] )
+        elif    self.N['매수차수'] == 5 : self.N['매도가격'] = my.round_up(self.N['평균단가'] * self.M['오매가치'] )
+        else :  self.N['매도가격'] = my.round_up(self.N['평균단가'] * self.M['일매가치'] )
         
-        self.T['매도가격'] = min(self.T['매도가격'], self.M['매도가격'])
+        self.N['매도가격'] = min(self.N['매도가격'], self.M['매도가격'])
     
-    def tomorrow_sell(self) :
+    def tomorrow_sel_A(self) :
 
         # [기본진행]---------------------------------------------------------------------------------------------
         if  self.M['기본진행'] :
-            
+
             if  self.V['매수단계'] not in ('매수제한','매수중단') :  
                 self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
                 
@@ -376,41 +399,28 @@ class RSN :
             self.M['매도가격'] = min(self.M['매도가격'],CPRICE)    
 
     def tomorrow_step(self)   :
+        # 현재잔액 상태를 파악하기 위해서, buy 검토가 sell 검토보다 빨라야 함, R,S의 매수가격은 V이 매수가격보다 작아야 하므로 V부터 검토하여야 함
+        self.tomorrow_buy_V()
+        self.tomorrow_buy_R()
+        self.tomorrow_buy_S()
+        self.tomorrow_buy_N()
+        self.tomorrow_sel_A()
+        self.tomorrow_sel_N()
         
-        self.tomorrow_buy()
-        self.tomorrow_sell()
-        self.tomorrow_sell_T()
-        self.tomorrow_buy_RST(self.R,'R')
-        self.tomorrow_buy_RST(self.S,'S')
-        self.tomorrow_buy_T()
-
-        if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01
-
-# -------------------------------------------------------------------------------------------------------------------------------------------
-# take_chance : 진입시점에 따른 매수 수량을 계산한다 
-# -------------------------------------------------------------------------------------------------------------------------------------------        
-    def take_chance(self,tac) :
-
-        H = self.V['보유수량']
-        n = self.V['예정수량']
-        A = self.V['총매수금']
-        if H == 0 : return 0
-        p = tac['진입시점'] if self.M['기본진행'] else tac['회복시점']
-
-        N = H + n
-        k = N / (1+p/100)
-        return round(A/(k-n),2)
+        # 매수가격은 매도가격보다 낮아야 한다
+        for tac in (self.V,self.R,self.S) : 
+            if tac['매수예가'] >= self.M['매도가격'] : tac['매수예가'] = self.M['매도가격']-0.01
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
 # new_day : 첫날 매수에 대한 처리를 한다 
 # -------------------------------------------------------------------------------------------------------------------------------------------     
     def new_day(self) :
 
-        self.R['매수가격'] = 0.0;  self.R['진행시작'] = False; self.R['매수금액'] = 0.0; self.R['매수수량'] = 0
-        self.S['매수가격'] = 0.0;  self.S['진행시작'] = False; self.S['매수금액'] = 0.0; self.S['매수수량'] = 0
-        self.T['매수가격'] = 0.0;  self.T['진행시작'] = False; self.T['매수금액'] = 0.0; self.T['매수수량'] = 0
+        self.R['매수예가'] = 0.0;  self.R['진행시작'] = False; self.R['매수금액'] = 0.0; self.R['매수수량'] = 0
+        self.S['매수예가'] = 0.0;  self.S['진행시작'] = False; self.S['매수금액'] = 0.0; self.S['매수수량'] = 0
+        self.N['매수예가'] = 0.0;  self.N['진행시작'] = False; self.N['매수금액'] = 0.0; self.N['매수수량'] = 0
         
-        self.T['중익합계'] = 0.0;  self.T['중매합계'] = 0.0
+        self.N['중익합계'] = 0.0;  self.N['중매합계'] = 0.0
 
         self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가'],0)
             
@@ -439,23 +449,22 @@ class RSN :
         # --------------------------------------------------
         # T 매수 여부 판단
         # --------------------------------------------------   
-            진입단가 = round(self.M['전일종가'] * self.N['진입가치'],2)
-            if  self.M['당일연속'] == self.N['진입일자'] : 진입단가 = round(self.M['전일종가'] -0.01,2 ) 
+            진입단가 = round(self.M['전일종가'] * self.M['진입가치'],2)
+            if  self.M['당일연속'] == self.M['진입일자'] : 진입단가 = round(self.M['전일종가'] -0.01,2 ) 
             
             if  self.M['당일종가'] <= 진입단가 :
-                self.T['매수수량']  = int( self.T['매금단계'][1]/진입단가 )
-                self.T['수익현황']  = self.T['현수익률'] = 0.0
-                self.T['보유수량']  = self.T['매수수량']
-                self.T['평균단가']  = self.M['당일종가']
-                self.T['매수금액']  = self.M['당일종가'] * self.T['매수수량'] 
-                self.T['총매수금']  = self.T['평가금액'] = self.T['매수금액']
-                self.T['현재잔액'] -= self.T['매수금액']
-                self.T['거래코드']  = f"1B{self.T['매수수량']}" 
-                self.T['매수차수']  = 1
+                self.N['매수수량']  = int( self.N['매금단계'][1]/진입단가 )
+                self.N['수익현황']  = self.N['현수익률'] = 0.0
+                self.N['보유수량']  = self.N['매수수량']
+                self.N['평균단가']  = self.M['당일종가']
+                self.N['매수금액']  = self.M['당일종가'] * self.N['매수수량'] 
+                self.N['총매수금']  = self.N['평가금액'] = self.N['매수금액']
+                self.N['현재잔액'] -= self.N['매수금액']
+                self.N['거래코드']  = f"1B{self.N['매수수량']}" 
+                self.N['매수차수']  = 1
                 
-                if self.D['수료적용'] == 'on' : self.T['수수료등'] = self.commission(self.T['매수금액'],1); self.T['현재잔액'] -= self.T['수수료등']
+                if self.D['수료적용'] == 'on' : self.N['수수료등'] = self.commission(self.N['매수금액'],1); self.N['현재잔액'] -= self.N['수수료등']
                 
-            
             return True
 
         else : 
@@ -477,7 +486,7 @@ class RSN :
             self.M['당일연속'] = int(BD['add10'])
             self.M['전일연속'] = int(self.B[idx-1]['add10']) 
              
-            self.V['거래코드'] = self.R['거래코드'] = self.S['거래코드'] = self.T['거래코드'] = ' '
+            self.V['거래코드'] = self.R['거래코드'] = self.S['거래코드'] = self.N['거래코드'] = ' '
             self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','실현수익'],0)
             
             # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정값 이상으로 상승 시 건너뛰기 위함
@@ -486,7 +495,10 @@ class RSN :
                 else : self.M['첫날기록'] = True; continue
 
             self.today_sell()
-            self.today_buy()
+            self.today_buy_V()
+            self.today_buy_R()
+            self.today_buy_S()
+            self.today_buy_N()
             self.calculate()
             self.tomorrow_step()
             self.increase_count(printOut)
@@ -497,7 +509,7 @@ class RSN :
             self.V[k] = val
             self.R[k] = val
             self.S[k] = val
-            self.T[k] = val
+            self.N[k] = val
 
     def result(self) :
 
@@ -507,17 +519,17 @@ class RSN :
         self.D['MDD1'] = f"{self.V['진최하락']:.2f}"; self.D['MDD_DAY1'] = self.V['최하일자'][2:]
         self.D['MDD2'] = f"{self.R['진최하락']:.2f}"; self.D['MDD_DAY2'] = self.R['최하일자'][2:]
         self.D['MDD3'] = f"{self.S['진최하락']:.2f}"; self.D['MDD_DAY3'] = self.S['최하일자'][2:]
-        self.D['MDD4'] = f"{self.T['진최하락']:.2f}"; self.D['MDD_DAY4'] = self.T['최하일자'][2:]
+        self.D['MDD4'] = f"{self.N['진최하락']:.2f}"; self.D['MDD_DAY4'] = self.N['최하일자'][2:]
 
-        총매입금  = self.R['총매수금'] + self.S['총매수금'] + self.T['총매수금']
-        총보유량  = self.R['보유수량'] + self.S['보유수량'] + self.T['보유수량']
+        총매입금  = self.R['총매수금'] + self.S['총매수금'] + self.N['총매수금']
+        총보유량  = self.R['보유수량'] + self.S['보유수량'] + self.N['보유수량']
         총평가금  = self.M['당일종가'] * 총보유량
         평가손익  = 총평가금 - 총매입금
         
         초기자본1 = float(self.D['일반자금'].replace(',','')); 최종자본1=self.V['평가금액']+self.V['현재잔액']; 최종수익1=최종자본1-초기자본1; self.D['v_profit']=round((최종수익1/초기자본1)*100,2)
         초기자본2 = float(self.D['기회자금'].replace(',','')); 최종자본2=self.R['평가금액']+self.R['현재잔액']; 최종수익2=최종자본2-초기자본2; self.D['r_profit']=round((최종수익2/초기자본2)*100,2)
         초기자본3 = float(self.D['안정자금'].replace(',','')); 최종자본3=self.S['평가금액']+self.S['현재잔액']; 최종수익3=최종자본3-초기자본3; self.D['s_profit']=round((최종수익3/초기자본3)*100,2)
-        초기자본4 = float(self.D['생활자금'].replace(',','')); 최종자본4=self.T['평가금액']+self.T['현재잔액']; 최종수익4=최종자본4-초기자본4; self.D['t_profit']=round((최종수익4/초기자본4)*100,2)
+        초기자본4 = float(self.D['생활자금'].replace(',','')); 최종자본4=self.N['평가금액']+self.N['현재잔액']; 최종수익4=최종자본4-초기자본4; self.D['t_profit']=round((최종수익4/초기자본4)*100,2)
         
         초기자본 = 초기자본2 + 초기자본3 + 초기자본4; 최종자본 = 최종자본2 + 최종자본3 + 최종자본4; 최종수익 = 최종자본 - 초기자본 
         self.D['profit_t'] = round((최종수익/초기자본) * 100,2)
@@ -633,23 +645,23 @@ class RSN :
             
             NT = self.DB.parameters_dict('매매전략/N310')
             
-            self.N['평단가치']  = NT['N0201']  # 첫날 매수 이후 (-0%)이상 하락 시 매수
-            self.N['진입일자']  = NT['N0202']
-            self.N['진입가치']  = NT['N0203']  # 10% 하락 시 진입
-            self.N['일매가치']  = NT['N0301']  # 평단가의 1% 이상 수익 시 매도  
-            self.N['이매가치']  = NT['N0302']
-            self.N['삼매가치']  = NT['N0303']
-            self.N['사매가치']  = NT['N0304']
-            self.N['오매가치']  = NT['N0305']
+            self.M['매수가치']  = NT['N0201']  # 첫날 매수 이후 (-0%)이상 하락 시 매수
+            self.M['진입일자']  = NT['N0202']
+            self.M['진입가치']  = NT['N0203']  # 10% 하락 시 진입
+            self.M['일매가치']  = NT['N0301']  # 평단가의 1% 이상 수익 시 매도  
+            self.M['이매가치']  = NT['N0302']
+            self.M['삼매가치']  = NT['N0303']
+            self.M['사매가치']  = NT['N0304']
+            self.M['오매가치']  = NT['N0305']
             
-            self.N['분할공일']  = NT['N0101'] 
-            self.N['분할공이']  = NT['N0102'] 
-            self.N['분할공삼']  = NT['N0103'] 
-            self.N['분할공사']  = NT['N0104']
+            self.M['분할공일']  = NT['N0101'] 
+            self.M['분할공이']  = NT['N0102'] 
+            self.M['분할공삼']  = NT['N0103'] 
+            self.M['분할공사']  = NT['N0104']
 
         self.M['기본진행']  = True  
-        self.V['매수단계']  = self.R['매수단계'] = self.S['매수단계'] = self.T['매수단계'] = '일반매수'
-        self.V['진행상황']  = self.R['진행상황'] = self.S['진행상황'] = self.T['진행상황'] = '매수대기'
+        self.V['매수단계']  = self.R['매수단계'] = self.S['매수단계'] = self.N['매수단계'] = '일반매수'
+        self.V['진행상황']  = self.R['진행상황'] = self.S['진행상황'] = self.N['진행상황'] = '매수대기'
         self.M['기록시즌']  = 0
         self.D['총수수료'] = 0.0
         
@@ -673,11 +685,11 @@ class RSN :
         self.V['현재잔액']  = self.V['시초금액'] = my.sv(self.D['일반자금'])
         self.R['현재잔액']  = self.R['시초금액'] = my.sv(self.D['기회자금'])
         self.S['현재잔액']  = self.S['시초금액'] = my.sv(self.D['안정자금'])
-        self.T['현재잔액']  = self.T['시초금액'] = my.sv(self.D['생활자금'])
+        self.N['현재잔액']  = self.N['시초금액'] = my.sv(self.D['생활자금'])
         
         # 잔액 분할
-        self.T['매금단계'] = [0.0,0.0,0.0,0.0,0.0,0.0]
-        self.rebalanceT()
+        self.N['매금단계'] = [0.0,0.0,0.0,0.0,0.0,0.0]
+        self.rebalanceN()
 
         self.V['일매수금']  = int(self.V['현재잔액'] / self.M['분할횟수'])
         self.R['일매수금']  = int(self.R['현재잔액'] / self.M['분할횟수'])
@@ -688,12 +700,12 @@ class RSN :
         self.M['최장일수']  = 0   # 최고 오래 지속된 시즌의 일수
         
         self.M['첫날기록']  = False
-        self.R['진행시작']  = self.S['진행시작'] = self.T['진행시작']  = False
+        self.R['진행시작']  = self.S['진행시작'] = self.N['진행시작']  = False
 
         self.M['전일종가']  = 0.0
         
         self.set_value(['매수수량','매도수량','예정수량','보유수량'],0)
-        self.set_value(['매수금액','매도금액','실현수익','총매수금','평균단가','수익현황','현수익률','평가금액','매수가격','수수료등'],0.0)
+        self.set_value(['매수금액','매도금액','실현수익','총매수금','평균단가','수익현황','현수익률','평가금액','매수예가','수수료등'],0.0)
 
         self.set_value(['진최하락'],0)
         self.set_value(['최하일자'],'')
@@ -714,7 +726,7 @@ class RSN :
             self.D['일회익절'] = 0; self.D['기회익절'] = 0; self.D['안회익절'] = 0; self.D['생회익절'] = 0
             self.D['일회손절'] = 0; self.D['기회손절'] = 0; self.D['안회손절'] = 0; self.D['생회손절'] = 0
 
-            self.D['손익통계'] = [[self.D['시작일자'],f"{self.R['현재잔액']+self.S['현재잔액']+self.T['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE",'','0.00']]
+            self.D['손익통계'] = [[self.D['시작일자'],f"{self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE",'','0.00']]
             self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
             self.D['손익저점'] = 100.0
             self.D['저점날자'] = ''
@@ -730,7 +742,7 @@ class RSN :
         self.D['N_단계'] = self.V['매수단계']
 
         if  self.R['보유수량'] :
-            self.D['NT-AVG'] = round((self.R['총매수금']+self.S['총매수금']+self.T['총매수금'])/(self.R['보유수량']+self.S['보유수량']+self.T['보유수량']),2)
+            self.D['NT-AVG'] = round((self.R['총매수금']+self.S['총매수금']+self.N['총매수금'])/(self.R['보유수량']+self.S['보유수량']+self.N['보유수량']),2)
         else :
             self.D['NT-AVG'] = '0.00'
             
@@ -751,13 +763,13 @@ class RSN :
             self.D['N_일반매수가'] = self.D['N_기회매수가'] = round(self.M['당일종가'] * self.M['큰단가치'],2)
             self.D['N_안정매수가'] = self.D['N_생활매수가'] = 0.0
             
-            self.D['N_생활매수가'] = round(self.M['당일종가'] * self.N['진입가치'],2)
-            if self.M['당일연속'] == self.N['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] -0.01,2 ) 
+            self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['진입가치'],2)
+            if self.M['당일연속'] == self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] -0.01,2 ) 
             
             self.D['N_일반매수량'] = self.D['N_일반기초']
             self.D['N_기회매수량'] = self.D['N_기회기초']
             self.D['N_안정매수량'] = 0
-            self.D['N_생활매수량'] = int( self.T['매금단계'][1] / self.D['N_생활매수가'] )
+            self.D['N_생활매수량'] = int( self.N['매금단계'][1] / self.D['N_생활매수가'] )
 
             self.D['N_일반매도량'] = self.D['N_기회매도량'] = self.D['N_안정매도량'] = self.D['N_생활매도량'] = 0
 
@@ -768,8 +780,6 @@ class RSN :
             
         else : 
             
-            self.next_buy_RST()
-
             self.D['N_일반기초'] = self.V['기초수량']
             self.D['N_기회기초'] = self.R['기초수량']
             self.D['N_안정기초'] = self.S['기초수량']
@@ -777,8 +787,8 @@ class RSN :
             self.V['진행시작'] = True
             
             for (tac,key) in [(self.V,'일반'),(self.R,'기회'),(self.S,'안정')] : 
-                self.D['N_'+key+'매수량'] = tac['매수수량']
-                self.D['N_'+key+'매수가'] = self.M['매수가격'] if tac['진행시작'] else tac['매수가격']
+                self.D['N_'+key+'매수량'] = tac['예정수량']
+                self.D['N_'+key+'매수가'] = tac['매수예가']
                 self.D['N_'+key+'평대비'] = self.next_percent(tac['평균단가'],self.D['N_'+key+'매수가'])
                 self.D['N_'+key+'종대비'] = self.next_percent(self.M['당일종가'],self.D['N_'+key+'매수가'])
                 self.D['N_'+key+'매수가'] = f"{self.D['N_'+key+'매수가']:,.2f}"
@@ -788,50 +798,22 @@ class RSN :
                 self.D['N_'+key+'도평비'] = self.next_percent(tac['평균단가'],self.M['매도가격'])
                 self.D['N_'+key+'도종비'] = self.next_percent(self.M['당일종가'],self.M['매도가격'])
 
-            self.D['N_생활매수량'] = self.T['예정수량']
-            self.D['N_생활매수가'] = self.T['매수가격']
-            self.D['N_생활평대비'] = self.next_percent(self.T['평균단가'],self.D['N_생활매수가']) 
+            self.D['N_생활매수량'] = self.N['예정수량']
+            self.D['N_생활매수가'] = self.N['매수예가']
+            self.D['N_생활평대비'] = self.next_percent(self.N['평균단가'],self.D['N_생활매수가']) 
             self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
             self.D['N_생활매수가'] = f"{self.D['N_생활매수가']:,.2f}"
             
-            self.D['N_생활매도량'] = self.T['보유수량']
-            self.D['N_생활매도가'] = f"{self.T['매도가격']:.2f}"
-            self.D['N_생활도평비'] = self.next_percent(self.T['평균단가'],self.T['매도가격'])
-            self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.T['매도가격'])
-            
-            
+            self.D['N_생활매도량'] = self.N['보유수량']
+            self.D['N_생활매도가'] = f"{self.N['매도가격']:.2f}"
+            self.D['N_생활도평비'] = self.next_percent(self.N['평균단가'],self.N['매도가격'])
+            self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.N['매도가격'])
             
     def next_percent(self,a,b) :
         
         if not a : return ''
         return f"{(b/a-1)*100:.2f}"
     
-    def next_buy_RST(self) :
-
-        self.V['매수수량']  = my.ceil(self.V['기초수량'] * ((self.M['현재날수']-1)*self.M['비중조절'] + 1))
-
-        if  self.V['현재잔액'] < self.V['매수수량'] * self.M['매수가격'] : 
-            self.V['매수수량'] = my.ceil(self.V['기초수량'] * self.M['위매비중'])
-            if  self.V['현재잔액'] < self.V['매수수량'] * self.M['매수가격'] : self.V['예정수량'] = 0
-            
-        for (tac,key) in [(self.R,'R'),(self.S,'S')] :
-            # 이틀 째까지는 전략 V 와 같은 패턴
-            days = 2 if key == 'R' else self.M['대기전략']
-            if  self.M['현재날수'] == days and key == 'R' : self.R['매수수량'] = my.ceil(self.R['기초수량'] * (self.M['비중조절'] + 1))
-
-            if  tac['진행시작'] : tac['매수수량'] = tac['예정수량'] 
-
-            else :
-                if  self.M['현재날수'] > days  :
-                    
-                    tac['매수가격'] = self.take_chance(tac)
-                    if tac['매수가격'] > self.M['매수가격'] : tac['매수가격'] = self.M['매수가격']
-                    
-                    tac['매수수량'] = self.chance_qty(tac['기초수량'],key)
-                    if tac['매수수량'] * tac['매수가격'] > tac['현재잔액'] : tac['매수수량'] = int(tac['현재잔액']/tac['매수가격'])
-                else :
-                    tac['매수가격'] = self.M['매수가격']
-                    
     # ------------------------------------------------------------------------------------------------------------------------------------------
     # same with xtask END
     # ------------------------------------------------------------------------------------------------------------------------------------------
@@ -854,7 +836,7 @@ class RSN :
         tx['일반익률'] = f"<span style='color:{clr}'>{round(self.V['현수익률'],4):,.2f}</span>"
         tx['일반잔액'] = f"{self.V['현재잔액']:,.2f}"
         #--------------------------------------------------------
-        for tac,key,key2 in [(self.R,'기회','r'),(self.S,'안정','s'),(self.T,'생활','t')] :
+        for tac,key,key2 in [(self.R,'기회','r'),(self.S,'안정','s'),(self.N,'생활','t')] :
             tx[key+'진행'] = f"{round(tac['매도금액'],4):,.2f}" if tac['매도금액'] else tac['거래코드']
             tx[key+'평균'] = f"<span class='avg{key2}{self.M['기록시즌']}'>{round(tac['평균단가'],4):,.4f}</span>" if tac['평균단가'] else f"<span class='avg{key2}{self.M['기록시즌']}'></span>"
             clr = "#F6CECE" if tac['현수익률'] > 0 else "#CED8F6"
@@ -873,11 +855,11 @@ class RSN :
         else : self.D['avge_r'].append('null')
         if avg_s := round(self.S['평균단가'],2) : self.D['avge_s'].append(avg_s)
         else : self.D['avge_s'].append('null') 
-        if avg_t := round(self.T['평균단가'],2) : self.D['avge_t'].append(avg_t)
+        if avg_t := round(self.N['평균단가'],2) : self.D['avge_t'].append(avg_t)
         else : self.D['avge_t'].append('null')     
         
         self.D['c_date'].append(self.M['현재일자'][2:])
-        self.D['totalV'].append(round(self.R['현재잔액']+self.R['평가금액']+self.S['현재잔액']+self.S['평가금액']+self.T['현재잔액']+self.T['평가금액'],0))
+        self.D['totalV'].append(round(self.R['현재잔액']+self.R['평가금액']+self.S['현재잔액']+self.S['평가금액']+self.N['현재잔액']+self.N['평가금액'],0))
         
 
     def get_simResult(self,start='',end='',result=False) :
@@ -960,7 +942,7 @@ class RSN :
         if   tactic == 'V' : tac = self.V ; RST_board = self.M['일반보드']
         elif tactic == 'R' : tac = self.R ; RST_board = self.M['기회보드']
         elif tactic == 'S' : tac = self.S ; RST_board = self.M['안정보드']
-        elif tactic == 'T' : tac = self.T ; RST_board = self.M['생활보드']
+        elif tactic == 'T' : tac = self.N ; RST_board = self.M['생활보드']
 
         preDate = self.DB.one(f"SELECT max(add0) FROM {RST_board} WHERE add0 < '{theDate}'")
         if not preDate : return 
