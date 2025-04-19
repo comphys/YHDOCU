@@ -554,7 +554,7 @@ let closeP_ori   = {{D['clse_p']|safe}};
 
 let avge_r_ori   = {{D['avge_r']|safe}};
 let avge_s_ori   = {{D['avge_s']|safe}};
-let avge_t_ori   = {{D['avge_t']|safe}};
+let avge_n_ori   = {{D['avge_n']|safe}};
 let totalV_ori   = {{D['totalV']|safe}};
 let labels_main_ori = {{D['c_date']|safe}};
 
@@ -562,7 +562,7 @@ let closeP   = closeP_ori.slice(0);
 
 let avge_r   = avge_r_ori.slice(0);
 let avge_s   = avge_s_ori.slice(0);
-let avge_t   = avge_t_ori.slice(0);
+let avge_n   = avge_n_ori.slice(0);
 
 let totalV   = totalV_ori.slice(0);
 let labels_main = labels_main_ori.slice(0);
@@ -572,7 +572,7 @@ let data_count = labels_main.length
 if(data_count > 100) {
 	avge_r.fill(null) 
 	avge_s.fill(null)
-	avge_t.fill(null) 
+	avge_n.fill(null) 
 }
 
 if(data_count <= 100) {
@@ -602,8 +602,8 @@ const data_main = {
 			lineTension:0.2
         },
 		{
-            label:' 평균단가T',
-            data : avge_t,
+            label:' 평균단가N',
+            data : avge_n,
 			borderColor:'lightgreen', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'lightgreen',
 			lineTension:0.2
         },
@@ -675,7 +675,7 @@ data_count = myChart_main.config.data.labels.length
 myChart_main.config.data.datasets[0].data =  closeP_ori.slice(new_s,new_e);
 myChart_main.config.data.datasets[1].data =  avge_r_ori.slice(new_s,new_e);
 myChart_main.config.data.datasets[2].data =  avge_s_ori.slice(new_s,new_e);
-myChart_main.config.data.datasets[3].data =  avge_t_ori.slice(new_s,new_e);
+myChart_main.config.data.datasets[3].data =  avge_n_ori.slice(new_s,new_e);
 myChart_main.config.data.datasets[4].data =  totalV_ori.slice(new_s,new_e);
 
 
