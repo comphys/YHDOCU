@@ -55,11 +55,8 @@ class RSN :
             tac['중익합계'] += tac['수익현황']  
             tac['총매수금']  = 0.0
             
-            if  tac == self.N : 
-                tac['실수익률']  = round( (tac['현재잔액'] / tac['매금단계'][0] -1) * 100, 2) 
-                self.rebalanceN()
-            else :
-                tac['실수익률']  = round( (tac['현재잔액'] / tac['시초금액'] -1   ) * 100, 2)
+            tac['실수익률']  = round( (tac['현재잔액'] / tac['시초금액'] -1   ) * 100, 2)
+            if  tac == self.N : self.rebalanceN()
             
         if  self.V['매도수량'] :
             tac['매도금액'] = tac['중매합계']
@@ -261,7 +258,7 @@ class RSN :
                 tac['예정수량'] = 0
                 tac['매수상태'] = '매수중단'
                 if  self.D['이밸런싱'] == 'on' and tac in (self.R,self.S): 
-                    self.N['현재잔액'] += tac['현재잔액']; tac['현재잔액'] = 0.0
+                    if tac['현재잔액'] : self.N['현재잔액'] += tac['현재잔액']; self.N['시초금액'] += tac['현재잔액']; tac['시초금액'] -= tac['현재잔액'];  tac['현재잔액'] = 0.0
         
     # V tactic
     def tomorrow_buy_V(self) :
@@ -283,11 +280,11 @@ class RSN :
             if      self.M['현재날수'] == 1 :
                     self.R['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
                     self.R['예정수량'] = my.ceil(self.R['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
-                    
-            elif    self.M['현재날수'] >=2 : # 순서주의 ( 매수예가 부터 계산해야함 )
-                    self.R['매수예가'] = self.take_chance(self.R) 
+            else :
+                    매수예가 = round( self.M['당일종가'] - 0.01, 2 ) if self.M['당일연속'] == 2 else round(self.M['당일종가'] * self.M['매입가치'],2)  
+                    self.R['매수예가'] = min(매수예가,self.take_chance(self.R)) # 순서주의 ( 매수예가 부터 계산해야함 )
                     self.R['예정수량'] = self.chance_qty(self.R)
-        
+
         self.check_balance(self.R)    
     
     # S tactic    
@@ -300,8 +297,8 @@ class RSN :
             self.S['예정수량'] = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
             
         else :
-            if  self.M['현재날수'] >= self.M['대기전략'] : # 순서주의 ( 매수예가 부터 계산해야함 )
-                self.S['매수예가'] = self.take_chance(self.S) 
+            if  self.M['현재날수'] >= self.M['대기전략'] : 
+                self.S['매수예가'] = self.take_chance(self.S)   # 순서주의 ( 매수예가 부터 계산해야함 )
                 self.S['예정수량'] = self.chance_qty(self.S)
                 
         self.check_balance(self.S)        
@@ -313,7 +310,7 @@ class RSN :
         if self.N['매수차수'] == 4 : self.N['매금단계'][5] = self.N['현재잔액']
         
         if  self.N['보유수량'] :
-            self.N['매수예가'] = round( self.M['당일종가'] * self.M['매수가치'],2 ) 
+            self.N['매수예가'] = round( self.M['당일종가'] * self.M['매입가치'],2 ) 
         else :
             self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['당일연속'] == 2 else round(self.M['당일종가'] * self.M['진입가치'],2)    
         
@@ -356,16 +353,13 @@ class RSN :
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
         
         # [최종결정]---------------------------------------------------------------------------------------------
-        # 2024.06.18 이후 폭락장 보정
-        CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승']) if self.M['현재날수'] <= 10 else my.round_up(self.M['당일종가'] * self.M['종가탈출'])
-        # [24일] 이후 강매가치 적용
+        # 2024.06.18 이후 폭락장 보정, RSN 에선 종가상승값만 사용
+        CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승']) 
         LPRICE = my.round_up(self.V['평균단가'] * self.M['강매가치'])
         
         if  self.M['현재날수'] >= self.M['강매시작'] : 
-            # 시초금액합 = my.round_up(self.R['시초금액']+self.S['시초금액']+self.N['시초금액']-self.N['현재잔액'])
-            # 현재수량합 = self.R['보유수량']+self.S['보유수량']+self.N['보유수량']
             # LPRICE = my.round_up(시초금액합 / 현재수량합 )
-            self.M['매도예가']  = my.round_up(self.V['평균단가'] * self.M['강매가치'])
+            self.M['매도예가']  = LPRICE
 
         if  CPRICE >= LPRICE : 
             self.M['매도예가'] = min(self.M['매도예가'],CPRICE)
@@ -611,7 +605,7 @@ class RSN :
             
             NT = self.DB.parameters_dict('매매전략/N310')
             
-            self.M['매수가치']  = NT['N0201']  # 첫날 매수 이후 (-0%)이상 하락 시 매수
+            self.M['매입가치']  = NT['N0201']  # 첫날 매수 이후 (-0%)이상 하락 시 매수
             self.M['진입일자']  = NT['N0202']
             self.M['진입가치']  = NT['N0203']  # 10% 하락 시 진입
             self.M['각매가치']  = [NT['N0301'],NT['N0302'],NT['N0303'],NT['N0304'],NT['N0305']]
