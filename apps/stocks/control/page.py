@@ -138,6 +138,36 @@ class Page(Control) :
         RST.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
         
         return self.echo(RST.D)
+    
+    def rpd_rsnStat(self) :
+
+        self.D['종목코드'] = self.D['post']['종목코드']
+        self.D['일반자금'] = self.D['post']['일반자금']
+        self.D['기회자금'] = self.D['post']['기회자금']
+        self.D['안정자금'] = self.D['post']['안정자금']
+        self.D['생활자금'] = self.D['post']['생활자금']
+
+        self.D['시작일자'] = self.D['post']['통계시작']
+        self.D['통계시작'] = self.D['시작일자']
+        self.D['종료일자'] = self.D['post']['종료일자']
+        # -------------------
+        self.D['기회시점'] = self.D['post']['기회시점']
+        self.D['기회회복'] = self.D['post']['기회회복']
+        self.D['안정시점'] = self.D['post']['안정시점']
+        self.D['안정회복'] = self.D['post']['안정회복']
+
+        self.D['수료적용'] = self.D['post'].get('chk_fee','off')
+        self.D['세금적용'] = self.D['post'].get('chk_tax','off')
+        self.D['일밸런싱'] = self.D['post'].get('chk_brs','off')
+        self.D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
+
+        RST = self.load_app_lib('rsn')
+        RST.D |= self.D
+
+        RST.do_viewStat()
+        RST.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
+        
+        return self.echo(RST.D)
 
     def rpd_baseChart(self) :
 
@@ -171,6 +201,25 @@ class Page(Control) :
         self.D['세금적용'] = self.D['post'].get('chk_tax','off')
         
         VB = self.load_app_lib('n310')
+        VB.D |= self.D
+
+        VB.do_viewChart()
+
+        VB.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
+        return self.echo(VB.D)
+    
+    def rpd_generalTestChart(self) :
+
+        self.D['종목코드'] = 'SOXL'
+        self.D['전략선택'] = self.D['post']['전략선택']
+        self.D['일반자금'] = self.D['post']['일반자금']
+
+        self.D['시작일자'] = self.D['post']['시작일자']
+        self.D['종료일자'] = self.D['post']['종료일자']
+
+        self.D['수료적용'] = self.D['post'].get('chk_fee','off')
+        
+        VB = self.load_app_lib('getest')
         VB.D |= self.D
 
         VB.do_viewChart()

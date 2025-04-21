@@ -124,17 +124,18 @@ class RSN :
     def rebalanceN(self) :
 
         self.N['매금단계'][0] = self.N['현재잔액']   
-        self.N['매금단계'][1] = round(self.N['현재잔액'] * self.M['분할공일'],2)
-        self.N['매금단계'][2] = round(self.N['현재잔액'] * self.M['분할공이'],2)
-        self.N['매금단계'][3] = round(self.N['현재잔액'] * self.M['분할공삼'],2)
-        self.N['매금단계'][4] = round(self.N['현재잔액'] * self.M['분할공사'],2)
+        for i in [1,2,3,4] :   self.N['매금단계'][i] = round(self.N['현재잔액'] * self.M['분할매수'][i-1],2)
         self.N['매수차수'] = 0        
         
     def rebalance(self)  :
 
         total = self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액']
+        
+        # RN rebalance
         if  self.D['일밸런싱'] == 'on' :
-            self.R['현재잔액'] = self.S['현재잔액'] = self.N['현재잔액'] = round( total /3,2)
+            self.R['현재잔액'] = round(total*self.M['투자배분'][0]/100,2)
+            self.S['현재잔액'] = round(total*self.M['투자배분'][1]/100,2)
+            self.N['현재잔액'] = total - self.R['현재잔액'] - self.S['현재잔액']
 
         for tac in (self.V,self.R,self.S) :   
             tac['일매수금'] = int(tac['현재잔액']/self.M['분할횟수']) 
@@ -209,7 +210,7 @@ class RSN :
             self.S['거래코드']  = f"B{self.S['매수수량']}" 
             self.S['진행상황']  = '일반매수'
 
-            if  not self.S['진행시작'] and self.M['현재날수']>self.M['대기전략'] :
+            if  not self.S['진행시작'] and self.M['현재날수']>self.M['전략대기'] :
                 self.S['거래코드'] = f"B{self.S['매수수량']}/{self.S['기초수량']}" 
                 self.S['진행시작'] = True
 
@@ -251,14 +252,14 @@ class RSN :
     def check_balance(self,tac) :
         
         if  tac['현재잔액'] < tac['예정수량'] * tac['매수예가'] : 
-            tac['예정수량'] = my.ceil(tac['기초수량'] * self.M['위매비중']) 
+            tac['예정수량'] = my.ceil(tac['기초수량'] * self.M['제한비중']) 
             tac['매수상태'] = '매수제한'
             
             if  tac['현재잔액'] < tac['예정수량'] * tac['매수예가'] : 
                 tac['예정수량'] = 0
                 tac['매수상태'] = '매수중단'
                 if  self.D['이밸런싱'] == 'on' and tac in (self.R,self.S): 
-                    if tac['현재잔액'] : self.N['현재잔액'] += tac['현재잔액']; self.N['시초금액'] += tac['현재잔액']; tac['시초금액'] -= tac['현재잔액'];  tac['현재잔액'] = 0.0
+                    if  tac['현재잔액']: self.N['현재잔액'] += tac['현재잔액']; self.N['시초금액'] += tac['현재잔액']; tac['시초금액'] -= tac['현재잔액']; tac['현재잔액']  = 0.0
         
     # V tactic
     def tomorrow_buy_V(self) :
@@ -281,7 +282,7 @@ class RSN :
                     self.R['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
                     self.R['예정수량'] = my.ceil(self.R['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
             else :
-                    매수예가 = round( self.M['당일종가'] - 0.01, 2 ) if self.M['당일연속'] == 2 else round(self.M['당일종가'] * self.M['매입가치'],2)  
+                    매수예가 = round( self.M['당일종가'] - 0.01, 2 ) if self.M['당일연속'] >= 2 else round(self.M['당일종가'] * self.M['매입가치'],2)  
                     self.R['매수예가'] = min(매수예가,self.take_chance(self.R)) # 순서주의 ( 매수예가 부터 계산해야함 )
                     self.R['예정수량'] = self.chance_qty(self.R)
 
@@ -297,7 +298,7 @@ class RSN :
             self.S['예정수량'] = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
             
         else :
-            if  self.M['현재날수'] >= self.M['대기전략'] : 
+            if  self.M['현재날수'] >= self.M['전략대기'] : 
                 self.S['매수예가'] = self.take_chance(self.S)   # 순서주의 ( 매수예가 부터 계산해야함 )
                 self.S['예정수량'] = self.chance_qty(self.S)
                 
@@ -574,82 +575,86 @@ class RSN :
 # -------------------------------------------------------------------------------------------------------------------------------------------         
     def init_value(self) :
 
-        if '비중조절' not in self.M :
+        if '분할횟수' not in self.M :
             
-            ST = self.DB.parameters_dict('매매전략/VRS')
+            ST = self.DB.parameters_dict('매매전략/RSN')
             
-            self.M['비중조절']  = ST['01001']  
-            self.M['평단가치']  = ST['00300']  
-            self.M['큰단가치']  = ST['00200']  
-            self.M['첫매가치']  = ST['00400']  
-            self.M['둘매가치']  = ST['00500']  
-            self.M['강매시작']  = ST['00800']  
-            self.M['강매가치']  = ST['00700']  
-            self.M['위매비중']  = ST['01000']  
-            self.M['대기전략']  = ST['01003']
-            self.R['매도보정']  = ST['01100']
-            self.S['매도보정']  = ST['01200']
-            self.R['위기탈출']  = ST['01500']
-            self.M['종가상승']  = ST['01600'] 
-            self.M['종가탈출']  = ST['01601']
-             
-            self.M['매도대기']  = ST['00600']  
-            self.M['전략가치']  = ST['00900']  
-            self.M['회복탈출']  = ST['00901']  
-            self.M['분할횟수']  = ST['00100']  
-            self.M['찬스일가']  = ST['01002']  
-            self.M['일반보드']  = ST['03500']
-            self.M['기회보드']  = ST['03701']
-            self.M['안정보드']  = ST['03702']
-            self.M['생활보드']  = ST['03703']
+            # X 
+            self.M['일반보드']  = ST['TX010']  
+            self.M['기회보드']  = ST['TX020']  
+            self.M['안정보드']  = ST['TX030'] 
+            self.M['생활보드']  = ST['TX040']  
             
-            NT = self.DB.parameters_dict('매매전략/N310')
+            # V tactic 
+            self.M['분할횟수']  = ST['TV010']  # TV
+            self.M['큰단가치']  = ST['TV020']  # TV003
+            self.M['평단가치']  = ST['TV021']  # TV002
+            self.M['비중조절']  = ST['TV022']  # TV001 매수수량 가중치
+            self.M['제한비중']  = ST['TV023']  # TV008
+            self.M['첫매가치']  = ST['TV024']  # TV004
+            self.M['매도대기']  = ST['TV025']  # TV
+            self.M['둘매가치']  = ST['TV026']  # TV005
+            self.M['강매시작']  = ST['TV027']  # TV006
+            self.M['강매가치']  = ST['TV028']  # TV007
+            self.M['전략가치']  = ST['TV029']  # TV
+            self.M['종가상승']  = ST['TV030']  # TV
             
-            self.M['매입가치']  = NT['N0201']  # 첫날 매수 이후 (-0%)이상 하락 시 매수
-            self.M['진입일자']  = NT['N0202']
-            self.M['진입가치']  = NT['N0203']  # 10% 하락 시 진입
-            self.M['각매가치']  = [NT['N0301'],NT['N0302'],NT['N0303'],NT['N0304'],NT['N0305']]
+            # RS tactic
+            self.M['전략대기']  = ST['TR010']  # TS001
+            self.M['찬스일가']  = ST['TR011']  # TS
+            self.R['매도보정']  = ST['TR012']  # TR
+            self.S['매도보정']  = ST['TS010']  # TS
+            self.R['위기탈출']  = ST['TR013']  # TR
+            self.M['회복탈출']  = ST['TS011']  # TS
             
-            self.M['분할공일']  = NT['N0101'] 
-            self.M['분할공이']  = NT['N0102'] 
-            self.M['분할공삼']  = NT['N0103'] 
-            self.M['분할공사']  = NT['N0104']
+            # N tactic
+            분할 = my.sf(ST['TN010']); self.M['분할매수']  = [분할[0],분할[1],분할[2],분할[3]] # TN
+            각매 = my.sf(ST['TN011']); self.M['각매가치']  = [각매[0],각매[1],각매[2],각매[3],각매[4]] # TN
+            self.M['진입일자']  = ST['TN020']  # TN
+            self.M['진입가치']  = ST['TN021']
+            self.M['매입가치']  = ST['TN022']  # TN 첫날 매수 이후 (-0%)이상 하락 시 매수
+            
+            self.R['진입시점']  = float(self.D['기회시점']) if '기회시점' in self.D else ST['TR021'] #TR
+            self.R['회복시점']  = float(self.D['기회회복']) if '기회회복' in self.D else ST['TR022'] #TR
+            self.S['진입시점']  = float(self.D['안정시점']) if '안정시점' in self.D else ST['TS021'] #TS
+            self.S['회복시점']  = float(self.D['안정회복']) if '안정회복' in self.D else ST['TS022'] #TS
 
+            # 투자옵션 초기화 ----------------------------------------------------------------------------
+            if '가상손실' in self.D  and  self.D['가상손실'] == 'on' : self.M['기본진행']  = False     
+            if '수료적용' not in self.D : self.D['수료적용']  = 'on' 
+            if '세금적용' not in self.D : self.D['세금적용']  = 'off'
+            if '일밸런싱' not in self.D : self.D['일밸런싱']  = 'on'
+            if '이밸런싱' not in self.D : self.D['이밸런싱']  = 'on'
+            
+            # 투자자금 초기화 ----------------------------------------------------------------------------
+            self.M['투자자금'] = ST['TC010']
+            self.M['투자배분'] = my.sf(ST['TC012'])    
+            self.info(self.M['투자배분'])
+            if '일반자금' not in self.D : self.D['일반자금']  = 60000
+            if '기회자금' not in self.D : self.D['기회자금']  = round(self.M['투자자금']*self.M['투자배분'][0]/100,2)
+            if '안정자금' not in self.D : self.D['안정자금']  = round(self.M['투자자금']*self.M['투자배분'][1]/100,2)
+            if '생활자금' not in self.D : self.D['생활자금']  = self.M['투자자금'] - self.D['기회자금'] - self.D['안정자금']
+            self.info(f"{self.D['기회자금']} {self.D['안정자금']} {self.D['생활자금']}")
+            
+            
         self.M['기본진행']  = True  
         self.V['매수상태']  = self.R['매수상태'] = self.S['매수상태'] = self.N['매수상태'] = '일반매수'
         self.V['진행상황']  = self.R['진행상황'] = self.S['진행상황'] = self.N['진행상황'] = '매수대기'
         self.M['기록시즌']  = 0
         self.D['총수수료'] = 0.0
-        
-        self.R['진입시점']  = float(self.D['기회시점']) if '기회시점' in self.D else ST['02100']
-        self.R['회복시점']  = float(self.D['기회회복']) if '기회회복' in self.D else ST['02200']
-        self.S['진입시점']  = float(self.D['안정시점']) if '안정시점' in self.D else ST['02300']
-        self.S['회복시점']  = float(self.D['안정회복']) if '안정회복' in self.D else ST['02400']
-
-
-        if '가상손실' in self.D  and  self.D['가상손실'] == 'on' : self.M['기본진행']  = False     
-        if '수료적용' not in self.D : self.D['수료적용']  = 'on' 
-        if '세금적용' not in self.D : self.D['세금적용']  = 'off'
-        if '일밸런싱' not in self.D : self.D['일밸런싱']  = 'on'
-        if '이밸런싱' not in self.D : self.D['이밸런싱']  = 'on'
-            
-        if '일반자금' not in self.D : self.D['일반자금']  = ST['05100']
-        if '기회자금' not in self.D : self.D['기회자금']  = ST['05200']
-        if '안정자금' not in self.D : self.D['안정자금']  = ST['05300']
-        if '생활자금' not in self.D : self.D['생활자금']  = ST['05400']
 
         self.V['현재잔액']  = self.V['시초금액'] = my.sv(self.D['일반자금'])
         self.R['현재잔액']  = self.R['시초금액'] = my.sv(self.D['기회자금'])
         self.S['현재잔액']  = self.S['시초금액'] = my.sv(self.D['안정자금'])
         self.N['현재잔액']  = self.N['시초금액'] = my.sv(self.D['생활자금'])
         
-        # 잔액 분할
+        # 매수금 분할 ( N tactic )
         self.N['매금단계'] = [0.0,0.0,0.0,0.0,0.0,0.0]
         self.rebalanceN()
-
         self.V['일매수금']  = int(self.V['현재잔액'] / self.M['분할횟수'])
         self.R['일매수금']  = int(self.R['현재잔액'] / self.M['분할횟수'])
         self.S['일매수금']  = int(self.S['현재잔액'] / self.M['분할횟수'])
+        # -------------------------------------------------------------------------------------------
         
         self.M['최장일자']  = ' '
         self.M['현재날수']  = 1
@@ -703,7 +708,7 @@ class RSN :
             self.D['NT-AVG'] = '0.00'
             
         self.D['LPRICE'] = my.round_up(self.V['평균단가'] * self.M['강매가치'])
-        self.D['CPRICE'] = my.round_up(self.M['당일종가'] * self.M['종가상승']) if self.D['N_일자']-1  <= 10 else my.round_up(self.M['당일종가'] * self.M['종가탈출'])
+        self.D['CPRICE'] = my.round_up(self.M['당일종가'] * self.M['종가상승']) 
 
         # 변수초기화 
         # 도종비 : 현재 종가와 매도가의 비율

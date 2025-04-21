@@ -1,13 +1,12 @@
 import system.core.my_utils as my
 
-class N310 :
+class GETEST :
 
     def __init__(self,SYS) :
         self.SYS   = SYS
         self.info  = SYS.info
         self.D     = SYS.D
         self.DB    = SYS.DB
-        self.board = 'h_IGUIDE_board'
         self.chart = False
         self.stat  = False
 
@@ -24,47 +23,36 @@ class N310 :
         self.V['진행상황']  = ''
         
         if  self.V['매수수량'] : 
+            self.V['매수차수'] += 1
             self.V['현재잔액'] -= self.V['매수금액']
             self.V['보유수량'] += self.V['매수수량']
             self.V['총매수금'] += self.V['매수금액']
             self.V['평균단가'] =  self.V['총매수금'] / self.V['보유수량'] 
-            self.V['매수차수'] += 1
-            self.V['진행상황']  = str(self.V['매수차수']) + 'B' if self.V['구매수량'] else ' '
+            self.V['진행상황']  = f"{self.V['매수차수']}B" if self.V['매수수량'] else ' '
             if self.D['수료적용'] == 'on' :  self.V['수수료등']  = self.commission(self.V['매수금액'],1); self.V['현재잔액'] -= self.V['수수료등']
         
-        self.V['현수익률'] = (self.M['당일종가'] / self.V['평균단가'] -1) * 100  if self.V['평균단가'] else 0.00  
+        self.V['현수익률'] = (self.M['당일종가'] / self.V['평균단가'] -1) * 100  if self.V['평균단가'] else 0.00 
+        self.V['수익현황'] = self.V['평가금액'] - self.V['총매수금']
         
         if  self.V['매도수량'] :
             self.V['실현수익']  =  self.V['매도금액'] - self.V['총매수금']
-            self.V['보유수량'] -=  self.V['매도수량'];  self.V['현재잔액'] += self.V['매도금액']; self.V['총매수금'] = 0.00
+            self.V['보유수량'] -=  self.V['매도수량'];  self.V['현재잔액'] += self.V['매도금액'] 
             self.V['수익현황']  =  self.V['실현수익']
+            self.V['현수익률'] = round( self.V['수익현황'] / self.V['총매수금'] * 100, 2 ) 
+            self.V['총매수금'] = 0.00  
+            self.M['손실회수']  =  True if self.V['수익현황'] >= 0 else False
+            self.V['진행상황']  =  '+' if self.V['수익현황'] >= 0 else '-'
             
             if self.D['수료적용'] == 'on' : self.V['수수료등']  = self.commission(self.V['매도금액'],2); self.V['현재잔액'] -= self.V['수수료등'] 
-            
-            self.V['현수익률'] = round( self.V['수익현황'] / self.V['매금단계'][0] * 100, 2 )   
  
             self.vCount(self.V['실현수익'])
-
-        self.V['평가금액'] =  self.M['당일종가'] * self.V['보유수량'] 
-              
-
-        if  self.V['매도수량'] :
-
-            if  self.M['당일종가']>= self.V['평균단가'] : 
-                self.M['손실회수'] = False
-                self.V['진행상황'] = '+'
-            else :
-                self.M['손실회수'] = True
-                self.V['진행상황'] = '-'
-            
+            self.V['평균단가'] = 0.0
             self.M['첫날기록'] = True
             self.V['매수단계'] ='일반매수'
-            self.V['평균단가'] = 0.0
-            self.rebalance() 
-            
-        else  : 
-            self.V['수익현황'] = self.V['평가금액'] - self.V['총매수금']
+            self.rebalance()
+            self.collect_stat()
 
+        self.V['평가금액'] =  self.M['당일종가'] * self.V['보유수량'] 
         self.realMDD()
 
 
@@ -97,14 +85,10 @@ class N310 :
         return fee
         
     def rebalance(self)  :
+        pass
 
-        self.V['매금단계'][0] = self.V['현재잔액']
-        self.V['매금단계'][1] = round(self.V['현재잔액'] * self.M['분할공일'],2)
-        self.V['매금단계'][2] = round(self.V['현재잔액'] * self.M['분할공이'],2)
-        self.V['매금단계'][3] = round(self.V['현재잔액'] * self.M['분할공삼'],2)
-        self.V['매금단계'][4] = round(self.V['현재잔액'] * self.M['분할공사'],2)
-        self.V['매수차수'] = 0
-
+    def collect_stat(self) :
+    
         if  self.stat :
             pzero = my.sv(self.D['손익통계'][0][1])
             pbase = my.sv(self.D['손익통계'][-1][1])
@@ -121,43 +105,41 @@ class N310 :
             color = "#F6CECE" if difft >= 0 else "#CED8F6"
             self.D['손익통계'].append([self.M['현재일자'],f"{self.V['현재잔액']:,.2f}",f"{difft:,.2f}",f"{diffp:.2f}",color,self.M['기록시즌'],f"{diff0:.2f}"])
     
+    # ------------------------------------------------------------------------------------------------------------------------------------------
+    # Today Check
+    # ------------------------------------------------------------------------------------------------------------------------------------------    
+    
     def today_sell(self) :
         
         if  self.M['당일종가'] >= self.M['매도가격'] : 
-
-            self.V['매도수량'] = self.V['보유수량']
-            self.V['매도금액'] = self.V['매도수량'] * self.M['당일종가']
+            self.V['매도수량']  = self.V['보유수량']
+            self.V['매도금액']  = self.V['매도수량'] * self.M['당일종가']
 
     def today_buy(self) :
 
         if  self.M['당일종가'] <= self.M['매수가격'] : 
-            self.V['매수수량']  = self.V['구매수량']
+            self.V['매수수량']  = self.V['예정수량']
             self.V['매수금액']  = self.V['매수수량'] * self.M['당일종가']
             
+    # ------------------------------------------------------------------------------------------------------------------------------------------
+    # Tomorrow Check
+    # ------------------------------------------------------------------------------------------------------------------------------------------            
 
     def tomorrow_buy(self) :
         
-        if  self.V['매수차수'] >= 5 : self.V['구매수량'] = 0;     return
-        if  self.V['매수차수'] == 4 : self.V['매금단계'][5] = self.V['현재잔액']
-        
-        self.M['매수가격'] = round(self.M['당일종가'] * self.M['평단가치'],2)
-        self.V['구매수량'] = int(  self.V['매금단계'][self.V['매수차수']+1]/ self.M['매수가격'] ) 
+        self.M['매수가격'] = self.V['평균단가']
+        self.V['예정수량'] = 100 * (self.V['매수차수']+1)
         
     def tomorrow_sell(self) :
         
-        if   self.V['매수차수'] == 2 : self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['이매가치'] )
-        elif self.V['매수차수'] == 3 : self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['삼매가치'] )
-        elif self.V['매수차수'] == 4 : self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['사매가치'] )
-        elif self.V['매수차수'] == 5 : self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['오매가치'] )
-        else : self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['일매가치'] )
+        self.M['매도가격'] = self.V['평균단가']
+        if self.M['현재날수'] >= 5 : self.M['매도가격'] = self.V['평균단가']*0.9
 
 
     def tomorrow_step(self)   :
 
         self.tomorrow_buy()
         self.tomorrow_sell()
-        
-
         if  self.M['매수가격']>= self.M['매도가격'] : self.M['매수가격'] = self.M['매도가격'] - 0.01
         
     
@@ -165,14 +147,13 @@ class N310 :
 
         self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가'],0)
         
-        진입단가 = round(self.M['전일종가'] * self.M['진입가치'],2)
-        if  self.M['당일연속'] == self.M['진입일자'] : 진입단가 = round(self.M['전일종가'] -0.01, 2 )
+        진입단가 = self.M['전일종가']
         
         if  self.M['당일종가'] <=  진입단가  :
             
             self.M['기록시즌'] += 1
             self.M['현재날수'] = 1
-            self.V['매수수량']  = int( self.V['매금단계'][1]/진입단가 )
+            self.V['매수수량']  = 100
             self.V['수익현황']  = self.V['현수익률'] = 0.0
             self.V['보유수량']  = self.V['매수수량']
             self.V['평균단가']  = self.M['당일종가'] 
@@ -182,8 +163,8 @@ class N310 :
             if self.D['수료적용'] == 'on' : self.V['수수료등']  = self.commission(self.V['매수금액'],1); self.V['현재잔액'] -= self.V['수수료등']
 
             self.V['매수단계'] = '일반매수'
+            self.V['매수차수'] = 1
             self.V['진행상황'] = '1B'
-            self.V['매수차수']  = 1
             self.M['첫날기록'] = False
  
             return True
@@ -297,26 +278,10 @@ class N310 :
         
     def init_value(self) :
 
-        self.D['전략명칭']  = 'Strategy N310'
-        ST = self.DB.parameters_dict('매매전략/N310')
-        
-        self.M['평단가치']  = ST['N0201']  # 첫날 매수 이후 (-0%)이상 하락 시 매수
-        self.M['진입일자']  = ST['N0202']
-        self.M['진입가치']  = ST['N0203']  # 10% 하락 시 진입
-        self.M['일매가치']  = ST['N0301']  # 평단가의 1% 이상 수익 시 매도  
-        self.M['이매가치']  = ST['N0302']
-        self.M['삼매가치']  = ST['N0303']
-        self.M['사매가치']  = ST['N0304']
-        self.M['오매가치']  = ST['N0305']
-        
-        self.M['분할공일']  = ST['N0101'] 
-        self.M['분할공이']  = ST['N0102'] 
-        self.M['분할공삼']  = ST['N0103'] 
-        self.M['분할공사']  = ST['N0104'] 
-
         self.M['손실회수']  = False  
         self.V['매수단계']  = '일반매수'
         self.V['진행상황']  = '매수대기'
+        self.V['매수차수']  = 0
         self.M['기록시즌']  = 0
 
         if '가상손실' in self.D  and  self.D['가상손실'] == 'on' : self.M['손실회수']  = True     
@@ -325,24 +290,15 @@ class N310 :
 
         self.V['현재잔액']  = my.sv(self.D['일반자금'])
         
-        # 잔액 분할
-        self.V['매금단계'] = [0.0,0.0,0.0,0.0,0.0,0.0]
-        self.V['매금단계'][0] = self.V['현재잔액']
-        self.V['매금단계'][1] = round(self.V['현재잔액'] * self.M['분할공일'],2)
-        self.V['매금단계'][2] = round(self.V['현재잔액'] * self.M['분할공이'],2)
-        self.V['매금단계'][3] = round(self.V['현재잔액'] * self.M['분할공삼'],2)
-        self.V['매금단계'][4] = round(self.V['현재잔액'] * self.M['분할공사'],2)
-        self.V['매수차수'] = 0
         
         self.M['최장일자']  = ' '
-
         self.M['현재날수']  = 1
         self.M['최장일수']  = 0   # 최고 오래 지속된 시즌의 일수
         
         self.M['첫날기록']  = False
         self.M['전일종가']  = 0.0
         
-        self.set_value(['매수수량','매도수량','구매수량','보유수량'],0)
+        self.set_value(['매수수량','매도수량','예정수량','보유수량'],0)
         self.set_value(['매수금액','매도금액','실현수익','총매수금','평균단가','수익현황','현수익률','평가금액','매수가격','수수료등'],0.0)
 
         self.set_value(['진최하락'],0)
@@ -376,7 +332,6 @@ class N310 :
         tx = {}
         #--------------------------------------------------------
         tx['현재날수'] = self.M['현재날수']; tx['기록시즌'] = self.M['기록시즌']
-        tx['현재차수'] = self.V['매수차수']
         tx['기록일자'] = self.M['현재일자'][2:]
         tx['당일종가'] = f"<span class='clsp{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
         clr = "#F6CECE" if self.M['종가변동'] >= 0 else "#CED8F6"

@@ -15,6 +15,10 @@ def ceil(n) :
 def sv(v,s='f') :
     return float(v.replace(',','')) if s=='f' else int(v.replace(',',''))
 
+def sf(v,s='f') :
+    temp = v.split('/')
+    return([float(x) for x in temp])
+
 # 파일조작 관련 함수 
 def file_split(filename) :
     '''
