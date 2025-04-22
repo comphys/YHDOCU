@@ -512,19 +512,6 @@
 
 {% if D['TR'] %}
 
-$(".balance-r").click(function(){ 
-	var html = "RSN-R<br>"+$(this).data('r'); $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F8E6E0");
-	$("#daily-log").show(); 
-});
-$(".balance-s").click(function(){ 
-	var html = "RSN-S<br>"+$(this).data('s'); $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F7F8E0");
-	$("#daily-log").show(); 
- });
-$(".balance-n").click(function(){ 
-	var html = "RSN-N<br>"+$(this).data('n'); $("#daily-log-left").html(html); $("#daily-log-left").css("color","#E0F8E0");
-	$("#daily-log").show(); 
-});
-
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 
@@ -830,8 +817,6 @@ function chart_up_dn(opt) {
 	}
 }
 
-
-
 function slice_chart(opt) {
 
 	var s_date,e_date,new_s,new_e
@@ -1032,8 +1017,49 @@ function synchro(opt,begin='pick') {
 }
 
 // daily log 보기
-	
 
+//let theDay  = $("input[name='add0']").val();
+//let Balance = $("input[name='add3']").val();
+//if(theDay=='None' || theDay =='') {h_dialog.notice('날자를 선택하여 주세요'); return;}
+//if(!Balance) {h_dialog.notice('잔액을 입력하여 주세요'); return;}
+
+//let posturl = uri('linkurl')+ 'boards-vtactic_guide/basic_qty/'+uri(0)
+
+//postData = {theDay:theDay, Balance:Balance}
+//$.post( posturl, postData).done(function(data) {
+//	var ans = JSON.parse(data);
+//	for(let i in ans) { $("input[name='"+i+"']" ).val(ans[i]); }
+//});
+//AutoCalculated = true; $("#notice-calculated").removeClass('notice-calculated');
 //
+
+$(".balance-r").click(function(){ 
+	var html = "RSN-R<br>"+$(this).data('r'); $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F8E6E0");
+	let sday = $("input[name='시작일자']").val();
+	let eday = $("input[name='종료일자']").val();
+	let rmon = $("input[name='기회자금']").val();
+	let smon = $("input[name='안정자금']").val();
+	let nmon = $("input[name='생활자금']").val();
+	let r_p1 = $("input[name='기회시점']").val();
+	let r_p2 = $("input[name='기회회복']").val();
+	let s_p1 = $("input[name='안정시점']").val();
+	let s_p2 = $("input[name='안정회복']").val();
+
+	let pdat = {sday:sday, eday:eday, rmon:rmon, smon:smon, nmon:nmon,r_p1:r_p1,r_p2:r_p2,s_p1:s_p1,s_p2:s_p2}
+	let posturl = uri('linkurl')+ 'pages-rsn_ajax/back'
+
+	$.post(posturl, pdat,null,'json').done(function(data){
+		$("input[name='add3']").val(data['add3']);
+	});
+	$("#daily-log").show(); 
+});
+$(".balance-s").click(function(){ 
+	var html = "RSN-S<br>"+$(this).data('s'); $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F7F8E0");
+	$("#daily-log").show(); 
+ });
+$(".balance-n").click(function(){ 
+	var html = "RSN-N<br>"+$(this).data('n'); $("#daily-log-left").html(html); $("#daily-log-left").css("color","#E0F8E0");
+	$("#daily-log").show(); 
+});
 </script>
 {% endblock %}

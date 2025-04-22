@@ -629,12 +629,10 @@ class RSN :
             # 투자자금 초기화 ----------------------------------------------------------------------------
             self.M['투자자금'] = ST['TC010']
             self.M['투자배분'] = my.sf(ST['TC012'])    
-            self.info(self.M['투자배분'])
             if '일반자금' not in self.D : self.D['일반자금']  = 60000
             if '기회자금' not in self.D : self.D['기회자금']  = round(self.M['투자자금']*self.M['투자배분'][0]/100,2)
             if '안정자금' not in self.D : self.D['안정자금']  = round(self.M['투자자금']*self.M['투자배분'][1]/100,2)
             if '생활자금' not in self.D : self.D['생활자금']  = self.M['투자자금'] - self.D['기회자금'] - self.D['안정자금']
-            self.info(f"{self.D['기회자금']} {self.D['안정자금']} {self.D['생활자금']}")
             
             
         self.M['기본진행']  = True  
