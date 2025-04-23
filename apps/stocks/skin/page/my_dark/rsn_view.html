@@ -339,10 +339,8 @@
 	 </table>
 </div>
 
-<div id="daily-log" style="display:none;position:fixed;left:30px;top:108px;width:1232px;height:356px;background-color:#24272d;padding:10px;;z-index:10;border:2px solid black">
-	<div id="daily-log-left" class="pull-left" style="padding:50px 15px;font-size:30px;font-weight:bold;font-style:italic;line-height:45px;color:gray">
-		RSN-S<br>25-04-02
-	</div>
+<div id="daily-log">
+	<div id="daily-log-left" class="pull-left"></div>
 	<div class="pull-left">
 	<table class='table' style="width:1040px;">
 		<tbody>
@@ -438,7 +436,7 @@
 						<input type='text' name='sub1' class="i-number" style="width:100px;" value="">
 					</div>
 					<div class='i-input-div-2'>
-						<div class='write-input-server'>일매수금</div>
+						<div class='write-input-server'><span id='cn1'>일매수금</span></div>
 						<input type='text' name='sub4' class="i-number" style="width:100px;" value="">
 					</div>
 					<div class='i-input-div-2'>
@@ -454,7 +452,7 @@
 						<input type='text' name='sub12' class="i-number" style="width:100px;" value="">
 					</div>
 					<div class='i-input-div-2'>
-						<div class='write-input-server'>기초수량</div>
+						<div class='write-input-server'><span id='cn2'>기초수량</span></div>
 						<input type='text' name='sub18' class="i-number" style="width:100px;" value="">
 					</div>
 					<div class='i-input-div-2'>
@@ -471,11 +469,11 @@
 						<input type='text' name='sub29' class="i-text" style="width:100px;text-align:right" value="">
 					</div>
 					<div class='i-input-div-2'>
-						<div class='write-input-server'>연속상승</div>
+						<div class='write-input-server'>종가추이</div>
 						<input type='text' name='sub5' class="i-number" style="width:100px;" value="">
 					</div>
 					<div class='i-input-div-2'>
-						<div class='write-input-server'>연속하락</div>
+						<div class='write-input-server'>초기금액</div>
 						<input type='text' name='sub6' class="i-number" style="width:100px;" value="">
 					</div>
 					<div class='i-input-div-2'>
@@ -492,11 +490,11 @@
 						<input type='text' name='sub30' class="i-number" style="width:100px;" value="">
 					</div>
 					<div class='i-input-div-2'>
-						<div class='write-input-server'>누적수수료</div>
+						<div class='write-input-server'>누적수익</div>
 						<input type='text' name='sub31' class="i-number" style="width:100px;" value="">
 					</div>
 					<div class='i-input-div-2'>
-						<div class='write-input-server'>초기금액</div>
+						<div class='write-input-server'>특이사항</div>
 						<input type='text' name='sub11' class="i-number" style="width:100px;" value="">
 					</div>
 				</td>
@@ -857,7 +855,7 @@ function slice_chart(opt) {
 }
 
 // MonthlyProfitChart Begin
-{% if D['월별이익']|safe %}
+{% if D['월별이익'][0]|safe %}
 
 	const ctx_monthly= $id('monthlyProfitChart');
 
@@ -1016,49 +1014,61 @@ function synchro(opt,begin='pick') {
 	});
 }
 
-// daily log 보기
 
-//let theDay  = $("input[name='add0']").val();
-//let Balance = $("input[name='add3']").val();
-//if(theDay=='None' || theDay =='') {h_dialog.notice('날자를 선택하여 주세요'); return;}
-//if(!Balance) {h_dialog.notice('잔액을 입력하여 주세요'); return;}
+let pdat = {}
 
-//let posturl = uri('linkurl')+ 'boards-vtactic_guide/basic_qty/'+uri(0)
+function get_pdat(){
 
-//postData = {theDay:theDay, Balance:Balance}
-//$.post( posturl, postData).done(function(data) {
-//	var ans = JSON.parse(data);
-//	for(let i in ans) { $("input[name='"+i+"']" ).val(ans[i]); }
-//});
-//AutoCalculated = true; $("#notice-calculated").removeClass('notice-calculated');
-//
+	pdat['기회자금'] = $("input[name='기회자금']").val();
+	pdat['안정자금'] = $("input[name='안정자금']").val();
+	pdat['생활자금'] = $("input[name='생활자금']").val();
+	pdat['시작일자'] = $("input[name='시작일자']").val();
+	pdat['기회시점'] = $("input[name='기회시점']").val();
+	pdat['기회회복'] = $("input[name='기회회복']").val();
+	pdat['안정시점'] = $("input[name='안정시점']").val();
+	pdat['안정회복'] = $("input[name='안정회복']").val();
+
+	pdat['수료적용'] = $("input[name='chk_fee']").is(':checked');
+	pdat['세금적용'] = $("input[name='chk_tax']").is(':checked');
+	pdat['일밸런싱'] = $("input[name='chk_brs']").is(':checked');
+	pdat['이밸런싱'] = $("input[name='chk_rs_']").is(':checked');
+	pdat['가상손실'] = $("input[name='chk_chx']").is(':checked');
+}
 
 $(".balance-r").click(function(){ 
-	var html = "RSN-R<br>"+$(this).data('r'); $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F8E6E0");
-	let sday = $("input[name='시작일자']").val();
-	let eday = $("input[name='종료일자']").val();
-	let rmon = $("input[name='기회자금']").val();
-	let smon = $("input[name='안정자금']").val();
-	let nmon = $("input[name='생활자금']").val();
-	let r_p1 = $("input[name='기회시점']").val();
-	let r_p2 = $("input[name='기회회복']").val();
-	let s_p1 = $("input[name='안정시점']").val();
-	let s_p2 = $("input[name='안정회복']").val();
-
-	let pdat = {sday:sday, eday:eday, rmon:rmon, smon:smon, nmon:nmon,r_p1:r_p1,r_p2:r_p2,s_p1:s_p1,s_p2:s_p2}
+	get_pdat();	
+	pdat['적용전략'] = 'R';
+	pdat['종료일자'] = '20'+$(this).data('r');
+	let html = "RSN-R<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F6CECE");
+	$("#cn1").text('일매수금');
+	$("#cn2").text("기초수량");
 	let posturl = uri('linkurl')+ 'pages-rsn_ajax/back'
 
-	$.post(posturl, pdat,null,'json').done(function(data){
-		$("input[name='add3']").val(data['add3']);
-	});
+	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);} });
 	$("#daily-log").show(); 
 });
 $(".balance-s").click(function(){ 
-	var html = "RSN-S<br>"+$(this).data('s'); $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F7F8E0");
+	get_pdat();	
+	pdat['적용전략'] = 'S';
+	pdat['종료일자'] = '20'+$(this).data('s');
+	let html = "RSN-S<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F2F5A9");
+	$("#cn1").text('일매수금');
+	$("#cn2").text("기초수량");
+	let posturl = uri('linkurl')+ 'pages-rsn_ajax/back'
+
+	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);} });
 	$("#daily-log").show(); 
  });
 $(".balance-n").click(function(){ 
-	var html = "RSN-N<br>"+$(this).data('n'); $("#daily-log-left").html(html); $("#daily-log-left").css("color","#E0F8E0");
+	get_pdat(); 
+	pdat['적용전략'] = 'N';
+	pdat['종료일자'] = '20'+$(this).data('n');
+	let html = "RSN-N<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","#CEF6CE");
+	$("#cn1").text('매수차수');
+	$("#cn2").text("배분금액");
+	let posturl = uri('linkurl')+ 'pages-rsn_ajax/back'
+
+	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);} });
 	$("#daily-log").show(); 
 });
 </script>

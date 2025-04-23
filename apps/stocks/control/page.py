@@ -43,33 +43,33 @@ class Page(Control) :
     # -------------------------------------------------------
 
     def rpd_viewChart(self) :
+        D = {}
+        D['종목코드'] = self.D['post']['종목코드']
+        D['일반자금'] = self.D['post']['일반자금']
+        D['기회자금'] = self.D['post']['기회자금']
+        D['안정자금'] = self.D['post']['안정자금']
+        D['생활자금'] = self.D['post']['생활자금']
 
-        self.D['종목코드'] = self.D['post']['종목코드']
-        self.D['일반자금'] = self.D['post']['일반자금']
-        self.D['기회자금'] = self.D['post']['기회자금']
-        self.D['안정자금'] = self.D['post']['안정자금']
-        self.D['생활자금'] = self.D['post']['생활자금']
-
-        self.D['시작일자'] = self.D['post']['시작일자']
-        self.D['종료일자'] = self.D['post']['종료일자']
+        D['시작일자'] = self.D['post']['시작일자']
+        D['종료일자'] = self.D['post']['종료일자']
         # -------------------
-        self.D['기회시점'] = self.D['post']['기회시점']
-        self.D['기회회복'] = self.D['post']['기회회복']
-        self.D['안정시점'] = self.D['post']['안정시점']
-        self.D['안정회복'] = self.D['post']['안정회복']
-        self.D['생활시점'] = self.D['post']['생활시점']
-        self.D['생활회복'] = self.D['post']['생활회복']
+        D['기회시점'] = self.D['post']['기회시점']
+        D['기회회복'] = self.D['post']['기회회복']
+        D['안정시점'] = self.D['post']['안정시점']
+        D['안정회복'] = self.D['post']['안정회복']
+        D['생활시점'] = self.D['post']['생활시점']
+        D['생활회복'] = self.D['post']['생활회복']
 
-        self.D['수료적용'] = self.D['post'].get('chk_fee','off')
-        self.D['세금적용'] = self.D['post'].get('chk_tax','off')
-        self.D['일밸런싱'] = self.D['post'].get('chk_brs','off')
-        self.D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
-        self.D['일반상황'] = self.D['post'].get('chk_von','off')
-        self.D['가상손실'] = self.D['post'].get('chk_chx','off')
-        self.D['랜덤종가'] = self.D['post'].get('chk_rnd','off')
+        D['수료적용'] = self.D['post'].get('chk_fee','off')
+        D['세금적용'] = self.D['post'].get('chk_tax','off')
+        D['일밸런싱'] = self.D['post'].get('chk_brs','off')
+        D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
+        D['일반상황'] = self.D['post'].get('chk_von','off')
+        D['가상손실'] = self.D['post'].get('chk_chx','off')
+        D['랜덤종가'] = self.D['post'].get('chk_rnd','off')
         
         RST = self.load_app_lib('rst')
-        RST.D |= self.D
+        RST.D |= D
 
         RST.do_viewChart()
 
@@ -77,30 +77,30 @@ class Page(Control) :
         return self.echo(RST.D)
     
     def rpd_rsnview(self) :
+        D = {}
+        D['종목코드'] = self.D['post']['종목코드']
+        D['일반자금'] = self.D['post']['일반자금']
+        D['기회자금'] = self.D['post']['기회자금']
+        D['안정자금'] = self.D['post']['안정자금']
+        D['생활자금'] = self.D['post']['생활자금']
 
-        self.D['종목코드'] = self.D['post']['종목코드']
-        self.D['일반자금'] = self.D['post']['일반자금']
-        self.D['기회자금'] = self.D['post']['기회자금']
-        self.D['안정자금'] = self.D['post']['안정자금']
-        self.D['생활자금'] = self.D['post']['생활자금']
-
-        self.D['시작일자'] = self.D['post']['시작일자']
-        self.D['종료일자'] = self.D['post']['종료일자']
+        D['시작일자'] = self.D['post']['시작일자']
+        D['종료일자'] = self.D['post']['종료일자']
         # -------------------
-        self.D['기회시점'] = self.D['post']['기회시점']
-        self.D['기회회복'] = self.D['post']['기회회복']
-        self.D['안정시점'] = self.D['post']['안정시점']
-        self.D['안정회복'] = self.D['post']['안정회복']
+        D['기회시점'] = self.D['post']['기회시점']
+        D['기회회복'] = self.D['post']['기회회복']
+        D['안정시점'] = self.D['post']['안정시점']
+        D['안정회복'] = self.D['post']['안정회복']
 
-        self.D['수료적용'] = self.D['post'].get('chk_fee','off')
-        self.D['세금적용'] = self.D['post'].get('chk_tax','off')
-        self.D['일밸런싱'] = self.D['post'].get('chk_brs','off')
-        self.D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
-        self.D['일반상황'] = self.D['post'].get('chk_von','off')
-        self.D['가상손실'] = self.D['post'].get('chk_chx','off')
+        D['수료적용'] = self.D['post'].get('chk_fee','off')
+        D['세금적용'] = self.D['post'].get('chk_tax','off')
+        D['일밸런싱'] = self.D['post'].get('chk_brs','off')
+        D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
+        D['일반상황'] = self.D['post'].get('chk_von','off')
+        D['가상손실'] = self.D['post'].get('chk_chx','off')
         
         RST = self.load_app_lib('rsn')
-        RST.D |= self.D
+        RST.D |= D
 
         RST.do_viewChart()
 
@@ -108,31 +108,31 @@ class Page(Control) :
         return self.echo(RST.D)
     
     def rpd_viewStat(self) :
+        D = {}
+        D['종목코드'] = self.D['post']['종목코드']
+        D['일반자금'] = self.D['post']['일반자금']
+        D['기회자금'] = self.D['post']['기회자금']
+        D['안정자금'] = self.D['post']['안정자금']
+        D['생활자금'] = self.D['post']['생활자금']
 
-        self.D['종목코드'] = self.D['post']['종목코드']
-        self.D['일반자금'] = self.D['post']['일반자금']
-        self.D['기회자금'] = self.D['post']['기회자금']
-        self.D['안정자금'] = self.D['post']['안정자금']
-        self.D['생활자금'] = self.D['post']['생활자금']
-
-        self.D['시작일자'] = self.D['post']['통계시작']
-        self.D['통계시작'] = self.D['시작일자']
-        self.D['종료일자'] = self.D['post']['종료일자']
+        D['시작일자'] = self.D['post']['통계시작']
+        D['통계시작'] = D['시작일자']
+        D['종료일자'] = self.D['post']['종료일자']
         # -------------------
-        self.D['기회시점'] = self.D['post']['기회시점']
-        self.D['기회회복'] = self.D['post']['기회회복']
-        self.D['안정시점'] = self.D['post']['안정시점']
-        self.D['안정회복'] = self.D['post']['안정회복']
-        self.D['생활시점'] = self.D['post']['생활시점']
-        self.D['생활회복'] = self.D['post']['생활회복']
+        D['기회시점'] = self.D['post']['기회시점']
+        D['기회회복'] = self.D['post']['기회회복']
+        D['안정시점'] = self.D['post']['안정시점']
+        D['안정회복'] = self.D['post']['안정회복']
+        D['생활시점'] = self.D['post']['생활시점']
+        D['생활회복'] = self.D['post']['생활회복']
 
-        self.D['수료적용'] = self.D['post'].get('chk_fee','off')
-        self.D['세금적용'] = self.D['post'].get('chk_tax','off')
-        self.D['일밸런싱'] = self.D['post'].get('chk_brs','off')
-        self.D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
+        D['수료적용'] = self.D['post'].get('chk_fee','off')
+        D['세금적용'] = self.D['post'].get('chk_tax','off')
+        D['일밸런싱'] = self.D['post'].get('chk_brs','off')
+        D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
 
         RST = self.load_app_lib('rst')
-        RST.D |= self.D
+        RST.D |= D
 
         RST.do_viewStat()
         RST.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
@@ -140,29 +140,29 @@ class Page(Control) :
         return self.echo(RST.D)
     
     def rpd_rsnStat(self) :
+        D = {}
+        D['종목코드'] = self.D['post']['종목코드']
+        D['일반자금'] = self.D['post']['일반자금']
+        D['기회자금'] = self.D['post']['기회자금']
+        D['안정자금'] = self.D['post']['안정자금']
+        D['생활자금'] = self.D['post']['생활자금']
 
-        self.D['종목코드'] = self.D['post']['종목코드']
-        self.D['일반자금'] = self.D['post']['일반자금']
-        self.D['기회자금'] = self.D['post']['기회자금']
-        self.D['안정자금'] = self.D['post']['안정자금']
-        self.D['생활자금'] = self.D['post']['생활자금']
-
-        self.D['시작일자'] = self.D['post']['통계시작']
-        self.D['통계시작'] = self.D['시작일자']
-        self.D['종료일자'] = self.D['post']['종료일자']
+        D['시작일자'] = self.D['post']['통계시작']
+        D['통계시작'] = D['시작일자']
+        D['종료일자'] = self.D['post']['종료일자']
         # -------------------
-        self.D['기회시점'] = self.D['post']['기회시점']
-        self.D['기회회복'] = self.D['post']['기회회복']
-        self.D['안정시점'] = self.D['post']['안정시점']
-        self.D['안정회복'] = self.D['post']['안정회복']
+        D['기회시점'] = self.D['post']['기회시점']
+        D['기회회복'] = self.D['post']['기회회복']
+        D['안정시점'] = self.D['post']['안정시점']
+        D['안정회복'] = self.D['post']['안정회복']
 
-        self.D['수료적용'] = self.D['post'].get('chk_fee','off')
-        self.D['세금적용'] = self.D['post'].get('chk_tax','off')
-        self.D['일밸런싱'] = self.D['post'].get('chk_brs','off')
-        self.D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
+        D['수료적용'] = self.D['post'].get('chk_fee','off')
+        D['세금적용'] = self.D['post'].get('chk_tax','off')
+        D['일밸런싱'] = self.D['post'].get('chk_brs','off')
+        D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
 
         RST = self.load_app_lib('rsn')
-        RST.D |= self.D
+        RST.D |= D
 
         RST.do_viewStat()
         RST.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
@@ -170,19 +170,19 @@ class Page(Control) :
         return self.echo(RST.D)
 
     def rpd_baseChart(self) :
+        D = {}
+        D['종목코드'] = self.D['post']['종목코드']
+        D['일반자금'] = self.D['post']['일반자금']
 
-        self.D['종목코드'] = self.D['post']['종목코드']
-        self.D['일반자금'] = self.D['post']['일반자금']
+        D['시작일자'] = self.D['post']['시작일자']
+        D['종료일자'] = self.D['post']['종료일자']
 
-        self.D['시작일자'] = self.D['post']['시작일자']
-        self.D['종료일자'] = self.D['post']['종료일자']
-
-        self.D['수료적용'] = self.D['post'].get('chk_fee','off')
-        self.D['세금적용'] = self.D['post'].get('chk_tax','off')
-        self.D['가상손실'] = self.D['post'].get('chk_chx','off')
+        D['수료적용'] = self.D['post'].get('chk_fee','off')
+        D['세금적용'] = self.D['post'].get('chk_tax','off')
+        D['가상손실'] = self.D['post'].get('chk_chx','off')
         
         VB = self.load_app_lib('vtactic')
-        VB.D |= self.D
+        VB.D |= D
 
         VB.do_viewChart()
 
@@ -190,18 +190,18 @@ class Page(Control) :
         return self.echo(VB.D)
     
     def rpd_testChart(self) :
+        D = {}
+        D['종목코드'] = self.D['post']['종목코드']
+        D['일반자금'] = self.D['post']['일반자금']
 
-        self.D['종목코드'] = self.D['post']['종목코드']
-        self.D['일반자금'] = self.D['post']['일반자금']
+        D['시작일자'] = self.D['post']['시작일자']
+        D['종료일자'] = self.D['post']['종료일자']
 
-        self.D['시작일자'] = self.D['post']['시작일자']
-        self.D['종료일자'] = self.D['post']['종료일자']
-
-        self.D['수료적용'] = self.D['post'].get('chk_fee','off')
-        self.D['세금적용'] = self.D['post'].get('chk_tax','off')
+        D['수료적용'] = self.D['post'].get('chk_fee','off')
+        D['세금적용'] = self.D['post'].get('chk_tax','off')
         
         VB = self.load_app_lib('n310')
-        VB.D |= self.D
+        VB.D |= D
 
         VB.do_viewChart()
 
@@ -209,18 +209,18 @@ class Page(Control) :
         return self.echo(VB.D)
     
     def rpd_generalTestChart(self) :
+        D = {}
+        D['종목코드'] = 'SOXL'
+        D['전략선택'] = self.D['post']['전략선택']
+        D['일반자금'] = self.D['post']['일반자금']
 
-        self.D['종목코드'] = 'SOXL'
-        self.D['전략선택'] = self.D['post']['전략선택']
-        self.D['일반자금'] = self.D['post']['일반자금']
+        D['시작일자'] = self.D['post']['시작일자']
+        D['종료일자'] = self.D['post']['종료일자']
 
-        self.D['시작일자'] = self.D['post']['시작일자']
-        self.D['종료일자'] = self.D['post']['종료일자']
-
-        self.D['수료적용'] = self.D['post'].get('chk_fee','off')
+        D['수료적용'] = self.D['post'].get('chk_fee','off')
         
         VB = self.load_app_lib('getest')
-        VB.D |= self.D
+        VB.D |= D
 
         VB.do_viewChart()
 

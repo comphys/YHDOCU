@@ -1,5 +1,4 @@
 from system.core.load import Control
-from flask import session
 
 class Rsn_ajax(Control) :
 
@@ -11,7 +10,7 @@ class Rsn_ajax(Control) :
         
         RSN = self.load_app_lib('rsn')
         
-        PD = {} # post data
+        PD = {}
 
         PD['기회자금'] = self.D['post']['기회자금']
         PD['안정자금'] = self.D['post']['안정자금']
@@ -30,12 +29,27 @@ class Rsn_ajax(Control) :
         PD['이밸런싱'] = 'on' if self.D['post']['이밸런싱'] == 'true' else 'off'
         PD['가상손실'] = 'on' if self.D['post']['가상손실'] == 'true' else 'off'
         
-        key = self.D['post']['적용전략']
-            
+         
         RSN.D |= PD
         RSN.get_simResult(PD['시작일자'],PD['종료일자'])
-        DC = RSN.get_simulLog(key)
+        self.info(PD['종료일자'])
+        AD = RSN.get_simulLog('R')
+        self.info(AD)
         
-        return self.json(DC)
+        return self.json(AD)
+        
+        
+
             
+            
+            
+        # RSN.get_simResult(start=self.D['시작일자'],end=self.D['종료일자'])
+        # DR = RSN.get_simulLog('R')
+        
+        # self.info(DR)
+        
+        
+        # return self.json()
+        
+        # return self.echo(self.D['이밸런싱'])
         
