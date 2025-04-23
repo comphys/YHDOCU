@@ -407,7 +407,7 @@ class RSN :
         # T 매수 여부 판단
         # --------------------------------------------------   
             진입단가 = round(self.M['전일종가'] * self.M['진입가치'],2)
-            if  self.M['연속하락'] >= self.M['진입일자'] : 진입단가 = round(self.M['전일종가'] -0.01,2 ) 
+            if  self.M['연속하락'] == self.M['진입일자'] : 진입단가 = round(self.M['전일종가'] -0.01,2 ) 
             
             if  self.M['당일종가'] <= 진입단가 :
                 self.N['매수수량']  = int( self.N['매금단계'][1]/진입단가 )
@@ -719,7 +719,7 @@ class RSN :
             self.D['N_안정매수가'] = self.D['N_생활매수가'] = 0
             
             self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['진입가치'],2)
-            if self.M['연속하락'] >= self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] -0.01,2 ) 
+            if self.M['연속하락'] == self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] -0.01,2 ) 
             
             self.D['N_일반매수량'] = self.D['N_일반기초']
             self.D['N_기회매수량'] = self.D['N_기회기초']
