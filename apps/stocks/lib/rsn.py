@@ -512,8 +512,6 @@ class RSN :
             self.D['월별구분'] = [ x[0] for x in self.D['월익통계']][-28:]
             self.D['월별이익'] = [ round(x[1]) for x in self.D['월익통계']][-28:]
             
-            self.info(self.D['월별이익'])
-
             if  self.D['월별이익'][0] == 0 :
                 self.D['월별구분'].pop(0)
                 self.D['월별이익'].pop(0)
