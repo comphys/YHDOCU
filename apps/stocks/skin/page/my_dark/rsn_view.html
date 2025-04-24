@@ -5,7 +5,6 @@
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
 		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/rpd_rsnview/rsn_view">
 			<br>
-			<input type='hidden' class="i-number" name="일반자금" value="{{D['일반자금']}}">
 			<div class="well clearfix" style="border-radius:0px;">
     			<div class="pull-left">
     				<div class='select' style='margin-right:10px;vertical-align:bottom'>
@@ -113,7 +112,7 @@
 		V tactic  {{D['일정익절']}}:{{D['일정손절']}} , {{D['일회익절']}}:{{D['일회손절']}}&nbsp;&nbsp;
 		<span style="color:#F6CECE">R tactic  {{D['기정익절']}}-{{D['기정손절']}} : {{D['기회익절']}}-{{D['기회손절']}}</span>&nbsp;&nbsp;
 		<span style="color:yellow">S tactic   {{D['안정익절']}}-{{D['안정손절']}} : {{D['안회익절']}}-{{D['안회손절']}}</span>&nbsp;&nbsp;
-		<span style="color:#CEF6CE">T tactic  {{D['생정익절']}}-{{D['생정손절']}} : {{D['생회익절']}}-{{D['생회손절']}}</span>
+		<span style="color:#CEF6CE">N tactic  {{D['생정익절']}}-{{D['생정손절']}} : {{D['생회익절']}}-{{D['생회손절']}}</span>
 		</div>
 		{% endif %}
 
@@ -241,29 +240,29 @@
 				<td style='text-align:right;color:#F6CECE'>{{TR['일반진행']|safe}}</td>
 				<td style='text-align:right;color:#E6F8E0'>{{TR['일반평균']|safe}}</td>
 				<td style='text-align:right;font-weight:bold'>{{TR['일반수익']|safe}}</td>
-				<td style='text-align:right;font-weight:bold'>{{TR['일반익률']|safe}}</td>
+				<td class="log-v" data-v="{{TR['기록일자']}}">{{TR['일반익률']|safe}}</td>
 				{% endif %}
 
 				<td style='text-align:right;color:#F6CECE'>{{TR['기회진행']|safe}}</td>
 				<td style='text-align:right;color:#E6F8E0'>{{TR['기회평균']|safe}}</td>
 				<td style='text-align:right'>{{TR['기회수익']|safe}}</td>
-				<td style='text-align:right;font-weight:bold'>{{TR['기회익률']|safe}}</td>
+				<td class="log-r" data-r="{{TR['기록일자']}}">{{TR['기회익률']|safe}}</td>
 				{% if D['일반상황']=='off' %}
-				<td class="balance-r" data-r="{{TR['기록일자']}}">{{TR['기회잔액']|safe}}</td>
+				<td class="balance-r">{{TR['기회잔액']|safe}}</td>
 				{% endif %}
 				<td style='text-align:right;color:#F6CECE'>{{TR['안정진행']|safe}}</td>
 				<td style='text-align:right;color:#E6F8E0'>{{TR['안정평균']|safe}}</td>
 				<td style='text-align:right'>{{TR['안정수익']|safe}}</td>
-				<td style='text-align:right;font-weight:bold'>{{TR['안정익률']|safe}}</td>
+				<td class="log-s" data-s="{{TR['기록일자']}}">{{TR['안정익률']|safe}}</td>
 				{% if D['일반상황']=='off' %}
-				<td class="balance-s" data-s="{{TR['기록일자']}}">{{TR['안정잔액']|safe}}</td>	
+				<td class="balance-s">{{TR['안정잔액']|safe}}</td>	
 				{% endif %}
 				<td style='text-align:right;color:#F6CECE'>{{TR['생활진행']|safe}}</td>
 				<td style='text-align:right;color:#E6F8E0'>{{TR['생활평균']|safe}}</td>
 				<td style='text-align:right'>{{TR['생활수익']|safe}}</td>
-				<td style='text-align:right;font-weight:bold'>{{TR['생활익률']|safe}}</td>
+				<td class="log-n" data-n="{{TR['기록일자']}}">{{TR['생활익률']|safe}}</td>
 				{% if D['일반상황']=='off' %}
-				<td class="balance-n" data-n="{{TR['기록일자']}}">{{TR['생활잔액']|safe}}</td>
+				<td class="balance-n">{{TR['생활잔액']|safe}}</td>
 				{% endif %}
 			</tr>
 			{%- endfor %}
@@ -1004,7 +1003,6 @@ function synchro(opt,begin='pick') {
 		else {
 			h_dialog.notice("동기화 데이타가 입력되었습니다.")
 			$("input[name='시작일자']").val(data.date);
-			$("input[name='일반자금']").val(data.V_money);
 			$("input[name='기회자금']").val(data.R_money);
 			$("input[name='안정자금']").val(data.S_money);
 			$("input[name='생활자금']").val(data.T_money);
@@ -1035,38 +1033,51 @@ function get_pdat(){
 	pdat['가상손실'] = $("input[name='chk_chx']").is(':checked');
 }
 
-$(".balance-r").click(function(){ 
+
+$(".log-v").click(function(){ 
+	get_pdat();	
+	pdat['적용전략'] = 'V';
+	pdat['종료일자'] = '20'+$(this).data('v');
+	let html = "RSN-V<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","gray");
+	$("#cn1").text('일매수금');
+	$("#cn2").text("기초수량");
+	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
+
+	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);} });
+	$("#daily-log").show(); 
+});
+$(".log-r").click(function(){ 
 	get_pdat();	
 	pdat['적용전략'] = 'R';
 	pdat['종료일자'] = '20'+$(this).data('r');
 	let html = "RSN-R<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F6CECE");
 	$("#cn1").text('일매수금');
 	$("#cn2").text("기초수량");
-	let posturl = uri('linkurl')+ 'pages-rsn_ajax/back'
+	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
 
 	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);} });
 	$("#daily-log").show(); 
 });
-$(".balance-s").click(function(){ 
+$(".log-s").click(function(){ 
 	get_pdat();	
 	pdat['적용전략'] = 'S';
 	pdat['종료일자'] = '20'+$(this).data('s');
 	let html = "RSN-S<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F2F5A9");
 	$("#cn1").text('일매수금');
 	$("#cn2").text("기초수량");
-	let posturl = uri('linkurl')+ 'pages-rsn_ajax/back'
+	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
 
 	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);} });
 	$("#daily-log").show(); 
  });
-$(".balance-n").click(function(){ 
+$(".log-n").click(function(){ 
 	get_pdat(); 
 	pdat['적용전략'] = 'N';
 	pdat['종료일자'] = '20'+$(this).data('n');
 	let html = "RSN-N<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","#CEF6CE");
 	$("#cn1").text('매수차수');
 	$("#cn2").text("배분금액");
-	let posturl = uri('linkurl')+ 'pages-rsn_ajax/back'
+	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
 
 	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);} });
 	$("#daily-log").show(); 

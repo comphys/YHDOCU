@@ -12,7 +12,6 @@ class M_rsn_stat(Model) :
         투자자금 = self.DB.parameters('TC010')
         자금배분 = my.sf(self.DB.parameters('TC012'))
         
-        self.D['일반자금'] = 60000
         self.D['기회자금'] = round(투자자금*자금배분[0]/100,2)
         self.D['안정자금'] = round(투자자금*자금배분[1]/100,2)
         self.D['생활자금'] = round(투자자금*자금배분[2]/100,2)

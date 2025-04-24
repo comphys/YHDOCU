@@ -7,7 +7,7 @@ class Rsn_ajax(Control) :
         
         self.DB = self.db('stocks')
     
-    def back(self) :
+    def log_rsn(self) :
         
         RSN = self.load_app_lib('rsn')
         

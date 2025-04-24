@@ -39,9 +39,13 @@
 .scrollbar::-webkit-scrollbar-track { background:black;}
 
 /* rsn_view */
-.balance-r {text-align:right;color:#CEF6CE;cursor:pointer}
-.balance-s {text-align:right;color:#CEF6CE;cursor:pointer}
-.balance-n {text-align:right;color:#CEF6CE;cursor:pointer}
+.log-v {text-align:right;font-weight:bold;cursor:pointer;}
+.log-r {text-align:right;font-weight:bold;cursor:pointer;}
+.log-s {text-align:right;font-weight:bold;cursor:pointer;}
+.log-n {text-align:right;font-weight:bold;cursor:pointer;}
+.balance-r {text-align:right;color:#CEF6CE;}
+.balance-s {text-align:right;color:#CEF6CE;}
+.balance-n {text-align:right;color:#CEF6CE;}
 
 .write-td-left  { text-align:left; padding-left:15px; padding-right:10px; background-color: #4a505e; width:80px;}
 .write-td-right { text-align:left; padding-left:15px; padding-right:10px; background-color: #1D1F24;}
@@ -55,6 +59,6 @@
 .i-input-div-choice, .i-input-div-choice2 {border: 1px solid lightgreen;}
 .i-input-div-choice2 {border-top:none;}
 
-.balance-r:hover, .balance-n:hover, .balance-s:hover {font-weight:bold;}
+.log-v:hover, .log-r:hover, .log-s:hover, .log-n:hover {font-style:italic;font-size:16px;}
 #daily-log {display:none;position:fixed;left:30px;top:108px;width:1232px;height:356px;background-color:#24272d;padding:10px;;z-index:10;border:2px solid gray;z-index:8;}
 #daily-log-left {padding:50px 15px;font-size:20px;font-weight:bold;font-style:italic;line-height:30px;}
