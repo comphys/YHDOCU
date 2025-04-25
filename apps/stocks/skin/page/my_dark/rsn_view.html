@@ -40,13 +40,13 @@
 						<input type='text' class="i-number" name="안정회복" style="width:50px;text-align:center;background-color:black;" value="{{D['안정회복']}}">
 					</div>
 					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;" title="동기화(처음부터)"></i>
+						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;"></i>
 					</div>
 					<div style="display:inline-block;">	
-						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;"  title="동기화(back)"></i>
+						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro('test')" title="테스트모드"></i>
 					</div>
 					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:cadetblue;cursor:pointer;" onclick="synchro('real')" title="동기화"></i>
+						<i class="fa fa-superpowers fa-lg" style="color:cadetblue;cursor:pointer;" onclick="synchro('real')" title="동기화모드"></i>
 					</div>
     			</div> <!--pull left-->
 
@@ -1000,8 +1000,9 @@ function synchro(opt) {
 			$("input[name='기회자금']").val(data.R_mon);
 			$("input[name='안정자금']").val(data.S_mon);
 			$("input[name='생활자금']").val(data.N_mon);
-			if(data._mode=="전략진행") {$("input[name='chk_chx']").prop('checked',true);}
-			if(opt=='real') {$("form[name='rsn_dashboard']").submit();}
+			if(data.mode_=="전략진행") {$("input[name='chk_chx']").prop('checked',true);}
+			else {$("input[name='chk_chx']").prop('checked',false);}
+			if(opt=='real'||opt=='test') {$("form[name='rsn_dashboard']").submit();}
 	});
 }
 
