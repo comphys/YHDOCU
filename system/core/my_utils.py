@@ -17,7 +17,8 @@ def sv(v,s='f') :
 
 def sf(v,s='f') :
     temp = v.split('/')
-    return([float(x) for x in temp])
+    if s == 'f' : return([float(x) for x in temp])
+    else : return([int(x) for x in temp])
 
 # 파일조작 관련 함수 
 def file_split(filename) :

@@ -12,7 +12,7 @@ class M_rsn_view(Model) :
         
         # 기본 값
         self.D['종목코드'] = 'SOXL'
-        투자자금 = self.DB.parameters('TC010')
+        투자자금 = my.sv(self.DB.parameters('TC010'))
         자금배분 = my.sf(self.DB.parameters('TC011'))
         
         self.D['기회자금'] = round(투자자금*자금배분[0]/100,2)

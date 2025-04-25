@@ -49,7 +49,8 @@ class Rsn_ajax(Control) :
             mode_ = self.DB.parameters('TX052')
         elif opt == 'test' :
             sdate = my.dayofdate(ldate,delta=-365*2)[0]
-            T_mon = my.sv(self.DB.parameters('TX051'))
+            T_mon = my.sv(self.DB.parameters('TC010'))
+            self.info(T_mon)
             mode_ = '기본진행'
         
         alloc = my.sf(self.DB.parameters('TC011'))
