@@ -1,5 +1,5 @@
 from system.core.load import Control
-from flask import session
+import system.core.my_utils as my
 
 class Rsn_ajax(Control) :
 
@@ -37,5 +37,27 @@ class Rsn_ajax(Control) :
         DC = RSN.get_simulLog(key)
         
         return self.json(DC)
-            
+    
+    def synchro(self) :
         
+        opt = self.D['post']['opt']
+        
+        sdate = self.DB.parameters('TX050')
+        ldate = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")
+        T_mon = my.sv(self.DB.parameters('TX051'))
+        _mode = self.DB.parameters('TX052')
+        alloc = my.sf(self.DB.parameters('TC012'))
+        
+        R_mon = round(T_mon * alloc[0]/100,2)
+        S_mon = round(T_mon * alloc[1]/100,2)
+        N_mon = T_mon - R_mon - S_mon
+        
+        RD = {}
+        RD['sdate'] = sdate
+        RD['ldate'] = ldate
+        RD['R_mon'] = f"{R_mon:,.2f}"
+        RD['S_mon'] = f"{S_mon:,.2f}"
+        RD['N_mon'] = f"{N_mon:,.2f}"
+        RD['_mode'] = _mode
+        
+        return self.json(RD)

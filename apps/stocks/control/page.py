@@ -78,7 +78,6 @@ class Page(Control) :
     
     def rpd_rsnview(self) :
         D = {}
-        D['종목코드'] = self.D['post']['종목코드']
         D['기회자금'] = self.D['post']['기회자금']
         D['안정자금'] = self.D['post']['안정자금']
         D['생활자금'] = self.D['post']['생활자금']
@@ -140,7 +139,6 @@ class Page(Control) :
     
     def rpd_rsnStat(self) :
         D = {}
-        D['종목코드'] = self.D['post']['종목코드']
         D['기회자금'] = self.D['post']['기회자금']
         D['안정자금'] = self.D['post']['안정자금']
         D['생활자금'] = self.D['post']['생활자금']

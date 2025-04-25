@@ -3,31 +3,31 @@
 {% block contents_page  %}
 <div class="row-row">
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
-		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/rpd_rsnview/rsn_view">
+		<form method='post' name='rsn_dashboard' action="{{D['_bse']}}page/rpd_rsnview/rsn_view">
 			<br>
 			<div class="well clearfix" style="border-radius:0px;">
     			<div class="pull-left">
     				<div class='select' style='margin-right:10px;vertical-align:bottom'>
-        				<input placeholder='종목코드' name='종목코드' type='text' value="{{D['종목코드']}}">
+        				<input placeholder='RSN' name='적용전략' type='text' value="RSN">
             			<div class='btn-group'>
                 			<button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>
                     		<ul class='dropdown-menu'>
-                        		<li><a>종목코드</a></li>
-                        		<li><a href='#'>SOXL</a></li>
+                        		<li><a>적용전략</a></li>
+                        		<li><a href='#'>RSN</a></li>
                     		</ul>
             			</div>
     				</div>
 					<div class='i-input-div'>
 						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:40px;font-weight:bold;">R</div>
-						<input type='text' class="i-number" name="기회자금" style="width:80px;text-align:center;" value="{{D['기회자금']}}">
+						<input type='text' class="i-number" name="기회자금" style="width:100px;text-align:center;" value="{{D['기회자금']}}">
 					</div>
 					<div class='i-input-div'>
 						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:40px;font-weight:bold;">S</div>
-						<input type='text' class="i-number" name="안정자금" style="width:80px;text-align:center;" value="{{D['안정자금']}}">
+						<input type='text' class="i-number" name="안정자금" style="width:100px;text-align:center;" value="{{D['안정자금']}}">
 					</div>
 					<div class='i-input-div'>
 						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:40px;font-weight:bold;">T</div>
-						<input type='text' class="i-number" name='생활자금' style="width:80px;text-align:center;" value="{{D['생활자금']}}">
+						<input type='text' class="i-number" name='생활자금' style="width:100px;text-align:center;" value="{{D['생활자금']}}">
 					</div>
 					<div class='i-input-div'>
 						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:40px">RP</div>
@@ -40,13 +40,13 @@
 						<input type='text' class="i-number" name="안정회복" style="width:50px;text-align:center;background-color:black;" value="{{D['안정회복']}}">
 					</div>
 					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;" onclick="synchro(0,'start')" title="동기화(처음부터)"></i>
+						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;" title="동기화(처음부터)"></i>
+					</div>
+					<div style="display:inline-block;">	
+						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;"  title="동기화(back)"></i>
 					</div>
 					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro(1,'pick')" title="동기화(back)"></i>
-					</div>
-					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:cadetblue;cursor:pointer;" onclick="synchro(2,'pick')" title="동기화(최근시즌)"></i>
+						<i class="fa fa-superpowers fa-lg" style="color:cadetblue;cursor:pointer;" onclick="synchro('real')" title="동기화"></i>
 					</div>
     			</div> <!--pull left-->
 
@@ -147,9 +147,9 @@
 					
 					{% if D['일반상황']=='on' %}
 					<th style='text-align:right;width:110px;color:grey'>V process</th>
-					<th style='text-align:center;width:90px;color:gray'>V avg</th>
-					<th style='text-align:right;width:94px;color:gray'>V profit</th>
-					<th style='text-align:right;width:74px;color:gray'>V rate</th>
+					<th style='text-align:center;width:74px;color:gray'>V avg</th>
+					<th style='text-align:right;width:100px;color:gray'>V profit</th>
+					<th style='text-align:right;width:70px;color:gray'>V rate</th>
 					{% endif %}
 
 					<th style='text-align:right;width:110px;color:#F6CECE'>R process</th>
@@ -194,9 +194,9 @@
 			
 			{% if D['일반상황']=='on' %}
 			<col style="width:110px"> <!-- 일반진행 -->
-			<col style="width:90px"> <!-- 일반평균 -->
-			<col style="width:94px"> <!-- 일반수익 -->
-			<col style="width:74px;border-right:3px solid #424242"> <!-- 일반(%) -->
+			<col style="width:74px"> <!-- 일반평균 -->
+			<col style="width:100px"> <!-- 일반수익 -->
+			<col style="width:70px;border-right:3px solid #424242"> <!-- 일반(%) -->
 			{% endif %}
 
 			<col style="width:110px"> <!-- 기회진행 -->
@@ -311,7 +311,7 @@
 		{% if D['N_생활매도량'] %}
 		<tr><td style="text-align:left;">N sell</td><td>{{D['N_생활매도량']}}</td><td>{{D['N_생활매도가']}}</td><td>{{D['N_생활도평비']}}</td><td>{{D['N_생활도종비']}}</td></tr>
 		{% endif %}
-		<tr style="border-top:1px solid gray"><td style="text-align:left;">LP : </td><td>{{D['LPRICE']}}</td><td></td><td style="text-align:left;">CP : </td><td>{{D['CPRICE']}}</td></tr>
+		<!-- <tr style="border-top:1px solid gray"><td style="text-align:left;">LP : </td><td>{{D['LPRICE']}}</td><td></td><td style="text-align:left;">CP : </td><td>{{D['CPRICE']}}</td></tr> -->
 	</table>
 </div>
 
@@ -370,7 +370,7 @@
 			</tr>
 			<tr style="border:2px solid #CEE3F6;">
 				<td style="width:30px">&nbsp;</td>
-				<td class='list-code' style="cursor:pointer">SOXL</td>
+				<td class='list-code' style="cursor:pointer">투자현황</td>
 				<td class="write-td-right" style="padding:12px 8px">
 					<div class='i-input-div-choice'>
 						<div class='write-input-server'>매수금&nbsp;</div>
@@ -990,25 +990,18 @@ function startYearSpan() {
 	$("input[name='시작일자']").val(date2)
 }
 
-function synchro(opt,begin='pick') {
-	let today =''
-	if(opt==2 || opt==0) {
-		today = new Date().format("yyyy-MM-dd");
-		$("input[name='종료일자']").val(today);
-	} else if(opt==1){	today = $("input[name='시작일자']").val();} 
+function synchro(opt) {
 
-	let posturl = uri('linkurl') + 'pages-pajax/rst_sync';
-	$.post(posturl, { s_date : today, begin : begin },null,'json').done(function(data){
-		if(data.date=='None'){h_dialog.notice(data.msg);}
-		else {
+	let posturl = uri('linkurl') + 'pages-rsn_ajax/synchro';
+	$.post(posturl, { opt : opt },null,'json').done(function(data){
 			h_dialog.notice("동기화 데이타가 입력되었습니다.")
-			$("input[name='시작일자']").val(data.date);
-			$("input[name='기회자금']").val(data.R_money);
-			$("input[name='안정자금']").val(data.S_money);
-			$("input[name='생활자금']").val(data.T_money);
-			if(parseFloat(data.V_mode) > 0 ) {$("input[name='chk_chx']").prop('checked',true);}
-			if(opt==2||opt==0) {$("form[name=stock_back_testing]").submit();}
-		}
+			$("input[name='시작일자']").val(data.sdate);
+			$("input[name='종료일자']").val(data.ldate);
+			$("input[name='기회자금']").val(data.R_mon);
+			$("input[name='안정자금']").val(data.S_mon);
+			$("input[name='생활자금']").val(data.N_mon);
+			if(data._mode=="전략진행") {$("input[name='chk_chx']").prop('checked',true);}
+			if(opt=='real') {$("form[name='rsn_dashboard']").submit();}
 	});
 }
 

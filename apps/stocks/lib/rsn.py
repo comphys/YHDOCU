@@ -31,7 +31,7 @@ class RSN :
             tac['총매수금'] += tac['매수금액']
             tac['평균단가'] =  tac['총매수금'] / tac['보유수량'] 
             
-            if self.D['수료적용'] == 'on' :  tac['수수료등']  = self.commission(tac['매수금액'],1); tac['현재잔액'] -= tac['수수료등']
+            if self.D['수료적용'] == 'on' :  tac['수수료등']  = self.commission(tac['매수금액'],1,key); tac['현재잔액'] -= tac['수수료등']
         
         tac['현수익률'] = (self.M['당일종가'] / tac['평균단가'] -1) * 100  if tac['평균단가'] else 0.00    
         tac['평가금액'] =  self.M['당일종가'] * tac['보유수량'] 
@@ -39,7 +39,7 @@ class RSN :
         
         if  tac['매도수량'] :
 
-            if self.D['수료적용'] == 'on' : tac['수수료등']  = self.commission(tac['매도금액'],2); tac['현재잔액'] -= tac['수수료등'] 
+            if self.D['수료적용'] == 'on' : tac['수수료등']  = self.commission(tac['매도금액'],2,key); tac['현재잔액'] -= tac['수수료등'] 
             if self.D['세금적용'] == 'on' : tac['현재잔액'] -= self.tax(tac['실현수익'])
             
             tac['보유수량'] -= tac['매도수량']
@@ -63,8 +63,6 @@ class RSN :
             tac['현수익률'] = tac['실수익률']
             
             self.rstCount(tac['중익합계'],key)
-            self.info(f"{self.M['현재일자']} {key} : {tac['중익합계']}")
-
 
     def calculate(self)  :
         
@@ -108,11 +106,11 @@ class RSN :
             if self.M['기본진행'] : self.D[key+'정손절'] += 1
             else : self.D[key+'회손절'] += 1   
 
-    def commission(self,mm,opt) :
+    def commission(self,mm,opt,key) :
 
         fee = int(mm*0.07)/100
         if opt==2 : fee += round(mm*0.0008)/100
-        self.D['총수수료'] += fee
+        if key != '일' : self.D['총수수료'] += fee
         return fee
         
     def tax(self,mm) :
@@ -258,6 +256,7 @@ class RSN :
         
     # V tactic
     def tomorrow_buy_V(self) :
+        
         self.V['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
         self.V['예정수량'] = my.ceil(self.V['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
         self.check_balance(self.V)                  
@@ -352,7 +351,7 @@ class RSN :
         # 2024.06.18 이후 폭락장 보정, RSN 에선 종가상승값만 사용
         CPRICE = my.round_up(self.M['당일종가'] * self.M['종가상승']) 
         LPRICE = my.round_up(self.V['평균단가'] * self.M['강매가치'])
-        
+        # 최종결정은 적절한 타이밍에 약손절을 하기 위함으로 수익성에 큰 영향을 끼치는 중요한 부분임
         if  self.M['현재날수'] >= self.M['강매시작'] : 
             # LPRICE = my.round_up(시초금액합 / 현재수량합 )
             self.M['매도예가']  = LPRICE
@@ -391,6 +390,7 @@ class RSN :
             for tac in (self.V,self.R,self.S) : tac['기초수량']  = my.ceil(tac['일매수금']/self.M['전일종가'])
             
             for tac in (self.V,self.R) :
+                key = '일' if tac == self.V else '기' 
                 tac['매수수량']  = tac['기초수량']
                 tac['수익현황']  = tac['현수익률'] = 0.0
                 tac['보유수량']  = tac['매수수량']
@@ -399,7 +399,7 @@ class RSN :
                 tac['총매수금']  = tac['평가금액'] = tac['매수금액']
                 tac['현재잔액'] -= tac['매수금액']
                 tac['거래코드']  = f"{tac['매수수량']}" 
-                if self.D['수료적용'] == 'on' : tac['수수료등'] = self.commission(tac['매수금액'],1); tac['현재잔액'] -= tac['수수료등']
+                if self.D['수료적용'] == 'on' : tac['수수료등'] = self.commission(tac['매수금액'],1,key); tac['현재잔액'] -= tac['수수료등']
 
             self.M['첫날기록'] = False
             
@@ -419,7 +419,7 @@ class RSN :
                 self.N['현재잔액'] -= self.N['매수금액']
                 self.N['거래코드']  = f"1B{self.N['매수수량']}" 
                 self.N['매수차수']  = 1
-                if self.D['수료적용'] == 'on' : self.N['수수료등'] = self.commission(self.N['매수금액'],1); self.N['현재잔액'] -= self.N['수수료등']
+                if self.D['수료적용'] == 'on' : self.N['수수료등'] = self.commission(self.N['매수금액'],1,'생'); self.N['현재잔액'] -= self.N['수수료등']
                 
             return True
 
@@ -639,16 +639,18 @@ class RSN :
             # 투자자금 초기화 ----------------------------------------------------------------------------
             self.M['투자자금'] = ST['TC010']
             self.M['투자배분'] = my.sf(ST['TC012'])    
+        
             if '기회자금' not in self.D : self.D['기회자금']  = round(self.M['투자자금']*self.M['투자배분'][0]/100,2)
             if '안정자금' not in self.D : self.D['안정자금']  = round(self.M['투자자금']*self.M['투자배분'][1]/100,2)
             if '생활자금' not in self.D : self.D['생활자금']  = self.M['투자자금'] - self.D['기회자금'] - self.D['안정자금']
-            
-            self.R['현재잔액']  = self.R['시초금액'] = my.sv(self.D['기회자금'])
-            self.S['현재잔액']  = self.S['시초금액'] = my.sv(self.D['안정자금'])
-            self.N['현재잔액']  = self.N['시초금액'] = my.sv(self.D['생활자금'])
-            # 일반잔액은 RSN 전략의 합으로 설정한다
-            self.V['현재잔액']  = self.V['시초금액'] = (self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액'])
-            self.D['일반자금']  = f"{self.V['현재잔액']:,.2f}"
+        
+        # 통계자료 작성을 위해 RSN 현재잔액은 init_value 호출 때 마다 초기화가 되어야 함
+        self.R['현재잔액']  = self.R['시초금액'] = my.sv(self.D['기회자금'])
+        self.S['현재잔액']  = self.S['시초금액'] = my.sv(self.D['안정자금'])
+        self.N['현재잔액']  = self.N['시초금액'] = my.sv(self.D['생활자금'])
+        # 일반잔액은 RSN 전략의 합으로 설정한다
+        self.V['현재잔액']  = self.V['시초금액'] = (self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액'])
+        self.D['일반자금']  = f"{self.V['현재잔액']:,.2f}"
         
         # 매수금 분할 ( N tactic )
         self.N['매금단계'] = [0.0,0.0,0.0,0.0,0.0,0.0]
