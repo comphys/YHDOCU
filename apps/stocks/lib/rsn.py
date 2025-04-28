@@ -395,7 +395,7 @@ class RSN :
                 tac['매수금액']  = self.M['당일종가'] * tac['매수수량']
                 tac['총매수금']  = tac['평가금액'] = tac['매수금액']
                 tac['현재잔액'] -= tac['매수금액']
-                tac['거래코드']  = f"{tac['매수수량']}" 
+                tac['거래코드']  = f"B{tac['매수수량']}" 
                 if self.D['수료적용'] == 'on' : tac['수수료등'] = self.commission(tac['매수금액'],1,key); tac['현재잔액'] -= tac['수수료등']
 
             self.M['첫날기록'] = False
@@ -414,7 +414,7 @@ class RSN :
                 self.N['매수금액']  = self.M['당일종가'] * self.N['매수수량'] 
                 self.N['총매수금']  = self.N['평가금액'] = self.N['매수금액']
                 self.N['현재잔액'] -= self.N['매수금액']
-                self.N['거래코드']  = f"1B{self.N['매수수량']}" 
+                self.N['거래코드']  = f"1B {self.N['매수수량']}" 
                 self.N['매수차수']  = 1
                 if self.D['수료적용'] == 'on' : self.N['수수료등'] = self.commission(self.N['매수금액'],1,'생'); self.N['현재잔액'] -= self.N['수수료등']
                 
