@@ -52,9 +52,8 @@ class RSN :
             tac['매수차수']  = 0
             tac['수익현황']  = tac['매도금액'] - tac['총매수금']
             tac['중익합계'] += tac['수익현황']  
+            tac['실수익률']  = round( (tac['중익합계'] / tac['총매수금'] ) * 100, 2)
             tac['총매수금']  = 0.0
-            
-            tac['실수익률']  = round( (tac['중익합계'] / tac['시초금액'] ) * 100, 2)
             if  tac == self.N : self.rebalanceN()
             
         if  self.V['매도수량'] :
@@ -177,6 +176,12 @@ class RSN :
 # -------------------------------------------------------------------------------------------------------------------------------------------
 # today_buy : 당일 매수를 체크한다
 # -------------------------------------------------------------------------------------------------------------------------------------------
+    def RStoN(self,tac) :
+        if  self.D['이밸런싱'] != 'on' : return
+        self.N['현재잔액'] += tac['현재잔액']
+        tac['현재잔액'] = 0.0
+        self.rebalanceN()
+
 
     def today_buy_V(self) :
 
@@ -195,6 +200,7 @@ class RSN :
             if  not self.R['진행시작'] and self.M['현재날수']> 2 :
                 self.R['거래코드'] = f"B{self.R['매수수량']}/{self.R['기초수량']}" 
                 self.R['진행시작'] = True
+                self.RStoN(self.R)
     
     def today_buy_S(self) :
         
@@ -206,6 +212,7 @@ class RSN :
             if  not self.S['진행시작'] and self.M['현재날수']>self.M['전략대기'] :
                 self.S['거래코드'] = f"B{self.S['매수수량']}/{self.S['기초수량']}" 
                 self.S['진행시작'] = True
+                self.RStoN(self.S)
 
     def today_buy_N(self) :
         
@@ -252,7 +259,8 @@ class RSN :
                 tac['예정수량'] = 0
                 tac['진행상황'] = '매수중단'
                 if  self.D['이밸런싱'] == 'on' and tac in (self.R,self.S): 
-                    if  tac['현재잔액']: self.N['현재잔액'] += tac['현재잔액']; self.N['시초금액'] += tac['현재잔액']; tac['시초금액'] -= tac['현재잔액']; tac['현재잔액']  = 0.0
+                    if  tac['현재잔액']: self.N['현재잔액'] += tac['현재잔액']; tac['현재잔액']  = 0.0
+                    
         
     # V tactic
     def tomorrow_buy_V(self) :
@@ -285,7 +293,7 @@ class RSN :
     # S tactic    
     def tomorrow_buy_S(self) :
         
-        if not self.S['현재잔액'] : self.R['예정수량'] = 0; return
+        if not self.S['현재잔액'] : self.S['예정수량'] = 0; return
         
         if  self.S['진행시작'] :
             self.S['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
