@@ -79,7 +79,7 @@
 				<input role="switch" type="checkbox" name="chk_tax" {{ 'checked' if D['세금적용'] =='on' else '' }}>&nbsp;<span>Tax</span>&nbsp;&nbsp; 
 				<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on' else '' }}>&nbsp;<span>RST=</span>&nbsp;&nbsp; 
 				<input role="switch" type="checkbox" name="chk_rs_" {{ 'checked' if D['이밸런싱'] =='on' else '' }}>&nbsp;<span>RS>T</span>&nbsp;&nbsp; 
-				Max LP date : {{D['MaxDD']}}
+				Min LP : {{D['MinLP']}} % when starting on ( {{D['MinDD']}} )
 			</div>
 			<div class="pull-right" style="padding:10px 5px;margin-right:0px;height:42px;">
 				<i class="fa fa-line-chart" onclick="show_timeSeries_chart()"></i>

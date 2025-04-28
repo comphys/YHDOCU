@@ -920,7 +920,7 @@ class RSN :
         sx['생활최락'] = f"{self.D['MDD4']}<span style='color:gray'>({self.D['MDD_DAY4']})</span>"    if self.D['MDD_DAY4'] else ''
         sx['저점기록'] = f"<b>{self.D['손익저점']}</b><span style='color:gray'>({self.D['저점날자'][2:]})</span>" if self.D['저점날자'] else ''
         
-        if float(self.D['MaxDP']) >= float(self.D['손익저점']) : self.D['MaxDP'] = self.D['손익저점']; self.D['MaxDD'] = self.D['시작일자']
+        if float(self.D['MinLP']) >= float(self.D['손익저점']) : self.D['MinLP'] = self.D['손익저점']; self.D['MinDD'] = self.D['시작일자']
 
         sx['게임횟수'] = f"{self.D['R_총매도수']}<span style='color:gray'>({self.D['R_총익절수']}/{self.D['R_총손절수']})</span>"
         sx['게임승률'] = self.D['R_총익승률']
@@ -939,8 +939,8 @@ class RSN :
         self.stat  = True
         B = self.get_dateList(self.D['시작일자'],self.D['종료일자'])
         
-        self.D['MaxDP'] = 100.0
-        self.D['MaxDD'] = ''
+        self.D['MinLP'] = 100.0
+        self.D['MinDD'] = ''
         self.D['SR'] = []
         
         for b in B :
