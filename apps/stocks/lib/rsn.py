@@ -31,7 +31,12 @@ class RSN :
             tac['총매수금'] += tac['매수금액']
             tac['평균단가'] =  tac['총매수금'] / tac['보유수량'] 
             
-            if self.D['수료적용'] == 'on' :  tac['수수료등']  = self.commission(tac['매수금액'],1,key); tac['현재잔액'] -= tac['수수료등']
+            if  self.D['수료적용'] == 'on' :  tac['수수료등']  = self.commission(tac['매수금액'],1,key); tac['현재잔액'] -= tac['수수료등']
+            if  tac['잔액이동'] :
+                self.N['현재잔액'] += tac['현재잔액']
+                tac['현재잔액'] = 0
+                tac['잔액이동'] = False
+                self.rebalanceN()
         
         tac['현수익률'] = (self.M['당일종가'] / tac['평균단가'] -1) * 100  if tac['평균단가'] else 0.00    
         tac['평가금액'] =  self.M['당일종가'] * tac['보유수량'] 
@@ -53,7 +58,7 @@ class RSN :
             tac['중익합계'] += tac['수익현황']  
             tac['실수익률']  = round( (tac['중익합계'] / tac['총매수금'] ) * 100, 2)
             tac['총매수금']  = 0.0
-            if  tac == self.N : self.N['매수차수'] = 0; self.rebalanceN()
+            if  tac == self.N and not self.V['매도수량'] : self.N['매수차수'] = 0; self.rebalanceN()
             
         if  self.V['매도수량'] :
             tac['매도금액'] = tac['중매합계']
@@ -118,15 +123,14 @@ class RSN :
    
     def rebalanceN(self) :
 
-        self.N['매금단계'][0] = self.N['현재잔액']   
-        for i in [1,2,3,4] :   self.N['매금단계'][i] = round(self.N['현재잔액'] * self.M['분할매수'][i-1],2)
+        for i in [0,1,2,3] : self.N['매금단계'][i] = round(self.N['현재잔액'] * self.M['분할배분'][i],2)
     
         
     def rebalance(self)  :
 
         total = self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액']
         
-        # RN rebalance
+        # RSN rebalance
         if  self.D['일밸런싱'] == 'on' :
             self.R['현재잔액'] = round(total*self.M['투자배분'][0]/100,2)
             self.S['현재잔액'] = round(total*self.M['투자배분'][1]/100,2)
@@ -134,11 +138,6 @@ class RSN :
 
         for tac in (self.V,self.R,self.S) :   
             tac['일매수금'] = int(tac['현재잔액']/self.M['분할횟수']) 
-        
-        self.V['시초금액']  = self.V['현재잔액']
-        self.R['시초금액']  = self.R['현재잔액']
-        self.S['시초금액']  = self.S['현재잔액']
-        self.N['시초금액']  = self.N['현재잔액']        
         
         self.rebalanceN()
 
@@ -253,18 +252,6 @@ class RSN :
                 tac['예정수량'] = 0
                 tac['진생상황'] = '매수중단'
         
-        if  self.R['잔액이동'] : 
-            self.N['현재잔액'] += self.R['현재잔액']
-            self.R['현재잔액'] = 0
-            self.R['잔액이동'] = False
-            self.rebalanceN()
-            
-        if  self.S['잔액이동'] : 
-            self.N['현재잔액'] += self.S['현재잔액']
-            self.S['현재잔액'] = 0
-            self.S['잔액이동'] = False
-            self.rebalanceN()
-        
     # V tactic
     def tomorrow_buy_V(self) :
         
@@ -276,7 +263,7 @@ class RSN :
     # R tactic
     def tomorrow_buy_R(self) :
         
-        if not self.R['현재잔액'] : self.R['예정수량'] = 0; return
+        if not self.R['현재잔액'] : self.R['예정수량'] = 0; self.R['매수예가'] = 0; return
         
         if  self.R['진행시작'] :
             self.R['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
@@ -296,7 +283,7 @@ class RSN :
     # S tactic    
     def tomorrow_buy_S(self) :
         
-        if not self.S['현재잔액'] : self.S['예정수량'] = 0; return
+        if not self.S['현재잔액'] : self.S['예정수량'] = 0; self.S['매수예가'] = 0; return
         
         if  self.S['진행시작'] :
             self.S['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
@@ -313,14 +300,14 @@ class RSN :
     def tomorrow_buy_N(self) :
         
         if self.N['매수차수'] >= 5 : self.N['예정수량'] = 0; return
-        if self.N['매수차수'] == 4 : self.N['매금단계'][5] = self.N['현재잔액']
+        if self.N['매수차수'] == 4 : self.N['매금단계'][4] = self.N['현재잔액']
         
         if  self.N['보유수량'] :
             self.N['매수예가'] = round( self.M['당일종가'] * self.M['매입가치'],2 ) 
         else :
             self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] == 2 else round(self.M['당일종가'] * self.M['진입가치'],2)    
         
-        self.N['예정수량'] = int( self.N['매금단계'][self.N['매수차수']+1]/ self.N['매수예가'] ) 
+        self.N['예정수량'] = int( self.N['매금단계'][self.N['매수차수']]/ self.N['매수예가'] ) 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
 # tomorrow_sell : 다음 날의 매도예가를 계산한다 
@@ -364,7 +351,6 @@ class RSN :
         LPRICE = my.round_up(self.V['평균단가'] * self.M['강매가치'])
         # 최종결정은 적절한 타이밍에 약손절을 하기 위함으로 수익성에 큰 영향을 끼치는 중요한 부분임
         if  self.M['현재날수'] >= self.M['강매시작'] : 
-            # LPRICE = my.round_up(시초금액합 / 현재수량합 )
             self.M['매도예가']  = LPRICE
 
         if  CPRICE >= LPRICE : 
@@ -415,13 +401,13 @@ class RSN :
             self.M['첫날기록'] = False
             
         # --------------------------------------------------
-        # T 매수 여부 판단
+        # N 매수 여부 판단
         # --------------------------------------------------   
             진입단가 = round(self.M['전일종가'] * self.M['진입가치'],2)
             if  self.M['연속하락'] == self.M['진입일자'] : 진입단가 = round(self.M['전일종가'] -0.01,2 ) 
             
             if  self.M['당일종가'] <= 진입단가 :
-                self.N['매수수량']  = int( self.N['매금단계'][1]/진입단가 )
+                self.N['매수수량']  = int( self.N['매금단계'][0]/진입단가 )
                 self.N['수익현황']  = self.N['현수익률'] = 0.0
                 self.N['보유수량']  = self.N['매수수량']
                 self.N['평균단가']  = self.M['당일종가']
@@ -629,7 +615,7 @@ class RSN :
             self.M['회복탈출']  = ST['TS011']  # TS
             
             # N tactic
-            분할 = my.sf(ST['TN010']); self.M['분할매수']  = [분할[0],분할[1],분할[2],분할[3]] # TN
+            분할 = my.sf(ST['TN010']); self.M['분할배분']  = [분할[0],분할[1],분할[2],분할[3]] # TN
             각매 = my.sf(ST['TN011']); self.M['각매가치']  = [각매[0],각매[1],각매[2],각매[3],각매[4]] # TN
             self.M['진입일자']  = ST['TN020']  # TN
             self.M['진입가치']  = ST['TN021']
@@ -656,21 +642,21 @@ class RSN :
             if '생활자금' not in self.D : self.D['생활자금']  = self.M['투자자금'] - self.D['기회자금'] - self.D['안정자금']
         
         # 통계자료 작성을 위해 RSN 현재잔액은 init_value 호출 때 마다 초기화가 되어야 함
-        self.R['현재잔액']  = self.R['시초금액'] = my.sv(self.D['기회자금'])
-        self.S['현재잔액']  = self.S['시초금액'] = my.sv(self.D['안정자금'])
-        self.N['현재잔액']  = self.N['시초금액'] = my.sv(self.D['생활자금'])
+        self.R['현재잔액']  = my.sv(self.D['기회자금'])
+        self.S['현재잔액']  = my.sv(self.D['안정자금'])
+        self.N['현재잔액']  = my.sv(self.D['생활자금'])
         # 일반잔액은 RSN 전략의 합으로 설정한다
-        self.V['현재잔액']  = self.V['시초금액'] = (self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액'])
+        self.V['현재잔액']  = self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액']
         self.D['일반자금']  = f"{self.V['현재잔액']:,.2f}"
         
         # 매수금 분할 ( N tactic )
-        self.N['매금단계'] = [0.0,0.0,0.0,0.0,0.0,0.0]
+        self.N['매금단계'] = [0.0,0.0,0.0,0.0,0.0]
         self.N['매수차수'] = 0
         self.rebalanceN()
-        self.V['일매수금']  = int(self.V['현재잔액'] / self.M['분할횟수'])
-        self.R['일매수금']  = int(self.R['현재잔액'] / self.M['분할횟수'])
-        self.S['일매수금']  = int(self.S['현재잔액'] / self.M['분할횟수'])
-        self.R['잔액이동']  = self.S['잔액이동'] = False
+        self.V['일매수금'] = int(self.V['현재잔액'] / self.M['분할횟수'])
+        self.R['일매수금'] = int(self.R['현재잔액'] / self.M['분할횟수'])
+        self.S['일매수금'] = int(self.S['현재잔액'] / self.M['분할횟수'])
+        self.R['잔액이동'] = self.S['잔액이동'] = self.V['잔액이동'] = self.N['잔액이동'] = False
          # -------------------------------------------------------------------------------------------
         if  self.chart : # 챠트작성
             
@@ -730,7 +716,7 @@ class RSN :
             self.D['N_일반매수량'] = self.D['N_일반기초']
             self.D['N_기회매수량'] = self.D['N_기회기초']
             self.D['N_안정매수량'] = 0
-            self.D['N_생활매수량'] = int( self.N['매금단계'][1] / self.D['N_생활매수가'] )
+            self.D['N_생활매수량'] = int( self.N['매금단계'][0] / self.D['N_생활매수가'] )
 
             self.D['N_일반매도량'] = self.D['N_기회매도량'] = self.D['N_안정매도량'] = self.D['N_생활매도량'] = 0
 
@@ -888,7 +874,7 @@ class RSN :
         LD['sub4']  = self.N['매수차수'] if tactic == 'N' else f"{tac['일매수금']:,.2f}"
         
         LD['sub12'] = self.M['현재날수'] - 1
-        LD['sub18'] = f"{self.N['매금단계'][self.N['매수차수']+1]:,.2f}" if tactic == 'N' else tac['기초수량'] 
+        LD['sub18'] = f"{self.N['매금단계'][self.N['매수차수']]:,.2f}" if tactic == 'N' else tac['기초수량'] 
                   
         LD['sub29'] = tac['진행상황']
         LD['sub5']  = f"+ {self.M['연속상승']}" if self.M['연속상승'] else f"- {self.M['연속하락']}"
