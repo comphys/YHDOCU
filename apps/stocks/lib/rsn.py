@@ -49,17 +49,17 @@ class RSN :
             tac['중매합계'] += tac['매도금액']
             tac['현수익률'] = (self.M['당일종가'] / tac['평균단가'] -1) * 100  if tac['평균단가'] else 0.00 
             tac['평균단가']  = 0.0
-            tac['매수차수']  = 0
             tac['수익현황']  = tac['매도금액'] - tac['총매수금']
             tac['중익합계'] += tac['수익현황']  
             tac['실수익률']  = round( (tac['중익합계'] / tac['총매수금'] ) * 100, 2)
             tac['총매수금']  = 0.0
-            if  tac == self.N : self.rebalanceN()
+            if  tac == self.N : self.N['매수차수'] = 0; self.rebalanceN()
             
         if  self.V['매도수량'] :
             tac['매도금액'] = tac['중매합계']
             tac['수익현황'] = tac['중익합계']
             tac['현수익률'] = tac['실수익률']
+            self.N['매수차수'] = 0
             
             self.rstCount(tac['중익합계'],key)
 
@@ -120,7 +120,7 @@ class RSN :
 
         self.N['매금단계'][0] = self.N['현재잔액']   
         for i in [1,2,3,4] :   self.N['매금단계'][i] = round(self.N['현재잔액'] * self.M['분할매수'][i-1],2)
-        self.N['매수차수'] = 0        
+    
         
     def rebalance(self)  :
 
@@ -176,12 +176,6 @@ class RSN :
 # -------------------------------------------------------------------------------------------------------------------------------------------
 # today_buy : 당일 매수를 체크한다
 # -------------------------------------------------------------------------------------------------------------------------------------------
-    def RStoN(self,tac) :
-        if  self.D['이밸런싱'] != 'on' : return
-        self.N['현재잔액'] += tac['현재잔액']
-        tac['현재잔액'] = 0.0
-        self.rebalanceN()
-
 
     def today_buy_V(self) :
 
@@ -200,7 +194,7 @@ class RSN :
             if  not self.R['진행시작'] and self.M['현재날수']> 2 :
                 self.R['거래코드'] = f"B{self.R['매수수량']}/{self.R['기초수량']}" 
                 self.R['진행시작'] = True
-                self.RStoN(self.R)
+                if self.D['이밸런싱'] == 'on' : self.R['잔액이동'] = True
     
     def today_buy_S(self) :
         
@@ -212,7 +206,7 @@ class RSN :
             if  not self.S['진행시작'] and self.M['현재날수']>self.M['전략대기'] :
                 self.S['거래코드'] = f"B{self.S['매수수량']}/{self.S['기초수량']}" 
                 self.S['진행시작'] = True
-                self.RStoN(self.S)
+                if self.D['이밸런싱'] == 'on' : self.S['잔액이동'] = True
 
     def today_buy_N(self) :
         
@@ -257,10 +251,19 @@ class RSN :
             
             if  tac['현재잔액'] < tac['예정수량'] * tac['매수예가'] : 
                 tac['예정수량'] = 0
-                tac['진행상황'] = '매수중단'
-                if  self.D['이밸런싱'] == 'on' and tac in (self.R,self.S): 
-                    if  tac['현재잔액']: self.N['현재잔액'] += tac['현재잔액']; tac['현재잔액']  = 0.0
-                    
+                tac['진생상황'] = '매수중단'
+        
+        if  self.R['잔액이동'] : 
+            self.N['현재잔액'] += self.R['현재잔액']
+            self.R['현재잔액'] = 0
+            self.R['잔액이동'] = False
+            self.rebalanceN()
+            
+        if  self.S['잔액이동'] : 
+            self.N['현재잔액'] += self.S['현재잔액']
+            self.S['현재잔액'] = 0
+            self.S['잔액이동'] = False
+            self.rebalanceN()
         
     # V tactic
     def tomorrow_buy_V(self) :
@@ -662,11 +665,13 @@ class RSN :
         
         # 매수금 분할 ( N tactic )
         self.N['매금단계'] = [0.0,0.0,0.0,0.0,0.0,0.0]
+        self.N['매수차수'] = 0
         self.rebalanceN()
         self.V['일매수금']  = int(self.V['현재잔액'] / self.M['분할횟수'])
         self.R['일매수금']  = int(self.R['현재잔액'] / self.M['분할횟수'])
         self.S['일매수금']  = int(self.S['현재잔액'] / self.M['분할횟수'])
-        # -------------------------------------------------------------------------------------------
+        self.R['잔액이동']  = self.S['잔액이동'] = False
+         # -------------------------------------------------------------------------------------------
         if  self.chart : # 챠트작성
             
             self.D['TR'] = []
