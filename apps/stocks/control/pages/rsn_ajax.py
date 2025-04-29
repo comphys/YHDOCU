@@ -128,14 +128,14 @@ class Rsn_ajax(Control) :
         LD['add16'] = DV['sub29'] # 진행상황
         LD['add17'] = opt # 카테고리
         # prettify
-        LD['add6'] = f"{LD['add6']:,}"
-        LD['add7'] = f"{LD['add7']:,.2f}"
+        LD['add6'] = f"{LD['add6']:}"
+        LD['add7'] = f"{LD['add7']:.2f}"
         LD['add8'] = f"{LD['add8']:.4f}"
-        LD['add9'] = f"{LD['add9']:,.2f}"
-        LD['add10'] = f"{LD['add10']:,.2f}"
+        LD['add9'] = f"{LD['add9']:.2f}"
+        LD['add10'] = f"{LD['add10']:.2f}"
         LD['add11'] = f"{LD['add11']:.2f}"
-        LD['add12'] = f"{LD['add12']:,.2f}"
-        LD['add14'] = f"{LD['add14']:,.2f}"
+        LD['add12'] = f"{LD['add12']:.2f}"
+        LD['add14'] = f"{LD['add14']:.2f}"
         
         
         for (tac,key) in [(DV,'v'),(DR,'r'),(DS,'s'),(DN,'n')] :         

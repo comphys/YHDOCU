@@ -852,43 +852,43 @@ class RSN :
         
         LD = {}
         LD['add1'] = LD['add2'] = '0.00' 
-        LD['add3'] = f"{tac['현재잔액']:,.2f}"
+        LD['add3'] = f"{tac['현재잔액']:.2f}"
         LD['add4'] = f"{tac['현재잔액']/(tac['현재잔액'] + tac['평가금액']) * 100:.2f}"
         
-        LD['add11'] = f"{tac['매수금액']:,.2f}"
-        LD['add12'] = f"{tac['매도금액']:,.2f}"
-        LD['add5']  = f"{tac['매수수량']:,}" if not tac['매도수량'] else f"-{tac['매도수량']:,}"
+        LD['add11'] = f"{tac['매수금액']:.2f}"
+        LD['add12'] = f"{tac['매도금액']:.2f}"
+        LD['add5']  = f"{tac['매수수량']:}" if not tac['매도수량'] else f"-{tac['매도수량']:}"
         LD['add16'] = f"{tac['평가금액']/(tac['현재잔액'] + tac['평가금액']) * 100:,.2f}"
     
         LD['add14'] = self.M['당일종가']
         LD['add20'] = self.M['종가변동']
-        LD['add9']  = f"{tac['보유수량']:,}"
-        LD['add8']  = f"{tac['현수익률']:,.2f}"
+        LD['add9']  = f"{tac['보유수량']:}"
+        LD['add8']  = f"{tac['현수익률']:.2f}"
         
         LD['add7']  = f"{tac['평균단가']:.4f}"
-        LD['add15'] = f"{tac['평가금액']:,.2f}"
-        LD['add6']  = f"{tac['총매수금']:,.2f}"
-        LD['add18'] = f"{tac['수익현황']:,.2f}"
+        LD['add15'] = f"{tac['평가금액']:.2f}"
+        LD['add6']  = f"{tac['총매수금']:.2f}"
+        LD['add18'] = f"{tac['수익현황']:.2f}"
         
         LD['sub1']  = self.M['기록시즌']
-        LD['sub4']  = self.N['매수차수'] if tactic == 'N' else f"{tac['일매수금']:,.2f}"
+        LD['sub4']  = self.N['매수차수'] if tactic == 'N' else f"{tac['일매수금']:.2f}"
         
         LD['sub12'] = self.M['현재날수'] - 1
-        LD['sub18'] = f"{self.N['매금단계'][self.N['매수차수']]:,.2f}" if tactic == 'N' else tac['기초수량'] 
+        LD['sub18'] = f"{self.N['매금단계'][self.N['매수차수']]:.2f}" if tactic == 'N' else tac['기초수량'] 
                   
         LD['sub29'] = self.V['진행상황']
         LD['sub5']  = f"+ {self.M['연속상승']}" if self.M['연속상승'] else f"- {self.M['연속하락']}"
-        LD['sub6']  = f"{초기자금:,.2f}" 
+        LD['sub6']  = f"{초기자금:.2f}" 
         LD['sub32'] = self.D['시작일자']
                 
-        LD['add17'] = f"{tac['현재잔액'] +tac['평가금액']:,.2f}"
+        LD['add17'] = f"{tac['현재잔액'] +tac['평가금액']:.2f}"
         LD['sub30'] = f"{tac['수수료등']:.2f}"
-        LD['sub31'] = f"{tac['현재잔액'] +tac['평가금액']-초기자금:,.2f}"
+        LD['sub31'] = f"{tac['현재잔액'] +tac['평가금액']-초기자금:.2f}"
         LD['sub11'] = '특이사항 없음'
         
         self.nextStep()
-        LD['sub2']  = f"{self.D['N_'+key+'매수량']:,}" 
-        LD['sub3']  = f"{self.D['N_'+key+'매도량']:,}"
+        LD['sub2']  = f"{self.D['N_'+key+'매수량']:}" 
+        LD['sub3']  = f"{self.D['N_'+key+'매도량']:}"
         LD['sub19'] = self.D['N_'+key+'매수가'] 
         LD['sub20'] = self.D['N_'+key+'매도가']
         

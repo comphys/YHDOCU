@@ -1047,8 +1047,9 @@ $(".log-v").click(function(){
 	$("#cn2").text("기초수량");
 	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
 
-	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);} });
+	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#daily-log").show(); 
+	
 });
 $(".log-r").click(function(){ 
 	get_pdat();	
@@ -1059,7 +1060,7 @@ $(".log-r").click(function(){
 	$("#cn2").text("기초수량");
 	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
 
-	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);} });
+	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#daily-log").show(); 
 });
 $(".log-s").click(function(){ 
@@ -1071,7 +1072,7 @@ $(".log-s").click(function(){
 	$("#cn2").text("기초수량");
 	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
 
-	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);} });
+	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#daily-log").show(); 
  });
 $(".log-n").click(function(){ 
@@ -1083,7 +1084,7 @@ $(".log-n").click(function(){
 	$("#cn2").text("배분금액");
 	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
 
-	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);} });
+	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#daily-log").show(); 
 });
 </script>
