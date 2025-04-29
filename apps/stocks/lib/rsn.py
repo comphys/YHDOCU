@@ -193,7 +193,7 @@ class RSN :
             if  not self.R['진행시작'] and self.M['현재날수']> 2 :
                 self.R['거래코드'] = f"B{self.R['매수수량']}/{self.R['기초수량']}" 
                 self.R['진행시작'] = True
-                if self.D['이밸런싱'] == 'on' : self.R['잔액이동'] = True
+                self.R['잔액이동'] = True if self.D['이밸런싱'] == 'on' else False
     
     def today_buy_S(self) :
         
@@ -205,7 +205,7 @@ class RSN :
             if  not self.S['진행시작'] and self.M['현재날수']>self.M['전략대기'] :
                 self.S['거래코드'] = f"B{self.S['매수수량']}/{self.S['기초수량']}" 
                 self.S['진행시작'] = True
-                if self.D['이밸런싱'] == 'on' : self.S['잔액이동'] = True
+                self.S['잔액이동'] = True if self.D['이밸런싱'] == 'on' else False
 
     def today_buy_N(self) :
         
@@ -250,7 +250,7 @@ class RSN :
             
             if  tac['현재잔액'] < tac['예정수량'] * tac['매수예가'] : 
                 tac['예정수량'] = 0
-                tac['진생상황'] = '매수중단'
+                tac['진행상황'] = '매수중단'
         
     # V tactic
     def tomorrow_buy_V(self) :
@@ -876,7 +876,7 @@ class RSN :
         LD['sub12'] = self.M['현재날수'] - 1
         LD['sub18'] = f"{self.N['매금단계'][self.N['매수차수']]:,.2f}" if tactic == 'N' else tac['기초수량'] 
                   
-        LD['sub29'] = tac['진행상황']
+        LD['sub29'] = self.V['진행상황']
         LD['sub5']  = f"+ {self.M['연속상승']}" if self.M['연속상승'] else f"- {self.M['연속하락']}"
         LD['sub6']  = f"{초기자금:,.2f}" 
         LD['sub32'] = self.D['시작일자']

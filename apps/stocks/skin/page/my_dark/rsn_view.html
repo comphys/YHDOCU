@@ -40,7 +40,7 @@
 						<input type='text' class="i-number" name="안정회복" style="width:50px;text-align:center;background-color:black;" value="{{D['안정회복']}}">
 					</div>
 					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;"></i>
+						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;" onclick="write_log()" title="로그기록"></i>
 					</div>
 					<div style="display:inline-block;">	
 						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro('test')" title="테스트모드"></i>
@@ -1025,6 +1025,16 @@ function get_pdat(){
 	pdat['일밸런싱'] = $("input[name='chk_brs']").is(':checked');
 	pdat['이밸런싱'] = $("input[name='chk_rs_']").is(':checked');
 	pdat['가상손실'] = $("input[name='chk_chx']").is(':checked');
+}
+
+function write_log() {
+
+	pdat['종료일자'] = $("input[name='종료일자']").val();
+	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_invest'
+	$.post(posturl, pdat, null, 'json' ).done(function(data){
+		for(key in data) {$("input[name='"+key+"']").val(data[key]);} 
+		$("form[name='rsn_dashboard']").submit();
+	});
 }
 
 
