@@ -2,12 +2,71 @@
 
 {% block contents_list %}
 <!-- 리스트 상부 카테고리 시작 -->
-<div class="clearfix" style='margin:10px 0px 5px 0px'>
-{% if D['Cat_use'] %}
+
+<!-- 리스트 상부 카테고리 종료 -->
+
+<!-- 리스트 메인 테이블 시작 -->
+<script src="/sys/chart/chart.min.js"></script>
+<script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
+
+<div style="height:370px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
+	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
+		<canvas id="myChart_main"  style="width:1078px;height:350px;background-color:#24272d;"></canvas>
+	</div>
+	<div style="position:absolute;left:1114px;top:58px;">
+	<!-- 우측 정보창( Next Strategy )-->
+		<div id="Next-Strategy" style="height:352px;background-color: #393f4a;border:2px solid black;padding:10px">
+			<span style="font-style: italic"> <span style="color:gray">Next Strategy</span></span>
+			<table class="table" style="text-align:right;width:274px">
+				<tr style="font-style:italic;border-bottom:1px solid gray"><td style="text-align:left;">Tactic</td><td>qty</td><td>price</td><td>ppa</td><td>ppl</td></tr>
+				{% if D['N_기회매수량'] %}
+				<tr><td style="text-align:left;">R buy</td><td>{{D['N_기회매수량']}}</td><td>{{D['N_기회매수가']}}</td>
+					<td style="color:gray">{{D['N_기회평대비']}}</td><td style="color:gray">{{D['N_기회종대비']}}</td>
+				</tr>
+				{% endif %}
+				{% if D['N_안정매수량'] %}
+				<tr><td style="text-align:left;">S buy</td><td>{{D['N_안정매수량']}}</td><td>{{D['N_안정매수가']}}</td>
+					<td style="color:gray">{{D['N_안정평대비']}}</td><td style="color:gray">{{D['N_안정종대비']}}</td>
+				</tr>
+				{% endif %}
+				{% if D['N_생활매수량'] %}
+				<tr><td style="text-align:left;">N buy</td><td>{{D['N_생활매수량']}}</td><td>{{D['N_생활매수가']}}</td>
+					<td style="color:gray">{{D['N_생활평대비']}}</td><td style="color:gray">{{D['N_생활종대비']}}</td>
+				</tr>
+				{% endif %}
+				{% if D['N_기회매도량'] %}
+				<tr style="border-top:1px solid gray"><td style="text-align:left;">R sell</td>
+					<td>{{D['N_기회매도량']}}</td><td>{{D['N_기회매도가']}}</td>
+					<td style="color:gray">{{D['N_기회도평비']}}</td><td style="color:gray">{{D['N_기회도종비']}}</td>
+				</tr>
+				{% endif %}
+				{% if D['N_안정매도량'] %}
+				<tr><td style="text-align:left;">S sell</td><td>{{D['N_안정매도량']}}</td><td>{{D['N_안정매도가']}}</td>
+					<td style="color:gray">{{D['N_안정도평비']}}</td><td style="color:gray">{{D['N_안정도종비']}}</td>
+				</tr>
+				{% endif %}
+				{% if D['N_생활매도량'] %}
+				<tr><td style="text-align:left;">N sell</td><td>{{D['N_생활매도량']}}</td><td>{{D['N_생활매도가']}}</td>
+					<td style="color:gray">{{D['N_생활도평비']}}</td><td style="color:gray">{{D['N_생활도종비']}}</td>
+				</tr>
+				{% endif %}
+			</table>
+		</div>
+	</div>
+</div>
+
+
+{% if D['TR'] %}
+
+<div id="extra-info" class="clearfix" style="border:2px solid black;background-color:rgb(34, 33, 33);padding:5px 20px;margin-bottom:-2px">
 	<div class="pull-left">
+		<i class="fa fa-sign-in"></i> <span class="exchange">{{D['총입금']}}</span> &nbsp;
+		<i class="fa fa-sign-out"></i> <span class="exchange">{{D['총출금']}}</span> &nbsp;
+	</div>
+	<div class="pull-right">
 		<form method='post' name='category_search' action="{{D['_bse']}}board/list/{{D['bid']}}" style='display:inline;'>
 			{%- for cats in D['CAT_LIST'] %}
-			<div class='myselect' style='margin-right:5px;'>
+			<div class='myselect' style='margin:-8px -14px -10px 0px'>
 				{%- if cats['chked'] %}
 				<input placeholder="{{cats['title']}}" name="csh_{{cats['fkey']}}" id="{{cats['id']}}" type="text" style="color:black;width:100px;background-color:#b5daff" value="{{cats['value']}}" />
 				{%- else %}
@@ -24,23 +83,30 @@
 				</div>
 			</div>
 			{% endfor -%}
-			<input type="hidden" name="list_filter" value="{{D['list_filter']}}" >
 		</form>
 	</div>
-{% endif -%}
 </div>
-<!-- 리스트 상부 카테고리 종료 -->
 
-<!-- 리스트 메인 테이블 시작 -->
-
-{% if D['TR'] %}
 <div class="row-row clearfix"> 
 	<table class='table table-bordered table-striped table-hover'>
 		<thead>
-			<tr>
-				{% for key,val in D['head_td'].items() %}
-				{{val|safe}}
-				{% endfor %}
+			<tr style="background-color:#0A2229;">
+				<th>날자</th>
+				<th>시즌</th>
+				<th>일수</th>
+				<th>종가</th>
+				<th>변동</th>
+				<th class="text-right">수량</th>
+				<th class="text-right">평균단가</th>
+				<th class="text-right">매입금액</th>
+				<th class="text-right">평가금액</th>
+				<th class="text-right">평가손익</th>
+				<th class="text-right">현수익률</th>
+				<th class="text-right">현재잔액</th>
+				<th class="text-right">R balance</th>
+				<th class="text-right">S balance</th>
+				<th class="text-right">N balance</th>
+				<th class="text-right">자산총액</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -82,16 +148,58 @@
 	</ul></div>
 </div>
 
-{% if D['BCONFIG']['row_flt']=='on' %}
+
+
 <script>
-$(document).ready(function(){ 
-	if("{{D['list_filter']}}") $("#list-filter").show();
-	$(document).on('keydown',null,'f1',function(){ $("#list-filter").toggle(); return false; })
-	$("#filter-qry").on('keydown',function(e){if(e.which==13){var txt = $("#filter-qry").text(); $("input[name='list_filter']").val(txt);document.category_search.submit();}});
-	$("#filter-reset").click(function(){$("#filter-qry").text('');});
-	$("#list-filter-submit").click(function(){var txt = $("#filter-qry").text(); $("input[name='list_filter']").val(txt);document.category_search.submit();});
-});
+// 챠트 그리기(메인챠트) -----------------------------------------------------------------------------------------
+const ctx_main = $id('myChart_main');
+ctx_main.style.backgroundColor = '#33363b';
+
+let labels_origin   = {{D['chart_date']|safe}}				// labels main origin
+let close_origin    = {{D['close_price']|safe}} 		    // soxl close price origin 
+let n_avg_origin    = {{D['Ntactic_avg']|safe}}	            // soxl average in v tactic
+let n_pro_origin    = {{D['Ntactic_pro']|safe}}	            // soxl profits in v tactic
+let s_avg_origin    = {{D['Stactic_avg']|safe}}	
+let s_pro_origin    = {{D['Stactic_pro']|safe}}
+let r_avg_origin    = {{D['Rtactic_avg']|safe}}	
+let r_pro_origin    = {{D['Rtactic_pro']|safe}}
+
+
+let ChartStart      = {{D['chart_start']}};	
+
+let labels_main     =  labels_origin.slice(ChartStart); let span_start = labels_main[0]; $("input[name='s_date']").val('20'+span_start)
+let close_price     =  close_origin.slice(ChartStart)	
+let n_avg_value     =  n_avg_origin.slice(ChartStart)  
+let n_pro_value     =  n_pro_origin.slice(ChartStart)	
+let s_avg_value     =  s_avg_origin.slice(ChartStart)	
+let s_pro_value     =  s_pro_origin.slice(ChartStart)
+let r_avg_value     =  r_avg_origin.slice(ChartStart)	
+let r_pro_value     =  r_pro_origin.slice(ChartStart)
+
+
+const data_main = {
+    labels : labels_main,
+    datasets : [
+		{   label:' 종가변동',data : close_price,borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],lineTension:0.2},
+		{   label:' 기회평균',data : r_avg_value,borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
+		{   label:' 안정평균',data : s_avg_value,borderColor:'yellow', borderWidth:3, pointRadius:1,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
+		{   label:' 생활평균',data : n_avg_value,borderColor:'lightgreen', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
+    ]   
+};
+const options_main = {
+	animation : { duration:500},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:true}},
+    responsive:false,
+    layout:{padding:20},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'lightgray'}, grid:{color:'#272727'},position:'right'},
+    }
+};
+const config_main  = {type:'line',data:data_main,options:options_main};
+const myChart_main = new Chart(ctx_main, config_main); 
+// ------------------------------------------------------------------------------------------------------------------------
 </script>
-{% endif %}
 
 {% endblock %}
