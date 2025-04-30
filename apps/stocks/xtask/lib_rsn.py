@@ -1,26 +1,30 @@
-import system.core.my_utils as my
+from myutils.DB import DB
+import myutils.my_utils as my
 
-class RSN :
+class update_Log :
 
-    def __init__(self,SYS) :
-        self.SYS   = SYS
-        self.info  = SYS.info
-        self.D     = SYS.D
-        self.DB    = SYS.DB
+    def __init__(self) :
+
+        self.DB    = DB('stocks')
         self.chart = False
         self.stat  = False
+        self.skey = self.DB.store("slack_key")
 
         self.B = {}
         self.V = {}
         self.R = {}
         self.S = {}
-        self.N = {} # N 전략에 대한 변수값
+        self.N = {}
         self.M = {}
-  
-# ------------------------------------------------------------------------------------------------------------------------------------------
-# same with xtask BEGIN, last modified 2024.10.18.
-# ------------------------------------------------------------------------------------------------------------------------------------------ 
+        self.D = {}
 
+    def send_message(self,message) :
+        if self.DB.system == "Linux" : my.post_slack(self.skey,message)
+        else : print(message)  
+
+# ------------------------------------------------------------------------------------------------------------------------------------------
+# From rsn.py in sytem lib
+# ------------------------------------------------------------------------------------------------------------------------------------------
     def calculate_A(self,tac,key) :
         
         if  tac['매수수량'] : 
@@ -759,89 +763,23 @@ class RSN :
         if not a : return ''
         return f"{(b/a-1)*100:.2f}"
     
-# ------------------------------------------------------------------------------------------------------------------------------------------
-# same with xtask END
-# ------------------------------------------------------------------------------------------------------------------------------------------
-
+    # ------------------------------------------------------------------------------------------------------------------------------------------
+    # From rsn.py END
+    # ------------------------------------------------------------------------------------------------------------------------------------------
+    
     def print_backtest(self) :
-
-        tx = {}
-        #--------------------------------------------------------
-        tx['현재날수'] = self.M['현재날수'] 
-        tx['기록시즌'] = self.M['기록시즌']
-        tx['기록일자'] = self.M['현재일자'][2:]
-        tx['당일종가'] = f"<span class='clsp{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
-        clr = "#F6CECE" if self.M['종가변동'] >= 0 else "#CED8F6"
-        tx['종가변동'] = f"<span style='color:{clr}'>{self.M['종가변동']:,.2f}</span>"
-        #--------------------------------------------------------
-        tx['일반진행'] = f"{round(self.V['매도금액'],4):,.2f}" if self.V['매도금액'] else self.V['거래코드']
-        tx['일반평균'] = f"{round(self.V['평균단가'],4):,.4f}" if self.V['평균단가'] else ""
-        clr = "#F6CECE" if self.V['현수익률'] > 0 else "#CED8F6"
-        tx['일반수익'] = f"<span style='color:{clr}'>{round(self.V['수익현황'],4):,.2f}</span>"
-        tx['일반익률'] = f"<span style='color:{clr}'>{round(self.V['현수익률'],4):,.2f}</span>"
-        tx['일반잔액'] = f"{self.V['현재잔액']:,.2f}"
-        #--------------------------------------------------------
-        for tac,key,key2 in [(self.R,'기회','r'),(self.S,'안정','s'),(self.N,'생활','t')] :
-            tx[key+'진행'] = f"<span title='{tac['실수익률']}'>{round(tac['매도금액'],4):,.2f}</span>" if tac['매도금액'] else tac['거래코드']
-            tx[key+'평균'] = f"<span class='avg{key2}{self.M['기록시즌']}'>{round(tac['평균단가'],4):,.4f}</span>" if tac['평균단가'] else f"<span class='avg{key2}{self.M['기록시즌']}'></span>"
-            clr = "#F6CECE" if tac['현수익률'] > 0 else "#CED8F6"
-            tx[key+'수익'] = f"<span style='color:{clr}'>{round(tac['수익현황'],4):,.2f}</span>" 
-            tx[key+'익률'] = f"<span style='color:{clr}'>{round(tac['현수익률'],4):,.2f}</span>" 
-            tx[key+'잔액'] = f"{tac['현재잔액']:,.2f}"
-        #--------------------------------------------------------    
-        tx['진행상황'] = self.V['진행상황']
-            
-        self.D['TR'].append(tx)
-        
-        self.D['clse_p'].append(self.M['당일종가'])
-
-        if avg_r := round(self.R['평균단가'],2) : self.D['avge_r'].append(avg_r)
-        else : self.D['avge_r'].append('null')
-        if avg_s := round(self.S['평균단가'],2) : self.D['avge_s'].append(avg_s)
-        else : self.D['avge_s'].append('null') 
-        if avg_n := round(self.N['평균단가'],2) : self.D['avge_n'].append(avg_n)
-        else : self.D['avge_n'].append('null')     
-        
-        self.D['c_date'].append(self.M['현재일자'][2:])
-        self.D['totalV'].append(round(self.R['현재잔액']+self.R['평가금액']+self.S['현재잔액']+self.S['평가금액']+self.N['현재잔액']+self.N['평가금액'],0))
-
-
-    def get_simResult(self,start='',end='',result=False) :
+        return
+    
+    def get_simResult(self,start='',end='') :
         
         self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board") if not end else end
         self.D['시작일자'] = my.dayofdate(self.D['종료일자'],delta=-365*2)[0] if not start else start 
         self.get_start()
         self.init_value()
         self.simulate()
-        if result : self.result()
-        self.nextStep()
-    
-    def get_thisYearResult(self) :
-
-        end   = my.timestamp_to_date(opt=7)
-        start = end[:4]+'-01-01'
-        self.get_simResult(start,end,result=True) 
-        return self.D['R_최종익률']
-    
-    def do_viewChart(self) :
-
-        self.chart = True
-        self.stat  = True
-        self.get_start()
-        self.init_value()
-        self.simulate(printOut=True)
         self.result()
         self.nextStep()
 
-    def get_dateList(self,start_date,end_date) :
-        
-        qry = f"SELECT add0 FROM h_stockHistory_board WHERE add1='SOXL' AND add0 BETWEEN '{start_date}' AND '{end_date}' ORDER BY add0"
-        return self.DB.col(qry)
-    
-      
-    # 시뮬레이션 화면( page : rsn ) 에서 로그 추출을 위한 함수
-
-        
     def get_simulLog(self,tactic) :
         
         if   tactic == 'V' : tac = self.V; key = '일반'; 초기자금 = my.sv(self.D['일반자금'])
@@ -893,59 +831,52 @@ class RSN :
         return LD
 
 
-    def get_backDateStat(self) :
-
-        sx = {}
-
-        sx['시작일자'] = self.D['시작일자']
-        sx['경과일자'] = self.D['R_총경과일']
-
-        sx['최종수익'] = self.D['R_최종수익']
-        sx['종수익률'] = self.D['R_최종익률']
-        sx['최장기록'] = f"{self.D['최장일수']}<span style='color:gray'>({self.D['최장일자'][2:]})</span>"
-
-        sx['기회최락'] = f"{self.D['MDD2']}<span style='color:gray'>({self.D['MDD_DAY2']})</span>"    if self.D['MDD_DAY2'] else ''
-        sx['안정최락'] = f"{self.D['MDD3']}<span style='color:gray'>({self.D['MDD_DAY3']})</span>"    if self.D['MDD_DAY3'] else ''
-        sx['생활최락'] = f"{self.D['MDD4']}<span style='color:gray'>({self.D['MDD_DAY4']})</span>"    if self.D['MDD_DAY4'] else ''
-        sx['저점기록'] = f"<b>{self.D['손익저점']}</b><span style='color:gray'>({self.D['저점날자'][2:]})</span>" if self.D['저점날자'] else ''
+    def do_tacticsLog(self,logDay) :
         
-        if float(self.D['MinLP']) >= float(self.D['손익저점']) : self.D['MinLP'] = self.D['손익저점']; self.D['MinDD'] = self.D['시작일자']
-
-        sx['게임횟수'] = f"{self.D['R_총매도수']}<span style='color:gray'>({self.D['R_총익절수']}/{self.D['R_총손절수']})</span>"
-        sx['게임승률'] = self.D['R_총익승률']
-        sx['게임익평'] = self.D['R_익절평균']
-        sx['게임손평'] = self.D['R_손절평균']
-
-        sx['기회갯수'] = f"{self.D['기정익절']}-{self.D['기정손절']} : {self.D['기회익절']}-{self.D['기회손절']}"
-        sx['안정갯수'] = f"{self.D['안정익절']}-{self.D['안정손절']} : {self.D['안회익절']}-{self.D['안회손절']}"
-        sx['생활갯수'] = f"{self.D['생정익절']}-{self.D['생정손절']} : {self.D['생회익절']}-{self.D['생회손절']}"
-
-        return sx
-
-    def do_viewStat(self) :
-
-        self.chart = False
-        self.stat  = True
-        B = self.get_dateList(self.D['시작일자'],self.D['종료일자'])
+        sdate = self.DB.parameters('TX050')
+        T_mon = my.sv(self.DB.parameters('TX051'))
+        mode_ = self.DB.parameters('TX052')
         
-        self.D['MinLP'] = 100.0
-        self.D['MinDD'] = ''
-        self.D['SR'] = []
+        alloc = my.sf(self.DB.parameters('TC011'))
+        R_mon = round(T_mon * alloc[0]/100,2)
+        S_mon = round(T_mon * alloc[1]/100,2)
+        N_mon = T_mon - R_mon - S_mon
         
-        for b in B :
-            self.get_start(b)
-            self.init_value()
-            self.simulate()
-            self.result()
-            self.D['SR'].append(self.get_backDateStat())
-            
-        self.D['SR'].pop()
-        
-        self.D['chart_dte'] = [x['시작일자'] for x in self.D['SR']]
-        self.D['chart_val'] = [my.sv(x['종수익률']) for x in self.D['SR']]
-        
-        self.D['chart_dte'].reverse()
-        self.D['chart_val'].reverse()
+        self.D['기회자금'] = f"{R_mon:,.2f}"
+        self.D['안정자금'] = f"{S_mon:,.2f}"
+        self.D['생활자금'] = f"{N_mon:,.2f}"
 
-# ------------------------------------------------------------------------------------
+        self.D['시작일자'] = sdate
+        self.D['종료일자'] = logDay 
+        if sdate >= logDay : return
         
+        self.D['기회시점'] = f"{self.DB.parameters('TR021'):.1f}"
+        self.D['기회회복'] = f"{self.DB.parameters('TR022'):.1f}"
+        self.D['안정시점'] = f"{self.DB.parameters('TS021'):.1f}"
+        self.D['안정회복'] = f"{self.DB.parameters('TS022'):.1f}"      
+        
+        self.D['수료적용'] = 'on' 
+        self.D['세금적용'] = 'off' 
+        self.D['일밸런싱'] = 'on' 
+        self.D['이밸런싱'] = 'on' 
+        self.D['가상손실'] = 'on' if mode_ == '전략진행' else 'off'
+        
+        opt = '초기셋팅' if sdate == logDay else '일반진행'
+        
+        self.get_simResult(sdate,logDay)
+        
+        
+        
+        
+
+
+        
+
+    
+    
+
+
+
+
+
+

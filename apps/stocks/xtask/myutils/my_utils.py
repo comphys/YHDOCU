@@ -17,6 +17,11 @@ def ceil(n) :
 def sv(v,s='f') :
     return float(v.replace(',','')) if s=='f' else int(v.replace(',',''))
 
+def sf(v,s='f') :
+    temp = v.split('/')
+    if s == 'f' : return([float(x) for x in temp])
+    else : return([int(x) for x in temp])
+
 # time & date
 
 def now_timestamp() :

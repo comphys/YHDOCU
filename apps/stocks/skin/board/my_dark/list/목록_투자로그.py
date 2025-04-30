@@ -20,10 +20,17 @@ class 목록_투자로그(SKIN) :
         
         self.D['head_td'] = THX       
 
- 
+    def chart(self) :
+        last_date = self.D['LIST'][0]['add0']
+        self.DB.tbl = self.D['tbl']
+        self.DB.wre = f"add0='{last_date}'"
+        TS = self.DB.get_line("r_17,r_18,r_19,r_20,s_17,s_18,s_19,s_20,n_17,n_18,n_19,n_20")
+        self.info(TS)
+    
     def list(self) :
 
         self.head()
+        self.chart()
 
         TR = [] ; tx = {}
 
