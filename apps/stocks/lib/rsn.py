@@ -30,6 +30,7 @@ class RSN :
             tac['평균단가'] =  tac['총매수금'] / tac['보유수량'] 
             
             if  self.D['수료적용'] == 'on' :  tac['수수료등']  = self.commission(tac['매수금액'],1,key); tac['현재잔액'] -= tac['수수료등']
+            
             if  tac['잔액이동'] :
                 self.N['현재잔액'] += tac['현재잔액']
                 tac['현재잔액'] = 0
@@ -288,9 +289,13 @@ class RSN :
             self.S['예정수량'] = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
             
         else :
-            if  self.M['현재날수'] >= self.M['전략대기'] : 
-                self.S['매수예가'] = self.take_chance(self.S)   # 순서주의 ( 매수예가 부터 계산해야함 )
-                self.S['예정수량'] = self.chance_qty(self.S) 
+            if      self.M['현재날수'] == 2 :
+                    self.S['매수예가'] = round(self.M['당일종가'] - 0.01, 2) if self.M['연속하락'] == 2 else round(self.M['당일종가'] * self.M['진입가치'],2)  
+                    self.S['예정수량'] = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
+            
+            elif    self.M['현재날수'] >= self.M['전략대기'] : 
+                    self.S['매수예가'] = self.take_chance(self.S)   # 순서주의 ( 매수예가 부터 계산해야함 )
+                    self.S['예정수량'] = self.chance_qty(self.S) 
                 
         self.check_balance(self.S)        
     
@@ -892,6 +897,10 @@ class RSN :
         
         return LD
 
+
+    # --------------------------------------------------------------------------
+    # STAT
+    # --------------------------------------------------------------------------
 
     def get_backDateStat(self) :
 
