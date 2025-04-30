@@ -10,16 +10,14 @@ class Board(Control) :
 
         self.DB = self.db('stocks')
         
-        if 'N_NO' in session :
-
+        if  'N_NO' in session :
+            
             self.DB.tbl, self.DB.wre = ("h_user_list",f"no={session['N_NO']}")
             self.D['USER'] = self.DB.get("*",many=1, assoc=True)
-
             self.D['bid']     = self.parm[0] if self.parm else self.C['init_board']
             self.D['tbl']     = 'h_'+self.D['bid']+'_board'
             self.DB.tbl, self.DB.wre = ("h_board_config",f"bid='{self.D['bid']}'")
             self.D['BCONFIG'] = self.DB.get("*",many=1,assoc=True)
-
             self.skin = 'board/'+self.D['BCONFIG']['skin']
             self.model('board-board_main')
             self.D['DOCU_ROOT'] = self.C['DOCU_ROOT']
@@ -89,12 +87,14 @@ class Board(Control) :
             if self.DB.cnt(qry) == 1 : 
                 session['N_NO'] = self.DB.one(qry)
                 session['CSH'] = {}
-                if self.D['_mbl'] : return self.moveto('page/view/dashboard_jrst')
-                else : return self.moveto('page/view/dashboard_jrst')
+                if self.D['_mbl'] : return self.moveto('board/list/rsnLog')
+                else : return self.moveto('board/list/rsnLog')
 
         
         return self.echo(D)
 
     def logout(self) : 
-        if 'N_NO' in session : del session['N_NO'] ; del session['CSH']
+        if 'N_NO' in session : 
+            del session['N_NO'] 
+            del session['CSH']
         return self.moveto('board/login')
