@@ -12,6 +12,17 @@ class 목록_투자로그(SKIN) :
         if not a or not b : return ''
         return f"{(b/a-1)*100:.2f}"
 
+    def next_stock_day(self,today) :
+        
+        delta = 1
+        while delta :
+            temp = my.dayofdate(today,delta)
+            weekend = 1 if temp[1] in ('토','일') else 0
+            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}'") else 0 
+            delta = 0 if not (weekend + holiday) else delta + 1
+        return temp
+    
+
     def chart(self) :
         
         last_date = self.D['LIST'][0]['add0']
@@ -25,6 +36,8 @@ class 목록_투자로그(SKIN) :
         chart_data = self.DB.get("add0,add3,r_08,r_09,s_08,s_09,n_08,n_09",assoc=True)
         
         if chart_data :
+            
+            self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(last_date)
             
             # 챠트 정보 가져오기
             first_date = chart_data[-1]['add0']
