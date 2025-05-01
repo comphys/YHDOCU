@@ -91,26 +91,12 @@
 	<table class='table table-bordered table-striped table-hover'>
 		<thead>
 			<tr style="background-color:#0A2229;">
-				<th>날자</th>
-				<th>시즌</th>
-				<th>일수</th>
-				<th>종가</th>
-				<th>변동</th>
-				<th class="text-right">수량</th>
-				<th class="text-right">평균단가</th>
-				<th class="text-right">매입금액</th>
-				<th class="text-right">평가금액</th>
-				<th class="text-right">평가손익</th>
-				<th class="text-right">수익률</th>
-				<th class="text-right">현재잔액</th>
-				<th class="text-right">R balance</th>
-				<th class="text-right">S balance</th>
-				<th class="text-right">N balance</th>
-				<th class="text-right">자산총액</th>
+					{% for key,val in D['head_td'].items() %}
+					{{val|safe}}
+					{% endfor %}
 			</tr>
 		</thead>
 		<tbody>
-
 			{%- for TR in D['TR'] -%}
 			{% if TR['add6']|striptags == '0' %}
 			<tr style="background-color:black;"> 
