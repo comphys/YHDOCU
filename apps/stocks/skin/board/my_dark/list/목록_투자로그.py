@@ -94,12 +94,13 @@ class 목록_투자로그(SKIN) :
             self.D['총출금'] =  f"{temp[1]:,.2f}"
         
     def list(self) :
-        self.head()
-        self.chart()
-
-        TR = [] ; tx = {}
-
+        
         if self.TrCnt :
+
+            self.head()
+            self.chart()
+
+            TR = [] ; tx = {}
 
             for item in self.D['LIST'] :
 
