@@ -36,6 +36,7 @@ else :
     LD['add9']  = round(LD['add3']*LD['add6'],2) # 평가금액
     LD['add10'] = my.sv(DR['add18']) + my.sv(DS['add18']) + my.sv(DN['add18'])  # 현재수익
     LD['add11'] = round(LD['add10'] / LD['add7'] * 100,2) if LD['add7'] else 0 # 현수익률
+    
     # 전체 금액에 대한 수익률이 아닌 매수금액 대비 수익률임 
     if  DV['sub29'] in ('익절매도','손절매도') : 
         매도금합 = my.sv(DR['add12']) + my.sv(DS['add12']) + my.sv(DN['add12'])
@@ -45,7 +46,7 @@ else :
     LD['add12'] = my.sv(DR['add3']) + my.sv(DS['add3']) + my.sv(DN['add3'])  # 현재잔액
     LD['add14'] = my.sv(DR['add17']) + my.sv(DS['add17']) + my.sv(DN['add17'])  # 자산총액
     LD['add15'] = DV['sub32'] # 초기일자
-    LD['add16'] = DV['sub29'] # 진행상황
+    LD['add16'] = '수익실현' if  DV['sub29'] in ('익절매도','손절매도') else DV['sub29'] # 진행상황
     LD['add17'] = opt # 카테고리
     # prettify
     LD['add6'] = f"{LD['add6']:}"

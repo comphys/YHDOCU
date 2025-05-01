@@ -138,6 +138,7 @@ class RSN :
 
         for tac in (self.V,self.R,self.S) :   
             tac['일매수금'] = int(tac['현재잔액']/self.M['분할횟수']) 
+            tac['기초수량'] = my.ceil(tac['일매수금'] / self.M['당일종가'])
         
         self.rebalanceN()
 
