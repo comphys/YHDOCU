@@ -35,7 +35,6 @@ class Rsn_ajax(Control) :
         RSN.D |= PD
         RSN.get_simResult(PD['시작일자'],PD['종료일자'])
         DC = RSN.get_simulLog(key)
-        
         return self.json(DC)
     
     def synchro(self) :
@@ -122,6 +121,12 @@ class Rsn_ajax(Control) :
         LD['add9']  = round(LD['add3']*LD['add6'],2) # 평가금액
         LD['add10'] = my.sv(DR['add18']) + my.sv(DS['add18']) + my.sv(DN['add18'])  # 현재수익
         LD['add11'] = round(LD['add10'] / LD['add7'] * 100,2) if LD['add7'] else '0.00' # 현수익률
+        
+        if  DV['sub29'] in ('익절매도','손절매도') : 
+            매도금합 = my.sv(DR['add12']) + my.sv(DS['add12']) + my.sv(DN['add12'])
+            매수금합 = RSN.DB.one(f"SELECT CAST(add7 as float) FROM h_rsnLog_board WHERE add0 < '{today}' ORDER BY add0 DESC LIMIT 1")
+            LD['add11'] = round((매도금합/매수금합-1) * 100,2)     
+        
         LD['add12'] = my.sv(DR['add3']) + my.sv(DS['add3']) + my.sv(DN['add3'])  # 현재잔액
         LD['add14'] = my.sv(DR['add17']) + my.sv(DS['add17']) + my.sv(DN['add17'])  # 자산총액
         LD['add15'] = DV['sub32'] # 초기일자
@@ -141,6 +146,7 @@ class Rsn_ajax(Control) :
         for (tac,key) in [(DV,'v'),(DR,'r'),(DS,'s'),(DN,'n')] :         
             LD[key+'_01']  = tac['sub6'] if opt == '초기셋팅' else '0.00' # 입금
             LD[key+'_02']  = '0.00' # 출금
+            LD[key+'_03']  = tac['add3']    # 잔액
             LD[key+'_04']  = tac['add11']   # 매수금
             LD[key+'_05']  = tac['add12']   # 매도금
             LD[key+'_06']  = tac['add5']    # 변동수량
@@ -149,7 +155,8 @@ class Rsn_ajax(Control) :
             LD[key+'_09']  = tac['add7']    # 평균단가
             LD[key+'_10']  = tac['add15']   # 현재가치
             LD[key+'_11']  = tac['add17']   # 가치합계
-            LD[key+'_12']  = tac['add18']   # 수익현황    
+            LD[key+'_12']  = tac['add18']   # 수익현황 
+            LD[key+'_13']  = tac['add6']    # 현매수금      
             LD[key+'_14']  = tac['add17']   # 가치합계
             LD[key+'_15']  = tac['sub4']    # 일매수금(VRS), 매수차수(N)
             LD[key+'_16']  = tac['sub18']   # 기초수량(VRS), 매금단계(N)

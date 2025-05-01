@@ -132,6 +132,7 @@
 .i-input-div, .i-input-div-2, .i-input-div-choice, .i-input-div-choice2 {display:inline-block; border: 1px solid #4a505e; margin:0px 10px 0px 0px}
 .i-input-div-choice, .i-input-div-choice2 {border: 1px solid lightgreen;}
 .i-input-div-choice2 {border-top:none;}
+.i-input-subdiv {display:inline-block;width:100px;text-align:right;padding-right:5px;}
 .strategy-toggle {display:none;}
 .notice-calculated {background-color : darksalmon;}
 /* ////////////////////////////////////////////////////////////////////////////////////////////////
