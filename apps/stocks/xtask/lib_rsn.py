@@ -866,8 +866,6 @@ class update_Log :
         self.D['이밸런싱'] = 'on' 
         self.D['가상손실'] = 'on' if mode_ == '전략진행' else 'off'
         
-        opt = '초기셋팅' if sdate == logDay else '일반진행'
-        
         self.get_simResult(sdate,logDay)
         
         

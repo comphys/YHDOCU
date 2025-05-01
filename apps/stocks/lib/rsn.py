@@ -89,6 +89,7 @@ class RSN :
         self.realMDD()
 
     def realMDD(self) :
+        
         # 현수익률을 실최하략으로 적용 ( RSN 전략 특성상, 현재잔액+총매수금이 0일 경우도 발생함)
         if not self.stat : return
         for tac in (self.V,self.R,self.S,self.N) :
