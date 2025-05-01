@@ -101,7 +101,7 @@
 				<th class="text-right">매입금액</th>
 				<th class="text-right">평가금액</th>
 				<th class="text-right">평가손익</th>
-				<th class="text-right">현수익률</th>
+				<th class="text-right">수익률</th>
 				<th class="text-right">현재잔액</th>
 				<th class="text-right">R balance</th>
 				<th class="text-right">S balance</th>
@@ -110,15 +110,10 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% if D['BCONFIG']['row_flt'] == 'on' %}
-			<tr id="list-filter" {{ "" if D['list_filter'] else "style='display:none'"|safe }}>{{D['row_flt']|safe}}</tr>
-			{% endif %}
-			{% if D['BCONFIG']['row_sum'] == 'on' %}
-			<tr id="list-sum">{{D['row_sum']|safe}}</tr>
-			{% endif %}
+
 			{%- for TR in D['TR'] -%}
-			{% if loop.index0 == D['cno'] %}
-			<tr class="list-current-tr">
+			{% if TR['add6']|striptags == '0' %}
+			<tr style="background-color:black;"> 
 			{% else %}
 			<tr> 
 			{% endif %}
@@ -154,6 +149,7 @@
 // 챠트 그리기(메인챠트) -----------------------------------------------------------------------------------------
 const ctx_main = $id('myChart_main');
 ctx_main.style.backgroundColor = '#33363b';
+ctx_main.style.border = '2px solid black';
 
 let labels_origin   = {{D['chart_date']|safe}}				// labels main origin
 let close_origin    = {{D['close_price']|safe}} 		    // soxl close price origin 

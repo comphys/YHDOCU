@@ -29,7 +29,7 @@ class 목록_투자로그(SKIN) :
         
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
-        self.DB.wre = f"add0='{last_date}'"
+        self.DB.wre = f"add0 <='{last_date}'"
         self.DB.odr = "add0 DESC"
         self.DB.lmt = '200'
         
@@ -103,7 +103,7 @@ class 목록_투자로그(SKIN) :
                      
                     if  key == 'add0'  : 
                         tmp = f"<td style='{style}'>"
-                        href= f"{self.D['_bse']}board/body/{self.D['bid']}/no={item['no']}"
+                        href= f"{self.D['_bse']}board/modify/{self.D['bid']}/no={item['no']}/page={self.D['page']}"
                         tmp+= f"<span class='list-subject' data-href='{href}'>{txt}</span>"
                         tmp+= '</td>'
                         tx[key] = tmp

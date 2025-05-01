@@ -32,10 +32,16 @@ else :
     LD['add5']  = DV['sub5']            # 추이
     LD['add6']  = my.sv(DR['add9'],'i') + my.sv(DS['add9'],'i') + my.sv(DN['add9'],'i')       # 보유수량   
     LD['add7']  = my.sv(DR['add6']) + my.sv(DS['add6']) + my.sv(DN['add6'])  # 총매수금
-    LD['add8']  = round(LD['add7']/LD['add6'],4) if LD['add6'] else '0.0000' # 평균단가
+    LD['add8']  = round(LD['add7']/LD['add6'],4) if LD['add6'] else 0 # 평균단가
     LD['add9']  = round(LD['add3']*LD['add6'],2) # 평가금액
     LD['add10'] = my.sv(DR['add18']) + my.sv(DS['add18']) + my.sv(DN['add18'])  # 현재수익
-    LD['add11'] = round(LD['add10'] / LD['add7'] * 100,2) if LD['add7'] else '0.00' # 현수익률
+    LD['add11'] = round(LD['add10'] / LD['add7'] * 100,2) if LD['add7'] else 0 # 현수익률
+    
+    if  DV['sub29'] in ('익절매도','손절매도') : 
+        매도금합 = my.sv(DR['add12']) + my.sv(DS['add12']) + my.sv(DN['add12'])
+        매수금합 = RSN.DB.one(f"SELECT CAST(add7 as float) FROM h_rsnLog_board WHERE add0 < '{today}' ORDER BY add0 DESC LIMIT 1")
+        LD['add11'] = round((매도금합/매수금합-1) * 100,2)        
+
     LD['add12'] = my.sv(DR['add3']) + my.sv(DS['add3']) + my.sv(DN['add3'])  # 현재잔액
     LD['add14'] = my.sv(DR['add17']) + my.sv(DS['add17']) + my.sv(DN['add17'])  # 자산총액
     LD['add15'] = DV['sub32'] # 초기일자
