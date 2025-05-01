@@ -133,6 +133,7 @@
 .i-input-div-choice, .i-input-div-choice2 {border: 1px solid lightgreen;}
 .i-input-div-choice2 {border-top:none;}
 .i-input-subdiv {display:inline-block;width:100px;text-align:right;padding-right:5px;}
+.i-input-subdiv2 {display:inline-block;width:100px;text-align:right;padding-right:10px;height:25px;background-color:black;font-weight:bold;}
 .strategy-toggle {display:none;}
 .notice-calculated {background-color : darksalmon;}
 /* ////////////////////////////////////////////////////////////////////////////////////////////////

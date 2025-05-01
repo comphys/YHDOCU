@@ -1,5 +1,4 @@
 from system.core.load import SKIN
-import system.core.my_utils as my
 
 class 쓰기_투자로그(SKIN) :
 
