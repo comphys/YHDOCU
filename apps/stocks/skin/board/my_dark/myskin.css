@@ -188,3 +188,9 @@
 }
 
 #tool-bar i {color:#636363}
+/* ////////////////////////////////////////////////////////////////////////////////////////////////
+// RSN
+//////////////////////////////////////////////////////////////////////////////////////////////// */
+.r_balance:hover, .s_balance:hover, .n_balance:hover {cursor:pointer;font-weight:bold;color:white}
+#daily-log-view {display:none;position:absolute;left:30px;top:60px;width:1078px;height:350px;border:2px solid black;z-index:10;background-color: #24272D;padding-left:20px;}
+#daily-log-tact {font-style:italic;color:lightgoldenrodyellow;font-size:26px;width:1000px;text-align:center;font-weight:bold;padding:12px;}

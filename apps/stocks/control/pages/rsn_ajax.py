@@ -124,7 +124,7 @@ class Rsn_ajax(Control) :
         
         if  DV['sub29'] in ('익절매도','손절매도') : 
             매도금합 = my.sv(DR['add12']) + my.sv(DS['add12']) + my.sv(DN['add12'])
-            매수금합 = RSN.DB.one(f"SELECT CAST(add7 as float) FROM h_rsnLog_board WHERE add0 < '{today}' ORDER BY add0 DESC LIMIT 1")
+            매수금합 = RSN.DB.one(f"SELECT CAST(add7 as float) FROM h_rsnLog_board WHERE add0 < '{ldate}' ORDER BY add0 DESC LIMIT 1")
             LD['add11'] = round((매도금합/매수금합-1) * 100,2)     
         
         LD['add12'] = my.sv(DR['add3']) + my.sv(DS['add3']) + my.sv(DN['add3'])  # 현재잔액

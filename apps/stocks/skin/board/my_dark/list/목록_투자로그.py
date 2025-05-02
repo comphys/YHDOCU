@@ -50,7 +50,9 @@ class 목록_투자로그(SKIN) :
         if chart_data :
             
             self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(last_date)
-            
+            # 누적 수익 가져오기
+            acc_profit = self.DB.one(f"SELECT cast(sum(r_12+s_12+n_12) as float) FROM {self.D['tbl']} WHERE add17='수익실현'")
+            if acc_profit : self.D['누적수익'] = f"{acc_profit:,.2f}"
             # 챠트 정보 가져오기
             first_date = chart_data[-1]['add0']
             self.D['s_date'] = first_date

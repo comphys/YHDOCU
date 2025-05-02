@@ -62,6 +62,7 @@
 	<div class="pull-left">
 		<i class="fa fa-sign-in"></i> <span class="exchange">{{D['총입금']}}</span> &nbsp;
 		<i class="fa fa-sign-out"></i> <span class="exchange">{{D['총출금']}}</span> &nbsp;
+		<i class="fa fa-plus-square" aria-hidden="true"></i> <span class="exchange">{{D['누적수익']}}</span> &nbsp;
 	</div>
 	<div class="pull-right">
 		<form method='post' name='category_search' action="{{D['_bse']}}board/list/{{D['bid']}}" style='display:inline;'>
@@ -129,7 +130,159 @@
 	</ul></div>
 </div>
 
-
+<div id="daily-log-view" onclick="$(this).hide()">
+	<div id="daily-log-tact">RSN-R Strategy</div>
+	<table style="width:1040px;">
+		<tr>
+			<td style="width:50px;height:50px;">&nbsp;</td>
+			<td style="width:100px">현금투자</td>
+			<td>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>입금</div>
+					<input disabled type='text' name='a01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>출금</div>
+					<input disabled type='text' name='a02' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>잔액</i></div>
+					<input disabled type='text' name='a03' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>현금비중</div>
+					<input disabled type='text' name='a04' class="i-number" style="width:100px;" value="">
+				</div>
+			</td>
+		</tr>
+		<tr style="border:2px solid #CEE3F6;">
+			<td style="height:110px;">&nbsp;</td>
+			<td>투자현황</td>
+			<td>
+				<div class='i-input-div-choice'>
+					<div class='write-input-server'>매수금액</div>
+					<input disabled type='text' name='b01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-choice'>
+					<div class='write-input-server'>매도금액</div>
+					<input disabled type='text' name='b02' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-choice'>
+					<div class='write-input-server'>변동수량</div>
+					<input disabled type='text' name='b03' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>레버비중</div>
+					<input disabled type='text' name='b04' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>당일종가</div>
+					<input disabled type='text' name='c01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>종가변동</div>
+					<input disabled type='text' name='c02' class="i-number" style="width:100px;text-align:right" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>보유수량</div>
+					<input disabled type='text' name='c03' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>현수익률</div>
+					<input disabled type='text' name='c04' class="i-text" style="width:100px;text-align:right" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>평균단가</div>
+					<input disabled type='text' name='d01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>현재가치</div>
+					<input disabled type='text' name='d02' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>현매수금</div>
+					<input disabled type='text' name='d03' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>현재손익</div>
+					<input disabled type='text' name='d04' class="i-number" style="width:100px;" value="">
+				</div>
+			</td>
+		</tr>
+		<tr><td colspan="3" style="line-height:10px;font-size:2px;">&nbsp;</td></tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>투자전략</td>
+			<td>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>현재시즌</div>
+					<input disabled type='text' name='e01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'><span id='cn1'>일매수금</span></div>
+					<input disabled type='text' name='e02' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>매수수량&nbsp;&nbsp;</div>
+					<input disabled type='text' name='e03' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>매도수량</div>
+					<input disabled type='text' name='e04' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>경과일수</div>
+					<input disabled type='text' name='f01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'><span id='cn2'>기초수량</span></div>
+					<input disabled type='text' name='f02' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>매수가격&nbsp;&nbsp;</div>
+					<input disabled type='text' name='f03' class="i-number" style="width:100px;text-align:right;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>매도가격&nbsp;&nbsp;</div>
+					<input disabled type='text' name='f04' class="i-number" style="width:100px;text-align:right;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>진행상황</div>
+					<input disabled type='text' name='g01' class="i-text" style="width:100px;text-align:right" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>종가추이</div>
+					<input disabled type='text' name='g02' class="i-text" style="width:100px;text-align:right" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>초기금액</div>
+					<input disabled type='text' name='g03' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>초기일자</div>
+					<input disabled type='text' name='g04' class="i-text" style="width:100px;text-align:right" value="">
+				</div>
+				<br>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>가치합계</div>
+					<input disabled type='text' name='h01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>수수료등</div>
+					<input disabled type='text' name='h02' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>누적수익</div>
+					<input disabled type='text' name='h03' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>특이사항</div>
+					<input disabled type='text' name='h04' class="i-text" style="width:100px;" value="">
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
 
 <script>
 // 챠트 그리기(메인챠트) -----------------------------------------------------------------------------------------
@@ -182,6 +335,25 @@ const options_main = {
 const config_main  = {type:'line',data:data_main,options:options_main};
 const myChart_main = new Chart(ctx_main, config_main); 
 // ------------------------------------------------------------------------------------------------------------------------
+// 각 전략 내용 보기
+
+$(".r_balance").click(function(){
+	theday = $(this).parent().children("td:eq(0)").text();
+	$("#daily-log-tact").text("RSN-R on "+theday).css("color","#F6D8CE"); 
+	$("#daily-log-view").show();
+});
+
+$(".s_balance").click(function(){
+	theday = $(this).parent().children("td:eq(0)").text();
+	$("#daily-log-tact").text("RSN-S on "+theday).css("color","#F3F781");
+	$("#daily-log-view").show();
+});
+
+$(".n_balance").click(function(){
+	theday = $(this).parent().children("td:eq(0)").text();
+	$("#daily-log-tact").text("RSN-N on "+theday).css("color","#E0F8EC");
+	$("#daily-log-view").show();
+});
 </script>
 
 {% endblock %}
