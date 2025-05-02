@@ -34,6 +34,7 @@ class RSN :
             if  tac['잔액이동'] :
                 self.N['현재잔액'] += tac['현재잔액']
                 tac['현재잔액'] = 0
+                tac['진행상황'] = '매수중단'
                 tac['잔액이동'] = False
                 self.rebalanceN()
         
@@ -882,7 +883,7 @@ class RSN :
         LD['sub12'] = self.M['현재날수'] - 1
         LD['sub18'] = f"{self.N['매금단계'][self.N['매수차수']]:.2f}" if tactic == 'N' else tac['기초수량'] 
                   
-        LD['sub29'] = self.V['진행상황']
+        LD['sub29'] = tac['진행상황']
         LD['sub5']  = f"+ {self.M['연속상승']}" if self.M['연속상승'] else f"- {self.M['연속하락']}"
         LD['sub6']  = f"{초기자금:.2f}" 
         LD['sub32'] = self.D['시작일자']
