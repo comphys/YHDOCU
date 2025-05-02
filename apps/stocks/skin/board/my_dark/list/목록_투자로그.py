@@ -123,12 +123,12 @@ class 목록_투자로그(SKIN) :
                         
                     elif key in ('add4','add10','add11') :
                         clas = "class='list-bull'" if float(txt) >=0 else "class='list-bear'" 
-                        tx[key] = f"<td style='{style}' {clas}>{txt}</td>"
+                        tx[key] = f"<td style='{style}' {clas}>{float(txt):.2f}</td>"
                         
                     elif key in ('add6') :
                         tx[key] = f"<td style='{style}' {clas}>{int(txt):,}</td>"
 
-                    elif key in ('add7','add9','add18','add19','add20','add12','add14') :
+                    elif key in ('add7','add9','add18','add19','add20','add12','add14','add3') :
                         tx[key] = f"<td style='{style}' {clas}>{float(txt):,.2f}</td>"
                     
                     else : 

@@ -21,7 +21,9 @@ else :
     DS = RSN.get_simulLog('S')
     DN = RSN.get_simulLog('N')
 
-    opt = '초기셋팅' if RSN.D['시작일자'] == RSN.D['종료일자'] else '일반진행'
+    if   RSN.D['시작일자'] == RSN.D['종료일자'] :  카테고리 = '초기셋팅' 
+    elif DV['sub29'] in ('익절매도','손절매도') :  카테고리 = '수익실현'
+    else : 카테고리 = '일반진행'
     
     LD = {}
     LD['add0']  = today
@@ -47,7 +49,7 @@ else :
     LD['add14'] = my.sv(DR['add17']) + my.sv(DS['add17']) + my.sv(DN['add17'])  # 자산총액
     LD['add15'] = DV['sub32'] # 초기일자
     LD['add16'] = '수익실현' if  DV['sub29'] in ('익절매도','손절매도') else DV['sub29'] # 진행상황
-    LD['add17'] = opt # 카테고리
+    LD['add17'] = 카테고리
     # prettify
     LD['add6'] = f"{LD['add6']:}"
     LD['add7'] = f"{LD['add7']:.2f}"
@@ -59,7 +61,7 @@ else :
     LD['add14'] = f"{LD['add14']:.2f}"
     
     for (tac,key) in [(DV,'v'),(DR,'r'),(DS,'s'),(DN,'n')] :         
-        LD[key+'_01']  = tac['sub6'] if opt == '초기셋팅' else '0.00' # 입금
+        LD[key+'_01']  = tac['sub6'] if 카테고리 == '초기셋팅' else '0.00' # 입금
         LD[key+'_02']  = '0.00' # 출금
         LD[key+'_03']  = tac['add3']    # 잔액
         LD[key+'_04']  = tac['add11']   # 매수금
