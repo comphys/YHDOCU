@@ -48,11 +48,18 @@ class 목록_투자로그(SKIN) :
         chart_data = self.DB.get("add0,add3,r_08,r_09,s_08,s_09,n_08,n_09",assoc=True)
         
         if chart_data :
-            
+
+            # 다음 거래 일자 가져오기
             self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(last_date)
             # 누적 수익 가져오기
-            acc_profit = self.DB.one(f"SELECT cast(sum(r_12+s_12+n_12) as float) FROM {self.D['tbl']} WHERE add17='수익실현'")
-            if acc_profit : self.D['누적수익'] = f"{acc_profit:,.2f}"
+            profit = self.DB.one(f"SELECT cast(sum(r_12+s_12+n_12) as float) FROM {self.D['tbl']} WHERE add17='수익실현'")
+            feesum = self.DB.one(f"SELECT cast(sum(r_22+s_22+n_22) as float) FROM {self.D['tbl']}")
+            if  profit : 
+                self.D['실현수익'] = f"{profit:,.2f}"
+                self.D['수수료합'] = f"{feesum:,.2f}"
+                self.D['누적수익'] = f"{profit-feesum:,.2f}"
+
+
             # 챠트 정보 가져오기
             first_date = chart_data[-1]['add0']
             self.D['s_date'] = first_date
@@ -124,7 +131,9 @@ class 목록_투자로그(SKIN) :
                         tx[key] = tmp
                         
                     elif key in ('add4','add10','add11') :
-                        clas = "class='list-bull'" if float(txt) >=0 else "class='list-bear'" 
+                        if   float(txt) > 0 : clas = "class='list-bull'"
+                        elif float(txt) < 0 : clas = "class='list-bear'"
+                        else : clas = ''; style += "color:gray;"
                         tx[key] = f"<td style='{style}' {clas}>{float(txt):.2f}</td>"
                         
                     elif key in ('add6') :

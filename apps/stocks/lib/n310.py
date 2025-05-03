@@ -36,12 +36,13 @@ class N310 :
         
         if  self.V['매도수량'] :
             self.V['실현수익']  =  self.V['매도금액'] - self.V['총매수금']
-            self.V['보유수량'] -=  self.V['매도수량'];  self.V['현재잔액'] += self.V['매도금액']; self.V['총매수금'] = 0.00
+            self.V['보유수량'] -=  self.V['매도수량'];  self.V['현재잔액'] += self.V['매도금액'] 
             self.V['수익현황']  =  self.V['실현수익']
             
             if self.D['수료적용'] == 'on' : self.V['수수료등']  = self.commission(self.V['매도금액'],2); self.V['현재잔액'] -= self.V['수수료등'] 
             
-            self.V['현수익률'] = round( self.V['수익현황'] / self.V['매금단계'][0] * 100, 2 )   
+            self.V['현수익률'] = round( self.V['실현수익'] / self.V['총매수금'] * 100, 2 )   
+            self.V['총매수금'] = 0.00
  
             self.vCount(self.V['실현수익'])
 
@@ -133,6 +134,7 @@ class N310 :
         if  self.M['당일종가'] <= self.M['매수가격'] : 
             self.V['매수수량']  = self.V['구매수량']
             self.V['매수금액']  = self.V['매수수량'] * self.M['당일종가']
+            self.M['매도가격']  = self.M['당일종가'] * self.M['매도가치']
             
 
     def tomorrow_buy(self) :
@@ -144,7 +146,7 @@ class N310 :
         self.V['구매수량'] = int(  self.V['매금단계'][self.V['매수차수']+1]/ self.M['매수가격'] ) 
         
     def tomorrow_sell(self) :
-        
+        return
         if   self.V['매수차수'] == 2 : self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['이매가치'] )
         elif self.V['매수차수'] == 3 : self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['삼매가치'] )
         elif self.V['매수차수'] == 4 : self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['사매가치'] )
@@ -185,6 +187,7 @@ class N310 :
             self.V['진행상황'] = '1B'
             self.V['매수차수']  = 1
             self.M['첫날기록'] = False
+            self.M['매도가격'] = self.M['당일종가'] * self.M['매도가치']
  
             return True
 
@@ -308,6 +311,7 @@ class N310 :
         self.M['삼매가치']  = ST['N0303']
         self.M['사매가치']  = ST['N0304']
         self.M['오매가치']  = ST['N0305']
+        self.M['매도가치']  = ST['N0307']
         
         self.M['분할공일']  = ST['N0101'] 
         self.M['분할공이']  = ST['N0102'] 

@@ -154,9 +154,8 @@ class Rsn_ajax(Control) :
             LD[key+'_08']  = tac['add8']    # 현수익률
             LD[key+'_09']  = tac['add7']    # 평균단가
             LD[key+'_10']  = tac['add15']   # 현재가치
-            LD[key+'_11']  = tac['add17']   # 가치합계
-            LD[key+'_12']  = tac['add18']   # 수익현황 
-            LD[key+'_13']  = tac['add6']    # 현매수금      
+            LD[key+'_11']  = tac['add6']    # 현매수금
+            LD[key+'_12']  = tac['add18']   # 현재손익 
             LD[key+'_14']  = tac['add17']   # 가치합계
             LD[key+'_15']  = tac['sub4']    # 일매수금(VRS), 매수차수(N)
             LD[key+'_16']  = tac['sub18']   # 기초수량(VRS), 매금단계(N)
@@ -166,6 +165,7 @@ class Rsn_ajax(Control) :
             LD[key+'_20']  = tac['sub20']   # 예정 매도가격
             LD[key+'_21']  = tac['sub6']    # 초기자금
             LD[key+'_22']  = tac['sub30']   # 수수료
+            LD[key+'_23']  = tac['sub29']   # 진행상황
         
         # 각 전략의 잔액도 함께 목록에 표시하기 위함
         LD['add18'] = DR['add3']
