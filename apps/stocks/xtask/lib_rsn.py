@@ -25,6 +25,7 @@ class update_Log :
 # ------------------------------------------------------------------------------------------------------------------------------------------
 # From rsn.py in sytem lib
 # ------------------------------------------------------------------------------------------------------------------------------------------
+
     def calculate_A(self,tac,key) :
         
         if  tac['매수수량'] : 
@@ -38,6 +39,7 @@ class update_Log :
             if  tac['잔액이동'] :
                 self.N['현재잔액'] += tac['현재잔액']
                 tac['현재잔액'] = 0
+                tac['진행상황'] = '매수중단'
                 tac['잔액이동'] = False
                 self.rebalanceN()
         
@@ -93,6 +95,7 @@ class update_Log :
         self.realMDD()
 
     def realMDD(self) :
+        
         # 현수익률을 실최하략으로 적용 ( RSN 전략 특성상, 현재잔액+총매수금이 0일 경우도 발생함)
         if not self.stat : return
         for tac in (self.V,self.R,self.S,self.N) :
@@ -141,6 +144,7 @@ class update_Log :
 
         for tac in (self.V,self.R,self.S) :   
             tac['일매수금'] = int(tac['현재잔액']/self.M['분할횟수']) 
+            tac['기초수량'] = my.ceil(tac['일매수금'] / self.M['당일종가'])
         
         self.rebalanceN()
 
@@ -246,7 +250,7 @@ class update_Log :
             return cq   
          
     def check_balance(self,tac) :
-        
+        if  self.M['첫날기록'] : return
         if  tac['현재잔액'] < tac['예정수량'] * tac['매수예가'] : 
             tac['예정수량'] = my.ceil(tac['기초수량'] * self.M['제한비중']) 
             tac['진행상황'] = '매수제한'
@@ -299,7 +303,7 @@ class update_Log :
             
             elif    self.M['현재날수'] >= self.M['전략대기'] : 
                     self.S['매수예가'] = self.take_chance(self.S)   # 순서주의 ( 매수예가 부터 계산해야함 )
-                    self.S['예정수량'] = self.chance_qty(self.S)
+                    self.S['예정수량'] = self.chance_qty(self.S) 
                 
         self.check_balance(self.S)        
     
@@ -759,7 +763,7 @@ class update_Log :
             self.D['N_생활매수가'] = f"{self.D['N_생활매수가']:,.2f}"
             
             self.D['N_생활매도량'] = self.N['보유수량']
-            self.D['N_생활매도가'] = self.N['매도예가']
+            self.D['N_생활매도가'] = f"{self.N['매도예가']:.2f}"
             self.D['N_생활도평비'] = self.next_percent(self.N['평균단가'],self.N['매도예가'])
             self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.N['매도예가'])
             
@@ -768,9 +772,9 @@ class update_Log :
         if not a : return ''
         return f"{(b/a-1)*100:.2f}"
     
-    # ------------------------------------------------------------------------------------------------------------------------------------------
-    # From rsn.py END
-    # ------------------------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------------------
+# From rsn.py END
+# ------------------------------------------------------------------------------------------------------------------------------------------
     
     def print_backtest(self) :
         return

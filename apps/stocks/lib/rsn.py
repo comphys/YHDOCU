@@ -76,8 +76,8 @@ class RSN :
         self.calculate_A(self.V,'일')
         
         if  self.V['매도수량'] :
-
-            if  self.V['수익현황'] > 0 : # 현수익률은 RS>N 에 의해 수익이라도 손실로 계산될 수 있어, 수익현황으로 판단하여야 함 
+            
+            if  self.V['수익현황'] >= 0 : # 현수익률은 RS>N 에 의해 수익이라도 손실로 계산될 수 있어, 수익현황으로 판단하여야 함 
                 self.M['기본진행'] = True
                 self.set_value(['진행상황'],'익절매도')
             else :
@@ -245,7 +245,7 @@ class RSN :
             return cq   
          
     def check_balance(self,tac) :
-        
+        if  self.M['첫날기록'] : return
         if  tac['현재잔액'] < tac['예정수량'] * tac['매수예가'] : 
             tac['예정수량'] = my.ceil(tac['기초수량'] * self.M['제한비중']) 
             tac['진행상황'] = '매수제한'
@@ -364,7 +364,6 @@ class RSN :
 
 
     def tomorrow_step(self) :
-        
         self.tomorrow_buy_V()
         self.tomorrow_buy_R()
         self.tomorrow_buy_S()
@@ -461,6 +460,7 @@ class RSN :
             self.calculate()
             self.tomorrow_step()
             self.increase_count(printOut)
+            
     
     def set_value(self,key,val) :
 
@@ -798,7 +798,7 @@ class RSN :
             tx[key+'잔액'] = f"{tac['현재잔액']:,.2f}"
         #--------------------------------------------------------    
         tx['진행상황'] = self.V['진행상황']
-            
+         
         self.D['TR'].append(tx)
         
         self.D['clse_p'].append(self.M['당일종가'])
@@ -891,7 +891,7 @@ class RSN :
         LD['add17'] = f"{tac['현재잔액'] +tac['평가금액']:.2f}"
         LD['sub30'] = f"{tac['수수료등']:.2f}"
         LD['sub31'] = f"{tac['현재잔액'] +tac['평가금액']-초기자금:.2f}"
-        LD['sub11'] = '특이사항 없음'
+        LD['sub11'] = 'Simulation'
         
         LD['sub2']  = f"{self.D['N_'+key+'매수량']:}" 
         LD['sub3']  = f"{self.D['N_'+key+'매도량']:}"
