@@ -123,7 +123,7 @@ class RSN :
    
     def rebalanceN(self) :
 
-        for i in [0,1,2,3] : self.N['매금단계'][i] = round(self.N['현재잔액'] * self.M['분할배분'][i],2)
+        for i in [0,1,2,3] : self.N['매금단계'][i] = int((self.N['현재잔액']+self.N['총매수금']) * self.M['분할배분'][i])
     
         
     def rebalance(self)  :
@@ -314,7 +314,7 @@ class RSN :
         else :
             self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] == 2 else round(self.M['당일종가'] * self.M['진입가치'],2)    
         
-        self.N['예정수량'] = int( self.N['매금단계'][self.N['매수차수']]/ self.N['매수예가'] ) 
+        self.N['예정수량'] = int( self.N['매금단계'][self.N['매수차수']] / (self.M['당일종가']*self.M['매입가치']) ) 
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # tomorrow_sell : 다음 날의 매도예가를 계산한다 
@@ -882,7 +882,7 @@ class RSN :
         LD['sub4']  = self.N['매수차수'] if tactic == 'N' else f"{tac['일매수금']:.2f}"
         
         LD['sub12'] = self.M['현재날수'] - 1
-        LD['sub18'] = f"{self.N['매금단계'][self.N['매수차수']]:.2f}" if tactic == 'N' else tac['기초수량'] 
+        LD['sub18'] = f"{self.N['매금단계'][self.N['매수차수']]}" if tactic == 'N' else tac['기초수량'] 
                   
         LD['sub29'] = tac['진행상황']
         LD['sub5']  = f"+ {self.M['연속상승']}" if self.M['연속상승'] else f"- {self.M['연속하락']}"
