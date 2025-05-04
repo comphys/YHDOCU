@@ -11,13 +11,13 @@
 
 <div style="height:370px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
 	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
-		<canvas id="myChart_main"  style="width:1078px;height:350px;background-color:#24272d;"></canvas>
+		<canvas id="myChart_main"  style="width:1128px;height:350px;background-color:#24272d;"></canvas>
 	</div>
-	<div style="position:absolute;left:1114px;top:60px;">
+	<div style="position:absolute;left:1164px;top:60px;">
 	<!-- 우측 정보창( Next Strategy )-->
 		<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:2px solid black;padding:10px">
 			<span style="font-style: italic;"><span style="color:gray">Strategy for </span><b>{{D['다음날자']}} ({{D['다음요일']}})</b></span>
-			<table class="table" style="text-align:right;width:274px;margin-top:10px">
+			<table class="table" style="text-align:right;width:324px;margin-top:10px">
 				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>qty</td><td>price</td><td>ppa</td><td>ppl&nbsp;</td></tr>
 				{% if D['N_기회매수량'] %}
 				<tr><td style="text-align:left;">R <span style="color:gray">buy</span></td><td>{{D['N_기회매수량']}}</td><td>{{D['N_기회매수가']}}</td>

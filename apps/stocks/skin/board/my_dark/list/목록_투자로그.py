@@ -128,7 +128,7 @@ class 목록_투자로그(SKIN) :
                         tmp+= '</td>'
                         tx[key] = tmp
                         
-                    elif key in ('add4','add10','add11') :
+                    elif key in ('add4','add10','add11','add13') :
                         if   float(txt) > 0 : clas = "class='list-bull'"
                         elif float(txt) < 0 : clas = "class='list-bear'"
                         else : clas = ''; style += "color:gray;"

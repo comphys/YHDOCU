@@ -128,6 +128,7 @@ class Rsn_ajax(Control) :
             LD['add11'] = round((매도금합/매수금합-1) * 100,2)     
         
         LD['add12'] = my.sv(DR['add3']) + my.sv(DS['add3']) + my.sv(DN['add3'])  # 현재잔액
+        LD['add13'] = my.sv(DR['add12']) + my.sv(DS['add12']) + my.sv(DN['add12'])  # 총매도금
         LD['add14'] = my.sv(DR['add17']) + my.sv(DS['add17']) + my.sv(DN['add17'])  # 자산총액
         LD['add15'] = DV['sub32'] # 초기일자
         LD['add16'] = DV['sub29'] # 진행상황
