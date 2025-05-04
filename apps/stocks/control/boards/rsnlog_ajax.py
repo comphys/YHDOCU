@@ -48,7 +48,7 @@ class Rsnlog_ajax(Control) :
         PD['g01'] = LD[tactic+'_23']  # 진행상황 
         PD['g02'] = LD['add5']  # 종가추이 
         PD['g03'] = LD[tactic+'_21']  # 초기금액 
-        PD['g04'] = LD[tactic+'_15']  # 초기일자
+        PD['g04'] = LD['add15']  # 초기일자
 
         PD['h01'] = LD[tactic+'_14']  # 가치합계 
         PD['h02'] = LD[tactic+'_22']  # 수수료등 
