@@ -33,8 +33,7 @@ class update_Log :
             tac['보유수량'] += tac['매수수량']
             tac['총매수금'] += tac['매수금액']
             tac['평균단가'] =  tac['총매수금'] / tac['보유수량'] 
-            
-            if  self.D['수료적용'] == 'on' :  tac['수수료등']  = self.commission(tac['매수금액'],1,key); tac['현재잔액'] -= tac['수수료등']
+            self.commission(tac,1)
             
             if  tac['잔액이동'] :
                 self.N['현재잔액'] += tac['현재잔액']
@@ -43,19 +42,14 @@ class update_Log :
                 tac['잔액이동'] = False
                 self.rebalanceN()
         
-        tac['현수익률'] = (self.M['당일종가'] / tac['평균단가'] -1) * 100  if tac['평균단가'] else 0.00    
         tac['평가금액'] =  self.M['당일종가'] * tac['보유수량'] 
         tac['수익현황'] =  tac['평가금액']    - tac['총매수금']
+        tac['현수익률'] = (self.M['당일종가'] / tac['평균단가'] -1) * 100  if tac['평균단가'] else 0.00    
         
         if  tac['매도수량'] :
-
-            if self.D['수료적용'] == 'on' : tac['수수료등']  = self.commission(tac['매도금액'],2,key); tac['현재잔액'] -= tac['수수료등'] 
-            if self.D['세금적용'] == 'on' : tac['현재잔액'] -= self.tax(tac['실현수익'])
-            
             tac['보유수량'] -= tac['매도수량']
             tac['현재잔액'] += tac['매도금액']
-            # 그래프에서 토탈가치 표시를 위해 매도일 평가금액도 계산해 주어야 한다.
-            tac['평가금액']  = 0.0
+            tac['평가금액']  = 0.0 # 그래프에서 토탈가치 표시를 위해 매도일 평가금액도 표시해 주어야 한다.
             tac['중매합계'] += tac['매도금액']
             tac['현수익률'] = (self.M['당일종가'] / tac['평균단가'] -1) * 100  if tac['평균단가'] else 0.00 
             tac['평균단가']  = 0.0
@@ -63,6 +57,7 @@ class update_Log :
             tac['중익합계'] += tac['수익현황']  
             tac['실수익률']  = round( (tac['중익합계'] / tac['총매수금'] ) * 100, 2)
             tac['총매수금']  = 0.0
+            self.commission(tac,2)
             if  tac == self.N and not self.V['매도수량'] : self.N['매수차수'] = 0; self.rebalanceN()
             
         if  self.V['매도수량'] :
@@ -70,7 +65,8 @@ class update_Log :
             tac['수익현황'] = tac['중익합계']
             tac['현수익률'] = tac['실수익률']
             self.N['매수차수'] = 0
-            
+
+            self.tax(tac)
             self.rstCount(tac['중익합계'],key)
 
     def calculate(self)  :
@@ -81,8 +77,8 @@ class update_Log :
         self.calculate_A(self.V,'일')
         
         if  self.V['매도수량'] :
-
-            if  self.V['수익현황'] > 0 : # 현수익률은 RS>N 에 의해 수익이라도 손실로 계산될 수 있어, 수익현황으로 판단하여야 함 
+            
+            if  self.V['수익현황'] >= 0 : # 현수익률은 RS>N 에 의해 수익이라도 손실로 계산될 수 있어, 수익현황으로 판단하여야 함 
                 self.M['기본진행'] = True
                 self.set_value(['진행상황'],'익절매도')
             else :
@@ -116,16 +112,19 @@ class update_Log :
             if self.M['기본진행'] : self.D[key+'정손절'] += 1
             else : self.D[key+'회손절'] += 1   
 
-    def commission(self,mm,opt,key) :
-
-        fee = int(mm*0.07)/100
-        if opt==2 : fee += round(mm*0.0008)/100
-        if key != '일' : self.D['총수수료'] += fee
-        return fee
+    def commission(self,tac,opt) :
+       
+        if self.D['수료적용'] == 'on' :
+            mm = tac['매수금액'] if opt==1 else tac['매도금액'] 
+            fee = int(mm*0.07)/100
+            if opt==2 : fee += round(mm*0.0008)/100
+            if tac != self.V : self.D['총수수료'] += fee
+            tac['수수료등']  = fee
+            tac['현재잔액'] -= fee
         
-    def tax(self,mm) :
+    def tax(self,tac) :
 
-        return int(mm*0.22) 
+        if self.D['세금적용'] == 'on' : tac['현재잔액'] -= int(tac['수익현황']*0.22) 
    
     def rebalanceN(self) :
 
@@ -185,7 +184,7 @@ class update_Log :
 
     def today_buy_V(self) :
 
-        if  self.M['당일종가'] <= self.V['매수예가'] : 
+        if  self.M['당일종가'] <= self.V['매수예가'] and self.V['예정수량'] : 
             self.V['매수수량']  = self.V['예정수량']
             self.V['거래코드']  = f"B{self.V['매수수량']}" if self.V['매수수량'] else ' '
             self.V['매수금액']  = self.V['매수수량'] * self.M['당일종가']
@@ -197,14 +196,14 @@ class update_Log :
             self.R['매수금액']  = self.R['매수수량'] * self.M['당일종가']
             self.R['거래코드'] = f"B{self.R['매수수량']}"
             
-            if  not self.R['진행시작'] and self.M['현재날수']> 2 :
+            if  not self.R['진행시작'] and self.M['현재날수'] > 2 :
                 self.R['거래코드'] = f"B{self.R['매수수량']}/{self.R['기초수량']}" 
                 self.R['진행시작'] = True
                 self.R['잔액이동'] = True if self.D['이밸런싱'] == 'on' else False
     
     def today_buy_S(self) :
         
-        if  self.M['당일종가'] <= self.S['매수예가'] and self.S['예정수량']: 
+        if  self.M['당일종가'] <= self.S['매수예가'] and self.S['예정수량'] : 
             self.S['매수수량']  = self.S['예정수량']
             self.S['매수금액']  = self.S['매수수량'] * self.M['당일종가']
             self.S['거래코드']  = f"B{self.S['매수수량']}" 
@@ -240,6 +239,7 @@ class update_Log :
         return cp if cp < self.V['매수예가'] else self.V['매수예가']
     
     def chance_qty(self,tac) :
+            
             if tac['매수예가'] == 0 : return 0
             cq = 0   
             day_limit = 6 if tac == self.R else 7 
@@ -250,6 +250,7 @@ class update_Log :
             return cq   
          
     def check_balance(self,tac) :
+
         if  self.M['첫날기록'] : return
         if  tac['현재잔액'] < tac['예정수량'] * tac['매수예가'] : 
             tac['예정수량'] = my.ceil(tac['기초수량'] * self.M['제한비중']) 
@@ -369,7 +370,6 @@ class update_Log :
 
 
     def tomorrow_step(self) :
-        
         self.tomorrow_buy_V()
         self.tomorrow_buy_R()
         self.tomorrow_buy_S()
@@ -407,7 +407,7 @@ class update_Log :
                 tac['총매수금']  = tac['평가금액'] = tac['매수금액']
                 tac['현재잔액'] -= tac['매수금액']
                 tac['거래코드']  = f"B{tac['매수수량']}" 
-                if self.D['수료적용'] == 'on' : tac['수수료등'] = self.commission(tac['매수금액'],1,key); tac['현재잔액'] -= tac['수수료등']
+                self.commission(tac,1)
 
             self.M['첫날기록'] = False
             
@@ -427,7 +427,7 @@ class update_Log :
                 self.N['현재잔액'] -= self.N['매수금액']
                 self.N['거래코드']  = f"1B {self.N['매수수량']}" 
                 self.N['매수차수']  = 1
-                if self.D['수료적용'] == 'on' : self.N['수수료등'] = self.commission(self.N['매수금액'],1,'생'); self.N['현재잔액'] -= self.N['수수료등']
+                self.commission(self.N,1)
                 
             return True
 
@@ -451,7 +451,7 @@ class update_Log :
             self.M['연속하락'] = int(BD['add10'])
              
             self.V['거래코드'] = self.R['거래코드'] = self.S['거래코드'] = self.N['거래코드'] = ' '
-            self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','실현수익','수수료등'],0)
+            self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','수수료등'],0)
             
             # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정값 이상으로 상승 시 건너뛰기 위함
             if  idx == idxx + 1 or self.M['첫날기록'] : 
@@ -466,6 +466,7 @@ class update_Log :
             self.calculate()
             self.tomorrow_step()
             self.increase_count(printOut)
+            
     
     def set_value(self,key,val) :
 
@@ -589,7 +590,7 @@ class update_Log :
         self.R['진행시작']  = self.S['진행시작'] = self.N['진행시작']  = False
         self.D['총수수료'] = 0.0
         self.set_value(['예정수량','매수수량','보유수량','매도수량',],0)
-        self.set_value(['매수예가','매수금액','총매수금','평균단가','평가금액','매도예가','매도금액','수익현황','현수익률','실현수익','실수익률','중익합계','중매합계','수수료등'],0.0)
+        self.set_value(['매수예가','매수금액','총매수금','평균단가','평가금액','매도예가','매도금액','수익현황','현수익률','실수익률','중익합계','중매합계','수수료등'],0.0)
         self.set_value(['진최하락'],0)
         self.set_value(['최하일자'],'')
 
