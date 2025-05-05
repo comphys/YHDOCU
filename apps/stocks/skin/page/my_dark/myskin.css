@@ -62,3 +62,5 @@
 .log-v:hover, .log-r:hover, .log-s:hover, .log-n:hover {font-style:italic;font-size:16px;}
 #daily-log {display:none;position:fixed;left:30px;top:108px;width:1232px;height:356px;background-color:#24272d;padding:10px;;z-index:8;border:2px solid gray;}
 #daily-log-left {padding:70px 15px;font-size:20px;font-weight:bold;font-style:italic;line-height:30px;}
+#N310-next {position:fixed;left:1140px;top:112px;width:370px;height:350px;padding:10px;background-color:#393f4a;border:2px solid black;padding:10px;z-index:7;}
+#N310-statistics {position:fixed;left:1140px;top:112px;width:370px;height:350px;padding:0px;background-color:#24272d;border:2px solid black;overflow-y:scroll;z-index:5;}

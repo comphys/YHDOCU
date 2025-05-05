@@ -66,6 +66,24 @@ class Rsn_ajax(Control) :
         
         return self.json(RD)
     
+    def synchro_n310(self) :
+        
+        opt = self.D['post']['opt']
+        ldate = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")
+    
+        if  opt == 'real' :
+            sdate = self.DB.parameters('N0701')
+            V_mon = my.sv(self.DB.parameters('N0702'))
+        elif opt == 'test' :
+            sdate = my.dayofdate(ldate,delta=-365*2)[0]
+            V_mon = 60000
+        
+        RD = {}
+        RD['sdate'] = sdate
+        RD['ldate'] = ldate
+        RD['V_mon'] = f"{V_mon:,.2f}"
+        return self.json(RD)
+    
     def log_invest(self) :
         
         ldate = self.D['post']['종료일자']

@@ -128,7 +128,7 @@ class 목록_투자로그(SKIN) :
                         tmp+= '</td>'
                         tx[key] = tmp
 
-                    if  key == 'add8'  : 
+                    elif  key == 'add8'  : 
                         if float(txt) :
                             tx[key] = f"<td style='{style}' {clas}>{float(txt):,.4f}</td>"
                         else : 
