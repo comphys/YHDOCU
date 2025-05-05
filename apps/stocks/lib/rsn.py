@@ -55,8 +55,6 @@ class RSN :
 
             self.commission(tac,2)
             self.tax(tac)
-            
-
             self.N['매수차수'] = 0; self.rebalanceN() # just for N tactic 
 
     def calculate(self)  :
