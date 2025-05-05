@@ -127,7 +127,14 @@ class 목록_투자로그(SKIN) :
                         tmp+= f"<span class='list-subject' data-href='{href}'>{txt}</span>"
                         tmp+= '</td>'
                         tx[key] = tmp
-                        
+
+                    if  key == 'add8'  : 
+                        if float(txt) :
+                            tx[key] = f"<td style='{style}' {clas}>{float(txt):,.4f}</td>"
+                        else : 
+                            clas = ''; style += "color:gray;"
+                            tx[key] = f"<td style='{style}'>0.00</td>"                        
+
                     elif key in ('add4','add10','add11','add13') :
                         if   float(txt) > 0 : clas = "class='list-bull'"
                         elif float(txt) < 0 : clas = "class='list-bear'"
@@ -135,7 +142,11 @@ class 목록_투자로그(SKIN) :
                         tx[key] = f"<td style='{style}' {clas}>{float(txt):.2f}</td>"
                         
                     elif key in ('add6') :
-                        tx[key] = f"<td style='{style}' {clas}>{int(txt):,}</td>"
+                        if int(txt) :
+                            tx[key] = f"<td style='{style}' {clas}>{int(txt):,}</td>"
+                        else :
+                            clas = ''; style += "color:gray;"
+                            tx[key] = f"<td style='{style}'>0</td>"                            
 
                     elif key in ('add7','add9','add18','add19','add20','add12','add14','add3') :
                         if float(txt) :

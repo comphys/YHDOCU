@@ -134,7 +134,7 @@ class N310 :
         if  self.M['당일종가'] <= self.M['매수가격'] : 
             self.V['매수수량']  = self.V['구매수량']
             self.V['매수금액']  = self.V['매수수량'] * self.M['당일종가']
-            self.M['매도가격']  = self.M['당일종가'] * self.M['매도가치']
+            # self.M['매도가격']  = self.M['당일종가'] * self.M['매도가치'] # for M3107
             
 
     def tomorrow_buy(self) :
@@ -146,7 +146,7 @@ class N310 :
         self.V['구매수량'] = int(  self.V['매금단계'][self.V['매수차수']+1]/ self.M['매수가격'] ) 
         
     def tomorrow_sell(self) :
-        return
+
         if   self.V['매수차수'] == 2 : self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['이매가치'] )
         elif self.V['매수차수'] == 3 : self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['삼매가치'] )
         elif self.V['매수차수'] == 4 : self.M['매도가격'] = my.round_up(self.V['평균단가'] * self.M['사매가치'] )
@@ -187,7 +187,7 @@ class N310 :
             self.V['진행상황'] = '1B'
             self.V['매수차수']  = 1
             self.M['첫날기록'] = False
-            self.M['매도가격'] = self.M['당일종가'] * self.M['매도가치']
+            # self.M['매도가격'] = self.M['당일종가'] * self.M['매도가치'] # for
  
             return True
 
