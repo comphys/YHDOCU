@@ -307,7 +307,7 @@ class RSN :
     def tomorrow_buy_N(self) :
         
         if self.N['매수차수'] >= 5 : self.N['예정수량'] = 0; return
-        if self.N['매수차수'] == 4 : self.N['매금단계'][4] = self.N['현재잔액']
+        if self.N['매수차수'] == 4 : self.N['매금단계'][4] = int(self.N['현재잔액'])
         
         if  self.N['보유수량'] :
             # self.N['매수예가'] = round( self.M['당일종가'] * self.M['매입가치'],2 )
