@@ -60,7 +60,7 @@ class update_Log :
 
             self.commission(tac,2)
             self.tax(tac)
-            self.N['매수차수'] = 0
+            self.N['매수차수'] = 0 
             if not self.V['매도수량'] : self.rebalanceN() # just for N tactic 
 
     def calculate(self)  :
@@ -316,11 +316,10 @@ class update_Log :
         if self.N['매수차수'] == 4 : self.N['매금단계'][4] = int(self.N['현재잔액'])
         
         if  self.N['보유수량'] :
-            # self.N['매수예가'] = round( self.M['당일종가'] * self.M['매입가치'],2 )
             # 2025.05.06. 진행시 매수예가를 평단가 대비로 변경, 매입가치 0.95 > 0.93
             self.N['매수예가'] = min(round( self.N['평균단가'] * self.M['매입가치'],2 ),self.M['당일종가']) 
         else :
-            self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] == 2 else round(self.M['당일종가'] * self.M['진입가치'],2)    
+            self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >= 2 else round(self.M['당일종가'] * self.M['진입가치'],2)    
         
         self.N['예정수량'] = int( self.N['매금단계'][self.N['매수차수']] / self.N['매수예가'] ) 
 
