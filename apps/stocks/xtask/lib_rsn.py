@@ -60,7 +60,8 @@ class update_Log :
 
             self.commission(tac,2)
             self.tax(tac)
-            self.N['매수차수'] = 0; self.rebalanceN() # just for N tactic 
+            self.N['매수차수'] = 0
+            if not self.V['매도수량'] : self.rebalanceN() # just for N tactic 
 
     def calculate(self)  :
         
