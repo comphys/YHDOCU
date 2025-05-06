@@ -418,17 +418,20 @@ class N310 :
         tx['잔액비중'] = f"{self.V['현재잔액']/가치합계*100:,.1f}"
         tx['진행상황'] = self.V['진행상황']
         
-        tx['매수수량'] = f"{self.V['매수수량']:,}"
-        tx['매수금액'] = f"{self.V['매수금액']:,.2f}"
+        tx['매수수량'] = f"{self.V['매수수량']:,}" if self.V['매수수량'] else ''
+        tx['매수금액'] = f"{self.V['매수금액']:,.2f}" if self.V['매수금액'] else ''
+        
         tx['평균단가'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.V['평균단가'],4):,.4f}</span>" if self.V['평균단가'] else f"<span class='avgv{self.M['기록시즌']}'></span>"
-        tx['보유수량'] = f"{self.V['보유수량']:,}"
+        tx['보유수량'] = f"{self.V['보유수량']:,}" if self.V['보유수량'] else ''
         
         clr = "#F6CECE" if self.V['현수익률'] > 0 else "#CED8F6"
-        tx['총매수금'] = f"{self.V['총매수금']:,.2f}"
-        tx['매도금액'] = f"<span style='color:{clr}'>{round(self.V['매도금액'],4):,.2f}</span>"
-        tx['평가금액'] = f"{self.V['평가금액']:,.2f}" if self.V['평가금액'] else tx['매도금액']
+        tx['총매수금'] = f"{self.V['총매수금']:,.2f}" if self.V['총매수금'] else ''
+        tx['매도금액'] = f"<span style='font-weight:normal;color:{clr}'>{round(self.V['매도금액'],4):,.2f}</span>"
+        tx['평가금액'] = f"{self.V['평가금액']:,.2f}" if self.V['평가금액'] else ''
         tx['수익현황'] = f"<span style='color:{clr}'>{round(self.V['수익현황'],4):,.2f}</span>"
         tx['현수익률'] = f"<span style='color:{clr}'>{round(self.V['현수익률'],4):,.2f}</span>"
+        
+        if self.V['매도금액'] :  tx['매수금액'] = tx['매도금액']
 
         tx['가치합계'] = f"{가치합계:,.2f}"
             
