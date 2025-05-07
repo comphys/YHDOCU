@@ -744,21 +744,19 @@ class RSN :
             
             for (tac,key) in [(self.V,'일반'),(self.R,'기회'),(self.S,'안정')] : 
                 self.D['N_'+key+'매수량'] = tac['예정수량']
-                self.D['N_'+key+'매수가'] = tac['매수예가']
-                self.D['N_'+key+'평대비'] = self.next_percent(tac['평균단가'],self.D['N_'+key+'매수가'])
-                self.D['N_'+key+'종대비'] = self.next_percent(self.M['당일종가'],self.D['N_'+key+'매수가'])
-                self.D['N_'+key+'매수가'] = self.D['N_'+key+'매수가']
+                self.D['N_'+key+'매수가'] = f"{tac['매수예가']:.2f}"
+                self.D['N_'+key+'평대비'] = self.next_percent(tac['평균단가'],tac['매수예가'])
+                self.D['N_'+key+'종대비'] = self.next_percent(self.M['당일종가'],tac['매수예가'])
 
                 self.D['N_'+key+'매도량'] = tac['보유수량']
-                self.D['N_'+key+'매도가'] = self.M['매도예가'] if tac['보유수량'] else 0
+                self.D['N_'+key+'매도가'] = f"{self.M['매도예가']:.2f}" if tac['보유수량'] else 0
                 self.D['N_'+key+'도평비'] = self.next_percent(tac['평균단가'],self.M['매도예가'])
                 self.D['N_'+key+'도종비'] = self.next_percent(self.M['당일종가'],self.M['매도예가'])
 
             self.D['N_생활매수량'] = self.N['예정수량']
-            self.D['N_생활매수가'] = self.N['매수예가']
-            self.D['N_생활평대비'] = self.next_percent(self.N['평균단가'],self.D['N_생활매수가']) 
-            self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
-            self.D['N_생활매수가'] = f"{self.D['N_생활매수가']:,.2f}"
+            self.D['N_생활매수가'] = f"{self.N['매수예가']:.2f}"
+            self.D['N_생활평대비'] = self.next_percent(self.N['평균단가'],self.N['매수예가']) 
+            self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.N['매수예가'])
             
             self.D['N_생활매도량'] = self.N['보유수량']
             self.D['N_생활매도가'] = f"{self.N['매도예가']:.2f}"
