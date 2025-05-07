@@ -132,7 +132,7 @@ class N310 :
         if  self.V['매수차수'] >= 5 : self.V['구매수량'] = 0;     return
         if  self.V['매수차수'] == 4 : self.V['매금단계'][5] = self.V['현재잔액']
         
-        self.M['매수가격'] = round(self.M['당일종가'] * self.M['평단가치'],2)
+        self.M['매수가격'] = round(self.M['당일종가'] * self.M['매입가치'],2)
         self.V['구매수량'] = int(  self.V['매금단계'][self.V['매수차수']+1]/ self.M['매수가격'] ) 
         
     def tomorrow_sell(self) :
@@ -294,7 +294,7 @@ class N310 :
         self.D['전략명칭']  = 'Strategy N310'
         ST = self.DB.parameters_dict('매매전략/N310')
         
-        self.M['평단가치']  = ST['N0201']  # 첫날 매수 이후 (-0%)이상 하락 시 매수
+        self.M['매입가치']  = ST['N0201']  # 첫날 매수 이후 (-0%)이상 하락 시 매수
         self.M['진입일자']  = ST['N0202']
         self.M['진입가치']  = ST['N0203']  # 10% 하락 시 진입
         self.M['일매가치']  = ST['N0301']  # 평단가의 1% 이상 수익 시 매도  
@@ -302,7 +302,7 @@ class N310 :
         self.M['삼매가치']  = ST['N0303']
         self.M['사매가치']  = ST['N0304']
         self.M['오매가치']  = ST['N0305']
-        self.M['매도가치']  = ST['N0307']
+        # self.M['매도가치']  = ST['N0307']
         
         self.M['분할공일']  = ST['N0101'] 
         self.M['분할공이']  = ST['N0102'] 
