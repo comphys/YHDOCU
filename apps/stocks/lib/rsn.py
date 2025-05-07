@@ -278,7 +278,7 @@ class RSN :
                     self.R['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
                     self.R['예정수량'] = my.ceil(self.R['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
             else :
-                    매수예가 = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >= 2 else round(self.M['당일종가'] * self.M['매입가치'],2)  
+                    매수예가 = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >= 2 else round(self.M['당일종가'] * self.M['기회진입'],2)  
                     self.R['매수예가'] = min(매수예가,self.take_chance(self.R)) # 순서주의 ( 매수예가 부터 계산해야함 )
                     self.R['예정수량'] = self.chance_qty(self.R)
 
@@ -377,7 +377,7 @@ class RSN :
         
         # 매수예근 매도예가보다 낮아야 한다
         for tac in (self.V,self.R,self.S,self.N) : 
-            if tac['매수예가'] >= self.M['매도예가'] : tac['매수예가'] = self.M['매도예가']-0.01
+            if tac['매수예가'] >= self.M['매도예가'] : tac['매수예가'] = self.M['매도예가'] - 0.01
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # new_day : 첫날 매수에 대한 처리를 한다 
@@ -411,7 +411,7 @@ class RSN :
         # N 매수 여부 판단
         # --------------------------------------------------   
             진입단가 = round(self.M['전일종가'] * self.M['진입가치'],2)
-            if  self.M['연속하락'] == self.M['진입일자'] : 진입단가 = round(self.M['전일종가'] -0.01,2 ) 
+            if  self.M['연속하락'] == self.M['진입일자'] : 진입단가 = round(self.M['전일종가'] - 0.01,2 ) 
             
             if  self.M['당일종가'] <= 진입단가 :
                 self.N['매수수량']  = int( self.N['매금단계'][0]/진입단가 )
@@ -621,6 +621,7 @@ class RSN :
             self.S['매도보정']  = ST['TS010']  # TS
             self.R['위기탈출']  = ST['TR013']  # TR
             self.M['회복탈출']  = ST['TS011']  # TS
+            self.M['기회진입']  = ST['TR023']  # TR
             
             # N tactic
             분할 = my.sf(ST['TN010']); self.M['분할배분']  = [분할[0],분할[1],분할[2],분할[3]] # TN
@@ -719,7 +720,7 @@ class RSN :
             self.D['N_안정매수가'] = self.D['N_생활매수가'] = 0
             
             self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['진입가치'],2)
-            if self.M['연속하락'] == self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] -0.01,2 ) 
+            if self.M['연속하락'] == self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] - 0.01,2 ) 
             
             self.D['N_일반매수량'] = self.D['N_일반기초']
             self.D['N_기회매수량'] = self.D['N_기회기초']
