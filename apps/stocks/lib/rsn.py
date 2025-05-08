@@ -313,7 +313,7 @@ class RSN :
         if  self.N['보유수량'] :
             self.N['매수예가'] = round( self.M['당일종가'] * self.M['매입가치'],2 )
         else :
-            self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >= 2 else round(self.M['당일종가'] * self.M['진입가치'],2)    
+            self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >= 1 else round(self.M['당일종가'] * self.M['진입가치'],2)    
         
         self.N['예정수량'] = int( self.N['매금단계'][self.N['매수차수']] / self.N['매수예가'] ) 
 
@@ -321,7 +321,7 @@ class RSN :
     # tomorrow_sell : 다음 날의 매도예가를 계산한다 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     def tomorrow_sel_N(self) :
-        # 2025.05.06. 각매가치 변경 1.03/1.02/1.0/0.98/0.97 -> 1.04/1.03/1.02/1.01/1.0
+        
         self.N['매도예가'] = min(my.round_up(self.N['평균단가'] * self.M['각매가치'][self.N['매수차수']-1]), self.M['매도예가'])
     
     def tomorrow_sel_A(self) :
@@ -407,23 +407,9 @@ class RSN :
             self.M['첫날기록'] = False
             
         # --------------------------------------------------
-        # N 매수 여부 판단
+        # N 전략은 첫날 매수 없음
         # --------------------------------------------------   
-            진입단가 = round(self.M['전일종가'] * self.M['진입가치'],2)
-            if  self.M['연속하락'] == self.M['진입일자'] : 진입단가 = round(self.M['전일종가'] - 0.01,2 ) 
-            
-            if  self.M['당일종가'] <= 진입단가 :
-                self.N['매수수량']  = int( self.N['매금단계'][0]/진입단가 )
-                self.N['수익현황']  = self.N['현수익률'] = 0.0
-                self.N['보유수량']  = self.N['매수수량']
-                self.N['평균단가']  = self.M['당일종가']
-                self.N['매수금액']  = self.M['당일종가'] * self.N['매수수량'] 
-                self.N['총매수금']  = self.N['평가금액'] = self.N['매수금액']
-                self.N['현재잔액'] -= self.N['매수금액']
-                self.N['거래코드']  = f"1B {self.N['매수수량']}" 
-                self.N['매수차수']  = 1
-                self.commission(self.N,1)
-                
+               
             return True
 
         else : 
@@ -555,6 +541,7 @@ class RSN :
         if b : self.D['시작일자'] = b
         old_date = my.dayofdate(self.D['시작일자'],-7)[0]
         lst_date = self.D['종료일자']
+        if lst_date < old_date : lst_date = self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")  
         self.DB.tbl,self.DB.wre,self.DB.odr = ("h_stockHistory_board",f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{lst_date}'","add0")
         self.B = self.DB.get('add0,add3,add8,add9,add10') # 날자, 종가, 증감, 연상,연하 
         
@@ -718,13 +705,10 @@ class RSN :
             self.D['N_일반매수가'] = self.D['N_기회매수가'] = round(self.M['당일종가'] * self.M['큰단가치'],2)
             self.D['N_안정매수가'] = self.D['N_생활매수가'] = 0
             
-            self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['진입가치'],2)
-            if self.M['연속하락'] == self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] - 0.01,2 ) 
-            
             self.D['N_일반매수량'] = self.D['N_일반기초']
             self.D['N_기회매수량'] = self.D['N_기회기초']
             self.D['N_안정매수량'] = 0
-            self.D['N_생활매수량'] = int( self.N['매금단계'][0] / self.D['N_생활매수가'] )
+            self.D['N_생활매수량'] = 0
 
             self.D['N_일반매도량'] = self.D['N_기회매도량'] = self.D['N_안정매도량'] = self.D['N_생활매도량'] = 0
 

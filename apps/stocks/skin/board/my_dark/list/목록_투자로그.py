@@ -96,9 +96,15 @@ class 목록_투자로그(SKIN) :
                 self.D['N_'+name+'매도가'] = f"{float(self.D['N_'+name+'매도가']):.2f}"
 
             # 기타 정보 가져오기
-            temp = self.DB.oneline(f"SELECT sum(CAST(r_01+s_01+n_01 AS FLOAT)), sum(CAST(r_02+s_02+n_02 AS FLOAT)) FROM {self.D['tbl']}")
-            self.D['총입금'] =  f"{temp[0]:,.2f}"
-            self.D['총출금'] =  f"{temp[1]:,.2f}"
+            temp = self.DB.oneline(f"SELECT sum(CAST(r_01+s_01+n_01 AS FLOAT)), sum(CAST(r_02+s_02+n_02 AS FLOAT)), sum(CAST(r_04+s_04+n_04 AS FLOAT)), sum(CAST(r_05+s_05+n_05 AS FLOAT)) FROM {self.D['tbl']}")
+            self.D['총입금합'] =  f"{temp[0]:,.2f}"
+            self.D['총출금합'] =  f"{temp[1]:,.2f}"
+            ls_date = self.DB.one(f"SELECT add0 FROM {self.D['tbl']} WHERE add17='수익실현' ORDER BY add0 DESC LIMIT 1")
+            temp =self.DB.oneline(f"SELECT sum(CAST(r_04+s_04+n_04 AS FLOAT)), sum(CAST(r_05+s_05+n_05 AS FLOAT)) FROM {self.D['tbl']} WHERE add0<='{ls_date}'")
+            self.D['총매수금'] =  f"{temp[0]:,.2f}"
+            self.D['총매도금'] =  f"{temp[1]:,.2f}"
+            self.D['투자익률'] =  f"{(temp[1]/temp[0]-1)*100:.2f}"
+            
         
     def list(self) :
         
