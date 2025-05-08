@@ -124,7 +124,7 @@ class RSN :
    
     def rebalanceN(self) :
 
-        for i in [0,1,2,3] : self.N['매금단계'][i] = int((self.N['현재잔액']+self.N['총매수금']) * self.M['분할배분'][i]) # RS>N 을 고려한 매수기초금액 재 산정
+        for i in range(self.M['최대차수']) : self.N['매금단계'][i] = int((self.N['현재잔액']+self.N['총매수금']) * self.M['분할배분'][i]) # RS>N 을 고려한 매수기초금액 재 산정
     
         
     def rebalance(self)  :
@@ -307,8 +307,8 @@ class RSN :
     # N tactic               
     def tomorrow_buy_N(self) :
         
-        if self.N['매수차수'] >= 5 : self.N['예정수량'] = 0; return
-        if self.N['매수차수'] == 4 : self.N['매금단계'][4] = int(self.N['현재잔액'])
+        if self.N['매수차수'] >= self.M['최대차수']   : self.N['예정수량'] = 0; return
+        if self.N['매수차수'] == self.M['최대차수']-1 : self.N['매금단계'][self.M['최대차수']-1] = int(self.N['현재잔액'])
         
         if  self.N['보유수량'] :
             self.N['매수예가'] = round( self.M['당일종가'] * self.M['매입가치'],2 )
@@ -610,8 +610,9 @@ class RSN :
             self.M['기회진입']  = ST['TR023']  # TR
             
             # N tactic
-            분할 = my.sf(ST['TN010']); self.M['분할배분']  = [분할[0],분할[1],분할[2],분할[3]] # TN
-            각매 = my.sf(ST['TN011']); self.M['각매가치']  = [각매[0],각매[1],각매[2],각매[3],각매[4]] # TN
+            self.M['분할배분']  = my.sf(ST['TN010']) # TN
+            self.M['각매가치']  = my.sf(ST['TN011']) # TN
+            self.M['최대차수']  = len(self.M['분할배분'])
             self.M['진입일자']  = ST['TN020']  # TN
             self.M['진입가치']  = ST['TN021']
             self.M['매입가치']  = ST['TN022']  # TN 첫날 매수 이후 (-0%)이상 하락 시 매수
@@ -645,7 +646,7 @@ class RSN :
         self.D['일반자금']  = f"{self.V['현재잔액']:,.2f}"
         
         # 매수금 분할 ( N tactic )
-        self.N['매금단계'] = [0.0,0.0,0.0,0.0,0.0]
+        self.N['매금단계'] = [0.0] * self.M['최대차수']
         self.N['매수차수'] = 0
         self.rebalanceN()
         self.V['일매수금'] = int(self.V['현재잔액'] / self.M['분할횟수'])

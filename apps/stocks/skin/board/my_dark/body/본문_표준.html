@@ -177,7 +177,7 @@
 <div class="row-row clearfix"> 
 	<table class='table table-bordered table-striped table-hover'>
 		<thead>
-			<tr>
+			<tr style="background-color:#0A2229;">
 				{% for key,val in D['head_td'].items() %}
 				{{val|safe}}
 				{% endfor %}
@@ -192,7 +192,7 @@
 			{% endif %}
 			{%- for TR in D['TR'] -%}
 			{% if loop.index0 == D['cno'] %}
-			<tr class="list-current-tr2" style="border:2px solid yellow">
+			<tr style="background-color:black;">
 			{% else %}
 			<tr> 
 			{% endif %}

@@ -6,8 +6,12 @@
 #send-to-mobile-send {display:inline-block;color:yellow;width:80px;text-align:right;}
 
 .i-input-div {display:inline-block; border: 1px solid #4a505e; margin:1px 10px 1px 0px}
-.i-input-div input {margin-left:-7px;border-radius: 0;}
-.write-input-left  {width:100px; display:inline-block;border:2px solid #000;background-color:#004200;vertical-align:middle;padding:1px 5px 2px 5px;}
+.i-input-div input {margin-left:-7px;height:27px;border-radius: 0;padding:0px 4px 2px 2px;}
+.i-input-div-2, .i-input-div-choice, .i-input-div-choice2 {display:inline-block; border: 1px solid #4a505e; margin:0px 10px 0px 0px}
+.i-input-div-choice, .i-input-div-choice2 {border: 1px solid lightgreen;}
+.i-input-div-choice2 {border-top:none;}
+
+.write-input-left  {width:100px; display:inline-block;border:2px solid #000;background-color:#333F4F;vertical-align:middle;padding:1px 5px 2px 5px;}
 .if-this-day {text-align:right;color:#BDBDBD;cursor:pointer}
 .if-the-day  {text-align:center;color:#CEF6F5;cursor:pointer}
 
@@ -55,9 +59,7 @@
 .i-text {width:150px; }
 .i-date {width:150px; }
 .i-number {width:150px; text-align: right; }
-.i-input-div-2, .i-input-div-choice, .i-input-div-choice2 {display:inline-block; border: 1px solid #4a505e; margin:0px 10px 0px 0px}
-.i-input-div-choice, .i-input-div-choice2 {border: 1px solid lightgreen;}
-.i-input-div-choice2 {border-top:none;}
+
 
 .log-v:hover, .log-r:hover, .log-s:hover, .log-n:hover {font-style:italic;font-size:16px;}
 #daily-log {display:none;position:fixed;left:30px;top:108px;width:1232px;height:356px;background-color:#24272d;padding:10px;;z-index:8;border:2px solid gray;}
