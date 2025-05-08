@@ -18,6 +18,7 @@ class M_rsn_view(Model) :
         self.D['기회자금'] = round(투자자금*자금배분[0]/100,2)
         self.D['안정자금'] = round(투자자금*자금배분[1]/100,2)
         self.D['생활자금'] = round(투자자금*자금배분[2]/100,2)
+        self.D['투자자금'] = f"{투자자금:,.2f}"
 
         self.D['기회시점'] = self.DB.parameters('TR021')
         self.D['기회회복'] = self.DB.parameters('TR022')

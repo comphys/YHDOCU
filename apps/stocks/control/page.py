@@ -81,6 +81,7 @@ class Page(Control) :
         D['기회자금'] = self.D['post']['기회자금']
         D['안정자금'] = self.D['post']['안정자금']
         D['생활자금'] = self.D['post']['생활자금']
+        D['투자자금'] = self.D['post']['투자자금']
 
         D['시작일자'] = self.D['post']['시작일자']
         D['종료일자'] = self.D['post']['종료일자']
