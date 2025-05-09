@@ -165,8 +165,8 @@ class 목록_투자로그(SKIN) :
                         if item['add17'] == '수익실현' :
                             tx[key] = f"<td style='{style}' {clas}>{float(txt):,.2f}</td>"
                         else : 
-                            style += "color:gray;"
-                            tx[key] = f"<td style='{style}'>{float(txt):,.2f}</td>"
+                            style = "color:gray;text-align:right;"
+                            tx[key] = f"<td style='{style}' {clas}>{float(txt):,.2f}</td>"
                     
                     else : 
                         tx[key] = f"<td style='{style}' {clas}>{txt}</td>"
