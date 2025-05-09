@@ -18,7 +18,7 @@ class RSN :
         self.M = {}
   
 # ------------------------------------------------------------------------------------------------------------------------------------------
-# same with xtask BEGIN, last modified 2024.10.18.
+# same with xtask BEGIN
 # ------------------------------------------------------------------------------------------------------------------------------------------ 
 
     def calculate_A(self,tac) :
@@ -60,11 +60,12 @@ class RSN :
 
     def calculate(self)  :
         
-        self.calculate_A(self.N)
-        self.calculate_A(self.S)
+        self.calculate_A(self.V) # 계산순서 ( V-N-R-S ) V는 기준, N은 RS의 잔액이동의 영향을 피하기 위해 RS보다 우선 계산함
+        self.calculate_A(self.N) 
         self.calculate_A(self.R)
-        self.calculate_A(self.V)
-        
+        self.calculate_A(self.S)
+        self.rstCount() # self.M['기본진행] 값을 재설정하기 전에 수행되어야 함
+
         if  self.V['매도수량'] :
                     
             self.N['매도금액'] = self.N['중도합계']
@@ -81,7 +82,6 @@ class RSN :
             self.M['첫날기록'] = True
 
             self.rebalance()
-            self.rstCount()
         
         self.realMDD()
 

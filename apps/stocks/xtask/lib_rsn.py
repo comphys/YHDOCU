@@ -65,11 +65,12 @@ class update_Log :
 
     def calculate(self)  :
         
-        self.calculate_A(self.N)
-        self.calculate_A(self.S)
+        self.calculate_A(self.V) # 계산순서 ( V-N-R-S ) V는 기준, N은 RS의 잔액이동의 영향을 피하기 위해 RS보다 우선 계산함
+        self.calculate_A(self.N) 
         self.calculate_A(self.R)
-        self.calculate_A(self.V)
-        
+        self.calculate_A(self.S)
+        self.rstCount() # self.M['기본진행] 값을 재설정하기 전에 수행되어야 함
+
         if  self.V['매도수량'] :
                     
             self.N['매도금액'] = self.N['중도합계']
@@ -86,7 +87,6 @@ class update_Log :
             self.M['첫날기록'] = True
 
             self.rebalance()
-            self.rstCount()
         
         self.realMDD()
 
@@ -129,7 +129,7 @@ class update_Log :
    
     def rebalanceN(self) :
 
-        for i in [0,1,2,3] : self.N['매금단계'][i] = int((self.N['현재잔액']+self.N['총매수금']) * self.M['분할배분'][i]) # RS>N 을 고려한 매수기초금액 재 산정
+        for i in range(self.M['최대차수']) : self.N['매금단계'][i] = int((self.N['현재잔액']+self.N['총매수금']) * self.M['분할배분'][i]) # RS>N 을 고려한 매수기초금액 재 산정
     
         
     def rebalance(self)  :
@@ -312,8 +312,8 @@ class update_Log :
     # N tactic               
     def tomorrow_buy_N(self) :
         
-        if self.N['매수차수'] >= 5 : self.N['예정수량'] = 0; return
-        if self.N['매수차수'] == 4 : self.N['매금단계'][4] = int(self.N['현재잔액'])
+        if self.N['매수차수'] >= self.M['최대차수']   : self.N['예정수량'] = 0; return
+        if self.N['매수차수'] == self.M['최대차수']-1 : self.N['매금단계'][self.M['최대차수']-1] = int(self.N['현재잔액'])
         
         if  self.N['보유수량'] :
             self.N['매수예가'] = round( self.M['당일종가'] * self.M['매입가치'],2 )
@@ -326,7 +326,7 @@ class update_Log :
     # tomorrow_sell : 다음 날의 매도예가를 계산한다 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     def tomorrow_sel_N(self) :
-
+        
         self.N['매도예가'] = min(my.round_up(self.N['평균단가'] * self.M['각매가치'][self.N['매수차수']-1]), self.M['매도예가'])
     
     def tomorrow_sel_A(self) :
@@ -504,8 +504,8 @@ class update_Log :
         if self.chart and self.D['c_date'] : self.D['s_date'] = self.D['c_date'][0]; self.D['e_date'] = self.D['c_date'][-1]
 
         if  self.stat :
-            self.D['월별구분'] = [ x[0] for x in self.D['월익통계']][-28:]
-            self.D['월별이익'] = [ round(x[1]) for x in self.D['월익통계']][-28:]
+            self.D['월별구분'] = [ x[0] for x in self.D['월익통계']][-24:]
+            self.D['월별이익'] = [ round(x[1]) for x in self.D['월익통계']][-24:]
             
             if  self.D['월별이익'][0] == 0 :
                 self.D['월별구분'].pop(0)
@@ -615,8 +615,9 @@ class update_Log :
             self.M['기회진입']  = ST['TR023']  # TR
             
             # N tactic
-            분할 = my.sf(ST['TN010']); self.M['분할배분']  = [분할[0],분할[1],분할[2],분할[3]] # TN
-            각매 = my.sf(ST['TN011']); self.M['각매가치']  = [각매[0],각매[1],각매[2],각매[3],각매[4]] # TN
+            self.M['분할배분']  = my.sf(ST['TN010']) # TN
+            self.M['각매가치']  = my.sf(ST['TN011']) # TN
+            self.M['최대차수']  = len(self.M['분할배분'])
             self.M['진입일자']  = ST['TN020']  # TN
             self.M['진입가치']  = ST['TN021']
             self.M['매입가치']  = ST['TN022']  # TN 첫날 매수 이후 (-0%)이상 하락 시 매수
@@ -650,7 +651,7 @@ class update_Log :
         self.D['일반자금']  = f"{self.V['현재잔액']:,.2f}"
         
         # 매수금 분할 ( N tactic )
-        self.N['매금단계'] = [0.0,0.0,0.0,0.0,0.0]
+        self.N['매금단계'] = [0.0] * self.M['최대차수']
         self.N['매수차수'] = 0
         self.rebalanceN()
         self.V['일매수금'] = int(self.V['현재잔액'] / self.M['분할횟수'])
