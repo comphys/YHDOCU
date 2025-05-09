@@ -154,12 +154,19 @@ class 목록_투자로그(SKIN) :
                             clas = ''; style += "color:gray;"
                             tx[key] = f"<td style='{style}'>0</td>"                            
 
-                    elif key in ('add7','add9','add18','add19','add20','add12','add14','add3') :
+                    elif key in ('add7','add9','add3') :
                         if float(txt) :
                             tx[key] = f"<td style='{style}' {clas}>{float(txt):,.2f}</td>"
                         else : 
-                            clas = ''; style += "color:gray;"
+                            style += "color:gray;"
                             tx[key] = f"<td style='{style}'>0.00</td>"
+
+                    elif key in ('add12','add14','add18','add19','add20') :
+                        if item['add17'] == '수익실현' :
+                            tx[key] = f"<td style='{style}' {clas}>{float(txt):,.2f}</td>"
+                        else : 
+                            style += "color:gray;"
+                            tx[key] = f"<td style='{style}'>{float(txt):,.2f}</td>"
                     
                     else : 
                         tx[key] = f"<td style='{style}' {clas}>{txt}</td>"
