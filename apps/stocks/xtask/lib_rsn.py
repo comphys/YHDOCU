@@ -53,7 +53,7 @@ class update_Log :
             tac['현수익률']  =(tac['매도금액'] / tac['총매수금'] -1) * 100  if tac['총매수금'] else 0.00 # for N tactic 중간 실현수익률
             tac['수익현황']  = tac['매도금액'] - tac['총매수금']
             tac['중익합계'] += tac['수익현황']  
-            tac['실현익률']  = round( (tac['중익합계'] / tac['총매수금'] ) * 100, 2)
+            tac['실현익률']  = round( tac['중익합계']/(tac['중도합계']-tac['중익합계']) * 100,2 )
             tac['평가금액']  = 0.0 # 그래프에서 토탈가치 표시를 위해 매도일 평가금액도 표시해 주어야 한다.
             tac['평균단가']  = 0.0
             tac['총매수금']  = 0.0
@@ -318,7 +318,7 @@ class update_Log :
         if  self.N['보유수량'] :
             self.N['매수예가'] = round( self.M['당일종가'] * self.M['매입가치'],2 )
         else :
-            self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >= 1 else round(self.M['당일종가'] * self.M['진입가치'],2)    
+            self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >=(self.M['진입일자']-1) else round(self.M['당일종가'] * self.M['진입가치'],2)    
         
         self.N['예정수량'] = int( self.N['매금단계'][self.N['매수차수']] / self.N['매수예가'] ) 
 
