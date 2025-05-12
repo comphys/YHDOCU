@@ -104,8 +104,33 @@ class 목록_투자로그(SKIN) :
             self.D['총매수금'] =  f"{temp[0]:,.2f}"
             self.D['총매도금'] =  f"{temp[1]:,.2f}"
             self.D['투자익률'] =  f"{(temp[1]/temp[0]-1)*100:.2f}"
+            # 통계 자료 가져오기
+            temp = self.DB.exe(f"SELECT add0,CAST(add12 as float),CAST(add10 as float),CAST(r_21+s_21+n_21 as float),add17 FROM {self.D['tbl']} WHERE add17 in ('초기셋팅','수익실현') ORDER BY add0")
+            l_b = b_b = cntW =  cntL = accWp = accLp = 0.0
+            self.D['수익연혁'] = []
+            self.D['수익통계'] = []
+            for dte,bal,pro,ini,cat in temp :
+                if  cat == '초기셋팅' : 
+                    l_b = b_b = ini 
+                    self.D['수익연혁'].append([dte[2:],f"{ini:,.2f}",'0.00','0.00','0.00','0.00',cat])
+                else :
+                    l_p = (bal/l_b - 1)*100   
+                    b_p = (bal/b_b - 1)*100
+                    a_p =  bal-b_b
+                    self.D['수익연혁'].append([dte[2:],f"{bal:,.2f}",f"{pro:,.2f}",f"{l_p:.2f}",f"{b_p:.2f}",f"{a_p:,.2f}",cat])
+                    l_b = bal
+                    
+                    if  pro >= 0 : cntW += 1; accWp += l_p
+                    else : cntL += 1; accLp += l_p
             
-        
+            cntA = cntW + cntL
+            accWp = accWp/cntW if cntW else 0.00
+            accLp = accLp/cntL if cntL else 0.00
+            dspan = my.diff_day('20'+self.D['수익연혁'][0][0],'20'+self.D['수익연혁'][-1][0])
+            self.D['수익통계'] = [f"{dspan:,}",f"{cntA:,.0f}",f"{cntW:,.0f}",f"{cntL:,.0f}",f"{cntW/cntA*100:,.1f}",f"{cntL/cntA*100:,.1f}",f"{accWp:,.2f}",f"{accLp:,.2f}"]
+            self.D['수익연혁'].reverse()
+            
+            
     def list(self) :
         
         if self.TrCnt :

@@ -15,7 +15,7 @@
 	</div>
 	<div style="position:absolute;left:1164px;top:60px;">
 	<!-- 우측 정보창( Next Strategy )-->
-		<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:2px solid black;padding:10px">
+		<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:2px solid black;padding:10px" ondblclick="$('#profit-history').show()">
 			<span style="font-style: italic;"><span style="color:gray">Strategy for </span><b>{{D['다음날자']}} ({{D['다음요일']}})</b></span>
 			<table class="table" style="text-align:right;width:324px;margin-top:10px">
 				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppa</td><td>ppl&nbsp;</td></tr>
@@ -281,6 +281,35 @@
 				</div>
 			</td>
 		</tr>
+	</table>
+</div>
+
+<!-- 수익 히스토리 -->
+ <div id="profit-history" class="scrollbar" ondblclick="$(this).hide()">
+	<table class="table table-bordered table-striped" style="border:none;">
+			<tr style="background-color:#0A2229;text-align:center;">
+				<td>{{D['수익통계'][0]}} days</td>
+				<td>{{D['수익통계'][1]}}({{D['수익통계'][2]}}/{{D['수익통계'][3]}})</td>
+				<td>승 {{D['수익통계'][4]}} %</td>
+				<td>평균 {{D['수익통계'][6]}} %</td>
+				<td>패 {{D['수익통계'][5]}} %</td>
+				<td>평균 {{D['수익통계'][7]}} %</td>
+			</tr>
+		<tr style="text-align:right;background-color:black;"><th style="text-align:center;">날자</th><th>잔액합계</th><th>실현수익</th><th>수익(%)</th><th>누적수익</th><th>누적(%)</th></tr>
+			{%- for tr in D['수익연혁'] -%}
+			{% if tr[6]|striptags == '초기셋팅' %}
+			<tr style="background-color:black;text-align:right;"> 
+			{% else %}
+			<tr style="text-align:right;"> 
+			{% endif %}
+				<td>{{tr[0]}}</td>
+				<td>{{tr[1]}}</td>
+				<td>{{tr[2]}}</td>
+				<td>{{tr[3]}}</td>
+				<td>{{tr[5]}}</td>
+				<td>{{tr[4]}}</td>
+			</tr>
+			{%- endfor %}
 	</table>
 </div>
 
