@@ -312,8 +312,8 @@ class update_Log :
         if self.N['매수차수'] >= self.M['최대차수']   : self.N['예정수량'] = 0; return
         if self.N['매수차수'] == self.M['최대차수']-1 : self.N['매금단계'][self.M['최대차수']-1] = int(self.N['현재잔액'])
         
-        if  self.N['보유수량'] :
-            self.N['매수예가'] = round( self.M['당일종가'] * self.M['매입가치'],2 )
+        if  self.N['보유수량'] and self.R['진행시작'] : 
+            self.N['매수예가'] = round(self.M['당일종가'] * self.M['매입가치'],2 )
         else :
             self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >=(self.M['진입일자']-1) else round(self.M['당일종가'] * self.M['진입가치'],2)    
         
@@ -331,7 +331,7 @@ class update_Log :
         if  self.M['첫날기록'] : return
         
         # [기본진행]---------------------------------------------------------------------------------------------
-        
+
         if  self.M['기본진행'] :
 
             if  self.V['진행상황'] not in ('매수제한','매수중단') :  
