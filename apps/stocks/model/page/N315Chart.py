@@ -1,13 +1,13 @@
 from system.core.load import Model
 import system.core.my_utils as my
 
-class M_N310Chart(Model) :
+class M_N315Chart(Model) :
 
     def view(self) :
         
         # 기본 값
         self.D['종목코드'] = 'SOXL'
-        self.D['전략선택'] = 'N310'
+        self.D['전략선택'] = 'N315'
         self.D['일반자금'] = f"{my.sv(self.DB.parameters('N0702')):,.2f}"
  
         self.D['수료적용'] = 'on'

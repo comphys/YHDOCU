@@ -224,7 +224,7 @@ class Page(Control) :
         VB.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
         return self.echo(VB.D)
     
-    def rpd_N310Chart(self) :
+    def rpd_N315Chart(self) :
         D = {}
         D['종목코드'] = self.D['post']['종목코드']
         D['일반자금'] = self.D['post']['일반자금']
@@ -235,7 +235,7 @@ class Page(Control) :
         D['수료적용'] = self.D['post'].get('chk_fee','off')
         D['세금적용'] = self.D['post'].get('chk_tax','off')
         
-        VB = self.load_app_lib('n310')
+        VB = self.load_app_lib('n315')
         VB.D |= D
 
         VB.do_viewChart()
