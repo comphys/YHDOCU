@@ -70,8 +70,10 @@
 			{% if D['최장일수'] %}
 			<div class="pull-left" style="color:lightgray;">
 				최장 : <b>{{D['최장일수']}}</b>일( <span class="positioning_date">{{D['최장일자'][2:]}}</span> ) &nbsp;
+				익절 : {{D['익절횟수']}} &nbsp;
+				손절 : {{D['손절횟수']}} &nbsp;
 				MDD : <b>{{D['MDD1']}}%</b>( <span class="positioning_date">{{D['MDD_DAY1']}}</span> )&nbsp;
-				LP : <b>{{D['손익저점']}}%</b>( <span class="positioning_date">{{D['저점날자'][2:]}}</span> )
+				LP : <b>{{D['손익저점']}}%</b>( <span class="positioning_date">{{D['저점날자'][2:]}}</span> )&nbsp;&nbsp;
 				<i class="fa fa-arrow-up" onclick="chart_up_dn(1)"></i>
 				<i class="fa fa-arrow-down" onclick="chart_up_dn(2)"></i>
 			</div>
@@ -97,9 +99,9 @@
 
 					<th style='text-align:right;width:120px;'>현재잔액</th>
 					<th style='text-align:right;width:80px'>진행상황</th>
-					<th style='text-align:right;width:100px'>매수량</th>
+					<th style='text-align:right;width:80px'>매수량</th>
 					<th style='text-align:right;width:120px'>매수금액</th>
-					<th style='text-align:right;width:100px;'>보유수량</th>
+					<th style='text-align:right;width:80px;'>보유수량</th>
 					<th style='text-align:right;width:100px'>평균단가</th>
 					
 					<th style='text-align:right;width:120px'>총매수금</th>
@@ -127,9 +129,9 @@
 			<col style="width:120px"> <!--현재잔액 -->
 			<col style="width:80px;border-right:3px solid #424242;"> <!-- 진행상황 -->
 
-			<col style="width:100px;"> <!-- 매수량 -->
+			<col style="width:80px;"> <!-- 매수량 -->
 			<col style="width:120px;"> <!-- 매수금액 -->
-			<col style="width:100px;"> <!-- 보유수량 -->
+			<col style="width:80px;"> <!-- 보유수량 -->
 			<col style="width:100px;border-right:3px solid #424242"> <!-- 평균단가 -->
 
 			<col style="width:120px;"> <!-- 총매수금 -->
