@@ -16,14 +16,13 @@ if  skip :
 
 else :
     
-    ini_data = N315.DB.oneline("SELECT add18,add19,add20 FROM h_log315_board ORDER BY add0 DESC LIMIT 1")
+    ini_data = N315.DB.oneline("SELECT add18,add19 FROM h_log315_board ORDER BY add0 DESC LIMIT 1")
     ini_date = ini_data[0]
     ini_capt = f"{float(ini_data[1]):,.2f}"
     
     N315.do_tacticLog(ini_date,today,ini_capt)
     LD = N315.get_simulLog()
     
-    LD['add20'] = ini_data[2]
     LD['uid']   = 'comphys'
     LD['uname'] = '정용훈'
     LD['wdate'] = LD['mdate'] = my.now_timestamp() 
