@@ -97,8 +97,8 @@
 					<th style='text-align:right;width:70px'>종가</th>
 					<th style='text-align:right;width:70px'>변동</th>
 
-					<th style='text-align:right;width:120px;'>현재잔액</th>
 					<th style='text-align:right;width:80px'>진행상황</th>
+					<th style='text-align:right;width:120px;'>현재잔액</th>
 					<th style='text-align:right;width:80px'>매수량</th>
 					<th style='text-align:right;width:120px'>매수금액</th>
 					<th style='text-align:right;width:80px;'>보유수량</th>
@@ -126,8 +126,9 @@
 			<col style="width:50px;"> <!-- 날수 -->
 			<col style="width:70px;"> <!-- 당일종가 -->
 			<col style="width:70px;border-right:3px solid #424242;"> <!-- 종가변동 -->
-			<col style="width:120px"> <!--현재잔액 -->
-			<col style="width:80px;border-right:3px solid #424242;"> <!-- 진행상황 -->
+			
+			<col style="width:80px"> <!-- 진행상황 -->
+			<col style="width:120px;border-right:3px solid #424242;"> <!--현재잔액 -->
 
 			<col style="width:80px;"> <!-- 매수량 -->
 			<col style="width:120px;"> <!-- 매수금액 -->
@@ -143,9 +144,9 @@
 
 
 			{% for TR in D['TR'] %}
-			{% if TR['진행상황'] == '+'  %}
+			{% if TR['진행상황'] == '익절매도'  %}
 			<tr style="border-top:1px solid #424242;border-bottom:1px solid #424242;background-color:black;font-weight:bold" onclick="show_chart({{TR['기록시즌']}},this)"> 
-			{% elif TR['진행상황'] == '-' %}
+			{% elif TR['진행상황'] == '손절매도' %}
 			<tr style="border-top:1px solid #A9D0F5;border-bottom:1px solid #A9D0F5;background-color:black;" onclick="show_chart({{TR['기록시즌']}},this)">
 			{% else %}
 			<tr>
@@ -156,8 +157,8 @@
 				<td class='ohlc-price' style='text-align:right;font-weight:bold;cursor:pointer;'>{{TR['당일종가']|safe}}</td>
 				<td style='text-align:right;font-weight:bold;'>{{TR['종가변동']|safe}}</td>
 
-				<td style='text-align:right;color:#CEF6CE'>{{TR['일반잔액']}}</td>
-				<td style='text-align:right'>{{TR['진행상황']|safe}}</td>
+				<td style='text-align:right;color:gray;'>{{TR['진행상황']|safe}}</td>
+				<td style='text-align:right;font-weight:bold;'>{{TR['일반잔액']}}</td>
 
 				<td style='text-align:right'>{{TR['매수수량']|safe}}</td>
 				<td style='text-align:right;'>{{TR['매수금액']|safe}}</td>

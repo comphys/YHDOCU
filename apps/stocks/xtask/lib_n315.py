@@ -1,21 +1,26 @@
-import system.core.my_utils as my
+from myutils.DB import DB
+import myutils.my_utils as my
 
-class N315 :
+class update_Log315 :
 
-    def __init__(self,SYS) :
-        self.SYS   = SYS
-        self.info  = SYS.info
-        self.D     = SYS.D
-        self.DB    = SYS.DB
+    def __init__(self) :
+
+        self.DB    = DB('stocks')
         self.chart = False
         self.stat  = False
+        self.skey = self.DB.store("slack_key")
 
         self.B = {}
         self.M = {}
-  
+        self.D = {}
+
+    def send_message(self,message) :
+        if self.DB.system == "Linux" : my.post_slack(self.skey,message)
+        else : print(message)  
+
 # ------------------------------------------------------------------------------------------------------------------------------------------
-#   Belows are the same with lib_n315 in xtaxk 
-# ------------------------------------------------------------------------------------------------------------------------------------------ 
+# From n315.py in sytem lib
+# ------------------------------------------------------------------------------------------------------------------------------------------
 
     def calculate(self)  :
         
@@ -363,64 +368,15 @@ class N315 :
         
         if not a : return ''
         return f"{(b/a-1)*100:.2f}"
-# ------------------------------------------------------------------------------------------------------------------------------------------
-#  above is the same with lib_n315 in xtask
-# ------------------------------------------------------------------------------------------------------------------------------------------
-
-    def print_backtest(self) :
-
-        tx = {}
-        #--------------------------------------------------------
-        tx['현재날수'] = self.M['현재날수']; tx['기록시즌'] = self.M['기록시즌']
-        tx['현재차수'] = self.M['매수차수']
-        tx['기록일자'] = self.M['현재일자'][2:]
-        tx['당일종가'] = f"<span class='clsp{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"
-        clr = "#F6CECE" if self.M['종가변동'] >= 0 else "#CED8F6"
-        tx['종가변동'] = f"<span style='color:{clr}'>{self.M['종가변동']:,.2f}</span>"
-        #--------------------------------------------------------
-        가치합계 = self.M['현재잔액'] + self.M['평가금액']
-        tx['일반잔액'] = f"{self.M['현재잔액']:,.2f}"
-        tx['잔액비중'] = f"{self.M['현재잔액']/가치합계*100:,.1f}"
-        tx['진행상황'] = self.M['진행상황']
-        
-        tx['매수수량'] = f"{self.M['매수수량']:,}" if self.M['매수수량'] else ''
-        tx['매수금액'] = f"{self.M['매수금액']:,.2f}" if self.M['매수금액'] else ''
-        
-        tx['평균단가'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.4f}</span>" if self.M['평균단가'] else f"<span class='avgv{self.M['기록시즌']}'></span>"
-        tx['보유수량'] = f"{self.M['보유수량']:,}" if self.M['보유수량'] else ''
-        
-        clr = "#F6CECE" if self.M['현수익률'] > 0 else "#CED8F6"
-        tx['총매수금'] = f"{self.M['총매수금']:,.2f}" if self.M['총매수금'] else ''
-        tx['매도금액'] = f"<span style='color:{clr}'>{round(self.M['매도금액'],4):,.2f}</span>"
-        tx['평가금액'] = f"{self.M['평가금액']:,.2f}" if self.M['평가금액'] else tx['매도금액']
-        tx['수익현황'] = f"<span style='color:{clr}'>{round(self.M['수익현황'],4):,.2f}</span>"
-        tx['현수익률'] = f"<span style='color:{clr}'>{round(self.M['현수익률'],4):,.2f}</span>"
-        
-        tx['가치합계'] = f"{가치합계:,.2f}"
-            
-        self.D['TR'].append(tx)
-        
-        self.D['clse_p'].append(self.M['당일종가'])
-        if avg_v := round(self.M['평균단가'],2) : self.D['avge_v'].append(avg_v)
-        else : self.D['avge_v'].append('null')
     
-        self.D['c_date'].append(self.M['현재일자'][2:])
-        self.D['totalV'].append(round(가치합계,0))
-        
+# ------------------------------------------------------------------------------------------------------------------------------------------
+# From n315.py END
+# ------------------------------------------------------------------------------------------------------------------------------------------
+    
+    def print_backtest(self) :
+        return
 
-    def do_viewChart(self) :
-
-        self.chart = True
-        self.stat  = True
-        
-        self.get_start()
-        self.init_value()
-        self.simulate(printOut=True)
-        self.result()
-        self.nextStep()
-        
-    def get_nextStrategy(self,start,end,ini_money) :
-
+    def do_tacticLog(self,start,end,ini_money) :
         self.chart = False
         self.stat  = False
         self.D['시작일자'] = start
@@ -429,33 +385,31 @@ class N315 :
         self.get_start()
         self.init_value()
         self.simulate(printOut=False)
-        self.nextStep()
-        
-        NS = {}
-        NS['시작일자'] = start
-        NS['종료일자'] = end
-        NS['다음날자'] = self.D['다음날자']
-        NS['다음요일'] = self.D['다음요일']
-        NS['현재종가'] = self.D['현재종가']
-        NS['현재연속'] = self.D['현재연속']
-        NS['예정수량'] = self.D['N_생활매수량']
-        NS['예정매가'] = self.D['N_생활매수가']
-        NS['매평대비'] = self.D['N_생활평대비']
-        NS['매종대비'] = self.D['N_생활종대비']
-        NS['예정도수'] = self.D['N_생활매도량']
-        NS['예정도가'] = self.D['N_생활매도가']
-        NS['도평대비'] = self.D['N_생활도평비']
-        NS['도종대비'] = self.D['N_생활도종비']
-        NS['배분금액'] = self.D['배분금액']
-        return NS
-        
 
-    def next_stock_day(self,today) :
+    def get_simulLog(self) :
         
-        delta = 1
-        while delta :
-            temp = my.dayofdate(today,delta)
-            weekend = 1 if temp[1] in ('토','일') else 0
-            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}'") else 0 
-            delta = 0 if not (weekend + holiday) else delta + 1
-        return temp
+        D = {}
+        D['첫날기록']= self.M['첫날기록']
+        D['add0']   = self.M['현재일자'] # 날자
+        D['add1']   = self.M['기록시즌'] # 시즌
+        D['add2']   = self.M['현재날수']-1 # 날수
+        D['add3']   = self.M['당일종가'] # 종가
+        D['add4']   = self.M['종가변동'] # 변동
+        D['add5']   = f"{self.M['현재잔액']:.2f}" # 현재잔액
+        D['add6']   = self.M['진행상황'] if self.M['진행상황'] else '매수대기' # 진행상황
+        D['add7']   = self.M['매수수량'] # 매수량
+        D['add8']   = f"{self.M['매수금액']:.2f}" # 매수금액
+        D['add9']   = self.M['보유수량'] # 보유수량
+        D['add10']  = f"{self.M['평균단가']:.4f}" # 평균단가
+        D['add11']  = f"{self.M['총매수금']:.2f}" # 총매수금
+        D['add12']  = f"{self.M['평가금액']:.2f}" # 평가금액
+        D['add13']  = f"{self.M['매도금액']:.2f}" # 매도금액
+        D['add14']  = f"{self.M['수익현황']:.2f}" # 수익현황
+        D['add15']  = f"{self.M['현수익률']:.2f}" # 현수익률
+        D['add16']  = f"{self.M['현재잔액'] + self.M['평가금액']:.2f}" # 가치합계
+        D['add17']  = f"{self.M['매금단계'][self.M['매수차수']]:.0f}"  # 배분금액
+        D['add18']  = self.D['시작일자'] # 초기일자
+        D['add19']  = self.D['일반자금'] # 초기금액
+        D['add21']  = f"{self.M['수수료등']:.2f}" # 수수료등
+        return D
+    

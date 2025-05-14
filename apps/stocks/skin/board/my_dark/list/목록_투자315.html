@@ -19,8 +19,7 @@
 			
 			<span style="font-style: italic;"><span style="color:gray">Strategy for </span><b>{{D['다음날자']}} ({{D['다음요일']}})</b></span>&nbsp;
 			<span style="font-style: italic;color:gray">from {{D['현재날자']}}</span><br>
-			<span style="font-style: italic;color:gray">initial capital {{D['초기금액']}}, initial date {{D['초기일자']}}</span><br>
-			<span style="font-style: italic;color:gray">buying qty = int( {{D['배분금액']}} / {{D['예정매가']}} )</span><br>
+
 
 			<table class="table" style="text-align:right;width:324px;margin-top:10px">
 				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppa</td><td>ppl&nbsp;</td></tr>
@@ -35,6 +34,10 @@
 				</tr>
 				{% endif %}
 			</table>
+			<div style="margin-top:20px">
+				<span style="font-style: italic;color:gray">Initial capital : {{D['초기금액']}}, initial date : {{D['초기일자']}}</span><br>
+				<span style="font-style: italic;color:gray">b qty = int( {{D['배분금액']}} / {{D['예정매가']}} ), The falling trend is {{D['현재연속']}}</span><br>
+			</div>
 		</div>
 	</div>
 </div>
