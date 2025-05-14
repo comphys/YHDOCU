@@ -1,0 +1,353 @@
+{% extends D['_skn'] + 'board/my_dark/main_layout.html' %}
+
+{% block contents_list %}
+<!-- 리스트 상부 카테고리 시작 -->
+
+<!-- 리스트 상부 카테고리 종료 -->
+
+<!-- 리스트 메인 테이블 시작 -->
+<script src="/sys/chart/chart.min.js"></script>
+<script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
+
+<div style="height:370px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
+	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
+		<canvas id="myChart_main"  style="width:1128px;height:350px;background-color:#24272d;"></canvas>
+	</div>
+	<div style="position:absolute;left:1164px;top:60px;">
+	<!-- 우측 정보창( Next Strategy )-->
+		<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:2px solid black;padding:10px" ondblclick="$('#profit-history').show()">
+			
+			<span style="font-style: italic;"><span style="color:gray">Strategy for </span><b>{{D['다음날자']}} ({{D['다음요일']}})</b></span>&nbsp;
+			<span style="font-style: italic;color:gray">from {{D['현재날자']}}</span><br>
+			<span style="font-style: italic;color:gray">initial capital {{D['초기금액']}}, initial date {{D['초기일자']}}</span><br>
+			<span style="font-style: italic;color:gray">buying qty = int( {{D['배분금액']}} / {{D['예정매가']}} )</span><br>
+
+			<table class="table" style="text-align:right;width:324px;margin-top:10px">
+				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppa</td><td>ppl&nbsp;</td></tr>
+				{% if D['예정수량'] %}
+				<tr><td style="text-align:left;">N <span style="color:gray">buy</span></td><td>{{D['예정매가']}}</td><td>{{D['예정수량']}}</td>
+					<td style="color:gray">{{D['매평대비']}}</td><td style="color:gray">{{D['매종대비']}}</td>
+				</tr>
+				{% endif %}
+				{% if D['예정도수'] %}
+				<tr><td style="text-align:left;">N <span style="color:gray">sell</span></td><td>{{D['예정도가']}}</td><td>{{D['예정도수']}}</td>
+					<td style="color:gray">{{D['도평대비']}}</td><td style="color:gray">{{D['도종대비']}}</td>
+				</tr>
+				{% endif %}
+			</table>
+		</div>
+	</div>
+</div>
+
+
+{% if D['TR'] %}
+
+<div id="extra-info" class="clearfix" style="border:2px solid black;background-color:rgb(34, 33, 33);padding:5px 20px;margin-bottom:-2px">
+	<div class="pull-left">
+		{%- if D['누적수익'] %}
+		<i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;<span class="exchange"> {{D['누적수익']}} ( {{D['실현수익']}} △ {{D['수수료합']}} )</span> &nbsp;
+		{%- endif %}
+	</div>
+	<div class="pull-right">
+		<form method='post' name='category_search' action="{{D['_bse']}}board/list/{{D['bid']}}" style='display:inline;'>
+			{%- for cats in D['CAT_LIST'] %}
+			<div class='myselect' style='margin:-8px -14px -10px 0px'>
+				{%- if cats['chked'] %}
+				<input placeholder="{{cats['title']}}" name="csh_{{cats['fkey']}}" id="{{cats['id']}}" type="text" style="color:black;width:100px;background-color:#b5daff" value="{{cats['value']}}" />
+				{%- else %}
+				<input placeholder="{{cats['title']}}" name="csh_{{cats['fkey']}}" id="{{cats['id']}}" type="text" style="width:100px" value="{{cats['value']}}" />
+				{%- endif %}
+				<div class='btn-group'>
+					<button class="btn btn-select dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+					<ul class='dropdown-menu'>
+						<li><a> {{cats['title']}} </a></li>
+						{%- for li in cats['lists'] %}
+						<li><a href="#"> {{li[0]}} </a></li>
+						{% endfor -%}
+					</ul>
+				</div>
+			</div>
+			{% endfor -%}
+		</form>
+	</div>
+</div>
+
+<div class="row-row clearfix"> 
+	<table class='table table-bordered table-striped table-hover'>
+		<thead>
+			<tr style="background-color:#0A2229;">
+					{% for key,val in D['head_td'].items() %}
+					{{val|safe}}
+					{% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+			{%- for TR in D['TR'] -%}
+			{% if TR['add6']|striptags == '0' and TR['add13']|striptags != '0.00' %}
+			<tr style="background-color:black;"> 
+			{% else %}
+			<tr> 
+			{% endif %}
+			{% for key,val in TR.items() %}
+			{{val|safe}}
+			{% endfor %}
+			</tr>
+			{%- endfor %}
+		</tbody>
+	</table>
+</div>
+{% else %}
+<div class="row-row clearfix"> 
+	<div class='well'><strong>안내사항 :</strong> 현재 작성된 글이 없거나 검색결과에 일치하는 데이타가 없습니다.  </div> 
+</div>
+{% endif %}
+<!-- 리스트 메인 테이블 종료 -->
+
+<!-- 하단 버튼 [ 목록 쓰기] [페이지네이션]-->
+<div class="row-row clearfix">
+	<div class='pull-left'>
+		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
+		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>쓰 기</button></a>&nbsp;
+	</div>
+	<div class='pagination pull-right'><ul>
+		{{D['Pagination']|safe}}
+	</ul></div>
+</div>
+
+<div id="daily-log-view" onclick="$(this).hide()">
+	<div id="daily-log-tact">RSN-R Strategy</div>
+	<table style="width:1040px;">
+		<tr>
+			<td style="width:50px;height:50px;">&nbsp;</td>
+			<td style="width:100px">현금투자</td>
+			<td>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>입금</div>
+					<input disabled type='text' name='a01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>출금</div>
+					<input disabled type='text' name='a02' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>잔액</i></div>
+					<input disabled type='text' name='a03' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>현금비중</div>
+					<input disabled type='text' name='a04' class="i-number" style="width:100px;" value="">
+				</div>
+			</td>
+		</tr>
+		<tr >
+			<td style="height:110px;">&nbsp;</td>
+			<td style="border-bottom:2px solid #CEE3F6;">투자현황</td>
+			<td style="border-bottom:2px solid #CEE3F6;">
+				<div class='i-input-div-choice'>
+					<div class='write-input-server'>매수금액</div>
+					<input disabled type='text' name='b01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-choice'>
+					<div class='write-input-server'>매도금액</div>
+					<input disabled type='text' name='b02' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-choice'>
+					<div class='write-input-server'>변동수량</div>
+					<input disabled type='text' name='b03' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>레버비중</div>
+					<input disabled type='text' name='b04' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>당일종가</div>
+					<input disabled type='text' name='c01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>종가변동</div>
+					<input disabled type='text' name='c02' class="i-number" style="width:100px;text-align:right" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>보유수량</div>
+					<input disabled type='text' name='c03' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>현수익률</div>
+					<input disabled type='text' name='c04' class="i-text" style="width:100px;text-align:right" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>평균단가</div>
+					<input disabled type='text' name='d01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>현재가치</div>
+					<input disabled type='text' name='d02' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>현매수금</div>
+					<input disabled type='text' name='d03' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>현재손익</div>
+					<input disabled type='text' name='d04' class="i-number" style="width:100px;" value="">
+				</div>
+			</td>
+		</tr>
+		<tr><td colspan="3" style="line-height:10px;font-size:2px;">&nbsp;</td></tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>투자전략</td>
+			<td>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>현재시즌</div>
+					<input disabled type='text' name='e01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'><span id='cn1'>일매수금</span></div>
+					<input disabled type='text' name='e02' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>매수수량&nbsp;&nbsp;</div>
+					<input disabled type='text' name='e03' class="i-number" style="width:100px;color:lightpink;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>매도수량</div>
+					<input disabled type='text' name='e04' class="i-number" style="width:100px;color:cyan;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>경과일수</div>
+					<input disabled type='text' name='f01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'><span id='cn2'>기초수량</span></div>
+					<input disabled type='text' name='f02' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>매수가격&nbsp;&nbsp;</div>
+					<input disabled type='text' name='f03' class="i-number" style="width:100px;text-align:right;color:lightpink;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>매도가격&nbsp;&nbsp;</div>
+					<input disabled type='text' name='f04' class="i-number" style="width:100px;text-align:right;color:cyan;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>진행상황</div>
+					<input disabled type='text' name='g01' class="i-text" style="width:100px;text-align:right" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>종가추이</div>
+					<input disabled type='text' name='g02' class="i-text" style="width:100px;text-align:right" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>초기금액</div>
+					<input disabled type='text' name='g03' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>초기일자</div>
+					<input disabled type='text' name='g04' class="i-text" style="width:100px;text-align:right" value="">
+				</div>
+				<br>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>가치합계</div>
+					<input disabled type='text' name='h01' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>수수료등</div>
+					<input disabled type='text' name='h02' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>누적수익</div>
+					<input disabled type='text' name='h03' class="i-number" style="width:100px;" value="">
+				</div>
+				<div class='i-input-div-2'>
+					<div class='write-input-server'>특이사항</div>
+					<input disabled type='text' name='h04' class="i-text" style="width:100px;text-align:right;" value="">
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<!-- 수익 히스토리 -->
+ <div id="profit-history" class="scrollbar" ondblclick="$(this).hide()">
+ {% if D['수익통계'] %}
+	<table class="table table-bordered table-striped" style="border:none;">
+			<tr style="background-color:#0A2229;text-align:center;">
+				<td>{{D['수익통계'][0]}} days</td>
+				<td>{{D['수익통계'][1]}}({{D['수익통계'][2]}}/{{D['수익통계'][3]}})</td>
+				<td>승 {{D['수익통계'][4]}} %</td>
+				<td>평균 {{D['수익통계'][6]}} %</td>
+				<td>패 {{D['수익통계'][5]}} %</td>
+				<td>평균 {{D['수익통계'][7]}} %</td>
+			</tr>
+		<tr style="text-align:right;background-color:black;"><th style="text-align:center;">날자</th><th>잔액합계</th><th>실현수익</th><th>수익(%)</th><th>누적수익</th><th>누적(%)</th></tr>
+			{%- for tr in D['수익연혁'] -%}
+			{% if tr[6]|striptags == '초기셋팅' %}
+			<tr style="background-color:black;text-align:right;"> 
+			{% else %}
+			<tr style="text-align:right;"> 
+			{% endif %}
+				<td>{{tr[0]}}</td>
+				<td>{{tr[1]}}</td>
+				<td>{{tr[2]}}</td>
+				<td>{{tr[3]}}</td>
+				<td>{{tr[5]}}</td>
+				<td>{{tr[4]}}</td>
+			</tr>
+			{%- endfor %}
+	</table>
+{% endif %}
+</div>
+
+<script>
+// 챠트 그리기(메인챠트) -----------------------------------------------------------------------------------------
+const ctx_main = $id('myChart_main');
+ctx_main.style.backgroundColor = '#33363b';
+ctx_main.style.border = '2px solid black';
+
+let labels_origin   = {{D['chart_date']|safe}}				// labels main origin
+let close_origin    = {{D['close_price']|safe}} 		    // soxl close price origin 
+let n_avg_origin    = {{D['Ntactic_avg']|safe}}	            // soxl average in N tactic
+let t_buy           = {{D['타겟매가']|safe}}	    
+let t_sel           = {{D['타겟도가']|safe}}
+
+let ChartStart      = {{D['chart_start']}};	
+
+let labels_main     =  labels_origin.slice(ChartStart) 
+let chart_len       =  labels_main.length
+let close_price     =  close_origin.slice(ChartStart)	
+let n_avg_value     =  n_avg_origin.slice(ChartStart)  
+let target_buy      =  []
+let target_sel      =  [] 
+for(let x=0; x < chart_len; x++) { target_buy.push(t_buy);}
+for(let x=0; x < chart_len; x++) { target_sel.push(t_sel);}
+
+const data_main = {
+    labels : labels_main,
+    datasets : [
+		{   label:' 종가변동',data : close_price,borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],lineTension:0.2},
+		{   label:' 생활평균',data : n_avg_value,borderColor:'lightgreen', borderWidth:2, pointRadius:3,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
+		{   label:' 매수가격',data : target_buy,borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+		{   label:' 매도가격',data : target_sel,borderWidth:1,borderColor:'yellow',borderDash: [2,4],backgroundColor:'yellow',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+    ]   
+};
+const options_main = {
+	animation : { duration:500},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:true}},
+    responsive:false,
+    layout:{padding:20},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'lightgray'}, grid:{color:'#272727'},position:'right'},
+    }
+};
+const config_main  = {type:'line',data:data_main,options:options_main};
+const myChart_main = new Chart(ctx_main, config_main); 
+// ------------------------------------------------------------------------------------------------------------------------
+// 각 전략 내용 보기
+
+
+</script>
+
+{% endblock %}
