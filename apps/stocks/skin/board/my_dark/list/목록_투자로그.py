@@ -28,7 +28,7 @@ class 목록_투자로그(SKIN) :
         while delta :
             temp = my.dayofdate(today,delta)
             weekend = 1 if temp[1] in ('토','일') else 0
-            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}'") else 0 
+            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}' and cat='미국증시휴장일'") else 0 
             delta = 0 if not (weekend + holiday) else delta + 1
         return temp
     
@@ -43,7 +43,7 @@ class 목록_투자로그(SKIN) :
         self.DB.odr = "add0 DESC"
         self.DB.lmt = '200'
         
-        chart_data = self.DB.get("add0,add3,r_08,r_09,s_08,s_09,n_08,n_09",assoc=True)
+        chart_data = self.DB.get("add0,add3,r_09,s_09,n_09",assoc=True)
         
         if chart_data :
 
@@ -74,11 +74,8 @@ class 목록_투자로그(SKIN) :
             self.D['close_price'] = [x['add3'] for x in chart_data]
             
             self.D['Rtactic_avg'] = [x['r_09'] if float(x['r_09']) != 0 else 'null' for x in chart_data]
-            self.D['Rtactic_pro'] = [x['r_08'] if float(x['r_08']) != 0 else 'null' for x in chart_data]
             self.D['Stactic_avg'] = [x['s_09'] if float(x['s_09']) != 0 else 'null' for x in chart_data]
-            self.D['Stactic_pro'] = [x['s_08'] if float(x['s_08']) != 0 else 'null' for x in chart_data]
             self.D['Ntactic_avg'] = [x['n_09'] if float(x['n_09']) != 0 else 'null' for x in chart_data]
-            self.D['Ntactic_pro'] = [x['n_08'] if float(x['n_08']) != 0 else 'null' for x in chart_data]
             
             # 다음 날 주문정보 갖고오기
             NS = self.DB.get_line("add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20") 
@@ -104,6 +101,7 @@ class 목록_투자로그(SKIN) :
             self.D['총매수금'] =  f"{temp[0]:,.2f}"
             self.D['총매도금'] =  f"{temp[1]:,.2f}"
             self.D['투자익률'] =  f"{(temp[1]/temp[0]-1)*100:.2f}"
+            self.D['주문확인'] =  self.DB.parameters('TX070')
             # 통계 자료 가져오기
             temp = self.DB.exe(f"SELECT add0,CAST(add12 as float),CAST(add10 as float),CAST(r_21+s_21+n_21 as float),add17 FROM {self.D['tbl']} WHERE add17 in ('초기셋팅','수익실현') ORDER BY add0")
             l_b = b_b = cntW =  cntL = accWp = accLp = 0.0
@@ -129,7 +127,7 @@ class 목록_투자로그(SKIN) :
             dspan = my.diff_day('20'+self.D['수익연혁'][0][0],'20'+self.D['수익연혁'][-1][0])
             self.D['수익통계'] = [f"{dspan:,}",f"{cntA:,.0f}",f"{cntW:,.0f}",f"{cntL:,.0f}",f"{cntW/cntA*100:,.1f}",f"{cntL/cntA*100:,.1f}",f"{accWp:,.2f}",f"{accLp:,.2f}"]
             self.D['수익연혁'].reverse()
-            
+
             
     def list(self) :
         

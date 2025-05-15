@@ -15,7 +15,11 @@
 	</div>
 	<div style="position:absolute;left:1164px;top:60px;">
 	<!-- 우측 정보창( Next Strategy )-->
+		{% if D['다음날자'] == D['주문확인'] %}
 		<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:2px solid black;padding:10px" ondblclick="$('#profit-history').show()">
+		{% else %}
+		<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:4px solid rgba(243, 151, 108, 0.7);padding:10px">	
+		{% endif %}
 			<span style="font-style: italic;"><span style="color:gray">Strategy for </span><b>{{D['다음날자']}} ({{D['다음요일']}})</b></span>
 			<table class="table" style="text-align:right;width:324px;margin-top:10px">
 				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppa</td><td>ppl&nbsp;</td></tr>
@@ -64,7 +68,8 @@
 		<i class="fa fa-sign-out"></i> <span class="exchange">{{D['총출금합']}}</span> &nbsp;
 		<i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;<span class="exchange"> {{D['누적수익']}} ( {{D['실현수익']}} △ {{D['수수료합']}} )</span> &nbsp;
 	</div>
-	<div class="pull-right">
+	<div class="pull-right" style="color:#222121;">
+		<div id ='daily-check'>{{D['주문확인']}}</div>&nbsp;&nbsp;
 		<form method='post' name='category_search' action="{{D['_bse']}}board/list/{{D['bid']}}" style='display:inline;'>
 			{%- for cats in D['CAT_LIST'] %}
 			<div class='myselect' style='margin:-8px -14px -10px 0px'>
@@ -322,11 +327,8 @@ ctx_main.style.border = '2px solid black';
 let labels_origin   = {{D['chart_date']|safe}}				// labels main origin
 let close_origin    = {{D['close_price']|safe}} 		    // soxl close price origin 
 let n_avg_origin    = {{D['Ntactic_avg']|safe}}	            // soxl average in v tactic
-let n_pro_origin    = {{D['Ntactic_pro']|safe}}	            // soxl profits in v tactic
 let s_avg_origin    = {{D['Stactic_avg']|safe}}	
-let s_pro_origin    = {{D['Stactic_pro']|safe}}
 let r_avg_origin    = {{D['Rtactic_avg']|safe}}	
-let r_pro_origin    = {{D['Rtactic_pro']|safe}}
 
 
 let ChartStart      = {{D['chart_start']}};	
@@ -334,11 +336,8 @@ let ChartStart      = {{D['chart_start']}};
 let labels_main     =  labels_origin.slice(ChartStart); let span_start = labels_main[0]; $("input[name='s_date']").val('20'+span_start)
 let close_price     =  close_origin.slice(ChartStart)	
 let n_avg_value     =  n_avg_origin.slice(ChartStart)  
-let n_pro_value     =  n_pro_origin.slice(ChartStart)	
 let s_avg_value     =  s_avg_origin.slice(ChartStart)	
-let s_pro_value     =  s_pro_origin.slice(ChartStart)
 let r_avg_value     =  r_avg_origin.slice(ChartStart)	
-let r_pro_value     =  r_pro_origin.slice(ChartStart)
 
 
 const data_main = {
@@ -395,6 +394,18 @@ $(".n_balance").click(function(){
 	$("#daily-log-tact").text("RSN-N on "+theday).css("color","#E0F8EC");
 	$("#daily-log-view").show();
 });
-</script>
 
+$("#daily-check").on('dblclick', function() {
+	$(this).attr("contenteditable",true).addClass('daily-check-on');
+	$(this).on('keydown',function(e){
+		if(e.which==13) {
+			let odrday  = $(this).text(); odrday = $.trim(odrday);
+			let posturl = uri('linkurl')+'boards-rsnlog_ajax/dailyCheckUpdate';
+			$.post(posturl,{odrday:odrday,option:'RSN'}).done(function(){location.replace(location.href);}); 
+		} else if(e.which==69) {$(this).attr("contenteditable",false).removeClass('daily-check-on');}
+	});
+});
+
+</script>
+ㄷㄷ
 {% endblock %}

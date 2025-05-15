@@ -228,6 +228,10 @@ class DB :
         elif  parm[1] == 'int'   : return int(parm[0])
         else  : return parm[0]
     
+    def parameter_update(self,key,val) :
+        qry = f"UPDATE parameters SET val='{val}' WHERE key='{key}'"
+        self.exe(qry)        
+    
     def parameters_des(self,key) :
         parm = self.one(f"SELECT description FROM parameters WHERE key='{key}' LIMIT 1")
         return parm

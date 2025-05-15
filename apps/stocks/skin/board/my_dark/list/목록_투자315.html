@@ -15,11 +15,13 @@
 	</div>
 	<div style="position:absolute;left:1164px;top:60px;">
 	<!-- 우측 정보창( Next Strategy )-->
-		<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:2px solid black;padding:10px" ondblclick="$('#profit-history').show()">
-			
+			{% if D['다음날자'] == D['주문확인'] %}
+			<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:2px solid black;padding:10px" ondblclick="$('#profit-history').show()">
+			{% else %}
+			<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:4px solid rgba(243, 151, 108, 0.7);padding:10px">	
+			{% endif %}
 			<span style="font-style: italic;"><span style="color:gray">Strategy for </span><b>{{D['다음날자']}} ({{D['다음요일']}})</b></span>&nbsp;
 			<span style="font-style: italic;color:gray">from {{D['현재날자']}}</span><br>
-
 
 			<table class="table" style="text-align:right;width:324px;margin-top:10px">
 				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppa</td><td>ppl&nbsp;</td></tr>
@@ -51,7 +53,8 @@
 		<i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;<span class="exchange"> {{D['누적수익']}} ( {{D['실현수익']}} △ {{D['수수료합']}} )</span> &nbsp;
 		{%- endif %}
 	</div>
-	<div class="pull-right">
+	<div class="pull-right" style="color:#222121;">
+		<div id ='daily-check'>{{D['주문확인']}}</div>&nbsp;&nbsp;
 		<form method='post' name='category_search' action="{{D['_bse']}}board/list/{{D['bid']}}" style='display:inline;'>
 			{%- for cats in D['CAT_LIST'] %}
 			<div class='myselect' style='margin:-8px -14px -10px 0px'>
@@ -350,7 +353,16 @@ const myChart_main = new Chart(ctx_main, config_main);
 // ------------------------------------------------------------------------------------------------------------------------
 // 각 전략 내용 보기
 
-
+$("#daily-check").on('dblclick', function() {
+	$(this).attr("contenteditable",true).addClass('daily-check-on');
+	$(this).on('keydown',function(e){
+		if(e.which==13) {
+			let odrday  = $(this).text(); odrday = $.trim(odrday);
+			let posturl = uri('linkurl')+'boards-rsnlog_ajax/dailyCheckUpdate';
+			$.post(posturl,{odrday:odrday,option:'N315'}).done(function(){location.replace(location.href);}); 
+		} else if(e.which==69) {$(this).attr("contenteditable",false).removeClass('daily-check-on');}
+	});
+});
 </script>
 
 {% endblock %}

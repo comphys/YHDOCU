@@ -28,7 +28,7 @@ class 목록_투자315(SKIN) :
         while delta :
             temp = my.dayofdate(today,delta)
             weekend = 1 if temp[1] in ('토','일') else 0
-            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}'") else 0 
+            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}' and cat='미국증시휴장일'") else 0 
             delta = 0 if not (weekend + holiday) else delta + 1
         return temp
     
@@ -106,7 +106,8 @@ class 목록_투자315(SKIN) :
             self.D['타겟매가'] = NS['예정매가'] if NS['예정수량'] else 'null' 
             self.D['타겟도가'] = NS['예정도가'] if NS['예정도수'] else 'null' 
             
-            # # 기타 정보 가져오기
+            # 기타 정보 가져오기
+            self.D['주문확인'] =  self.DB.parameters('N0710')
             # temp = self.DB.oneline(f"SELECT sum(CAST(r_01+s_01+n_01 AS FLOAT)), sum(CAST(r_02+s_02+n_02 AS FLOAT)), sum(CAST(r_04+s_04+n_04 AS FLOAT)), sum(CAST(r_05+s_05+n_05 AS FLOAT)) FROM {self.D['tbl']}")
             # self.D['총입금합'] =  f"{temp[0]:,.2f}"
             # self.D['총출금합'] =  f"{temp[1]:,.2f}"

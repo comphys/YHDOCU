@@ -56,3 +56,11 @@ class Rsnlog_ajax(Control) :
         PD['h04'] = LD['add17']  # 카테고리
 
         return self.json(PD)
+    
+    def dailyCheckUpdate(self) :
+        
+        odrday = self.D['post']['odrday']
+        option = self.D['post']['option']
+        
+        key = 'TX070' if option == 'RSN' else 'N0710'
+        self.DB.parameter_update(key,odrday)
