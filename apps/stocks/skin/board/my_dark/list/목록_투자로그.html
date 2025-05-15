@@ -399,6 +399,7 @@ $("#daily-check").on('dblclick', function() {
 	$(this).attr("contenteditable",true).addClass('daily-check-on');
 	$(this).on('keydown',function(e){
 		if(e.which==13) {
+			$(this).attr("contenteditable",false).removeClass('daily-check-on');
 			let odrday  = $(this).text(); odrday = $.trim(odrday);
 			let posturl = uri('linkurl')+'boards-rsnlog_ajax/dailyCheckUpdate';
 			$.post(posturl,{odrday:odrday,option:'RSN'}).done(function(){location.replace(location.href);}); 

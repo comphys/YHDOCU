@@ -102,7 +102,7 @@ class DB :
 
 
     def fetch_assoc(self, many=0) :
-        if not self.rst : return ''
+        if not self.rst : return None
         rst = self.rst.fetchall() if not many else  self.rst.fetchmany(many)
         temp_list = []
         col = [x[0] for x in self.rst.description]
@@ -110,7 +110,7 @@ class DB :
         return temp_list[0] if many == 1 else temp_list      
 
     def fetch(self, many=0) :
-        if not self.rst : return ''
+        if not self.rst : return None
         if    many == 0 : return self.rst.fetchall()
         elif  many == 1 : return self.rst.fetchmany(1)[0]
         else  : return self.rst.fetchmany(many)
@@ -122,7 +122,7 @@ class DB :
         try : 
             self.rst = self.cur.execute(qry)
         except sqlite3.Error as err :
-            return err
+            return False
 
         if qry.upper().startswith(('SELECT','PRAGMA')) : 
             return self.fetch(many) if not assoc else self.fetch_assoc(many)
