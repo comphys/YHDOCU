@@ -363,7 +363,12 @@ $("#daily-check").on('dblclick', function() {
 			let odrday  = $(this).text(); odrday = $.trim(odrday);
 			let posturl = uri('linkurl')+'boards-rsnlog_ajax/dailyCheckUpdate';
 			$.post(posturl,{odrday:odrday,option:'N315'}).done(function(){location.replace(location.href);}); 
-		} else if(e.which==69) {$(this).attr("contenteditable",false).removeClass('daily-check-on');}
+		}  else { 
+			if(!/[0-9\-]/.test(e.key) && e.which != 46 && e.which !=8 && e.which !=37 && e.which !=39 ) {
+				e.preventDefault();
+				$(this).attr("contenteditable",false).removeClass('daily-check-on');
+			}
+		}
 	});
 });
 </script>

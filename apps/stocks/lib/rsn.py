@@ -530,10 +530,11 @@ class RSN :
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # get_start : 테스트에 필요한 주가 정보를 불러옴
     # -------------------------------------------------------------------------------------------------------------------------------------------
-    def get_start(self,b='') :
+    def get_start(self,b='',e='') :
 
         self.D['종목코드']  = 'SOXL'
         if b : self.D['시작일자'] = b
+        if e : self.D['종료일자'] = e
         old_date = my.dayofdate(self.D['시작일자'],-7)[0]
         lst_date = self.D['종료일자']
         if lst_date < old_date : lst_date = self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")  
@@ -889,7 +890,8 @@ class RSN :
 
         sx = {}
 
-        sx['시작일자'] = self.D['시작일자']
+        sx['시작일자'] = self.D['시작일자'][2:]
+        sx['종료일자'] = self.D['종료일자'][2:]
         sx['경과일자'] = self.D['R_총경과일']
 
         sx['최종수익'] = self.D['R_최종수익']
@@ -914,7 +916,7 @@ class RSN :
 
         return sx
 
-    def do_viewStat(self) :
+    def do_viewStat(self,opt) :
 
         self.chart = False
         self.stat  = True
@@ -924,19 +926,30 @@ class RSN :
         self.D['MinDD'] = ''
         self.D['SR'] = []
         
+        last_day = self.DB.one("SELECT add0 FROM h_stockHistory_board ORDER BY add0 DESC LIMIT 1")
+        end = ''
+        
         for b in B :
-            self.get_start(b)
+            if opt == '1year' : 
+                year1 = my.dayofdate(b,365)[0]
+                if  year1 < last_day : 
+                    end = year1
+                else :
+                    end = '' 
+                    break
+            self.get_start(b,end)
             self.init_value()
             self.simulate()
             self.result()
             self.D['SR'].append(self.get_backDateStat())
             
-        self.D['SR'].pop()
+        if  self.D['SR'] : 
+            self.D['SR'].pop()
         
-        self.D['chart_dte'] = [x['시작일자'] for x in self.D['SR']]
-        self.D['chart_val'] = [my.sv(x['종수익률']) for x in self.D['SR']]
-        
-        self.D['chart_dte'].reverse()
-        self.D['chart_val'].reverse()
+            self.D['chart_dte'] = [x['시작일자'] for x in self.D['SR']]
+            self.D['chart_val'] = [my.sv(x['종수익률']) for x in self.D['SR']]
+            
+            self.D['chart_dte'].reverse()
+            self.D['chart_val'].reverse()
 
 # ------------------------------------------------------------------------------------

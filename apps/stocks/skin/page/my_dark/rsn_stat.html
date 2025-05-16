@@ -75,10 +75,11 @@
 		<div class="clearfix" style="height:50px;background-color:#24272d;padding:5px;border:2px solid black;">
 			<div class="pull-left" style="padding:10px 5px;margin-right:0px;height:42px;">
 				Options : 
-				<input role="switch" type="checkbox" name="chk_fee" {{ 'checked' if D['수료적용'] =='on' else '' }}>&nbsp;<span>fee</span>&nbsp;&nbsp;
-				<input role="switch" type="checkbox" name="chk_tax" {{ 'checked' if D['세금적용'] =='on' else '' }}>&nbsp;<span>Tax</span>&nbsp;&nbsp; 
-				<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on' else '' }}>&nbsp;<span>RST=</span>&nbsp;&nbsp; 
-				<input role="switch" type="checkbox" name="chk_rs_" {{ 'checked' if D['이밸런싱'] =='on' else '' }}>&nbsp;<span>RS>T</span>&nbsp;&nbsp; 
+				<input role="switch" type="checkbox" name="chk_fee" {{ 'checked' if D['수료적용'] =='on'  else '' }}>&nbsp;<span>fee</span>&nbsp;&nbsp;
+				<input role="switch" type="checkbox" name="chk_tax" {{ 'checked' if D['세금적용'] =='on'  else '' }}>&nbsp;<span>Tax</span>&nbsp;&nbsp; 
+				<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on'  else '' }}>&nbsp;<span>RST=</span>&nbsp;&nbsp; 
+				<input role="switch" type="checkbox" name="chk_rs_" {{ 'checked' if D['이밸런싱'] =='on'  else '' }}>&nbsp;<span>RS>T</span>&nbsp;&nbsp; 
+				<input role="switch" type="checkbox" name="chk_1yr" {{ 'checked' if D['일년단위'] =='on'  else '' }}>&nbsp;<span>1year</span>&nbsp;&nbsp; 
 				Min LP : {{D['MinLP']}} % when starting on ( {{D['MinDD']}} )
 			</div>
 			<div class="pull-right" style="padding:10px 5px;margin-right:0px;height:42px;">
@@ -91,8 +92,9 @@
 			<table class='table table-striped table-hover' style="border:2px solid black;">
 				<tr style="background-color:#393f4a;border-bottom:1px solid black;">
 					<th style='text-align:center;width:60px;'>No</th>
-					<th style='text-align:center;width:90px;'>Start</th>
-					<th style='text-align:right;width:60px;'>Days</th>
+					<th style='text-align:center;width:80px;'>시작일</th>
+					<th style='text-align:center;width:80px;'>종료일</th>
+					<th style='text-align:right;width:60px;'>경과일</th>
 					
 					<th style='text-align:right;width:100px;'>Profit</th>
 					<th style='text-align:right;width:70px;'>PR</th>
@@ -101,7 +103,7 @@
 					<th style='text-align:center;width:140px'>LP</th>
 					<th style='text-align:center;width:140px'>MDD(R)</th>
 					<th style='text-align:center;width:140px'>MDD(S)</th>
-					<th style='text-align:center;width:140px'>MDD(T)</th>
+					<th style='text-align:center;width:140px'>MDD(N)</th>
 					
 					<th style='text-align:right;width:100px'>Games</th>
 					<th style='text-align:right;width:70px'>WR</th>
@@ -123,7 +125,8 @@
 	<table class='table table-striped table-hover' style="border:2px solid black">
 		<colgroup>
 			<col style="width:60px"> <!-- No -->
-			<col style="width:90px"> <!-- 시작일 -->
+			<col style="width:80px"> <!-- 시작일 -->
+			<col style="width:80px"> <!-- 시작일 -->
 			<col style="width:60px;border-right:1px solid gray"> <!-- 경과 -->
 
 			<col style="width:100px"> <!-- 수익 -->
@@ -154,6 +157,7 @@
 			{% endif %}
 				<td style='text-align:center'>{{loop.index}}</td>
 				<td>{{S['시작일자']}}</td>
+				<td>{{S['종료일자']}}</td>
 				<td style="text-align:right">{{S['경과일자']}}</td>
 
 				<td style="text-align:right">{{S['최종수익']}}</td>

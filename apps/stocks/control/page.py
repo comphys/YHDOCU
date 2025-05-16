@@ -157,11 +157,13 @@ class Page(Control) :
         D['세금적용'] = self.D['post'].get('chk_tax','off')
         D['일밸런싱'] = self.D['post'].get('chk_brs','off')
         D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
-
+        D['일년단위'] = self.D['post'].get('chk_1yr','off')
+        
+        opt = '1year' if D['일년단위'] == 'on' else ''
         RST = self.load_app_lib('rsn')
         RST.D |= D
 
-        RST.do_viewStat()
+        RST.do_viewStat(opt)
         RST.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
         
         return self.echo(RST.D)
