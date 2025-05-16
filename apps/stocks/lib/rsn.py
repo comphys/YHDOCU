@@ -948,8 +948,16 @@ class RSN :
         
             self.D['chart_dte'] = [x['시작일자'] for x in self.D['SR']]
             self.D['chart_val'] = [my.sv(x['종수익률']) for x in self.D['SR']]
-            
             self.D['chart_dte'].reverse()
             self.D['chart_val'].reverse()
+            
+            if  opt == '1year' :
+                self.D['over_100p'] = [x for x in self.D['chart_val'] if x > 100] 
+                totcnt = len(self.D['chart_val'])
+                cnt100 = len(self.D['over_100p'])
+                over_p = cnt100/totcnt*100
+                self.D['over100st'] = f"{cnt100} / {totcnt} ( {over_p:.1f}% )"
+            
+
 
 # ------------------------------------------------------------------------------------
