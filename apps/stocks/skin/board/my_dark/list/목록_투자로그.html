@@ -398,18 +398,12 @@ $(".n_balance").click(function(){
 $("#daily-check").on('dblclick', function() {
 	$(this).attr("contenteditable",true).addClass('daily-check-on');
 	$(this).on('keydown',function(e){
-		let regx = /[0-9]|-/;
 		if(e.which==13) {
 			$(this).attr("contenteditable",false).removeClass('daily-check-on');
 			let odrday  = $(this).text(); odrday = $.trim(odrday);
 			let posturl = uri('linkurl')+'boards-rsnlog_ajax/dailyCheckUpdate';
 			$.post(posturl,{odrday:odrday,option:'RSN'}).done(function(){location.replace(location.href);}); 
-		}  else { 
-			if(!/[0-9\-]/.test(e.key) && e.which != 46 && e.which !=8 && e.which !=37 && e.which !=39 ) {
-				e.preventDefault();
-				$(this).attr("contenteditable",false).removeClass('daily-check-on');
-			}
-		}
+		} else if(e.which==69) {$(this).attr("contenteditable",false).removeClass('daily-check-on');}
 	});
 });
 
