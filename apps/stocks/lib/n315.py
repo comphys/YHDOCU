@@ -159,8 +159,18 @@ class N315 :
 
         else : 
             return False
+
+
+    def chart_data(self) :
+        
+        if not self.chart : return
+        self.D['clse_p'].append(self.M['당일종가'])
+        if avg_v := round(self.M['평균단가'],2) : self.D['avge_v'].append(avg_v)
+        else : self.D['avge_v'].append('null')
     
-    
+        self.D['c_date'].append(self.M['현재일자'][2:])
+        self.D['totalV'].append(round(self.M['현재잔액'] + self.M['평가금액'],0))
+
     def simulate(self,printOut=False) :
 
         for idx,BD in enumerate(self.B) : 
@@ -177,12 +187,13 @@ class N315 :
             # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정값 이상으로 상승 시 건너뛰기 위함
             if  idx == idxx + 1 or self.M['첫날기록'] : 
                 
-                if  self.new_day() : self.tomorrow_step(); self.increase_count(printOut); continue
-                else : self.M['첫날기록'] = True; continue
+                if  self.new_day() : self.tomorrow_step(); self.chart_data(); self.increase_count(printOut); continue
+                else : self.M['첫날기록'] = True; self.chart_data(); continue
 
             self.today_sell()
             self.today_buy()
             self.calculate()
+            self.chart_data()
             self.tomorrow_step()
             self.increase_count(printOut)
         
@@ -386,7 +397,7 @@ class N315 :
         tx['매수수량'] = f"{self.M['매수수량']:,}" if self.M['매수수량'] else ''
         tx['매수금액'] = f"{self.M['매수금액']:,.2f}" if self.M['매수금액'] else ''
         
-        tx['평균단가'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.4f}</span>" if self.M['평균단가'] else f"<span class='avgv{self.M['기록시즌']}'></span>"
+        tx['평균단가'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.2f}</span>" if self.M['평균단가'] else f"<span class='avgv{self.M['기록시즌']}'></span>"
         tx['보유수량'] = f"{self.M['보유수량']:,}" if self.M['보유수량'] else ''
         
         clr = "#F6CECE" if self.M['현수익률'] > 0 else "#CED8F6"
@@ -400,12 +411,7 @@ class N315 :
             
         self.D['TR'].append(tx)
         
-        self.D['clse_p'].append(self.M['당일종가'])
-        if avg_v := round(self.M['평균단가'],2) : self.D['avge_v'].append(avg_v)
-        else : self.D['avge_v'].append('null')
-    
-        self.D['c_date'].append(self.M['현재일자'][2:])
-        self.D['totalV'].append(round(가치합계,0))
+
         
 
     def do_viewChart(self) :

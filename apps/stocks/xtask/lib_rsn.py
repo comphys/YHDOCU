@@ -436,8 +436,8 @@ class update_Log :
             
             # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정값 이상으로 상승 시 건너뛰기 위함
             if  idx == idxx + 1 or self.M['첫날기록'] : 
-                if  self.new_day() : self.tomorrow_step(); self.increase_count(printOut); continue
-                else : self.M['첫날기록'] = True; continue
+                if  self.new_day() : self.chart_data(); self.tomorrow_step(); self.increase_count(printOut); continue
+                else : self.M['첫날기록'] = True; self.chart_data(); continue
 
             self.today_sell()
             self.today_buy_V()
@@ -445,6 +445,7 @@ class update_Log :
             self.today_buy_S()
             self.today_buy_N()
             self.calculate()
+            self.chart_data()
             self.tomorrow_step()
             self.increase_count(printOut)
             
@@ -535,10 +536,11 @@ class update_Log :
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # get_start : 테스트에 필요한 주가 정보를 불러옴
     # -------------------------------------------------------------------------------------------------------------------------------------------
-    def get_start(self,b='') :
+    def get_start(self,b='',e='') :
 
         self.D['종목코드']  = 'SOXL'
         if b : self.D['시작일자'] = b
+        if e : self.D['종료일자'] = e
         old_date = my.dayofdate(self.D['시작일자'],-7)[0]
         lst_date = self.D['종료일자']
         if lst_date < old_date : lst_date = self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")  
@@ -659,7 +661,7 @@ class update_Log :
             self.D['TR'] = []
             self.D['c_date'] = []
             self.D['clse_p'] = []
-            self.D['avge_r'] = []; self.D['avge_s'] = []; self.D['avge_n'] = []
+            self.D['avge_v'] = []; self.D['avge_r'] = []; self.D['avge_s'] = []; self.D['avge_n'] = []
 
         # 통계자료
         if  self.stat :

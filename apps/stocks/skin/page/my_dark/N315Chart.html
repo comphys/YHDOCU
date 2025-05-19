@@ -286,27 +286,40 @@ const data_season = {
 
 		},
 		{
+			label:'추세+10',
+			data : [4,7,5,3,4],
+			borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
+			lineTension:0.2
+
+		},
+		{
+			label:'추세+0',
+			data : [4,7,5,3,4],
+			borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,
+			lineTension:0.2
+
+		},
+		{
 			label:'추세-10',
 			data : [4,7,5,3,4],
-			borderWidth:1,borderColor:'#CEF6F5',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
+			borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
 			lineTension:0.2
 
 		},
 		{
 			label:'추세-20',
 			data : [4,7,5,3,4],
-			borderWidth:1,borderColor:'#CEF6F5',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
+			borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
 			lineTension:0.2
 
 		},
 		{
 			label:'추세-30',
 			data : [4,7,5,3,4],
-			borderWidth:1,borderColor:'#CEF6F5',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
+			borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
 			lineTension:0.2
 
-		}
-
+		},
 	]   
 };
 const options_season = {
@@ -340,14 +353,17 @@ function show_chart(season,sel,profit=null,rate=null) {
 	$('#backTestingChart').css({top:'110px',left:'32px'}).show();
 	var clsp = [];
 	var avgv = [];
-	var dl10 = []; var dl20 = []; var dl30 = []; 
+	var dl10 = []; var dl20 = []; var dl30 = []; var du00 = []; var du10 = []; var dlnl = [null]*30;
+	var amin = 1000.0;
+	var amax = 0;
 
-	$(".clsp"+season).each(function() {clsp.push(parseFloat($(this).text()))});
-
+	$(".clsp"+season).each(function() {tmpv = parseFloat($(this).text()); if(tmpv < amin ) amin = tmpv; if(tmpv > amax) amax = tmpv; clsp.push(tmpv)}); 
 	$(".avgv"+season).each(function() {tmpv = parseFloat($(this).text());tmpv = (tmpv)? avgv.push(tmpv) : avgv.push(null); });
 	
 	const a0 = clsp[0];	
 
+	for(let x=0; x < 10; x++) { du10.push(a0*1.1);}
+	for(let x=0; x < 30; x++) { du00.push(a0);}
 	for(let x=0; x < 10; x++) { dl10.push(a0*0.9);}
 	for(let x=0; x < 20; x++) { dl20.push(a0*0.8);}
 	for(let x=0; x < 30; x++) { dl30.push(a0*0.7);}
@@ -359,9 +375,11 @@ function show_chart(season,sel,profit=null,rate=null) {
 	myChart_season.data.labels = new_labels;
 	myChart_season.data.datasets[0].data =  clsp;
 	myChart_season.data.datasets[1].data =  avgv;
-	myChart_season.data.datasets[2].data =  dl10;
-	myChart_season.data.datasets[3].data =  dl20;
-	myChart_season.data.datasets[4].data =  dl30;
+	myChart_season.data.datasets[2].data = (amax>a0*1.0)? du10 : dlnl;
+	myChart_season.data.datasets[3].data =  du00;
+	myChart_season.data.datasets[4].data =  dl10;
+	myChart_season.data.datasets[5].data = (amin<a0*0.8)? dl20 : dlnl;
+	myChart_season.data.datasets[6].data = (amin<a0*0.7)? dl30 : dlnl;
 
 	myChart_season.update();
 
@@ -392,7 +410,6 @@ ctx_main.style.backgroundColor = '#33363b';
 ctx_main.style.border = '2px solid black';
 
 let closeP_ori   = {{D['clse_p']|safe}};
-
 let avge_v_ori   = {{D['avge_v']|safe}};
 let totalV_ori   = {{D['totalV']|safe}};
 let labels_main_ori = {{D['c_date']|safe}};
@@ -405,11 +422,11 @@ let labels_main = labels_main_ori.slice(0);
 
 let data_count = labels_main.length
 
-if(data_count > 200) {
+if(data_count > 100) {
 	avge_v.fill(null) 
 }
 
-if(data_count <= 200) {
+if(data_count <= 100) {
 
 	totalV.fill(null)
 }

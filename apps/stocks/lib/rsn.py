@@ -431,8 +431,8 @@ class RSN :
             
             # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정값 이상으로 상승 시 건너뛰기 위함
             if  idx == idxx + 1 or self.M['첫날기록'] : 
-                if  self.new_day() : self.tomorrow_step(); self.increase_count(printOut); continue
-                else : self.M['첫날기록'] = True; continue
+                if  self.new_day() : self.chart_data(); self.tomorrow_step(); self.increase_count(printOut); continue
+                else : self.M['첫날기록'] = True; self.chart_data(); continue
 
             self.today_sell()
             self.today_buy_V()
@@ -440,6 +440,7 @@ class RSN :
             self.today_buy_S()
             self.today_buy_N()
             self.calculate()
+            self.chart_data()
             self.tomorrow_step()
             self.increase_count(printOut)
             
@@ -655,7 +656,7 @@ class RSN :
             self.D['TR'] = []
             self.D['c_date'] = []
             self.D['clse_p'] = []
-            self.D['avge_r'] = []; self.D['avge_s'] = []; self.D['avge_n'] = []
+            self.D['avge_v'] = []; self.D['avge_r'] = []; self.D['avge_s'] = []; self.D['avge_n'] = []
 
         # 통계자료
         if  self.stat :
@@ -765,6 +766,7 @@ class RSN :
         #--------------------------------------------------------
         tx['일반진행'] = f"{round(self.V['매도금액'],4):,.2f}" if self.V['매도금액'] else self.V['거래코드']
         tx['일반평균'] = f"{round(self.V['평균단가'],4):,.4f}" if self.V['평균단가'] else ""
+        tx['일반평균'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.V['평균단가'],4):,.2f}</span>" if self.V['평균단가'] else f"<span class='avgv{self.M['기록시즌']}'></span>"
         clr = "#F6CECE" if self.V['현수익률'] > 0 else "#CED8F6"
         tx['일반수익'] = f"<span style='color:{clr}'>{round(self.V['수익현황'],4):,.2f}</span>"
         tx['일반익률'] = f"<span style='color:{clr}'>{round(self.V['현수익률'],4):,.2f}</span>"
@@ -772,7 +774,7 @@ class RSN :
         #--------------------------------------------------------
         for tac,key,key2 in [(self.R,'기회','r'),(self.S,'안정','s'),(self.N,'생활','t')] :
             tx[key+'진행'] = f"{round(tac['매도금액'],4):,.2f}" if tac['매도금액'] else tac['거래코드']
-            tx[key+'평균'] = f"<span class='avg{key2}{self.M['기록시즌']}'>{round(tac['평균단가'],4):,.4f}</span>" if tac['평균단가'] else f"<span class='avg{key2}{self.M['기록시즌']}'></span>"
+            tx[key+'평균'] = f"<span class='avg{key2}{self.M['기록시즌']}'>{round(tac['평균단가'],4):,.2f}</span>" if tac['평균단가'] else f"<span class='avg{key2}{self.M['기록시즌']}'></span>"
             clr = "#F6CECE" if tac['현수익률'] > 0 else "#CED8F6"
             tx[key+'수익'] = f"<span style='color:{clr}'>{round(tac['수익현황'],4):,.2f}</span>" 
             tx[key+'익률'] = f"<span style='color:{clr}'>{round(tac['현수익률'],4):,.2f}</span>" 
@@ -782,8 +784,13 @@ class RSN :
          
         self.D['TR'].append(tx)
         
+    def chart_data(self) :
+        
+        if not self.chart : return
+        
         self.D['clse_p'].append(self.M['당일종가'])
-
+        if avg_v := round(self.V['평균단가'],2) : self.D['avge_v'].append(avg_v)
+        else : self.D['avge_v'].append('null')        
         if avg_r := round(self.R['평균단가'],2) : self.D['avge_r'].append(avg_r)
         else : self.D['avge_r'].append('null')
         if avg_s := round(self.S['평균단가'],2) : self.D['avge_s'].append(avg_s)

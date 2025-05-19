@@ -528,7 +528,7 @@ const data_season = {
 		{
 			label:'V 평균',
 			data : [3,6,7,8,5],
-			borderColor:'rgb(143,134,129,0.4)',borderWidth:3,pointRadius:0,lineTension:0.2,
+			borderColor:'rgb(143,134,129,0.6)',borderWidth:3,pointRadius:0,lineTension:0.2,
 			lineTension:0.2
 
 		},
@@ -591,14 +591,14 @@ const data_season = {
 		{
 			label:'추세-40',
 			data : [4,7,5,3,4],
-			borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
+			borderWidth:1,borderColor:'#58ACFA',borderDash: [2,4],backgroundColor:'#58ACFA',pointRadius:0,pointHoverRadius:0,
 			lineTension:0.2
 
 		},
 		{
 			label:'추세-50',
 			data : [4,7,5,3,4],
-			borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
+			borderWidth:1,borderColor:'#f78181',borderDash: [2,4],backgroundColor:'#f78181',pointRadius:0,pointHoverRadius:0,
 			lineTension:0.2
 
 		}
@@ -684,9 +684,9 @@ function show_chart(season,sel,profit=null,rate=null) {
 	for(let x=0; x < 10; x++) { du10.push(a0*1.1);}
 	for(let x=0; x < 30; x++) { du00.push(a0);}
 	for(let x=0; x < 10; x++) { dl10.push(a0*0.9);}
-	for(let x=0; x < 15; x++) { dl20.push(a0*0.8);}
-	for(let x=0; x < 20; x++) { dl30.push(a0*0.7);}
-	for(let x=0; x < 25; x++) { dl40.push(a0*0.6);}
+	for(let x=0; x < 20; x++) { dl20.push(a0*0.8);}
+	for(let x=0; x < 30; x++) { dl30.push(a0*0.7);}
+	for(let x=0; x < 30; x++) { dl40.push(a0*0.6);}
 	for(let x=0; x < 30; x++) { dl50.push(a0*0.5);}
 
 	var xticks = clsp.length

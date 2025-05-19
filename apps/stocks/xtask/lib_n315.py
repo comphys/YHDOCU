@@ -164,8 +164,18 @@ class update_Log315 :
 
         else : 
             return False
+
+
+    def chart_data(self) :
+        
+        if not self.chart : return
+        self.D['clse_p'].append(self.M['당일종가'])
+        if avg_v := round(self.M['평균단가'],2) : self.D['avge_v'].append(avg_v)
+        else : self.D['avge_v'].append('null')
     
-    
+        self.D['c_date'].append(self.M['현재일자'][2:])
+        self.D['totalV'].append(round(self.M['현재잔액'] + self.M['평가금액'],0))
+
     def simulate(self,printOut=False) :
 
         for idx,BD in enumerate(self.B) : 
@@ -182,12 +192,13 @@ class update_Log315 :
             # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정값 이상으로 상승 시 건너뛰기 위함
             if  idx == idxx + 1 or self.M['첫날기록'] : 
                 
-                if  self.new_day() : self.tomorrow_step(); self.increase_count(printOut); continue
-                else : self.M['첫날기록'] = True; continue
+                if  self.new_day() : self.tomorrow_step(); self.chart_data(); self.increase_count(printOut); continue
+                else : self.M['첫날기록'] = True; self.chart_data(); continue
 
             self.today_sell()
             self.today_buy()
             self.calculate()
+            self.chart_data()
             self.tomorrow_step()
             self.increase_count(printOut)
         
