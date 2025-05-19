@@ -1,6 +1,5 @@
 from system.core.load import Control
 from flask import session
-import system.core.my_utils as my
 
 class Page(Control) : 
 
@@ -31,7 +30,6 @@ class Page(Control) :
                     elif    temp['type'] == 'page'    : temp['bid'] =  'page/view/'+temp['bid']
 
     def view(self) :
-        if not 'N_NO' in session : return self.moveto('board/login')
         M = self.model('page-'+self.D['bid'])
         M.view()
         D={'skin':f"{self.skin}/{self.D['bid']}.html"}

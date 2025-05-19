@@ -64,6 +64,11 @@ def main(myapp=None, control=None, method=None, option=None):
  
     if not method  : return redirect(mybase + control+'/index')
 
+    # log in 
+    
+    if not 'N_NO' in session : myapp = 'stocks'; control = 'board'; method  = 'login'
+    
+    
     data = request.form if request.method == 'POST' else None
 
     try :  CLS = load_control(control,myapp)

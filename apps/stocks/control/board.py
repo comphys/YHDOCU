@@ -9,9 +9,7 @@ class Board(Control) :
     def _auto(self) :
 
         self.DB = self.db('stocks')
-        
-        if  'N_NO' in session :
-            
+        if 'N_NO' in session :
             self.DB.tbl, self.DB.wre = ("h_user_list",f"no={session['N_NO']}")
             self.D['USER'] = self.DB.get("*",many=1, assoc=True)
             self.D['bid']     = self.parm[0] if self.parm else self.C['init_board']
@@ -24,7 +22,6 @@ class Board(Control) :
 
 
     def list(self) :
-        if not 'N_NO' in session : return self.moveto('board/login')
         M = self.model('board-board_list')
         M.list_head()
         M.list_main()
@@ -33,7 +30,6 @@ class Board(Control) :
         return self.echo(D)
 
     def body(self) :
-        if not 'N_NO' in session : return self.moveto('board/login')
         M = self.model('board-board_list')
         M.list_head()
         M.list_main()
@@ -44,7 +40,6 @@ class Board(Control) :
         return self.echo(D)      
 
     def write(self) :
-        if not 'N_NO' in session : return self.moveto('board/login')
         self.D['Mode'] = 'write'
         M = self.model('board-board_write')
         M.write_main()
@@ -53,7 +48,6 @@ class Board(Control) :
         return self.echo(D)
 
     def add_body(self) :
-        if not 'N_NO' in session : return self.moveto('board/login')
         self.D['Mode'] = 'add_body'
         self.D['No'] = self.gets['no']
         self.D['Brother']  = int(self.gets.get('brother','0')) 
@@ -71,7 +65,6 @@ class Board(Control) :
         return self.echo(D)
 
     def modify(self,mode='modify') :
-        if not 'N_NO' in session : return self.moveto('board/login')
         self.D['Mode'] = 'modify'
         M = self.model('board-board_write')
         M.write_main()
@@ -79,6 +72,7 @@ class Board(Control) :
         return self.echo(D)
 
     def login(self) :
+        
         D = {'title':'로그인', 'skin':'board/login.html', 'back':'board/login'}
         
         if self.D['post'] :
