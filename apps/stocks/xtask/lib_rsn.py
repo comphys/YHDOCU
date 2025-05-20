@@ -476,7 +476,7 @@ class update_Log :
         초기자본1 = float(self.D['일반자금'].replace(',','')); 최종자본1=self.V['평가금액']+self.V['현재잔액']; 최종수익1=최종자본1-초기자본1; self.D['v_profit']=round((최종수익1/초기자본1)*100,2)
         초기자본2 = float(self.D['기회자금'].replace(',','')); 최종자본2=self.R['평가금액']+self.R['현재잔액']; 최종수익2=최종자본2-초기자본2; self.D['r_profit']=round((최종수익2/초기자본2)*100,2)
         초기자본3 = float(self.D['안정자금'].replace(',','')); 최종자본3=self.S['평가금액']+self.S['현재잔액']; 최종수익3=최종자본3-초기자본3; self.D['s_profit']=round((최종수익3/초기자본3)*100,2)
-        초기자본4 = float(self.D['생활자금'].replace(',','')); 최종자본4=self.N['평가금액']+self.N['현재잔액']; 최종수익4=최종자본4-초기자본4; self.D['t_profit']=round((최종수익4/초기자본4)*100,2)
+        초기자본4 = float(self.D['생활자금'].replace(',','')); 최종자본4=self.N['평가금액']+self.N['현재잔액']; 최종수익4=최종자본4-초기자본4; self.D['n_profit']=round((최종수익4/초기자본4)*100,2)
         
         초기자본 = 초기자본2 + 초기자본3 + 초기자본4; 최종자본 = 최종자본2 + 최종자본3 + 최종자본4; 최종수익 = 최종자본 - 초기자본 
         self.D['profit_t'] = round((최종수익/초기자본) * 100,2)
@@ -494,7 +494,7 @@ class update_Log :
         self.D['R_일반익률'] = f"{self.D['v_profit']:,.2f}"
         self.D['R_기회익률'] = f"{self.D['r_profit']:,.2f}"
         self.D['R_안정익률'] = f"{self.D['s_profit']:,.2f}"
-        self.D['R_생활익률'] = f"{self.D['t_profit']:,.2f}"
+        self.D['R_생활익률'] = f"{self.D['n_profit']:,.2f}"
         self.D['R_총경과일'] = f"{my.diff_day(self.D['시작일자'],self.D['종료일자']):,}"
 
         if self.chart and self.D['c_date'] : self.D['s_date'] = self.D['c_date'][0]; self.D['e_date'] = self.D['c_date'][-1]
@@ -536,23 +536,27 @@ class update_Log :
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # get_start : 테스트에 필요한 주가 정보를 불러옴
     # -------------------------------------------------------------------------------------------------------------------------------------------
-    def get_start(self,b='',e='') :
+    def get_start(self,s='',e='') :
 
         self.D['종목코드']  = 'SOXL'
-        if b : self.D['시작일자'] = b
-        if e : self.D['종료일자'] = e
-        old_date = my.dayofdate(self.D['시작일자'],-7)[0]
-        lst_date = self.D['종료일자']
-        if lst_date < old_date : lst_date = self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")  
-        self.DB.tbl,self.DB.wre,self.DB.odr = ("h_stockHistory_board",f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{lst_date}'","add0")
+
+        if not s : s = self.D['시작일자']
+        if not e : e = self.D['종료일자']
+        
+        old_date = my.dayofdate(s,-7)[0]  
+        lst_date = self.DB.one("SELECT max(add0) FROM h_stockHistory_board") 
+        
+        if old_date < '2010-03-15' : old_date = '2010-03-15'; s = '2010-03-22'
+        
+        if e > lst_date : e = lst_date
+        if s > e : s = '2020-01-02'; e = lst_date
+        
+        self.D['시작일자'] = s
+        self.D['종료일자'] = e
+          
+        self.DB.tbl,self.DB.wre,self.DB.odr = ("h_stockHistory_board",f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{e}'","add0")
         self.B = self.DB.get('add0,add3,add8,add9,add10') # 날자, 종가, 증감, 연상,연하 
         
-
-        # 데이타 존재 여부 확인
-        self.DB.tbl, self.DB.wre = ("h_stockHistory_board",f"add1='{self.D['종목코드']}'")
-        chk_data = self.DB.get_one("min(add0)")
-        if  chk_data > self.D['시작일자'] : 
-            self.D['NOTICE'] = f" {self.D['시작일자']} 에서 {self.D['종료일자']} 까지 분석을 위한 데이타가 부족합니다. 시작 날자를 {chk_data} 이후 3일 뒤로 조정하시기 바랍니다."
 
     def increase_count(self,printOut=False) :
         
@@ -757,10 +761,11 @@ class update_Log :
 # ------------------------------------------------------------------------------------------------------------------------------------------
 # From rsn.py END
 # ------------------------------------------------------------------------------------------------------------------------------------------
-    def chart_data(self) :
-        return
-    
+
     def print_backtest(self) :
+        return
+
+    def chart_data(self) :
         return
     
     def get_simResult(self,start='',end='') :
