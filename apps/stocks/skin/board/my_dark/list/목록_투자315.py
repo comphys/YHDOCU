@@ -78,10 +78,11 @@ class 목록_투자315(SKIN) :
             ax = {}
             
             for C in chart_data : # 날자를 인덱스로 하는 평균값과 수익률 dict 생성
-                ax[C['add0']] = float(C['add10']) if float(C['add10']) else 'null'
+                ax[C['add0'][2:]] = float(C['add10']) if float(C['add10']) else 'null'
             
             for x in self.D['chart_date'] :    
                 self.D['Ntactic_avg'].append(ax.get(x,'null'))
+                
                 
             # 다음 날 주문정보 갖고오기
             ini_data   = self.DB.oneline(f"SELECT add18,add19 FROM {self.D['tbl']}")
