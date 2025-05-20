@@ -26,12 +26,12 @@
 			<table class="table" style="text-align:right;width:324px;margin-top:10px">
 				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppa</td><td>ppl&nbsp;</td></tr>
 				{% if D['예정수량'] %}
-				<tr><td style="text-align:left;">N <span style="color:gray">buy</span></td><td>{{D['예정매가']}}</td><td>{{D['예정수량']}}</td>
+				<tr><td style="text-align:left;"><span style="color:gray">buy</span></td><td>{{D['예정매가']}}</td><td>{{D['예정수량']}}</td>
 					<td style="color:gray">{{D['매평대비']}}</td><td style="color:gray">{{D['매종대비']}}</td>
 				</tr>
 				{% endif %}
 				{% if D['예정도수'] %}
-				<tr><td style="text-align:left;">N <span style="color:gray">sell</span></td><td>{{D['예정도가']}}</td><td>{{D['예정도수']}}</td>
+				<tr style="border-top:1px solid gray;"><td style="text-align:left;"><span style="color:gray">sell</span></td><td>{{D['예정도가']}}</td><td>{{D['예정도수']}}</td>
 					<td style="color:gray">{{D['도평대비']}}</td><td style="color:gray">{{D['도종대비']}}</td>
 				</tr>
 				{% endif %}
