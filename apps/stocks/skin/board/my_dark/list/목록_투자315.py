@@ -179,7 +179,7 @@ class 목록_투자315(SKIN) :
                             clas = ''; style += "color:gray;"
                             tx[key] = f"<td style='{style}'>0.00</td>"                        
 
-                    elif key in ('add14','add15') : # 손익 구분 실수
+                    elif key in ('add4','add14','add15') : # 손익 구분 실수
                         if   float(txt) > 0 : clas = "class='list-bull'"
                         elif float(txt) < 0 : clas = "class='list-bear'"
                         else : clas = ''; style += "color:gray;"

@@ -18,7 +18,7 @@ else :
     
     ini_data = N315.DB.oneline("SELECT add18,add19 FROM h_log315_board ORDER BY add0 DESC LIMIT 1")
     ini_date = ini_data[0]
-    ini_capt = f"{float(ini_data[1]):,.2f}"
+    ini_capt = f"{my.sv(ini_data[1]):,.2f}"
     
     N315.do_tacticLog(ini_date,today,ini_capt)
     LD = N315.get_simulLog()
