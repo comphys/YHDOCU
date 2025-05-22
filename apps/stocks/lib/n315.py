@@ -46,7 +46,7 @@ class N315 :
             self.M['매수차수'] = 0
             self.M['첫날기록'] = True
             
-            self.vCount(self.M['실현수익'])
+            self.vCount(self.M['수익현황'])
             self.rebalance() 
             
 
@@ -112,7 +112,7 @@ class N315 :
             
     def tomorrow_buy(self) :
         
-        if  self.M['매수차수'] >= self.M['최대차수']   : self.M['예정수량'] = 0; return
+        if  self.M['매수차수'] >  self.M['최대차수']-1 : self.M['예정수량'] = 0; return
         if  self.M['매수차수'] == self.M['최대차수']-1 : self.M['매금단계'][self.M['최대차수']-1] = int(self.M['현재잔액'])
         
         self.M['매수예가'] = round(self.M['당일종가'] * self.M['매입가치'],2)
@@ -136,7 +136,7 @@ class N315 :
 
         self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가','매수예가','예정수량','매도예가','매수차수'],0)
         
-        진입단가 = round(self.M['전일종가']-0.01, 2) if self.M['당일연속'] == self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
+        진입단가 = round(self.M['전일종가']-0.01, 2) if self.M['당일연속'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
         
         if  self.M['당일종가'] <=  진입단가  :
             
@@ -309,7 +309,7 @@ class N315 :
         self.M['전일종가']  = 0.0
         
         self.set_value(['매수수량','매도수량','예정수량','보유수량','진최하락'],0)
-        self.set_value(['매수금액','매도금액','실현수익','총매수금','평균단가','수익현황','현수익률','평가금액','매수예가','수수료등'],0.0)
+        self.set_value(['매수금액','매도금액','총매수금','평균단가','수익현황','현수익률','평가금액','매수예가','수수료등'],0.0)
         self.M['최하일자'] = ''
         self.D['익절횟수'] = self.D['손절횟수'] = 0
         
@@ -341,7 +341,12 @@ class N315 :
         self.D['현재날자'] = self.M['현재일자']
         self.D['현재종가'] = self.M['당일종가']
         self.D['현재연속'] = self.M['당일연속']
-        self.D['배분금액'] = int(self.M['매금단계'][self.M['매수차수']])
+        # 매수차수는 매수가 이루어졌을 경우에 증가함
+        if     self.M['매수차수'] >  self.M['최대차수']-1 : self.D['배분금액'] = 0
+        elif   self.M['매수차수'] == self.M['최대차수']-1 : self.D['배분금액'] = int(self.M['현재잔액'])
+        else : self.D['배분금액'] =  int(self.M['매금단계'][self.M['매수차수']])
+        
+        self.D['배분금액'] = int(self.M['매금단계'][self.M['매수차수']]) if self.M['예정수량'] else 0
 
         self.D['N_변동'] = round(self.M['종가변동'],2)
         
