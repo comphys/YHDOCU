@@ -192,20 +192,13 @@ class 목록_투자315(SKIN) :
                             clas = ''; style += "color:gray;"
                             tx[key] = f"<td style='{style}'>0</td>"                            
 
-                    elif key in ('add3','add5','add8','add11','add12','add16') : # 실수 일반
+                    elif key in ('add3','add5','add8','add11','add12','add13','add16') : # 실수 일반
                         if float(txt) :
                             tx[key] = f"<td style='{style}' {clas}>{float(txt):,.2f}</td>"
                         else : 
                             style += "color:gray;"
                             tx[key] = f"<td style='{style}'>0.00</td>"
 
-                    elif key in ('add13') : # 매도금액
-                        if item['add17'] == '수익실현' :
-                            tx[key] = f"<td style='{style}' {clas}>{float(txt):,.2f}</td>"
-                        else : 
-                            style = "color:gray;text-align:right;"
-                            tx[key] = f"<td style='{style}' {clas}>{float(txt):,.2f}</td>"
-                    
                     else : 
                         tx[key] = f"<td style='{style}' {clas}>{txt}</td>"
 
