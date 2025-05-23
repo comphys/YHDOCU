@@ -324,7 +324,9 @@ class update_Log :
     # -------------------------------------------------------------------------------------------------------------------------------------------
     def tomorrow_sel_N(self) :
         
-        self.N['매도예가'] = min(my.round_up(self.N['평균단가'] * self.M['각매가치'][self.N['매수차수']-1]), self.M['매도예가'])
+        # self.N['매도예가'] = min(my.round_up(self.N['평균단가'] * self.M['각매가치'][self.N['매수차수']-1]), self.M['매도예가'])
+        self.N['매도예가'] = my.round_up(self.N['평균단가'] * self.M['각매가치'][self.N['매수차수']-1])
+        self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'])
     
     def tomorrow_sel_A(self) :
 
