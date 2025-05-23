@@ -216,7 +216,7 @@ class update_Log :
         
         if  self.M['당일종가'] <= self.N['매수예가'] and self.N['예정수량'] :
             self.N['매수수량']  = self.N['예정수량']
-            self.N['매수차수'] += 1 
+            self.N['매수차수']  = self.N['매수차수'] + 1 if self.N['매수차수'] < self.M['최대차수'] else self.M['최대차수']
             self.N['거래코드']  = f"{self.N['매수차수']}B {self.N['매수수량']}"
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -811,7 +811,9 @@ class update_Log :
         LD['sub4']  = self.N['매수차수'] if tactic == 'N' else f"{tac['일매수금']:.2f}"
         
         LD['sub12'] = self.M['현재날수'] - 1
-        LD['sub18'] = f"{self.N['매금단계'][self.N['매수차수']]}" if tactic == 'N' else tac['기초수량'] 
+        
+        매수차수 = self.N['매수차수'] if self.N['매수차수'] < self.M['최대차수'] else self.M['최대차수'] - 1
+        LD['sub18'] = f"{self.N['매금단계'][매수차수]}" if tactic == 'N' else tac['기초수량'] 
                   
         LD['sub29'] = tac['진행상황']
         LD['sub5']  = f"+ {self.M['연속상승']}" if self.M['연속상승'] else f"- {self.M['연속하락']}"
