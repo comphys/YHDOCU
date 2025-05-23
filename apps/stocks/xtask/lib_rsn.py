@@ -371,11 +371,11 @@ class update_Log :
         self.tomorrow_buy_R()
         self.tomorrow_buy_S()
         self.tomorrow_buy_N()
-        # 현재잔액 상태를 파악하기 위해서, buy 검토가 sell 검토보다 빨라야 함, R,S의 매수가격은 V이 매수가격보다 작아야 하므로 V부터 검토하여야 함
+        # 현재잔액 상태를 파악하기 위해서, buy 검토가 sell 검토보다 빨라야 함, R,S의 매수가격은 V 매수가격보다 작아야 하므로 V부터 검토하여야 함
         self.tomorrow_sel_A()
         self.tomorrow_sel_N()
         
-        # 매수예근 매도예가보다 낮아야 한다
+        # 매수예가는 매도예가보다 낮아야 한다
         for tac in (self.V,self.R,self.S,self.N) : 
             if tac['매수예가'] >= self.M['매도예가'] : tac['매수예가'] = self.M['매도예가'] - 0.01
 
