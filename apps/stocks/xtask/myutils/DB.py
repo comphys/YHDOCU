@@ -232,3 +232,9 @@ class DB :
     def parameters_des(self,key) :
         parm = self.one(f"SELECT description FROM parameters WHERE key='{key}' LIMIT 1")
         return parm
+    
+    # for RSN
+    
+    def last_date(self,tbl) :
+        qry = f"SELECT add0 FROM {tbl} order by rowid desc LIMIT 1"
+        return self.one(qry)

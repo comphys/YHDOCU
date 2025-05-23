@@ -35,7 +35,7 @@ class 목록_투자315(SKIN) :
 
     def chart(self) :
         
-        last_date = self.D['LIST'][0]['add0']
+        last_date = self.DB.last_date(self.D['tbl'])
         
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
