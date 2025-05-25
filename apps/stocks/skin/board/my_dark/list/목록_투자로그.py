@@ -127,6 +127,16 @@ class 목록_투자로그(SKIN) :
             dspan = my.diff_day('20'+self.D['수익연혁'][0][0],'20'+self.D['수익연혁'][-1][0])
             self.D['수익통계'] = [f"{dspan:,}",f"{cntA:,.0f}",f"{cntW:,.0f}",f"{cntL:,.0f}",f"{cntW/cntA*100:,.1f}",f"{cntL/cntA*100:,.1f}",f"{accWp:,.2f}",f"{accLp:,.2f}"]
             self.D['수익연혁'].reverse()
+            # Lucky vicky
+            self.D['럭키비키'] = ''
+            self.D['럭키이십'] = False
+            self.D['럭키삼십'] = False
+            
+            lucky = self.DB.oneline(f"SELECT CAST(s_09 as float),CAST(add11 as float), CAST(add3 as float) FROM {self.D['tbl']} WHERE add0 = '{last_date}'") # 평균단가, 현수익률, 종가
+            if   lucky[1] < -21.0 : lp = lucky[0] * 0.7; self.D['럭키비키'] = f"{lp:.2f}" ; self.D['럭키삼십'] = True ; self.D['당종대비'] = f"{(lp/lucky[2]-1)*100:.2f}"
+            elif lucky[1] < -12.0 : lp = lucky[0] * 0.8; self.D['럭키비키'] = f"{lp:.2f}" ; self.D['럭키이십'] = True ; self.D['당종대비'] = f"{(lp/lucky[2]-1)*100:.2f}"
+            
+                        
 
             
     def list(self) :
