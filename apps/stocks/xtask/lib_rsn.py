@@ -324,13 +324,10 @@ class update_Log :
     # -------------------------------------------------------------------------------------------------------------------------------------------
     def tomorrow_sel_N(self) :
         
-        self.N['매도예가'] = my.round_up(self.N['평균단가'] * self.M['각매가치'][self.N['매수차수']-1])
+        NSELLP = my.round_up(self.N['평균단가'] * self.M['각매가치'][self.N['매수차수']-1])
         
-        # 매도탈출가를 우선적으로 적용시키기 위한 최종매도가 결정
-        if  self.M['매도탈출'] : 
-            self.N['매도예가'] = min(self.M['매도예가'],self.N['매도예가'])
-        else :
-            self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'])
+        self.N['매도예가'] = NSELLP if self.M['현재날수'] < self.M['강매시작'] else my.round_up(self.N['평균단가'])
+        self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'])
             
     
     def tomorrow_sel_M(self) :
@@ -343,12 +340,10 @@ class update_Log :
 
             if  self.V['진행상황'] not in ('매수제한','매수중단') : 
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
-                
-                if  self.S['진행시작'] : 
-                    self.M['매도탈출'] = min(self.M['매도예가'],my.round_up(self.S['평균단가'] * self.S['매도보정']))
-                    self.M['매도예가'] = min(self.M['매도탈출'],self.M['매도예가'])  
-            else :
+            else : 
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])  
+
+            if  self.S['진행시작'] : self.M['매도예가'] = min(self.M['매도예가'],my.round_up(self.S['평균단가'] * self.S['매도보정']))
         
         # [전략진행]---------------------------------------------------------------------------------------------
 
@@ -356,12 +351,10 @@ class update_Log :
            
             if  self.M['현재날수'] < self.M['매도대기'] :
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['전략가치'])
-                
-                if  self.S['진행시작'] : 
-                    self.M['매도탈출'] = min(self.M['매도예가'],my.round_up(self.S['평균단가'] * self.S['회복탈출']))
-                    self.M['매도예가'] = min(self.M['매도탈출'],self.M['매도예가'])  
             else :
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
+                
+            if  self.S['진행시작'] : self.M['매도예가'] = min(self.M['매도예가'],my.round_up(self.S['평균단가'] * self.S['회복탈출']))
                 
         # [강매진행]----------------------------------------------------------------------------------------------
     
@@ -436,7 +429,6 @@ class update_Log :
             self.M['종가변동'] = float(BD['add8']) 
             self.M['연속상승'] = int(BD['add9'])
             self.M['연속하락'] = int(BD['add10'])
-            self.M['매도탈출'] = 0.0 
             self.V['거래코드'] = self.R['거래코드'] = self.S['거래코드'] = self.N['거래코드'] = ' '
             self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','수수료등'],0)
             
