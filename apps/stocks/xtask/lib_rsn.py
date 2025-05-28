@@ -333,7 +333,7 @@ class update_Log :
             self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'])
             
     
-    def tomorrow_sel_A(self) :
+    def tomorrow_sel_M(self) :
 
         if  self.M['첫날기록'] : return
         
@@ -344,9 +344,9 @@ class update_Log :
             if  self.V['진행상황'] not in ('매수제한','매수중단') : 
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
                 
-                for tac in (self.R,self.S) : 
-                    if  tac['진행시작'] : 
-                        self.M['매도탈출'] = min(self.M['매도예가'],my.round_up(tac['평균단가'] * tac['매도보정']))
+                if  self.S['진행시작'] : 
+                    self.M['매도탈출'] = min(self.M['매도예가'],my.round_up(self.S['평균단가'] * self.S['매도보정']))
+                    self.M['매도예가'] = min(self.M['매도탈출'],self.M['매도예가'])  
             else :
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])  
         
@@ -357,14 +357,14 @@ class update_Log :
             if  self.M['현재날수'] < self.M['매도대기'] :
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['전략가치'])
                 
-                for tac in (self.R,self.S) : 
-                    if  tac['진행시작'] : 
-                        self.M['매도탈출'] = min(self.M['매도예가'],my.round_up(tac['평균단가'] * tac['회복탈출']))
+                if  self.S['진행시작'] : 
+                    self.M['매도탈출'] = min(self.M['매도예가'],my.round_up(self.S['평균단가'] * self.S['회복탈출']))
+                    self.M['매도예가'] = min(self.M['매도탈출'],self.M['매도예가'])  
             else :
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
                 
-        # [최종결정]----------------------------------------------------------------------------------------------
-        if  self.M['매도탈출'] : self.M['매도예가'] = min(self.M['매도탈출'],self.M['매도예가'])        
+        # [강매진행]----------------------------------------------------------------------------------------------
+    
         if  self.M['현재날수'] < self.M['강매시작'] :
             self.M['매도예가'] = min( self.M['매도예가'], my.round_up(self.M['당일종가']*self.M['종가상승']) ) 
         else :
@@ -377,7 +377,7 @@ class update_Log :
         self.tomorrow_buy_S()
         self.tomorrow_buy_N()
         # 현재잔액 상태를 파악하기 위해서, buy 검토가 sell 검토보다 빨라야 함, R,S의 매수가격은 V 매수가격보다 작아야 하므로 V부터 검토하여야 함
-        self.tomorrow_sel_A()
+        self.tomorrow_sel_M()
         self.tomorrow_sel_N()
         
         # 매수예가는 매도예가보다 낮아야 한다
@@ -413,14 +413,13 @@ class update_Log :
 
             self.M['첫날기록'] = False
             
-        # --------------------------------------------------
-        # N 전략은 첫날 매수 없음
-        # --------------------------------------------------   
+            # --------------------------------------------------
+            # N 전략은 첫날 매수 없음
+            # --------------------------------------------------   
                
             return True
 
-        else : 
-            return False
+        else : return False
         
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # simulate : 메인함수로서 시작일과 종료일까지의 매수매도를 테스트함
@@ -616,9 +615,7 @@ class update_Log :
             # RS tactic
             self.M['전략대기']  = ST['TR010']  # TS001
             self.M['찬스일가']  = ST['TR011']  # TS
-            self.R['매도보정']  = ST['TR012']  # TR
             self.S['매도보정']  = ST['TS010']  # TS
-            self.R['회복탈출']  = ST['TR013']  # TR
             self.S['회복탈출']  = ST['TS011']  # TS
             self.R['기회진입']  = ST['TR023']  # TR
             
