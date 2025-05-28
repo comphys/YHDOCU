@@ -275,7 +275,7 @@ class RSN :
                     self.R['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
                     self.R['예정수량'] = my.ceil(self.R['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
             else :
-                    매수예가 = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >= 2 else round(self.M['당일종가'] * self.M['기회진입'],2)  
+                    매수예가 = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >= 2 else round(self.M['당일종가'] * self.R['기회진입'],2)  
                     self.R['매수예가'] = min(매수예가,self.take_chance(self.R)) # 순서주의 ( 매수예가 부터 계산해야함 )
                     self.R['예정수량'] = self.chance_qty(self.R)
 
@@ -319,9 +319,14 @@ class RSN :
     # -------------------------------------------------------------------------------------------------------------------------------------------
     def tomorrow_sel_N(self) :
         
-        # self.N['매도예가'] = min(my.round_up(self.N['평균단가'] * self.M['각매가치'][self.N['매수차수']-1]), self.M['매도예가'])
         self.N['매도예가'] = my.round_up(self.N['평균단가'] * self.M['각매가치'][self.N['매수차수']-1])
-        self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'])
+        
+        # 매도탈출가를 우선적으로 적용시키기 위한 최종매도가 결정
+        if  self.M['매도탈출'] : 
+            self.N['매도예가'] = min(self.M['매도예가'],self.N['매도예가'])
+        else :
+            self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'])
+            
     
     def tomorrow_sel_A(self) :
 
@@ -331,12 +336,12 @@ class RSN :
 
         if  self.M['기본진행'] :
 
-            if  self.V['진행상황'] not in ('매수제한','매수중단') :  
+            if  self.V['진행상황'] not in ('매수제한','매수중단') : 
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
                 
                 for tac in (self.R,self.S) : 
                     if  tac['진행시작'] : 
-                        self.M['매도예가'] = min(self.M['매도예가'],my.round_up(tac['평균단가'] * tac['매도보정']))
+                        self.M['매도탈출'] = min(self.M['매도예가'],my.round_up(tac['평균단가'] * tac['매도보정']))
             else :
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])  
         
@@ -345,16 +350,16 @@ class RSN :
         else :
            
             if  self.M['현재날수'] < self.M['매도대기'] :
+                self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['전략가치'])
                 
-                self.M['매도예가'] = min(my.round_up(self.V['평균단가'] * self.M['전략가치']),my.round_up(self.R['평균단가'] * self.R['위기탈출']))
-                
-                if  self.S['진행시작']  : 
-                    self.M['매도예가'] = min(self.M['매도예가'],my.round_up(self.S['평균단가'] * self.M['회복탈출']))
+                for tac in (self.R,self.S) : 
+                    if  tac['진행시작'] : 
+                        self.M['매도탈출'] = min(self.M['매도예가'],my.round_up(tac['평균단가'] * tac['회복탈출']))
             else :
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
-        
+                
         # [최종결정]----------------------------------------------------------------------------------------------
-
+        if  self.M['매도탈출'] : self.M['매도예가'] = min(self.M['매도탈출'],self.M['매도예가'])        
         if  self.M['현재날수'] < self.M['강매시작'] :
             self.M['매도예가'] = min( self.M['매도예가'], my.round_up(self.M['당일종가']*self.M['종가상승']) ) 
         else :
@@ -427,7 +432,7 @@ class RSN :
             self.M['종가변동'] = float(BD['add8']) 
             self.M['연속상승'] = int(BD['add9'])
             self.M['연속하락'] = int(BD['add10'])
-             
+            self.M['매도탈출'] = 0.0 
             self.V['거래코드'] = self.R['거래코드'] = self.S['거래코드'] = self.N['거래코드'] = ' '
             self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','수수료등'],0)
             
@@ -608,9 +613,9 @@ class RSN :
             self.M['찬스일가']  = ST['TR011']  # TS
             self.R['매도보정']  = ST['TR012']  # TR
             self.S['매도보정']  = ST['TS010']  # TS
-            self.R['위기탈출']  = ST['TR013']  # TR
-            self.M['회복탈출']  = ST['TS011']  # TS
-            self.M['기회진입']  = ST['TR023']  # TR
+            self.R['회복탈출']  = ST['TR013']  # TR
+            self.S['회복탈출']  = ST['TS011']  # TS
+            self.R['기회진입']  = ST['TR023']  # TR
             
             # N tactic
             self.M['분할배분']  = my.sf(ST['TN010']) # TN
