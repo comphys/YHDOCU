@@ -64,6 +64,7 @@ class update_Log :
             self.tax(tac)
             if  tac == self.N : 
                 self.N['매수차수'] = 0 
+                self.N['매도예가'] = 0
                 if not self.V['매도수량'] : self.rebalance_N() # just for N tactic 
 
     def calculate(self)  :
@@ -324,14 +325,15 @@ class update_Log :
     # -------------------------------------------------------------------------------------------------------------------------------------------
     def tomorrow_sel_N(self) :
         
+        if not self.N['보유수량'] : return
+        
         if  self.M['현재날수'] < self.M['강매시작'] :
-            self.N['매도예가'] = my.round_up(self.N['평균단가'] * self.M['각매가치'][self.N['매수차수']-1])
+            self.N['매도예가'] = my.round_up(self.N['평균단가'] * self.M['각매가치'][self.N['매수차수']-1]) 
         else :
-            self.M['매도예가'] = my.round_up(self.N['평균단가'])
-            
+            self.M['매도예가'] = my.round_up(self.N['평균단가']) 
+                        
         self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'])
             
-    
     def tomorrow_sel_M(self) :
 
         if  self.M['첫날기록'] : return
