@@ -197,7 +197,7 @@ class Page(Control) :
         D['수료적용'] = self.D['post'].get('chk_fee','off')
         D['세금적용'] = self.D['post'].get('chk_tax','off')
         
-        VB = self.load_app_lib('n310')
+        VB = self.load_app_lib('t3days')
         VB.D |= D
 
         VB.do_viewChart()
