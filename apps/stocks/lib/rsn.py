@@ -322,8 +322,10 @@ class RSN :
         
         if not self.N['보유수량'] : return
         
-        self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) if self.M['현재날수'] < self.M['강매시작'] else my.round_up(self.N['평균단가']) 
-        self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'])
+        if  self.M['현재날수'] < self.M['강매시작'] :
+            self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
+        else :
+            self.N['매도예가'] = my.round_up(self.N['평균단가']) 
             
     def tomorrow_sel_M(self) :
 
@@ -358,7 +360,6 @@ class RSN :
         else :
             self.M['매도예가'] = my.round_up( self.V['평균단가'] * self.M['강매가치'] )
         
-
     def tomorrow_step(self) :
         self.tomorrow_buy_V()
         self.tomorrow_buy_R()
@@ -368,7 +369,8 @@ class RSN :
         self.tomorrow_sel_M()
         self.tomorrow_sel_N()
         
-        # 매수예가는 매도예가보다 낮아야 한다
+        # 최종 매도가 및 매수가 조율
+        self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'])
         for tac in (self.V,self.R,self.S,self.N) : 
             if tac['매수예가'] >= self.M['매도예가'] : tac['매수예가'] = self.M['매도예가'] - 0.01
 
