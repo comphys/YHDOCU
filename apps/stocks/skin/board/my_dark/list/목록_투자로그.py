@@ -135,8 +135,9 @@ class 목록_투자로그(SKIN) :
             
             lucky = self.DB.oneline(f"SELECT CAST(s_09 as float),CAST(add11 as float), CAST(add3 as float) FROM {self.D['tbl']} WHERE add0 = '{last_date}'") # 평균단가, 현수익률, 종가
             lp = 0
-            if   lucky[1] < -21.0 : lp = lucky[0] * 0.7; self.D['럭키삼십'] = True  
-            elif lucky[1] < -12.0 : lp = lucky[0] * 0.8; self.D['럭키이십'] = True  
+            if   lucky[1] < -21.0 : lp = lucky[0] * 0.70; self.D['럭키삼십'] = True  
+            elif lucky[1] < -12.0 : lp = lucky[0] * 0.80; self.D['럭키이십'] = True  
+            elif lucky[1] <  -8.0 : lp = lucky[0] * 0.85; self.D['럭키십오'] = True
             
             if lp : lp = min(lp,lucky[2]); self.D['럭키비키'] = f"{lp:.2f}"; self.D['당종대비'] = f"{(lp/lucky[2]-1)*100:.2f}"
                         

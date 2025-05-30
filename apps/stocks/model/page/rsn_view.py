@@ -29,7 +29,7 @@ class M_rsn_view(Model) :
         self.D['세금적용'] = 'off'
         self.D['일밸런싱'] = 'on'
         self.D['이밸런싱'] = 'on'
-        self.D['일반상황'] = 'off'
+        self.D['일반상황'] = 'on'
         self.D['가상손실'] = 'off'
 
         # 기간 설정(최근 2년간)
