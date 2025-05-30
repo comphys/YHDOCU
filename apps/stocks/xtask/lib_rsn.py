@@ -327,11 +327,7 @@ class update_Log :
         
         if not self.N['보유수량'] : return
         
-        if  self.M['현재날수'] < self.M['강매시작'] :
-            self.N['매도예가'] = my.round_up(self.N['평균단가'] * self.M['각매가치'][self.N['매수차수']-1]) 
-        else :
-            self.M['매도예가'] = my.round_up(self.N['평균단가']) 
-                        
+        self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) if self.M['현재날수'] < self.M['강매시작'] else my.round_up(self.N['평균단가']) 
         self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'])
             
     def tomorrow_sel_M(self) :
