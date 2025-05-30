@@ -363,8 +363,8 @@ class update_Log :
         if  self.M['현재날수'] < self.M['강매시작'] :
             self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
         else :
-            self.N['매도예가'] = my.round_up(self.N['평균단가']) 
-            # self.N['매도예가'] = self.M['매도예가']
+            # self.N['매도예가'] = my.round_up(self.N['평균단가']) 
+            self.N['매도예가'] = self.M['매도예가']
         
     def tomorrow_step(self) :
         self.tomorrow_buy_V()
