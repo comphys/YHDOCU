@@ -129,19 +129,17 @@ class 목록_투자로그(SKIN) :
             self.D['수익연혁'].reverse()
             
             # Lucky vicky
-            self.D['럭키비키'] = ''
-            self.D['럭키이십'] = False
-            self.D['럭키삼십'] = False
+            self.D['럭키십오'] = self.D['럭키이십'] = self.D['럭키삼십'] = False
             
-            lucky = self.DB.oneline(f"SELECT CAST(s_09 as float),CAST(add11 as float), CAST(add3 as float) FROM {self.D['tbl']} WHERE add0 = '{last_date}'") # 평균단가, 현수익률, 종가
-            lp = 0
-            if   lucky[1] < -21.0 : lp = lucky[0] * 0.70; self.D['럭키삼십'] = True  
-            elif lucky[1] < -12.0 : lp = lucky[0] * 0.80; self.D['럭키이십'] = True  
-            elif lucky[1] <  -8.0 : lp = lucky[0] * 0.85; self.D['럭키십오'] = True
+            lucky = self.DB.oneline(f"SELECT CAST(s_09 as float),CAST(s_08 as float), CAST(add3 as float) FROM {self.D['tbl']} WHERE add0 = '{last_date}'") # 평균단가, 현수익률, 종가
             
-            if lp : lp = min(lp,lucky[2]); self.D['럭키비키'] = f"{lp:.2f}"; self.D['당종대비'] = f"{(lp/lucky[2]-1)*100:.2f}"
-                        
-
+            if lucky[1] < -21.0 : lp=lucky[0]*0.70; self.D['럭키삼십']=True; lp=min(lp,lucky[2]); self.D['럭키30']=f"{lp:.2f}";self.D['당종30']=f"{(lp/lucky[2]-1)*100:.2f}" 
+            if lucky[1] < -12.0 : lp=lucky[0]*0.80; self.D['럭키이십']=True; lp=min(lp,lucky[2]); self.D['럭키20']=f"{lp:.2f}";self.D['당종20']=f"{(lp/lucky[2]-1)*100:.2f}"  
+            if lucky[1] <  -8.0 : lp=lucky[0]*0.85; self.D['럭키십오']=True; lp=min(lp,lucky[2]); self.D['럭키15']=f"{lp:.2f}";self.D['당종15']=f"{(lp/lucky[2]-1)*100:.2f}"
+            
+            self.D['당종30']=f"{(lp/lucky[2]-1)*100:.2f}"
+            
+                      
             
     def list(self) :
         
