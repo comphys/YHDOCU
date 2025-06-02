@@ -215,7 +215,11 @@ class DB :
         if    parm[1] == 'float' : return float(parm[0])
         elif  parm[1] == 'int'   : return int(parm[0])
         else  : return parm[0]
-        
+
+    def parameter_update(self,key,val) :
+        qry = f"UPDATE parameters SET val='{val}' WHERE key='{key}'"
+        self.exe(qry)
+                
     def parameters_dict(self,cat=None) :
         con = f"WHERE cat ='{cat}'" if cat else ''
         parm = self.exe(f"SELECT key,val,type FROM parameters {con}",assoc=False)

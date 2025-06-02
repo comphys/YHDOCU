@@ -772,6 +772,20 @@ class update_Log :
         self.result()
         self.nextStep()
 
+    def get_luckyLog(self) :
+        
+        LD = {}
+        LD['진행시작'] = self.S['진행시작']
+        LD['기록일자'] = self.M['현재일자']
+        LD['기록시즌'] = self.M['기록시즌']
+        LD['기록날수'] = self.M['현재날수']-1
+        LD['평균단가'] = self.S['평균단가']
+        LD['당일종가'] = self.M['당일종가']
+        LD['종가변동'] = self.M['종가변동']
+        LD['매도예가'] = self.D['N_안정매도가']
+        return LD
+        
+
     def get_simulLog(self,tactic) :
         
         if   tactic == 'V' : tac = self.V; key = '일반'; 초기자금 = my.sv(self.D['일반자금'])

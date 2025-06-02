@@ -3,6 +3,7 @@ from lib_rsn import update_Log
 
 
 today = my.kor_loc_date('US/Eastern')[0:10]
+today = '2025-05-30'
 weekd = my.dayofdate(today)
 RSN = update_Log()
 

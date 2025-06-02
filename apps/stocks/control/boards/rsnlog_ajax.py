@@ -62,5 +62,7 @@ class Rsnlog_ajax(Control) :
         odrday = self.D['post']['odrday']
         option = self.D['post']['option']
         
-        key = 'TX070' if option == 'RSN' else 'N0710'
+        if  option == 'RSN'   : key = 'TX070'
+        if  option == 'N315'  : key = 'N0710'
+        if  option == 'LUCKY' : key = 'L0202'
         self.DB.parameter_update(key,odrday)
