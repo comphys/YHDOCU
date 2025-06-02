@@ -841,11 +841,11 @@ class update_Log :
 
     def do_tacticsLog(self,logDay) :
         
-        sdate = self.DB.parameters('TX050')
-        T_mon = my.sv(self.DB.parameters('TX051'))
-        mode_ = self.DB.parameters('TX052')
+        sdate = self.DB.parameter('TX050')
+        T_mon = my.sv(self.DB.parameter('TX051'))
+        mode_ = self.DB.parameter('TX052')
         
-        alloc = my.sf(self.DB.parameters('TC011'))
+        alloc = my.sf(self.DB.parameter('TC011'))
         R_mon = round(T_mon * alloc[0]/100,2)
         S_mon = round(T_mon * alloc[1]/100,2)
         N_mon = T_mon - R_mon - S_mon
@@ -858,10 +858,10 @@ class update_Log :
         self.D['종료일자'] = logDay 
         if sdate >= logDay : return
         
-        self.D['기회시점'] = f"{self.DB.parameters('TR021'):.1f}"
-        self.D['기회회복'] = f"{self.DB.parameters('TR022'):.1f}"
-        self.D['안정시점'] = f"{self.DB.parameters('TS021'):.1f}"
-        self.D['안정회복'] = f"{self.DB.parameters('TS022'):.1f}"      
+        self.D['기회시점'] = f"{self.DB.parameter('TR021'):.1f}"
+        self.D['기회회복'] = f"{self.DB.parameter('TR022'):.1f}"
+        self.D['안정시점'] = f"{self.DB.parameter('TS021'):.1f}"
+        self.D['안정회복'] = f"{self.DB.parameter('TS022'):.1f}"      
         
         self.D['수료적용'] = 'on' 
         self.D['세금적용'] = 'off' 

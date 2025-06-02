@@ -82,7 +82,7 @@ class 목록_Vtactic(SKIN) :
             self.D['연속상승'] = LD['sub5']
             self.D['연속하락'] = LD['sub6']
             self.D['현재환율'] = f"{현재환율:,.2f}"
-            self.D['자산배분'] = self.DB.parameters_des('03800')
+            self.D['자산배분'] = self.DB.parameter_des('03800')
             self.D['가치합계'] = round(float(LD['add17']))
             
             self.D['필요상승'] = f"({round((float(LD['sub20'])/float(LD['add14']) -1)*100,2)}%)" if int(LD['add9']) else ''

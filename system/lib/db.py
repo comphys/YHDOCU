@@ -226,7 +226,7 @@ class DB :
         qry = f"DELETE FROM STORAGE WHERE key='{key}'"
         self.exe(qry)
         
-    def parameters(self,key) :
+    def parameter(self,key) :
         parm = self.exe(f"SELECT val,type FROM parameters WHERE key='{key}'",many=1,assoc=False)
         if    parm[1] == 'float' : return float(parm[0])
         elif  parm[1] == 'int'   : return int(parm[0])
@@ -236,7 +236,7 @@ class DB :
         qry = f"UPDATE parameters SET val='{val}' WHERE key='{key}'"
         self.exe(qry)        
     
-    def parameters_des(self,key) :
+    def parameter_des(self,key) :
         parm = self.one(f"SELECT description FROM parameters WHERE key='{key}' LIMIT 1")
         return parm
 

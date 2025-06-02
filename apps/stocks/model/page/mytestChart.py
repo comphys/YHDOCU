@@ -8,7 +8,7 @@ class M_mytestChart(Model) :
         # 기본 값
         self.D['종목코드'] = 'SOXL'
         self.D['전략선택'] = 'T3DAYS'
-        self.D['일반자금'] = self.DB.parameters('05100')
+        self.D['일반자금'] = self.DB.parameter('05100')
  
         self.D['수료적용'] = 'on'
         self.D['세금적용'] = 'off'

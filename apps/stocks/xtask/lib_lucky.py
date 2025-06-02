@@ -129,10 +129,10 @@ class update_lucky :
         ST = self.DB.parameters_dict('매매전략/LUCKY')
         # ---------------------------------------------------------
         self.M['시즌자금']  = my.sv(ST['L0001'])
-        self.M['럭키일오']  = my.sf(self.DB.parameters('L0015'))
-        self.M['럭키이공']  = my.sf(self.DB.parameters('L0020'))
-        self.M['럭키이오']  = my.sf(self.DB.parameters('L0025'))
-        self.M['럭키삼공']  = my.sf(self.DB.parameters('L0030'))
+        self.M['럭키일오']  = my.sf(self.DB.parameter('L0015'))
+        self.M['럭키이공']  = my.sf(self.DB.parameter('L0020'))
+        self.M['럭키이오']  = my.sf(self.DB.parameter('L0025'))
+        self.M['럭키삼공']  = my.sf(self.DB.parameter('L0030'))
         #----------------------------------------------------------
         self.M['일오자금']  = round(self.M['시즌자금'] * self.M['럭키일오'][0] / 100,2)
         self.M['일오진입']  = round((100+self.M['럭키일오'][1])/100,2)

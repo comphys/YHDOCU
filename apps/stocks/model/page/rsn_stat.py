@@ -9,17 +9,17 @@ class M_rsn_stat(Model) :
         self.D['종목코드'] = 'SOXL'
         
         self.D['종목코드'] = 'SOXL'
-        투자자금 = my.sv(self.DB.parameters('TC010'))
-        자금배분 = my.sf(self.DB.parameters('TC011'))
+        투자자금 = my.sv(self.DB.parameter('TC010'))
+        자금배분 = my.sf(self.DB.parameter('TC011'))
         
         self.D['기회자금'] = round(투자자금*자금배분[0]/100,2)
         self.D['안정자금'] = round(투자자금*자금배분[1]/100,2)
         self.D['생활자금'] = round(투자자금*자금배분[2]/100,2)
 
-        self.D['기회시점'] = self.DB.parameters('TR021')
-        self.D['기회회복'] = self.DB.parameters('TR022')
-        self.D['안정시점'] = self.DB.parameters('TS021')
-        self.D['안정회복'] = self.DB.parameters('TS022')
+        self.D['기회시점'] = self.DB.parameter('TR021')
+        self.D['기회회복'] = self.DB.parameter('TR022')
+        self.D['안정시점'] = self.DB.parameter('TS021')
+        self.D['안정회복'] = self.DB.parameter('TS022')
 
         self.D['수료적용'] = 'on'
         self.D['세금적용'] = 'off'

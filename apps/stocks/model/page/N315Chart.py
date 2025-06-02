@@ -8,7 +8,7 @@ class M_N315Chart(Model) :
         # 기본 값
         self.D['종목코드'] = 'SOXL'
         self.D['전략선택'] = 'N315'
-        self.D['일반자금'] = f"{my.sv(self.DB.parameters('N0702')):,.2f}"
+        self.D['일반자금'] = f"{my.sv(self.DB.parameter('N0702')):,.2f}"
  
         self.D['수료적용'] = 'on'
         self.D['세금적용'] = 'off'
@@ -17,5 +17,5 @@ class M_N315Chart(Model) :
         # self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)
         self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")
         # self.D['시작일자'] = my.dayofdate(self.D['종료일자'],delta=-365*2)[0]
-        self.D['시작일자'] = self.DB.parameters('N0701')
+        self.D['시작일자'] = self.DB.parameter('N0701')
         

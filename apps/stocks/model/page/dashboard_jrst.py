@@ -191,7 +191,7 @@ class M_dashboard_jrst(Model) :
 
 
         self.D['나중순증'] = []
-        self.D['자산분배'] = self.DB.parameters_des('03802') # 자금투자 변경 시 파라미터 변경
+        self.D['자산분배'] = self.DB.parameter_des('03802') # 자금투자 변경 시 파라미터 변경
         for odr in [1,2,3] :
             con = f"WHERE add0 <= '{self.D['e_date']}'" 
             qry = f"SELECT add17, sub25, sub26 FROM {self.M['boards'][odr]} {con} ORDER BY add0 DESC LIMIT 1"

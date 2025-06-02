@@ -15,7 +15,7 @@ class 목록_Rtactic2(SKIN) :
     def chart(self) :
 
         last_date = self.DB.one(f"SELECT max(add0) FROM {self.D['tbl']}")
-        VtacBoard = self.DB.parameters('03500') 
+        VtacBoard = self.DB.parameter('03500') 
         
         self.DB.clear()
         self.DB.tbl = VtacBoard
@@ -86,7 +86,7 @@ class 목록_Rtactic2(SKIN) :
             self.D['chance_value'] = [LD['sub19']] * chart_len if float(LD['sub2']) else ['null'] * chart_len
             
             self.D['현재환율'] = f"{현재환율:,.2f}"
-            self.D['자산배분'] = self.DB.parameters_des('03800') if self.D['bid'] == 'R240805' else self.DB.parameters_des('03802')
+            self.D['자산배분'] = self.DB.parameter_des('03800') if self.D['bid'] == 'R240805' else self.DB.parameter_des('03802')
             self.D['가치합계'] = round(float(LD['add17']))
 
             yx_b = (float(LD['sub19'])/float(LD['add14'])-1)*100

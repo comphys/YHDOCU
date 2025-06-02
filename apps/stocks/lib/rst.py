@@ -749,8 +749,8 @@ class RST :
         s_date = my.timestamp_to_date(opt=7) if not backto else backto
 
         order = 'add0 ASC' if origin else 'add0 DESC' 
-        V_board = self.DB.parameters('03500')
-        R_board = self.DB.parameters('03501') if self.op=='rst' else self.DB.parameters('03701')
+        V_board = self.DB.parameter('03500')
+        R_board = self.DB.parameter('03501') if self.op=='rst' else self.DB.parameter('03701')
         V_date  = self.DB.one(f"SELECT add0 FROM {V_board} WHERE add0 < '{s_date}' and sub12='1' ORDER BY {order} LIMIT 1")
         V_money = self.DB.one(f"SELECT add3 FROM {V_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")
         R_money = self.DB.one(f"SELECT add3 FROM {R_board} WHERE add0 < '{V_date}' and sub12='0' ORDER BY {order} LIMIT 1")

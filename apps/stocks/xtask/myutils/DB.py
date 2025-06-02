@@ -77,6 +77,7 @@ class DB :
 
 
     def fetch_assoc(self, many=0) :
+        if not self.rst : return None
         rst = self.rst.fetchall() if not many else  self.rst.fetchmany(many)
         temp_list = []
         col = [x[0] for x in self.rst.description]
@@ -84,6 +85,7 @@ class DB :
         return temp_list[0] if many == 1 else temp_list
 
     def fetch(self, many=0) :
+        if not self.rst : return None
         if    many == 0 : return self.rst.fetchall()
         elif  many == 1 : return self.rst.fetchmany(1)[0]
         else  : return self.rst.fetchmany(many)
@@ -210,7 +212,7 @@ class DB :
         qry = f"DELETE FROM STORAGE WHERE key='{key}'"
         self.exe(qry)
     
-    def parameters(self,key) :
+    def parameter(self,key) :
         parm = self.exe(f"SELECT val,type FROM parameters WHERE key='{key}'",many=1,assoc=False)
         if    parm[1] == 'float' : return float(parm[0])
         elif  parm[1] == 'int'   : return int(parm[0])
@@ -233,7 +235,7 @@ class DB :
             
         return D
     
-    def parameters_des(self,key) :
+    def parameter_des(self,key) :
         parm = self.one(f"SELECT description FROM parameters WHERE key='{key}' LIMIT 1")
         return parm
     

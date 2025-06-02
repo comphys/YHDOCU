@@ -108,7 +108,7 @@ class 목록_투자315(SKIN) :
             self.D['타겟도가'] = NS['예정도가'] if NS['예정도수'] else 'null' 
             
             # 기타 정보 가져오기
-            self.D['주문확인'] =  self.DB.parameters('N0710')
+            self.D['주문확인'] =  self.DB.parameter('N0710')
             
             
     def list(self) :

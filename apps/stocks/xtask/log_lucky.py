@@ -4,7 +4,6 @@ from lib_lucky import update_lucky
 
 
 today = my.kor_loc_date('US/Eastern')[0:10]
-today = '2025-05-16'
 weekd = my.dayofdate(today)
 RSN = update_Log()
 LUCKY = update_lucky()
@@ -19,7 +18,7 @@ if  skip :
 
 else :
     # 1. Lucky 정보 가져오기 None 이면 현재 진행중인 lucky는 없음
-    set = int(LUCKY.DB.parameters('L0200'))
+    set = int(LUCKY.DB.parameter('L0200'))
     # 2. RSN 에서 현재 S가 진행중인지 확인
     RSN.do_tacticsLog(today)
     DS = RSN.get_luckyLog()
