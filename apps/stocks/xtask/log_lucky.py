@@ -29,10 +29,10 @@ else :
             LUCKY.DB.parameter_update('L0200',LD['진행시즌'])
             LUCKY.DB.parameter_update('L0201',LD['기준단가'])
             
-            LUCKY.DB.parameter_update('L0215',LD['매수15']); LUCKY.DB.parameter_update('L0216','0')
-            LUCKY.DB.parameter_update('L0220',LD['매수20']); LUCKY.DB.parameter_update('L0221','0')
-            LUCKY.DB.parameter_update('L0225',LD['매수25']); LUCKY.DB.parameter_update('L0226','0')
-            LUCKY.DB.parameter_update('L0230',LD['매수30']); LUCKY.DB.parameter_update('L0231','0')
+            LUCKY.DB.parameter_update('L0215',LD['일오수량']); LUCKY.DB.parameter_update('L0216','0')
+            LUCKY.DB.parameter_update('L0220',LD['이공수량']); LUCKY.DB.parameter_update('L0221','0')
+            LUCKY.DB.parameter_update('L0225',LD['이오수량']); LUCKY.DB.parameter_update('L0226','0')
+            LUCKY.DB.parameter_update('L0230',LD['삼공수량']); LUCKY.DB.parameter_update('L0231','0')
             
             qry=LUCKY.DB.qry_insert('h_log_lucky_board',LD)
             LUCKY.DB.exe(qry)

@@ -62,24 +62,33 @@ class 목록_투자_lucky(SKIN) :
             np =  float(SD['s_08'])  # current_position
             ap =  float(ST['L0201']) # average of S tactic
             lp =  float(SD['s_20'])  # the target price of S tactic
+            
+            대기시점 = my.sf(ST['L0022'])
+            매수시점 = my.sf(ST['L0023'])
+            명칭구분 = ['일오','이공','이오','삼공']
             self.D['일오수량']=f"{int(ST['L0215']):,}"
             self.D['이공수량']=f"{int(ST['L0220']):,}"
             self.D['이오수량']=f"{int(ST['L0225']):,}"
             self.D['삼공수량']=f"{int(ST['L0230']):,}"
-            if np < -21.0 : tp=ap*0.70; self.D['삼공매수']=True; self.D['럭키30']=f"{tp:.2f}";self.D['당종삼공']=f"{(tp/cp-1)*100:.2f}" 
-            if np < -16.0 : tp=ap*0.75; self.D['이오매수']=True; self.D['럭키25']=f"{tp:.2f}";self.D['당종이오']=f"{(tp/cp-1)*100:.2f}"  
-            if np < -11.0 : tp=ap*0.80; self.D['이공매수']=True; self.D['럭키20']=f"{tp:.2f}";self.D['당종이공']=f"{(tp/cp-1)*100:.2f}"
-            if np <  -6.0 : tp=ap*0.85; self.D['일오매수']=True; self.D['럭키15']=f"{tp:.2f}";self.D['당종일오']=f"{(tp/cp-1)*100:.2f}"
-            if tp : self.D['매수가격'] = [tp] * chart_len
-
+            
+            tp_max = 0.0
+            for i in range(4) :
+                if  np < 대기시점[i] : 
+                    tp=ap*매수시점[i]/100; tp=min(tp,lp,cp) 
+                    self.D[명칭구분[i]+'매수'] = True 
+                    self.D[명칭구분[i]+'매가'] = f"{tp:.2f}" 
+                    self.D[명칭구분[i]+'종수'] = f"{(tp/cp-1)*100:.2f}"
+                    tp_max = max(tp,tp_max)
+            if tp_max : self.D['매수가격'] = [tp_max] * chart_len
+                    
             if  tp:=float(ST['L0216']) : 
-                self.D['일오매도']=True; tp=min(tp,lp); self.D['일오도가']=f"{tp:.2f}"; self.D['당종15']=f"{(tp/cp-1)*100:.2f}" 
+                self.D['일오매도']=True; tp=min(tp,lp,cp); self.D['일오도가']=f"{tp:.2f}"; self.D['당종15']=f"{(tp/cp-1)*100:.2f}" 
             if  tp:=float(ST['L0221']) : 
-                self.D['이공매도']=True; tp=min(tp,lp); self.D['이공도가']=f"{tp:.2f}"; self.D['당종20']=f"{(tp/cp-1)*100:.2f}" 
+                self.D['이공매도']=True; tp=min(tp,lp,cp); self.D['이공도가']=f"{tp:.2f}"; self.D['당종20']=f"{(tp/cp-1)*100:.2f}" 
             if  tp:=float(ST['L0226']) : 
-                self.D['이오매도']=True; tp=min(tp,lp); self.D['이오도가']=f"{tp:.2f}"; self.D['당종25']=f"{(tp/cp-1)*100:.2f}" 
+                self.D['이오매도']=True; tp=min(tp,lp,cp); self.D['이오도가']=f"{tp:.2f}"; self.D['당종25']=f"{(tp/cp-1)*100:.2f}" 
             if  tp:=float(ST['L0231']) : 
-                self.D['삼공매도']=True; tp=min(tp,lp); self.D['삼공도가']=f"{tp:.2f}"; self.D['당종30']=f"{(tp/cp-1)*100:.2f}" 
+                self.D['삼공매도']=True; tp=min(tp,lp,cp); self.D['삼공도가']=f"{tp:.2f}"; self.D['당종30']=f"{(tp/cp-1)*100:.2f}" 
             if  tp : self.D['매도가격'] = [tp] * chart_len
                 
     def list(self) :
