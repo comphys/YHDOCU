@@ -856,7 +856,7 @@ class update_Log :
 
         self.D['시작일자'] = sdate
         self.D['종료일자'] = logDay 
-        if sdate >= logDay : return
+        if sdate > logDay : return
         
         self.D['기회시점'] = f"{self.DB.parameter('TR021'):.1f}"
         self.D['기회회복'] = f"{self.DB.parameter('TR022'):.1f}"

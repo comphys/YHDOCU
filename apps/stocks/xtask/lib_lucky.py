@@ -64,51 +64,11 @@ class update_lucky :
         pass
        
     
-    def today_sell(self) :
-        
-        if  self.M['당일종가'] >= self.M['매도예가'] : self.M['매도수량'] = self.M['보유수량']
-
-    def today_buy(self) :
-        
-        if  self.M['예정수량'] == 0 : return
-        
-        if  self.M['당일종가'] <= self.M['매수예가'] : 
-            self.M['매수수량']  = self.M['예정수량']
-            self.M['진행상황']  = self.M['차수명칭'][self.M['매수차수']] + '차매수' if self.M['예정수량'] else ' '
-            self.M['매수차수'] += 1
-            
-    def tomorrow_buy(self) :
-        
-        if  self.M['매수차수'] >  self.M['최대차수']-1 : self.M['예정수량'] = 0; return
-        if  self.M['매수차수'] == self.M['최대차수']-1 : self.M['매금단계'][self.M['최대차수']-1] = int(self.M['현재잔액'])
-        
-        self.M['매수예가'] = round(self.M['당일종가'] * self.M['매입가치'],2)
-        self.M['예정수량'] = int(  self.M['매금단계'][self.M['매수차수']]/ self.M['매수예가'] ) 
-        
-    def tomorrow_sell(self) :
-        
-        if not self.M['보유수량'] : return
-        self.M['매도예가'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
-
-
-    def tomorrow_step(self)   :
-
-        self.tomorrow_buy()
-        self.tomorrow_sell()
-        
-        if  self.M['매수예가']>= self.M['매도예가'] : self.M['매수예가'] = self.M['매도예가'] - 0.01
-        
-    
     def new_day(self) :
 
         pass
 
 
-    def simulate(self,printOut=False) :
-
-        pass
-        
-   
     def set_value(self,key,val) :
 
         for k in key :
@@ -123,21 +83,51 @@ class update_lucky :
 
         pass
             
-
+    def today_buy_check(self,cp,key) : 
+        
+        n = self.M['별칭구분'][key]
+        if self.M[n+'목표'] : return
+        tp = self.M['기준단가'] * self.M['매수시점'][key]/100; tp = round(min(tp,cp),2)
+        if tp <= cp : self.M['매수수량'] += self.M[n+'수량']
+        
+    def today_sell_check(self,cp,key) : 
+        
+        n = self.M['별칭구분'][key]
+        if not self.M[n+'목표'] : return
+        if cp <= self.M[n+'목표'] : self.M['매도수량'] += self.M[n+'수량']
+        
+            
+    def invest_allot(self) :
+        
+        self.M['일오자금']  = round(self.M['현재잔액'] * self.M['자산배분'][0]/100,2)
+        self.M['이공자금']  = round(self.M['현재잔액'] * self.M['자산배분'][1]/100,2)
+        self.M['이오자금']  = round(self.M['현재잔액'] * self.M['자산배분'][2]/100,2)
+        self.M['삼공자금']  = round(self.M['현재잔액'] * self.M['자산배분'][3]/100,2)        
+        
+        
     def init_value(self) :
         
         ST = self.DB.parameters_dict('매매전략/LUCKY')
-        # ---------------------------------------------------------
-        self.M['시즌자금']  = my.sv(ST['L0001'])
+        # 
+        self.M['현재잔액']  = my.sv(ST['L0001'])
         self.M['자산배분']  = my.sf(self.DB.parameter('L0021'))
         self.M['대기시점']  = my.sf(self.DB.parameter('L0022'))
         self.M['매수시점']  = my.sf(self.DB.parameter('L0023'))
         self.M['목표시점']  = my.sf(self.DB.parameter('L0024'))
+        self.M['기준단가']  = my.sv(ST['L0201'])
+        self.M['별칭구분']  = ['일오','이공','이오','삼공']
+        # 
+        self.M['일오수량']  = int(ST['L0215']); self.M['일오목표'] = float(ST['L0216'])
+        self.M['이공수량']  = int(ST['L0220']); self.M['이공목표'] = float(ST['L0221'])
+        self.M['이오수량']  = int(ST['L0225']); self.M['이오목표'] = float(ST['L0226'])
+        self.M['삼공수량']  = int(ST['L0230']); self.M['삼공목표'] = float(ST['L0231'])
+        
+        self.invest_allot() # for 자산배분
+        
+        self.M['매수수량'] = 0
+        self.M['매도수량'] = 0
         #----------------------------------------------------------
-        self.M['일오자금']  = round(self.M['시즌자금'] * self.M['자산배분'][0] / 100,2)
-        self.M['이공자금']  = round(self.M['시즌자금'] * self.M['럭키이공'][1] / 100,2)
-        self.M['이오자금']  = round(self.M['시즌자금'] * self.M['럭키이오'][2] / 100,2)
-        self.M['삼공자금']  = round(self.M['시즌자금'] * self.M['럭키삼공'][3] / 100,2)
+
          
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # 
@@ -159,8 +149,7 @@ class update_lucky :
         D = {}
     
         D['진행시즌']  = DS['기록시즌']
-        D['시즌자금']  = self.M['시즌자금']
-        
+        D['시즌자금']  = self.M['현재잔액']
         D['일오수량'] = int(self.M['일오자금']/round(DS['평균단가']*self.M['매수시점'][0]/100,2))  # 진입수량
         D['이공수량'] = int(self.M['이공자금']/round(DS['평균단가']*self.M['매수시점'][1]/100,2))  # 진입수량
         D['이오수량'] = int(self.M['이오자금']/round(DS['평균단가']*self.M['매수시점'][2]/100,2))  # 진입수량

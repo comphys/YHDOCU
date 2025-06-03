@@ -16,10 +16,11 @@
 	<div style="position:absolute;left:1164px;top:60px;">
 	<!-- 우측 정보창( Next Strategy )-->
 
-			<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:2px solid black;padding:10px" ondblclick="$('#profit-history').show()">
+			<div id="Next-Strategy" style="height:350px;width:348px;background-color: #393f4a;border:2px solid black;padding:10px" ondblclick="$('#profit-history').show()">
 
 			<span style="font-style: italic;"><span style="color:gray">Strategy for </span><b>{{D['다음날자']}} ({{D['다음요일']}})</b></span>&nbsp;<br>
-
+			
+			{% if D['진행시작'] %}
 			<table class="table" style="text-align:right;width:324px;margin-top:10px">
 				<tr style="font-style:italic;border-bottom:1px solid gray;text-align:center;color:gray;">
 					<td style="text-align:center;">Div</td><td>L15</td><td>L20</td><td>L25</td><td>L30</td></tr>
@@ -76,6 +77,9 @@
 				</tr>
 				{% endif %}
 			</table>
+			{% else %}
+			<div style="color:gray;width:348px;margin-top:10px;font-style:italic;">Lucky mode 진행 대기 중입니다</div>
+			{% endif %}
 		</div>
 	</div>
 </div>

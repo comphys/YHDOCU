@@ -24,6 +24,7 @@ else :
     DS = RSN.get_luckyLog()
     
     if  not set : 
+        
         if  DS['진행시작'] :
             LD = LUCKY.do_log_setting(DS)
             LUCKY.DB.parameter_update('L0200',LD['진행시즌'])
@@ -34,15 +35,13 @@ else :
             LUCKY.DB.parameter_update('L0225',LD['이오수량']); LUCKY.DB.parameter_update('L0226','0')
             LUCKY.DB.parameter_update('L0230',LD['삼공수량']); LUCKY.DB.parameter_update('L0231','0')
             
-            qry=LUCKY.DB.qry_insert('h_log_lucky_board',LD)
-            LUCKY.DB.exe(qry)
             LUCKY.send_message(f"{today}일 LUCKY 초기셋팅 완료")
         else : 
-            LUCKY.send_message(f"{today}일 LUCKY 대기상태입니다")
+            LUCKY.send_message(f"{today}일 LUCKY 모드 진행 대기")
     
     else :
-        log = LUCKY.DB.cnt(f"SELECT * FROM h_log_lucky_board WHERE add1='{DS['기록시즌']}' and add20='매매자료'")
-        LUCKY.send_message(f"{today}일 LUCKY 매수 대기 중입니다")
+        LUCKY.send_message(f"{today}일 LUCKY 매매 결과 기록")
+        # LUCKY.today_check()
         
     
     

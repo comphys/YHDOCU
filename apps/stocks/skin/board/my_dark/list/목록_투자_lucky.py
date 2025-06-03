@@ -36,10 +36,11 @@ class 목록_투자_lucky(SKIN) :
     def chart(self) :
         
         last_date = self.DB.last_date('h_stockHistory_board')
+        self.D['다음날자'],self.D['다음요일'] = self.next_stock_day(last_date)
         
         self.DB.clear()
         self.DB.tbl = 'h_stockHistory_board'
-        self.DB.wre = f"add0 <='{last_date}'"
+        self.DB.wre = f"add0 <='{last_date}' and add1='SOXL'"
         self.DB.odr = "add0 DESC"
         self.DB.lmt = '30'
         
@@ -53,11 +54,16 @@ class 목록_투자_lucky(SKIN) :
         self.D['매도가격'] = ['null'] * chart_len
         
         ST = self.DB.parameters_dict('매매전략/LUCKY')
-        if  ST['L0200'] :
+        self.D['진행시작'] = False
+        
+        if  int(ST['L0200']) :  # 진행중인 시즌 정보를 불러옴, '0'인 경우 진행중이지 않음
+
+            self.D['진행시작'] = True
             self.D['기준가격'] = [float(ST['L0201'])] * chart_len
-            self.D['다음날자'],self.D['다음요일'] = self.next_stock_day(last_date)
-            self.D['주문확인'] = ST['L0202']
-            SD =  self.DB.line(f"SELECT add1,add2,add3,s_08,s_20 FROM h_rsnLog_board WHERE add0='{last_date}'")
+            self.D['주문확인'] = ST['L0500']
+            
+            # SD =  self.DB.line(f"SELECT add1,add2,add3,s_08,s_20 FROM h_rsnLog_board WHERE add0='{last_date}'")
+            SD = {'add1':'4','add2':'11','add3':'18.13','s_08':'-12.42','s_20':'20.20'}
             cp =  float(SD['add3'])  # close_price
             np =  float(SD['s_08'])  # current_position
             ap =  float(ST['L0201']) # average of S tactic
@@ -70,7 +76,7 @@ class 목록_투자_lucky(SKIN) :
             self.D['이공수량']=f"{int(ST['L0220']):,}"
             self.D['이오수량']=f"{int(ST['L0225']):,}"
             self.D['삼공수량']=f"{int(ST['L0230']):,}"
-            
+
             tp_max = 0.0
             for i in range(4) :
                 if  np < 대기시점[i] : 
