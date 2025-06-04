@@ -177,7 +177,7 @@ class 목록_투자로그(SKIN) :
                         if   float(txt) > 0 : clas = "class='list-bull'"
                         elif float(txt) < 0 : clas = "class='list-bear'"
                         else : clas = ''; style += "color:gray;"
-                        tx[key] = f"<td style='{style}' {clas}>{float(txt):.2f}</td>"
+                        tx[key] = f"<td style='{style}' {clas}>{float(txt):,.2f}</td>"
                         
                     elif key in ('add6') :
                         if int(txt) :
