@@ -469,10 +469,10 @@ class update_Log :
         총평가금  = self.M['당일종가'] * 총보유량
         평가손익  = 총평가금 - 총매입금
         
-        초기자본1 = float(self.D['일반자금'].replace(',','')); 최종자본1=self.V['평가금액']+self.V['현재잔액']; 최종수익1=최종자본1-초기자본1; self.D['v_profit']=round((최종수익1/초기자본1)*100,2)
-        초기자본2 = float(self.D['기회자금'].replace(',','')); 최종자본2=self.R['평가금액']+self.R['현재잔액']; 최종수익2=최종자본2-초기자본2; self.D['r_profit']=round((최종수익2/초기자본2)*100,2)
-        초기자본3 = float(self.D['안정자금'].replace(',','')); 최종자본3=self.S['평가금액']+self.S['현재잔액']; 최종수익3=최종자본3-초기자본3; self.D['s_profit']=round((최종수익3/초기자본3)*100,2)
-        초기자본4 = float(self.D['생활자금'].replace(',','')); 최종자본4=self.N['평가금액']+self.N['현재잔액']; 최종수익4=최종자본4-초기자본4; self.D['n_profit']=round((최종수익4/초기자본4)*100,2)
+        초기자본1 = self.D['일반자금']; 최종자본1=self.V['평가금액']+self.V['현재잔액']; 최종수익1=최종자본1-초기자본1; self.D['v_profit']=round((최종수익1/초기자본1)*100,2)
+        초기자본2 = self.D['기회자금']; 최종자본2=self.R['평가금액']+self.R['현재잔액']; 최종수익2=최종자본2-초기자본2; self.D['r_profit']=round((최종수익2/초기자본2)*100,2)
+        초기자본3 = self.D['안정자금']; 최종자본3=self.S['평가금액']+self.S['현재잔액']; 최종수익3=최종자본3-초기자본3; self.D['s_profit']=round((최종수익3/초기자본3)*100,2)
+        초기자본4 = self.D['생활자금']; 최종자본4=self.N['평가금액']+self.N['현재잔액']; 최종수익4=최종자본4-초기자본4; self.D['n_profit']=round((최종수익4/초기자본4)*100,2)
         
         초기자본 = 초기자본2 + 초기자본3 + 초기자본4; 최종자본 = 최종자본2 + 최종자본3 + 최종자본4; 최종수익 = 최종자본 - 초기자본 
         self.D['profit_t'] = round((최종수익/초기자본) * 100,2)
@@ -630,20 +630,20 @@ class update_Log :
             if '이밸런싱' not in self.D : self.D['이밸런싱']  = 'on'
             
             # 투자자금 초기화 ----------------------------------------------------------------------------
-            self.M['투자자금'] = ST['TC010']
+            self.M['투자자금'] = my.sv(ST['TC010']) if '투자자금' not in self.D else my.sv(self.D['투자자금'])
             self.M['투자배분'] = my.sf(ST['TC011'])    
-        
-            if '기회자금' not in self.D : self.D['기회자금']  = round(self.M['투자자금']*self.M['투자배분'][0]/100,2)
-            if '안정자금' not in self.D : self.D['안정자금']  = round(self.M['투자자금']*self.M['투자배분'][1]/100,2)
-            if '생활자금' not in self.D : self.D['생활자금']  = self.M['투자자금'] - self.D['기회자금'] - self.D['안정자금']
+
+            self.D['기회자금']  = round(self.M['투자자금']*self.M['투자배분'][0]/100,2)
+            self.D['안정자금']  = round(self.M['투자자금']*self.M['투자배분'][1]/100,2)
+            self.D['생활자금']  = self.M['투자자금'] - self.D['기회자금'] - self.D['안정자금']
         
         # 통계자료 작성을 위해 RSN 현재잔액은 init_value 호출 때 마다 초기화가 되어야 함
-        self.R['현재잔액']  = my.sv(self.D['기회자금'])
-        self.S['현재잔액']  = my.sv(self.D['안정자금'])
-        self.N['현재잔액']  = my.sv(self.D['생활자금'])
+        self.R['현재잔액']  = self.D['기회자금']
+        self.S['현재잔액']  = self.D['안정자금']
+        self.N['현재잔액']  = self.D['생활자금']
         # 일반잔액은 RSN 전략의 합으로 설정한다
         self.V['현재잔액']  = self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액']
-        self.D['일반자금']  = f"{self.V['현재잔액']:,.2f}"
+        self.D['일반자금']  = self.V['현재잔액']
         
         # 매수금 분할 ( N tactic )
         self.N['매금단계'] = [0.0] * self.M['최대차수']
@@ -772,26 +772,12 @@ class update_Log :
         self.result()
         self.nextStep()
 
-    def get_luckyLog(self) :
-        
-        LD = {}
-        LD['진행시작'] = self.S['진행시작']
-        LD['기록일자'] = self.M['현재일자']
-        LD['기록시즌'] = self.M['기록시즌']
-        LD['기록날수'] = self.M['현재날수']-1
-        LD['평균단가'] = self.S['평균단가']
-        LD['당일종가'] = self.M['당일종가']
-        LD['종가변동'] = self.M['종가변동']
-        LD['매도예가'] = self.D['N_안정매도가']
-        return LD
-        
-
     def get_simulLog(self,tactic) :
         
-        if   tactic == 'V' : tac = self.V; key = '일반'; 초기자금 = my.sv(self.D['일반자금'])
-        elif tactic == 'R' : tac = self.R; key = '기회'; 초기자금 = my.sv(self.D['기회자금'])
-        elif tactic == 'S' : tac = self.S; key = '안정'; 초기자금 = my.sv(self.D['안정자금'])
-        elif tactic == 'N' : tac = self.N; key = '생활'; 초기자금 = my.sv(self.D['생활자금'])
+        if   tactic == 'V' : tac = self.V; key = '일반'; 초기자금 = self.D['일반자금']
+        elif tactic == 'R' : tac = self.R; key = '기회'; 초기자금 = self.D['기회자금']
+        elif tactic == 'S' : tac = self.S; key = '안정'; 초기자금 = self.D['안정자금']
+        elif tactic == 'N' : tac = self.N; key = '생활'; 초기자금 = self.D['생활자금']
         
         LD = {}
         LD['add1'] = LD['add2'] = '0.00' 
@@ -845,15 +831,7 @@ class update_Log :
         T_mon = my.sv(self.DB.parameter('TX051'))
         mode_ = self.DB.parameter('TX052')
         
-        alloc = my.sf(self.DB.parameter('TC011'))
-        R_mon = round(T_mon * alloc[0]/100,2)
-        S_mon = round(T_mon * alloc[1]/100,2)
-        N_mon = T_mon - R_mon - S_mon
-        
-        self.D['기회자금'] = f"{R_mon:,.2f}"
-        self.D['안정자금'] = f"{S_mon:,.2f}"
-        self.D['생활자금'] = f"{N_mon:,.2f}"
-
+        self.D['투자자금'] = f"{T_mon:,.2f}"
         self.D['시작일자'] = sdate
         self.D['종료일자'] = logDay 
         if sdate > logDay : return
@@ -870,3 +848,43 @@ class update_Log :
         self.D['가상손실'] = 'on' if mode_ == '전략진행' else 'off'
         
         self.get_simResult(sdate,logDay)
+    
+#   -------------------------------------------------------------------------------------
+#   For Lucky Mode
+#   -------------------------------------------------------------------------------------
+    def do_luckyLog(self,logDay) :
+        
+        sdate = self.DB.parameter('L0002') # Lucky 전략에서 사용되는 동기일자
+        T_mon = my.sv(self.DB.parameter('TX051'))
+        mode_ = self.DB.parameter('TX052')
+        
+        self.D['투자자금'] = f"{T_mon:,.2f}"
+        self.D['시작일자'] = sdate
+        self.D['종료일자'] = logDay 
+        if sdate > logDay : return
+        
+        self.D['기회시점'] = f"{self.DB.parameter('TR021'):.1f}"
+        self.D['기회회복'] = f"{self.DB.parameter('TR022'):.1f}"
+        self.D['안정시점'] = f"{self.DB.parameter('TS021'):.1f}"
+        self.D['안정회복'] = f"{self.DB.parameter('TS022'):.1f}"      
+        
+        self.D['수료적용'] = 'on' 
+        self.D['세금적용'] = 'off' 
+        self.D['일밸런싱'] = 'on' 
+        self.D['이밸런싱'] = 'on' 
+        self.D['가상손실'] = 'on' if mode_ == '전략진행' else 'off'
+        
+        self.get_simResult(sdate,logDay)
+        
+    def get_luckyLog(self) :
+        
+        LD = {}
+        LD['진행시작'] = self.S['진행시작']
+        LD['기록일자'] = self.M['현재일자']
+        LD['기록시즌'] = self.M['기록시즌']
+        LD['기록날수'] = self.M['현재날수']-1
+        LD['평균단가'] = self.S['평균단가']     # S전략 평균단가
+        LD['당일종가'] = self.M['당일종가']   
+        LD['종가변동'] = self.M['종가변동']   
+        LD['매도예가'] = self.D['N_안정매도가'] 
+        return LD

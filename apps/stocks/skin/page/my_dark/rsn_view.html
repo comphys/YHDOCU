@@ -1017,9 +1017,7 @@ function synchro(opt) {
 			h_dialog.notice("동기화 데이타가 입력되었습니다.")
 			$("input[name='시작일자']").val(data.sdate);
 			$("input[name='종료일자']").val(data.ldate);
-			$("input[name='기회자금']").val(data.R_mon);
-			$("input[name='안정자금']").val(data.S_mon);
-			$("input[name='생활자금']").val(data.N_mon);
+			$("input[name='투자자금']").val(data.T_mon);
 			if(data.mode_=="전략진행") {$("input[name='chk_chx']").prop('checked',true);}
 			else {$("input[name='chk_chx']").prop('checked',false);}
 			if(opt=='real'||opt=='test') {$("form[name='rsn_dashboard']").submit();}
@@ -1031,9 +1029,7 @@ let pdat = {}
 
 function get_pdat(){
 
-	pdat['기회자금'] = $("input[name='기회자금']").val();
-	pdat['안정자금'] = $("input[name='안정자금']").val();
-	pdat['생활자금'] = $("input[name='생활자금']").val();
+	pdat['투자자금'] = $("input[name='투자자금']").val();
 	pdat['시작일자'] = $("input[name='시작일자']").val();
 	pdat['기회시점'] = $("input[name='기회시점']").val();
 	pdat['기회회복'] = $("input[name='기회회복']").val();

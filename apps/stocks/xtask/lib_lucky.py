@@ -142,12 +142,11 @@ class update_lucky :
         return temp
 
 
-    def do_log_setting(self,DS) :
+    def set_new_season(self,DS) :
         
         self.init_value()
         
         D = {}
-    
         D['진행시즌']  = DS['기록시즌']
         D['시즌자금']  = self.M['현재잔액']
         D['일오수량'] = int(self.M['일오자금']/round(DS['평균단가']*self.M['매수시점'][0]/100,2))  # 진입수량

@@ -13,9 +13,7 @@ class Rsn_ajax(Control) :
         
         PD = {} # post data
 
-        PD['기회자금'] = self.D['post']['기회자금']
-        PD['안정자금'] = self.D['post']['안정자금']
-        PD['생활자금'] = self.D['post']['생활자금']
+        PD['투자자금'] = self.D['post']['투자자금']
 
         PD['시작일자'] = self.D['post']['시작일자']
         PD['종료일자'] = self.D['post']['종료일자']
@@ -51,17 +49,10 @@ class Rsn_ajax(Control) :
             T_mon = my.sv(self.DB.parameter('TC010'))
             mode_ = '기본진행'
         
-        alloc = my.sf(self.DB.parameter('TC011'))
-        R_mon = round(T_mon * alloc[0]/100,2)
-        S_mon = round(T_mon * alloc[1]/100,2)
-        N_mon = T_mon - R_mon - S_mon
-        
         RD = {}
         RD['sdate'] = sdate
         RD['ldate'] = ldate
-        RD['R_mon'] = f"{R_mon:,.2f}"
-        RD['S_mon'] = f"{S_mon:,.2f}"
-        RD['N_mon'] = f"{N_mon:,.2f}"
+        RD['T_mon'] = f"{T_mon:,.2f}"
         RD['mode_'] = mode_
         
         return self.json(RD)
