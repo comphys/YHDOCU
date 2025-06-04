@@ -125,6 +125,34 @@ class 목록_투자_lucky(SKIN) :
                         tmp+= '</td>'
                         tx[key] = tmp
                         
+                    elif  key == 'add16' : tx[key] = f"<td style='{style}' {clas}>{txt}</td>" if txt != '매수대기' else "<td>&nbsp;</td>"
+
+                    elif  key == 'add9'  : # 평균 단가
+                        if float(txt) :
+                            tx[key] = f"<td style='{style}' {clas}>{float(txt):,.4f}</td>"
+                        else : 
+                            clas = ''; style += "color:gray;"
+                            tx[key] = f"<td style='{style}'>0.00</td>"                        
+
+                    elif key in ('add4','add13','add14') : # 손익 구분 실수
+                        if   float(txt) > 0 : clas = "class='list-bull'"
+                        elif float(txt) < 0 : clas = "class='list-bear'"
+                        else : clas = ''; style += "color:gray;"
+                        tx[key] = f"<td style='{style}' {clas}>{float(txt):,.2f}</td>"
+                        
+                    elif key in ('add1','add2','add6','add8') : # 정수 일반
+                        if int(txt) :
+                            tx[key] = f"<td style='{style}' {clas}>{int(txt):,}</td>"
+                        else :
+                            clas = ''; style += "color:gray;"
+                            tx[key] = f"<td style='{style}'>0</td>"                            
+
+                    elif key in ('add3','add5','add7','add10','add11','add12','add15') : # 실수 일반
+                        if float(txt) :
+                            tx[key] = f"<td style='{style}' {clas}>{float(txt):,.2f}</td>"
+                        else : 
+                            style += "color:gray;"
+                            tx[key] = f"<td style='{style}'>0.00</td>"
 
                     else : 
                         tx[key] = f"<td style='{style}' {clas}>{txt}</td>"

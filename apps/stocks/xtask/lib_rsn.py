@@ -885,6 +885,7 @@ class update_Log :
         LD['기록날수'] = self.M['현재날수']-1
         LD['평균단가'] = self.S['평균단가']     # S전략 평균단가
         LD['당일종가'] = self.M['당일종가']   
+        LD['전일종가'] = self.M['전일종가']  
         LD['종가변동'] = self.M['종가변동']   
         LD['매도예가'] = self.D['N_안정매도가'] 
         return LD
