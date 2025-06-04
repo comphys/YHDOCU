@@ -50,7 +50,7 @@ class 목록_투자315(SKIN) :
             # 다음 거래 일자 가져오기
             self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(last_date)
             # 누적 수익 가져오기
-            profit = self.DB.one(f"SELECT cast(sum(add14) as float) FROM {self.D['tbl']} WHERE add17='수익실현'")
+            profit = self.DB.one(f"SELECT cast(sum(add14) as float) FROM {self.D['tbl']} WHERE add20='수익실현'")
             feesum = self.DB.one(f"SELECT cast(sum(add21) as float) FROM {self.D['tbl']}")
             if  profit : 
                 self.D['실현수익'] = f"{profit:,.2f}"
