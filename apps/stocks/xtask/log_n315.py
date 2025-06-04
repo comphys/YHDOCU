@@ -27,7 +27,7 @@ else :
     LD['uname'] = '정용훈'
     LD['wdate'] = LD['mdate'] = my.now_timestamp() 
     
-    if  not LD['첫날기록'] :   
+    if  not LD['첫날기록'] or LD['add6'] in('익절매도','손절매도') :   
         del LD['첫날기록']  
         qry=N315.DB.qry_insert('h_log315_board',LD)
         N315.DB.exe(qry)
