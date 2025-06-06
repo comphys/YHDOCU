@@ -92,7 +92,6 @@ class 목록_투자_lucky(SKIN) :
             for i in range(4) :
                 if  np < 대기시점[i] : 
                     tp=ap*매수시점[i]/100 
-                    self.info(f"{tp} = {ap} * {매수시점[i]/100}")
                     tp=min(tp,lp,cp) 
                     self.D[명칭구분[i]+'매수'] = True 
                     self.D[명칭구분[i]+'매가'] = f"{tp:.2f}" 
