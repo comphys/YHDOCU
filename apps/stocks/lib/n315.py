@@ -362,6 +362,7 @@ class N315 :
             self.D['N_생활도평비'] = 0
             self.D['N_생활도종비'] = 0
             self.D['N_생활평대비'] = 0
+            self.D['N_생활배분금'] = self.M['매금단계'][1]
             
         else : 
             self.D['N_생활매수량'] = self.M['예정수량']
@@ -369,6 +370,7 @@ class N315 :
             self.D['N_생활평대비'] = self.next_percent(self.M['평균단가'],self.D['N_생활매수가']) 
             self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
             self.D['N_생활매수가'] = self.D['N_생활매수가']
+            self.D['N_생활배분금'] = self.D['배분금액']
             
             self.D['N_생활매도량'] = self.M['보유수량']
             self.D['N_생활매도가'] = self.M['매도예가']
@@ -457,7 +459,7 @@ class N315 :
         NS['예정도가'] = self.D['N_생활매도가']
         NS['도평대비'] = self.D['N_생활도평비']
         NS['도종대비'] = self.D['N_생활도종비']
-        NS['배분금액'] = self.D['배분금액']
+        NS['배분금액'] = self.D['N_생활배분금']
         return NS
         
 

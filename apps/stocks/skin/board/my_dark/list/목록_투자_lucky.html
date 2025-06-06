@@ -169,6 +169,7 @@ ctx_main.style.border = '2px solid black';
 let labels_main     =  {{D['chart_date']|safe}}	 
 let chart_len       =  labels_main.length
 let close_price     =  {{D['close_price']|safe}}
+let rsn_V_price     =  {{D['rsn_V_price']|safe}}
 let ref_price       =  {{D['기준가격']|safe}}	
 let buy_price       =  {{D['매수가격']|safe}}	
 let sell_price      =  {{D['매도가격']|safe}}	
@@ -182,7 +183,8 @@ const data_main = {
     labels : labels_main,
     datasets : [
 		{   label:' 종가변동',data : close_price,borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],lineTension:0.2},
-		{   label:' 기준가격',data : ref_price,borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+		{   label:' 참고평단',data : rsn_V_price,borderColor:'gray',    borderWidth:1, pointRadius:0, borderDash:[2,3],lineTension:0.2},
+		{   label:' 기준가격',data : ref_price,borderWidth:2,borderColor:'gray',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
 		{   label:' 매수가격',data : buy_price, borderColor:'#ffc4c4', borderWidth:1, borderDash: [2,2],pointRadius:0},
 		{   label:' 매도가격',data : sell_price,borderColor:'yellow',  borderWidth:1, borderDash: [2,2],pointRadius:0},
     ]   

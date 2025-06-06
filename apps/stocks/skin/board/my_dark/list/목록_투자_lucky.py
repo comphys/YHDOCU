@@ -42,13 +42,19 @@ class 목록_투자_lucky(SKIN) :
         self.DB.tbl = 'h_stockHistory_board'
         self.DB.wre = f"add0 <='{last_date}' and add1='SOXL'"
         self.DB.odr = "add0 DESC"
-        self.DB.lmt = '30'
+        self.DB.lmt = '25'
         
         chart_data = self.DB.get("add0,add3",assoc=True)
+        rsn_V_data = self.DB.exe(f"SELECT add0,v_09 FROM h_rsnLog_board WHERE add0 <='{last_date}' ORDER BY add0 DESC LIMIT {self.DB.lmt}",assoc=True)
+
         chart_len  = len(chart_data)
         chart_data.reverse()
+        rsn_V_data.reverse()
         self.D['chart_date']  = [x['add0'][2:] for x in chart_data]
         self.D['close_price'] = [x['add3'] for x in chart_data]
+        self.D['rsn_V_price'] = [x['v_09'] if x['add0'][2:] in self.D['chart_date'] else 'null' for x in rsn_V_data ]
+        self.D['rsn_V_price'] = [x if float(x) else 'null' for x in self.D['rsn_V_price']]
+
         self.D['기준가격'] = ['null'] * chart_len
         self.D['매수가격'] = ['null'] * chart_len
         self.D['매도가격'] = ['null'] * chart_len
