@@ -854,7 +854,7 @@ class update_Log :
 #   -------------------------------------------------------------------------------------
     def do_luckyLog(self,logDay) :
         
-        sdate = self.DB.parameter('L0002') # Lucky 전략에서 사용되는 동기일자
+        sdate = self.DB.parameter('L0001') # Lucky 전략에서 사용되는 동기일자
         T_mon = my.sv(self.DB.parameter('TX051'))
         mode_ = self.DB.parameter('TX052')
         
@@ -883,9 +883,10 @@ class update_Log :
         LD['기록일자'] = self.M['현재일자']
         LD['기록시즌'] = self.M['기록시즌']
         LD['기록날수'] = self.M['현재날수']-1
-        LD['평균단가'] = self.S['평균단가']     # S전략 평균단가
+        LD['기준단가'] = self.S['평균단가']     # S전략 평균단가
         LD['당일종가'] = self.M['당일종가']   
         LD['전일종가'] = self.M['전일종가']  
         LD['종가변동'] = self.M['종가변동']   
-        LD['매도예가'] = self.D['N_안정매도가'] 
+        LD['매도예가'] = self.M['매도예가'] 
+
         return LD

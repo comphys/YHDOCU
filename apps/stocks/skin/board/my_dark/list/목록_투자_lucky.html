@@ -129,7 +129,7 @@
 		</thead>
 		<tbody>
 			{%- for TR in D['TR'] -%}
-			{% if TR['add6']|striptags == '0' and TR['add13']|striptags != '0.00' %}
+			{% if TR['add16']|striptags in ('익절매도','손절매도')  %}
 			<tr style="background-color:black;"> 
 			{% else %}
 			<tr> 
