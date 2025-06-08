@@ -84,24 +84,15 @@ class update_lucky :
         
     def today_buy_check(self) : 
         
-        if self.M['매도수량'] : return
+        if self.M['매도수량'] or not self.M['진입가격']: return
 
-        판단기준 = round((self.M['전일종가']/self.M['기준단가']-1)*100,2)
-   
-        if   판단기준 < -25.0 : key = 3
-        elif 판단기준 < -20.0 : key = 2 
-        elif 판단기준 < -15.0 : key = 1 
-        else : key = 0
-        
-        tp = self.M['기준단가'] * self.M['매수시점'][key]/100
-        tp = round(min(tp,self.M['전일종가']),2)
-        if  self.M['당일종가'] <= tp and str(key) not in self.M['매수기록'] : 
-            self.M['매수수량'] = self.M['구매수량'][key]
+        if  self.M['당일종가'] <= self.M['진입가격'] : 
+            self.M['매수수량']  = self.M['구매수량'][key]
             매도가치 = self.M['당일종가'] * self.M['목표시점'][key]
-            self.M['목표단가'] = min(self.M['목표단가'],매도가치) 
-            self.M['진행상황'] = self.M['기호구분'][key]
-            self.M['매수기록']+= str(key)
-            self.M['당일기록'] = True
+            self.M['목표단가']  = min(self.M['목표단가'],매도가치) 
+            self.M['진행상황']  = self.M['기호구분'][key]
+            self.M['매수기록'] += str(key)
+            self.M['당일기록']  = True
 
                     
         
@@ -136,8 +127,8 @@ class update_lucky :
         # 
         self.M['시즌자금']  = float(LD['add5'])+float(LD['add10'])
         self.M['현재잔액']  = float(LD['add5'])
-        self.M['자산배분']  = my.sf(ST['L0021'])
-        self.M['대기시점']  = my.sf(ST['L0022'])
+        self.M['자산배분']  = my.sf(ST['L0021']) # 0.33/0.34/0.33
+        self.M['대기시점']  = my.sf(ST['L0022']) 
         self.M['매수시점']  = my.sf(ST['L0023'])
         self.M['목표시점']  = my.sf(ST['L0024'])
         self.M['기준단가']  = my.sv(ST['L0201'])

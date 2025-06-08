@@ -4,7 +4,7 @@ from lib_lucky import update_lucky
 
 
 today = my.kor_loc_date('US/Eastern')[0:10]
-today = '2025-03-25'
+
 weekd = my.dayofdate(today)
 RSN = update_Log()
 LUC = update_lucky()
@@ -22,14 +22,13 @@ else :
     set = int(LUC.DB.parameter('L0200'))
     # 2. RSN 에서 현재 S가 진행중인지 확인
     RSN.do_luckyLog(today)
-    DS = RSN.get_luckyLog()
+    DV = RSN.get_luckyLog()
 
     if  not set : 
         
-        if  DS['진행시작'] :
+        if  DV['감시시작'] :
             
-            LUC.DB.parameter_update('L0200',DS['기록시즌'])
-            LUC.DB.parameter_update('L0201',DS['기준단가'])
+            LUC.DB.parameter_update('L0200',DV['기록시즌'])
             LUC.send_message(f"{today}일 LUCKY 초기셋팅 완료")
 
         else : 
@@ -37,9 +36,8 @@ else :
     
     else :
 
-        LUC.M['당일종가'] = DS['당일종가']
-        LUC.M['전일종가'] = DS['전일종가']
-        LUC.M['매도예가'] = DS['매도예가']
+        LUC.M['당일종가'] = DV['당일종가']
+        LUC.M['진입가격'] = DV['진입가격']
 
         LUC.today_check()
         
@@ -49,16 +47,17 @@ else :
             D['uname'] = '정용훈'
             D['wdate'] = D['mdate'] = my.now_timestamp() 
 
-            D['add0']  = DS['기록일자']
-            D['add1']  = DS['기록시즌']
-            D['add2']  = DS['기록날수']
-            D['add3']  = DS['당일종가']
-            D['add4']  = DS['종가변동']
+            D['add0']  = DV['기록일자']
+            D['add1']  = DV['기록시즌']
+            D['add2']  = DV['기록날수']
+            D['add3']  = DV['당일종가']
+            D['add4']  = DV['종가변동']
 
             qry=LUC.DB.qry_insert('h_log_lucky_board',D)
             LUC.DB.exe(qry)
             LUC.send_message(f"{today}일 매매일지 작성완료")
-        
+            if DV['진행종료'] : LUC.DB.parameter_update('L0200','0')
+            
         else :
             LUC.send_message(f"{today}일 LUCKY 매매 대기중입니다")
 
