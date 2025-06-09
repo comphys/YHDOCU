@@ -239,3 +239,30 @@ class Page(Control) :
 
         VB.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
         return self.echo(VB.D)
+    
+    def rpd_rsnLview(self) :
+        D = {}
+
+        D['투자자금'] = self.D['post']['투자자금']
+        D['시작일자'] = self.D['post']['시작일자']
+        D['종료일자'] = self.D['post']['종료일자']
+        # -------------------
+        D['기회시점'] = self.D['post']['기회시점']
+        D['기회회복'] = self.D['post']['기회회복']
+        D['안정시점'] = self.D['post']['안정시점']
+        D['안정회복'] = self.D['post']['안정회복']
+
+        D['수료적용'] = self.D['post'].get('chk_fee','off')
+        D['세금적용'] = self.D['post'].get('chk_tax','off')
+        D['일밸런싱'] = self.D['post'].get('chk_brs','off')
+        D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
+        D['일반상황'] = self.D['post'].get('chk_von','off')
+        D['가상손실'] = self.D['post'].get('chk_chx','off')
+        
+        RST = self.load_app_lib('rsnL')
+        RST.D |= D
+
+        RST.do_viewChart()
+
+        RST.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
+        return self.echo(RST.D)
