@@ -67,7 +67,7 @@
 				<canvas id="myChart_main"  style="width:1070px;height:350px;background-color:#24272d;"></canvas>
 			</div>
 			<div class="pull-left" ondblclick="$('#statistics-profits').show()" style="margin-left:10px">
-				<canvas id="myChart_side" style="width:280px;height:330px;background-color:#24272d;"></canvas>
+				<canvas id="myChart_side" style="width:270px;height:330px;background-color:#24272d;"></canvas>
 				<div style="text-align:right;">
 					{% if D['s_date'] %}
 					<input type='text' name='s_date' class="i-date_1" style="width:90px;text-align:center;background:none;border:none" placeholder='시작일자' value="20{{D['s_date']}}"> -
@@ -76,7 +76,7 @@
 					{% endif %}
 				</div>
 			</div>
-			<div class="pull-left" style="padding:10px 5px;margin-left:-20px;height:350px;" ondblclick="$('#Next-Strategy').show()">
+			<div class="pull-left" style="padding:10px 5px;margin-left:-5px;height:350px;" ondblclick="$('#Next-Strategy').show()">
 				Options
 				<div class="toggle-block" style="margin-top:20px">
 					<input role="switch" type="checkbox" name="chk_fee" {{ 'checked' if D['수료적용'] =='on' else '' }}><span>fee</span> 
