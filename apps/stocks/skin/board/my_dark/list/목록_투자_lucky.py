@@ -71,6 +71,7 @@ class 목록_투자_lucky(SKIN) :
         ST = self.DB.parameters_dict('매매전략/LUCKY')
         self.D['다음날자'],self.D['다음요일'] = self.next_stock_day(ST['L0202'])
         self.D['진행시작'] = False
+        self.D['주문확인'] = ST['L0500']
         
         if  int(ST['L0200']) :  # 진행중인 시즌 정보를 불러옴, '0'인 경우 진행중이지 않음
 
@@ -107,7 +108,7 @@ class 목록_투자_lucky(SKIN) :
                 self.D['보유수량'] = f"{int(LD['add8']):,}"
                 self.D['매도대기'] = True        
             
-            self.D['주문확인'] = ST['L0500']
+
             
 
                     
