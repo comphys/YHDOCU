@@ -10,7 +10,7 @@
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 
 <div style="height:370px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
-	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
+	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9" onclick="monthlyProfit_toggle()">
 		<canvas id="myChart_main"  style="width:1128px;height:350px;background-color:#24272d;"></canvas>
 	</div>
 	<div style="position:absolute;left:1164px;top:60px;">
@@ -52,30 +52,6 @@
 				{% if D['N_생활매도량'] %}
 				<tr><td style="text-align:left;">N <span style="color:gray">sell</span></td><td>{{D['N_생활매도가']}}</td><td>{{D['N_생활매도량']}}</td>
 					<td style="color:gray">{{D['N_생활도평비']}}</td><td style="color:gray">{{D['N_생활도종비']}}</td>
-				</tr>
-				{% endif %}
-				{% if D['럭키십오'] %}
-				<tr style="border-top:1px solid gray;">
-					<td style="text-align:left;">
-					<a href="https://docs.google.com/spreadsheets/d/154skg6KdOw5z3TGelGjtB8RNk9xKkfFFBU5UK9vWjOE/edit?gid=0#gid=0" style="color:white;" target="_blank">L-15</a></td>
-					<td>{{D['럭키15']}}</td><td>&nbsp;</td>
-					<td>&nbsp;</td><td>{{D['당종15']}}</td>
-				</tr>
-				{% endif %}
-				{% if D['럭키이십'] %}
-				<tr style="border-top:1px solid gray;">
-					<td style="text-align:left;">
-					<a href="https://docs.google.com/spreadsheets/d/154skg6KdOw5z3TGelGjtB8RNk9xKkfFFBU5UK9vWjOE/edit?gid=0#gid=0" style="color:white;" target="_blank">L-20</a></td>
-					<td>{{D['럭키20']}}</td><td>&nbsp;</td>
-					<td>&nbsp;</td><td>{{D['당종20']}}</td>
-				</tr>
-				{% endif %}
-				{% if D['럭키삼십'] %}
-				<tr style="border-top:1px solid gray;">
-					<td style="text-align:left;">
-					<a href="https://docs.google.com/spreadsheets/d/154skg6KdOw5z3TGelGjtB8RNk9xKkfFFBU5UK9vWjOE/edit?gid=0#gid=0" style="color:white;" target="_blank">L-30</a></td>
-					<td>{{D['럭키30']}}</td><td>&nbsp;</td>
-					<td>&nbsp;</td><td>{{D['당종30']}}</td>
 				</tr>
 				{% endif %}
 			</table>
@@ -342,6 +318,10 @@
 	</table>
 </div>
 
+<div id='monthlyProfit' style="position:absolute;left:20px;top:55px;padding:5px 10px 5px 10px;opacity:0.9;z-index:3;" onclick="monthlyProfit_toggle()">
+	<canvas id="monthlyProfitChart" style="width:1128px;height:350px;background-color:#24272d"></canvas>
+</div>
+
 <script>
 // 챠트 그리기(메인챠트) -----------------------------------------------------------------------------------------
 const ctx_main = $id('myChart_main');
@@ -430,6 +410,70 @@ $("#daily-check").on('dblclick', function() {
 		} else if(e.which==69) {$(this).attr("contenteditable",false).removeClass('daily-check-on');}
 	});
 });
+
+// -- Monthly Profit Graph -----------------------------------------------------------------
+{% if D['월별구분']|safe %}
+	{% if D['월별이익'] %}
+	const ctx_monthly= $id('monthlyProfitChart');
+
+	ctx_monthly.style.backgroundColor = '#33363b';
+	ctx_monthly.style.border = '2px solid black';
+
+	let labels_monthly = {{D['월별구분']|safe}};
+	let monthlyProfits = {{D['월별순익']|safe}};
+	let backColor = new Array(labels_monthly.length-1);
+	let boreColor = new Array(labels_monthly.length-1);
+	backColor.fill('rgba(75, 192, 192, 0.4)');
+	backColor.push('#8F8681');
+	boreColor.fill('rgb(75, 192, 192)');
+	boreColor.push('#000000');
+
+	const data_monthly = {
+	labels: labels_monthly,
+	datasets: [{
+		label: ' 월별수익금 ',
+		data: monthlyProfits,
+		backgroundColor: backColor,
+		borderColor: boreColor,
+		borderWidth: 1
+	}]
+	};
+
+	const config_monthly = {
+	type: 'bar',
+	data: data_monthly,
+	plugins:[ChartDataLabels],
+	options: {
+		animation : {duration:500},
+		layout:{padding:10},
+		plugins : { legend: {display:false},
+					title:{display:true,color:'#F7F8E0',align:'end',font:{size:14,style:'italic',weight:'normal'},text:"{{D['손익합계']}}"},
+					tooltip : {enabled:false},
+					datalabels : {color:'white', anchor:'end', align:'end', offset: 3, font:{size:12}}			
+		},
+		scales: {
+		x: { ticks : {color:'white'}, grid:{color:'#272727'}},
+		y: {
+			grid : {
+				lineWidth:2,
+				color: function(context) {
+					if(context.tick.value == 0 ) { return '#071418'} else { return '' }
+				}
+			},
+			beginAtZero: true
+		}
+		}
+	},
+	};
+	const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
+	{% endif %}
+
+	let monthlyProfit_show = false;
+	function monthlyProfit_toggle() { 
+		monthlyProfit_show = !monthlyProfit_show;
+		if(monthlyProfit_show) $('#monthlyProfit').css('zIndex',7); else $('#monthlyProfit').css('zIndex',3);
+	}	
+{% endif %}
 
 </script>
 {% endblock %}

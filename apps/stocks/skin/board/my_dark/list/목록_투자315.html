@@ -10,7 +10,7 @@
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 
 <div style="height:370px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
-	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
+	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9" onclick="monthlyProfit_toggle()">
 		<canvas id="myChart_main"  style="width:1128px;height:350px;background-color:#24272d;"></canvas>
 	</div>
 	<div style="position:absolute;left:1164px;top:60px;">
@@ -121,160 +121,6 @@
 	</ul></div>
 </div>
 
-<div id="daily-log-view" onclick="$(this).hide()">
-	<div id="daily-log-tact">RSN-R Strategy</div>
-	<table style="width:1040px;">
-		<tr>
-			<td style="width:50px;height:50px;">&nbsp;</td>
-			<td style="width:100px">현금투자</td>
-			<td>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>입금</div>
-					<input disabled type='text' name='a01' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>출금</div>
-					<input disabled type='text' name='a02' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>잔액</i></div>
-					<input disabled type='text' name='a03' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>현금비중</div>
-					<input disabled type='text' name='a04' class="i-number" style="width:100px;" value="">
-				</div>
-			</td>
-		</tr>
-		<tr >
-			<td style="height:110px;">&nbsp;</td>
-			<td style="border-bottom:2px solid #CEE3F6;">투자현황</td>
-			<td style="border-bottom:2px solid #CEE3F6;">
-				<div class='i-input-div-choice'>
-					<div class='write-input-server'>매수금액</div>
-					<input disabled type='text' name='b01' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-choice'>
-					<div class='write-input-server'>매도금액</div>
-					<input disabled type='text' name='b02' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-choice'>
-					<div class='write-input-server'>변동수량</div>
-					<input disabled type='text' name='b03' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>레버비중</div>
-					<input disabled type='text' name='b04' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>당일종가</div>
-					<input disabled type='text' name='c01' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>종가변동</div>
-					<input disabled type='text' name='c02' class="i-number" style="width:100px;text-align:right" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>보유수량</div>
-					<input disabled type='text' name='c03' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>현수익률</div>
-					<input disabled type='text' name='c04' class="i-text" style="width:100px;text-align:right" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>평균단가</div>
-					<input disabled type='text' name='d01' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>현재가치</div>
-					<input disabled type='text' name='d02' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>현매수금</div>
-					<input disabled type='text' name='d03' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>현재손익</div>
-					<input disabled type='text' name='d04' class="i-number" style="width:100px;" value="">
-				</div>
-			</td>
-		</tr>
-		<tr><td colspan="3" style="line-height:10px;font-size:2px;">&nbsp;</td></tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>투자전략</td>
-			<td>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>현재시즌</div>
-					<input disabled type='text' name='e01' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'><span id='cn1'>일매수금</span></div>
-					<input disabled type='text' name='e02' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>매수수량&nbsp;&nbsp;</div>
-					<input disabled type='text' name='e03' class="i-number" style="width:100px;color:lightpink;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>매도수량</div>
-					<input disabled type='text' name='e04' class="i-number" style="width:100px;color:cyan;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>경과일수</div>
-					<input disabled type='text' name='f01' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'><span id='cn2'>기초수량</span></div>
-					<input disabled type='text' name='f02' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>매수가격&nbsp;&nbsp;</div>
-					<input disabled type='text' name='f03' class="i-number" style="width:100px;text-align:right;color:lightpink;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>매도가격&nbsp;&nbsp;</div>
-					<input disabled type='text' name='f04' class="i-number" style="width:100px;text-align:right;color:cyan;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>진행상황</div>
-					<input disabled type='text' name='g01' class="i-text" style="width:100px;text-align:right" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>종가추이</div>
-					<input disabled type='text' name='g02' class="i-text" style="width:100px;text-align:right" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>초기금액</div>
-					<input disabled type='text' name='g03' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>초기일자</div>
-					<input disabled type='text' name='g04' class="i-text" style="width:100px;text-align:right" value="">
-				</div>
-				<br>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>가치합계</div>
-					<input disabled type='text' name='h01' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>수수료등</div>
-					<input disabled type='text' name='h02' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>누적수익</div>
-					<input disabled type='text' name='h03' class="i-number" style="width:100px;" value="">
-				</div>
-				<div class='i-input-div-2'>
-					<div class='write-input-server'>특이사항</div>
-					<input disabled type='text' name='h04' class="i-text" style="width:100px;text-align:right;" value="">
-				</div>
-			</td>
-		</tr>
-	</table>
-</div>
-
 <!-- 수익 히스토리 -->
  <div id="profit-history" class="scrollbar" ondblclick="$(this).hide()">
  {% if D['수익통계'] %}
@@ -304,6 +150,10 @@
 			{%- endfor %}
 	</table>
 {% endif %}
+</div>
+
+<div id='monthlyProfit' style="position:absolute;left:20px;top:55px;padding:5px 10px 5px 10px;opacity:0.9;z-index:3;" onclick="monthlyProfit_toggle()">
+	<canvas id="monthlyProfitChart" style="width:1128px;height:350px;background-color:#24272d"></canvas>
 </div>
 
 <script>
@@ -365,6 +215,69 @@ $("#daily-check").on('dblclick', function() {
 		} else if(e.which==69) {$(this).attr("contenteditable",false).removeClass('daily-check-on');}
 	});
 });
+
+{% if D['월별구분']|safe %}
+	{% if D['월별이익'] %}
+	const ctx_monthly= $id('monthlyProfitChart');
+
+	ctx_monthly.style.backgroundColor = '#33363b';
+	ctx_monthly.style.border = '2px solid black';
+
+	let labels_monthly = {{D['월별구분']|safe}};
+	let monthlyProfits = {{D['월별순익']|safe}};
+	let backColor = new Array(labels_monthly.length-1);
+	let boreColor = new Array(labels_monthly.length-1);
+	backColor.fill('rgba(75, 192, 192, 0.4)');
+	backColor.push('#8F8681');
+	boreColor.fill('rgb(75, 192, 192)');
+	boreColor.push('#000000');
+
+	const data_monthly = {
+	labels: labels_monthly,
+	datasets: [{
+		label: ' 월별수익금 ',
+		data: monthlyProfits,
+		backgroundColor: backColor,
+		borderColor: boreColor,
+		borderWidth: 1
+	}]
+	};
+
+	const config_monthly = {
+	type: 'bar',
+	data: data_monthly,
+	plugins:[ChartDataLabels],
+	options: {
+		animation : {duration:500},
+		layout:{padding:10},
+		plugins : { legend: {display:false},
+					title:{display:true,color:'#F7F8E0',align:'end',font:{size:14,style:'italic',weight:'normal'},text:"{{D['손익합계']}}"},
+					tooltip : {enabled:false},
+					datalabels : {color:'white', anchor:'end', align:'end', offset: 3, font:{size:12}}			
+		},
+		scales: {
+		x: { ticks : {color:'white'}, grid:{color:'#272727'}},
+		y: {
+			grid : {
+				lineWidth:2,
+				color: function(context) {
+					if(context.tick.value == 0 ) { return '#071418'} else { return '' }
+				}
+			},
+			beginAtZero: true
+		}
+		}
+	},
+	};
+	const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
+	{% endif %}
+
+	let monthlyProfit_show = false;
+	function monthlyProfit_toggle() { 
+		monthlyProfit_show = !monthlyProfit_show;
+		if(monthlyProfit_show) $('#monthlyProfit').css('zIndex',7); else $('#monthlyProfit').css('zIndex',3);
+	}	
+{% endif %}
 </script>
 
 {% endblock %}

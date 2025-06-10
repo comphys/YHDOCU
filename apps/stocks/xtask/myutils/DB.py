@@ -242,5 +242,5 @@ class DB :
     # for RSN
     
     def last_date(self,tbl) :
-        qry = f"SELECT add0 FROM {tbl} order by rowid desc LIMIT 1"
+        qry = f"SELECT add0 FROM {tbl} order by add0 desc LIMIT 1"
         return self.one(qry)
