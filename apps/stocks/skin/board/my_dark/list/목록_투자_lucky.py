@@ -68,42 +68,7 @@ class 목록_투자_lucky(SKIN) :
             
             self.D['주문확인'] = ST['L0500']
             
-            SD =  self.DB.line(f"SELECT add1,add2,add3,s_08,s_20 FROM h_rsnLog_board WHERE add0='{last_date}'")
 
-            cp =  float(SD['add3'])  # close_price
-            np =  float(SD['s_08'])  # current_position
-            ap =  float(ST['L0201']) # average of S tactic
-            lp =  float(SD['s_20'])  # the target price of S tactic
-            
-            대기시점 = my.sf(ST['L0022'])
-            매수시점 = my.sf(ST['L0023'])
-            명칭구분 = ['일오','이공','이오','삼공']
-            시즌자산 = my.sv(ST['L0002'])
-            자산배분 = my.sf(ST['L0021'])
-            기준가격 = float(ST['L0201'])
-            매수시점 = my.sf(ST['L0023'])
-
-            self.D['기준가격'] = [기준가격] * chart_len
-            self.D['일오자금']  = round(시즌자산 * 자산배분[0]/100,2)
-            self.D['이공자금']  = round(시즌자산 * 자산배분[1]/100,2)
-            self.D['이오자금']  = round(시즌자산 * 자산배분[2]/100,2)
-            self.D['삼공자금']  = round(시즌자산 * 자산배분[3]/100,2) 
-
-            self.D['일오수량'] = int(self.D['일오자금']/round(기준가격 * 매수시점[0]/100,2)) 
-            self.D['이공수량'] = int(self.D['이공자금']/round(기준가격 * 매수시점[1]/100,2))
-            self.D['이오수량'] = int(self.D['이오자금']/round(기준가격 * 매수시점[2]/100,2))
-            self.D['삼공수량'] = int(self.D['삼공자금']/round(기준가격 * 매수시점[3]/100,2))
-
-            tp_max = 0.0
-            for i in range(4) :
-                if  np < 대기시점[i] : 
-                    tp=ap*매수시점[i]/100 
-                    tp=min(tp,lp,cp) 
-                    self.D[명칭구분[i]+'매수'] = True 
-                    self.D[명칭구분[i]+'매가'] = f"{tp:.2f}" 
-                    self.D[명칭구분[i]+'종수'] = f"{(tp/cp-1)*100:.2f}"
-                    tp_max = max(tp,tp_max)
-            if tp_max : self.D['매수가격'] = [tp_max] * chart_len
                     
 
                 

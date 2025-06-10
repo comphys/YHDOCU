@@ -888,11 +888,13 @@ class update_Log :
         LD['감시시작'] = True if self.V['현수익률'] < - 4.0 else False # S전략 평균단가
         LD['진입가격'] = 0.0 
         if  LD['감시시작'] :
-            LD['진입가격'] = min(self.take_lucky(),self.M['당일종가']-0.01,self.M['매도예가'])
+            LD['진입가격'] = min(self.take_lucky(),self.M['당일종가']-0.01)
 
-        LD['당일종가'] = self.M['당일종가']   
+        LD['당일종가'] = self.M['당일종가']
+        LD['전일종가'] = self.M['전일종가']   
         LD['종가변동'] = self.M['종가변동']   
         LD['매도예가'] = self.M['매도예가'] 
+        if LD['진입가격'] > LD['매도예가'] : LD['진입가격'] = LD['매도예가']
         LD['진행종료'] = True if self.V['진행상황'] in ('익절매도','손절매도') else False
 
         return LD

@@ -362,7 +362,7 @@ class RSNL :
         if self.L['매수차수'] == self.L['최대차수']-1 : self.L['매금단계'][self.L['최대차수']-1] = int(self.L['현재잔액'])
         
         if  self.L['보유수량'] :
-            self.L['매수예가'] = self.M['당일종가']-0.01
+            self.L['매수예가'] = min(self.M['당일종가']-0.01,self.L['평균단가'])
         else :
             self.L['매수예가'] = self.take_chanceL()  
 
@@ -406,7 +406,9 @@ class RSNL :
         
     def tomorrow_sel_L(self) :
         
-        if self.L['보유수량'] : self.L['매도예가'] = my.round_up(self.L['평균단가']*self.L['각매가치'][self.L['매수차수']-1]) 
+        if  self.L['보유수량'] : 
+            self.L['매도예가'] = my.round_up(self.L['평균단가']*self.L['각매가치'][self.L['매수차수']-1]) 
+
 
     def tomorrow_step(self) :
         self.tomorrow_buy_V()
