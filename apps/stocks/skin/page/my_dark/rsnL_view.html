@@ -317,6 +317,7 @@
 	</table>
 </div>
 
+{% if D['손익통계'] %}
 <div id="statistics-profits" class="scrollbar"
      style="position:fixed;left:1468px;top:112px;min-width:410px;height:350px;padding:0px;background-color:black;overflow-y:scroll;border:1px solid gray" 
 	 ondblclick="$('#statistics-profits').hide()">
@@ -339,6 +340,7 @@
 	 {% endfor %}
 	 </table>
 </div>
+{% endif %}
 
 <div id="daily-log">
 	<div id="daily-log-left" class="pull-left"></div>

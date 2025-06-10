@@ -80,7 +80,8 @@ class 목록_투자_lucky(SKIN) :
             LD = self.DB.line(f"SELECT add5,add8,add9,add10,add19,add20 FROM {self.D['tbl']} ORDER BY add0 DESC LIMIT 1") 
             
             self.D['목표단가'] = float(LD['add20']) if int(LD['add8']) else 0
-            self.D['진입단가'] = min(float(ST['L0201']),float(LD['add9'])) if int(LD['add8']) else float(ST['L0201'])
+            당일종가 = float(self.D['close_price'][-1])
+            self.D['진입단가'] = min(float(ST['L0201']),float(LD['add9']),당일종가-0.01) if int(LD['add8']) else float(ST['L0201'])
             
             # 진입수량
             시즌금액 = int(float(LD['add5']) + float(LD['add10']))
@@ -91,6 +92,8 @@ class 목록_투자_lucky(SKIN) :
 
             if  self.D['진입단가'] : 
                 self.D['매수가격'] = self.D['진입단가'] * chart_len
+                self.D['매수종비'] = self.next_percent(당일종가,self.D['진입단가'])
+                self.D['매수평비'] = self.next_percent(float(LD['add9']),self.D['진입단가']) if int(LD['add8']) else ''
                 self.D['진입단가'] = f"{self.D['진입단가']:.2f}"
                 self.D['진입수량'] = f"{self.D['진입수량']:,}"
                 self.D['매수대기'] = True
@@ -98,6 +101,8 @@ class 목록_투자_lucky(SKIN) :
                 
             if  self.D['목표단가'] : 
                 self.D['매도가격'] = self.D['목표단가'] * chart_len
+                self.D['매도종비'] = self.next_percent(당일종가,self.D['목표단가'])
+                self.D['매도평비'] = self.next_percent(float(LD['add9']),self.D['목표단가']) if int(LD['add8']) else ''
                 self.D['목표단가'] = f"{self.D['목표단가']:.2f}"
                 self.D['보유수량'] = f"{int(LD['add8']):,}"
                 self.D['매도대기'] = True        
