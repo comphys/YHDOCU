@@ -36,7 +36,6 @@ class 목록_투자_lucky(SKIN) :
     def chart(self) :
         
         last_date = self.DB.last_date('h_stockHistory_board')
-        self.D['다음날자'],self.D['다음요일'] = self.next_stock_day(last_date)
         
         self.DB.clear()
         self.DB.tbl = 'h_stockHistory_board'
@@ -45,26 +44,63 @@ class 목록_투자_lucky(SKIN) :
         self.DB.lmt = '25'
         
         chart_data = self.DB.get("add0,add3",assoc=True)
-        rsn_V_data = self.DB.exe(f"SELECT add0,v_09 FROM h_rsnLog_board WHERE add0 <='{last_date}' ORDER BY add0 DESC LIMIT {self.DB.lmt}",assoc=True)
-
+        rsn_V_data = self.DB.exe(f"SELECT add0,v_09 FROM h_rsnLog_board  WHERE add0 <='{last_date}' ORDER BY add0 DESC LIMIT {self.DB.lmt}",assoc=True)
+        luc_L_data = self.DB.exe(f"SELECT add0,add9 FROM {self.D['tbl']} WHERE add0 <='{last_date}' ORDER BY add0 DESC LIMIT {self.DB.lmt}",assoc=True)
+        
         chart_len  = len(chart_data)
         chart_data.reverse()
         rsn_V_data.reverse()
+        luc_L_data.reverse()
+        
         self.D['chart_date']  = [x['add0'][2:] for x in chart_data]
         self.D['close_price'] = [x['add3'] for x in chart_data]
-        self.D['rsn_V_price'] = [x['v_09'] if x['add0'][2:] in self.D['chart_date'] else 'null' for x in rsn_V_data ]
-        self.D['rsn_V_price'] = [x if float(x) else 'null' for x in self.D['rsn_V_price']]
 
-        self.D['기준가격'] = ['null'] * chart_len
+        rsn_V_dict = { x['add0'][2:] : x['v_09'] for x in rsn_V_data }
+        self.D['rsn_V_price'] = [rsn_V_dict[x] if x in rsn_V_dict else 0 for x in self.D['chart_date']]
+        self.D['rsn_V_price'] = [ x if float(x) else 'null' for x in self.D['rsn_V_price']]
+        
+        luc_L_dict = { x['add0'][2:] : x['add9'] for x in luc_L_data }
+        self.D['luc_L_price'] = [luc_L_dict[x] if x in luc_L_dict else 0 for x in self.D['chart_date']]
+        self.D['luc_L_price'] = [ x if float(x) else 'null' for x in self.D['luc_L_price']]
+
         self.D['매수가격'] = ['null'] * chart_len
         self.D['매도가격'] = ['null'] * chart_len
         
+        self.D['매수대기'] = self.D['매도대기'] = False
+        
         ST = self.DB.parameters_dict('매매전략/LUCKY')
+        self.D['다음날자'],self.D['다음요일'] = self.next_stock_day(ST['L0202'])
         self.D['진행시작'] = False
         
         if  int(ST['L0200']) :  # 진행중인 시즌 정보를 불러옴, '0'인 경우 진행중이지 않음
 
             self.D['진행시작'] = True
+            
+            # 현재잔액, 보유수량, 평균단가, 총매수금, 매수차수, 목표가치
+            LD = self.DB.line(f"SELECT add5,add8,add9,add10,add19,add20 FROM {self.D['tbl']} ORDER BY add0 DESC LIMIT 1") 
+            
+            self.D['목표단가'] = float(LD['add20']) if int(LD['add8']) else 0
+            self.D['진입단가'] = min(float(ST['L0201']),float(LD['add9'])) if int(LD['add8']) else float(ST['L0201'])
+            
+            # 진입수량
+            시즌금액 = int(float(LD['add5']) + float(LD['add10']))
+            if   매수차수:=int(LD['add19']) == 3 : self.D['진입수량'] = 0
+            elif 매수차수 == 2 : self.D['진입수량'] = int(float(LD['add5'])/self.D['진입단가'])
+            else : 
+                 self.D['진입수량'] = int(시즌금액*0.3/self.D['진입단가']) if self.D['진입단가'] else 0
+
+            if  self.D['진입단가'] : 
+                self.D['매수가격'] = self.D['진입단가'] * chart_len
+                self.D['진입단가'] = f"{self.D['진입단가']:.2f}"
+                self.D['진입수량'] = f"{self.D['진입수량']:,}"
+                self.D['매수대기'] = True
+
+                
+            if  self.D['목표단가'] : 
+                self.D['매도가격'] = self.D['목표단가'] * chart_len
+                self.D['목표단가'] = f"{self.D['목표단가']:.2f}"
+                self.D['보유수량'] = f"{int(LD['add8']):,}"
+                self.D['매도대기'] = True        
             
             self.D['주문확인'] = ST['L0500']
             

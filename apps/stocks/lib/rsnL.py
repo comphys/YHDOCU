@@ -66,7 +66,6 @@ class RSNL :
             if  tac == self.L : 
                 self.L['매수차수'] = 0 
                 self.L['매도예가'] = 0
-                if not self.V['매도수량'] : self.rebalance_L() # just for N tactic 
 
     def calculate(self)  :
         
@@ -141,10 +140,6 @@ class RSNL :
 
         for i in range(self.M['최대차수']) : self.N['매금단계'][i] = int((self.N['현재잔액']+self.N['총매수금']) * self.M['분할배분'][i]) # RS>N 을 고려한 매수기초금액 재 산정
 
-    def rebalance_L(self) :
-
-        for i in range(self.L['최대차수']) : self.L['매금단계'][i] = int((self.L['현재잔액']+self.L['총매수금']) * self.L['분할배분'][i]) # RS>N 을 고려한 매수기초금액 재 산정    
-        
     def rebalance(self)  :
 
         total = self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액']
@@ -355,20 +350,14 @@ class RSNL :
 
     def tomorrow_buy_L(self) :
         
-        
-        if self.V['현수익률'] > self.L['대기시점'] :  self.L['예정수량'] = 0; return
-        
-        if self.L['매수차수'] >= self.L['최대차수']   : self.L['예정수량'] = 0; return
-        if self.L['매수차수'] == self.L['최대차수']-1 : self.L['매금단계'][self.L['최대차수']-1] = int(self.L['현재잔액'])
-        
-        if  self.L['보유수량'] :
-            self.L['매수예가'] = min(self.M['당일종가']-0.01,self.L['평균단가'])
-        else :
-            self.L['매수예가'] = self.take_chanceL()  
-
+        if self.V['현수익률'] >  self.L['대기시점'] or self.L['매수차수'] >= self.L['최대차수'] : self.L['예정수량'] = 0; return
+         
+        self.L['매수예가'] = min(self.M['당일종가']-0.01,self.L['평균단가']) if self.L['보유수량'] else self.take_chanceL()
         if not self.L['매수예가'] : self.L['예정수량'] = 0; return
-        
-        self.L['예정수량'] = int( self.L['매금단계'][self.L['매수차수']] / self.L['매수예가'] ) 
+
+        시즌자금 = int(self.L['현재잔액']+self.L['총매수금'])
+        매수자금 = self.L['현재잔액'] if self.L['매수차수']==self.L['최대차수']-1 else int(시즌자금 * self.L['분할배분'][self.L['매수차수']])
+        self.L['예정수량'] = int( 매수자금 / self.L['매수예가'] ) 
         
      # -------------------------------------------------------------------------------------------------------------------------------------------
     # tomorrow_sell : 다음 날의 매도예가를 계산한다 
@@ -694,10 +683,8 @@ class RSNL :
             self.L['진입시점']  = SL['L0023']
             self.L['각매가치']  = my.sf(SL['L0024'])
             self.L['최대차수']  = len(self.L['분할배분'])
-            self.L['매금단계'] = [0.0] * self.L['최대차수']
             self.L['매수차수']  = 0
-            self.rebalance_L()
-            
+             
             # 투자옵션 초기화 ----------------------------------------------------------------------------
             if '가상손실' in self.D  and  self.D['가상손실'] == 'on' : self.M['기본진행']  = False     
             if '수료적용' not in self.D : self.D['수료적용']  = 'on' 

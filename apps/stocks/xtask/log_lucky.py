@@ -4,7 +4,6 @@ from lib_lucky import update_lucky
 
 
 today = my.kor_loc_date('US/Eastern')[0:10]
-today = '2025-04-09'
 weekd = my.dayofdate(today)
 RSN = update_Log()
 LUC = update_lucky()
@@ -23,11 +22,11 @@ else :
     # 2. RSN 에서 현재 S가 진행중인지 확인
     RSN.do_luckyLog(today)
     DV = RSN.get_luckyLog()
-
+    LUC.DB.parameter_update('L0202',DV['기록일자'])  
+    
     if  not set : 
         
         if  DV['감시시작'] :
-            
             LUC.DB.parameter_update('L0200',DV['기록시즌'])
             LUC.DB.parameter_update('L0201',DV['진입가격'])
             LUC.send_message(f"{today}일 LUCKY 초기셋팅 완료")

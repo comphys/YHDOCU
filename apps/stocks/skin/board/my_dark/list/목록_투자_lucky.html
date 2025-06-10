@@ -22,63 +22,25 @@
 			
 			{% if D['진행시작'] %}
 			<table class="table" style="text-align:right;width:324px;margin-top:10px">
-				<tr style="font-style:italic;border-bottom:1px solid gray;text-align:center;color:gray;">
-					<td style="text-align:center;">Div</td><td>L15</td><td>L20</td><td>L25</td><td>L30</td></tr>
-				<tr style="font-style:italic;text-align:right;color:gray;">
-					<td style="text-align:left;">Entry price</td><td>{{D['일오매가']}}</td><td>{{D['이공매가']}}</td><td>{{D['이오매가']}}</td><td>{{D['삼공매가']}}</td>
-				</tr>
-				{% if D['일오매수'] %}
+				<tr style="font-style:italic;border-bottom:1px solid gray;text-align:right;color:gray;">
+					<td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppa</td><td>ppl</td></tr>
+
+				{% if D['매수대기'] %}
 				<tr style="border-top:1px solid gray;text-align:right;color:#ffc4c4;">
-					<td style="text-align:left;">L15 <span style="color:gray">buy</span></td><td>{{D['일오매가']}}</td><td>{{D['일오수량']}}</td>
-					<td style="color:gray">&nbsp;</td><td style="color:gray">{{D['일오종수']}}</td>
+					<td style="text-align:left;">L <span style="color:gray">buy</span></td><td>{{D['진입단가']}}</td><td>{{D['진입수량']}}</td>
+					<td style="color:gray">&nbsp;</td><td style="color:gray">{{D['매수종비']}}</td>
 				</tr>
 				{% endif %}
-				{% if D['이공매수'] %}
-				<tr style="border-top:1px solid gray;text-align:right;color:#ffc4c4;">
-					<td style="text-align:left;">L20 <span style="color:gray">buy</span></td><td>{{D['이공매가']}}</td><td>{{D['이공수량']}}</td>
-					<td style="color:gray">&nbsp;</td><td style="color:gray">{{D['이공종수']}}</td>
-				</tr>
-				{% endif %}
-				{% if D['이오매수'] %}
-				<tr style="border-top:1px solid gray;text-align:right;color:#ffc4c4;">
-					<td style="text-align:left;">L25 <span style="color:gray">buy</span></td><td>{{D['이오매가']}}</td><td>{{D['이오수량']}}</td>
-					<td style="color:gray">&nbsp;</td><td style="color:gray">{{D['이오종수']}}</td>
-				</tr>
-				{% endif %}
-				{% if D['삼공매수'] %}
-				<tr style="border-top:1px solid gray;text-align:right;color:#ffc4c4;">
-					<td style="text-align:left;">L30 <span style="color:gray">buy</span></td><td>{{D['삼공매가']}}</td><td>{{D['삼공수량']}}</td>
-					<td style="color:gray">&nbsp;</td><td style="color:gray">{{D['삼공종수']}}</td>
+				{% if D['매도대기'] %}
+				<tr style="border-top:1px solid gray;text-align:right;color:#c1e0ff;">
+					<td style="text-align:left;">L <span style="color:gray">sell</span></td><td>{{D['목표단가']}}</td><td>{{D['보유수량']}}</td>
+					<td style="color:gray">&nbsp;</td><td style="color:gray">{{D['매도종비']}}</td>
 				</tr>
 				{% endif %}
 
-				{% if D['일오매도'] %}
-				<tr style="border-top:1px solid gray;text-align:right;color:#c1e0ff;">
-					<td style="text-align:left;">L15 <span style="color:gray">sell</span></td><td>{{D['일오도가']}}</td><td>{{D['일오수량']}}</td>
-					<td style="color:gray">&nbsp;</td><td style="color:gray">{{D['당종15']}}</td>
-				</tr>
-				{% endif %}
-				{% if D['이공매도'] %}
-				<tr style="border-top:1px solid gray;text-align:right;color:#c1e0ff;">
-					<td style="text-align:left;">L20 <span style="color:gray">sell</span></td><td>{{D['이공도가']}}</td><td>{{D['이공수량']}}</td>
-					<td style="color:gray">&nbsp;</td><td style="color:gray">{{D['당종20']}}</td>
-				</tr>
-				{% endif %}
-				{% if D['이오매도'] %}
-				<tr style="border-top:1px solid gray;text-align:right;color:#c1e0ff;">
-					<td style="text-align:left;">L25 <span style="color:gray">sell</span></td><td>{{D['이오도가']}}</td><td>{{D['이오수량']}}</td>
-					<td style="color:gray">&nbsp;</td><td style="color:gray">{{D['당종25']}}</td>
-				</tr>
-				{% endif %}
-				{% if D['삼공매도'] %}
-				<tr style="border-top:1px solid gray;text-align:right;color:#c1e0ff;">
-					<td style="text-align:left;">L30 <span style="color:gray">sell</span></td><td>{{D['삼공도가']}}</td><td>{{D['삼공수량']}}</td>
-					<td style="color:gray">&nbsp;</td><td style="color:gray">{{D['당종30']}}</td>
-				</tr>
-				{% endif %}
 			</table>
 			{% else %}
-			<div style="color:gray;width:348px;margin-top:10px;font-style:italic;">Lucky mode 진행 대기 중입니다</div>
+			<div style="color:gray;width:348px;margin-top:10px;font-style:italic;">Lucky mode 진행 대기 상태입니다</div>
 			{% endif %}
 		</div>
 	</div>
@@ -170,7 +132,8 @@ let labels_main     =  {{D['chart_date']|safe}}
 let chart_len       =  labels_main.length
 let close_price     =  {{D['close_price']|safe}}
 let rsn_V_price     =  {{D['rsn_V_price']|safe}}
-let ref_price       =  {{D['기준가격']|safe}}	
+let luc_L_price     =  {{D['luc_L_price']|safe}}
+	
 let buy_price       =  {{D['매수가격']|safe}}	
 let sell_price      =  {{D['매도가격']|safe}}	
 //let n_avg_value     =  n_avg_origin.slice(ChartStart)  
@@ -184,7 +147,7 @@ const data_main = {
     datasets : [
 		{   label:' 종가변동',data : close_price,borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],lineTension:0.2},
 		{   label:' 참고평단',data : rsn_V_price,borderColor:'gray',    borderWidth:1, pointRadius:0, borderDash:[2,3],lineTension:0.2},
-		{   label:' 기준가격',data : ref_price,borderWidth:2,borderColor:'gray',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+		{   label:' 럭키평단',data : luc_L_price,borderColor:'#f4d980', borderWidth:2, pointRadius:2, backgroundColor:'#f4d980',lineTension:0.2},
 		{   label:' 매수가격',data : buy_price, borderColor:'#ffc4c4', borderWidth:1, borderDash: [2,2],pointRadius:0},
 		{   label:' 매도가격',data : sell_price,borderColor:'yellow',  borderWidth:1, borderDash: [2,2],pointRadius:0},
     ]   

@@ -93,7 +93,7 @@ class update_lucky :
         매수가격 = self.M['전일종가']-0.01 if self.M['보유수량'] else self.M['매수가격']
         if  self.M['보유수량'] : 매수가격 = min(매수가격,self.M['평균단가'])
         if  self.M['당일종가'] <= 매수가격 : 
-            매수자금 = int(self.M['현재잔액']) if self.M['매수차수']==self.M['최대차수']-1 else int(self.M['시즌자금']*self.M['분할배분'][self.M['매수차수']]) 
+            매수자금 = self.M['현재잔액'] if self.M['매수차수']==self.M['최대차수']-1 else int(self.M['시즌자금']*self.M['분할배분'][self.M['매수차수']]) 
             self.M['매수수량'] = int(매수자금/매수가격)
             self.M['진행상황'] = self.M['기호구분'][self.M['매수차수']]+'매수'
             self.M['당일기록'] = True
