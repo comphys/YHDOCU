@@ -2,7 +2,6 @@ import myutils.my_utils as my
 from lib_rsn   import update_Log
 from lib_lucky import update_lucky
 
-
 today = my.kor_loc_date('US/Eastern')[0:10]
 weekd = my.dayofdate(today)
 RSN = update_Log()
@@ -17,14 +16,13 @@ if  skip :
     LUC.send_message(f"{today}일은 쉬는 날입니다")
 
 else :
-    # 1. Lucky 정보 가져오기 None 이면 현재 진행중인 lucky는 없음
+
     set = int(LUC.DB.parameter('L0200'))
-    # 2. RSN 에서 현재 S가 진행중인지 확인
     RSN.do_luckyLog(today)
     DV = RSN.get_luckyLog()
      
+    LUC.DB.parameter_update('L0202',DV['기록일자']) 
     거래일자 = LUC.next_stock_day(DV['기록일자'])
-    LUC.DB.parameter_update('L0202',거래일자) 
     
     if  not set : 
         
