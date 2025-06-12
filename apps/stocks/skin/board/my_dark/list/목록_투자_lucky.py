@@ -13,6 +13,9 @@ class 목록_투자_lucky(SKIN) :
 
         for key in self.D['list_order'] :
             THX[key] = f"<th style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
+            
+        THX['add0']  = f"<th style='border-top-left-radius:0;text-align:center'>날자</th>"
+        THX['add15'] = f"<th style='border-top-right-radius:0;text-align:right'>자산합계</th>"
         
         self.D['head_td'] = THX 
 
@@ -86,10 +89,9 @@ class 목록_투자_lucky(SKIN) :
             
             # 진입수량
             시즌금액 = int(float(LD['add5']) + float(LD['add10']))
-            if   매수차수:=int(LD['add19']) == 3 : self.D['진입수량'] = 0
+            if   매수차수:=int(LD['add19']) >= 3 : self.D['진입수량'] = 0
             elif 매수차수 == 2 : self.D['진입수량'] = int(float(LD['add5'])/self.D['진입단가'])
-            else : 
-                 self.D['진입수량'] = int(시즌금액*0.3/self.D['진입단가']) if self.D['진입단가'] else 0
+            elif 매수차수 <= 1 : self.D['진입수량'] = int(시즌금액*0.3/self.D['진입단가']) if self.D['진입단가'] else 0
 
             if  self.D['진입단가'] : 
                 self.D['매수가격'] = self.D['진입단가'] * chart_len
@@ -99,7 +101,6 @@ class 목록_투자_lucky(SKIN) :
                 self.D['진입수량'] = f"{self.D['진입수량']:,}"
                 self.D['매수대기'] = True
 
-                
             if  self.D['목표단가'] : 
                 self.D['매도가격'] = self.D['목표단가'] * chart_len
                 self.D['매도종비'] = self.next_percent(당일종가,self.D['목표단가'])
@@ -107,11 +108,6 @@ class 목록_투자_lucky(SKIN) :
                 self.D['목표단가'] = f"{self.D['목표단가']:.2f}"
                 self.D['보유수량'] = f"{int(LD['add8']):,}"
                 self.D['매도대기'] = True        
-            
-
-            
-
-                    
 
                 
     def list(self) :

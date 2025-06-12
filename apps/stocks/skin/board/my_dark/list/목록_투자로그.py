@@ -14,6 +14,8 @@ class 목록_투자로그(SKIN) :
         for key in self.D['list_order'] :
             THX[key] = f"<th style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
         
+        THX['add0']  = f"<th style='border-top-left-radius:0;text-align:center'>날자</th>"
+        THX['add14'] = f"<th style='border-top-right-radius:0;text-align:right'>자산합계</th>"
         self.D['head_td'] = THX 
 
 

@@ -45,8 +45,6 @@
 /* 
   BODY PART
 */
-.table-body tbody:last-child tr:last-child > td:first-child   { border-bottom-left-radius: 0px; }
-.table-body tbody:last-child tr:last-child > td:last-child    { border-bottom-right-radius: 0px; }
 .body_left { background-color:#006393; width: 123px; text-align:left; padding-left:15px; }
 .title_only { font-weight:bold;font-size:18px; line-height:25px}
 .body_right { background-color:#00344d; text-align:left; padding-left:20px;  font-weight:bold}

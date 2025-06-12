@@ -13,6 +13,9 @@ class 목록_투자315(SKIN) :
 
         for key in self.D['list_order'] :
             THX[key] = f"<th style='text-align:{TH_align[key]}'>{TH_title[key]}</th>"
+            
+        THX['add0']  = f"<th style='border-top-left-radius:0;text-align:center'>날자</th>"
+        THX['add16'] = f"<th style='border-top-right-radius:0;text-align:right'>자산합계</th>"
         
         self.D['head_td'] = THX 
 
@@ -43,7 +46,7 @@ class 목록_투자315(SKIN) :
         self.DB.odr = "add0 DESC"
         self.DB.lmt = '200'
         
-        chart_data = self.DB.get("add0,add10,add15",assoc=True)
+        chart_data = self.DB.get("add0,add10",assoc=True)
         
         if chart_data :
 
@@ -71,9 +74,7 @@ class 목록_투자315(SKIN) :
             for C in chart_data : # 날자를 인덱스로 하는 평균값과 수익률 dict 생성
                 ax[C['add0'][2:]] = float(C['add10']) if float(C['add10']) else 'null'
             
-            for x in self.D['chart_date'] :    
-                self.D['Ntactic_avg'].append(ax.get(x,'null'))
-                
+            self.D['Ntactic_avg'] = [ax[x] if x in ax else 'null' for x in self.D['chart_date']]    
                 
             # 다음 날 주문정보 갖고오기
             ini_data   = self.DB.oneline(f"SELECT add18,add19 FROM {self.D['tbl']}")
