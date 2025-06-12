@@ -38,7 +38,8 @@ class 목록_투자_lucky(SKIN) :
 
     def chart(self) :
         
-        last_date = self.DB.last_date('h_stockHistory_board')
+        ST = self.DB.parameters_dict('매매전략/LUCKY')
+        last_date = ST['L0202']
         
         self.DB.clear()
         self.DB.tbl = 'h_stockHistory_board'
@@ -71,8 +72,7 @@ class 목록_투자_lucky(SKIN) :
         
         self.D['매수대기'] = self.D['매도대기'] = False
         
-        ST = self.DB.parameters_dict('매매전략/LUCKY')
-        self.D['다음날자'],self.D['다음요일'] = self.next_stock_day(ST['L0202'])
+        self.D['다음날자'],self.D['다음요일'] = self.next_stock_day(last_date)
         self.D['진행시작'] = False
         self.D['주문확인'] = ST['L0500']
         
@@ -84,7 +84,7 @@ class 목록_투자_lucky(SKIN) :
             LD = self.DB.line(f"SELECT add5,add8,add9,add10,add19,add20 FROM {self.D['tbl']} ORDER BY add0 DESC LIMIT 1") 
             
             self.D['목표단가'] = float(LD['add20']) if int(LD['add8']) else 0
-            당일종가 = float(self.D['close_price'][-1])
+            당일종가 = self.DB.one(f"SELECT CAST(add3 as float) FROM h_stockHistory_board WHERE add0='{last_date}'")
             self.D['진입단가'] = min(float(ST['L0201']),float(LD['add9']),당일종가-0.01) if int(LD['add8']) else float(ST['L0201'])
             
             # 진입수량

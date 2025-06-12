@@ -28,7 +28,7 @@ class update_lucky :
             self.M['현재잔액'] -= self.M['매수금액']
             self.M['총매수금'] += self.M['매수금액']
             self.M['평균단가'] =  self.M['총매수금'] / self.M['보유수량'] 
-            self.M['목표단가'] =  self.M['평균단가'] * self.M['목표시점'][self.M['매수차수']]
+            self.M['목표단가'] =  my.round_up(self.M['평균단가'] * self.M['목표시점'][self.M['매수차수']])
             self.M['매수차수'] += 1
             self.commission(1)
 
