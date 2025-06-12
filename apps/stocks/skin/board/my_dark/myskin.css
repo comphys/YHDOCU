@@ -16,9 +16,9 @@
 .list-bold {font-weight:700;}
 
 .list-wdate { text-align:center; color:gray;}
-.list-mdate { text-align:center; color:#ffeaea;}
+.list-mdate { text-align:center; color:gray;}
 .list-name { text-align:center; color:#8DD1FF; }
-.list-hit  { text-align:center;}
+.list-hit  { text-align:center; color:gray;}
 .list-bull {text-align:right; color:#ffc4c4}
 .list-bear {text-align:right; color:#c1e0ff}
 .list-bulls,.list-bulls2 {text-align:right; font-weight:bold; color:#ffc4c4}
