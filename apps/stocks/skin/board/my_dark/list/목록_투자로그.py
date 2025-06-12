@@ -95,6 +95,8 @@ class 목록_투자로그(SKIN) :
             self.D['총매도금'] =  f"{temp[1]:,.2f}"
             self.D['투자익률'] =  f"{(temp[1]/temp[0]-1)*100:.2f}"
             self.D['주문확인'] =  self.DB.parameter('TX070')
+            self.D['주문생활'] =  self.DB.parameter('N0710')
+            self.D['주문럭키'] =  self.DB.parameter('L0500')
             
             # 통계 자료 가져오기
             temp = self.DB.exe(f"SELECT add0,CAST(add12 as float),CAST(add10 as float),CAST(r_21+s_21+n_21 as float),add17 FROM {self.D['tbl']} WHERE add17 in ('초기셋팅','수익실현') ORDER BY add0")

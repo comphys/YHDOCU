@@ -55,6 +55,16 @@
 				</tr>
 				{% endif %}
 			</table>
+			{% if D['다음날자'] != D['주문생활'] %}
+			<div style="padding-top:20px;padding-left:10px;font-style:italic;color:gray;">
+				Please Check the <a href="/stocks/board/list/log315" style='color:white'>N315</a> tactic
+			</div>
+			{% endif %}
+			{% if D['다음날자'] != D['주문럭키'] %}
+			<div style="padding:10px;font-style:italic;color:gray;">
+				Please Check the <a href="/stocks/board/list/log_lucky" style='color:white'>LUCKY</a> tactic
+			</div>
+			{% endif %}
 		</div>
 	</div>
 </div>

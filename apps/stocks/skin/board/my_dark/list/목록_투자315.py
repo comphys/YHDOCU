@@ -109,8 +109,6 @@ class 목록_투자315(SKIN) :
             qry = f"SELECT SUBSTR(add0,1,7), sum(CAST(add21 as float)) FROM {self.D['tbl']} WHERE add0 <='{ls_date}' GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
             monthlyFee = self.DB.exe(qry)
             
-            self.info(monProfit)
-            
             if monthlyFee :
 
                 월별이익 = {x[0]:float(x[1]) for x in monProfit}
