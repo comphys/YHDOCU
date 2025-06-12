@@ -22,7 +22,8 @@ else :
     DV = RSN.get_luckyLog()
      
     LUC.DB.parameter_update('L0202',DV['기록일자']) 
-    거래일자 = LUC.next_stock_day(DV['기록일자'])
+    거래일자 = LUC.next_stock_day(DV['기록일자'])[0]
+    print(거래일자)
     
     if  not set : 
         
