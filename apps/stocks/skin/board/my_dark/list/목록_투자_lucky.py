@@ -85,7 +85,7 @@ class 목록_투자_lucky(SKIN) :
             
             self.D['목표단가'] = float(LD['add20']) if int(LD['add8']) else 0
             당일종가 = self.DB.one(f"SELECT CAST(add3 as float) FROM h_stockHistory_board WHERE add0='{last_date}'")
-            self.D['진입단가'] = min(float(ST['L0201']),float(LD['add9']),당일종가-0.01) if int(LD['add8']) else float(ST['L0201'])
+            self.D['진입단가'] = min(float(ST['L0201']),float(LD['add9']),당일종가*ST['L0025']) if int(LD['add8']) else float(ST['L0201'])
             
             # 진입수량
             시즌금액 = int(float(LD['add5']) + float(LD['add10']))

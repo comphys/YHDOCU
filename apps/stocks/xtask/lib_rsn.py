@@ -879,34 +879,38 @@ class update_Log :
         
     def get_luckyLog(self) :
         
+        SL = self.DB.parameters_dict('매매전략/LUCKY')
         LD = {}
         
         LD['기록일자'] = self.M['현재일자']
         LD['기록시즌'] = self.M['기록시즌']
         LD['기록날수'] = self.M['현재날수']-1
         
-        LD['감시시작'] = True if self.V['현수익률'] < - 4.0 else False # S전략 평균단가
+        LD['감시시작'] = True if self.V['현수익률'] < - SL['L0022'] else False # S전략 평균단가
         LD['진입가격'] = 0.0 
+        
         if  LD['감시시작'] :
-            LD['진입가격'] = min(self.take_lucky(),self.M['당일종가']-0.01)
+            LD['진입가격'] = min(self.take_lucky(SL['L0023']),self.M['당일종가']*SL['L0025'])
 
         LD['당일종가'] = self.M['당일종가']
         LD['전일종가'] = self.M['전일종가']   
         LD['종가변동'] = self.M['종가변동']   
         LD['매도예가'] = self.M['매도예가'] 
+        
         if LD['진입가격'] >= LD['매도예가'] : LD['진입가격'] = LD['매도예가']-0.01
+        
         LD['진입가격'] = f"{LD['진입가격']:.2f}"
         LD['진행종료'] = True if self.V['진행상황'] in ('익절매도','손절매도') else False
 
         return LD
     
-    def take_lucky(self) :
+    def take_lucky(self,check_in) :
 
         H = self.V['보유수량']
         n = self.V['예정수량']
         A = self.V['총매수금']
 
-        p = -9.0
+        p = check_in
         N = H + n
         k = N / (1+p/100)
         cp = round(A/(k-n),2)
