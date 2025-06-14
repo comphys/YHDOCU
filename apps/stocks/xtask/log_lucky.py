@@ -23,6 +23,7 @@ else :
      
     LUC.DB.parameter_update('L0202',DV['기록일자']) 
     거래일자 = LUC.next_stock_day(DV['기록일자'])[0]
+
     if not float(DV['진입가격']) : LUC.DB.parameter_update('L0500',거래일자)
     
     if  not wait : 
@@ -63,10 +64,11 @@ else :
             LUC.DB.exe(qry)
             LUC.send_message(f"{today}일 매매일지 작성완료")
 
+            if not float(D['add20']) : LUC.DB.parameter_update('L0500',거래일자)
+
         else :
             LUC.send_message(f"{today}일 LUCKY 매매 대기중입니다")
 
-            
         if  DV['진행종료'] : 
             LUC.DB.parameter_update('L0200','0')
             LUC.DB.parameter_update('L0201','0')
