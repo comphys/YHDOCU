@@ -17,14 +17,15 @@ if  skip :
 
 else :
 
-    set = int(LUC.DB.parameter('L0200'))
+    wait = int(LUC.DB.parameter('L0200'))
     RSN.do_luckyLog(today)
     DV = RSN.get_luckyLog()
      
     LUC.DB.parameter_update('L0202',DV['기록일자']) 
     거래일자 = LUC.next_stock_day(DV['기록일자'])[0]
+    if not float(DV['진입가격']) : LUC.DB.parameter_update('L0500',거래일자)
     
-    if  not set : 
+    if  not wait : 
         
         if  DV['감시시작'] :
             LUC.DB.parameter_update('L0200',DV['기록시즌'])
@@ -34,8 +35,6 @@ else :
         else : 
             LUC.send_message(f"{today}일 LUCKY 모드 진행 대기")
         
-        LUC.DB.parameter_update('L0500',거래일자)
-    
     else :
 
         LUC.M['당일종가'] = DV['당일종가']
@@ -71,7 +70,7 @@ else :
         if  DV['진행종료'] : 
             LUC.DB.parameter_update('L0200','0')
             LUC.DB.parameter_update('L0201','0')
-            LUC.DB.parameter_update('L0500',거래일자)
+
 
         
     

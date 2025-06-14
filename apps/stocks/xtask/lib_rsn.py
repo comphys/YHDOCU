@@ -898,9 +898,14 @@ class update_Log :
         LD['매도예가'] = self.M['매도예가'] 
         
         if LD['진입가격'] >= LD['매도예가'] : LD['진입가격'] = LD['매도예가']-0.01
-        
+                
+        if  self.V['진행상황'] in ('익절매도','손절매도') :
+            LD['진행종료'] = True
+            LD['진입가격'] = "0.0"
+        else :
+            LD['진행종료'] = False
+
         LD['진입가격'] = f"{LD['진입가격']:.2f}"
-        LD['진행종료'] = True if self.V['진행상황'] in ('익절매도','손절매도') else False
 
         return LD
     
