@@ -82,7 +82,9 @@
 				<input role="switch" type="checkbox" name="chk_fee" {{ 'checked' if D['수료적용'] =='on' else '' }}>&nbsp;<span>fee</span>&nbsp;&nbsp;
 				<input role="switch" type="checkbox" name="chk_tax" {{ 'checked' if D['세금적용'] =='on' else '' }}>&nbsp;<span>Tax</span>&nbsp;&nbsp; 
 				<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on' else '' }}>&nbsp;<span>RST=</span>&nbsp;&nbsp; 
-				<input role="switch" type="checkbox" name="chk_rs_" {{ 'checked' if D['이밸런싱'] =='on' else '' }}>&nbsp;<span>RS>T</span>&nbsp;&nbsp; 
+				<input role="switch" type="checkbox" name="chk_rs_" {{ 'checked' if D['이밸런싱'] =='on' else '' }}>&nbsp;<span>RS>T</span>&nbsp;&nbsp;
+				<input role="switch" type="checkbox" name="chk_1yr" {{ 'checked' if D['일년단위'] =='on'  else '' }}>&nbsp;<span>1year</span>&nbsp;&nbsp;
+				over 100% profit : {{D['over100st']}} &nbsp;&nbsp; 
 				Max LP date : {{D['MaxDD']}}
 			</div>
 			<div class="pull-right" style="padding:10px 5px;margin-right:0px;height:42px;">

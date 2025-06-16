@@ -441,19 +441,26 @@ class RST :
             self.D['R_총매도수'] = asis_c; self.D['R_총익절수'] = asispc; self.D['R_총손절수'] = asisuc
             self.D['R_총익승률'] = f"{win_p:.2f}" ; self.D['R_익절평균'] = f"{asispm:.2f}"; self.D['R_손절평균'] = f"{asisum:.2f}"        
 
-    def get_start(self,b='') :
+    def get_start(self,s='',e='') :
 
         self.D['종목코드']  = 'SOXL'
-        if b : self.D['시작일자'] = b
-        old_date = my.dayofdate(self.D['시작일자'],-7)[0]
-        self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{self.D['종료일자']}'",'add0')
-        self.B = self.DB.get('add0,add3,add8') # 날자, 종가, 증감 
 
-        # 데이타 존재 여부 확인
-        self.DB.tbl, self.DB.wre = ("h_stockHistory_board",f"add1='{self.D['종목코드']}'")
-        chk_data = self.DB.get_one("min(add0)")
-        if  chk_data > self.D['시작일자'] : 
-            self.D['NOTICE'] = f" {self.D['시작일자']} 에서 {self.D['종료일자']} 까지 분석을 위한 데이타가 부족합니다. 시작 날자를 {chk_data} 이후 3일 뒤로 조정하시기 바랍니다."
+        if not s : s = self.D['시작일자']
+        if not e : e = self.D['종료일자']
+        
+        old_date = my.dayofdate(s,-7)[0]  
+        lst_date = self.DB.one("SELECT max(add0) FROM h_stockHistory_board") 
+        
+        if old_date < '2010-03-15' : old_date = '2010-03-15'; s = '2010-03-22'
+        
+        if e > lst_date : e = lst_date
+        if s > e : s = '2020-01-02'; e = lst_date
+        
+        self.D['시작일자'] = s
+        self.D['종료일자'] = e
+          
+        self.DB.tbl,self.DB.wre,self.DB.odr = ("h_stockHistory_board",f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{e}'","add0")
+        self.B = self.DB.get('add0,add3,add8,add9,add10') # 날자, 종가, 증감, 연상,연하 
 
     def increase_count(self,printOut=False) :
         
@@ -876,7 +883,7 @@ class RST :
 
         return sx
 
-    def do_viewStat(self) :
+    def do_viewStat(self,opt) :
 
         self.chart = False
         self.stat  = True
@@ -886,20 +893,37 @@ class RST :
         self.D['MaxDD'] = ''
         self.D['SR'] = []
         
+        last_day = self.DB.one("SELECT add0 FROM h_stockHistory_board ORDER BY add0 DESC LIMIT 1")
+        end = ''
+        
         for b in B :
-            self.get_start(b)
+            if opt == '1year' : 
+                year1 = my.dayofdate(b,365)[0]
+                if  year1 < last_day : 
+                    end = year1
+                else :
+                    end = '' 
+                    break
+            self.get_start(b,end)
             self.init_value()
             self.simulate()
             self.result()
             self.D['SR'].append(self.get_backDateStat())
             
-        self.D['SR'].pop()
+        if  self.D['SR'] : 
+            self.D['SR'].pop()
         
-        self.D['chart_dte'] = [x['시작일자'] for x in self.D['SR']]
-        self.D['chart_val'] = [my.sv(x['종수익률']) for x in self.D['SR']]
-        
-        self.D['chart_dte'].reverse()
-        self.D['chart_val'].reverse()
+            self.D['chart_dte'] = [x['시작일자'] for x in self.D['SR']]
+            self.D['chart_val'] = [my.sv(x['종수익률']) for x in self.D['SR']]
+            self.D['chart_dte'].reverse()
+            self.D['chart_val'].reverse()
+            
+            if  opt == '1year' :
+                self.D['over_100p'] = [x for x in self.D['chart_val'] if x > 100] 
+                totcnt = len(self.D['chart_val'])
+                cnt100 = len(self.D['over_100p'])
+                over_p = cnt100/totcnt*100
+                self.D['over100st'] = f"{cnt100} / {totcnt} ( {over_p:.1f}% )"
 
 # ------------------------------------------------------------------------------------
     def get_start_virtual(self) :

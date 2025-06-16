@@ -13,7 +13,7 @@ is_holiday = ck_holiday[0][0] if ck_holiday else ''
 skip = (weekd in ['토','일']) or is_holiday
 
 if  skip :
-    LUC.send_message(f"{today}일은 쉬는 날입니다")
+    pass
 
 else :
 

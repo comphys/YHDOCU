@@ -25,6 +25,7 @@ class M_rst_stat(Model) :
         self.D['이밸런싱'] = 'on'
         self.D['일반상황'] = 'off'
         self.D['가상손실'] = 'off'
+        self.D['일년단위'] = 'off'
 
         # 기간 설정(최근 2년간)
         # self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)
