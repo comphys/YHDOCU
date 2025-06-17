@@ -901,7 +901,7 @@ class update_Log :
                 
         if  self.V['진행상황'] in ('익절매도','손절매도') :
             LD['진행종료'] = True
-            LD['진입가격'] = "0.0"
+            LD['진입가격'] = 0.0
         else :
             LD['진행종료'] = False
 
