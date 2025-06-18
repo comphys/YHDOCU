@@ -3,7 +3,6 @@ from lib_rsn   import update_Log
 from lib_lucky import update_lucky
 
 today = my.kor_loc_date('US/Eastern')[0:10]
-print(today)
 weekd = my.dayofdate(today)
 RSN = update_Log()
 LUC = update_lucky()

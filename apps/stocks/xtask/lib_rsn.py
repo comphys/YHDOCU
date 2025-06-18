@@ -886,7 +886,7 @@ class update_Log :
         LD['기록시즌'] = self.M['기록시즌']
         LD['기록날수'] = self.M['현재날수']-1
         
-        LD['감시시작'] = True if self.V['현수익률'] < - SL['L0022'] else False # S전략 평균단가
+        LD['감시시작'] = True if self.V['현수익률'] < SL['L0022'] else False # S전략 평균단가
         LD['진입가격'] = 0.0 
         
         if  LD['감시시작'] :
