@@ -192,7 +192,7 @@ h1 {line-height:30px}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 .navbar {min-height:40px;padding-right:20px;padding-left:20px;background-color:#363636;
 	background-image: linear-gradient(to bottom, #222222, #0b0f1c); 
-	border: 1px solid #030303; border-bottom:1px dotted #ff0000;border-radius: 4px;box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);}
+	border-top: 1px solid #030303; border-bottom:1px dotted #ff0000; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);}
 .navbar-fixed-top {position:fixed; top:0; left:0; width:100%; z-index:10; }
 .navbar-inner { width:940px; margin-left:20px; margin-right:auto; }
 .navbar .brand { display: block; float: left; padding: 8px 20px 10px 5px; margin-left: -20px; font-size: 20px; text-shadow: 0 1px 0 #000000;}
