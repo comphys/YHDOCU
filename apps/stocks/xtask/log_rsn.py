@@ -33,11 +33,16 @@ else :
     LD['add4']  = DV['add20']           # 종가 변동
     LD['add5']  = DV['sub5']            # 추이
     LD['add6']  = my.sv(DR['add9'],'i') + my.sv(DS['add9'],'i') + my.sv(DN['add9'],'i')       # 보유수량   
-    LD['add7']  = my.sv(DR['add6']) + my.sv(DS['add6']) + my.sv(DN['add6'])  # 총매수금
+    LD['add7']  = my.sv(DR['add6']) + my.sv(DS['add6']) + my.sv(DN['add6'])  # 현재 총매수금
     LD['add8']  = round(LD['add7']/LD['add6'],4) if LD['add6'] else 0 # 평균단가
     LD['add9']  = round(LD['add3']*LD['add6'],2) # 평가금액
     LD['add10'] = my.sv(DR['add18']) + my.sv(DS['add18']) + my.sv(DN['add18'])  # 현재수익
-    LD['add11'] = round(LD['add10'] / LD['add7'] * 100,2) if LD['add7'] else 0 # 현수익률
+    
+    if  LD['add6'] :
+        LD['add11'] = round((LD['add3'] / LD['add8'] -1) * 100,2) if LD['add8'] else 0 # 현수익률 진행중일 때
+    else :
+        LD['add11'] = round(LD['add10'] / LD['add7'] * 100,2) if LD['add7'] else 0 # 현수익률 전체매도시
+
     
     # 전체 금액에 대한 수익률이 아닌 매수금액 대비 수익률임 
     if  DV['sub29'] in ('익절매도','손절매도') : 
