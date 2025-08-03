@@ -68,10 +68,9 @@ class RSN :
         self.calculate_A(self.N) 
         self.calculate_A(self.R)
         self.calculate_A(self.S)
-        self.rstCount() # self.M['기본진행] 값을 재설정하기 전에 수행되어야 함
 
         if  self.V['매도수량'] :
-                    
+            self.rstCount() # self.M['기본진행] 값을 재설정하기 전에 수행되어야 함        
             self.N['매도금액'] = self.N['중도합계']
             self.N['수익현황'] = self.N['중익합계']
             self.N['현수익률'] = self.N['실현익률']
