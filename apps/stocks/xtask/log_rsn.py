@@ -3,6 +3,7 @@ from lib_rsn import update_Log
 
 
 today = my.kor_loc_date('US/Eastern')[0:10]
+today = "2025-08-13"
 weekd = my.dayofdate(today)
 RSN = update_Log()
 
@@ -38,17 +39,15 @@ else :
     LD['add9']  = round(LD['add3']*LD['add6'],2) # 평가금액
     LD['add10'] = my.sv(DR['add18']) + my.sv(DS['add18']) + my.sv(DN['add18'])  # 현재수익
     
-    if  LD['add6'] :
-        LD['add11'] = round((LD['add3'] / LD['add8'] -1) * 100,2) if LD['add8'] else 0 # 현수익률 진행중일 때
-    else :
-        LD['add11'] = round(LD['add10'] / LD['add7'] * 100,2) if LD['add7'] else 0 # 현수익률 전체매도시
-
     
     # 전체 금액에 대한 수익률이 아닌 매수금액 대비 수익률임 
     if  DV['sub29'] in ('익절매도','손절매도') : 
-        매도금합 = my.sv(DR['add12']) + my.sv(DS['add12']) + my.sv(DN['add12'])
-        매수금합 = RSN.DB.one(f"SELECT CAST(add7 as float) FROM h_rsnLog_board WHERE add0 < '{today}' ORDER BY add0 DESC LIMIT 1")
-        LD['add11'] = round((매도금합/매수금합-1) * 100,2)        
+        LD['add10'] = my.sv(RSN.D['손익통계'][-1][2])
+        LD['add11'] = my.sv(RSN.D['손익통계'][-1][3])
+
+    else :
+        LD['add11'] = round((LD['add3'] / LD['add8'] -1) * 100,2) if LD['add8'] else 0 # 현수익률 진행중일 때
+    
 
     LD['add12'] = my.sv(DR['add3']) + my.sv(DS['add3']) + my.sv(DN['add3'])  # 현재잔액
     LD['add13'] = my.sv(DR['add12']) + my.sv(DS['add12']) + my.sv(DN['add12'])  # 총매도금

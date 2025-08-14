@@ -73,7 +73,7 @@ class update_Log :
         self.calculate_A(self.N) 
         self.calculate_A(self.R)
         self.calculate_A(self.S)
-       
+
         if  self.V['매도수량'] :
             self.rstCount() # self.M['기본진행] 값을 재설정하기 전에 수행되어야 함        
             self.N['매도금액'] = self.N['중도합계']
@@ -846,6 +846,7 @@ class update_Log :
         self.D['이밸런싱'] = 'on' 
         self.D['가상손실'] = 'on' if mode_ == '전략진행' else 'off'
         
+        self.stat = True
         self.get_simResult(sdate,logDay)
     
 #   -------------------------------------------------------------------------------------
