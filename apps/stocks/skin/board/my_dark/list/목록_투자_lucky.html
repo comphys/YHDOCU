@@ -26,18 +26,18 @@
 			{% if D['진행시작'] %}
 			<table class="table" style="text-align:right;width:324px;margin-top:10px">
 				<tr style="font-style:italic;border-bottom:1px solid gray;text-align:right;color:gray;">
-					<td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppa</td><td>ppl</td></tr>
+					<td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppl</td><td>ppa</td></tr>
 
 				{% if D['매수대기'] %}
 				<tr style="border-top:1px solid gray;text-align:right;color:#ffc4c4;">
 					<td style="text-align:left;">L <span style="color:gray">buy</span></td><td>{{D['진입단가']}}</td><td>{{D['진입수량']}}</td>
-					<td style="color:gray">{{D['매수평비']}}</td><td style="color:gray">{{D['매수종비']}}</td>
+					<td style="color:gray">{{D['매수종비']}}</td><td style="color:gray">{{D['매수평비']}}</td>
 				</tr>
 				{% endif %}
 				{% if D['매도대기'] %}
 				<tr style="border-top:1px solid gray;text-align:right;color:#c1e0ff;">
 					<td style="text-align:left;">L <span style="color:gray">sell</span></td><td>{{D['목표단가']}}</td><td>{{D['보유수량']}}</td>
-					<td style="color:gray">{{D['매도평비']}}</td><td style="color:gray">{{D['매도종비']}}</td>
+					<td style="color:gray">{{D['매도종비']}}</td><td style="color:gray">{{D['매도평비']}}</td>
 				</tr>
 				{% endif %}
 

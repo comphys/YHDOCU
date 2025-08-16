@@ -22,36 +22,36 @@
 		{% endif %}
 			<span style="font-style: italic;"><span style="color:gray">Strategy for </span><b>{{D['다음날자']}} ({{D['다음요일']}})</b></span>
 			<table class="table" style="text-align:right;width:324px;margin-top:10px">
-				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppa</td><td>ppl&nbsp;</td></tr>
+				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppl</td><td>ppa&nbsp;</td></tr>
 				{% if D['N_기회매수량'] %}
 				<tr><td style="text-align:left;">R <span style="color:gray">buy</span></td><td>{{D['N_기회매수가']}}</td><td>{{D['N_기회매수량']}}</td>
-					<td style="color:gray">{{D['N_기회평대비']}}</td><td style="color:gray">{{D['N_기회종대비']}}</td>
+					<td style="color:gray">{{D['N_기회종대비']}}</td><td style="color:gray">{{D['N_기회평대비']}}</td>
 				</tr>
 				{% endif %}
 				{% if D['N_안정매수량'] %}
 				<tr><td style="text-align:left;">S <span style="color:gray">buy</span></td><td>{{D['N_안정매수가']}}</td><td>{{D['N_안정매수량']}}</td>
-					<td style="color:gray">{{D['N_안정평대비']}}</td><td style="color:gray">{{D['N_안정종대비']}}</td>
+					<td style="color:gray">{{D['N_안정종대비']}}</td><td style="color:gray">{{D['N_안정평대비']}}</td>
 				</tr>
 				{% endif %}
 				{% if D['N_생활매수량'] %}
 				<tr><td style="text-align:left;">N <span style="color:gray">buy</span></td><td>{{D['N_생활매수가']}}</td><td>{{D['N_생활매수량']}}</td>
-					<td style="color:gray">{{D['N_생활평대비']}}</td><td style="color:gray">{{D['N_생활종대비']}}</td>
+					<td style="color:gray">{{D['N_생활종대비']}}</td><td style="color:gray">{{D['N_생활평대비']}}</td>
 				</tr>
 				{% endif %}
 				{% if D['N_기회매도량'] %}
 				<tr style="border-top:1px solid gray"><td style="text-align:left;">R <span style="color:gray">sell</span></td>
 					<td>{{D['N_기회매도가']}}</td><td>{{D['N_기회매도량']}}</td>
-					<td style="color:gray">{{D['N_기회도평비']}}</td><td style="color:gray">{{D['N_기회도종비']}}</td>
+					<td style="color:gray">{{D['N_기회도종비']}}</td><td style="color:gray">{{D['N_기회도평비']}}</td>
 				</tr>
 				{% endif %}
 				{% if D['N_안정매도량'] %}
 				<tr><td style="text-align:left;">S <span style="color:gray">sell</span></td><td>{{D['N_안정매도가']}}</td><td>{{D['N_안정매도량']}}</td>
-					<td style="color:gray">{{D['N_안정도평비']}}</td><td style="color:gray">{{D['N_안정도종비']}}</td>
+					<td style="color:gray">{{D['N_안정도종비']}}</td><td style="color:gray">{{D['N_안정도평비']}}</td>
 				</tr>
 				{% endif %}
 				{% if D['N_생활매도량'] %}
 				<tr><td style="text-align:left;">N <span style="color:gray">sell</span></td><td>{{D['N_생활매도가']}}</td><td>{{D['N_생활매도량']}}</td>
-					<td style="color:gray">{{D['N_생활도평비']}}</td><td style="color:gray">{{D['N_생활도종비']}}</td>
+					<td style="color:gray">{{D['N_생활도종비']}}</td><td style="color:gray">{{D['N_생활도평비']}}</td>
 				</tr>
 				{% endif %}
 			</table>
