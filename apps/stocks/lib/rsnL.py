@@ -74,10 +74,10 @@ class RSNL :
         self.calculate_A(self.R)
         self.calculate_A(self.S)
         self.calculate_A(self.L)
-        self.rstCount() # self.M['기본진행] 값을 재설정하기 전에 수행되어야 함
+        
 
         if  self.V['매도수량'] :
-                    
+            self.rstCount() # self.M['기본진행] 값을 재설정하기 전에 수행되어야 함      
             self.N['매도금액'] = self.N['중도합계']
             self.N['수익현황'] = self.N['중익합계']
             self.N['현수익률'] = self.N['실현익률']
@@ -114,7 +114,7 @@ class RSNL :
     def rstCount(self) :
         
         if not self.stat : return
-        for profit,key in [(self.V['중익합계'],'일'),(self.R['중익합계'],'기'),(self.S['중익합계'],'안'),(self.N['중익합계'],'생')] :
+        for profit,key in [(self.V['중익합계'],'일'),(self.R['중익합계'],'기'),(self.S['중익합계'],'안'),(self.N['중익합계'],'생'),(self.L['중익합계'],'행')] :
             if  profit > 0  : 
                 if self.M['기본진행'] : self.D[key+'정익절'] += 1
                 else : self.D[key+'회익절'] += 1  
@@ -732,10 +732,10 @@ class RSNL :
         if  self.stat :
 
             self.D['totalV'] = []
-            self.D['일정익절'] = 0; self.D['기정익절'] = 0; self.D['안정익절'] = 0; self.D['생정익절'] = 0
-            self.D['일정손절'] = 0; self.D['기정손절'] = 0; self.D['안정손절'] = 0; self.D['생정손절'] = 0
-            self.D['일회익절'] = 0; self.D['기회익절'] = 0; self.D['안회익절'] = 0; self.D['생회익절'] = 0
-            self.D['일회손절'] = 0; self.D['기회손절'] = 0; self.D['안회손절'] = 0; self.D['생회손절'] = 0
+            self.D['일정익절'] = 0; self.D['기정익절'] = 0; self.D['안정익절'] = 0; self.D['생정익절'] = 0; self.D['행정익절'] = 0
+            self.D['일정손절'] = 0; self.D['기정손절'] = 0; self.D['안정손절'] = 0; self.D['생정손절'] = 0; self.D['행정손절'] = 0
+            self.D['일회익절'] = 0; self.D['기회익절'] = 0; self.D['안회익절'] = 0; self.D['생회익절'] = 0; self.D['행회익절'] = 0
+            self.D['일회손절'] = 0; self.D['기회손절'] = 0; self.D['안회손절'] = 0; self.D['생회손절'] = 0; self.D['행회손절'] = 0
 
             self.D['손익통계'] = [[self.D['시작일자'],f"{self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE",'','0.00']]
             self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
@@ -991,6 +991,7 @@ class RSNL :
         sx['기회갯수'] = f"{self.D['기정익절']}-{self.D['기정손절']} : {self.D['기회익절']}-{self.D['기회손절']}"
         sx['안정갯수'] = f"{self.D['안정익절']}-{self.D['안정손절']} : {self.D['안회익절']}-{self.D['안회손절']}"
         sx['생활갯수'] = f"{self.D['생정익절']}-{self.D['생정손절']} : {self.D['생회익절']}-{self.D['생회손절']}"
+        sx['행복갯수'] = f"{self.D['행정익절']}-{self.D['행정손절']} : {self.D['행회익절']}-{self.D['행회손절']}"
 
         return sx
 
