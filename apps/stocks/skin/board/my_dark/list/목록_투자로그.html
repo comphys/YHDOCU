@@ -100,7 +100,7 @@
 			</div>
 			{% endfor -%}
 		</form>
-	</div>
+	</div> 
 </div>
 
 <div class="row-row clearfix"> 
@@ -310,7 +310,7 @@
 				<td>패 {{D['수익통계'][5]}} %</td>
 				<td>평균 {{D['수익통계'][7]}} %</td>
 			</tr>
-		<tr style="text-align:right;background-color:black;"><th style="text-align:center;">날자</th><th>잔액합계</th><th>실현수익</th><th>수익(%)</th><th>누적수익</th><th>누적(%)</th></tr>
+		<tr style="text-align:right;background-color:black;"><th style="text-align:center;">Date</th><th>Balance</th><th>Profit</th><th>ROB(%)</th><th>A_Profit</th><th>A_ROB(%)</th></tr>
 			{%- for tr in D['수익연혁'] -%}
 			{% if tr[6]|striptags == '초기셋팅' %}
 			<tr style="background-color:black;text-align:right;"> 

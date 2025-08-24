@@ -17,7 +17,7 @@ class 목록_투자로그(SKIN) :
         THX['add0']  = f"<th style='border-top-left-radius:0;text-align:center'>날자</th>"
         THX['add14'] = f"<th style='border-top-right-radius:0;text-align:right'>자산합계</th>"
         self.D['head_td'] = THX 
-
+ 
 
     def next_percent(self,a,b) :
         
@@ -99,6 +99,7 @@ class 목록_투자로그(SKIN) :
             self.D['주문럭키'] =  self.DB.parameter('L0500')
             
             # 통계 자료 가져오기
+            # add12(현재잔액), add10(현재수익), rsn_21(초기금액), add17(카테고리)
             temp = self.DB.exe(f"SELECT add0,CAST(add12 as float),CAST(add10 as float),CAST(r_21+s_21+n_21 as float),add17 FROM {self.D['tbl']} WHERE add17 in ('초기셋팅','수익실현') ORDER BY add0")
             l_b = b_b = cntW =  cntL = accWp = accLp = 0.0
             self.D['수익연혁'] = []
@@ -106,6 +107,8 @@ class 목록_투자로그(SKIN) :
             for dte,bal,pro,ini,cat in temp :
                 if  cat == '초기셋팅' : 
                     l_b = b_b = ini 
+                    cntW =  cntL = accWp = accLp = 0.0
+                    ini_date = dte
                     self.D['수익연혁'].append([dte[2:],f"{ini:,.2f}",'0.00','0.00','0.00','0.00',cat])
                 else :
                     l_p = (bal/l_b - 1)*100   
@@ -120,7 +123,7 @@ class 목록_투자로그(SKIN) :
             cntA = cntW + cntL
             accWp = accWp/cntW if cntW else 0.00
             accLp = accLp/cntL if cntL else 0.00
-            dspan = my.diff_day('20'+self.D['수익연혁'][0][0],'20'+self.D['수익연혁'][-1][0])
+            dspan = my.diff_day(ini_date,'20'+self.D['수익연혁'][-1][0])
             self.D['수익통계'] = [f"{dspan:,}",f"{cntA:,.0f}",f"{cntW:,.0f}",f"{cntL:,.0f}",f"{cntW/cntA*100:,.1f}",f"{cntL/cntA*100:,.1f}",f"{accWp:,.2f}",f"{accLp:,.2f}"]
             self.D['수익연혁'].reverse()
             
