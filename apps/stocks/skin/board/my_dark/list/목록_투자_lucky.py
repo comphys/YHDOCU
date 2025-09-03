@@ -75,6 +75,10 @@ class 목록_투자_lucky(SKIN) :
         self.D['다음날자'],self.D['다음요일'] = self.next_stock_day(last_date)
         self.D['진행시작'] = False
         self.D['주문확인'] = ST['L0500']
+
+        self.D['주문메인'] =  self.DB.parameter('TX070')
+        self.D['주문생활'] =  self.DB.parameter('N0710')
+
         
         if  int(ST['L0200']) :  # 진행중인 시즌 정보를 불러옴, '0'인 경우 진행중이지 않음
 

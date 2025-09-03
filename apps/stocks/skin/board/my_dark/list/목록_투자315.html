@@ -15,11 +15,11 @@
 	</div>
 	<div style="position:absolute;left:1164px;top:60px;">
 	<!-- 우측 정보창( Next Strategy )-->
-			{% if D['다음날자'] == D['주문확인'] %}
-			<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:2px solid black;padding:10px" ondblclick="$('#profit-history').show()">
-			{% else %}
-			<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:4px solid rgba(243, 151, 108, 0.7);padding:10px">	
-			{% endif %}
+		{% if D['다음날자'] == D['주문확인'] %}
+		<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:2px solid black;padding:10px" ondblclick="$('#profit-history').show()">
+		{% else %}
+		<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:4px solid rgba(243, 151, 108, 0.7);padding:10px">	
+		{% endif %}
 			<span style="font-style: italic;"><span style="color:gray">Strategy for </span><b>{{D['다음날자']}} ({{D['다음요일']}})</b></span>&nbsp;
 			<span style="font-style: italic;color:gray">from {{D['현재날자']}}</span><br>
 
@@ -36,11 +36,24 @@
 				</tr>
 				{% endif %}
 			</table>
+		
 			{% if D['예정수량'] %}
 			<div style="margin-top:20px;width:100%;text-align:center;">
 				<span style="font-style: italic;color:gray">b qty = int( <b>{{D['배분금액']}}</b> / {{D['예정매가']}} ), The falling trend is {{D['현재연속']}}</span><br>
 			</div>
 			{% endif %}
+		
+			{% if D['다음날자'] != D['주문메인'] %}
+			<div style="padding-top:20px;padding-left:10px;font-style:italic;color:gray;">
+				Please Check the <a href="/stocks/board/list/rsnLog" style='color:white'>RSN</a> tactic
+			</div>
+			{% endif %}
+			{% if D['다음날자'] != D['주문럭키'] %}
+			<div style="padding:10px;font-style:italic;color:gray;">
+				Please Check the <a href="/stocks/board/list/log_lucky" style='color:white'>LUCKY</a> tactic
+			</div>
+			{% endif %}
+
 		</div>
 	</div>
 </div>

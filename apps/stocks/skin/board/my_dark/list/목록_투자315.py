@@ -101,6 +101,8 @@ class 목록_투자315(SKIN) :
             
             # 기타 정보 가져오기
             self.D['주문확인'] =  self.DB.parameter('N0710')
+            self.D['주문메인'] =  self.DB.parameter('TX070')
+            self.D['주문럭키'] =  self.DB.parameter('L0500')
 
             # 통계 자료 가져오기
             # add5(현재잔액), add14(현재수익), add19(초기금액), add20(카테고리)
