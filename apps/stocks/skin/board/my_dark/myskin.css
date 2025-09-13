@@ -199,3 +199,5 @@
 #profit-history {display:none;position:absolute;left:978px;top:60px;width:540px;height:350px;border:1px solid black;background-color:#24272d;opacity:0.9;z-index:10;overflow-y:scroll;}
 #daily-check {display:inline-block;width:100px;padding:1px 10px;text-align:center;line-height:16px;}
 .daily-check-on {box-shadow:1px 1px 20px gray;color:white;}
+
+.q-addvalue {font-weight:bold;color:black;background-color: white;}
