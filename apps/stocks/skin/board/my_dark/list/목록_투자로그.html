@@ -21,7 +21,7 @@
 		<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:4px solid rgba(243, 151, 108, 0.7);padding:10px">	
 		{% endif %}
 			<span style="font-style: italic;"><span style="color:gray">Strategy for </span><b>{{D['다음날자']}} ({{D['다음요일']}})</b></span>&nbsp;&nbsp;
-			<span id="qty-bcnt" class="list-bull" style="font-weight:bold"></span>&nbsp;&nbsp;<span id="qty-scnt" class="list-bear" style="font-weight:bold"></span>
+			<span id="qty-bcnt" class="list-bull-cnt"></span>&nbsp;&nbsp;<span id="qty-scnt" class="list-bear-cnt"></span>
 			<table class="table" style="text-align:right;width:324px;margin-top:10px">
 				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppl&nbsp;</td><td>ppa&nbsp;</td></tr>
 				{% if D['N_기회매수량'] %}
@@ -495,9 +495,11 @@ $("[data-bcnt]").click(function()
 	
 		if(b_swt == 'off') {
 			$(this).addClass("q-addvalue").data("bcnt","on");
+			$(this).prev().addClass("list-bull-cnt");
 			b_sum = Number(b_sum) + Number(b_val);
 		} else {
 			$(this).removeClass("q-addvalue").data("bcnt","off");
+			$(this).prev().removeClass("list-bull-cnt");
 			b_sum = Number(b_sum) - Number(b_val);
 		}
 		if(b_sum) {
@@ -515,9 +517,11 @@ $("[data-scnt]").click(function()
 	
 		if(s_swt == 'off') {
 			$(this).addClass("q-addvalue").data("scnt","on");
+			$(this).prev().addClass("list-bear-cnt");
 			s_sum = Number(s_sum) + Number(s_val);
 		} else {
 			$(this).removeClass("q-addvalue").data("scnt","off");
+			$(this).prev().removeClass("list-bear-cnt");
 			s_sum = Number(s_sum) - Number(s_val);
 		}
 		if(s_sum) {

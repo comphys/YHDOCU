@@ -20,7 +20,9 @@
 .list-name { text-align:center; color:#8DD1FF; }
 .list-hit  { text-align:center; color:gray;}
 .list-bull {text-align:right; color:#ffc4c4}
+.list-bull-cnt {text-align:right; color:#ffc4c4;font-weight:bold;}
 .list-bear {text-align:right; color:#c1e0ff}
+.list-bear-cnt {text-align:right; color:#c1e0ff;font-weight:bold;}
 .list-bulls,.list-bulls2 {text-align:right; font-weight:bold; color:#ffc4c4}
 .list-bears,.list-bears2 {text-align:right; font-weight:bold; color:#c1e0ff}
 .list-bulls2,.list-bears2 {cursor:pointer}
