@@ -187,7 +187,7 @@ class update_Log315 :
             self.M['당일연속'] = int(BD['add10']) 
             self.M['전일종가'] = float(self.B[idx-1]['add3'])  
             self.M['진행상황'] = ''
-            self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률'],0)
+            self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','수수료등'],0)
             
             # BD의 기록은 시작일자 보다 전의 데이타(종가기록 등)에서 시작하고, 당일종가가 전일에 비해 설정값 이상으로 상승 시 건너뛰기 위함
             if  idx == idxx + 1 or self.M['첫날기록'] : 
@@ -402,7 +402,7 @@ class update_Log315 :
 
     def do_tacticLog(self,start,end,ini_money) :
         self.chart = False
-        self.stat  = False
+        self.stat  = True
         self.D['시작일자'] = start
         self.D['종료일자'] = end
         self.D['일반자금'] = ini_money
@@ -429,12 +429,17 @@ class update_Log315 :
         D['add12']  = f"{self.M['평가금액']:.2f}" # 평가금액
         D['add13']  = f"{self.M['매도금액']:.2f}" # 매도금액
         D['add14']  = f"{self.M['수익현황']:.2f}" # 수익현황
-        D['add15']  = f"{self.M['현수익률']:.2f}" # 현수익률
+        if  self.M['매도금액'] :  
+            D['add15'] = my.sv(self.D['손익통계'][-1][3])
+        else :        
+            D['add15']  = f"{self.M['현수익률']:.2f}" # 현수익률
         D['add16']  = f"{self.M['현재잔액'] + self.M['평가금액']:.2f}" # 가치합계
         D['add17']  = f"{self.M['매금단계'][self.M['매수차수']]:.0f}"  # 배분금액
         D['add18']  = self.D['시작일자'] # 초기일자
         D['add19']  = self.D['일반자금'] # 초기금액
         D['add20']  = '수익실현' if self.M['매도금액'] else '일반진행' # 초기금액
         D['add21']  = f"{self.M['수수료등']:.2f}" # 수수료등
+
         return D
+    
     

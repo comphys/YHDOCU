@@ -35,5 +35,4 @@ else :
         
     else :
         N315.send_message(f"{today}일 N315 변동사항 없음")
-    
-       
+         
