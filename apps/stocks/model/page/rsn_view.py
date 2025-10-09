@@ -19,7 +19,7 @@ class M_rsn_view(Model) :
         self.D['안정시점'] = self.DB.parameter('TS021')
         self.D['안정회복'] = self.DB.parameter('TS022')
 
-        self.D['수료적용'] = 'on'
+        self.D['수료적용'] = 'off'
         self.D['세금적용'] = 'off'
         self.D['일밸런싱'] = 'on'
         self.D['이밸런싱'] = 'on'

@@ -98,7 +98,7 @@ class Balance_ajax(Control) :
 
         # 파라미터 업데이트
         self.DB.parameter_update('TX050',d_ch)
-        self.DB.parameter_update('TX051',LD['add12'])
+        self.DB.parameter_update('TX051',f"{LD['add12']:,.2f}")
         
         self.msg = "RSN 에 대한 투자금액 변경작업이 정상적으로 변경되었습니다."
 

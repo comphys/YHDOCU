@@ -840,7 +840,7 @@ class update_Log :
         self.D['안정시점'] = f"{self.DB.parameter('TS021'):.1f}"
         self.D['안정회복'] = f"{self.DB.parameter('TS022'):.1f}"      
         
-        self.D['수료적용'] = 'on' 
+        self.D['수료적용'] = 'off' 
         self.D['세금적용'] = 'off' 
         self.D['일밸런싱'] = 'on' 
         self.D['이밸런싱'] = 'on' 
