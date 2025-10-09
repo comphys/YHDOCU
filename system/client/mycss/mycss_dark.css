@@ -23,6 +23,12 @@ select  { background-color:#202020; color:white;margin:0; height:27px; line-heig
 select:focus { outline:none; }
 option { padding:2px 6px; }
 h1 {line-height:30px}
+
+[type="radio"] {  appearance: none;  border: max(2px, 0.1em) solid gray;  border-radius: 50%;  width: 1.25em;  height: 1.25em;  transition: border 0.2s ease-in-out;}
+[type="radio"]:checked {  border: 0.4em solid tomato; }
+[type="radio"]:focus-visible {  outline-offset: max(2px, 0.1em);  outline: max(2px, 0.1em) dotted tomato;}
+[type="radio"]:hover {  box-shadow: 0 0 0 max(2px, 0.1em) lightgray;  cursor: pointer;}
+
 /*/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 * 클래스 설정
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
