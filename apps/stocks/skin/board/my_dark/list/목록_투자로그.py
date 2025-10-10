@@ -121,10 +121,12 @@ class 목록_투자로그(SKIN) :
                     else : cntL += 1; accLp += l_p
             
             cntA = cntW + cntL
+            winCp = cntW/cntA*100 if cntA else 0.00
+            LosCp = cntL/cntA*100 if cntA else 0.00
             accWp = accWp/cntW if cntW else 0.00
             accLp = accLp/cntL if cntL else 0.00
             dspan = my.diff_day(ini_date,'20'+self.D['수익연혁'][-1][0])
-            self.D['수익통계'] = [f"{dspan:,}",f"{cntA:,.0f}",f"{cntW:,.0f}",f"{cntL:,.0f}",f"{cntW/cntA*100:,.1f}",f"{cntL/cntA*100:,.1f}",f"{accWp:,.2f}",f"{accLp:,.2f}"]
+            self.D['수익통계'] = [f"{dspan:,}",f"{cntA:,.0f}",f"{cntW:,.0f}",f"{cntL:,.0f}",f"{winCp:,.1f}",f"{LosCp:,.1f}",f"{accWp:,.2f}",f"{accLp:,.2f}"]
             self.D['수익연혁'].reverse()
             
             # 월별 실현손익
