@@ -38,16 +38,15 @@ else :
     LD['add9']  = round(LD['add3']*LD['add6'],2) # 평가금액
     LD['add10'] = my.sv(DR['add18']) + my.sv(DS['add18']) + my.sv(DN['add18'])  # 현재수익
     
-    
+    if  LD['add2']  == 1 :
+        new_season  = int(my.sv(LD['add1'],'i')) + 1
+        LD['add1']  = str(new_season)    
+
+
     # 전체 매도 시 전시즌 대비 수익률
     if  DV['sub29'] in ('익절매도','손절매도') : 
         LD['add10'] = my.sv(RSN.D['손익통계'][-1][2])
         LD['add11'] = my.sv(RSN.D['손익통계'][-1][3])
-
-    if  LD['add2']  == '1' :
-        new_season  = int(my.sv(LD['add1'],'i')) + 1
-        LD['add1']  = str(new_season)
-
     else :
         LD['add11'] = round((LD['add3'] / LD['add8'] -1) * 100,2) if LD['add8'] else 0 # 현수익률 진행중일 때
     
@@ -69,7 +68,8 @@ else :
     LD['add14'] = f"{LD['add14']:.2f}"
     
     for (tac,key) in [(DV,'v'),(DR,'r'),(DS,'s'),(DN,'n')] :         
-        LD[key+'_01']  = tac['sub6'] if 카테고리 == '초기셋팅' else '0.00' # 입금
+        # LD[key+'_01']  = tac['sub6'] if 카테고리 == '초기셋팅' else '0.00' # 입금
+        LD[key+'_01']  = '0.00'
         LD[key+'_02']  = '0.00' # 출금
         LD[key+'_03']  = tac['add3']    # 잔액
         LD[key+'_04']  = tac['add11']   # 매수금
