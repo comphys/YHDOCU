@@ -77,9 +77,11 @@ class 목록_투자315(SKIN) :
             self.D['Ntactic_avg'] = [ax[x] if x in ax else 'null' for x in self.D['chart_date']]    
                 
             # 다음 날 주문정보 갖고오기
-            ini_data   = self.DB.oneline(f"SELECT add18,add19 FROM {self.D['tbl']}")
+            ini_data   = self.DB.oneline(f"SELECT add18,add19 FROM {self.D['tbl']} ORDER BY add0 DESC LIMIT 1")
             ini_date = ini_data[0]
             ini_capital = f"{float(ini_data[1]):,.2f}"
+
+            self.info(ini_data)
             
             T315 = self.SYS.load_app_lib('n315')
             NS = T315.get_nextStrategy(ini_date,last_date,ini_capital)

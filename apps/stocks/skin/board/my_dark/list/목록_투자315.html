@@ -105,6 +105,8 @@
 			{%- for TR in D['TR'] -%}
 			{% if TR['add6']|striptags == '익절매도' or TR['add6']|striptags == '손절매도' %}
 			<tr style="background-color:black;"> 
+			{% elif TR['add1']|striptags == '1' and TR['add2']|striptags == '1' %}
+			<tr style="background-color:darkslategray">
 			{% else %}
 			<tr> 
 			{% endif %}

@@ -106,7 +106,37 @@ class Balance_ajax(Control) :
     def n315(self,m_in,m_ex,m_nw,d_ch) :
 
         LD = self.DB.last_record('h_log315_board')
-        self.info(LD)
+
+        if  LD['add20'] != '수익실현' : 
+            self.msg = '현재 시즌 진행 중입니다. 시즌 종료 후 작업하시기 바랍니다.'
+            return
+        
+        if  LD['add0'] >= d_ch :
+            self.msg = '새로운 시작 날자는 최종 진행 날자 이후여야 합니다. 날자를 재 지정 하시기 바랍니다.'
+            return  
+        
+        # 잔액 및 가치합계 재 설정
+        o_mon = my.sv(LD['add5'])
+        if my.sv(m_in) : n_mon = o_mon + my.sv(m_in)
+        if my.sv(m_ex) : n_mon = o_mon - my.sv(m_ex)
+        if my.sv(m_nw) : n_mon  = my.sv(m_nw)
+
+        LD['add18'] = d_ch
+        LD['add19'] = f"{n_mon:.2f}"
+        LD['content'] = f"투자금액 변경 (기존) {o_mon:,.2f} > (변경) {n_mon:,.2f}, (변경시작일) {d_ch}" 
+        
+        # 새로운 데이타 
+        del(LD['no']); del(LD['brother']); del(LD['tle_color']); del(LD['reply']); del(LD['hit'])
+        LD['wdate'] = LD['mdate'] = my.now_timestamp()
+        qry=self.DB.qry_insert('h_log315_board',LD)
+        self.DB.exe(qry)
+
+        # 파라미터 업데이트
+        self.DB.parameter_update('N0701',d_ch)
+        self.DB.parameter_update('N0702',f"{n_mon:,.2f}")
+
+        self.msg = "N315 에 대한 투자금액 변경에 대한 파라미터가 정상적으로 변경되었습니다."
+
     
     def lucky(self,m_in,m_ex,m_nw,d_ch) :
 

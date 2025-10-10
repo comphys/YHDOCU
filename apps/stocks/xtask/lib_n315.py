@@ -406,6 +406,8 @@ class update_Log315 :
         self.D['시작일자'] = start
         self.D['종료일자'] = end
         self.D['일반자금'] = ini_money
+        self.D['수료적용'] = 'off' 
+        self.D['세금적용'] = 'off'
         self.get_start()
         self.init_value()
         self.simulate(printOut=False)

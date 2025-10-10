@@ -10,7 +10,7 @@ class M_N315Chart(Model) :
         self.D['전략선택'] = 'N315'
         self.D['일반자금'] = f"{my.sv(self.DB.parameter('N0702')):,.2f}"
  
-        self.D['수료적용'] = 'on'
+        self.D['수료적용'] = 'off'
         self.D['세금적용'] = 'off'
 
         # 기간 설정(최근 2년간)
