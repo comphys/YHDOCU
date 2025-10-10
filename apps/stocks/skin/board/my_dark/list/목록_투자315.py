@@ -81,8 +81,6 @@ class 목록_투자315(SKIN) :
             ini_date = ini_data[0]
             ini_capital = f"{float(ini_data[1]):,.2f}"
 
-            self.info(ini_data)
-            
             T315 = self.SYS.load_app_lib('n315')
             NS = T315.get_nextStrategy(ini_date,last_date,ini_capital)
             
@@ -232,7 +230,7 @@ class 목록_투자315(SKIN) :
                         else : clas = ''; style += "color:gray;"
                         tx[key] = f"<td style='{style}' {clas}>{float(txt):,.2f}</td>"
                         
-                    elif key in ('add1','add2','add7','add9') : # 정수 일반
+                    elif key in ('add1','add7','add9') : # 정수 일반
                         if int(txt) :
                             tx[key] = f"<td style='{style}' {clas}>{int(txt):,}</td>"
                         else :

@@ -82,9 +82,10 @@ class Balance_ajax(Control) :
         v_bq = my.ceil(v_bm / my.sv(LD['add3'])); LD['v_16'] = str(v_bq) # 기초수량
         LD['v_17'] = LD['v_16'] # 매수수량
 
-
+        LD['add2'] = 'R' # 새로운 베이스 임을 표시 
         LD['content'] = f"투자금액 변경 (기존) {ov_mon:,.2f} > (변경) {v_mon:,.2f}, (변경시작일) {d_ch}" 
-        # 새로운 데이타 
+        
+        # 불필요한 데이타 삭제 None 필드 등 
         del(LD['no']); del(LD['brother']); del(LD['tle_color']); del(LD['reply']); del(LD['hit'])
         del(LD['v_13']); del(LD['v_24']); del(LD['v_25'])
         del(LD['r_13']); del(LD['r_24']); del(LD['r_25'])
@@ -124,6 +125,7 @@ class Balance_ajax(Control) :
         LD['add18'] = d_ch
         LD['add19'] = f"{n_mon:.2f}"
         LD['content'] = f"투자금액 변경 (기존) {o_mon:,.2f} > (변경) {n_mon:,.2f}, (변경시작일) {d_ch}" 
+        LD['add2'] = 'R' # 새로운 베이스 임을 표시 
         
         # 새로운 데이타 
         del(LD['no']); del(LD['brother']); del(LD['tle_color']); del(LD['reply']); del(LD['hit'])

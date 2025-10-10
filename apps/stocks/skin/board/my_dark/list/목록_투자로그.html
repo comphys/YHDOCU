@@ -115,10 +115,10 @@
 		</thead>
 		<tbody>
 			{%- for TR in D['TR'] -%}
-			{% if TR['add6']|striptags == '0' and TR['add13']|striptags != '0.00' %}
-			<tr style="background-color:black;"> 
-			{% elif TR['add1']|striptags == '1' and TR['add2']|striptags == '1' %}
+			{% if TR['add2']|striptags == 'R' %}
 			<tr style="background-color:darkslategray">
+			{% elif TR['add6']|striptags == '0' and TR['add13']|striptags != '0.00' %}
+			<tr style="background-color:black;"> 
 			{% else %}
 			<tr> 
 			{% endif %}

@@ -57,6 +57,14 @@ class DB :
     def last_date(self,tbl) :
         qry = f"SELECT add0 FROM {tbl} order by add0 desc LIMIT 1"
         return self.one(qry)
+    
+    def last_data_line(self,sel,tbl) :
+        qry = f"SELECT {sel} FROM {tbl} order by rowid desc LIMIT 1"
+        return self.line(qry)
+
+    def last_data_one(self,sel,tbl) :
+        qry = f"SELECT {sel} FROM {tbl} order by rowid desc LIMIT 1"
+        return self.one(qry)
 
     def oneline(self,qry,assoc=False) :
         return self.exe(qry,many=1,assoc=assoc)

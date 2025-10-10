@@ -27,7 +27,7 @@ else :
     
     LD = {}
     LD['add0']  = today
-    LD['add1']  = DV['sub1']            # 시즌
+    LD['add1']  = RSN.DB.last_data_one('add1','h_rsnLog_board')    # 시즌
     LD['add2']  = DV['sub12']           # 날수
     LD['add3']  = DV['add14']           # 종가
     LD['add4']  = DV['add20']           # 종가 변동
@@ -43,6 +43,10 @@ else :
     if  DV['sub29'] in ('익절매도','손절매도') : 
         LD['add10'] = my.sv(RSN.D['손익통계'][-1][2])
         LD['add11'] = my.sv(RSN.D['손익통계'][-1][3])
+
+    if  LD['add2']  == '1' :
+        new_season  = int(my.sv(LD['add1'],'i')) + 1
+        LD['add1']  = str(new_season)
 
     else :
         LD['add11'] = round((LD['add3'] / LD['add8'] -1) * 100,2) if LD['add8'] else 0 # 현수익률 진행중일 때
