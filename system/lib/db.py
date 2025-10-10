@@ -66,8 +66,8 @@ class DB :
         qry = f"SELECT {sel} FROM {tbl} order by rowid desc LIMIT 1"
         return self.one(qry)
 
-    def oneline(self,qry,assoc=False) :
-        return self.exe(qry,many=1,assoc=assoc)
+    def oneline(self,qry) :
+        return self.exe(qry,many=1,assoc=False)
 
     def get_one(self,fld) :
         return self.get(fld,many=1,assoc=False)
