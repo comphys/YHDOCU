@@ -61,12 +61,6 @@ class DB :
     def get_one(self,fld) :
         return self.get(fld,many=1,assoc=False)
 
-    def oneline(self,qry,assoc=False) :
-        return self.exe(qry,many=1,assoc=assoc)
-
-    def get_one(self,fld) :
-        return self.get(fld,many=1,assoc=False)
-
     def get_line(self,fld) :
         return self.get(fld,many=1,assoc=True)
 
@@ -270,9 +264,3 @@ class DB :
     def parameter_des(self,key) :
         parm = self.one(f"SELECT description FROM parameters WHERE key='{key}' LIMIT 1")
         return parm
-    
-    # for RSN
-    
-    def last_date(self,tbl) :
-        qry = f"SELECT add0 FROM {tbl} order by add0 desc LIMIT 1"
-        return self.one(qry)
