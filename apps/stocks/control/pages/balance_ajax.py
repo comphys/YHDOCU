@@ -113,7 +113,7 @@ class Balance_ajax(Control) :
             return
         
         if  LD['add0'] >= d_ch :
-            self.msg = '새로운 시작 날자는 최종 진행 날자 이후여야 합니다. 날자를 재 지정 하시기 바랍니다.'
+            self.msg = f"새로운 시작 날자는 최종 진행 날자({LD['add0']}) 이후여야 합니다. 날자를 재 지정 하시기 바랍니다."
             return  
         
         # 잔액 및 가치합계 재 설정
