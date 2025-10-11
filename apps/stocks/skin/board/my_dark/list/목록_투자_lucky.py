@@ -157,7 +157,7 @@ class 목록_투자_lucky(SKIN) :
                         else : clas = ''; style += "color:gray;"
                         tx[key] = f"<td style='{style}' {clas}>{float(txt):,.2f}</td>"
                         
-                    elif key in ('add1','add2','add6','add8') : # 정수 일반
+                    elif key in ('add6','add8') : # 정수 일반
                         if int(txt) :
                             tx[key] = f"<td style='{style}' {clas}>{int(txt):,}</td>"
                         else :

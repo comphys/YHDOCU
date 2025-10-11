@@ -438,7 +438,7 @@ class update_Log315 :
         D['add16']  = f"{self.M['현재잔액'] + self.M['평가금액']:.2f}" # 가치합계
         D['add17']  = f"{self.M['매금단계'][self.M['매수차수']]:.0f}"  # 배분금액
         D['add18']  = self.D['시작일자'] # 초기일자
-        D['add19']  = self.D['일반자금'] # 초기금액
+        D['add19']  = self.D['일반자금'].replace(',','')  # 초기금액
         D['add20']  = '수익실현' if self.M['매도금액'] else '일반진행' # 초기금액
         D['add21']  = f"{self.M['수수료등']:.2f}" # 수수료등
 

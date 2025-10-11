@@ -106,7 +106,9 @@
 		</thead>
 		<tbody>
 			{%- for TR in D['TR'] -%}
-			{% if TR['add16']|striptags in ('익절매도','손절매도')  %}
+			{% if TR['add2']|striptags == 'R' %}
+			<tr style="background-color:darkslategray">
+			{% elif TR['add16']|striptags in ('익절매도','손절매도')  %}
 			<tr style="background-color:black;"> 
 			{% else %}
 			<tr> 
