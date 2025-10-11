@@ -108,7 +108,7 @@ class Balance_ajax(Control) :
 
         LD = self.DB.last_record('h_log315_board')
 
-        if  LD['add20'] != '수익실현' : 
+        if  LD['add20'] not in ('수익실현','기초셋팅') : 
             self.msg = '현재 시즌 진행 중입니다. 시즌 종료 후 작업하시기 바랍니다.'
             return
         
@@ -122,10 +122,13 @@ class Balance_ajax(Control) :
         if my.sv(m_ex) : n_mon = o_mon - my.sv(m_ex)
         if my.sv(m_nw) : n_mon  = my.sv(m_nw)
 
-        LD['add18'] = d_ch
-        LD['add19'] = f"{n_mon:.2f}"
+        LD['add0'] = LD['add18'] = d_ch
+        LD['add5'] = LD['add16'] = LD['add19'] = f"{n_mon:.2f}"
+        LD['add6'] = ''
         LD['content'] = f"투자금액 변경 (기존) {o_mon:,.2f} > (변경) {n_mon:,.2f}, (변경시작일) {d_ch}" 
         LD['add2'] = 'R' # 새로운 베이스 임을 표시 
+        LD['add3'] = LD['add4'] = LD['add13'] = LD['add14'] = LD['add15'] = LD['add17'] = LD['add21'] = '0.00' 
+        LD['add20'] = '기초셋팅'
         
         # 새로운 데이타 
         del(LD['no']); del(LD['brother']); del(LD['tle_color']); del(LD['reply']); del(LD['hit'])

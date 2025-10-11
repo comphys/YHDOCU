@@ -26,7 +26,11 @@ else :
     LD['uid']   = 'comphys'
     LD['uname'] = '정용훈'
     LD['wdate'] = LD['mdate'] = my.now_timestamp() 
+
+    LS = N315.DB.last_data_one('add1','h_log315_board') # last season
     
+    LD['add1'] = int(LS) + 1 if LD['add2'] == 1 else LS
+        
     if  not LD['첫날기록'] or LD['add6'] in('익절매도','손절매도') :   
         del LD['첫날기록']  
         qry=N315.DB.qry_insert('h_log315_board',LD)
