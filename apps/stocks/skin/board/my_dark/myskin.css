@@ -1,5 +1,10 @@
 @charset "utf-8";
 /* 
+  COMMON PART
+*/
+.my-box { background-color: #24272D;padding:10px;border:1px solid black;}
+.my-box-inner { background-color: #33363B;padding:10px;border:2px solid black;}
+/* 
   LIST PART
 */
 .list-sort  { background-color: #c1e0ff; color:black; cursor:pointer;}

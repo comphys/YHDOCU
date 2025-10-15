@@ -17,8 +17,6 @@ class Balance_ajax(Control) :
         m_nw = self.D['post']['money_nw']
         d_ch = self.D['post']['start_date']
         
-        PD = {'s_ch':s_ch, 'm_in':m_in, 'm_ex':m_ex, 'm_nw':m_nw, 'd_ch':d_ch}
-     
         if   s_ch == 'RSN'  : self.rsn(m_in,m_ex,m_nw,d_ch)
         elif s_ch == 'N315' : self.n315(m_in,m_ex,m_nw,d_ch)
         else : self.lucky(m_in,m_ex,m_nw,d_ch)
