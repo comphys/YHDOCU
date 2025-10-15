@@ -44,28 +44,28 @@ class 목록_주식히스토리(SKIN) :
     def list(self) :
         self.D['ot'] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         self.D['ot'][0] = self.DB.one("SELECT count(add0) FROM h_stockHistory_board WHERE add1='SOXL'") # total count
-        self.D['ot'][1] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add9 as INTEGER)  > 0") # updays
+        self.D['ot'][1] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add9 as INTEGER)  > 0 and add1='SOXL'") # updays
         self.D['ot'][2] = f"{self.D['ot'][1]/self.D['ot'][0]*100:.2f}"
-        self.D['ot'][3] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) > 0") # dndays 
+        self.D['ot'][3] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) > 0 and add1='SOXL'") # dndays 
         self.D['ot'][4] = f"{self.D['ot'][3]/self.D['ot'][0]*100:.2f}"
-        self.D['ot'][5] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add9 as INTEGER) = 0  and CAST(add10 as INTEGER) = 0") # equal days
+        self.D['ot'][5] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add9 as INTEGER) = 0  and CAST(add10 as INTEGER) = 0 and add1='SOXL'") # equal days
         self.D['ot'][6] = f"{self.D['ot'][5]/self.D['ot'][0]*100:.2f}"
 
-        self.D['ot'][7]  = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 1") # dn 1
+        self.D['ot'][7]  = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 1 and add1='SOXL'") # dn 1
         self.D['ot'][8]  = f"{self.D['ot'][7]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][9]  = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 2") # dn 2
+        self.D['ot'][9]  = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 2 and add1='SOXL'") # dn 2
         self.D['ot'][10] = f"{self.D['ot'][9]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][11] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 3") # dn 3
+        self.D['ot'][11] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 3 and add1='SOXL'") # dn 3
         self.D['ot'][12] = f"{self.D['ot'][11]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][13] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 4") # dn 4
+        self.D['ot'][13] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 4 and add1='SOXL'") # dn 4
         self.D['ot'][14] = f"{self.D['ot'][13]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][15] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 5") # dn 5
+        self.D['ot'][15] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 5 and add1='SOXL'") # dn 5
         self.D['ot'][16] = f"{self.D['ot'][15]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][17] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 6") # dn 6
+        self.D['ot'][17] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 6 and add1='SOXL'") # dn 6
         self.D['ot'][18] = f"{self.D['ot'][17]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][19] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 7") # dn 7
+        self.D['ot'][19] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 7 and add1='SOXL'") # dn 7
         self.D['ot'][20] = f"{self.D['ot'][19]/self.D['ot'][3]*100:.2f}"        
-        self.D['ot'][21] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8") # dn 8
+        self.D['ot'][21] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL'") # dn 8
         self.D['ot'][22] = f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
 
         self.info(self.D['ot'])
