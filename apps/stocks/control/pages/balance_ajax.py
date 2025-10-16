@@ -31,7 +31,7 @@ class Balance_ajax(Control) :
             self.msg = '현재 시즌 진행 중입니다. 시즌 종료 후 작업하시기 바랍니다.'
             return
         
-        if  LD['add0'] >= d_ch :
+        if  LD['add0'] > d_ch :
             self.msg = '새로운 시작 날자는 최종 진행 날자 이후여야 합니다. 날자를 재 지정 하시기 바랍니다.'
             return            
 
@@ -76,7 +76,7 @@ class Balance_ajax(Control) :
         LD['n_16'] = int(n_mon * n_allot[0])
         LD['n_16'] = str(LD['n_16'])
 
-        v_bm = int(v_mon/ST['TV010']); LD['v_15'] = str(v_bm) # 일매수금
+        v_bm = int(v_mon/ST['TV010']); LD['v_15'] = f"{v_bm:.2f}" # 일매수금
         v_bq = my.ceil(v_bm / my.sv(LD['add3'])); LD['v_16'] = str(v_bq) # 기초수량
         LD['v_17'] = LD['v_16'] # 매수수량
 
@@ -97,7 +97,7 @@ class Balance_ajax(Control) :
 
         # 파라미터 업데이트
         self.DB.parameter_update('TX050',d_ch)
-        self.DB.parameter_update('TX051',f"{LD['add12']:,.2f}")
+        self.DB.parameter_update('TX051',f"{my.sv(LD['add12']):,.2f}")
         
         self.msg = "RSN 에 대한 투자금액 변경작업이 정상적으로 변경되었습니다."
 
@@ -110,7 +110,7 @@ class Balance_ajax(Control) :
             self.msg = '현재 시즌 진행 중입니다. 시즌 종료 후 작업하시기 바랍니다.'
             return
         
-        if  LD['add0'] >= d_ch :
+        if  LD['add0'] > d_ch :
             self.msg = f"새로운 시작 날자는 최종 진행 날자({LD['add0']}) 이후여야 합니다. 날자를 재 지정 하시기 바랍니다."
             return  
         
@@ -149,7 +149,7 @@ class Balance_ajax(Control) :
             self.msg = '현재 시즌 진행 중입니다. 시즌 종료 후 작업하시기 바랍니다.'
             return
         
-        if  LD['add0'] >= d_ch :
+        if  LD['add0'] > d_ch :
             self.msg = '새로운 시작 날자는 최종 진행 날자 이후여야 합니다. 날자를 재 지정 하시기 바랍니다.'
             return  
         
