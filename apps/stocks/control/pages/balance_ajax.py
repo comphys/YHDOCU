@@ -65,11 +65,11 @@ class Balance_ajax(Control) :
         else : LD['v_02'] = f"{ov_mon - v_mon:.2f}"
 
         # 기초수량 재 선정
-        r_bm = int(r_mon/ST['TV010']); LD['r_15'] = str(r_bm) # 일매수금
+        r_bm = int(r_mon/ST['TV010']); LD['r_15'] = f"{r_bm:.2f}" # 일매수금
         r_bq = my.ceil(r_bm / my.sv(LD['add3'])); LD['r_16'] = str(r_bq) # 기초수량
         LD['r_17'] = LD['r_16'] # 매수수량
 
-        s_bm = int(s_mon/ST['TV010']); LD['s_15'] = str(s_bm) # 일매수금
+        s_bm = int(s_mon/ST['TV010']); LD['s_15'] = f"{s_bm:.2f}" # 일매수금
         s_bq = my.ceil(s_bm / my.sv(LD['add3'])); LD['s_16'] = str(s_bq) # 기초수량
 
         n_allot = my.sf(ST['TN010'])
