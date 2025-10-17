@@ -22,7 +22,18 @@ class Balance_ajax(Control) :
         else : self.lucky(m_in,m_ex,m_nw,d_ch)
 
         return self.msg
-   
+
+    def next_stock_day(self,today) :
+        
+        delta = 1
+        while delta :
+            temp = my.dayofdate(today,delta)
+            weekend = 1 if temp[1] in ('토','일') else 0
+            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}' and cat='미국증시휴장일'") else 0 
+            delta = 0 if not (weekend + holiday) else delta + 1
+        return temp
+
+
     def rsn(self,m_in,m_ex,m_nw,d_ch) :
 
         LD = self.DB.last_record('h_rsnLog_board')
@@ -96,7 +107,8 @@ class Balance_ajax(Control) :
         self.DB.exe(qry)
 
         # 파라미터 업데이트
-        self.DB.parameter_update('TX050',d_ch)
+        next_day = self.next_stock_day(d_ch)
+        self.DB.parameter_update('TX050',next_day[0])
         self.DB.parameter_update('TX051',f"{my.sv(LD['add12']):,.2f}")
         
         self.msg = "RSN 에 대한 투자금액 변경작업이 정상적으로 변경되었습니다."
