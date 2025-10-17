@@ -1,10 +1,10 @@
 {% extends D['_skn'] + 'page/my_dark/main_layout.html' %}
 
 {% block contents_page  %}
-<div style="height:320px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
+<div style="height:260px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
 	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
 	<!-- 좌측 설정창( Next Strategy )-->
-		<div id="Next-Strategy" style="height:300px;width:1128px;background-color: #33363b;border:2px solid black;padding:10px" >
+		<div id="Next-Strategy" style="height:240px;width:1128px;background-color: #33363b;border:2px solid black;padding:10px" >
 			<div style="padding:10px;background-color:#24272d;border:2px solid black;">
 				1. 투자금을 변경할 전략을 선택하십시오 : &nbsp;&nbsp; 
 				<input type="radio" name="choice-strategy" value="RSN" checked> RSN 
@@ -27,21 +27,14 @@
 				</div>
 			</div>
 			<div style="padding:10px;background-color:#24272d;;margin-top:10px;border:2px solid black;">
-				3. 변경이 시작되는 날자를 선택하세요. 파라미터의 시작일을 입력한 날자로 변경합니다.&nbsp;&nbsp;
-				<div class='i-input-div' style="border:1px solid gray">
-					<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:100px;font-weight:bold;">시작날자</div>
-					<input type='text' class="i-date" name="시작일" style="width:120px;text-align:center;" value="">
-				</div>				
-			</div>
-			<div style="padding:10px;background-color:#24272d;;margin-top:10px;border:2px solid black;">
-				4. 변경된 투자금액을 반영하여 선택 전략의 값을 변경합니다. 
+				3. 변경된 투자금액을 반영하여 선택 전략의 값을 변경합니다. 
 				<button class="btn btn-red-s3" style="vertical-align:middle;user-select:none;" onclick="change_balance()">투자금액 재설정</button>
 			</div>
 		</div>
 	</div>
 	<div style="position:absolute;left:1164px;top:60px;">
 	<!-- 우측 정보창( Next Strategy )-->
-		<div id="Next-Strategy" style="height:300px;width:344px;background-color: #393f4a;border:2px solid black;padding:10px" >
+		<div id="Next-Strategy" style="height:240px;width:344px;background-color: #393f4a;border:2px solid black;padding:10px" >
 		</div>
 	</div>
 </div>
@@ -53,7 +46,6 @@ function change_balance() {
 	var money_in = $("input[name=입금액]").val(); money_in = money_in.replace(/,/g, "");
 	var money_ex = $("input[name=출금액]").val(); money_ex = money_ex.replace(/,/g, "");
 	var money_nw = $("input[name=최종액]").val(); money_nw = money_nw.replace(/,/g, "");
-	var start_date = $("input[name=시작일]").val();
 
 	var msg = '';
 	var cnt = 0 ;
@@ -61,14 +53,13 @@ function change_balance() {
 	if(Number(money_ex)==0) cnt++;
 	if(Number(money_nw)==0) cnt++;
 
-	if( !start_date ) msg = "시작 날자를 입력하세요"
 	if( cnt <  2 )    msg = "[입금/출금/최종금액] 중 하나만 입력하세요"
 	if( cnt == 3 )    msg = "금액을 입력하세요"
 	
 	if( msg ) {h_dialog.notice(msg); return;}
 
 	var url = uri('linkurl') + 'pages-balance_ajax/re_balance';
-	$.post(url,{'choice':choice, 'money_in':money_in, 'money_ex':money_ex, 'money_nw':money_nw, 'start_date':start_date}).done(function(data){
+	$.post(url,{'choice':choice, 'money_in':money_in, 'money_ex':money_ex, 'money_nw':money_nw}).done(function(data){
 		if(data) {h_dialog.notice(data);}
 		else {h_dialog.notice('작업이 성공적으로 수행되었습니다.');}
 	});

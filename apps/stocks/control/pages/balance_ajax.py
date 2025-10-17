@@ -15,11 +15,10 @@ class Balance_ajax(Control) :
         m_in = self.D['post']['money_in']
         m_ex = self.D['post']['money_ex']
         m_nw = self.D['post']['money_nw']
-        d_ch = self.D['post']['start_date']
         
-        if   s_ch == 'RSN'  : self.rsn(m_in,m_ex,m_nw,d_ch)
-        elif s_ch == 'N315' : self.n315(m_in,m_ex,m_nw,d_ch)
-        else : self.lucky(m_in,m_ex,m_nw,d_ch)
+        if   s_ch == 'RSN'  : self.rsn(m_in,m_ex,m_nw)
+        elif s_ch == 'N315' : self.n315(m_in,m_ex,m_nw)
+        else : self.lucky(m_in,m_ex,m_nw)
 
         return self.msg
 
@@ -34,7 +33,7 @@ class Balance_ajax(Control) :
         return temp
 
 
-    def rsn(self,m_in,m_ex,m_nw,d_ch) :
+    def rsn(self,m_in,m_ex,m_nw) :
 
         LD = self.DB.last_record('h_rsnLog_board')
 
@@ -42,9 +41,7 @@ class Balance_ajax(Control) :
             self.msg = '현재 시즌 진행 중입니다. 시즌 종료 후 작업하시기 바랍니다.'
             return
         
-        if  LD['add0'] > d_ch :
-            self.msg = '새로운 시작 날자는 최종 진행 날자 이후여야 합니다. 날자를 재 지정 하시기 바랍니다.'
-            return            
+        next_day = self.next_stock_day(LD['add0'])
 
         or_mon = my.sv(LD['add18'])
         os_mon = my.sv(LD['add19'])
@@ -93,7 +90,7 @@ class Balance_ajax(Control) :
 
         LD['add2'] = 'R' # 새로운 베이스 임을 표시
         x_mon = f"(증) {v_mon-ov_mon:,.2f}" if v_mon > ov_mon else f"(감) {ov_mon-v_mon:,.2f}"
-        LD['content'] = f"투자금액 변경 (기존) {ov_mon:,.2f} > (변경) {v_mon:,.2f}, {x_mon}, (변경시작일) {d_ch}" 
+        LD['content'] = f"투자금액 변경 (기존) {ov_mon:,.2f} > (변경) {v_mon:,.2f}, {x_mon}, (변경시작일) {next_day[0]}" 
         
         # 불필요한 데이타 삭제 None 필드 등 
         del(LD['no']); del(LD['brother']); del(LD['tle_color']); del(LD['reply']); del(LD['hit'])
@@ -108,13 +105,13 @@ class Balance_ajax(Control) :
         self.DB.exe(qry)
 
         # 파라미터 업데이트
-        self.DB.parameter_update('TX050',d_ch)
+        self.DB.parameter_update('TX050',next_day[0])
         self.DB.parameter_update('TX051',f"{my.sv(LD['add12']):,.2f}")
         
         self.msg = "RSN 에 대한 투자금액 변경작업이 정상적으로 변경되었습니다."
 
     
-    def n315(self,m_in,m_ex,m_nw,d_ch) :
+    def n315(self,m_in,m_ex,m_nw) :
 
         LD = self.DB.last_record('h_log315_board')
 
@@ -122,10 +119,8 @@ class Balance_ajax(Control) :
             self.msg = '현재 시즌 진행 중입니다. 시즌 종료 후 작업하시기 바랍니다.'
             return
         
-        if  LD['add0'] > d_ch :
-            self.msg = f"새로운 시작 날자는 최종 진행 날자({LD['add0']}) 이후여야 합니다. 날자를 재 지정 하시기 바랍니다."
-            return  
-        
+        next_day = self.next_stock_day(LD['add0'])
+
         # 잔액 및 가치합계 재 설정
         o_mon = my.sv(LD['add5'])
         if my.sv(m_in) : n_mon = o_mon + my.sv(m_in)
@@ -133,10 +128,10 @@ class Balance_ajax(Control) :
         if my.sv(m_nw) : n_mon  = my.sv(m_nw)
         x_mon = f"(증) {n_mon-o_mon:,.2f}" if n_mon > o_mon else f"(감) {o_mon-n_mon:,.2f}"
 
-        LD['add0'] = LD['add18'] = d_ch
+        LD['add0'] = LD['add18'] = next_day[0]
         LD['add5'] = LD['add16'] = LD['add19'] = f"{n_mon:.2f}"
         LD['add6'] = ''
-        LD['content'] = f"투자금액 변경 (기존) {o_mon:,.2f} > (변경) {n_mon:,.2f}, {x_mon}, (변경시작일) {d_ch}" 
+        LD['content'] = f"투자금액 변경 (기존) {o_mon:,.2f} > (변경) {n_mon:,.2f}, {x_mon}, (변경시작일) {next_day[0]}" 
         LD['add2'] = 'R' # 새로운 베이스 임을 표시 
         LD['add3'] = LD['add4'] = LD['add13'] = LD['add14'] = LD['add15'] = LD['add17'] = LD['add21'] = '0.00' 
         LD['add20'] = '기초셋팅'
@@ -148,13 +143,13 @@ class Balance_ajax(Control) :
         self.DB.exe(qry)
 
         # 파라미터 업데이트
-        self.DB.parameter_update('N0701',d_ch)
+        self.DB.parameter_update('N0701',next_day[0])
         self.DB.parameter_update('N0702',f"{n_mon:,.2f}")
 
         self.msg = "N315 에 대한 투자금액 변경에 대한 파라미터가 정상적으로 변경되었습니다."
 
     
-    def lucky(self,m_in,m_ex,m_nw,d_ch) :
+    def lucky(self,m_in,m_ex,m_nw) :
 
         LD = self.DB.last_record('h_log_lucky_board')
 
@@ -162,10 +157,8 @@ class Balance_ajax(Control) :
             self.msg = '현재 시즌 진행 중입니다. 시즌 종료 후 작업하시기 바랍니다.'
             return
         
-        if  LD['add0'] > d_ch :
-            self.msg = '새로운 시작 날자는 최종 진행 날자 이후여야 합니다. 날자를 재 지정 하시기 바랍니다.'
-            return  
-        
+        next_day = self.next_stock_day(LD['add0'])
+
         # 잔액 및 가치합계 재 설정
         o_mon = my.sv(LD['add5'])
         if my.sv(m_in) : n_mon = o_mon + my.sv(m_in)
@@ -173,13 +166,13 @@ class Balance_ajax(Control) :
         if my.sv(m_nw) : n_mon  = my.sv(m_nw)
         x_mon = f"(증) {n_mon-o_mon:,.2f}" if n_mon > o_mon else f"(감) {o_mon-n_mon:,.2f}"
 
-        LD['add0'] = d_ch
+        LD['add0'] = next_day[0]
         LD['add5'] = LD['add15']  = f"{n_mon:.2f}"
         LD['add10'] = LD['add20'] = '0.00'
         LD['add8'] = '0'
         LD['add9'] = '0.0000'
         LD['add21']= '초기셋팅' 
-        LD['content'] = f"투자금액 변경 (기존) {o_mon:,.2f} > (변경) {n_mon:,.2f}, {x_mon}, (변경시작일) {d_ch}" 
+        LD['content'] = f"투자금액 변경 (기존) {o_mon:,.2f} > (변경) {n_mon:,.2f}, {x_mon}, (변경시작일) {next_day[0]}" 
         LD['add2'] = 'R' # 새로운 베이스 임을 표시 
         
         # 새로운 데이타 
