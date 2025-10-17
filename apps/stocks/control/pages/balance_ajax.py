@@ -91,8 +91,9 @@ class Balance_ajax(Control) :
         v_bq = my.ceil(v_bm / my.sv(LD['add3'])); LD['v_16'] = str(v_bq) # 기초수량
         LD['v_17'] = LD['v_16'] # 매수수량
 
-        LD['add2'] = 'R' # 새로운 베이스 임을 표시 
-        LD['content'] = f"투자금액 변경 (기존) {ov_mon:,.2f} > (변경) {v_mon:,.2f}, (변경시작일) {d_ch}" 
+        LD['add2'] = 'R' # 새로운 베이스 임을 표시
+        x_mon = f"(증) {v_mon-ov_mon:,.2f}" if v_mon > ov_mon else f"(감) {ov_mon-v_mon:,.2f}"
+        LD['content'] = f"투자금액 변경 (기존) {ov_mon:,.2f} > (변경) {v_mon:,.2f}, {x_mon}, (변경시작일) {d_ch}" 
         
         # 불필요한 데이타 삭제 None 필드 등 
         del(LD['no']); del(LD['brother']); del(LD['tle_color']); del(LD['reply']); del(LD['hit'])
@@ -107,8 +108,7 @@ class Balance_ajax(Control) :
         self.DB.exe(qry)
 
         # 파라미터 업데이트
-        next_day = self.next_stock_day(d_ch)
-        self.DB.parameter_update('TX050',next_day[0])
+        self.DB.parameter_update('TX050',d_ch)
         self.DB.parameter_update('TX051',f"{my.sv(LD['add12']):,.2f}")
         
         self.msg = "RSN 에 대한 투자금액 변경작업이 정상적으로 변경되었습니다."
@@ -131,11 +131,12 @@ class Balance_ajax(Control) :
         if my.sv(m_in) : n_mon = o_mon + my.sv(m_in)
         if my.sv(m_ex) : n_mon = o_mon - my.sv(m_ex)
         if my.sv(m_nw) : n_mon  = my.sv(m_nw)
+        x_mon = f"(증) {n_mon-o_mon:,.2f}" if n_mon > o_mon else f"(감) {o_mon-n_mon:,.2f}"
 
         LD['add0'] = LD['add18'] = d_ch
         LD['add5'] = LD['add16'] = LD['add19'] = f"{n_mon:.2f}"
         LD['add6'] = ''
-        LD['content'] = f"투자금액 변경 (기존) {o_mon:,.2f} > (변경) {n_mon:,.2f}, (변경시작일) {d_ch}" 
+        LD['content'] = f"투자금액 변경 (기존) {o_mon:,.2f} > (변경) {n_mon:,.2f}, {x_mon}, (변경시작일) {d_ch}" 
         LD['add2'] = 'R' # 새로운 베이스 임을 표시 
         LD['add3'] = LD['add4'] = LD['add13'] = LD['add14'] = LD['add15'] = LD['add17'] = LD['add21'] = '0.00' 
         LD['add20'] = '기초셋팅'
@@ -170,6 +171,7 @@ class Balance_ajax(Control) :
         if my.sv(m_in) : n_mon = o_mon + my.sv(m_in)
         if my.sv(m_ex) : n_mon = o_mon - my.sv(m_ex)
         if my.sv(m_nw) : n_mon  = my.sv(m_nw)
+        x_mon = f"(증) {n_mon-o_mon:,.2f}" if n_mon > o_mon else f"(감) {o_mon-n_mon:,.2f}"
 
         LD['add0'] = d_ch
         LD['add5'] = LD['add15']  = f"{n_mon:.2f}"
@@ -177,7 +179,7 @@ class Balance_ajax(Control) :
         LD['add8'] = '0'
         LD['add9'] = '0.0000'
         LD['add21']= '초기셋팅' 
-        LD['content'] = f"투자금액 변경 (기존) {o_mon:,.2f} > (변경) {n_mon:,.2f}, (변경시작일) {d_ch}" 
+        LD['content'] = f"투자금액 변경 (기존) {o_mon:,.2f} > (변경) {n_mon:,.2f}, {x_mon}, (변경시작일) {d_ch}" 
         LD['add2'] = 'R' # 새로운 베이스 임을 표시 
         
         # 새로운 데이타 
