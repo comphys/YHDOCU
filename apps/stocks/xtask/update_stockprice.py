@@ -67,7 +67,6 @@ class SU :
 
 # --------------------------------------------------------------------------------------------------
 today = my.kor_loc_date('US/Eastern')[0:10]
-today = '2025-10-17'
 weekd = my.dayofdate(today)
 A = SU()
 chk_holiday = A.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
