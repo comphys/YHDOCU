@@ -11,6 +11,10 @@ class SU :
         else : print(message)
 
     def stocks_update(self,cdx,today) :
+        
+        # 환율 가져오기
+        usdkrw = self.forex_update()
+
         cdx = cdx.upper()
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.DB.get_one("max(add0)")
@@ -42,7 +46,7 @@ class SU :
         if rst3 :
             for row in rst3 :
                 row2 = list(row)
-                row2 += [cdx,cdx,'comphys','정용훈',time_now,time_now]
+                row2 += [cdx,usdkrw,'comphys','정용훈',time_now,time_now]
                 values = str(row2)[1:-1]
                 sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
                 self.DB.exe(sql)
@@ -55,13 +59,15 @@ class SU :
 
     def forex_update(self) :
         getdate, usdkrw = my.get_usd_krw()
-        w_time = my.timestamp_to_date()
-        qry = f"INSERT INTO usd_krw (date,usd_krw,wtime) VALUES('{getdate}','{usdkrw}','{w_time}')"
-        self.DB.exe(qry)
+        # w_time = my.timestamp_to_date()
+        # qry = f"INSERT INTO usd_krw (date,usd_krw,wtime) VALUES('{getdate}','{usdkrw}','{w_time}')"
+        # self.DB.exe(qry)
+        return usdkrw
 
 
 # --------------------------------------------------------------------------------------------------
 today = my.kor_loc_date('US/Eastern')[0:10]
+today = '2025-10-17'
 weekd = my.dayofdate(today)
 A = SU()
 chk_holiday = A.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
@@ -75,4 +81,4 @@ if  skip :
 
 else :
     A.stocks_update('soxl',today)
-    A.forex_update()
+

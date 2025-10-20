@@ -51,7 +51,7 @@ class 목록_가이드(SKIN) :
             LD = self.DB.get_line('add6,add8,add9,add14,add15,add17,add18,add19,add20,sub1,sub2,sub3,sub4,sub7,sub12,sub5,sub6,sub18,sub19,sub20,sub25,sub26,sub27,sub32')
             
             # 가치 비율 for chart
-            현재환율 = float(self.DB.one("SELECT usd_krw FROM usd_krw ORDER BY rowid DESC LIMIT 1"))
+            현재환율 = float(self.DB.last_data_one('add2','h_stockHistory_board'))
             
             총투자금 = float(LD['sub25']) - float(LD['sub26'])
             총수익금 = float(LD['add17']) - 총투자금
