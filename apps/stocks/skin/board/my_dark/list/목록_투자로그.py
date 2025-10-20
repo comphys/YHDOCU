@@ -51,7 +51,7 @@ class 목록_투자로그(SKIN) :
 
             # 다음 거래 일자 가져오기
             self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(last_date)
-            현재환율 = self.DB.one("SELECT CAST(usd_krw AS FLOAT) FROM usd_krw ORDER BY rowid DESC LIMIT 1")
+            현재환율 = self.DB.last_data_one("CAST(add2 AS FLOAT)","h_stockHistory_board")
 
             # 챠트 정보 가져오기
             first_date = chart_data[-1]['add0']
