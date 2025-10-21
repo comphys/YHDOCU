@@ -68,8 +68,7 @@ class 목록_주식히스토리(SKIN) :
         self.D['ot'][21] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL'") # dn 8
         self.D['ot'][22] = f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
 
-        self.info(self.D['ot'])
-
+    
         self.D['TimeNow'] = ut.timestamp_to_date(ts='now')
         self.head()
         self.data_preprocess()
@@ -122,14 +121,28 @@ class 목록_주식히스토리(SKIN) :
                         tmp += '</td>'
                         tx[key] = tmp
 
+                    elif key in ('add3','add4','add5','add6')  : 
+                        if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
+                        if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
+                        if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
+                        
+                        txt = f"{float(txt):,.2f}"
+                        tx[key] = f"<td style='{style}' {clas}>{txt}</td>"  
+
+                    elif key == 'add7'  : 
+                        if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
+                        if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
+                        if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
+                        
+                        txt = f"{int(txt):,}"
+                        tx[key] = f"<td style='{style}' {clas}>{txt}</td>"  
+
+
                     else : 
                         if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
                         if self.D['EXWIDTH'][key]  : style  += f"width:{self.D['EXWIDTH'][key]};"
                         
-                        if (self.D['EXFTYPE'][key] == 'int'   ) : txt = f"{int(txt):,}"
-                        if (self.D['EXFTYPE'][key] == 'float' ) : txt = f"{float(txt):,.2f}"
-
                         tx[key] = f"<td style='{style}' {clas}>{txt}</td>"
 
                 TR.append(tx)
