@@ -1,7 +1,6 @@
-import system.core.my_utils as ut
+import system.core.my_utils as my
 from flask import session
 from system.core.load import SKIN
-from datetime import datetime
 
 class 목록_주식히스토리(SKIN) :
 
@@ -24,8 +23,8 @@ class 목록_주식히스토리(SKIN) :
     def data_preprocess(self) :
         if self.TrCnt :
             for item in self.D['LIST'] :
-                item['wdate'] = ut.timestamp_to_date(item['wdate'],"%Y/%m/%d")
-                item['mdate'] = ut.timestamp_to_date(item['mdate'],"%m/%d %H:%M")
+                item['wdate'] = my.timestamp_to_date(item['wdate'],"%Y/%m/%d")
+                item['mdate'] = my.timestamp_to_date(item['mdate'],"%m/%d %H:%M")
 
     def old_price_trace(self,code,today,old_date) :
 
@@ -42,6 +41,7 @@ class 목록_주식히스토리(SKIN) :
         return (c_drop,c_goup)
 
     def list(self) :
+
         self.D['ot'] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         self.D['ot'][0] = self.DB.one("SELECT count(add0) FROM h_stockHistory_board WHERE add1='SOXL'") # total count
         self.D['ot'][1] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add9 as INTEGER)  > 0 and add1='SOXL'") # updays
@@ -68,8 +68,34 @@ class 목록_주식히스토리(SKIN) :
         self.D['ot'][21] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL'") # dn 8
         self.D['ot'][22] = f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
 
-    
-        self.D['TimeNow'] = ut.timestamp_to_date(ts='now')
+        last_year = my.last_year_day()
+        self.D['ot1'] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        self.D['ot1'][0] = self.DB.one(f"SELECT count(add0) FROM h_stockHistory_board WHERE add1='SOXL' and add0 > '{last_year}'") # total count
+        self.D['ot1'][1] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add9 as INTEGER)  > 0 and add1='SOXL' and add0 > '{last_year}'") # updays
+        self.D['ot1'][2] = f"{self.D['ot1'][1]/self.D['ot1'][0]*100:.2f}"
+        self.D['ot1'][3] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) > 0 and add1='SOXL' and add0 > '{last_year}'") # dndays 
+        self.D['ot1'][4] = f"{self.D['ot1'][3]/self.D['ot1'][0]*100:.2f}"
+        self.D['ot1'][5] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add9 as INTEGER) = 0  and CAST(add10 as INTEGER) = 0 and add1='SOXL' and add0 > '{last_year}'") # equal days
+        self.D['ot1'][6] = f"{self.D['ot1'][5]/self.D['ot1'][0]*100:.2f}"
+
+        self.D['ot1'][7]  = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 1 and add1='SOXL' and add0 > '{last_year}'") # dn 1
+        self.D['ot1'][8]  = f"{self.D['ot1'][7]/self.D['ot1'][3]*100:.2f}"
+        self.D['ot1'][9]  = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 2 and add1='SOXL' and add0 > '{last_year}'") # dn 2
+        self.D['ot1'][10] = f"{self.D['ot1'][9]/self.D['ot1'][3]*100:.2f}"
+        self.D['ot1'][11] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 3 and add1='SOXL' and add0 > '{last_year}'") # dn 3
+        self.D['ot1'][12] = f"{self.D['ot1'][11]/self.D['ot1'][3]*100:.2f}"
+        self.D['ot1'][13] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 4 and add1='SOXL' and add0 > '{last_year}'") # dn 4
+        self.D['ot1'][14] = f"{self.D['ot1'][13]/self.D['ot1'][3]*100:.2f}"
+        self.D['ot1'][15] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 5 and add1='SOXL' and add0 > '{last_year}'") # dn 5
+        self.D['ot1'][16] = f"{self.D['ot1'][15]/self.D['ot1'][3]*100:.2f}"
+        self.D['ot1'][17] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 6 and add1='SOXL' and add0 > '{last_year}'") # dn 6
+        self.D['ot1'][18] = f"{self.D['ot1'][17]/self.D['ot1'][3]*100:.2f}"
+        self.D['ot1'][19] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 7 and add1='SOXL' and add0 > '{last_year}'") # dn 7
+        self.D['ot1'][20] = f"{self.D['ot1'][19]/self.D['ot1'][3]*100:.2f}"        
+        self.D['ot1'][21] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL' and add0 > '{last_year}'") # dn 8
+        self.D['ot1'][22] = f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
+
+        self.D['TimeNow'] = my.timestamp_to_date(ts='now')
         self.head()
         self.data_preprocess()
 

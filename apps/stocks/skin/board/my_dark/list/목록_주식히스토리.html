@@ -4,17 +4,25 @@
 
 	<div class="my-box">
 		<div class="my-box-inner">
-			SOXL : 총횟수 {{D['ot'][0]}}일 &nbsp; 상승일 {{D['ot'][1]}}( {{D['ot'][2]}}% ) &nbsp; 하락일 {{D['ot'][3]}}( {{D['ot'][4]}}% ) &nbsp; <span id="qty-pcnt" class="list-bear-cnt"></span><br>
+			전체 : {{D['ot'][0]}}일 &nbsp; 상승 {{D['ot'][1]}}( {{D['ot'][2]}}% ) 하락 {{D['ot'][3]}}( {{D['ot'][4]}}% ) 
+			최근 : {{D['ot1'][0]}}일 &nbsp; 상승 {{D['ot1'][1]}}( {{D['ot1'][2]}}% ) 하락 {{D['ot1'][3]}}( {{D['ot1'][4]}}% )&nbsp; <span id="qty-pcnt" class="list-bear-cnt"></span><br>
 			<table class="table table-bordered table-striped" style="text-align:right;margin-top:10px;">
 				<tr style="background-color:#0A2229;font-weight:bold;">
 					<td>연속하락</td><td>C1</td><td>C2</td><td>C3</td><td>C4</td><td>C5</td><td>C6</td><td>C7</td><td>C8</td>
 				</tr>
 				<tr>
-					<td>일수</td><td>{{D['ot'][7]}}</td><td>{{D['ot'][9]}}</td><td>{{D['ot'][11]}}</td><td>{{D['ot'][13]}}</td><td>{{D['ot'][15]}}</td><td>{{D['ot'][17]}}</td><td>{{D['ot'][19]}}</td><td>{{D['ot'][21]}}</td>
+					<td>전체일수</td><td>{{D['ot'][7]}}</td><td>{{D['ot'][9]}}</td><td>{{D['ot'][11]}}</td><td>{{D['ot'][13]}}</td><td>{{D['ot'][15]}}</td><td>{{D['ot'][17]}}</td><td>{{D['ot'][19]}}</td><td>{{D['ot'][21]}}</td>
 				</tr>
 				<tr>
 					<td>비율</td><td data-pcnt="off">{{D['ot'][8]}}</td><td data-pcnt="off">{{D['ot'][10]}}</td><td data-pcnt="off">{{D['ot'][12]}}</td><td data-pcnt="off">{{D['ot'][14]}}</td>
 					<td data-pcnt="off">{{D['ot'][16]}}</td><td data-pcnt="off">{{D['ot'][18]}}</td><td data-pcnt="off">{{D['ot'][20]}}</td><td data-pcnt="off">{{D['ot'][22]}}</td>
+				</tr>
+				<tr>
+					<td>최근일수</td><td>{{D['ot1'][7]}}</td><td>{{D['ot1'][9]}}</td><td>{{D['ot1'][11]}}</td><td>{{D['ot1'][13]}}</td><td>{{D['ot1'][15]}}</td><td>{{D['ot1'][17]}}</td><td>{{D['ot1'][19]}}</td><td>{{D['ot1'][21]}}</td>
+				</tr>
+				<tr>
+					<td>비율</td><td data-pcnt="off">{{D['ot1'][8]}}</td><td data-pcnt="off">{{D['ot1'][10]}}</td><td data-pcnt="off">{{D['ot1'][12]}}</td><td data-pcnt="off">{{D['ot1'][14]}}</td>
+					<td data-pcnt="off">{{D['ot1'][16]}}</td><td data-pcnt="off">{{D['ot1'][18]}}</td><td data-pcnt="off">{{D['ot1'][20]}}</td><td data-pcnt="off">{{D['ot1'][22]}}</td>
 				</tr>
 			</table>
 		</div>
