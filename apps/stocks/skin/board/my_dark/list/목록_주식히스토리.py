@@ -132,6 +132,11 @@ class 목록_주식히스토리(SKIN) :
                         txt = f"{txt_val:.2f}"
                         tx[key] = f"<td style='text-align:right;color:{clr}'>{txt}</td>"
                     
+                    elif key == 'add2'  : 
+                        
+                        txt = f"{float(txt):,.1f}" if txt else ''
+                        tx[key] = f"<td style='text-align:right;color:#D8F6CE'>{txt}</td>"
+                    
                     elif key == 'add0'  : 
                         if self.D['EXALIGN'][key]  : style  += f"text-align:{self.D['EXALIGN'][key]};"
                         if self.D['EXCOLOR'][key]  : style  += f"color:{self.D['EXCOLOR'][key]};"
