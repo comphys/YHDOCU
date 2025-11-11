@@ -95,8 +95,9 @@ class 목록_투자로그(SKIN) :
             self.D['총매도금'] =  f"{temp[1]:,.2f}"
             self.D['투자익률'] =  f"{(temp[1]/temp[0]-1)*100:.2f}"
             self.D['주문확인'] =  self.DB.parameter('TX070')
-            self.D['주문생활'] =  self.DB.parameter('N0710')
-            self.D['주문럭키'] =  self.DB.parameter('L0500')
+            # self.D['주문생활'] =  self.DB.parameter('N0710')
+            # self.D['주문럭키'] =  self.DB.parameter('L0500')
+            self.D['주문생활'] = self.D['주문럭키'] = self.D['다음날자']
             
             # 통계 자료 가져오기
             # add12(현재잔액), add10(현재수익), rsn_21(초기금액), add17(카테고리)
