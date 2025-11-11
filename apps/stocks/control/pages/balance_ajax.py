@@ -34,6 +34,7 @@ class Balance_ajax(Control) :
 
 
     def rsn(self,m_in,m_ex,m_nw) :
+        
 
         LD = self.DB.last_record('h_rsnLog_board')
 
@@ -46,11 +47,11 @@ class Balance_ajax(Control) :
         or_mon = my.sv(LD['add18'])
         os_mon = my.sv(LD['add19'])
         on_mon = my.sv(LD['add20'])
-        ov_mon = my.sv(LD['v_03'])
 
         # 잔액 및 가치합계 재 설정
-        total = or_mon + os_mon + ov_mon  # R잔액 + S잔액 + N잔액
-        
+        total = or_mon + os_mon + on_mon  # R잔액 + S잔액 + N잔액
+        ov_mon = total
+
         if my.sv(m_in) : total += my.sv(m_in)
         if my.sv(m_ex) : total -= my.sv(m_ex)
         if my.sv(m_nw) : total  = my.sv(m_nw)
@@ -91,7 +92,7 @@ class Balance_ajax(Control) :
         LD['add2'] = 'R' # 새로운 베이스 임을 표시
         x_mon = f"(증) {v_mon-ov_mon:,.2f}" if v_mon > ov_mon else f"(감) {ov_mon-v_mon:,.2f}"
         LD['content'] = f"투자금액 변경 (기존) {ov_mon:,.2f} > (변경) {v_mon:,.2f}, {x_mon}, (변경시작일) {next_day[0]}" 
-        
+
         # 불필요한 데이타 삭제 None 필드 등 
         del(LD['no']); del(LD['brother']); del(LD['tle_color']); del(LD['reply']); del(LD['hit'])
         del(LD['v_13']); del(LD['v_24']); del(LD['v_25'])
@@ -139,7 +140,7 @@ class Balance_ajax(Control) :
         # 새로운 데이타 
         del(LD['no']); del(LD['brother']); del(LD['tle_color']); del(LD['reply']); del(LD['hit'])
         LD['wdate'] = LD['mdate'] = my.now_timestamp()
-        qry=self.DB.qry_insert('h_log315_board',LD)
+        qry=self.DB.qry_insert('h_log315_board',LD)  
         self.DB.exe(qry)
 
         # 파라미터 업데이트
