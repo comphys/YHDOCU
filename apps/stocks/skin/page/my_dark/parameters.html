@@ -105,7 +105,7 @@ var _bse = "{{D['_bse']}}";
                 var key = $(this).attr('data-fid');	
                 var val = $(this).text(); 
                 var data = {'tbl':tbl, 'no':no, 'key':key, 'val' : val}
-                var posturl = _bse + 'pages-pajax/update_parameters'; 
+                var posturl = _bse + 'page/ajax/parameters/update_parameters'; 
 
                 $.post(posturl,data,null,'json').done(function(data){$(sel).text(ori); h_dialog.notice(data.msg);});
 				}});});}, 
@@ -125,7 +125,7 @@ $("[data-no]").dblclick(function(){
 	var key = $(this).parent().children().eq(1).text()
     $(this).parent().addClass("delTR")
     var no = $(this).attr('data-no');
-    var url = _bse + 'pages-pajax/delete_parameters'; 
+    var url = _bse + 'page/ajax/parameters/delete_parameters'; 
     data = {'no':no}
     self = this;
 	h_dialog.confirm('key:['+ key + '] 행을 정말 삭제하시겠습니까?',
@@ -145,7 +145,7 @@ function do_refresh() {
 
 function insert_new_row() {
 	var cat =  $("input[name=category]").val()
-	var url = _bse + 'pages-pajax/insert_parameters';
+	var url = _bse + 'page/ajax/parameters/insert_parameters';
 	$.post(url,{'cat':cat}).done(function(){location.reload()});
 }
 

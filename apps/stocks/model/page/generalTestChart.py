@@ -16,4 +16,24 @@ class M_generalTestChart(Model) :
         # self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)
         self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")
         self.D['시작일자'] = my.dayofdate(self.D['종료일자'],delta=-365*2)[0]
+    
+    def action(self) :
+        
+        D = {}
+        D['종목코드'] = 'SOXL'
+        D['전략선택'] = self.D['post']['전략선택']
+        D['일반자금'] = self.D['post']['일반자금']
+
+        D['시작일자'] = self.D['post']['시작일자']
+        D['종료일자'] = self.D['post']['종료일자']
+
+        D['수료적용'] = self.D['post'].get('chk_fee','off')
+        
+        VB = self.SYS.load_app_lib('getest')
+        VB.D |= D
+
+        VB.do_viewChart()
+
+        VB.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
+        return self.SYS.echo(VB.D)
         

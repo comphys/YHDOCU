@@ -3,7 +3,7 @@
 {% block contents_page  %}
 <div class="row-row">
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
-		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/rpd_viewChart/rst_view">
+		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/action/rst_view">
 			<br>
 			<input type='hidden' class="i-number" name="일반자금" value="{{D['일반자금']}}">
 			<div class="well clearfix" style="border-radius:0px;">
@@ -357,17 +357,6 @@
 
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
-
-$(".ohlc-price").click(function(){
-	if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
-	var code = $("input[name='종목코드']").val()
-	var date = '20'+$(this).prev().text();
-	var url = uri('linkurl') + 'pages-pajax/get_ohlc/date=' + date + '/code=' + code;
-	var ypos= mouse_Y
-	if(ypos > 800) ypos = ypos-280
-	var o = {id:'OHLC_DAY', width:'430px', x:240, y:ypos,header:false,footer:false,drag:false}
-	h_dialog.load(url,o)		
-});
 
 let labels_monthly = {{D['월별구분']|safe}};
 // 챠트 객체 생성
@@ -837,29 +826,6 @@ function startYearSpan() {
 	let date1 = $("input[name='종료일자']").val()
 	let date2 = date1.slice(0,4)+'-01-01'
 	$("input[name='시작일자']").val(date2)
-}
-
-function synchro(opt,begin='pick') {
-	let today =''
-	if(opt==2 || opt==0) {
-		today = new Date().format("yyyy-MM-dd");
-		$("input[name='종료일자']").val(today);
-	} else if(opt==1){	today = $("input[name='시작일자']").val();} 
-
-	let posturl = uri('linkurl') + 'pages-pajax/rst_sync';
-	$.post(posturl, { s_date : today, begin : begin },null,'json').done(function(data){
-		if(data.date=='None'){h_dialog.notice(data.msg);}
-		else {
-			h_dialog.notice("동기화 데이타가 입력되었습니다.")
-			$("input[name='시작일자']").val(data.date);
-			$("input[name='일반자금']").val(data.V_money);
-			$("input[name='기회자금']").val(data.R_money);
-			$("input[name='안정자금']").val(data.S_money);
-			$("input[name='생활자금']").val(data.T_money);
-			if(parseFloat(data.V_mode) > 0 ) {$("input[name='chk_chx']").prop('checked',true);}
-			if(opt==2||opt==0) {$("form[name=stock_back_testing]").submit();}
-		}
-	});
 }
 
 //

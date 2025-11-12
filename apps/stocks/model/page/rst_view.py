@@ -32,3 +32,37 @@ class M_rst_view(Model) :
         self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")
         self.D['시작일자'] = my.dayofdate(self.D['종료일자'],delta=-365*2)[0]
         
+    def action(self) :
+
+        D = {}
+        D['종목코드'] = self.D['post']['종목코드']
+        D['일반자금'] = self.D['post']['일반자금']
+        D['기회자금'] = self.D['post']['기회자금']
+        D['안정자금'] = self.D['post']['안정자금']
+        D['생활자금'] = self.D['post']['생활자금']
+
+        D['시작일자'] = self.D['post']['시작일자']
+        D['종료일자'] = self.D['post']['종료일자']
+        # -------------------
+        D['기회시점'] = self.D['post']['기회시점']
+        D['기회회복'] = self.D['post']['기회회복']
+        D['안정시점'] = self.D['post']['안정시점']
+        D['안정회복'] = self.D['post']['안정회복']
+        D['생활시점'] = self.D['post']['생활시점']
+        D['생활회복'] = self.D['post']['생활회복']
+
+        D['수료적용'] = self.D['post'].get('chk_fee','off')
+        D['세금적용'] = self.D['post'].get('chk_tax','off')
+        D['일밸런싱'] = self.D['post'].get('chk_brs','off')
+        D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
+        D['일반상황'] = self.D['post'].get('chk_von','off')
+        D['가상손실'] = self.D['post'].get('chk_chx','off')
+        D['랜덤종가'] = self.D['post'].get('chk_rnd','off')
+        
+        RST = self.SYS.load_app_lib('rst')
+        RST.D |= D
+
+        RST.do_viewChart()
+    
+        D['skin'] = f"{self.skin}/{self.D['bid']}.html"
+        return self.SYS.echo(RST.D)

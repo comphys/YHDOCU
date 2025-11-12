@@ -3,7 +3,7 @@
 {% block contents_page  %}
 <div class="row-row">
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
-		<form method='post' name='rsn_dashboard' action="{{D['_bse']}}page/rpd_rsnview/rsn_view">
+		<form method='post' name='rsn_dashboard' action="{{D['_bse']}}page/action/rsn_view">
 			<br>
 			<div class="well clearfix" style="border-radius:0px;">
     			<div class="pull-left">
@@ -32,7 +32,7 @@
 						<input type='text' class="i-number" name="안정회복" style="width:50px;text-align:center;background-color:black;" value="{{D['안정회복']}}">
 					</div>
 					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;" onclick="write_log()" title="로그기록"></i>
+						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;" title="로그기록"></i>
 					</div>
 					<div style="display:inline-block;">	
 						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro('test')" title="테스트모드"></i>
@@ -499,9 +499,9 @@ $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_ico
 
 $(".ohlc-price").click(function(){
 	if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
-	var code = $("input[name='종목코드']").val()
+	var code = 'SOXL'
 	var date = '20'+$(this).prev().text();
-	var url = uri('linkurl') + 'pages-pajax/get_ohlc/date=' + date + '/code=' + code;
+	var url = uri('linkurl') + 'page/ajax/rsn_view/get_ohlc/date=' + date + '/code=' + code;
 	var ypos= mouse_Y
 	if(ypos > 800) ypos = ypos-280
 	var o = {id:'OHLC_DAY', width:'430px', x:240, y:ypos,header:false,footer:false,drag:false}
@@ -1012,7 +1012,7 @@ function startYearSpan() {
 
 function synchro(opt) {
 
-	let posturl = uri('linkurl') + 'pages-rsn_ajax/synchro';
+	let posturl = uri('linkurl') + 'page/ajax/rsn_view/synchro';
 	$.post(posturl, { opt : opt },null,'json').done(function(data){
 			h_dialog.notice("동기화 데이타가 입력되었습니다.")
 			$("input[name='시작일자']").val(data.sdate);
@@ -1043,16 +1043,6 @@ function get_pdat(){
 	pdat['가상손실'] = $("input[name='chk_chx']").is(':checked');
 }
 
-function write_log() {
-
-	pdat['종료일자'] = $("input[name='종료일자']").val();
-	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_invest'
-	$.post(posturl, pdat, null, 'json' ).done(function(data){
-		for(key in data) {$("input[name='"+key+"']").val(data[key]);} 
-		$("form[name='rsn_dashboard']").submit();
-	});
-}
-
 
 $(".log-v").click(function(){ 
 	get_pdat();	
@@ -1061,7 +1051,7 @@ $(".log-v").click(function(){
 	let html = "RSN-V<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","gray");
 	$("#cn1").text('일매수금');
 	$("#cn2").text("기초수량");
-	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
+	let posturl = uri('linkurl')+ 'page/ajax/rsn_view/log_rsn'
 
 	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#daily-log").show(); 
@@ -1074,7 +1064,7 @@ $(".log-r").click(function(){
 	let html = "RSN-R<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F6CECE");
 	$("#cn1").text('일매수금');
 	$("#cn2").text("기초수량");
-	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
+	let posturl = uri('linkurl')+ 'page/ajax/rsn_view/log_rsn'
 
 	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#daily-log").show(); 
@@ -1086,7 +1076,7 @@ $(".log-s").click(function(){
 	let html = "RSN-S<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F2F5A9");
 	$("#cn1").text('일매수금');
 	$("#cn2").text("기초수량");
-	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
+	let posturl = uri('linkurl')+ 'page/ajax/rsn_view/log_rsn'
 
 	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#daily-log").show(); 
@@ -1098,7 +1088,7 @@ $(".log-n").click(function(){
 	let html = "RSN-N<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","#CEF6CE");
 	$("#cn1").text('매수차수');
 	$("#cn2").text("배분금액");
-	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
+	let posturl = uri('linkurl')+ 'page/ajax/rsn_view/log_rsn'
 
 	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#daily-log").show(); 

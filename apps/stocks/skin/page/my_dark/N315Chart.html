@@ -3,7 +3,7 @@
 {% block contents_page  %}
 <div class="row-row">
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
-		<form method='post' name='n310_chart_dashboard' action="{{D['_bse']}}page/rpd_N315Chart/N315Chart">
+		<form method='post' name='n310_chart_dashboard' action="{{D['_bse']}}page/action/N315Chart">
 			<br>
 			<div class="well clearfix" style="border-radius:0px;">
     			<div class="pull-left">
@@ -250,17 +250,6 @@
 
 let chart_b_date
 let chart_e_date
-
-$(".ohlc-price").click(function(){
-	if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
-	var code = $("input[name='종목코드']").val()
-	var date = '20'+$(this).prev().text();
-	var url = uri('linkurl') + 'pages-pajax/get_ohlc/date=' + date + '/code=' + code;
-	var ypos= mouse_Y
-	if(ypos > 800) ypos = ypos-280
-	var o = {id:'OHLC_DAY', width:'430px', x:240, y:ypos,header:false,footer:false,drag:false}
-	h_dialog.load(url,o)		
-});
 
 let labels_monthly = {{D['월별구분']|safe}};
 // 챠트 객체 생성
@@ -660,7 +649,7 @@ function startYearSpan() {
 
 function synchro(opt) {
 
-	let posturl = uri('linkurl') + 'pages-rsn_ajax/synchro_n310';
+	let posturl = uri('linkurl') + 'page/ajax/N315Chart/synchro_n315';
 	$.post(posturl, { opt : opt },null,'json').done(function(data){
 		h_dialog.notice("동기화 데이타가 입력되었습니다.")
 		$("input[name='시작일자']").val(data.sdate);

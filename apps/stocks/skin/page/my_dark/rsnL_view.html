@@ -3,7 +3,7 @@
 {% block contents_page  %}
 <div class="row-row">
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
-		<form method='post' name='rsn_dashboard' action="{{D['_bse']}}page/rpd_rsnLview/rsnL_view">
+		<form method='post' name='rsn_dashboard' action="{{D['_bse']}}page/action/rsnL_view">
 			<br>
 			<div class="well clearfix" style="border-radius:0px;">
     			<div class="pull-left">
@@ -521,7 +521,7 @@ $(".ohlc-price").click(function(){
 	if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
 	var code = $("input[name='종목코드']").val()
 	var date = '20'+$(this).prev().text();
-	var url = uri('linkurl') + 'pages-pajax/get_ohlc/date=' + date + '/code=' + code;
+	var url = uri('linkurl') + 'page/ajax/rsnL_view/get_ohlc/date=' + date + '/code=' + code;
 	var ypos= mouse_Y
 	if(ypos > 800) ypos = ypos-280
 	var o = {id:'OHLC_DAY', width:'430px', x:240, y:ypos,header:false,footer:false,drag:false}
@@ -1032,7 +1032,7 @@ function startYearSpan() {
 
 function synchro(opt) {
 
-	let posturl = uri('linkurl') + 'pages-rsn_ajax/synchro';
+	let posturl = uri('linkurl') + 'page/ajax/rsnL_view/synchro';
 	$.post(posturl, { opt : opt },null,'json').done(function(data){
 			h_dialog.notice("동기화 데이타가 입력되었습니다.")
 			$("input[name='시작일자']").val(data.sdate);
@@ -1063,16 +1063,6 @@ function get_pdat(){
 	pdat['가상손실'] = $("input[name='chk_chx']").is(':checked');
 }
 
-function write_log() {
-
-	pdat['종료일자'] = $("input[name='종료일자']").val();
-	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_invest'
-	$.post(posturl, pdat, null, 'json' ).done(function(data){
-		for(key in data) {$("input[name='"+key+"']").val(data[key]);} 
-		$("form[name='rsn_dashboard']").submit();
-	});
-}
-
 
 $(".log-v").click(function(){ 
 	get_pdat();	
@@ -1081,7 +1071,7 @@ $(".log-v").click(function(){
 	let html = "RSN-V<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","gray");
 	$("#cn1").text('일매수금');
 	$("#cn2").text("기초수량");
-	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
+	let posturl = uri('linkurl')+ 'page/ajax/rsnL_view/log_rsn'
 
 	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#daily-log").show(); 
@@ -1094,7 +1084,7 @@ $(".log-r").click(function(){
 	let html = "RSN-R<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F6CECE");
 	$("#cn1").text('일매수금');
 	$("#cn2").text("기초수량");
-	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
+	let posturl = uri('linkurl')+ 'page/ajax/rsnL_view/log_rsn'
 
 	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#daily-log").show(); 
@@ -1106,7 +1096,7 @@ $(".log-s").click(function(){
 	let html = "RSN-S<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","#F2F5A9");
 	$("#cn1").text('일매수금');
 	$("#cn2").text("기초수량");
-	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
+	let posturl = uri('linkurl')+ 'page/ajax/rsnL_view/log_rsn'
 
 	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#daily-log").show(); 
@@ -1118,7 +1108,7 @@ $(".log-n").click(function(){
 	let html = "RSN-N<br>"+pdat['종료일자']; $("#daily-log-left").html(html); $("#daily-log-left").css("color","#CEF6CE");
 	$("#cn1").text('매수차수');
 	$("#cn2").text("배분금액");
-	let posturl = uri('linkurl')+ 'pages-rsn_ajax/log_rsn'
+	let posturl = uri('linkurl')+ 'page/ajax/rsnL_view/log_rsn'
 
 	$.post(posturl, pdat, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#daily-log").show(); 

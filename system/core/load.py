@@ -144,6 +144,14 @@ class Control :
         module = f"apps.{self.I['_app']}.skin.board.{self.D['BCONFIG']['skin']}.{opt}.{classn}"
         mod = __import__('%s' %(module), fromlist=[classn])
         return getattr( mod, classn )(self)
+    
+    def load_pajax(self,module_name,method_name):
+        module = f"apps.{self.I['_app']}.model.page.{module_name}"
+        classn =  'Ajax'  
+        
+        mod = __import__('%s' %(module), fromlist=[classn])
+        ins = getattr( mod, classn )(self)
+        return getattr( ins, method_name)
 
     def set_message(self,msg,typ='notice') :
         self.DB.exe(f"UPDATE act_message SET type='{typ}', message='{msg}' WHERE no=1")    
@@ -192,6 +200,7 @@ class Model :
         self.info = SYS.info
         self.parm = SYS.parm
         self.gets = SYS.gets
+        self.skin = SYS.skin
         self.skin_dir = SYS.skin_dir
         self._auto()
 
@@ -201,6 +210,8 @@ class Model :
 
     def _auto(self) :
         pass
+
+
 
 class SKIN :
     def __init__(self,SYS) :
