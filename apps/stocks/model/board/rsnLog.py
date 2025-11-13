@@ -93,7 +93,4 @@ class Ajax(Model) :
         PD['profit'] = profit[0]
         PD['prate']  = profit[1]
 
-
-
-        self.info(profit)
         return self.SYS.json(PD)    

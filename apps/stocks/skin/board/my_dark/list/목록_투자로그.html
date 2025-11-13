@@ -582,64 +582,63 @@ $("[data-scnt]").click(function()
 	}
 );
 
-$("[data-season]").click(function() 
-	{
-		var season = $(this).data("season");
-		var sdate  = $(this).data("date");
+$("[data-season]").click(function() {
+
+	var season = $(this).data("season");
+	var sdate  = $(this).data("date");
+	
+	var url = uri('linkurl') + 'board/ajax/rsnLog/season_chart';
+	$.post(url,{'season': season,'sdate':sdate},null, 'json').done(function(data){
+	// ------------------------------------------------------------------------
+		$("#div-seasonChart").css('zIndex',7);
+		var clsp = [];
+		var avgv = [];
+		var avgr = [];
+		var avgs = [];
+		var avgn = [];
+		var dl10 = []; var dl20 = []; var dl30 = []; var dl40 = []; var dl50 = []; var du00 = []; var du10 = []; var dlnl = [null]*30;
+		var amin = data.amin;
+		var amax = data.amax;
+
+		clsp = data.C;
+		avgv = data.V;
+		avgr = data.R;
+		avgs = data.S;
+		avgn = data.N;
 		
-		var url = uri('linkurl') + 'board/ajax/rsnLog/season_chart';
-		$.post(url,{'season': season,'sdate':sdate},null, 'json').done(function(data){
-		// ------------------------------------------------------------------------
-			$("#div-seasonChart").css('zIndex',7);
-			var clsp = [];
-			var avgv = [];
-			var avgr = [];
-			var avgs = [];
-			var avgn = [];
-			var dl10 = []; var dl20 = []; var dl30 = []; var dl40 = []; var dl50 = []; var du00 = []; var du10 = []; var dlnl = [null]*30;
-			var amin = data.amin;
-			var amax = data.amax;
+		const a0 = clsp[0];
 
-			clsp = data.C;
-			avgv = data.V;
-			avgr = data.R;
-			avgs = data.S;
-			avgn = data.N;
-			
-			const a0 = clsp[0];
+		for(let x=0; x < 10; x++) { du10.push(a0*1.1);}
+		for(let x=0; x < 30; x++) { du00.push(a0);}
+		for(let x=0; x < 10; x++) { dl10.push(a0*0.9);}
+		for(let x=0; x < 20; x++) { dl20.push(a0*0.8);}
+		for(let x=0; x < 30; x++) { dl30.push(a0*0.7);}
+		for(let x=0; x < 30; x++) { dl40.push(a0*0.6);}
+		for(let x=0; x < 30; x++) { dl50.push(a0*0.5);}
 
-			for(let x=0; x < 10; x++) { du10.push(a0*1.1);}
-			for(let x=0; x < 30; x++) { du00.push(a0);}
-			for(let x=0; x < 10; x++) { dl10.push(a0*0.9);}
-			for(let x=0; x < 20; x++) { dl20.push(a0*0.8);}
-			for(let x=0; x < 30; x++) { dl30.push(a0*0.7);}
-			for(let x=0; x < 30; x++) { dl40.push(a0*0.6);}
-			for(let x=0; x < 30; x++) { dl50.push(a0*0.5);}
+		var xticks = clsp.length
+		if (xticks < 24 ) { xticks = 24; }
+		var new_labels = Array.from(new Array(xticks),(x,i)=> i+1);
 
-			var xticks = clsp.length
-			if (xticks < 24 ) { xticks = 24; }
-			var new_labels = Array.from(new Array(xticks),(x,i)=> i+1);
-
-			myChart_season.data.labels = new_labels;
-			myChart_season.data.datasets[0].data =  clsp;
-			myChart_season.data.datasets[1].data =  avgv;
-			myChart_season.data.datasets[2].data =  avgr;
-			myChart_season.data.datasets[3].data =  avgs;
-			myChart_season.data.datasets[4].data =  avgn;
-			myChart_season.data.datasets[5].data = (amax>a0*1.0)? du10 : dlnl;
-			myChart_season.data.datasets[6].data =  du00;
-			myChart_season.data.datasets[7].data =  dl10;
-			myChart_season.data.datasets[8].data = (amin<a0*0.8)? dl20 : dlnl;
-			myChart_season.data.datasets[9].data = (amin<a0*0.7)? dl30 : dlnl;
-			myChart_season.data.datasets[10].data =(amin<a0*0.6)? dl40 : dlnl;
-			myChart_season.data.datasets[11].data= (amin<a0*0.5)? dl50 : dlnl;
-			var myprofit = data.profit.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-			$("#div-seasonChart-notice").html(sdate+" 시즌 "+season+ " : 수익 $ "+myprofit+" ( "+data.prate+"% )");
-			myChart_season.update();		
-		// ------------------------------------------------------------------------
+		myChart_season.data.labels = new_labels;
+		myChart_season.data.datasets[0].data =  clsp;
+		myChart_season.data.datasets[1].data =  avgv;
+		myChart_season.data.datasets[2].data =  avgr;
+		myChart_season.data.datasets[3].data =  avgs;
+		myChart_season.data.datasets[4].data =  avgn;
+		myChart_season.data.datasets[5].data = (amax>a0*1.0)? du10 : dlnl;
+		myChart_season.data.datasets[6].data =  du00;
+		myChart_season.data.datasets[7].data =  dl10;
+		myChart_season.data.datasets[8].data = (amin<a0*0.8)? dl20 : dlnl;
+		myChart_season.data.datasets[9].data = (amin<a0*0.7)? dl30 : dlnl;
+		myChart_season.data.datasets[10].data =(amin<a0*0.6)? dl40 : dlnl;
+		myChart_season.data.datasets[11].data= (amin<a0*0.5)? dl50 : dlnl;
+		var myprofit = comma(data.profit);
+		$("#div-seasonChart-notice").html(sdate+" 시즌 "+season+ " : 수익 $ "+myprofit+" ( "+data.prate+"% )");
+		myChart_season.update();		
+	// ------------------------------------------------------------------------
 	});
-		
-	}
-);	
+});	
+
 </script>
 {% endblock %}

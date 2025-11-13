@@ -41,6 +41,15 @@ function uri(parameter){
 			else return '';
 	}
 }
+
+function comma( num ){
+  var aa;
+  if (typeof num == 'number' ) aa = String(num);
+  else if (typeof num == 'string') aa = num;
+  else aa = '0';
+
+  return aa.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+}
 // *************************************************************************************************
 // toggle() was removed since jquery1.9, below is alternative to toggle(f1,f2,f3...)
 // *************************************************************************************************
