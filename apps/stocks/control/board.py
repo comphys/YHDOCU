@@ -92,3 +92,8 @@ class Board(Control) :
             del session['N_NO'] 
             del session['CSH']
         return self.moveto('board/login')
+    
+    def ajax(self) :
+
+        M = self.load_bajax(self.D['bid'],self.parm[1])
+        return M()

@@ -152,6 +152,14 @@ class Control :
         mod = __import__('%s' %(module), fromlist=[classn])
         ins = getattr( mod, classn )(self)
         return getattr( ins, method_name)
+    
+    def load_bajax(self,module_name,method_name):
+        module = f"apps.{self.I['_app']}.model.board.{module_name}"
+        classn =  'Ajax'  
+        
+        mod = __import__('%s' %(module), fromlist=[classn])
+        ins = getattr( mod, classn )(self)
+        return getattr( ins, method_name)
 
     def set_message(self,msg,typ='notice') :
         self.DB.exe(f"UPDATE act_message SET type='{typ}', message='{msg}' WHERE no=1")    
@@ -200,7 +208,6 @@ class Model :
         self.info = SYS.info
         self.parm = SYS.parm
         self.gets = SYS.gets
-        self.skin = SYS.skin
         self.skin_dir = SYS.skin_dir
         self._auto()
 
@@ -210,7 +217,6 @@ class Model :
 
     def _auto(self) :
         pass
-
 
 
 class SKIN :

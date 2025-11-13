@@ -258,9 +258,9 @@
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
 {% endif %}
 
-<div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1070px;background-color:#24272d;padding:10px;border:2px solid black;z-index:7;">
-	<div id='backTestingChart-notice' style="position:absolute;top:11px;left:74px;color:gray;font-style:italic">&nbsp;</div>
-	<canvas id="mybackTestChart" style="width:1040px;height:330px;background-color:#24272d"></canvas>
+<div id='div-seasonChart' style="position:fixed;left:20px;top:2170px;width:1070px;background-color:#24272d;padding:10px;border:2px solid black;z-index:7;">
+	<div id='div-seasonChart-notice' style="position:absolute;top:11px;left:74px;color:gray;font-style:italic">&nbsp;</div>
+	<canvas id="seasonChart" style="width:1040px;height:330px;background-color:#24272d"></canvas>
 </div>
 {% if D['월별이익'] %}
 <div id='monthlyProfit' style="position:fixed;left:27px;top:108px;background-color:#24272d;padding:5px;opacity:0.9;z-index:3;" onclick="$(this).hide()">
@@ -509,8 +509,9 @@ $(".ohlc-price").click(function(){
 });
 
 let labels_monthly = {{D['월별구분']|safe}};
+
 // 챠트 객체 생성
-const ctx_season = $id('mybackTestChart');
+const ctx_season = $id('seasonChart');
 ctx_season.style.backgroundColor = '#33363b';
 ctx_season.style.border = '2px solid black';
 
@@ -648,7 +649,7 @@ const myChart_side = new Chart(ctx_side, config_side);
 // --------------------------------------------------------------------------------------
 var selected_tr = null
 $(document).ready(function(){ 
-	$('#backTestingChart').bind('dblclick',function(){$(this).hide();}).draggable().hide();
+	$('#div-seasonChart').bind('dblclick',function(){$(this).hide();}).draggable().hide();
 	$("#daily-log").bind('dblclick',function(){$(this).hide();}).draggable();
 });	
 
@@ -661,12 +662,12 @@ function check_thisForm() {
 
 function show_chart(season,sel,profit=null,rate=null) {
 	
-	$('#backTestingChart').css({top:'110px',left:'32px'}).show(); 
+	$('#div-seasonChart').css({top:'110px',left:'32px'}).show(); 
 	var clsp = [];
 	var avgv = [];
 	var avgr = [];
 	var avgs = [];
-	var avgt = [];
+	var avgn = [];
 	var dl10 = []; var dl20 = []; var dl30 = []; var dl40 = []; var dl50 = []; var du00 = []; var du10 = []; var dlnl = [null]*30;
 	var amin = 1000.0;
 	var amax = 0;
@@ -675,7 +676,7 @@ function show_chart(season,sel,profit=null,rate=null) {
 	$(".avgv"+season).each(function() {tmpv = parseFloat($(this).text());tmpv = (tmpv)? avgv.push(tmpv) : avgv.push(null); });
 	$(".avgr"+season).each(function() {tmpv = parseFloat($(this).text());tmpv = (tmpv)? avgr.push(tmpv) : avgr.push(null); });
 	$(".avgs"+season).each(function() {tmpv = parseFloat($(this).text());tmpv = (tmpv)? avgs.push(tmpv) : avgs.push(null); });
-	$(".avgt"+season).each(function() {tmpv = parseFloat($(this).text());tmpv = (tmpv)? avgt.push(tmpv) : avgt.push(null); });
+	$(".avgn"+season).each(function() {tmpv = parseFloat($(this).text());tmpv = (tmpv)? avgn.push(tmpv) : avgn.push(null); });
 	
 	const a0 = clsp[0];
 
@@ -697,7 +698,7 @@ function show_chart(season,sel,profit=null,rate=null) {
 	myChart_season.data.datasets[1].data =  avgv;
 	myChart_season.data.datasets[2].data =  avgr;
 	myChart_season.data.datasets[3].data =  avgs;
-	myChart_season.data.datasets[4].data =  avgt;
+	myChart_season.data.datasets[4].data =  avgn;
 	myChart_season.data.datasets[5].data = (amax>a0*1.0)? du10 : dlnl;
 	myChart_season.data.datasets[6].data =  du00;
 	myChart_season.data.datasets[7].data =  dl10;
@@ -725,7 +726,7 @@ function show_chart(season,sel,profit=null,rate=null) {
 		$(document).scrollTop(offTop-800);
 	
 	}
-	$("#backTestingChart-notice").html(p_date+" : $<b> "+p_profit+"</b> ( "+p_rate+"% )");
+	$("#div-seasonChart-notice").html(p_date+" : $<b> "+p_profit+"</b> ( "+p_rate+"% )");
 	
 }
 
@@ -823,7 +824,7 @@ function chart_up_dn(opt) {
 		$("#monthlyProfit").hide();
 		$('#statistics-profits').hide();
 		$('#Next-Strategy').hide();
-		$('#backTestingChart').hide();
+		$('#div-seasonChart').hide();
 		$("#backTesting-table").css("marginTop",'100px'); 
 	}
 	else {
@@ -974,7 +975,7 @@ function slice_chart(opt) {
 
 		$("input[name=s_date]").val(s_date);
 		$("#monthlyProfit").hide();
-		$('#backTestingChart').hide();
+		$('#div-seasonChart').hide();
 		slice_chart(1)
 	}
 

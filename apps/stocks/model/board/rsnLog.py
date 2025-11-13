@@ -1,12 +1,7 @@
-from system.core.load import Control
-import system.core.my_utils as my
+from system.core.load import Model
 
+class Ajax(Model) :
 
-class Rsnlog_ajax(Control) :
-
-    def _auto(self) :
-        self.DB = self.db('stocks')
-        
     def view_log(self) :
 
         theday = self.D['post']['theday']
@@ -55,7 +50,7 @@ class Rsnlog_ajax(Control) :
         PD['h03'] = f"{float(PD['h01'])-float(PD['g03']):,.2f}"  # 누적수익 
         PD['h04'] = LD['add17']  # 카테고리
 
-        return self.json(PD)
+        return self.SYS.json(PD)
     
     def dailyCheckUpdate(self) :
         
@@ -66,3 +61,39 @@ class Rsnlog_ajax(Control) :
         if  option == 'N315'  : key = 'N0710'
         if  option == 'LUCKY' : key = 'L0500'
         self.DB.parameter_update(key,odrday)
+
+
+    def season_chart(self) :
+
+        season = self.D['post']['season']
+        sdate  = self.D['post']['sdate']
+
+        qry = f"SELECT CAST(add3 as float), CAST(v_09 as float), CAST(r_09 as float), CAST(s_09 as float), CAST(n_09 as float) FROM h_rsnLog_board WHERE add1='{season}' ORDER BY add2 ASC"
+        RST = self.DB.exe(qry)
+
+        profit = self.DB.oneline(f"SELECT add10, add11 FROM h_rsnLog_board WHERE add0='{sdate}'")
+
+        cnt = len(RST)
+        PD = {}
+        PD['C'] = [0.0]*cnt
+        PD['V'] = [0.0]*cnt
+        PD['R'] = [0.0]*cnt
+        PD['S'] = [0.0]*cnt
+        PD['N'] = [0.0]*cnt
+
+        for idx,rst in enumerate(RST) :
+            PD['C'][idx] = rst[0]
+            PD['V'][idx] = rst[1] if rst[1] else 'null'
+            PD['R'][idx] = rst[2] if rst[2] else 'null'
+            PD['S'][idx] = rst[3] if rst[3] else 'null'
+            PD['N'][idx] = rst[4] if rst[4] else 'null'
+
+        PD['amin'] = min(PD['C'])
+        PD['amax'] = max(PD['C'])
+        PD['profit'] = profit[0]
+        PD['prate']  = profit[1]
+
+
+
+        self.info(profit)
+        return self.SYS.json(PD)    
