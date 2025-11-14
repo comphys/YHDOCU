@@ -14,20 +14,23 @@ class M_change_balance(Model) :
         lpd = self.DB.one(f"SELECT add0  FROM h_rsnLog_board WHERE add17='수익실현' and add0 > '{self.D['기준일자']}' ORDER BY add0 DESC LIMIT 1")
         lpm = self.DB.one(f"SELECT add12 FROM h_rsnLog_board WHERE add0 = '{lpd}' LIMIT 1")
 
-        RSN = self.SYS.load_app_lib('rsn')
+        if lpd > self.D['기준일자'] :
 
-        RSN.D['투자자금'] = self.D['기본자금']
-        RSN.D['수료적용'] = 'off' 
-        RSN.D['세금적용'] = 'off' 
-        RSN.D['일밸런싱'] = 'on' 
-        RSN.D['이밸런싱'] = 'on' 
-        RSN.D['가상손실'] = 'off'
+            RSN = self.SYS.load_app_lib('rsn')
 
-        RSN.get_simResult(start=self.D['기준일자'],end=lpd,result=True)
+            RSN.D['투자자금'] = self.D['기본자금']
+            RSN.D['수료적용'] = 'off' 
+            RSN.D['세금적용'] = 'off' 
+            RSN.D['일밸런싱'] = 'on' 
+            RSN.D['이밸런싱'] = 'on' 
+            RSN.D['가상손실'] = 'off'
 
-        adm = my.sv(lpm) - my.sv(RSN.D['R_최종자본']) - my.sv(self.D['수시자금'])
-        self.D['인출가금'] = f"{adm*0.78:,.2f}"
-        self.D['근수익일'] = lpd
+            RSN.get_simResult(start=self.D['기준일자'],end=lpd,result=True)
+
+            adm = my.sv(lpm) - my.sv(RSN.D['R_최종자본']) - my.sv(self.D['수시자금'])
+            self.D['합계수익'] = f"{my.sv(lpm) - my.sv(self.D['투입자금']):,.2f}"
+            self.D['인출가금'] = f"{adm*0.78:,.2f}"
+            self.D['근수익일'] = lpd
   
 
 
@@ -134,7 +137,7 @@ class Ajax(Model) :
         self.DB.parameter_update('TX050',next_day[0])
         self.DB.parameter_update('TX051',f"{my.sv(LD['add12']):,.2f}")
         
-        self.msg = "RSN 에 대한 투자금액 변경작업이 정상적으로 변경되었습니다."
+        self.msg = "RSN 에 대한 투자금액 변경이 정상적으로 처리되었습니다."
 
     
     def n315(self,m_in,m_ex,m_nw) :
