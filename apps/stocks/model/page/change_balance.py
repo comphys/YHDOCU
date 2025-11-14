@@ -6,10 +6,29 @@ class M_change_balance(Model) :
     def view(self) :
         
         # 기본 값
-        self.D['투자자금'] = self.DB.parameter('TX051')
+        self.D['투입자금'] = self.DB.parameter('TX051')
         self.D['수시자금'] = self.DB.parameter('TX053')
-        self.D['기본자금'] = f"{my.sv(self.D['투자자금'])-my.sv(self.D['수시자금']):,.2f}"
+        self.D['기본자금'] = f"{my.sv(self.D['투입자금'])-my.sv(self.D['수시자금']):,.2f}"
         self.D['기준일자'] = self.DB.parameter('TX050')
+
+        lpd = self.DB.one(f"SELECT add0  FROM h_rsnLog_board WHERE add17='수익실현' and add0 > '{self.D['기준일자']}' ORDER BY add0 DESC LIMIT 1")
+        lpm = self.DB.one(f"SELECT add12 FROM h_rsnLog_board WHERE add0 = '{lpd}' LIMIT 1")
+
+        RSN = self.SYS.load_app_lib('rsn')
+
+        RSN.D['투자자금'] = self.D['기본자금']
+        RSN.D['수료적용'] = 'off' 
+        RSN.D['세금적용'] = 'off' 
+        RSN.D['일밸런싱'] = 'on' 
+        RSN.D['이밸런싱'] = 'on' 
+        RSN.D['가상손실'] = 'off'
+
+        RSN.get_simResult(start=self.D['기준일자'],end=lpd,result=True)
+
+        adm = my.sv(lpm) - my.sv(RSN.D['R_최종자본']) - my.sv(self.D['수시자금'])
+        self.D['인출가금'] = f"{adm*0.78:,.2f}"
+        self.D['근수익일'] = lpd
+  
 
 
 class Ajax(Model) :
