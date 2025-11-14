@@ -576,12 +576,6 @@ class RSN :
             
             ST = self.DB.parameters_dict('매매전략/RSN')
             
-            # X 
-            self.M['일반보드']  = ST['TX010']  
-            self.M['기회보드']  = ST['TX020']  
-            self.M['안정보드']  = ST['TX030'] 
-            self.M['생활보드']  = ST['TX040']  
-            
             # V tactic 
             self.M['분할횟수']  = ST['TV010']  # TV
             self.M['큰단가치']  = ST['TV020']  # TV003
