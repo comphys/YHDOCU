@@ -10,12 +10,11 @@ class Board(Control) :
 
         self.DB = self.db('stocks')
         if 'N_NO' in session :
-            self.DB.tbl, self.DB.wre = ("h_user_list",f"no={session['N_NO']}")
-            self.D['USER'] = self.DB.get("*",many=1, assoc=True)
-            self.D['bid']     = self.parm[0] if self.parm else self.C['init_board']
-            self.D['tbl']     = 'h_'+self.D['bid']+'_board'
-            self.DB.tbl, self.DB.wre = ("h_board_config",f"bid='{self.D['bid']}'")
-            self.D['BCONFIG'] = self.DB.get("*",many=1,assoc=True)
+            self.D['bid']  = self.parm[0] if self.parm else self.C['init_board']
+            self.D['tbl']  = 'h_'+self.D['bid']+'_board'
+            self.D['USER'] = self.DB.line(f"SELECT * FROM h_user_list WHERE no={session['N_NO']}")
+            
+            self.D['BCONFIG'] = self.DB.line(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'")
             self.skin = 'board/'+self.D['BCONFIG']['skin']
             self.model('board-board_main')
             self.D['DOCU_ROOT'] = self.C['DOCU_ROOT']

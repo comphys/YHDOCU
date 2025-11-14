@@ -335,8 +335,8 @@
 	<canvas id="monthlyProfitChart" style="width:1128px;height:350px;background-color:#24272d"></canvas>
 </div>
 
-<div id='div-seasonChart' style="position:absolute;left:20px;top:55px;padding:5px 10px 5px 10px;z-index:2;">
-	<div id='div-seasonChart-notice' style="position:absolute;top:14px;left:450px;color:gray;font-style:italic">시즌 챠트</div>
+<div id='div-seasonChart' style="position:absolute;left:20px;top:55px;padding:5px 10px 5px 10px;z-index:2;opacity:0.9;">
+	<div id='div-seasonChart-notice' style="position:absolute;top:14px;left:450px;color:lightgray;font-style:italic">시즌 챠트</div>
 	<canvas id="seasonChart" style="width:800px;height:350px;background-color:#24272d"></canvas>
 </div>
 
@@ -394,8 +394,8 @@ const myChart_main = new Chart(ctx_main, config_main);
 
 // 시즌 챠트
 const ctx_season = $id('seasonChart');
-ctx_season.style.backgroundColor = '#2E2E2E';
-ctx_season.style.border = '2px solid black';
+ctx_season.style.backgroundColor = '#33363b';
+ctx_season.style.border = '2px solid rgba(243, 151, 108, 0.7)';
 
 const labels_season = Array.from(new Array(10),(x,i)=> i+1);
 const data_season = {

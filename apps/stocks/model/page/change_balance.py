@@ -6,7 +6,10 @@ class M_change_balance(Model) :
     def view(self) :
         
         # 기본 값
-        pass
+        self.D['투자자금'] = self.DB.parameter('TX051')
+        self.D['수시자금'] = self.DB.parameter('TX053')
+        self.D['기본자금'] = f"{my.sv(self.D['투자자금'])-my.sv(self.D['수시자금']):,.2f}"
+        self.D['기준일자'] = self.DB.parameter('TX050')
 
 
 class Ajax(Model) :
