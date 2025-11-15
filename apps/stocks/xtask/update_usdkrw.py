@@ -12,12 +12,10 @@ class SU :
 
 
     def forex_update(self) :
-        usdkrw = my.get_usd_krw()
-        # w_time = my.timestamp_to_date()
-        # qry = f"INSERT INTO usd_krw (date,usd_krw,wtime) VALUES('{getdate}','{usdkrw}','{w_time}')"
-        # self.DB.exe(qry)
-        return usdkrw
-
+        krw = my.get_usd_krw()
+        self.DB.exe(f"UPDATE h_stockHistory_board SET add2={krw[1]} WHERE add0='{krw[0]}'")
+        self.send_message(f"{krw[0]}일 환율 업데이트 완료")
+        
 
 # --------------------------------------------------------------------------------------------------
 today = my.kor_loc_date('US/Eastern')[0:10]
@@ -34,6 +32,4 @@ if  skip :
 
 else :
     krw = A.forex_update()
-    A.DB.exe(f"UPDATE h_stockHistory_board SET add2={krw[1]} WHERE add0='{krw[0]}'")
-    A.send_message(f"{krw[0]}일 환율 업데이트 완료")
-
+    
