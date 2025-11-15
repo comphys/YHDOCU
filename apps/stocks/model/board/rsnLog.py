@@ -83,10 +83,10 @@ class Ajax(Model) :
 
         for idx,rst in enumerate(RST) :
             PD['C'][idx] = rst[0]
-            PD['V'][idx] = rst[1] if rst[1] else 'null'
-            PD['R'][idx] = rst[2] if rst[2] else 'null'
-            PD['S'][idx] = rst[3] if rst[3] else 'null'
-            PD['N'][idx] = rst[4] if rst[4] else 'null'
+            PD['V'][idx] = rst[1] if rst[1] else None
+            PD['R'][idx] = rst[2] if rst[2] else None
+            PD['S'][idx] = rst[3] if rst[3] else None
+            PD['N'][idx] = rst[4] if rst[4] else None
 
         PD['amin'] = min(PD['C'])
         PD['amax'] = max(PD['C'])

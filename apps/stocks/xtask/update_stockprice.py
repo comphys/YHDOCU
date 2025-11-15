@@ -12,9 +12,6 @@ class SU :
 
     def stocks_update(self,cdx,today) :
         
-        # 환율 가져오기
-        usdkrw = self.forex_update()
-
         cdx = cdx.upper()
         self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
         b_date = self.DB.get_one("max(add0)")
@@ -46,7 +43,7 @@ class SU :
         if rst3 :
             for row in rst3 :
                 row2 = list(row)
-                row2 += [cdx,usdkrw,'comphys','정용훈',time_now,time_now]
+                row2 += [cdx,'','comphys','정용훈',time_now,time_now]
                 values = str(row2)[1:-1]
                 sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
                 self.DB.exe(sql)
@@ -55,14 +52,6 @@ class SU :
             self.send_message(f"{lday}일 주가 업데이트 완료")
         else :
             self.send_message(f"No data to update...")
-
-
-    def forex_update(self) :
-        getdate, usdkrw = my.get_usd_krw()
-        # w_time = my.timestamp_to_date()
-        # qry = f"INSERT INTO usd_krw (date,usd_krw,wtime) VALUES('{getdate}','{usdkrw}','{w_time}')"
-        # self.DB.exe(qry)
-        return usdkrw
 
 
 # --------------------------------------------------------------------------------------------------
