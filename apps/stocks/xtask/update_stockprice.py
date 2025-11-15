@@ -5,24 +5,21 @@ class SU :
     def __init__(self) :
         self.DB = DB('stocks')
         self.skey = self.DB.store("slack_key")
+        self.tkey = self.DB.store("tiingo")
 
     def send_message(self,message) :
         if self.DB.system == "Linux" : my.post_slack(self.skey,message)
         else : print(message)
 
     def stocks_update(self,cdx,today) :
-        
         cdx = cdx.upper()
-        self.DB.tbl, self.DB.wre = ('h_stockHistory_board',f"add1='{cdx}'")
-        b_date = self.DB.get_one("max(add0)")
+        b_date = self.DB.one(f"SELECT max(add0) FROM h_stockHistory_board WHERE add1='{cdx}'")
         
-        # add0 = date / add1 = code / add2 = alias / add4 = open / add5 = high / add6 = low / add7 = volume / add8 = change / add9 = up / add10 = dn
-        self.DB.wre = f"add0='{b_date}' and add1='{cdx}'"
-        one = self.DB.get('add0,add4,add5,add6,add3,add7,add8,add9,add10',many=1,assoc=False)
+        # # add0 = date / add1 = code / add2 = alias / add4 = open / add5 = high / add6 = low / add7 = volume / add8 = change / add9 = up / add10 = dn
+        one = self.DB.oneline(f"SELECT add0,add4,add5,add6,add3,add7,add8,add9,add10 FROM h_stockHistory_board WHERE add0='{b_date}' and add1='{cdx}'")
         the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
-        app_key = self.DB.store("tiingo")
-  
-        ohlc = my.get_tiingo_price(app_key,cdx,b_date,today)
+ 
+        ohlc = my.get_tiingo_price(self.tkey,cdx,b_date,today)
 
         if  not ohlc : 
             self.send_message("No data updated")
@@ -45,7 +42,7 @@ class SU :
                 row2 = list(row)
                 row2 += [cdx,'','comphys','정용훈',time_now,time_now]
                 values = str(row2)[1:-1]
-                sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
+                sql = f"INSERT INTO h_stockHistory_board ({db_keys}) VALUES({values})"
                 self.DB.exe(sql)
 
             lday = rst3[-1][0]
