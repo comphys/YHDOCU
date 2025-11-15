@@ -14,6 +14,8 @@ class Stock_update(Control) :
 
     def update_stock(self) :
 
+        usdkrw = self.stock.get_usd_krw()[1]
+
         self.DB.tbl, self.DB.wre = ("h_user_list",f"no={session['N_NO']}")
         USER = self.DB.get("*",many=1, assoc=True)
 
@@ -52,7 +54,7 @@ class Stock_update(Control) :
 
         for row in rst3 :
             row2 = list(row)
-            row2 += [cdx,cdx,USER['uid'],USER['uname'],time_now,time_now]
+            row2 += [cdx,usdkrw,USER['uid'],USER['uname'],time_now,time_now]
             values = str(row2)[1:-1]
             sql = f"INSERT INTO {self.DB.tbl} ({db_keys}) VALUES({values})"
             self.DB.exe(sql)
@@ -61,13 +63,7 @@ class Stock_update(Control) :
         return self.moveto('board/list/stockHistory/csh=on')
 
     def update_krw(self) :
-        getdate, usdkrw = self.stock.get_usd_krw()
-        w_time = my.timestamp_to_date()
-        qry = f"INSERT INTO usd_krw (date,usd_krw,wtime) VALUES('{getdate}','{usdkrw}','{w_time}')"
-        self.DB.exe(qry)
-       
-        self.set_message(f"환율 업데이트를 완료하였습니다. {getdate}일 현재 {usdkrw}원 / 1$ 입니다.")
-        return self.moveto('board/list/stockHistory/csh=on')
+        pass
 
     def delete(self) :
 
