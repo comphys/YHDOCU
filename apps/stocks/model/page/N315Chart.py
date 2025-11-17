@@ -35,7 +35,6 @@ class M_N315Chart(Model) :
 
         VB.do_viewChart()
 
-        VB.D['skin'] = f"{self.SYS.skin}/{self.D['bid']}.html"
         return self.SYS.echo(VB.D)
 
 # ----------------------------------------------------------------------------------------------

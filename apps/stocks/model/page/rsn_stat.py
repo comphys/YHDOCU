@@ -53,7 +53,6 @@ class M_rsn_stat(Model) :
         RST.D |= D
 
         RST.do_viewStat(opt)
-        RST.D['skin'] = f"{self.skin}/{self.D['bid']}.html"
         
         return self.SYS.echo(RST.D)
         

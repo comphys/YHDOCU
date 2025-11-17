@@ -50,19 +50,24 @@ class SU :
         else :
             self.send_message(f"No data to update...")
 
+    def stock_holiday(self,today) :
+        
+        weekd = my.dayofdate(today)
+
+        if weekd in ['토','일'] : return f"{weekd}요일 : Good morning !"
+        chk_holiday = self.DB.one(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
+
+        if chk_holiday : return "Today is a holiday !"
+
+        return None
 
 # --------------------------------------------------------------------------------------------------
-today = my.kor_loc_date('US/Eastern')[0:10]
-weekd = my.dayofdate(today)
 A = SU()
-chk_holiday = A.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
-chk_off = chk_holiday[0][0] if chk_holiday else ''
+today = my.kor_loc_date('US/Eastern')[0:10]
+skip = A.stock_holiday(today)
 
-skip = (weekd in ['토','일']) or chk_off
-
-if  skip :
-    message = f"Today is a holiday !" if chk_off else f"[{today}] {weekd}요일 : Good morning !"
-    A.send_message(message)
+if  skip : 
+    A.send_message(skip)
 
 else :
     A.stocks_update('soxl',today)

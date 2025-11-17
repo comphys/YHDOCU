@@ -64,5 +64,4 @@ class M_rst_view(Model) :
 
         RST.do_viewChart()
     
-        D['skin'] = f"{self.skin}/{self.D['bid']}.html"
         return self.SYS.echo(RST.D)

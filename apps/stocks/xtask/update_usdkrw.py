@@ -16,7 +16,7 @@ class SU :
         self.DB.exe(f"UPDATE h_stockHistory_board SET add2={krw[1]} WHERE add0='{krw[0]}'")
         self.send_message(f"{krw[0]}일 환율 업데이트 완료")
         
-
+    
 # --------------------------------------------------------------------------------------------------
 today = my.kor_loc_date('US/Eastern')[0:10]
 weekd = my.dayofdate(today)
@@ -27,9 +27,7 @@ chk_off = chk_holiday[0][0] if chk_holiday else ''
 skip = (weekd in ['토','일']) or chk_off
 
 if  skip :
-    message = f"Today is a holiday !" if chk_off else f"[{today}] {weekd}요일 : Good morning !"
-    A.send_message(message)
-
+    pass
 else :
     krw = A.forex_update()
     
