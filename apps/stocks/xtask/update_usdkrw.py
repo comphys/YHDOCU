@@ -11,11 +11,6 @@ class SU :
         else : print(message)
 
 
-    def forex_update(self) :
-        krw = my.get_usd_krw()
-        self.DB.exe(f"UPDATE h_stockHistory_board SET add2={krw[1]} WHERE add0='{krw[0]}'")
-        self.send_message(f"{krw[0]}일 환율 업데이트 완료")
-        
     
 # --------------------------------------------------------------------------------------------------
 today = my.kor_loc_date('US/Eastern')[0:10]
@@ -29,5 +24,7 @@ skip = (weekd in ['토','일']) or chk_off
 if  skip :
     pass
 else :
-    krw = A.forex_update()
+    krw = my.get_usd_krw()
+    A.DB.exe(f"UPDATE h_stockHistory_board SET add2={krw[1]} WHERE add0='{today}'")
+    A.send_message("환율 업데이트 완료")
     
