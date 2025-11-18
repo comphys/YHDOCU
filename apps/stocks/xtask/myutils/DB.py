@@ -27,7 +27,8 @@ class DB :
 
     def one(self,qry) :
         self.rst = self.cur.execute(qry)
-        return self.rst.fetchone()[0]
+        if  rst := self.rst.fetchone() : return rst[0] 
+        return None
 
     def col(self,qry) :
         self.rst = self.cur.execute(qry)

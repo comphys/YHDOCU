@@ -55,13 +55,9 @@ class SU :
         weekd = my.dayofdate(today)
 
         if weekd in ['토','일'] : return f"{weekd}요일 : Good morning !"
-        chk = self.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
+        chk = self.DB.one(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
 
-        chk_holiday = chk[0] if chk else None 
-
-        if chk_holiday : return "Today is a holiday !"
-
-        return None
+        return "Today is a holiday !" if chk else None
 
 # --------------------------------------------------------------------------------------------------
 A = SU()

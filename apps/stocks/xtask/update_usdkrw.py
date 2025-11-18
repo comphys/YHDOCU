@@ -16,10 +16,8 @@ class SU :
 today = my.kor_loc_date('US/Eastern')[0:10]
 weekd = my.dayofdate(today)
 A = SU()
-chk_holiday = A.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
-chk_off = chk_holiday[0][0] if chk_holiday else ''
-
-skip = (weekd in ['토','일']) or chk_off
+chk_holiday = A.DB.one(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
+skip = (weekd in ['토','일']) or chk_holiday
 
 if  skip :
     pass
