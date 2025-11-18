@@ -78,6 +78,11 @@
 		<i class="fa fa-sign-in"></i> <span class="exchange">{{D['총입금합']}}</span> &nbsp;
 		<i class="fa fa-sign-out"></i> <span class="exchange">{{D['총출금합']}}</span> &nbsp;
 		<i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;<span class="exchange"> {{D['누적수익']}} ( {{D['실현수익']}} △ {{D['수수료합']}} )</span> &nbsp;
+		<div style="display:inline-block;color:gray;margin-left:10px;" onclick="clear_closeP()">
+			<span id="closeP_1st"></span>&nbsp;
+			<span id="closeP_2nd"></span>&nbsp;
+			<span id="closeP_dff"></span>
+		</div>
 	</div>
 	<div class="pull-right" style="color:#222121;">
 		<div id ='daily-check'>{{D['주문확인']}}</div>&nbsp;&nbsp;
@@ -639,6 +644,29 @@ $("[data-season]").click(function() {
 	// ------------------------------------------------------------------------
 	});
 });	
+
+$(".closeP").click(function(e){
+	e.stopPropagation();
+	var n1 = $("#closeP_1st").text();
+	var n2 = $("#closeP_2nd").text();
+	var nn = $(this).text();
+	var df = 0.0
+
+	if(!n1) { $("#closeP_1st").text(nn); 
+	}else if(!n2) { 
+		$("#closeP_2nd").text(nn); 
+		n1 = $("#closeP_1st").text();
+		df = (parseFloat(nn)/parseFloat(n1)-1) * 100;		
+		$("#closeP_dff").text(df.toFixed(2)+"%");
+		 
+	}else { 
+		$("#closeP_1st").text(nn); 
+		$("#closeP_2nd").text('');
+		$("#closeP_dff").text('');
+	}
+});
+
+function clear_closeP() { $("#closeP_1st").text(''); $("#closeP_2nd").text(''); $("#closeP_dff").text(''); }
 
 </script>
 {% endblock %}
