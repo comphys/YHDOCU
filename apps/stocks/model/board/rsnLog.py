@@ -1,4 +1,5 @@
 from system.core.load import Model
+import system.core.my_utils as my
 
 class Ajax(Model) :
 
@@ -66,12 +67,12 @@ class Ajax(Model) :
     def season_chart(self) :
 
         season = self.D['post']['season']
-        sdate  = self.D['post']['sdate']
 
-        qry = f"SELECT CAST(add3 as float), CAST(v_09 as float), CAST(r_09 as float), CAST(s_09 as float), CAST(n_09 as float) FROM h_rsnLog_board WHERE add1='{season}' ORDER BY add0 ASC"
+        qry = f"SELECT CAST(add3 as float), CAST(v_09 as float), CAST(r_09 as float), CAST(s_09 as float), CAST(n_09 as float), add0 FROM h_rsnLog_board WHERE add1='{season}' ORDER BY add0 ASC"
         RST = self.DB.exe(qry)
-
-        profit = self.DB.oneline(f"SELECT add10, add11 FROM h_rsnLog_board WHERE add0='{sdate}'")
+        sdate = RST[-1][5]
+        
+        profit = self.DB.oneline(f"SELECT add10, add11, add6 FROM h_rsnLog_board WHERE add0='{sdate}'")
 
         cnt = len(RST)
         PD = {}
@@ -92,5 +93,8 @@ class Ajax(Model) :
         PD['amax'] = max(PD['C'])
         PD['profit'] = profit[0]
         PD['prate']  = profit[1]
-
+        PD['sdate']  = sdate
+        PD['season'] = season
+        PD['stocks'] = my.sv(profit[2],'i')
+        
         return self.SYS.json(PD)    

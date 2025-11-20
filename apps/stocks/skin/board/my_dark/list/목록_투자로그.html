@@ -122,9 +122,9 @@
 		<tbody>
 			{%- for TR in D['TR'] -%}
 			{% if TR['add2']|striptags == 'R' %}
-			<tr style="background-color:darkslategray" data-season="{{TR['add1']|striptags}}" data-date="{{TR['add0']|striptags}}">
+			<tr style="background-color:darkslategray" data-season="{{TR['add1']|striptags}}">
 			{% elif TR['add6']|striptags == '0' and TR['add13']|striptags != '0.00' %}
-			<tr style="background-color:black;" data-season="{{TR['add1']|striptags}}" data-date="{{TR['add0']|striptags}}"> 
+			<tr style="background-color:black;" data-season="{{TR['add1']|striptags}}"> 
 			{% else %}
 			<tr> 
 			{% endif %}
@@ -412,13 +412,13 @@ const data_season = {
 		{ label:'R 평균',  data : [3,6,7,8,5], pointStyle:'circle', borderWidth:4,pointRadius:1,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',lineTension:0.2},
 		{ label:'S 평균',  data : [3,6,7,8,5], pointStyle:'circle', borderWidth:4,pointRadius:1,pointHoverRadius:15,borderColor:'yellow',backgroundColor:'yellow', lineTension:0.2},
 		{ label:'T 평균',  data : [3,6,7,8,5], pointStyle:'rect', borderWidth:4,pointRadius:3,pointHoverRadius:15,borderColor:'lightgreen',backgroundColor:'lightgreen',lineTension:0.2},
-		{ label:'추세+10', data : [4,7,5,3,4], borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
-		{ label:'추세+0',  data : [4,7,5,3,4], borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
-		{ label:'추세-10', data : [4,7,5,3,4], borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
-		{ label:'추세-20', data : [4,7,5,3,4], borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
-		{ label:'추세-30', data : [4,7,5,3,4], borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
-		{ label:'추세-40', data : [4,7,5,3,4], borderWidth:1,borderColor:'#58ACFA',borderDash: [2,4],backgroundColor:'#58ACFA',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
-		{ label:'추세-50', data : [4,7,5,3,4], borderWidth:1,borderColor:'#f78181',borderDash: [2,4],backgroundColor:'#f78181',pointRadius:0,pointHoverRadius:0,lineTension:0.2}
+		{ label:'추세+10', data : [4,7,5,3,4], borderWidth:1,borderColor:'lightgray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+		{ label:'추세+0',  data : [4,7,5,3,4], borderWidth:1,borderColor:'lightgray',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+		{ label:'추세-10', data : [4,7,5,3,4], borderWidth:1,borderColor:'lightgray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+		{ label:'추세-20', data : [4,7,5,3,4], borderWidth:1,borderColor:'lightgray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+		{ label:'추세-30', data : [4,7,5,3,4], borderWidth:1,borderColor:'lightgray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+		{ label:'추세-40', data : [4,7,5,3,4], borderWidth:1,borderColor:'#58ACFA',  borderDash: [2,4],backgroundColor:'#58ACFA',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+		{ label:'추세-50', data : [4,7,5,3,4], borderWidth:1,borderColor:'#f78181',  borderDash: [2,4],backgroundColor:'#f78181',pointRadius:0,pointHoverRadius:0,lineTension:0.2}
 	]   
 };
 const options_season = {
@@ -588,63 +588,60 @@ $("[data-scnt]").click(function()
 	}
 );
 
-$("[data-season]").click(function() {
+$(".season").click(function(){var season=$(this).text();var url=uri('linkurl')+'board/ajax/rsnLog/season_chart';$.post(url,{'season':season},null,'json').done(function(data){ draw_seasonChart(data);});});
+$("[data-season]").click(function(){var season=$(this).data("season");var url=uri('linkurl')+'board/ajax/rsnLog/season_chart';$.post(url,{'season': season},null, 'json').done(function(data){ draw_seasonChart(data); });});
 
-	var season = $(this).data("season");
-	var sdate  = $(this).data("date");
+function draw_seasonChart(data) {
+
+	$("#div-seasonChart").css('zIndex',7);
+	var clsp = [];
+	var avgv = [];
+	var avgr = [];
+	var avgs = [];
+	var avgn = [];
+	var dl10 = []; var dl20 = []; var dl30 = []; var dl40 = []; var dl50 = []; var du00 = []; var du10 = []; var dlnl = [null]*30;
+	var amin = data.amin;
+	var amax = data.amax;
+
+	clsp = data.C;
+	avgv = data.V;
+	avgr = data.R;
+	avgs = data.S;
+	avgn = data.N;
 	
-	var url = uri('linkurl') + 'board/ajax/rsnLog/season_chart';
-	$.post(url,{'season': season,'sdate':sdate},null, 'json').done(function(data){
-	// ------------------------------------------------------------------------
-		$("#div-seasonChart").css('zIndex',7);
-		var clsp = [];
-		var avgv = [];
-		var avgr = [];
-		var avgs = [];
-		var avgn = [];
-		var dl10 = []; var dl20 = []; var dl30 = []; var dl40 = []; var dl50 = []; var du00 = []; var du10 = []; var dlnl = [null]*30;
-		var amin = data.amin;
-		var amax = data.amax;
+	const a0 = clsp[0];
 
-		clsp = data.C;
-		avgv = data.V;
-		avgr = data.R;
-		avgs = data.S;
-		avgn = data.N;
-		
-		const a0 = clsp[0];
+	for(let x=0; x < 10; x++) { du10.push(a0*1.1);}
+	for(let x=0; x < 30; x++) { du00.push(a0);}
+	for(let x=0; x < 10; x++) { dl10.push(a0*0.9);}
+	for(let x=0; x < 20; x++) { dl20.push(a0*0.8);}
+	for(let x=0; x < 30; x++) { dl30.push(a0*0.7);}
+	for(let x=0; x < 30; x++) { dl40.push(a0*0.6);}
+	for(let x=0; x < 30; x++) { dl50.push(a0*0.5);}
 
-		for(let x=0; x < 10; x++) { du10.push(a0*1.1);}
-		for(let x=0; x < 30; x++) { du00.push(a0);}
-		for(let x=0; x < 10; x++) { dl10.push(a0*0.9);}
-		for(let x=0; x < 20; x++) { dl20.push(a0*0.8);}
-		for(let x=0; x < 30; x++) { dl30.push(a0*0.7);}
-		for(let x=0; x < 30; x++) { dl40.push(a0*0.6);}
-		for(let x=0; x < 30; x++) { dl50.push(a0*0.5);}
+	var xticks = clsp.length
+	if (xticks < 24 ) { xticks = 24; }
+	var new_labels = Array.from(new Array(xticks),(x,i)=> i+1);
 
-		var xticks = clsp.length
-		if (xticks < 24 ) { xticks = 24; }
-		var new_labels = Array.from(new Array(xticks),(x,i)=> i+1);
+	myChart_season.data.labels = new_labels;
+	myChart_season.data.datasets[0].data =  clsp;
+	myChart_season.data.datasets[1].data =  avgv;
+	myChart_season.data.datasets[2].data =  avgr;
+	myChart_season.data.datasets[3].data =  avgs;
+	myChart_season.data.datasets[4].data =  avgn;
+	myChart_season.data.datasets[5].data = (amax>a0*1.0)? du10 : dlnl;
+	myChart_season.data.datasets[6].data =  du00;
+	myChart_season.data.datasets[7].data =  dl10;
+	myChart_season.data.datasets[8].data = (amin<a0*0.8)? dl20 : dlnl;
+	myChart_season.data.datasets[9].data = (amin<a0*0.7)? dl30 : dlnl;
+	myChart_season.data.datasets[10].data =(amin<a0*0.6)? dl40 : dlnl;
+	myChart_season.data.datasets[11].data= (amin<a0*0.5)? dl50 : dlnl;
+	var myprofit = comma(data.profit);
+	if(data.stocks) {	$("#div-seasonChart-notice").html(data.sdate+" 시즌 "+data.season+ "&nbsp; 진행중"); }
+	else { $("#div-seasonChart-notice").html(data.sdate+" 시즌 "+data.season+ "&nbsp; 종료 : 수익 $ "+myprofit+" ( "+data.prate+"% )"); }
+	myChart_season.update();	
+}
 
-		myChart_season.data.labels = new_labels;
-		myChart_season.data.datasets[0].data =  clsp;
-		myChart_season.data.datasets[1].data =  avgv;
-		myChart_season.data.datasets[2].data =  avgr;
-		myChart_season.data.datasets[3].data =  avgs;
-		myChart_season.data.datasets[4].data =  avgn;
-		myChart_season.data.datasets[5].data = (amax>a0*1.0)? du10 : dlnl;
-		myChart_season.data.datasets[6].data =  du00;
-		myChart_season.data.datasets[7].data =  dl10;
-		myChart_season.data.datasets[8].data = (amin<a0*0.8)? dl20 : dlnl;
-		myChart_season.data.datasets[9].data = (amin<a0*0.7)? dl30 : dlnl;
-		myChart_season.data.datasets[10].data =(amin<a0*0.6)? dl40 : dlnl;
-		myChart_season.data.datasets[11].data= (amin<a0*0.5)? dl50 : dlnl;
-		var myprofit = comma(data.profit);
-		$("#div-seasonChart-notice").html(sdate+" 시즌 "+season+ " : 수익 $ "+myprofit+" ( "+data.prate+"% )");
-		myChart_season.update();		
-	// ------------------------------------------------------------------------
-	});
-});	
 
 $(".closeP").click(function(e){
 	e.stopPropagation();
