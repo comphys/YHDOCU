@@ -52,8 +52,8 @@
 		<thead>
 			<tr style="height:27px">
 				<th style="background-color:#071418;font-style:italic;cursor:pointer" onclick="monthlyProfit_toggle()">Progress</th>
-				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('입금내역',0)">입금</th>
-				<th style="background-color:#0A2229;text-align:right;cursor:pointer" onclick="popup_notice('출금내역',0)">출금</th>
+				<th style="background-color:#0A2229;text-align:right;cursor:pointer" >입금</th>
+				<th style="background-color:#0A2229;text-align:right;cursor:pointer" >출금</th>
 				<th colspan='2' style="background-color:#0A2229;font-style:italic">US dollar</th>
 				<th colspan='12' style="background-color:#0B2F3A;font-style:italic;cursor:pointer;" onclick="winopen('winopen/chart2/soxl',820,450,'stock_chart');">Leverage Stock {{D['적용종목']}}</th>
 				<th style="background-color:#071418;;font-style:italic">Total</th>
@@ -65,7 +65,7 @@
 				<th style="background-color:#0A2229;text-align:right;;width:90px">잔액</th>
 				<th style="background-color:#0A2229;text-align:right;;width:65px">비중</th>
 
-				<th style="background-color:#0B2F3A;text-align:right;cursor:pointer;width:70px" onclick="popup_notice('종가2',0)">종가</th>
+				<th style="background-color:#0B2F3A;text-align:right;cursor:pointer;width:70px" >종가</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:50px">변동</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:60px">수량</th>
 				<th style="background-color:#0B2F3A;text-align:right;width:84px">매수금</th>
@@ -171,22 +171,6 @@ function exchange_toggle(sel) {
 	else { i=0; $("#INVEST_INFO .exchange").each(function(){ $(this).text(dollar_notice[i++]);});show_dollar = !show_dollar;$(sel).css("color","");}
 }
 
-function popup_notice(option,size) {
-	if( notice_popup ) {
-			h_dialog.close("POP_INFO"); 
-			notice_popup = null
-			return;
-		} else 
-		{	
-			if(size) width = '350px' ; else width = '230px' 
-			notice_popup = true
-			var url = uri('linkurl') + 'boards-stock_subinfo/get_subinfo/tbl={{D['tbl']}}/opt='+option;
-			var ypos = mouse_Y
-			// if(ypos > 400) ypos = ypos-250
-			var o = {id:'POP_INFO', width: width, x:mouse_X+10, y:mouse_Y,header:false,footer:false,drag:true}
-			h_dialog.load(url,o);
-		}
-}
 
 function limt_period() {
 	let lday = $("#the-last-date").val();
