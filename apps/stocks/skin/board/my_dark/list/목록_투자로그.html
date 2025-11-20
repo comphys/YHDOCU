@@ -79,10 +79,10 @@
 		<i class="fa fa-sign-out"></i> <span class="exchange">{{D['총출금합']}}</span> &nbsp;
 		<i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;<span class="exchange"> {{D['누적수익']}} ( {{D['실현수익']}} △ {{D['수수료합']}} )</span> &nbsp;
 		<div style="display:inline-block;color:gray;margin-left:10px;" onclick="clear_closeP()">
-			<span id="closeP_1st"></span>&nbsp;
-			<span id="closeP_arw" style="display:none;">▶</span>&nbsp;
-			<span id="closeP_2nd"></span>&nbsp;&nbsp;
-			<span id="closeP_dff"></span>
+			<span id="closeP_1st">{{D['sfc']}}</span>&nbsp;
+			<span id="closeP_arw">▶</span>&nbsp;
+			<span id="closeP_2nd">{{D['slc']}}</span>&nbsp;&nbsp;
+			<span id="closeP_dff">{{D['scd']}}%</span>
 		</div>
 	</div>
 	<div class="pull-right" style="color:#222121;">

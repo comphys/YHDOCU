@@ -37,8 +37,14 @@ class 목록_투자로그(SKIN) :
 
     def chart(self) :
         
-        last_date = self.DB.last_date(self.D['tbl'])
-        
+        last_date = self.D['LIST'][0]['add0']
+
+        slc = self.D['LIST'][0]['add3']
+        sfc = self.DB.one(f"SELECT add3 FROM {self.D['tbl']} WHERE add1='{self.D['LIST'][0]['add1']}' ORDER BY add0 ASC LIMIT 1")
+        self.D['sfc'] = sfc
+        self.D['slc'] = slc
+        self.D['scd'] = f"{(float(slc)/float(sfc) -1) * 100:.2f}"
+
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
         self.DB.wre = f"add0 <='{last_date}'"
