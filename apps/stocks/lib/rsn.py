@@ -490,8 +490,8 @@ class RSN :
         if self.chart and self.D['c_date'] : self.D['s_date'] = self.D['c_date'][0]; self.D['e_date'] = self.D['c_date'][-1]
 
         if  self.stat :
-            self.D['월별구분'] = [ x[0] for x in self.D['월익통계']][-24:]
-            self.D['월별이익'] = [ round(x[1]) for x in self.D['월익통계']][-24:]
+            self.D['월별구분'] = [ x[0] for x in self.D['월익통계']]
+            self.D['월별이익'] = [ round(x[1]) for x in self.D['월익통계']]
             
             if  self.D['월별이익'][0] == 0 :
                 self.D['월별구분'].pop(0)
@@ -512,7 +512,7 @@ class RSN :
     
             asis_c = len(asis)
             asis_p = [x for x in asis if x >= 0.0 ]
-            asis_u = [x for x in asis if x < 0.0]
+            asis_u = [x for x in asis if x <  0.0 ]
             asispc = len(asis_p)
             asisuc = len(asis_u)
             asispm = sum(asis_p) / asispc if asispc else 0.0
