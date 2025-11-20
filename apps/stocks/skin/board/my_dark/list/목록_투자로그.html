@@ -413,7 +413,7 @@ const data_season = {
 		{ label:'S 평균',  data : [3,6,7,8,5], pointStyle:'circle', borderWidth:4,pointRadius:1,pointHoverRadius:15,borderColor:'yellow',backgroundColor:'yellow', lineTension:0.2},
 		{ label:'T 평균',  data : [3,6,7,8,5], pointStyle:'rect', borderWidth:4,pointRadius:3,pointHoverRadius:15,borderColor:'lightgreen',backgroundColor:'lightgreen',lineTension:0.2},
 		{ label:'추세+10', data : [4,7,5,3,4], borderWidth:1,borderColor:'lightgray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
-		{ label:'추세+0',  data : [4,7,5,3,4], borderWidth:1,borderColor:'lightgray',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+		
 		{ label:'추세-10', data : [4,7,5,3,4], borderWidth:1,borderColor:'lightgray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
 		{ label:'추세-20', data : [4,7,5,3,4], borderWidth:1,borderColor:'lightgray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
 		{ label:'추세-30', data : [4,7,5,3,4], borderWidth:1,borderColor:'lightgray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
@@ -439,7 +439,7 @@ const myChart_season = new Chart(ctx_season, config_season);
 
 $(".r_balance").click(function(){
 	let theday = $(this).parent().children("td:eq(0)").text();
-	let posturl = uri('linkurl')+ 'board/ajax/rsnLog/view_log';
+	let posturl = uri('linkajax')+ 'rsnLog/view_log';
 	$.post(posturl, {theday:theday,tactic:'r'}, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#cn1").text('일매수금');
 	$("#cn2").text("기초수량");
@@ -449,7 +449,7 @@ $(".r_balance").click(function(){
 
 $(".s_balance").click(function(){
 	let theday = $(this).parent().children("td:eq(0)").text();
-	let posturl = uri('linkurl')+ 'board/ajax/rsnLog/view_log';
+	let posturl = uri('linkajax')+ 'rsnLog/view_log';
 	$.post(posturl, {theday:theday,tactic:'s'}, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#cn1").text('일매수금');
 	$("#cn2").text("기초수량");
@@ -459,7 +459,7 @@ $(".s_balance").click(function(){
 
 $(".n_balance").click(function(){
 	let theday = $(this).parent().children("td:eq(0)").text();
-	let posturl = uri('linkurl')+ 'board/ajax/rsnLog/view_log';
+	let posturl = uri('linkajax')+ 'rsnLog/view_log';
 	$.post(posturl, {theday:theday,tactic:'n'}, null, 'json' ).done(function(data){for(key in data) {$("input[name='"+key+"']").val(data[key]);$(".i-number").comma('init');} });
 	$("#cn1").text('매수차수');
 	$("#cn2").text("배분금액");	
@@ -473,7 +473,7 @@ $("#daily-check").on('dblclick', function() {
 		if(e.which==13) {
 			$(this).attr("contenteditable",false).removeClass('daily-check-on');
 			let odrday  = $(this).text(); odrday = $.trim(odrday);
-			let posturl = uri('linkurl')+'board/ajax/rsnLog/dailyCheckUpdate';
+			let posturl = uri('linkajax')+'rsnLog/dailyCheckUpdate';
 			$.post(posturl,{odrday:odrday,option:'RSN'}).done(function(){location.replace(location.href);}); 
 		} else if(e.which==69) {$(this).attr("contenteditable",false).removeClass('daily-check-on');}
 	});
@@ -588,18 +588,17 @@ $("[data-scnt]").click(function()
 	}
 );
 
-$(".season").click(function(){var season=$(this).text();var url=uri('linkurl')+'board/ajax/rsnLog/season_chart';$.post(url,{'season':season},null,'json').done(function(data){ draw_seasonChart(data);});});
-$("[data-season]").click(function(){var season=$(this).data("season");var url=uri('linkurl')+'board/ajax/rsnLog/season_chart';$.post(url,{'season': season},null, 'json').done(function(data){ draw_seasonChart(data); });});
+$(".season").click(function(){var season=$(this).text();var url=uri('linkajax')+'rsnLog/season_chart';$.post(url,{'season':season},null,'json').done(function(data){ draw_seasonChart(data);});});
+$("[data-season]").click(function(){var season=$(this).data("season");var url=uri('linkajax')+'rsnLog/season_chart';$.post(url,{'season': season},null, 'json').done(function(data){ draw_seasonChart(data); });});
 
 function draw_seasonChart(data) {
 
-	$("#div-seasonChart").css('zIndex',7);
 	var clsp = [];
 	var avgv = [];
 	var avgr = [];
 	var avgs = [];
 	var avgn = [];
-	var dl10 = []; var dl20 = []; var dl30 = []; var dl40 = []; var dl50 = []; var du00 = []; var du10 = []; var dlnl = [null]*30;
+	var dl10 = []; var dl20 = []; var dl30 = []; var dl40 = []; var dl50 = []; var du10 = []; var dlnl = [null]*30;
 	var amin = data.amin;
 	var amax = data.amax;
 
@@ -612,7 +611,6 @@ function draw_seasonChart(data) {
 	const a0 = clsp[0];
 
 	for(let x=0; x < 10; x++) { du10.push(a0*1.1);}
-	for(let x=0; x < 30; x++) { du00.push(a0);}
 	for(let x=0; x < 10; x++) { dl10.push(a0*0.9);}
 	for(let x=0; x < 20; x++) { dl20.push(a0*0.8);}
 	for(let x=0; x < 30; x++) { dl30.push(a0*0.7);}
@@ -620,7 +618,7 @@ function draw_seasonChart(data) {
 	for(let x=0; x < 30; x++) { dl50.push(a0*0.5);}
 
 	var xticks = clsp.length
-	if (xticks < 24 ) { xticks = 24; }
+	if (xticks < 26 ) { xticks = 26; }
 	var new_labels = Array.from(new Array(xticks),(x,i)=> i+1);
 
 	myChart_season.data.labels = new_labels;
@@ -630,14 +628,15 @@ function draw_seasonChart(data) {
 	myChart_season.data.datasets[3].data =  avgs;
 	myChart_season.data.datasets[4].data =  avgn;
 	myChart_season.data.datasets[5].data = (amax>a0*1.0)? du10 : dlnl;
-	myChart_season.data.datasets[6].data =  du00;
-	myChart_season.data.datasets[7].data =  dl10;
-	myChart_season.data.datasets[8].data = (amin<a0*0.8)? dl20 : dlnl;
-	myChart_season.data.datasets[9].data = (amin<a0*0.7)? dl30 : dlnl;
-	myChart_season.data.datasets[10].data =(amin<a0*0.6)? dl40 : dlnl;
-	myChart_season.data.datasets[11].data= (amin<a0*0.5)? dl50 : dlnl;
+	myChart_season.data.datasets[6].data =  dl10;
+	myChart_season.data.datasets[7].data = (amin<a0*0.8)? dl20 : dlnl;
+	myChart_season.data.datasets[8].data = (amin<a0*0.7)? dl30 : dlnl;
+	myChart_season.data.datasets[9].data =(amin<a0*0.6)? dl40 : dlnl;
+	myChart_season.data.datasets[10].data= (amin<a0*0.5)? dl50 : dlnl;
+	
+	$("#div-seasonChart").css('zIndex',7);
 	var myprofit = comma(data.profit);
-	if(data.stocks) {	$("#div-seasonChart-notice").html(data.sdate+" 시즌 "+data.season+ "&nbsp; 진행중"); }
+	if(data.stocks) { $("#div-seasonChart-notice").html(data.sdate+" 시즌 "+data.season+ "&nbsp; 진행중"); }
 	else { $("#div-seasonChart-notice").html(data.sdate+" 시즌 "+data.season+ "&nbsp; 종료 : 수익 $ "+myprofit+" ( "+data.prate+"% )"); }
 	myChart_season.update();	
 }
