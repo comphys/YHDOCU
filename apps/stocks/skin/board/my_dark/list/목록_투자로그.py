@@ -39,10 +39,15 @@ class 목록_투자로그(SKIN) :
         
         last_date = self.D['LIST'][0]['add0']
 
-        slc = self.D['LIST'][0]['add3']
-        sfc = self.DB.one(f"SELECT add3 FROM {self.D['tbl']} WHERE add1='{self.D['LIST'][0]['add1']}' ORDER BY add0 ASC LIMIT 1")
+        slc  = self.D['LIST'][0]['add3']
+        sfc  = self.DB.one(f"SELECT add3 FROM {self.D['tbl']} WHERE add1='{self.D['LIST'][0]['add1']}' ORDER BY add0 ASC  LIMIT 1")
+        cpr  = self.DB.oneline(f"SELECT v_08,r_08,s_08,n_08 FROM {self.D['tbl']} WHERE add1='{self.D['LIST'][0]['add1']}' ORDER BY add0 DESC LIMIT 1")
         self.D['sfc'] = sfc
         self.D['slc'] = slc
+        self.D['vca'] = cpr[0]
+        self.D['rca'] = cpr[1]
+        self.D['sca'] = cpr[2]
+        self.D['nca'] = cpr[3]
         self.D['scd'] = f"{(float(slc)/float(sfc) -1) * 100:.2f}"
 
         self.DB.clear()
@@ -63,7 +68,7 @@ class 목록_투자로그(SKIN) :
             first_date = chart_data[-1]['add0']
             self.D['총경과일'] = my.diff_day(first_date,day2=last_date)
             
-            chart_span = 40
+            chart_span = 50
             chart_slice = len(chart_data)
             self.D['chart_start'] = chart_slice - chart_span if chart_slice > chart_span else 0
     
