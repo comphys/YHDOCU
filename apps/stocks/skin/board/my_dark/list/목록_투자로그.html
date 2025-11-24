@@ -78,16 +78,7 @@
 		<i class="fa fa-sign-in"></i> <span class="exchange">{{D['총입금합']}}</span> &nbsp;
 		<i class="fa fa-sign-out"></i> <span class="exchange">{{D['총출금합']}}</span> &nbsp;
 		<i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;<span class="exchange"> {{D['누적수익']}} ( {{D['실현수익']}} △ {{D['수수료합']}} )</span> &nbsp;
-		<div style="display:inline-block;color:gray;margin-left:10px;" onclick="clear_closeP()">
-			종가추이 : 
-			<span id="closeP_1st">{{D['sfc']}}</span>&nbsp;
-			<span id="closeP_arw">▶</span>&nbsp;
-			<span id="closeP_2nd">{{D['slc']}}</span>&nbsp;&nbsp;
-			<span id="closeP_dff">{{D['scd']}}%</span>&nbsp;&nbsp;
-		</div>
-		<div style="display:inline-block;color:gray;margin-left:10px;">
-			현수익률 :&nbsp;&nbsp; V :&nbsp;{{D['vca']}} &nbsp; R :&nbsp;{{D['rca']}} &nbsp; S :&nbsp;{{D['sca']}} &nbsp; N :&nbsp;{{D['nca']}}
-		</div>
+		<div id = "season-status" style="display:inline-block;color:gray;margin-left:10px;"></div>
 	</div>
 	<div class="pull-right" style="color:#222121;">
 		<div id ='daily-check'>{{D['주문확인']}}</div>&nbsp;&nbsp;
@@ -345,15 +336,15 @@
 	<canvas id="monthlyProfitChart" style="width:1128px;height:350px;background-color:#24272d"></canvas>
 </div>
 
-<div id='div-seasonChart' style="position:absolute;left:180px;top:55px;padding:5px 10px 5px 10px;z-index:2;opacity:0.9;">
-	<div id='div-seasonChart-notice' style="position:absolute;top:14px;left:450px;color:lightgray;font-style:italic">시즌 챠트</div>
-	<canvas id="seasonChart" style="width:800px;height:350px;background-color:#24272d"></canvas>
+<div id='div-seasonChart' style="position:absolute;left:400px;top:57px;padding:5px 10px 5px 10px;z-index:2;opacity:0.9;">
+	<div id='div-seasonChart-notice' style="position:absolute;top:14px;left:380px;color:lightgray;font-style:italic">시즌 챠트</div>
+	<canvas id="seasonChart" style="width:746px;height:346px;background-color:#24272d"></canvas>
 </div>
 
 <script>
 
 $(document).ready(function(){ 
-	$('#div-seasonChart').bind('dblclick',function(){$(this).css({'left':20,'top':55,'zIndex':2});}).draggable();
+	$('#div-seasonChart').bind('dblclick',function(){$(this).css({'left':400,'top':57,'zIndex':2});$('#season-status').hide();}).draggable();
 });
 
 
@@ -638,37 +629,13 @@ function draw_seasonChart(data) {
 	myChart_season.data.datasets[9].data =(amin<a0*0.6)? dl40 : dlnl;
 	myChart_season.data.datasets[10].data= (amin<a0*0.5)? dl50 : dlnl;
 	
-	$("#div-seasonChart").css('zIndex',7);
+	$("#div-seasonChart").css('z-index',7);
+	$("#season-status").html(" 시즌 "+data.season+" : &nbsp;"+data.sfc+"&nbsp;&nbsp; ▶ &nbsp;"+data.slc+" &nbsp;&nbsp;("+data.scd+"%) &nbsp;&nbsp;&nbsp;&nbsp;  V &nbsp;"+data.vpr+"&nbsp; R &nbsp;"+data.rpr+"&nbsp; S &nbsp;"+data.spr+"&nbsp; N &nbsp;"+data.npr).show();
 	var myprofit = comma(data.profit);
 	if(data.stocks) { $("#div-seasonChart-notice").html(data.sdate+" 시즌 "+data.season+ "&nbsp; 진행중"); }
 	else { $("#div-seasonChart-notice").html(data.sdate+" 시즌 "+data.season+ "&nbsp; 종료 : 수익 $ "+myprofit+" ( "+data.prate+"% )"); }
 	myChart_season.update();	
 }
-
-
-$(".closeP").click(function(e){
-	e.stopPropagation();
-	var n1 = $("#closeP_1st").text();
-	var n2 = $("#closeP_2nd").text();
-	var nn = $(this).text();
-	var df = 0.0
-
-	if(!n1) { $("#closeP_1st").text(nn); 
-	}else if(!n2) {
-		$("#closeP_arw").show(); 
-		$("#closeP_2nd").text(nn); 
-		n1 = $("#closeP_1st").text();
-		df = (parseFloat(nn)/parseFloat(n1)-1) * 100;		
-		$("#closeP_dff").text(df.toFixed(2)+"%");
-		 
-	}else { 
-		$("#closeP_1st").text(nn); 
-		$("#closeP_2nd").text('');
-		$("#closeP_dff").text('');
-	}
-});
-
-function clear_closeP() { $("#closeP_1st").text("{{D['sfc']}}"); $("#closeP_2nd").text("{{D['slc']}}"); $("#closeP_dff").text("{{D['scd']}}"); }
 
 </script>
 {% endblock %}

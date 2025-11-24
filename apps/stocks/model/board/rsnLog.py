@@ -72,7 +72,7 @@ class Ajax(Model) :
         RST = self.DB.exe(qry)
         sdate = RST[-1][5]
         
-        profit = self.DB.oneline(f"SELECT add10, add11, add6 FROM h_rsnLog_board WHERE add0='{sdate}'")
+        profit = self.DB.oneline(f"SELECT add10, add11, add6, v_08,r_08,s_08,n_08 FROM h_rsnLog_board WHERE add0='{sdate}'")
 
         cnt = len(RST)
         PD = {}
@@ -96,5 +96,14 @@ class Ajax(Model) :
         PD['sdate']  = sdate
         PD['season'] = season
         PD['stocks'] = my.sv(profit[2],'i')
+
+        PD['sfc'] = PD['C'][0]
+        PD['slc'] = PD['C'][-1]
+        PD['scd'] = f"{(PD['slc']/PD['sfc'] -1) * 100:.2f}"
+
+        PD['vpr']  = profit[3]
+        PD['rpr']  = profit[4]
+        PD['spr']  = profit[5]
+        PD['npr']  = profit[6]
         
         return self.SYS.json(PD)    

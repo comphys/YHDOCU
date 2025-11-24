@@ -39,17 +39,6 @@ class 목록_투자로그(SKIN) :
         
         last_date = self.D['LIST'][0]['add0']
 
-        slc  = self.D['LIST'][0]['add3']
-        sfc  = self.DB.one(f"SELECT add3 FROM {self.D['tbl']} WHERE add1='{self.D['LIST'][0]['add1']}' ORDER BY add0 ASC  LIMIT 1")
-        cpr  = self.DB.oneline(f"SELECT v_08,r_08,s_08,n_08 FROM {self.D['tbl']} WHERE add1='{self.D['LIST'][0]['add1']}' ORDER BY add0 DESC LIMIT 1")
-        self.D['sfc'] = sfc
-        self.D['slc'] = slc
-        self.D['vca'] = cpr[0]
-        self.D['rca'] = cpr[1]
-        self.D['sca'] = cpr[2]
-        self.D['nca'] = cpr[3]
-        self.D['scd'] = f"{(float(slc)/float(sfc) -1) * 100:.2f}"
-
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
         self.DB.wre = f"add0 <='{last_date}'"
