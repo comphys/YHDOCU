@@ -49,10 +49,6 @@ class 목록_투자로그(SKIN) :
         
         if chart_data :
 
-            # 다음 거래 일자 가져오기
-            self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(last_date)
-            현재환율 = self.DB.last_data_one("CAST(add2 AS FLOAT)","h_stockHistory_board")
-
             # 챠트 정보 가져오기
             first_date = chart_data[-1]['add0']
             self.D['총경과일'] = my.diff_day(first_date,day2=last_date)
@@ -71,7 +67,10 @@ class 목록_투자로그(SKIN) :
             self.D['Ntactic_avg'] = [x['n_09'] if float(x['n_09']) != 0 else 'null' for x in chart_data]
             
             # 다음 날 주문정보 갖고오기
-            NS = self.DB.get_line("add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20") 
+            chk_last_date = self.DB.last_date(self.D['tbl'])
+            self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(chk_last_date)
+            현재환율 = self.DB.last_data_one("CAST(add2 AS FLOAT)","h_stockHistory_board")
+            NS = self.DB.line(f"SELECT add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20 FROM {self.D['tbl']} WHERE add0='{chk_last_date}' LIMIT 1") 
             for name, key in [('기회','r'),('안정','s'),('생활','n')] :
                 self.D['N_'+name+'매수량'] = f"{int(NS[key+'_17']):,}" if float(NS[key+'_17']) else 0
                 self.D['N_'+name+'매수가'] = NS[key+'_18']
