@@ -513,12 +513,12 @@ $(".ohlc-price").click(function(){
 let labels_monthly_ori = {{D['월별구분']|safe}};
 let monthlyProfits_ori = {{D['월별이익']|safe}};
 let labels_monthly_cnt = labels_monthly_ori.length; 
-let lms = labels_monthly_cnt -25; 
+let lms = labels_monthly_cnt -25; if(lms < 0) lms = 0;
 let lme = labels_monthly_cnt ; 
 let labels_monthly = labels_monthly_ori.slice(lms,lme); 
 let monthlyProfits = monthlyProfits_ori.slice(lms,lme); 
 
-// 챠트 객체 생성
+// 시즌챠트 객체 생성
 const ctx_season = $id('seasonChart');
 ctx_season.style.backgroundColor = '#33363b';
 ctx_season.style.border = '2px solid black';
@@ -528,88 +528,29 @@ const data_season = {
 	labels : labels_season,
 	datasets : [
 		{
-			label:'당일종가',
-			data : [2,5,6,3,8],
-			borderColor:'#58ACFA', borderWidth:2,borderDash: [2,2],pointRadius:0, pointHoverRadius:0, backgroundColor:'#58ACFA',
-			lineTension:0.2
-		},
+			label:'당일종가',data : [2,5,6,3,8],borderColor:'#58ACFA', borderWidth:2,borderDash: [2,2],pointRadius:0, pointHoverRadius:0, backgroundColor:'#58ACFA',lineTension:0.2	},
 		{
-			label:'V 평균',
-			data : [3,6,7,8,5],
-			borderColor:'rgb(143,134,129,0.6)',borderWidth:3,pointRadius:0,lineTension:0.2,
-			lineTension:0.2
-
-		},
+			label:'V 평균',data : [3,6,7,8,5],borderColor:'rgb(143,134,129,0.6)',borderWidth:3,pointRadius:0,lineTension:0.2,lineTension:0.2},
 		{
-			label:'R 평균',
-			data : [3,6,7,8,5],
-			pointStyle:'circle', borderWidth:4,pointRadius:1,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',
-			lineTension:0.2
-
-		},
+			label:'R 평균',data : [3,6,7,8,5],pointStyle:'circle', borderWidth:4,pointRadius:1,pointHoverRadius:15,borderColor:'#f78181',backgroundColor:'#f78181',lineTension:0.2},
 		{
-			label:'S 평균',
-			data : [3,6,7,8,5],
-			pointStyle:'circle', borderWidth:4,pointRadius:1,pointHoverRadius:15,borderColor:'yellow',backgroundColor:'yellow',
-			lineTension:0.2
-
-		},
+			label:'S 평균',data : [3,6,7,8,5],pointStyle:'circle', borderWidth:4,pointRadius:1,pointHoverRadius:15,borderColor:'yellow',backgroundColor:'yellow',lineTension:0.2},
 		{
-			label:'T 평균',
-			data : [3,6,7,8,5],
-			pointStyle:'rect', borderWidth:4,pointRadius:3,pointHoverRadius:15,borderColor:'lightgreen',backgroundColor:'lightgreen',
-			lineTension:0.2
-
-		},
+			label:'T 평균',data : [3,6,7,8,5],pointStyle:'rect', borderWidth:4,pointRadius:3,pointHoverRadius:15,borderColor:'lightgreen',backgroundColor:'lightgreen',lineTension:0.2},
 		{
-			label:'추세+10',
-			data : [4,7,5,3,4],
-			borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
-			lineTension:0.2
-
-		},
+			label:'추세+10',data : [4,7,5,3,4],borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
 		{
-			label:'추세+0',
-			data : [4,7,5,3,4],
-			borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,
-			lineTension:0.2
-
-		},
+			label:'추세+0',data : [4,7,5,3,4],borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
 		{
-			label:'추세-10',
-			data : [4,7,5,3,4],
-			borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
-			lineTension:0.2
-
-		},
+			label:'추세-10',data : [4,7,5,3,4],borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
 		{
-			label:'추세-20',
-			data : [4,7,5,3,4],
-			borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
-			lineTension:0.2
-
-		},
+			label:'추세-20',data : [4,7,5,3,4],borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
 		{
-			label:'추세-30',
-			data : [4,7,5,3,4],
-			borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,
-			lineTension:0.2
-
-		},
+			label:'추세-30',data : [4,7,5,3,4],borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
 		{
-			label:'추세-40',
-			data : [4,7,5,3,4],
-			borderWidth:1,borderColor:'#58ACFA',borderDash: [2,4],backgroundColor:'#58ACFA',pointRadius:0,pointHoverRadius:0,
-			lineTension:0.2
-
-		},
+			label:'추세-40',data : [4,7,5,3,4],borderWidth:1,borderColor:'#58ACFA',borderDash: [2,4],backgroundColor:'#58ACFA',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
 		{
-			label:'추세-50',
-			data : [4,7,5,3,4],
-			borderWidth:1,borderColor:'#f78181',borderDash: [2,4],backgroundColor:'#f78181',pointRadius:0,pointHoverRadius:0,
-			lineTension:0.2
-
-		}
+			label:'추세-50',data : [4,7,5,3,4],borderWidth:1,borderColor:'#f78181',borderDash: [2,4],backgroundColor:'#f78181',pointRadius:0,pointHoverRadius:0,lineTension:0.2}
 	]   
 };
 const options_season = {
