@@ -13,6 +13,7 @@ class M_change_balance(Model) :
 
         lpd = self.DB.one(f"SELECT add0  FROM h_rsnLog_board WHERE add17='수익실현' and add0 > '{self.D['기준일자']}' ORDER BY add0 DESC LIMIT 1")
         lpm = self.DB.one(f"SELECT add12 FROM h_rsnLog_board WHERE add0 = '{lpd}' LIMIT 1")
+        stk = self.DB.last_data_one('CAST(add2 as float)','h_stockHistory_board')
 
         if lpd > self.D['기준일자'] :
 
@@ -30,6 +31,8 @@ class M_change_balance(Model) :
             adm = my.sv(lpm) - my.sv(RSN.D['R_최종자본']) - my.sv(self.D['수시자금'])
             self.D['합계수익'] = f"{my.sv(lpm) - my.sv(self.D['투입자금']):,.2f}"
             self.D['인출가금'] = f"{adm*0.78:,.2f}"
+            self.D['인가원화'] = f"{adm*0.78*stk:,.0f}"
+            self.info(self.D['인가원화'])
             self.D['근수익일'] = lpd
   
 
