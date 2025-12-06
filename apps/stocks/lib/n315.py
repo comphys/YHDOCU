@@ -223,8 +223,8 @@ class N315 :
         if self.chart and self.D['c_date'] : self.D['s_date'] = self.D['c_date'][0]; self.D['e_date'] = self.D['c_date'][-1]
 
         if  self.stat :
-            self.D['월별구분'] = [ x[0] for x in self.D['월익통계']][-28:]
-            self.D['월별이익'] = [ round(x[1]) for x in self.D['월익통계']][-28:]
+            self.D['월별구분'] = [ x[0] for x in self.D['월익통계']]
+            self.D['월별이익'] = [ round(x[1]) for x in self.D['월익통계']]
 
             if  self.D['월별이익'][0] == 0 :
                 self.D['월별구분'].pop(0)

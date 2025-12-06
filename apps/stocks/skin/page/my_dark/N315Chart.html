@@ -212,6 +212,8 @@
 </div>
 {% if D['월별이익'] %}
 <div id='monthlyProfit' style="position:fixed;left:27px;top:108px;background-color:#24272d;padding:5px;opacity:0.9;z-index:3;" onclick="$(this).hide()">
+	<div id="monthlyProfit-left"  style="position:fixed;left:32px;top:116px;width:100px;height:346px;opacity:0.1"></div>
+	<div id="monthlyProfit-right" style="position:fixed;left:1030px;top:116px;width:100px;height:346px;opacity:0.1"></div>
 	<canvas id="monthlyProfitChart" style="width:1100px;height:350px;"></canvas>
 </div>
 {% endif %}
@@ -251,7 +253,14 @@
 let chart_b_date
 let chart_e_date
 
-let labels_monthly = {{D['월별구분']|safe}};
+let labels_monthly_ori = {{D['월별구분']|safe}};
+let monthlyProfits_ori = {{D['월별이익']|safe}};
+let labels_monthly_cnt = labels_monthly_ori.length; 
+let lms = labels_monthly_cnt -25; if(lms < 0) lms = 0;
+let lme = labels_monthly_cnt ; 
+let labels_monthly = labels_monthly_ori.slice(lms,lme); 
+let monthlyProfits = monthlyProfits_ori.slice(lms,lme);
+
 // 챠트 객체 생성
 const ctx_season = $id('mybackTestChart');
 ctx_season.style.backgroundColor = '#33363b';
@@ -518,7 +527,6 @@ myChart_main.update();
 	ctx_monthly.style.backgroundColor = '#33363b';
 	ctx_monthly.style.border = '2px solid black';
 
-	let monthlyProfits = {{D['월별이익']|safe}};
 	let backColor = new Array(labels_monthly.length-1);
 	let boreColor = new Array(labels_monthly.length-1);
 	backColor.fill('rgba(75, 192, 192, 0.4)');
@@ -659,5 +667,32 @@ function synchro(opt) {
 	});
 }
 //
+$( "#monthlyProfit-left" ).mouseover(function(){$(this).css("background-color","white")}).mouseout(function(){$(this).css("background-color","")}).click(function(e){
+	e.stopPropagation();
+	
+	lms -= 25;
+	lme -= 25;
+	if(lme < 1) { lms+=25; lme+=25; h_dialog.notice("[월별이익] 처음 데이타 입니다."); return;}
+	if(lms < 0) { lms = 0 }
+	labels_monthly = labels_monthly_ori.slice(lms,lme); 
+	monthlyProfits = monthlyProfits_ori.slice(lms,lme); 
+	myChart_monthly.data.labels = labels_monthly;
+	myChart_monthly.data.datasets[0].data  = monthlyProfits;
+	myChart_monthly.update();
+});
+$( "#monthlyProfit-right").mouseover(function(){$(this).css("background-color","white")}).mouseout(function(){$(this).css("background-color","")}).click(function(e){
+	e.stopPropagation();
+
+	lme += 25;
+	lms = lme - 25;
+	if(lme > labels_monthly_cnt ) { lms-=25; lme-=25; h_dialog.notice("[월별이익] 마지막 데이타 입니다."); return;}
+
+	labels_monthly = labels_monthly_ori.slice(lms,lme); 
+	monthlyProfits = monthlyProfits_ori.slice(lms,lme); 
+	myChart_monthly.data.labels = labels_monthly;
+	myChart_monthly.data.datasets[0].data  = monthlyProfits;
+	myChart_monthly.update();
+});
+
 </script>
 {% endblock %}
