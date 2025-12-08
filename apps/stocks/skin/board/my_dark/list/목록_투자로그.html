@@ -25,33 +25,33 @@
 			<table class="table" style="text-align:right;width:324px;margin-top:10px">
 				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppl&nbsp;</td><td>ppa&nbsp;</td></tr>
 				{% if D['N_기회매수량'] %}
-				<tr><td style="text-align:left;">R <span style="color:gray">buy</span></td><td>{{D['N_기회매수가']}}</td><td data-bcnt="off">{{D['N_기회매수량']}}</td>
+				<tr><td style="text-align:left;">R <span style="color:gray">buy</span></td><td>{{D['N_기회매수가']}}</td><td>{{D['N_기회매수량']}}</td>
 					<td style="color:gray">{{D['N_기회종대비']}}</td><td style="color:gray">{{D['N_기회평대비']}}</td>
 				</tr>
 				{% endif %}
 				{% if D['N_안정매수량'] %}
-				<tr><td style="text-align:left;">S <span style="color:gray">buy</span></td><td>{{D['N_안정매수가']}}</td><td td data-bcnt="off">{{D['N_안정매수량']}}</td>
+				<tr><td style="text-align:left;">S <span style="color:gray">buy</span></td><td>{{D['N_안정매수가']}}</td><td td>{{D['N_안정매수량']}}</td>
 					<td style="color:gray">{{D['N_안정종대비']}}</td><td style="color:gray">{{D['N_안정평대비']}}</td>
 				</tr>
 				{% endif %}
 				{% if D['N_생활매수량'] %}
-				<tr><td style="text-align:left;">N <span style="color:gray">buy</span></td><td>{{D['N_생활매수가']}}</td><td td data-bcnt="off">{{D['N_생활매수량']}}</td>
+				<tr><td style="text-align:left;">N <span style="color:gray">buy</span></td><td>{{D['N_생활매수가']}}</td><td td>{{D['N_생활매수량']}}</td>
 					<td style="color:gray">{{D['N_생활종대비']}}</td><td style="color:gray">{{D['N_생활평대비']}}</td>
 				</tr>
 				{% endif %}
 				{% if D['N_기회매도량'] %}
 				<tr style="border-top:1px solid gray"><td style="text-align:left;">R <span style="color:gray">sell</span></td>
-					<td>{{D['N_기회매도가']}}</td><td td data-scnt="off">{{D['N_기회매도량']}}</td>
+					<td>{{D['N_기회매도가']}}</td><td td>{{D['N_기회매도량']}}</td>
 					<td style="color:gray">{{D['N_기회도종비']}}</td><td style="color:gray">{{D['N_기회도평비']}}</td>
 				</tr>
 				{% endif %}
 				{% if D['N_안정매도량'] %}
-				<tr><td style="text-align:left;">S <span style="color:gray">sell</span></td><td>{{D['N_안정매도가']}}</td><td data-scnt="off">{{D['N_안정매도량']}}</td>
+				<tr><td style="text-align:left;">S <span style="color:gray">sell</span></td><td>{{D['N_안정매도가']}}</td><td>{{D['N_안정매도량']}}</td>
 					<td style="color:gray">{{D['N_안정도종비']}}</td><td style="color:gray">{{D['N_안정도평비']}}</td>
 				</tr>
 				{% endif %}
 				{% if D['N_생활매도량'] %}
-				<tr><td style="text-align:left;">N <span style="color:gray">sell</span></td><td>{{D['N_생활매도가']}}</td><td data-scnt="off">{{D['N_생활매도량']}}</td>
+				<tr><td style="text-align:left;">N <span style="color:gray">sell</span></td><td>{{D['N_생활매도가']}}</td><td>{{D['N_생활매도량']}}</td>
 					<td style="color:gray">{{D['N_생활도종비']}}</td><td style="color:gray">{{D['N_생활도평비']}}</td>
 				</tr>
 				{% endif %}
@@ -117,9 +117,9 @@
 		<tbody>
 			{%- for TR in D['TR'] -%}
 			{% if TR['add2']|striptags == 'R' %}
-			<tr style="background-color:darkslategray" data-season="{{TR['add1']|striptags}}">
+			<tr style="background-color:darkslategray" >
 			{% elif TR['add6']|striptags == '0' and TR['add13']|striptags != '0.00' %}
-			<tr style="background-color:black;" data-season="{{TR['add1']|striptags}}"> 
+			<tr style="background-color:black;" > 
 			{% else %}
 			<tr> 
 			{% endif %}
@@ -336,7 +336,7 @@
 	<canvas id="monthlyProfitChart" style="width:1128px;height:350px;background-color:#24272d"></canvas>
 </div>
 
-<div id='div-seasonChart' style="position:absolute;left:400px;top:57px;padding:5px 10px 5px 10px;z-index:2;opacity:0.9;">
+<div id='div-seasonChart' style="position:absolute;left:21px;top:57px;padding:5px 10px 5px 10px;z-index:2;opacity:0.9;">
 	<div id='div-seasonChart-notice' style="position:absolute;top:14px;left:380px;color:lightgray;font-style:italic">시즌 챠트</div>
 	<canvas id="seasonChart" style="width:746px;height:346px;background-color:#24272d"></canvas>
 </div>
@@ -344,7 +344,7 @@
 <script>
 
 $(document).ready(function(){ 
-	$('#div-seasonChart').bind('dblclick',function(){$(this).css({'left':400,'top':57,'zIndex':2});$('#season-status').hide();}).draggable();
+	$('#div-seasonChart').bind('dblclick',function(){$(this).css({'left':21,'top':57,'zIndex':2});$('#season-status').hide();}).draggable();
 });
 
 
@@ -538,53 +538,8 @@ $("#daily-check").on('dblclick', function() {
 	}	
 {% endif %}
 
-// 매매 수량 합산 
-$("[data-bcnt]").click(function()
-	{ 
-		var b_swt = $(this).data("bcnt");
-		var b_sum = parseInt($("#qty-bcnt").text().replace(/[^0-9]/g,"")); if(isNaN(b_sum)) b_sum = 0;
-		var b_val = parseInt($(this).text().replace(/[^0-9]/g,"")); 
-	
-		if(b_swt == 'off') {
-			$(this).addClass("q-addvalue").data("bcnt","on");
-			$(this).prev().addClass("list-bull-cnt");
-			b_sum = Number(b_sum) + Number(b_val);
-		} else {
-			$(this).removeClass("q-addvalue").data("bcnt","off");
-			$(this).prev().removeClass("list-bull-cnt");
-			b_sum = Number(b_sum) - Number(b_val);
-		}
-		if(b_sum) {
-			var bs = String(b_sum); bs = bs.replace(/(\d)(?=(?:\d{3})+(?!\d))/g,'$1,'); $("#qty-bcnt").text(bs);
-		} else { $("#qty-bcnt").text('');}
-
-	}
-);
-
-$("[data-scnt]").click(function()
-	{ 
-		var s_swt = $(this).data("scnt");
-		var s_sum = parseInt($("#qty-scnt").text().replace(/[^0-9]/g,"")); if(isNaN(s_sum)) s_sum = 0;
-		var s_val = parseInt($(this).text().replace(/[^0-9]/g,"")); 
-	
-		if(s_swt == 'off') {
-			$(this).addClass("q-addvalue").data("scnt","on");
-			$(this).prev().addClass("list-bear-cnt");
-			s_sum = Number(s_sum) + Number(s_val);
-		} else {
-			$(this).removeClass("q-addvalue").data("scnt","off");
-			$(this).prev().removeClass("list-bear-cnt");
-			s_sum = Number(s_sum) - Number(s_val);
-		}
-		if(s_sum) {
-			var ss = String(s_sum); ss = ss.replace(/(\d)(?=(?:\d{3})+(?!\d))/g,'$1,'); $("#qty-scnt").text(ss);
-		} else { $("#qty-scnt").text('');}
-
-	}
-);
 
 $(".season").click(function(){var season=$(this).text();var url=uri('linkajax')+'rsnLog/season_chart';$.post(url,{'season':season},null,'json').done(function(data){ draw_seasonChart(data);});});
-$("[data-season]").click(function(){var season=$(this).data("season");var url=uri('linkajax')+'rsnLog/season_chart';$.post(url,{'season': season},null, 'json').done(function(data){ draw_seasonChart(data); });});
 
 function draw_seasonChart(data) {
 
