@@ -1,55 +1,77 @@
 {% extends D['_skn'] + 'page/my_dark/main_layout.html' %}
 
 {% block contents_page  %}
-<div style="height:260px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
-	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9">
-	<!-- 좌측 설정창( Next Strategy )-->
-		<div id="Next-Strategy" style="height:240px;width:1128px;background-color: #33363b;border:2px solid black;padding:10px" >
-			<div style="padding:10px;background-color:#24272d;border:2px solid black;">
-				1. 투자금을 변경할 전략을 선택하십시오 : &nbsp;&nbsp; 
-				<input type="radio" name="choice-strategy" value="RSN" checked> RSN 
-				<input type="radio" name="choice-strategy" value="N315"> N315
-				<input type="radio" name="choice-strategy" value="Lucky"> Lucky
-			</div>
-			<div style="padding:10px;background-color:#24272d;;margin-top:10px;border:2px solid black;">
-				2. 투자금의 입금/출금/최종금액 중 하나를 입력하십시오. <br><br>
-				<div class='i-input-div' style="border:1px solid tomato">
-					<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:100px;font-weight:bold;">입금액</div>
-					<input type='text' class="i-number" name="입금액" style="width:100px;text-align:center;" value="0.00">
-				</div>
-				<div class='i-input-div' style="border:1px solid lightgreen">
-					<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:100px;font-weight:bold;">출금액</div>
-					<input type='text' class="i-number" name="출금액" style="width:100px;text-align:center;" value="0.00">
-				</div>
-				<div class='i-input-div' style="border:1px solid yellow">
-					<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:100px;font-weight:bold;">최종자금</div>
-					<input type='text' class="i-number" name="최종액" style="width:100px;text-align:center;" value="0.00">
-				</div>
-			</div>
-			<div style="padding:10px;background-color:#24272d;;margin-top:10px;border:2px solid black;">
-				3. 변경된 투자금액을 반영하여 선택 전략의 값을 변경합니다. 
-				<button class="btn btn-red-s3" style="vertical-align:middle;user-select:none;" onclick="change_balance()">투자금액 재설정</button>
-			</div>
-		</div>
-	</div>
-	<div style="position:absolute;left:1164px;top:60px;">
-	<!-- 우측 정보창( Next Strategy )-->
-		<div id="Next-Strategy" style="height:240px;width:344px;background-color: #393f4a;border:2px solid black;padding:20px" >
-			<span style="color:gray;font-style:italic;font-size:18px;">&nbsp;&nbsp;Current investment Status( $ )</span>
+
+<div style="width:1100px;background-color: #33363b;border:2px solid black;padding:10px" >
+	<div style="height:250px;">
+		<div style="float:left;height:240px;width:344px;background-color: #24272d;border:2px solid orange;padding:20px;margin-right:22px;" >
+			<span style="color:gray;font-style:italic;font-size:18px;">&nbsp;&nbsp;&nbsp;&nbsp;총투자자금</span>
 			<ul style="margin:10px 0px 0px 50px;">
-				<li>자금 합계 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['투입자금']}}</span></li>
-				<li style="color:gray;">기본 자금 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['기본자금']}}</span></li>
-				<li style="color:gray;">수시 자금 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['수시자금']}}</span></li>
-				
+				<li>현재 자금 : <span style="display:inline-block;width:120px;text-align:right;">{{D['합산현재']}}</span></li>
+				<li style="color:gray;">원화 환산 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['합산원화']}}원</span></li>
+				<li>투자 자금 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['합투자금']}}</span></li>
+				<li style="color:gray;">원화 환산 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['합투원화']}}원</span></li>
+				<li>현재 수익 : <span style="display:inline-block;width:120px;text-align:right;">{{D['합산수익']}}</span></li>
+				<li style="color:gray;">원화 환산 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['합수원화']}}원</span></li>
 				<li>기준 일자 : <span style="display:inline-block;width:120px;text-align:right;">{{D['기준일자']}}</span></li>
 				<li style="color:gray;">최근 수익 : <span style="display:inline-block;width:120px;text-align:right;">{{D['근수익일']}}</span></li>
-				<li style="color:gray;">수익 합계 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['합계수익']}}</span></li>
-				<li style="color:gray;">인출 가능 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['인출가금']}}</span></li>
-				<li style="color:gray;">원화 환산 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['인가원화']}} 원</span></li>
+			</ul>
+		</div>
+
+		<div style="float:left;height:240px;width:344px;background-color: #24272d;border:2px solid yellow;padding:20px;margin-right:22px;" >
+			<span style="color:gray;font-style:italic;font-size:18px;">&nbsp;&nbsp;&nbsp;&nbsp;투자자금</span>
+			<ul style="margin:10px 0px 0px 50px;">
+				<li>현재 자금 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['기본현재']}}</span></li>
+				<li style="color:gray;">원화 환산 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['기본원화']}}원</span></li>
+				<li>투자 자금 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['기투자금']}}</span></li>
+				<li style="color:gray;">원화 환산 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['기투원화']}}원</span></li>
+				<li>현재 수익 : <span style="display:inline-block;width:120px;text-align:right;">{{D['기본수익']}}</span></li>
+				<li style="color:gray;">원화 환산 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['기수원화']}}원</span></li>
+				<li style="color:gray;">세금 제외 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['기수세제']}}원</span></li>
+			</ul>
+		</div>
+
+		<div style="float:left;height:240px;width:344px;background-color: #24272d;border:2px solid lightgreen;padding:20px" >
+			<span style="color:gray;font-style:italic;font-size:18px;">&nbsp;&nbsp;&nbsp;&nbsp;생활자금</span>
+			<ul style="margin:10px 0px 0px 50px;">
+				<li>현재 자금 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['수시현재']}}</span></li>
+				<li style="color:gray;">원화 환산 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['수시원화']}}원</span></li>
+				<li>투자 자금 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['수투자금']}}</span></li>
+				<li style="color:gray;">원화 환산 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['수투원화']}}원</span></li>
+				<li>현재 수익 : <span style="display:inline-block;width:120px;text-align:right;">{{D['수시수익']}}</span></li>
+				<li style="color:gray;">원화 환산 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['수수원화']}}원</span></li>
+				<li style="color:gray;">세금 제외 : <span style="display:inline-block;width:120px;text-align:right;"> {{D['수수세제']}}원</span></li>
 			</ul>
 		</div>
 	</div>
+
+	<div style="padding:10px;background-color:#24272d;border:2px solid black;">
+		1. 투자금을 변경할 전략을 선택하십시오 : &nbsp;&nbsp; 
+		<input type="radio" name="choice-strategy" value="RSN" checked> RSN 
+		<input type="radio" name="choice-strategy" value="N315"> N315
+		<input type="radio" name="choice-strategy" value="Lucky"> Lucky
+	</div>
+	<div style="padding:10px;background-color:#24272d;;margin-top:10px;border:2px solid black;">
+		2. 투자금의 입금/출금/최종금액 중 하나를 입력하십시오. <br><br>
+		<div class='i-input-div' style="border:1px solid orange">
+			<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:100px;font-weight:bold;">입금액</div>
+			<input type='text' class="i-number" name="입금액" style="width:100px;text-align:center;" value="0.00">
+		</div>
+		<div class='i-input-div' style="border:1px solid yellow">
+			<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:100px;font-weight:bold;">출금액</div>
+			<input type='text' class="i-number" name="출금액" style="width:100px;text-align:center;" value="0.00">
+		</div>
+		<div class='i-input-div' style="border:1px solid lightgreen">
+			<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:100px;font-weight:bold;">최종자금</div>
+			<input type='text' class="i-number" name="최종액" style="width:100px;text-align:center;" value="0.00">
+		</div>
+	</div>
+	<div style="margin-top:10px;">
+		<button class="btn btn-black" style="height:40px;width:100%;user-select:none;" onclick="change_balance()">투자금액을 상기와 같이 재설정 합니다</button>
+	</div>
+
 </div>
+
 
 <script>
 
@@ -70,7 +92,8 @@ function change_balance() {
 	
 	if( msg ) {h_dialog.notice(msg); return;}
 
-	var url = uri('linkurl') + 'pages-balance_ajax/re_balance';
+	var url = uri('linkajax') + 'change_balance/re_balance';
+	
 	$.post(url,{'choice':choice, 'money_in':money_in, 'money_ex':money_ex, 'money_nw':money_nw}).done(function(data){
 		if(data) {h_dialog.notice(data);}
 		else {h_dialog.notice('작업이 성공적으로 수행되었습니다.');}

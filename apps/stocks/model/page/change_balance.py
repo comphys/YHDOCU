@@ -6,13 +6,13 @@ class M_change_balance(Model) :
     def view(self) :
         
         # 기본 값
-        self.D['투입자금'] = self.DB.parameter('TX051')
-        self.D['수시자금'] = self.DB.parameter('TX053')
-        self.D['기본자금'] = f"{my.sv(self.D['투입자금'])-my.sv(self.D['수시자금']):,.2f}"
+        self.D['합투자금'] = self.DB.parameter('TX051'); mon0 = my.sv(self.D['합투자금'])
+        self.D['수시자금'] = self.DB.parameter('TX053'); mon2 = my.sv(self.D['수시자금'])
+        self.D['기본자금'] = f"{mon0-mon2:,.2f}" ; mon1 = my.sv(self.D['기본자금'])
         self.D['기준일자'] = self.DB.parameter('TX050')
 
         lpd = self.DB.one(f"SELECT add0  FROM h_rsnLog_board WHERE add17='수익실현' and add0 > '{self.D['기준일자']}' ORDER BY add0 DESC LIMIT 1")
-        lpm = self.DB.one(f"SELECT add12 FROM h_rsnLog_board WHERE add0 = '{lpd}' LIMIT 1")
+        lpm = self.DB.one(f"SELECT add12 FROM h_rsnLog_board WHERE add0 = '{lpd}' LIMIT 1"); rmon = my.sv(lpm)
         stk = self.DB.last_data_one('CAST(add2 as float)','h_stockHistory_board')
 
         if lpd > self.D['기준일자'] :
@@ -28,12 +28,39 @@ class M_change_balance(Model) :
 
             RSN.get_simResult(start=self.D['기준일자'],end=lpd,result=True)
 
-            adm = my.sv(lpm) - my.sv(RSN.D['R_최종자본']) - my.sv(self.D['수시자금'])
-            self.D['합계수익'] = f"{my.sv(lpm) - my.sv(self.D['투입자금']):,.2f}"
-            self.D['인출가금'] = f"{adm*0.78:,.2f}"
-            self.D['인가원화'] = f"{adm*0.78*stk:,.0f}"
-            self.info(self.D['인가원화'])
+            bpm = my.sv(RSN.D['R_최종수익'])
+            blm = my.sv(RSN.D['R_최종자본'])
+            alm = rmon - blm
+            apm = rmon - blm - mon2
+
+            # 총투자자금
+            self.D['합산현재'] = f"{rmon:,.2f}"
+            self.D['합산원화'] = f"{rmon*stk:,.0f}"
+            self.D['합투원화'] = f"{mon0*stk:,.0f}"
+            self.D['합산수익'] = f"{my.sv(lpm) - mon0 :,.2f}"
+            self.D['합수원화'] = f"{my.sv(self.D['합산수익'])*stk:,.0f}"
             self.D['근수익일'] = lpd
+            
+            # 투자자금
+            self.D['기본현재'] = f"{blm:,.2f}"
+            self.D['기본원화'] = f"{blm*stk:,.0f}"
+            self.D['기투자금'] = f"{mon1:,.2f}"
+            self.D['기투원화'] = f"{mon1*stk:,.0f}"
+            self.D['기본수익'] = f"{bpm:,.2f}"
+            self.D['기수원화'] = f"{bpm*stk:,.0f}"
+            self.D['기수세제'] = f"{bpm*0.78*stk:,.0f}"
+
+            # 수시자금
+            self.D['수시현재'] = f"{alm:,.2f}"
+            self.D['수시원화'] = f"{alm*stk:,.0f}"
+            self.D['수투자금'] = f"{mon2:,.2f}"
+            self.D['수투원화'] = f"{mon2*stk:,.0f}"
+            self.D['수시수익'] = f"{apm:,.2f}"
+            self.D['수수원화'] = f"{apm*stk:,.0f}"
+            self.D['수수세제'] = f"{apm*0.78*stk:,.0f}"
+
+
+
   
 
 

@@ -34,7 +34,7 @@ function uri(parameter){
 		case 'gets':return segment
 		case 'base' : return location.protocol+'//'+location.hostname; 
 		case 'linkurl' : return '/'+ segment[0] + '/';
-		case 'linkajax' : return '/'+ segment[0] + '/'+segment[1]+'/ajax/';
+		case 'linkajax'  : return '/'+ segment[0] + '/'+segment[1]+'/ajax/'; 
 		case 'last' : return segment[cnt-1];
 		case 'thispage' : return '/'+ segment[0]+'/'+segment[1]+'/'+segment[2]+'/';
 		default: 
