@@ -860,6 +860,7 @@ class RSN :
         LD['sub4']  = self.N['매수차수'] if tactic == 'N' else f"{tac['일매수금']:.2f}"
         
         LD['sub12'] = self.M['현재날수'] - 1
+
         매수차수 = self.N['매수차수'] if self.N['매수차수'] < self.M['최대차수'] else self.M['최대차수'] - 1
         LD['sub18'] = f"{self.N['매금단계'][매수차수]}" if tactic == 'N' else tac['기초수량']
                   
@@ -960,3 +961,29 @@ class RSN :
 
 
 # ------------------------------------------------------------------------------------
+# for board(rsnLog) ajax log
+# ------------------------------------------------------------------------------------
+    def do_tacticsLog(self,logDay) :
+        
+        sdate = self.DB.parameter('TX050')
+        T_mon = my.sv(self.DB.parameter('TX051'))
+        mode_ = self.DB.parameter('TX052')
+        
+        self.D['투자자금'] = f"{T_mon:,.2f}"
+        self.D['시작일자'] = sdate
+        self.D['종료일자'] = logDay 
+        if sdate > logDay : return
+        
+        self.D['기회시점'] = f"{self.DB.parameter('TR021'):.1f}"
+        self.D['기회회복'] = f"{self.DB.parameter('TR022'):.1f}"
+        self.D['안정시점'] = f"{self.DB.parameter('TS021'):.1f}"
+        self.D['안정회복'] = f"{self.DB.parameter('TS022'):.1f}"      
+        
+        self.D['수료적용'] = 'off' 
+        self.D['세금적용'] = 'off' 
+        self.D['일밸런싱'] = 'on' 
+        self.D['이밸런싱'] = 'on' 
+        self.D['가상손실'] = 'on' if mode_ == '전략진행' else 'off'
+        
+        self.stat = True
+        self.get_simResult(sdate,logDay,result=True)

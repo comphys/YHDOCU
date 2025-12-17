@@ -6,12 +6,19 @@ today = my.kor_loc_date('US/Eastern')[0:10]
 weekd = my.dayofdate(today)
 RSN = update_Log()
 
+# 증시 휴장일 체크하기
 ck_holiday = RSN.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
 is_holiday = ck_holiday[0][0] if ck_holiday else ''
+# 주가 정보 업데이트 체크하기
+r_date = RSN.DB.last_date('h_stockHistory_board')
 
-skip = (weekd in ['토','일']) or is_holiday
+skip = ''
+if weekd in ['토','일'] : skip = f"{weekd}요일 입니다"
+elif is_holiday : skip = is_holiday
+elif today != r_date : skip = f"{today} lohc not updated"
 
 if  skip :
+    RSN.send_message(skip)
     pass
 
 else :

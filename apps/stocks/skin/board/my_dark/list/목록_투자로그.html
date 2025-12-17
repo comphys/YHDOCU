@@ -141,6 +141,7 @@
 <!-- 하단 버튼 [ 목록 쓰기] [페이지네이션]-->
 <div class="row-row clearfix">
 	<div class='pull-left'>
+		<button class='btn btn-small btn-blue-s6' onclick="update_log()">업데이트</button></a>&nbsp;
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>쓰 기</button></a>&nbsp;
 	</div>
@@ -635,6 +636,19 @@ function draw_seasonChart(data) {
 	if(data.stocks) { $("#div-seasonChart-notice").html(data.sdate+" 시즌 "+data.season+ "&nbsp; 진행중"); }
 	else { $("#div-seasonChart-notice").html(data.sdate+" 시즌 "+data.season+ "&nbsp; 종료 : 수익 $ "+myprofit+" ( "+data.prate+"% )"); }
 	myChart_season.update();	
+}
+
+// Update log
+
+function update_log() {
+	var tday = "{{D['다음날자']}}";
+	var posturl = uri('linkajax') + 'rsnLog/update_log'
+	$.post(posturl,{tday:tday},null,'json').done(function(data){
+
+		if(data=='OK') {location.reload(); h_dialog.notice("주가 정보가 업데이트 되었습니다")}
+		else {h_dialog.notice(data);}		
+		
+	});
 }
 
 </script>
