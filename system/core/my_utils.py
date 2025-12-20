@@ -143,6 +143,11 @@ def last_year_day() :
     theday = timestamp_to_date(ts='now',opt=7)
     return dayofdate(theday,-365)[0]
 
+def back_day(delta) :
+
+    theday = timestamp_to_date(ts='now',opt=7)
+    return dayofdate(theday,delta)[0]
+
 def dayofdate(theday,delta=0) :
     dow = ('월','화','수','목','금','토','일')
     a = datetime.strptime(theday,'%Y-%m-%d')

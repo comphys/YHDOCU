@@ -1,4 +1,5 @@
 import system.core.my_utils as my
+import numpy
 from flask import session
 from system.core.load import SKIN
 
@@ -84,6 +85,11 @@ class 목록_주식히스토리(SKIN) :
         self.D['ot'][21] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL'") # dn 8
         self.D['ot'][22] = f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
 
+        # 표준편차 구하기(전체)
+        std_all = self.DB.col("SELECT CAST(add8 as float) FROM h_stockHistory_board WHERE add1='SOXL'")
+        std_all_val = numpy.std(std_all)
+        self.D['전체변동률'] = f"{std_all_val:.2f}"
+
         last_year = my.last_year_day()
         self.D['ot1'] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         self.D['ot1'][0] = self.DB.one(f"SELECT count(add0) FROM h_stockHistory_board WHERE add1='SOXL' and add0 > '{last_year}'") # total count
@@ -110,6 +116,18 @@ class 목록_주식히스토리(SKIN) :
         self.D['ot1'][20] = f"{self.D['ot1'][19]/self.D['ot1'][3]*100:.2f}"        
         self.D['ot1'][21] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL' and add0 > '{last_year}'") # dn 8
         self.D['ot1'][22] = f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
+        
+        # 표준편차 구하기(일년)
+        std_1yr = self.DB.col(f"SELECT CAST(add8 as float) FROM h_stockHistory_board WHERE add1='SOXL' and add0 > '{last_year}'")
+        std_1yr_val = numpy.std(std_1yr)
+        self.D['일년변동률'] = f"{std_1yr_val:.2f}"
+
+        # 표준편차 구하기(한달)
+        one_month = my.back_day(-30)
+        std_1mt = self.DB.col(f"SELECT CAST(add8 as float) FROM h_stockHistory_board WHERE add1='SOXL' and add0 > '{one_month}'")
+        std_1mt_val = numpy.std(std_1mt)
+        self.D['한달변동률'] = f"{std_1mt_val:.2f}"
+
 
         self.D['TimeNow'] = my.timestamp_to_date(ts='now')
         self.head()
