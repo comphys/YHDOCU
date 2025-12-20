@@ -208,3 +208,4 @@
 .daily-check-on {box-shadow:1px 1px 20px gray;color:white;}
 
 .q-addvalue {font-weight:bold;color:black;background-color: white;}
+.season:hover {cursor:pointer; color:yellow; font-weight: bold; }
