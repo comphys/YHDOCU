@@ -48,9 +48,9 @@ def timestamp_to_date(ts='now',opt=1) :
     return datetime.fromtimestamp(ts,kst).strftime(t_format)
 
 
-def kor_loc_date(opt) :
+def kor_loc_date(opt='Asia/Seoul') :
 
-    loc = timezone('Asia/Seoul') if opt == 'kor' else timezone('US/Eastern')
+    loc = timezone(opt)
 
     ts = int(datetime.now().timestamp())
     t_format = "%Y-%m-%d %H:%M:%S"

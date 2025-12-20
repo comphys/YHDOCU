@@ -39,6 +39,22 @@ class 목록_주식히스토리(SKIN) :
             c_goup = c_goup + 1 if aaa[i] >  aaa[i-1] else 0
         
         return (c_drop,c_goup)
+    
+    def check_updated(self) :
+
+        last_ohlc = self.DB.last_date("h_stockHistory_board")
+        delta = 1
+        while delta :
+            temp = my.dayofdate(last_ohlc,delta)
+            weekend = 1 if temp[1] in ('토','일') else 0
+            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}' and cat='미국증시휴장일'") else 0 
+            delta = 0 if not (weekend + holiday) else delta + 1   
+
+        cur_time = my.kor_loc_date("UTC")
+        chk_date = temp[0]
+        chk_time = my.dayofdate(chk_date,1)[0] + " 00:10:00"
+
+        return True if cur_time < chk_time else False
 
     def list(self) :
 
@@ -98,6 +114,7 @@ class 목록_주식히스토리(SKIN) :
         self.D['TimeNow'] = my.timestamp_to_date(ts='now')
         self.head()
         self.data_preprocess()
+        self.D['업데이트'] = self.check_updated()
 
         try :     self.D['code'] = session['CSH']['csh_add1']
         except :  self.D['code'] = 'NONE'

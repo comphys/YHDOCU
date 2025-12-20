@@ -165,9 +165,9 @@ def date_yesterday(day1) :
     yesterday = datetime.strptime(day1,'%Y-%m-%d') + timedelta(days=-1)
     return yesterday.strftime("%Y-%m-%d")
 
-def kor_loc_date(opt) :
+def kor_loc_date(opt='Asia/Seoul') :
 
-    loc = timezone('Asia/Seoul') if opt == 'kor' else timezone('US/Eastern')
+    loc = timezone(opt) 
 
     ts = int(datetime.now().timestamp())
     t_format = "%Y-%m-%d %H:%M:%S"

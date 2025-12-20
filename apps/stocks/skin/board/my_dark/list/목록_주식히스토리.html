@@ -124,7 +124,9 @@
 <!-- 하단 버튼 [ 목록 쓰기] [페이지네이션]-->
 <div class="row-row clearfix">
 	<div class='pull-left'>
+		{% if not D['업데이트'] %}
 		<button class='btn btn-small btn-red' onclick="update_stockPrice()">주가 업데이트</button>
+		{% endif %}
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>직접입력</button></a>
 	</div>
 	<div class='pagination pull-right'><ul>
