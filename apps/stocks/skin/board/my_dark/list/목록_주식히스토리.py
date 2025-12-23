@@ -27,19 +27,6 @@ class 목록_주식히스토리(SKIN) :
                 item['wdate'] = my.timestamp_to_date(item['wdate'],"%Y/%m/%d")
                 item['mdate'] = my.timestamp_to_date(item['mdate'],"%m/%d %H:%M")
 
-    def old_price_trace(self,code,today,old_date) :
-
-        qry = f"SELECT add3 FROM h_stockHistory_board WHERE add0 BETWEEN '{old_date}' and '{today}' and add1='{code}' ORDER BY add0"
-        aaa= self.DB.exe(qry)
-        aaa= [float(x[0]) for x in aaa]
-
-        c_drop = 0
-        c_goup = 0
-        for i in range(1,len(aaa)) :
-            c_drop = c_drop + 1 if aaa[i] <= aaa[i-1] else 0
-            c_goup = c_goup + 1 if aaa[i] >  aaa[i-1] else 0
-        
-        return (c_drop,c_goup)
     
     def check_updated(self) :
 
@@ -52,8 +39,8 @@ class 목록_주식히스토리(SKIN) :
             delta = 0 if not (weekend + holiday) else delta + 1   
 
         cur_time = my.kor_loc_date("UTC")
-        chk_date = temp[0]
-        chk_time = my.dayofdate(chk_date,1)[0] + " 00:10:00"
+        self.D['chk_date'] = temp[0]
+        chk_time = my.dayofdate(self.D['chk_date'],1)[0] + " 00:10:00"
 
         return True if cur_time < chk_time else False
 
@@ -85,10 +72,6 @@ class 목록_주식히스토리(SKIN) :
         self.D['ot'][21] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL'") # dn 8
         self.D['ot'][22] = f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
 
-        # 표준편차 구하기(전체)
-        std_all = self.DB.col("SELECT CAST(add8 as float) FROM h_stockHistory_board WHERE add1='SOXL'")
-        std_all_val = numpy.std(std_all)
-        self.D['전체변동률'] = f"{std_all_val:.2f}"
 
         last_year = my.last_year_day()
         self.D['ot1'] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
@@ -117,6 +100,13 @@ class 목록_주식히스토리(SKIN) :
         self.D['ot1'][21] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL' and add0 > '{last_year}'") # dn 8
         self.D['ot1'][22] = f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
         
+
+        # 표준편차 구하기(최근5년)
+        day_5yr = my.back_day(-1824)
+        std_5yr = self.DB.col(f"SELECT CAST(add8 as float) FROM h_stockHistory_board WHERE add1='SOXL' and add0 > '{day_5yr}'")
+        std_5yr_val = numpy.std(std_5yr)
+        self.D['오년변동률'] = f"{std_5yr_val:.2f}"
+
         # 표준편차 구하기(일년)
         std_1yr = self.DB.col(f"SELECT CAST(add8 as float) FROM h_stockHistory_board WHERE add1='SOXL' and add0 > '{last_year}'")
         std_1yr_val = numpy.std(std_1yr)

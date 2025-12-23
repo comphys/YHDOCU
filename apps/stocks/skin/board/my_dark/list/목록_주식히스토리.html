@@ -25,7 +25,7 @@
 					<td data-pcnt="off">{{D['ot1'][16]}}</td><td data-pcnt="off">{{D['ot1'][18]}}</td><td data-pcnt="off">{{D['ot1'][20]}}</td><td data-pcnt="off">{{D['ot1'][22]}}</td>
 				</tr>
 			</table>
-			<div style="margin-top:10px;text-align: right;">주가 변동률 : (기간전체) {{D['전체변동률']}}% &nbsp; (최근일년) {{D['일년변동률']}}% &nbsp; (최근한달) {{D['한달변동률']}}%</div>
+			<div style="margin-top:10px;text-align: right;">주가 변동률 : (최근오년) {{D['오년변동률']}}% &nbsp; (최근일년) {{D['일년변동률']}}% &nbsp; (최근한달) {{D['한달변동률']}}%</div>
 		</div>
 	</div>
 
@@ -47,12 +47,6 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% if D['BCONFIG']['row_flt'] == 'on' %}
-			<tr id="list-filter" {{ "" if D['list_filter'] else "style='display:none'"|safe }}>{{D['row_flt']|safe}}</tr>
-			{% endif %}
-			{% if D['BCONFIG']['row_sum'] == 'on' %}
-			<tr id="list-sum">{{D['row_sum']|safe}}</tr>
-			{% endif %}
 			{%- for TR in D['TR'] -%}
 			{% if loop.index0 == D['cno'] %}
 			<tr class="list-current-tr">
@@ -79,8 +73,16 @@
 	<div class='pull-left'>
 		{% if not D['업데이트'] %}
 		<button class='btn btn-small btn-red' onclick="update_stockPrice()">주가 업데이트</button>
-		{% endif %}
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>직접입력</button></a>
+		<span style="display:inline-block;margin-left:10px;"> 
+			<input name='simple-date'  type="text" style="width:100px;text-align:center" value="{{D['chk_date']}}">
+			<input name='simple-close' type="text" style="width:80px;text-align:center"  value="{{D['TR'][0]['add3']|striptags}}">
+			<input name='simple-krw'   type="text" style="width:80px;text-align:center"  value="{{D['TR'][0]['add2']|striptags}}">
+			<button class='btn btn-small btn-blue' onclick="simple_stockPrice()">간편 입력</button>
+		</span>
+		{% else %}
+		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
+		{% endif %}
 	</div>
 	<div class='pagination pull-right'><ul>
 		{{D['Pagination']|safe}}
@@ -139,6 +141,20 @@ function update_stockPrice() {
 		if(data=='OK') {location.reload(); h_dialog.notice("주가 정보가 업데이트 되었습니다")}
 		else {h_dialog.notice(data);}
 	});
+}
+
+function simple_stockPrice() {
+	posturl = uri('linkajax') + "stockHistory/update_simple"
+	var simple_date  = $("input[name=simple-date]").val();
+	var simple_close = $("input[name=simple-close]").val();
+	var simple_krw   = $("input[name=simple-krw]").val();
+
+	$.post(posturl, {s_d:simple_date,s_c:simple_close,s_k:simple_krw}, null, 'json' ).done(function(data){ 
+
+		if(data=='OK') {location.reload(); h_dialog.notice("주가 정보가 업데이트 되었습니다")}
+		else {h_dialog.notice(data);}
+	});
+
 }
 
 </script>
