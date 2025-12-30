@@ -9,16 +9,18 @@ class Board(Control) :
     def _auto(self) :
 
         self.DB = self.db('stocks')
+
         if 'N_NO' in session :
             self.D['bid']  = self.parm[0] if self.parm else self.C['init_board']
             self.D['tbl']  = 'h_'+self.D['bid']+'_board'
             self.D['USER'] = self.DB.line(f"SELECT * FROM h_user_list WHERE uid='{session['N_NO']}'")
-            
-            if  self.D['USER']['level'] < 10 :
-                self.D['bid']  = 'log315_ljk'
-                self.D['tbl']  = 'h_'+self.D['bid']+'_board'
-            
             self.D['BCONFIG'] = self.DB.line(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'")
+
+            if  self.D['USER']['level'] < self.D['BCONFIG']['acc_list'] or  self.D['USER']['level'] < self.D['BCONFIG']['acc_body'] or self.D['USER']['level'] < self.D['BCONFIG']['acc_write']:
+                self.D['bid'] = self.D['USER']['home'].split('/')[-1]
+                self.D['tbl']  = 'h_'+self.D['bid']+'_board'
+                self.D['BCONFIG'] = self.DB.line(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'")
+
             self.skin = 'board/'+self.D['BCONFIG']['skin']
             self.model('board-board_main')
             self.D['DOCU_ROOT'] = self.C['DOCU_ROOT']
@@ -27,7 +29,6 @@ class Board(Control) :
 
     def list(self) :
         
-        if  self.D['USER']['level'] < self.D['BCONFIG']['acc_list'] : return self.echo("사용자의 접근 레벨이 허가되지 않았습니다.")
         M = self.model('board-board_list')
         M.list_head()
         M.list_main()
@@ -36,7 +37,7 @@ class Board(Control) :
         return self.echo(D)
 
     def body(self) :
-        if self.D['USER']['level'] < self.D['BCONFIG']['acc_body'] :  return self.echo("사용자의 접근 레벨이 허가되지 않았습니다.")
+
         M = self.model('board-board_list')
         M.list_head()
         M.list_main()
@@ -47,7 +48,7 @@ class Board(Control) :
         return self.echo(D)      
 
     def write(self) :
-        if self.D['USER']['level'] < self.D['BCONFIG']['acc_write'] :  return self.echo("사용자의 접근 레벨이 허가되지 않았습니다.")
+
         self.D['Mode'] = 'write'
         M = self.model('board-board_write')
         M.write_main()
@@ -56,7 +57,7 @@ class Board(Control) :
         return self.echo(D)
 
     def add_body(self) :
-        if self.D['USER']['level'] < self.D['BCONFIG']['acc_write'] :  return self.echo("사용자의 접근 레벨이 허가되지 않았습니다.")
+
         self.D['Mode'] = 'add_body'
         self.D['No'] = self.gets['no']
         self.D['Brother']  = int(self.gets.get('brother','0')) 
@@ -74,6 +75,7 @@ class Board(Control) :
         return self.echo(D)
 
     def modify(self,mode='modify') :
+
         self.D['Mode'] = 'modify'
         M = self.model('board-board_write')
         M.write_main()
@@ -98,6 +100,7 @@ class Board(Control) :
         return self.echo(D)
 
     def logout(self) : 
+        
         if 'N_NO' in session : 
             del session['N_NO'] 
             del session['CSH']
