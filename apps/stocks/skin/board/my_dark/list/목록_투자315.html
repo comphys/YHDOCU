@@ -214,8 +214,7 @@ $("#daily-check").on('dblclick', function() {
 		if(e.which==13) {
 			$(this).attr("contenteditable",false).removeClass('daily-check-on');
 			let odrday  = $(this).text(); odrday = $.trim(odrday);
-			let posturl = uri('linkajax')+ 'rsnLog/dailyCheckUpdate';
-			alert(posturl)
+			let posturl = uri('linkajax')+ 'log315_ljk/dailyCheckUpdate';
 			$.post(posturl,{odrday:odrday,option:'N315'}).done(function(){location.replace(location.href);}); 
 		} else if(e.which==69) {$(this).attr("contenteditable",false).removeClass('daily-check-on');}
 	});
