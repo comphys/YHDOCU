@@ -12,7 +12,7 @@ class Board(Control) :
         if 'N_NO' in session :
             self.D['bid']  = self.parm[0] if self.parm else self.C['init_board']
             self.D['tbl']  = 'h_'+self.D['bid']+'_board'
-            self.D['USER'] = self.DB.line(f"SELECT * FROM h_user_list WHERE no={session['N_NO']}")
+            self.D['USER'] = self.DB.line(f"SELECT * FROM h_user_list WHERE uid='{session['N_NO']}'")
             
             self.D['BCONFIG'] = self.DB.line(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'")
             self.skin = 'board/'+self.D['BCONFIG']['skin']
@@ -21,6 +21,8 @@ class Board(Control) :
 
 
     def list(self) :
+        
+        if self.D['USER']['level'] < self.D['BCONFIG']['acc_list'] :  return self.echo("사용자의 접근 레벨이 허가되지 않았습니다.")
         M = self.model('board-board_list')
         M.list_head()
         M.list_main()
@@ -29,6 +31,7 @@ class Board(Control) :
         return self.echo(D)
 
     def body(self) :
+        if self.D['USER']['level'] < self.D['BCONFIG']['acc_body'] :  return self.echo("사용자의 접근 레벨이 허가되지 않았습니다.")
         M = self.model('board-board_list')
         M.list_head()
         M.list_main()
@@ -39,6 +42,7 @@ class Board(Control) :
         return self.echo(D)      
 
     def write(self) :
+        if self.D['USER']['level'] < self.D['BCONFIG']['acc_write'] :  return self.echo("사용자의 접근 레벨이 허가되지 않았습니다.")
         self.D['Mode'] = 'write'
         M = self.model('board-board_write')
         M.write_main()
@@ -47,6 +51,7 @@ class Board(Control) :
         return self.echo(D)
 
     def add_body(self) :
+        if self.D['USER']['level'] < self.D['BCONFIG']['acc_write'] :  return self.echo("사용자의 접근 레벨이 허가되지 않았습니다.")
         self.D['Mode'] = 'add_body'
         self.D['No'] = self.gets['no']
         self.D['Brother']  = int(self.gets.get('brother','0')) 
@@ -75,14 +80,15 @@ class Board(Control) :
         D = {'title':'로그인', 'skin':'board/login.html', 'back':'board/login'}
         
         if self.D['post'] :
-            qry = f"SELECT no FROM h_user_list WHERE uid='{self.D['post']['userid']}' and upass='{self.D['post']['userpass']}'"
 
-            if self.DB.cnt(qry) == 1 : 
-                session['N_NO'] = self.DB.one(qry)
+            qry = f"SELECT uid FROM h_user_list WHERE uid='{self.D['post']['userid']}' and upass='{self.D['post']['userpass']}'"
+            uid = self.DB.one(qry)
+            
+            if  uid : 
+                session['N_NO'] = uid
                 session['CSH'] = {}
-                if self.D['_mbl'] : return self.moveto('board/list/rsnLog')
-                else : return self.moveto('board/list/rsnLog')
-
+                home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")
+                return self.moveto(home)
         
         return self.echo(D)
 

@@ -13,17 +13,7 @@
 </head>
 <body>
 <div id="logo" >	<img src="/sys/mycss/logo.png" alt="" /></div>
-{% if D['_mbl']  %} 
-<div style="text-align:center;margin-top:20px;background-color: black;" >
-	<form id="loginform" class="form-vertical" method='post' action="{{D['_bse']}}{{D['back']}}">
-		<div style='margin:0;padding:0'>
-					<input type="number" name='userpass' style='width:150px;background-color:black;color:white;border:0;text-align:center;height:30px;' />
-					<input type="hidden" name='userid' value="mobile" />
-					<input type="hidden" name='redirect' value="{{D['redirect']}}" />
-		</div>
-		</form>
-	</div>
-{% else %} 
+
 <div id="loginbox" >
 	<form id="loginform" class="form-vertical" method='post' action="{{D['_bse']}}{{D['back']}}">
 		<p>로그인 페이지 입니다</p>
@@ -47,7 +37,7 @@
 			</div>
 		</form>
 	</div>
-{% endif %}
+
 <script>
 	$(document).ready(function(){
 		$("input[name='userid']").focus(); 

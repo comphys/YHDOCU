@@ -51,7 +51,13 @@ def main(myapp=None, control=None, method=None, option=None):
 
 #   log = my_log("my_logger")    
 
-    if not myapp : return render_template('sys/sys_msg.html',msg="호출하실 앱을 명시하지 않았습니다.") 
+    if not myapp : 
+        myapp = 'stocks'
+        os_myapp = os.path.join(app_root,'apps',myapp)
+        if os.path.isdir(os_myapp) : 
+            mybase = '/'+myapp+'/'
+            myskin = myapp+'/skin/'
+        # return render_template('sys/sys_msg.html',msg="호출하실 앱을 명시하지 않았습니다.") 
     else :
         os_myapp = os.path.join(app_root,'apps',myapp)
         if os.path.isdir(os_myapp) : 
@@ -60,9 +66,11 @@ def main(myapp=None, control=None, method=None, option=None):
         else : return render_template('sys/sys_msg.html',msg="앱 위치를 찾을 수 없습니다.") 
 
     if not control : 
-        return render_template('sys/sys_msg.html',msg="컨트롤이 명시되지 않았습니다.")   
+        control = 'board'
+        # return render_template('sys/sys_msg.html',msg="컨트롤이 명시되지 않았습니다.")   
  
-    if not method  : return redirect(mybase + control+'/index')
+    if not method  : 
+        return redirect(mybase + control+'/index')
 
     # log in 
     

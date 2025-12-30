@@ -37,23 +37,12 @@
 				{% endif %}
 			</table>
 		
-			{% if D['예정수량'] %}
+			<!-- {% if D['예정수량'] %}
 			<div style="margin-top:20px;width:100%;text-align:center;">
 				<span style="font-style: italic;color:gray">b qty = int( <b>{{D['배분금액']}}</b> / {{D['예정매가']}} ), The falling trend is {{D['현재연속']}}</span><br>
 			</div>
-			{% endif %}
+			{% endif %} -->
 		
-			{% if D['다음날자'] != D['주문메인'] %}
-			<div style="padding-top:20px;padding-left:10px;font-style:italic;color:gray;">
-				Please Check the <a href="/stocks/board/list/rsnLog" style='color:white'>RSN</a> tactic
-			</div>
-			{% endif %}
-			{% if D['다음날자'] != D['주문럭키'] %}
-			<div style="padding:10px;font-style:italic;color:gray;">
-				Please Check the <a href="/stocks/board/list/log_lucky" style='color:white'>LUCKY</a> tactic
-			</div>
-			{% endif %}
-
 		</div>
 	</div>
 </div>
@@ -225,7 +214,8 @@ $("#daily-check").on('dblclick', function() {
 		if(e.which==13) {
 			$(this).attr("contenteditable",false).removeClass('daily-check-on');
 			let odrday  = $(this).text(); odrday = $.trim(odrday);
-			let posturl = uri('linkurl')+'boards-rsnlog_ajax/dailyCheckUpdate';
+			let posturl = uri('linkajax')+ 'rsnLog/dailyCheckUpdate';
+			alert(posturl)
 			$.post(posturl,{odrday:odrday,option:'N315'}).done(function(){location.replace(location.href);}); 
 		} else if(e.which==69) {$(this).attr("contenteditable",false).removeClass('daily-check-on');}
 	});

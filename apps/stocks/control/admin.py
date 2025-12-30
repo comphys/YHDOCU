@@ -1,6 +1,6 @@
 from system.core.load import Control
 from flask import session
-import system.hand.myfile as hf
+
 
 class Admin(Control) :
     def index(self) :
@@ -13,30 +13,35 @@ class Admin(Control) :
         self.get_message()
 
     def board(self) :
+        if session['N_NO'] != 'comphys' : return self.echo("허가된 사용자가 아닙니다")
         D = {'title' : '보드관리자', 'header' : 'YH Admin', 'skin' : 'admin/board.html'}
         self.model('admin-board')
         return self.echo(D)
 
 
     def board_edit(self) :
+        if session['N_NO'] != 'comphys' : return self.echo("허가된 사용자가 아닙니다")
         D = {'title' : '보드관리자', 'header' : 'YH Admin', 'skin' : 'admin/board_edit.html'}
         M = self.model('admin-board')
         M.board_edit()
         return self.echo(D)
 
     def board_delete(self) :
+        if session['N_NO'] != 'comphys' : return self.echo("허가된 사용자가 아닙니다")
         D = {'title' : '보드관리자', 'header' : 'YH Admin', 'skin' : 'admin/board_delete.html'}
         self.model('admin-board')
         self.D['section_list'] = self.DB.exe("SELECT section FROM h_board_config GROUP BY section ORDER BY sposition")
         return self.echo(D)
 
     def board_copy(self) :
+        if session['N_NO'] != 'comphys' : return self.echo("허가된 사용자가 아닙니다")
         D = {'title' : '보드관리자', 'header' : 'YH Admin', 'skin' : 'admin/board_copy.html'}
         self.model('admin-board')
         self.D['section_list'] = self.DB.exe("SELECT section FROM h_board_config GROUP BY section ORDER BY sposition")
         return self.echo(D)
 
     def board_sort(self) :
+        if session['N_NO'] != 'comphys' : return self.echo("허가된 사용자가 아닙니다")
         self.model('admin-board')
         tab = int(self.gets.get('tab',0))
         self.D['active_tab'] = ['','','','']
@@ -45,11 +50,13 @@ class Admin(Control) :
         return self.echo(D)
 
     def user(self) : 
+        if session['N_NO'] != 'comphys' : return self.echo("허가된 사용자가 아닙니다")
         self.model('admin-user')
         D = {'title' : '유저관리자', 'header' : 'YH Admin', 'skin' : 'admin/user.html'}
         return self.echo(D)
         
     def user_edit(self) :
+        if session['N_NO'] != 'comphys' : return self.echo("허가된 사용자가 아닙니다")
         M = self.model('admin-user')
         M.user_edit()
         D = {'title' : '유저관리자', 'header' : 'YH Admin', 'skin' : 'admin/user_edit.html'}

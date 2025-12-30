@@ -39,7 +39,7 @@ class 목록_투자315(SKIN) :
     def chart(self) :
         
         last_date = self.DB.last_date(self.D['tbl'])
-        
+
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
         self.DB.wre = f"add0 <='{last_date}'"
@@ -47,7 +47,7 @@ class 목록_투자315(SKIN) :
         self.DB.lmt = '200'
         
         chart_data = self.DB.get("add0,add10",assoc=True)
-        
+
         if chart_data :
 
             # 다음 거래 일자 가져오기
@@ -100,91 +100,90 @@ class 목록_투자315(SKIN) :
             self.D['타겟도가'] = NS['예정도가'] if NS['예정도수'] else 'null' 
             
             # 기타 정보 가져오기
-            self.D['주문확인'] =  self.DB.parameter('N0710')
-            self.D['주문메인'] =  self.DB.parameter('TX070')
-            self.D['주문럭키'] =  self.DB.parameter('L0500')
+            self.D['주문확인'] =  self.DB.parameter('N0710_'+self.D['USER']['uid'])
 
             # 통계 자료 가져오기
             # add5(현재잔액), add14(현재수익), add19(초기금액), add20(카테고리)
             temp = self.DB.exe(f"SELECT add0,CAST(add5 as float),CAST(add14 as float),CAST(add19 as float),add20 FROM {self.D['tbl']} WHERE add20 in ('초기셋팅','수익실현') ORDER BY add0")
-            l_b = b_b = cntW =  cntL = accWp = accLp = 0.0
-            self.D['수익연혁'] = []
-            self.D['수익통계'] = []
-            for dte,bal,pro,ini,cat in temp :
-                if  cat == '초기셋팅' : 
-                    l_b = b_b = ini 
-                    cntW =  cntL = accWp = accLp = 0.0
-                    ini_date = dte
-                    self.D['수익연혁'].append([dte[2:],f"{ini:,.2f}",'0.00','0.00','0.00','0.00',cat])
-                else :
-                    l_p = (bal/l_b - 1)*100   
-                    b_p = (bal/b_b - 1)*100
-                    a_p =  bal-b_b
-                    self.D['수익연혁'].append([dte[2:],f"{bal:,.2f}",f"{pro:,.2f}",f"{l_p:.2f}",f"{b_p:.2f}",f"{a_p:,.2f}",cat])
-                    l_b = bal
+            if  temp :
+                l_b = b_b = cntW =  cntL = accWp = accLp = 0.0
+                self.D['수익연혁'] = []
+                self.D['수익통계'] = []
+                for dte,bal,pro,ini,cat in temp :
+                    if  cat == '초기셋팅' : 
+                        l_b = b_b = ini 
+                        cntW =  cntL = accWp = accLp = 0.0
+                        ini_date = dte
+                        self.D['수익연혁'].append([dte[2:],f"{ini:,.2f}",'0.00','0.00','0.00','0.00',cat])
+                    else :
+                        l_p = (bal/l_b - 1)*100   
+                        b_p = (bal/b_b - 1)*100
+                        a_p =  bal-b_b
+                        self.D['수익연혁'].append([dte[2:],f"{bal:,.2f}",f"{pro:,.2f}",f"{l_p:.2f}",f"{b_p:.2f}",f"{a_p:,.2f}",cat])
+                        l_b = bal
+                        
+                        if  pro >= 0 : cntW += 1; accWp += l_p
+                        else : cntL += 1; accLp += l_p
+                
+                cntA = cntW + cntL
+                winCp = cntW/cntA*100 if cntA else 0.00
+                LosCp = cntL/cntA*100 if cntA else 0.00
+                accWp = accWp/cntW if cntW else 0.00
+                accLp = accLp/cntL if cntL else 0.00
+                dspan = my.diff_day(ini_date,'20'+self.D['수익연혁'][-1][0])
+                self.D['수익통계'] = [f"{dspan:,}",f"{cntA:,.0f}",f"{cntW:,.0f}",f"{cntL:,.0f}",f"{winCp:,.1f}",f"{LosCp:,.1f}",f"{accWp:,.2f}",f"{accLp:,.2f}"]
+                self.D['수익연혁'].reverse()
+
+
+
+                # 월별 실현손익
+                ls_date = self.DB.one(f"SELECT add0 FROM {self.D['tbl']} WHERE add20='수익실현' ORDER BY add0 DESC LIMIT 1")
+                qry = f"SELECT SUBSTR(add0,1,7), sum(CAST(add14 as float)) FROM {self.D['tbl']} WHERE add20 = '수익실현' GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
+                monProfit = self.DB.exe(qry)
+                qry = f"SELECT SUBSTR(add0,1,7), sum(CAST(add21 as float)) FROM {self.D['tbl']} WHERE add0 <='{ls_date}' GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
+                monthlyFee = self.DB.exe(qry)
+                
+                if monthlyFee :
+
+                    월별이익 = {x[0]:float(x[1]) for x in monProfit}
+                    월수수료 = {x[0]:float(x[1]) for x in monthlyFee}
                     
-                    if  pro >= 0 : cntW += 1; accWp += l_p
-                    else : cntL += 1; accLp += l_p
-            
-            cntA = cntW + cntL
-            winCp = cntW/cntA*100 if cntA else 0.00
-            LosCp = cntL/cntA*100 if cntA else 0.00
-            accWp = accWp/cntW if cntW else 0.00
-            accLp = accLp/cntL if cntL else 0.00
-            dspan = my.diff_day(ini_date,'20'+self.D['수익연혁'][-1][0])
-            self.D['수익통계'] = [f"{dspan:,}",f"{cntA:,.0f}",f"{cntW:,.0f}",f"{cntL:,.0f}",f"{winCp:,.1f}",f"{LosCp:,.1f}",f"{accWp:,.2f}",f"{accLp:,.2f}"]
-            self.D['수익연혁'].reverse()
-
-
-
-            # 월별 실현손익
-            ls_date = self.DB.one(f"SELECT add0 FROM {self.D['tbl']} WHERE add20='수익실현' ORDER BY add0 DESC LIMIT 1")
-            qry = f"SELECT SUBSTR(add0,1,7), sum(CAST(add14 as float)) FROM {self.D['tbl']} WHERE add20 = '수익실현' GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
-            monProfit = self.DB.exe(qry)
-            qry = f"SELECT SUBSTR(add0,1,7), sum(CAST(add21 as float)) FROM {self.D['tbl']} WHERE add0 <='{ls_date}' GROUP BY SUBSTR(add0,1,7) ORDER BY add0 DESC LIMIT 24"
-            monthlyFee = self.DB.exe(qry)
-            
-            if monthlyFee :
-
-                월별이익 = {x[0]:float(x[1]) for x in monProfit}
-                월수수료 = {x[0]:float(x[1]) for x in monthlyFee}
-                
-                self.D['월별구분'] = []
-                self.D['월별이익'] = []
-                self.D['월수수료'] = []
-                self.D['월별순익'] = []
-                
-                for key in 월수수료 :
+                    self.D['월별구분'] = []
+                    self.D['월별이익'] = []
+                    self.D['월수수료'] = []
+                    self.D['월별순익'] = []
                     
-                    self.D['월별구분'].append(key)
-                    self.D['월수수료'].append(월수수료[key])
-                    if  key in 월별이익 : 
-                        self.D['월별이익'].append(월별이익[key])
-                        self.D['월별순익'].append(월별이익[key]-월수수료[key])
-                    else : 
-                        self.D['월별이익'].append(0.0)
-                        self.D['월별순익'].append(-월수수료[key])
-                
-                self.D['월별구분'].reverse()
-                self.D['월별이익'].reverse()
-                self.D['월수수료'].reverse()
-                self.D['월별순익'].reverse()
+                    for key in 월수수료 :
+                        
+                        self.D['월별구분'].append(key)
+                        self.D['월수수료'].append(월수수료[key])
+                        if  key in 월별이익 : 
+                            self.D['월별이익'].append(월별이익[key])
+                            self.D['월별순익'].append(월별이익[key]-월수수료[key])
+                        else : 
+                            self.D['월별이익'].append(0.0)
+                            self.D['월별순익'].append(-월수수료[key])
                     
-                monthly_total = sum(self.D['월별이익'])
-                monthly_ntsum = sum(self.D['월별순익'])
-                monthly_lenth = len(self.D['월별이익'])
-                fee_sum       = sum(self.D['월수수료'])
-                
-                self.D['월별구분'].append('AVG')
-                self.D['월별순익'].append(round(monthly_ntsum/monthly_lenth))
-                
-                self.D['손익합계'] = f"$ {monthly_ntsum:,.0f} ({monthly_ntsum*현재환율:,.0f}원)" 
-                
-                self.D['월별순익'] = [round(x) for x in self.D['월별순익']]      
-                # 누적 수익 가져오기
-                self.D['실현수익'] = f"{monthly_total:,.2f}"
-                self.D['수수료합'] = f"{fee_sum:,.2f}"
-                self.D['누적수익'] = f"{monthly_total-fee_sum:,.2f}"      
+                    self.D['월별구분'].reverse()
+                    self.D['월별이익'].reverse()
+                    self.D['월수수료'].reverse()
+                    self.D['월별순익'].reverse()
+                        
+                    monthly_total = sum(self.D['월별이익'])
+                    monthly_ntsum = sum(self.D['월별순익'])
+                    monthly_lenth = len(self.D['월별이익'])
+                    fee_sum       = sum(self.D['월수수료'])
+                    
+                    self.D['월별구분'].append('AVG')
+                    self.D['월별순익'].append(round(monthly_ntsum/monthly_lenth))
+                    
+                    self.D['손익합계'] = f"$ {monthly_ntsum:,.0f} ({monthly_ntsum*현재환율:,.0f}원)" 
+                    
+                    self.D['월별순익'] = [round(x) for x in self.D['월별순익']]      
+                    # 누적 수익 가져오기
+                    self.D['실현수익'] = f"{monthly_total:,.2f}"
+                    self.D['수수료합'] = f"{fee_sum:,.2f}"
+                    self.D['누적수익'] = f"{monthly_total-fee_sum:,.2f}"      
             
             
     def list(self) :

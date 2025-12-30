@@ -42,6 +42,7 @@
 			</li>
 		{% endfor %}
 		</ul>
+		{% if D['USER']['uid'] == 'comphys' %}
 		<ul class='nav pull-right'>
 			<li><a href="javascript:open_folder()"><i class='fa fa-folder fa-lg' title="폴더관리"></i></a></li>
 			<li><a href="https://comphys.pythonanywhere.com/download/stock_mydata"><i class='fa fa-cloud-download fa-lg' title=""></i></a></li>
@@ -51,9 +52,15 @@
 				<a href="{{D['_bse']}}admin/board" target='blank'><i class='fa fa-wrench fa-lg' style='color:#ff6f6f;'></i></a>
 			</li>
 		</ul>
+		{% else %}
+		<ul class='nav pull-right' style='margin-right:20px;'>
+			<li><a href="{{D['_bse']}}board/logout"><i class='fa fa-user fa-lg' title="{{D['USER']['uname']}}({{D['USER']['uid']}})>로그아웃"></i></a></li>
+		</ul>
+		{% endif %}
 	</div>
 </div>
 <div class="row-body" id="content" style="width:{{D['xwidth']}}"><!-- 본문 시작 -->
+	{% if D['USER']['uid'] == 'comphys' %}
 	<div id="send-to-mobile-div" class='row-row clearfix' style="width:{{D['xwidth']}};">
 		<div class="pull-left">
 			<span id="send-to-mobile-select">
@@ -77,6 +84,7 @@
 			</span>
 		</div>
 	</div>
+	{% endif %}
 
 	{% block contents_body  %}{% endblock %}
 	{% block contents_list  %}{% endblock %} 
