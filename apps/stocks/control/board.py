@@ -14,15 +14,20 @@ class Board(Control) :
             self.D['tbl']  = 'h_'+self.D['bid']+'_board'
             self.D['USER'] = self.DB.line(f"SELECT * FROM h_user_list WHERE uid='{session['N_NO']}'")
             
+            if  self.D['USER']['level'] < 10 :
+                self.D['bid']  = 'log315_ljk'
+                self.D['tbl']  = 'h_'+self.D['bid']+'_board'
+            
             self.D['BCONFIG'] = self.DB.line(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'")
             self.skin = 'board/'+self.D['BCONFIG']['skin']
             self.model('board-board_main')
             self.D['DOCU_ROOT'] = self.C['DOCU_ROOT']
 
 
+
     def list(self) :
         
-        if self.D['USER']['level'] < self.D['BCONFIG']['acc_list'] :  return self.echo("사용자의 접근 레벨이 허가되지 않았습니다.")
+        if  self.D['USER']['level'] < self.D['BCONFIG']['acc_list'] : return self.echo("사용자의 접근 레벨이 허가되지 않았습니다.")
         M = self.model('board-board_list')
         M.list_head()
         M.list_main()
