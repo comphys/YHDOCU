@@ -36,6 +36,9 @@ class SU :
 
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
         time_now = my.now_timestamp()
+        
+        # 환율 업데이트
+        krw = my.get_usd_krw()
 
         if rst3 :
             for row in rst3 :
@@ -46,7 +49,8 @@ class SU :
                 self.DB.exe(sql)
 
             lday = rst3[-1][0]
-            self.send_message(f"{lday}일 주가 업데이트 완료")
+            self.DB.exe(f"UPDATE h_stockHistory_board SET add2={krw[1]} WHERE add0='{lday}'")
+            self.send_message(f"{lday}일 주가&환율 업데이트")
         else :
             self.send_message(f"No data to update...")
 
