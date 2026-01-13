@@ -20,6 +20,9 @@
 					<div class='write-input-server'>카테고리</div>
 					<input type='text' name='add20' class="i-text" style="width:100px;text-align:right;" value="{{D['BODY']['add20']}}">
 				</div>
+				{% if D['초기가능'] %}
+				<span class="btn btn-small btn-blue" style="height:25px;width:100px" onclick="reset_balance()">잔액변경</span>
+				{% endif %}
 			</td>
 		</tr>
 		<tr style="padding:4px;border-bottom:1px solid black">
@@ -46,7 +49,11 @@
 		<tr style="padding:4px;border-bottom:1px solid black">
 			<td style="width:100px;text-align:center">매수정보</td>
 			<td style="padding-left:10px">
+				{% if D['초기가능'] %}
+				<div class='i-input-div-choice'>
+				{% else %}
 				<div class='i-input-div'>
+				{% endif %}
 					<div class='write-input-server'>현재잔액</div>
 					<input type='text' name='add5' class="i-number" style="width:100px;" value="{{D['BODY']['add5']}}">
 				</div>
@@ -220,6 +227,18 @@ JYHEDITOR.UserTable = function() {
 	$("#tableMenu").css({left:mouse_X - 20 , top:mouse_Y }).toggle();
 }
 // ----------------------------------------------------------------------------------------------------------------------------------
+
+function reset_balance() {
+	
+	nb = $("input[name=add5]").val();
+	let posturl = uri('linkajax')+ 'log315_ljk/reset_balance';
+	$.post(posturl,{n_bl:nb}).done(function(data){
+		if(data == "___OK____") location.href = uri('linkurl') + 'board/list/'+uri(0)
+	});
+	
+
+}
+
 </script>
 
 

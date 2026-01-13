@@ -3,7 +3,7 @@ from system.core.load import SKIN
 class 쓰기_표준(SKIN) :
 
     def write(self) :
-        OBODY = self.D.get('OBODY',None)
+  
         self.D['TR_add'] = []
         self.D['TR_cat'] = []
         if self.D['BCONFIG']['width'] : w_width  = int( (self.D['BCONFIG']['width']).replace('px','') )
@@ -16,11 +16,8 @@ class 쓰기_표준(SKIN) :
         if  self.D['Mode'] == 'write' :
             self.D['w_title']='' ; self.D['w_tleClr']=''
 
-        elif self.D['Mode'] == 'modify' :
-            self.D['w_title'] = OBODY['add0'] ; self.D['w_tleClr']= OBODY['tle_color']
-
         if self.D['Mode'] != 'add_body' and int(self.D['Brother']) <= 0 :
-            self.add_all(self.D['BCONFIG']['category'], self.D['EXTITLE'], self.D['EXCLASS'], OBODY) 
+            self.add_all(self.D['BCONFIG']['category'], self.D['EXTITLE'], self.D['EXCLASS'], self.D['BODY']) 
     
 
     def add_all(self,category, exFIDktitle, exClass,OBODY) :

@@ -3,8 +3,7 @@ from system.core.load import SKIN
 class 쓰기_투자Lucky(SKIN) :
 
     def write(self) :
-        OBODY = self.D.get('OBODY',None)
-        self.D['BODY'] = OBODY
+
         self.D['TR_add'] = []
         self.D['TR_cat'] = []
         self.D['method'] = self.SYS.I['_mtd']

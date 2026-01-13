@@ -3,7 +3,6 @@ from system.core.load import SKIN
 class 쓰기_주가분석(SKIN) :
 
     def write(self) :
-        OBODY = self.D.get('OBODY',None)
 
         self.D['TR_add'] = []
         self.D['TR_cat'] = []
@@ -14,8 +13,8 @@ class 쓰기_주가분석(SKIN) :
 
         self.D['ChkField'] = ','.join(self.D['MustCheck'])
 
-        self.D['user_add1']  = self.user_add1( OBODY) # 종목코드
-        self.D['BODY'] = OBODY
+        self.D['user_add1']  = self.user_add1( self.D['BODY']) # 종목코드
+
 
     def user_add1(self,OBODY) :
         value =''
