@@ -16,6 +16,9 @@ class 쓰기_표준(SKIN) :
         if  self.D['Mode'] == 'write' :
             self.D['w_title']='' ; self.D['w_tleClr']=''
 
+        if  self.D['Mode'] == 'modify' :
+            self.D['w_title'] = self.D['BODY']['add0'] ; self.D['w_tleClr']= self.D['BODY']['tle_color']
+
         if self.D['Mode'] != 'add_body' and int(self.D['Brother']) <= 0 :
             self.add_all(self.D['BCONFIG']['category'], self.D['EXTITLE'], self.D['EXCLASS'], self.D['BODY']) 
     

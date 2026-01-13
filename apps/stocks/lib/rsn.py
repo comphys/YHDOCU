@@ -1,4 +1,5 @@
 import system.core.my_utils as my
+import numpy
 
 class RSN :
 
@@ -957,7 +958,9 @@ class RSN :
                 cnt100 = len(self.D['over_100p'])
                 over_p = cnt100/totcnt*100
                 self.D['over100st'] = f"{cnt100} / {totcnt} ( {over_p:.1f}% )"
-            
+
+                self.D['평균가치'] = f"{numpy.mean(self.D['chart_val']):.2f}"
+                self.D['표준편차'] = f"{numpy.std(self.D['chart_val']):.2f}"
 
 
 # ------------------------------------------------------------------------------------

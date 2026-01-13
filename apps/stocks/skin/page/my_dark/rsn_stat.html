@@ -74,6 +74,11 @@
 				<input role="switch" type="checkbox" name="chk_1yr" {{ 'checked' if D['일년단위'] =='on'  else '' }}>&nbsp;<span>1year</span>&nbsp;&nbsp; 
 				over 100% profit : {{D['over100st']}} &nbsp;&nbsp;
 				Min LP : {{D['MinLP']}} % when starting on ( {{D['MinDD']}} )
+				{% if D['평균가치'] %}
+				<span style="color:antiquewhite">
+					&nbsp;수익률 평균값 : {{D['평균가치']}}% &nbsp; 표준편차 {{D['표준편차']}}
+				</span>
+				{% endif %}
 			</div>
 			<div class="pull-right" style="padding:10px 5px;margin-right:0px;height:42px;">
 				<i class="fa fa-line-chart" onclick="show_timeSeries_chart()"></i>
