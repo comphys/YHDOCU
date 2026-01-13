@@ -18,7 +18,7 @@ class Ajax(Model) :
     def reset_balance(self) :
         
         n_bl = self.D['post']['n_bl']
-        LD = self.DB.last_record('h_log315_board')
+        LD = self.DB.last_record('h_log315_ljk_board')
         
         # 잔액 및 가치합계 재 설정
         o_mon = my.sv(LD['add5'])
