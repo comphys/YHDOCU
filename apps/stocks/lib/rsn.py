@@ -930,11 +930,12 @@ class RSN :
         last_day = self.DB.one("SELECT add0 FROM h_stockHistory_board ORDER BY add0 DESC LIMIT 1")
         end = ''
         
+        days = int(self.D['한정기간'])
         for b in B :
-            if opt == '1year' : 
-                year1 = my.dayofdate(b,365)[0]
-                if  year1 < last_day : 
-                    end = year1
+            if opt == 'lmt_days' : 
+                date1 = my.dayofdate(b,days)[0]
+                if  date1 < last_day : 
+                    end = date1
                 else :
                     end = '' 
                     break
@@ -952,7 +953,7 @@ class RSN :
             self.D['chart_dte'].reverse()
             self.D['chart_val'].reverse()
             
-            if  opt == '1year' :
+            if  opt == 'lmt_days' :
                 self.D['over_100p'] = [x for x in self.D['chart_val'] if x > 100] 
                 totcnt = len(self.D['chart_val'])
                 cnt100 = len(self.D['over_100p'])

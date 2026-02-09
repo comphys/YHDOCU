@@ -71,7 +71,8 @@
 				<input role="switch" type="checkbox" name="chk_tax" {{ 'checked' if D['세금적용'] =='on'  else '' }}>&nbsp;<span>Tax</span>&nbsp;&nbsp; 
 				<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on'  else '' }}>&nbsp;<span>RST=</span>&nbsp;&nbsp; 
 				<input role="switch" type="checkbox" name="chk_rs_" {{ 'checked' if D['이밸런싱'] =='on'  else '' }}>&nbsp;<span>RS>T</span>&nbsp;&nbsp; 
-				<input role="switch" type="checkbox" name="chk_1yr" {{ 'checked' if D['일년단위'] =='on'  else '' }}>&nbsp;<span>1year</span>&nbsp;&nbsp; 
+				<input role="switch" type="checkbox" name="chk_lmt" {{ 'checked' if D['기간한정'] =='on'  else '' }}>&nbsp;<span>기간</span>&nbsp;&nbsp; 
+				<input type="text" name="한정기간" value="{{D['한정기간']}}" style="border:1px solid gray;width:80px;text-align:center">&nbsp;일간&nbsp;&nbsp;
 				over 100% profit : {{D['over100st']}} &nbsp;&nbsp;
 				Min LP : {{D['MinLP']}} % when starting on ( {{D['MinDD']}} )
 				{% if D['평균가치'] %}

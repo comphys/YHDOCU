@@ -22,7 +22,8 @@ class M_rsn_stat(Model) :
         self.D['이밸런싱'] = 'on'
         self.D['일반상황'] = 'off'
         self.D['가상손실'] = 'off'
-        self.D['일년단위'] = 'off'
+        self.D['기간한정'] = 'off'
+        self.D['한정기간'] = '365'
 
         # 기간 설정(최근 2년간)
         # self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)
@@ -46,9 +47,10 @@ class M_rsn_stat(Model) :
         D['세금적용'] = self.D['post'].get('chk_tax','off')
         D['일밸런싱'] = self.D['post'].get('chk_brs','off')
         D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
-        D['일년단위'] = self.D['post'].get('chk_1yr','off')
+        D['기간한정'] = self.D['post'].get('chk_lmt','off')
+        D['한정기간'] = self.D['post']['한정기간']
         
-        opt = '1year' if D['일년단위'] == 'on' else ''
+        opt = 'lmt_days' if D['기간한정'] == 'on' else ''
         RST = self.SYS.load_app_lib('rsn')
         RST.D |= D
 
