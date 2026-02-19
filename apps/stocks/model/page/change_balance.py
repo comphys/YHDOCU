@@ -11,11 +11,13 @@ class M_change_balance(Model) :
         self.D['기본자금'] = f"{mon0-mon2:,.2f}" ; mon1 = my.sv(self.D['기본자금'])
         self.D['기준일자'] = self.DB.parameter('TX050')
 
-        lpd = self.DB.one(f"SELECT add0  FROM h_rsnLog_board WHERE add17='수익실현' and add0 > '{self.D['기준일자']}' ORDER BY add0 DESC LIMIT 1")
-        lpm = self.DB.one(f"SELECT add12 FROM h_rsnLog_board WHERE add0 = '{lpd}' LIMIT 1"); rmon = my.sv(lpm)
-        stk = self.DB.last_data_one('CAST(add2 as float)','h_stockHistory_board')
+        lpd = self.DB.one(f"SELECT add0  FROM h_rsnLog_board WHERE add17='수익실현' and add0 >= '{self.D['기준일자']}' ORDER BY add0 DESC LIMIT 1")
+        if  lpd :
+            lpm = self.DB.one(f"SELECT add12 FROM h_rsnLog_board WHERE add0 = '{lpd}' LIMIT 1"); rmon = my.sv(lpm)
+            stk = self.DB.last_data_one('CAST(add2 as float)','h_stockHistory_board')
+        
 
-        if lpd > self.D['기준일자'] :
+        if lpd and lpd > self.D['기준일자'] :
 
             RSN = self.SYS.load_app_lib('rsn')
 
