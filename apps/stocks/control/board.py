@@ -9,6 +9,7 @@ class Board(Control) :
     def _auto(self) :
 
         self.DB = self.db('stocks')
+        self.D['platform'] = 'On Local' if  self.DB.system == 'Windows' else ''
 
         if 'N_NO' in session :
             self.D['bid']  = self.parm[0] if self.parm else self.C['init_board']

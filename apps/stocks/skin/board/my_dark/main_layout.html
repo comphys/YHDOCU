@@ -44,6 +44,9 @@
 		</ul>
 		{% if D['USER']['uid'] == 'comphys' %}
 		<ul class='nav pull-right'>
+			{% if D['platform'] %}
+			<li class="brand" style="color:yellow;font-style:italic;"> {{D['platform']}} </li>
+			{% endif %}
 			<li><a href="javascript:open_folder()"><i class='fa fa-folder fa-lg' title="폴더관리"></i></a></li>
 			<li><a href="https://comphys.pythonanywhere.com/download/stock_mydata"><i class='fa fa-cloud-download fa-lg' title=""></i></a></li>
 			<li><a href="{{D['_bse']}}board/logout"><i class='fa fa-user fa-lg' title="{{D['USER']['uname']}}({{D['USER']['uid']}})>로그아웃"></i></a></li>

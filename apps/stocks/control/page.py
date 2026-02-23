@@ -7,6 +7,7 @@ class Page(Control) :
 
     def _auto(self) :
         self.DB = self.db('stocks')
+        self.D['platform'] = 'On Local' if  self.DB.system == 'Windows' else ''
 
         self.D['USER'] = self.DB.exe(f"SELECT * FROM h_user_list WHERE uid='{session['N_NO']}'",many=1,assoc=True)
         self.D['bid']     = self.parm[0] 
