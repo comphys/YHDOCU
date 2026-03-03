@@ -116,8 +116,8 @@ class 목록_투자315(SKIN) :
                         ini_date = dte
                         self.D['수익연혁'].append([dte[2:],f"{ini:,.2f}",'0.00','0.00','0.00','0.00',cat])
                     else :
-                        l_p = (bal/l_b - 1)*100   
-                        b_p = (bal/b_b - 1)*100
+                        l_p = (bal/l_b - 1)*100 if l_b else 0.0
+                        b_p = (bal/b_b - 1)*100 if l_b else 0.0
                         a_p =  bal-b_b
                         self.D['수익연혁'].append([dte[2:],f"{bal:,.2f}",f"{pro:,.2f}",f"{l_p:.2f}",f"{b_p:.2f}",f"{a_p:,.2f}",cat])
                         l_b = bal
