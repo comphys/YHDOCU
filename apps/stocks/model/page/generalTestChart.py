@@ -6,7 +6,6 @@ class M_generalTestChart(Model) :
     def view(self) :
         
         # 기본 값
-        self.D['종목코드'] = 'SOXL'
         self.D['전략선택'] = 'N310'
         self.D['일반자금'] = '50000'
  
@@ -20,7 +19,6 @@ class M_generalTestChart(Model) :
     def action(self) :
         
         D = {}
-        D['종목코드'] = 'SOXL'
         D['전략선택'] = self.D['post']['전략선택']
         D['일반자금'] = self.D['post']['일반자금']
 

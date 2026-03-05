@@ -152,7 +152,7 @@
 			{% if S['시작일자'] == D['MaxDD'] %}
 			<tr style="border-top:1px solid #F8E6E0;border-bottom:1px solid #F8E6E0;background-color:black;">
 			{% else %}
-			<tr>
+			<tr onclick="$(this).css('backgroundColor','black')" ondblclick="$(this).css('backgroundColor','')">
 			{% endif %}
 				<td style='text-align:center'>{{loop.index}}</td>
 				<td>{{S['시작일자']}}</td>
