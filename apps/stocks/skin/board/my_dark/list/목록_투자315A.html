@@ -1,0 +1,287 @@
+{% extends D['_skn'] + 'board/my_dark/main_layout.html' %}
+
+{% block contents_list %}
+<!-- 리스트 상부 카테고리 시작 -->
+
+<!-- 리스트 상부 카테고리 종료 -->
+
+<!-- 리스트 메인 테이블 시작 -->
+<script src="/sys/chart/chart.min.js"></script>
+<script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
+
+<div style="height:370px;background-color:#24272d;padding:10px;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black">
+	<div style="position:absolute;left:30px;top:60px;z-index:5;opacity:0.9" onclick="monthlyProfit_toggle()">
+		<canvas id="myChart_main"  style="width:1128px;height:350px;background-color:#24272d;"></canvas>
+	</div>
+	<div style="position:absolute;left:1164px;top:60px;">
+	<!-- 우측 정보창( Next Strategy )-->
+		{% if D['다음날자'] == D['주문확인'] %}
+		<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:2px solid black;padding:10px" ondblclick="$('#profit-history').show()">
+		{% else %}
+		<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:4px solid rgba(243, 151, 108, 0.7);padding:10px" ondblclick="$('#profit-history').show()">	
+		{% endif %}
+			<span style="font-style: italic;"><span style="color:gray">Strategy for </span><b>{{D['다음날자']}} ({{D['다음요일']}})</b></span>&nbsp;
+			<span style="font-style: italic;color:gray">from {{D['현재날자']}}</span><br>
+
+			<table class="table" style="text-align:right;width:324px;margin-top:10px">
+				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppl&nbsp;</td><td>ppa&nbsp;</td></tr>
+				{% if D['예정수량'] %}
+				<tr><td style="text-align:left;"><span style="color:gray">buy</span></td><td>{{D['예정매가']}}</td><td>{{D['예정수량']}}</td>
+					<td style="color:gray">{{D['매종대비']}}</td><td style="color:gray">{{D['매평대비']}}</td>
+				</tr>
+				{% endif %}
+				{% if D['예정도수'] %}
+				<tr style="border-top:1px solid gray;"><td style="text-align:left;"><span style="color:gray">sell</span></td><td>{{D['예정도가']}}</td><td>{{D['예정도수']}}</td>
+					<td style="color:gray">{{D['도종대비']}}</td><td style="color:gray">{{D['도평대비']}}</td>
+				</tr>
+				{% endif %}
+			</table>
+		
+			<!-- {% if D['예정수량'] %}
+			<div style="margin-top:20px;width:100%;text-align:center;">
+				<span style="font-style: italic;color:gray">b qty = int( <b>{{D['배분금액']}}</b> / {{D['예정매가']}} ), The falling trend is {{D['현재연속']}}</span><br>
+			</div>
+			{% endif %} -->
+		
+		</div>
+	</div>
+</div>
+
+
+{% if D['TR'] %}
+
+<div id="extra-info" class="clearfix" style="border:2px solid black;background-color:rgb(34, 33, 33);padding:5px 20px;margin-bottom:-2px">
+	<div class="pull-left">
+		{%- if D['누적수익'] %}
+		<i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;<span class="exchange"> {{D['누적수익']}} ( {{D['실현수익']}} △ {{D['수수료합']}} )</span> &nbsp;
+		{%- endif %}
+	</div>
+	<div class="pull-right" style="color:#222121;">
+		<div id ='daily-check'>{{D['주문확인']}}</div>&nbsp;&nbsp;
+		<form method='post' name='category_search' action="{{D['_bse']}}board/list/{{D['bid']}}" style='display:inline;'>
+			{%- for cats in D['CAT_LIST'] %}
+			<div class='myselect' style='margin:-8px -14px -10px 0px'>
+				{%- if cats['chked'] %}
+				<input placeholder="{{cats['title']}}" name="csh_{{cats['fkey']}}" id="{{cats['id']}}" type="text" style="color:black;width:100px;background-color:#b5daff" value="{{cats['value']}}" />
+				{%- else %}
+				<input placeholder="{{cats['title']}}" name="csh_{{cats['fkey']}}" id="{{cats['id']}}" type="text" style="width:100px" value="{{cats['value']}}" />
+				{%- endif %}
+				<div class='btn-group'>
+					<button class="btn btn-select dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+					<ul class='dropdown-menu'>
+						<li><a> {{cats['title']}} </a></li>
+						{%- for li in cats['lists'] %}
+						<li><a href="#"> {{li[0]}} </a></li>
+						{% endfor -%}
+					</ul>
+				</div>
+			</div>
+			{% endfor -%}
+		</form>
+	</div>
+</div>
+
+<div class="row-row clearfix"> 
+	<table class='table table-bordered table-striped table-hover'>
+		<thead>
+			<tr style="background-color:#0A2229;">
+					{% for key,val in D['head_td'].items() %}
+					{{val|safe}}
+					{% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+			{%- for TR in D['TR'] -%}
+			{% if TR['add2']|striptags == 'R' %}
+			<tr style="background-color:darkslategray">
+			{% elif TR['add6']|striptags == '익절매도' or TR['add6']|striptags == '손절매도' %}
+			<tr style="background-color:black;"> 
+			{% else %}
+			<tr> 
+			{% endif %}
+			{% for key,val in TR.items() %}
+			{{val|safe}}
+			{% endfor %}
+			</tr>
+			{%- endfor %}
+		</tbody>
+	</table>
+</div>
+{% else %}
+<div class="row-row clearfix"> 
+	<div class='well'><strong>안내사항 :</strong> 현재 작성된 글이 없거나 검색결과에 일치하는 데이타가 없습니다.  </div> 
+</div>
+{% endif %}
+<!-- 리스트 메인 테이블 종료 -->
+
+<!-- 하단 버튼 [ 목록 쓰기] [페이지네이션]-->
+<div class="row-row clearfix">
+	<div class='pull-left'>
+		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
+		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>쓰 기</button></a>&nbsp;
+	</div>
+	<div class='pagination pull-right'><ul>
+		{{D['Pagination']|safe}}
+	</ul></div>
+</div>
+
+<!-- 수익 히스토리 -->
+ <div id="profit-history" class="scrollbar" ondblclick="$(this).hide()">
+ {% if D['수익통계'] %}
+	<table class="table table-bordered table-striped" style="border:none;">
+			<tr style="background-color:#0A2229;text-align:center;">
+				<td>{{D['수익통계'][0]}} days</td>
+				<td>{{D['수익통계'][1]}}({{D['수익통계'][2]}}/{{D['수익통계'][3]}})</td>
+				<td>승 {{D['수익통계'][4]}} %</td>
+				<td>평균 {{D['수익통계'][6]}} %</td>
+				<td>패 {{D['수익통계'][5]}} %</td>
+				<td>평균 {{D['수익통계'][7]}} %</td>
+			</tr>
+		<tr style="text-align:right;background-color:black;"><th style="text-align:center;">날자</th><th>잔액</th><th>이익</th><th>이익률(%)</th><th>누적이익</th><th>누적(%)</th></tr>
+			{%- for tr in D['수익연혁'] -%}
+			{% if tr[6]|striptags == '초기셋팅' %}
+			<tr style="background-color:black;text-align:right;"> 
+			{% else %}
+			<tr style="text-align:right;"> 
+			{% endif %}
+				<td>{{tr[0]}}</td>
+				<td>{{tr[1]}}</td>
+				<td>{{tr[2]}}</td>
+				<td>{{tr[3]}}</td>
+				<td>{{tr[5]}}</td>
+				<td>{{tr[4]}}</td>
+			</tr>
+			{%- endfor %}
+	</table>
+{% endif %}
+</div>
+
+<div id='monthlyProfit' style="position:absolute;left:20px;top:55px;padding:5px 10px 5px 10px;opacity:0.9;z-index:3;" onclick="monthlyProfit_toggle()">
+	<canvas id="monthlyProfitChart" style="width:1128px;height:350px;background-color:#24272d"></canvas>
+</div>
+
+<script>
+// 챠트 그리기(메인챠트) -----------------------------------------------------------------------------------------
+const ctx_main = $id('myChart_main');
+ctx_main.style.backgroundColor = '#33363b';
+ctx_main.style.border = '2px solid black';
+
+let labels_origin   = {{D['chart_date']|safe}}				// labels main origin
+let close_origin    = {{D['close_price']|safe}} 		    // soxl close price origin 
+let n_avg_origin    = {{D['Ntactic_avg']|safe}}	            // soxl average in N tactic
+let t_buy           = {{D['타겟매가']|safe}}	    
+let t_sel           = {{D['타겟도가']|safe}}
+
+let ChartStart      = {{D['chart_start']}};	
+
+let labels_main     =  labels_origin.slice(ChartStart) 
+let chart_len       =  labels_main.length
+let close_price     =  close_origin.slice(ChartStart)	
+let n_avg_value     =  n_avg_origin.slice(ChartStart)  
+let target_buy      =  []
+let target_sel      =  [] 
+for(let x=0; x < chart_len; x++) { target_buy.push(t_buy);}
+for(let x=0; x < chart_len; x++) { target_sel.push(t_sel);}
+
+const data_main = {
+    labels : labels_main,
+    datasets : [
+		{   label:' 종가변동',data : close_price,borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],lineTension:0.2},
+		{   label:' 생활평균',data : n_avg_value,borderColor:'lightgreen', borderWidth:2, pointRadius:3,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
+		{   label:' 매수가격',data : target_buy,borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+		{   label:' 매도가격',data : target_sel,borderWidth:1,borderColor:'yellow',borderDash: [2,4],backgroundColor:'yellow',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+    ]   
+};
+const options_main = {
+	animation : { duration:500},
+
+	plugins : { legend: {display:false}, tooltip:{enabled:true}},
+    responsive:false,
+    layout:{padding:20},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'lightgray'}, grid:{color:'#272727'},position:'right'},
+    }
+};
+const config_main  = {type:'line',data:data_main,options:options_main};
+const myChart_main = new Chart(ctx_main, config_main); 
+// ------------------------------------------------------------------------------------------------------------------------
+// 각 전략 내용 보기
+
+$("#daily-check").on('dblclick', function() {
+	$(this).attr("contenteditable",true).addClass('daily-check-on');
+	$(this).on('keydown',function(e){
+		if(e.which==13) {
+			$(this).attr("contenteditable",false).removeClass('daily-check-on');
+			let odrday  = $(this).text(); odrday = $.trim(odrday);
+			let posturl = uri('linkajax')+ 'log315_ljk/dailyCheckUpdate';
+			$.post(posturl,{odrday:odrday,option:'N315'}).done(function(){location.replace(location.href);}); 
+		} else if(e.which==69) {$(this).attr("contenteditable",false).removeClass('daily-check-on');}
+	});
+});
+
+{% if D['월별구분']|safe %}
+	{% if D['월별이익'] %}
+	const ctx_monthly= $id('monthlyProfitChart');
+
+	ctx_monthly.style.backgroundColor = '#33363b';
+	ctx_monthly.style.border = '2px solid black';
+
+	let labels_monthly = {{D['월별구분']|safe}};
+	let monthlyProfits = {{D['월별순익']|safe}};
+	let backColor = new Array(labels_monthly.length-1);
+	let boreColor = new Array(labels_monthly.length-1);
+	backColor.fill('rgba(75, 192, 192, 0.4)');
+	backColor.push('#8F8681');
+	boreColor.fill('rgb(75, 192, 192)');
+	boreColor.push('#000000');
+
+	const data_monthly = {
+	labels: labels_monthly,
+	datasets: [{
+		label: ' 월별수익금 ',
+		data: monthlyProfits,
+		backgroundColor: backColor,
+		borderColor: boreColor,
+		borderWidth: 1
+	}]
+	};
+
+	const config_monthly = {
+	type: 'bar',
+	data: data_monthly,
+	plugins:[ChartDataLabels],
+	options: {
+		animation : {duration:500},
+		layout:{padding:10},
+		plugins : { legend: {display:false},
+					title:{display:true,color:'#F7F8E0',align:'end',font:{size:14,style:'italic',weight:'normal'},text:"{{D['손익합계']}}"},
+					tooltip : {enabled:false},
+					datalabels : {color:'white', anchor:'end', align:'end', offset: 3, font:{size:12}}			
+		},
+		scales: {
+		x: { ticks : {color:'white'}, grid:{color:'#272727'}},
+		y: {
+			grid : {
+				lineWidth:2,
+				color: function(context) {
+					if(context.tick.value == 0 ) { return '#071418'} else { return '' }
+				}
+			},
+			beginAtZero: true
+		}
+		}
+	},
+	};
+	const myChart_monthly = new Chart(ctx_monthly, config_monthly); 
+	{% endif %}
+
+	let monthlyProfit_show = false;
+	function monthlyProfit_toggle() { 
+		monthlyProfit_show = !monthlyProfit_show;
+		if(monthlyProfit_show) $('#monthlyProfit').css('zIndex',7); else $('#monthlyProfit').css('zIndex',3);
+	}	
+{% endif %}
+</script>
+
+{% endblock %}
