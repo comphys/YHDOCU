@@ -1,5 +1,5 @@
 from system.core.load import Control
-from flask import session
+from flask import session, request
 
 class Board(Control) : 
 
@@ -93,6 +93,8 @@ class Board(Control) :
             uid = self.DB.one(qry)
             
             if  uid : 
+                client_ip = request.remote_addr
+                self.info(f"{uid} logged in from {client_ip}")
                 session['N_NO'] = uid
                 session['CSH'] = {}
                 home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")
