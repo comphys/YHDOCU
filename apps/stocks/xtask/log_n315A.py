@@ -16,8 +16,7 @@ class log :
 
     def set_value(self,key,val) :
 
-        for k in key :
-            self.M[k] = val
+        for k in key : self.M[k] = val
 
     def commission(self,opt) :
         
@@ -30,26 +29,24 @@ class log :
 
     def calculate(self)  :
         
-        self.D['진행상황'] = '매수대기'
-        self.D['진행일수'] = int(self.D['진행일수']) + 1
+        if  self.M['보유수량'] : self.M['진행일수'] += 1
 
         if  self.M['매수수량'] : 
+            self.M['매수차수'] += 1
             self.M['매수금액']  = self.M['매수수량'] * self.M['당일종가']
             self.M['보유수량'] += self.M['매수수량']
             self.M['현재잔액'] -= self.M['매수금액']
             self.M['총매수금'] += self.M['매수금액']
             self.M['평균단가'] =  self.M['총매수금'] / self.M['보유수량'] 
 
-            self.M['진행여부'] = '매매진행'
-            self.D['진행상황'] = self.M['차수명칭'][self.M['매수차수']] 
+            self.D['진행상황'] = self.M['차수명칭'][self.M['매수차수']-1] 
             self.D['카테고리'] = '일반진행'
             
-            self.M['매수차수']+= 1
-
             if  self.M['매수차수'] == 1 : 
                 self.D['현재시즌'] = int(self.D['현재시즌']) + 1
-                self.D['진행일수'] = 1
+                self.M['진행일수'] = 1
             
+            # 다음(차수) 배분금액
             self.M['배분금액'] = int( self.M['초기금액'] * self.M['분할배분'][self.M['매수차수']]) 
             
             self.commission(1)
@@ -72,7 +69,6 @@ class log :
             self.M['진행상황'] = '익절매도' if self.M['현재수익'] >= 0 else '손절매도'
             self.M['매수차수'] = 0
 
-            self.M['진행여부'] = '진입대기'
             self.D['진행상황'] = '익절매도' if self.M['현재수익'] >= 0 else '손실매도'
             self.D['카테고리'] = '수익실현'
 
@@ -98,11 +94,13 @@ class log :
 
     def tomorrow_buy(self) :
         
-        if  self.M['진행여부'] == '진행중단' : 
+        if  not self.M['진행여부']  : 
+
             self.D['매수예정'] = '0'
             self.D['매수예가'] = '0.00'
+            return 
         
-        elif self.M['진행여부'] == '매매진행' :
+        if self.M['보유수량'] :
 
             if  self.M['매수차수'] >  self.M['최대차수']-1 : 
                 self.D['매수예정'] = '0'
@@ -120,12 +118,13 @@ class log :
         
     def tomorrow_sell(self) :
         
-        if  not self.M['보유수량'] : 
-            self.D['매도예정'] = '0'
-            self.D['매도예가'] = '0.00'
-        else :
+        if  self.M['보유수량'] : 
             self.D['매도예정'] = self.M['보유수량']
             self.D['매도예가'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
+
+        else :
+            self.D['매도예정'] = '0'
+            self.D['매도예가'] = '0.00'
 
 
     def init_value(self) :
@@ -141,6 +140,8 @@ class log :
         self.M['진입가치'] = ST['A0203']
         self.M['수료적용'] = ST['A0501']
         self.M['세금적용'] = ST['A0502']
+        self.M['매수차수'] = ST['A0701']
+        self.M['진행여부'] = True if ST['A0720'] == 'on' else False
         # 종가 정보
         self.M['당일날자'] = CD['add0']
         self.M['당일종가'] = float(CD['add3']) 
@@ -152,10 +153,10 @@ class log :
         self.D['당일종가'] = CD['add3']
         self.D['종가변동'] = CD['add8']
         self.D['현재시즌'] = LD['add1']
-        self.D['진행일수'] = LD['add2']
+        self.M['진행일수'] = int(LD['add2'])
         self.M['현재잔액'] = float(LD['add5'])
-        self.D['진행상황'] = LD['add6']
-        self.D['매수수량'] = LD['add7']
+        self.D['진행상황'] = '매수대기' if int(LD['add9']) else ''
+        # self.D['매수수량'] = 0
         self.D['매수금액'] = LD['add8']
         self.M['보유수량'] = int(LD['add9'])
         self.M['총매수금'] = float(LD['add11'])
@@ -176,49 +177,46 @@ class log :
         # 잔액 분할
         self.M['최대차수'] = len(self.M['분할배분'])
         self.M['차수명칭'] = ['일차매수','이차매수','삼차매수','사차매수','오차매수','육차매수','칠차매수']
-        self.M['매수차수'] = self.M['차수명칭'].index(LD['add6']) if self.D['진행상황'] in self.M['차수명칭'] else 0
         #-------------------------------------------------------------
         self.set_value(['매수수량','매도수량'],0)
         self.set_value(['매수금액','매도금액','평균단가','현재수익','현수익률','평가금액','매수예가','수수료등'],0.0)
         
-        if  ST['A0720'] == 'on' : 
-            self.M['진행여부'] = '매매진행' if LD['add20'] == '일반진행' else '진입대기'
-        else :
-            self.M['진행여부'] = '진행중단'
-
     def print_data(self) :
         
         X = {}
         X['add0']  = self.M['당일날자'] 
         X['add20'] = self.D['카테고리'] 
-        X['add3']  = self.M['당일종가'] 
+        X['add3']  = f"{self.M['당일종가']:.2f}" 
         X['add4']  = self.M['당일증감'] 
         X['add1']  = self.D['현재시즌'] 
-        X['add2']  = self.D['진행일수'] 
-        X['add5']  = self.M['현재잔액'] 
+        X['add2']  = self.M['진행일수'] 
+        X['add5']  = f"{self.M['현재잔액']:.2f}" 
         X['add6']  = self.D['진행상황'] 
         X['add7']  = self.M['매수수량'] 
-        X['add8']  = self.M['매수금액'] 
+        X['add8']  = f"{self.M['매수금액']:.2f}" 
         X['add9']  = self.M['보유수량'] 
-        X['add11'] = self.M['총매수금']
-        X['add12'] = self.M['평가금액']
-        X['add10'] = self.M['평균단가']
-        X['add13'] = self.M['매도금액']
-        X['add14'] = self.M['현재수익']
-        X['add15'] = self.M['현수익률']
-        X['add16'] = self.M['평가금액'] + self.M['현재잔액']
+        X['add11'] = f"{self.M['총매수금']:.2f}"
+        X['add12'] = f"{self.M['평가금액']:.2f}"
+        X['add10'] = f"{self.M['평균단가']:.4f}"
+        X['add13'] = f"{self.M['매도금액']:.2f}"
+        X['add14'] = f"{self.M['현재수익']:.2f}"
+        X['add15'] = f"{self.M['현수익률']:.2f}"
+        X['add16'] = f"{self.M['평가금액'] + self.M['현재잔액']:.2f}"
         X['add22'] = self.D['매수예정']
-        X['add23'] = self.D['매수예가'] 
+        X['add23'] = f"{self.D['매수예가']:.2f}" 
         X['add24'] = self.D['매도예정']
-        X['add25'] = self.D['매도예가']
-        X['add21'] = self.D['수수료등']
-        X['add17'] = self.M['배분금액']
+        X['add25'] = f"{self.D['매도예가']:.2f}"
+        X['add21'] = f"{self.D['수수료등']:.2f}"
+        X['add17'] = f"{self.M['배분금액']:.2f}"
         X['add18'] = self.D['초기일자']
-        X['add19'] = str(self.M['초기금액'])
+        X['add19'] = f"{self.M['초기금액']:.2f}"
+
         X['uid']   = 'comphys'
         X['uname'] = '정용훈'
         X['wdate'] = X['mdate'] = my.now_timestamp()
         X['content'] = '' 
+
+        self.DB.parameter_update('A0701',self.M['매수차수'])
         return X
 
 
@@ -241,17 +239,18 @@ else :
   
     L.init_value()
 
-    if  L.M['진행여부'] != '진행중단' : 
+    if  L.M['진행여부'] : 
         
         if L.M['매수예정'] : L.today_buy()
         if L.M['매도예정'] : L.today_sell()
-        if L.D['카테고리'] == '일반진행' : L.calculate()
+        if L.M['매수수량'] or L.M['매도수량'] or L.M['보유수량'] : L.calculate()
 
         L.tomorrow_buy()
         L.tomorrow_sell()
 
         board = 'h_log315A_board'
-        if  L.M['매수금액'] or L.M['매도금액'] : 
+
+        if  L.M['매수수량'] or L.M['매도수량'] or L.M['보유수량'] :
             XD = L.print_data()
             qry=L.DB.qry_insert(board,XD)
             L.DB.exe(qry)
