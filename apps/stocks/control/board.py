@@ -94,10 +94,15 @@ class Board(Control) :
             uid = self.DB.one(qry)
             
             if  uid : 
-                client_ip = request.remote_addr
-                client_time = my.timestamp_to_date(ts='now',opt=3)
+                if request.headers.get('X-Forwarded-For'):
+                    user_ip = request.headers.get('X-Forwarded-For').split(',')[0]
+                else :
+                    user_ip = request.remote_addr
+
+                user_time = my.timestamp_to_date(ts='now',opt=3)
+                user_agent = request.headers.get('User-Agent')
                 with open('whoin.txt','a',encoding='utf-8') as f:
-                    f.write(f"{uid} logged in at {client_time} from {client_ip}\n")
+                    f.write(f"{uid} logged in at {user_time} from {user_ip} with {user_agent}\n")
                 session['N_NO'] = uid
                 session['CSH'] = {}
                 home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")

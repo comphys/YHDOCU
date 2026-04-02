@@ -18,7 +18,7 @@ class Page(Control) :
         if self.page_access :
         
             if self.D['BCONFIG']['width'] : self.D['xwidth'] = self.D['BCONFIG']['width']
-            else : self.D['xwidth'] = '384px' if self.D['_mbl'] else '815px'
+            else : self.D['xwidth'] = '815px'
                 
             self.skin = 'page/'+self.D['BCONFIG']['skin']
             self.D['DOCU_ROOT'] = self.C['DOCU_ROOT']
