@@ -1,4 +1,4 @@
-sfrom system.core.load import Control
+from system.core.load import Control
 from flask import session, request
 import system.core.my_utils as my
 
@@ -101,8 +101,10 @@ class Board(Control) :
 
                 user_time = my.timestamp_to_date(ts='now',opt=3)
                 user_agent = request.headers.get('User-Agent')
+                
                 user_agent = user_agent.replace("Android","<span class='who-gear>Android</span>")
                 user_agent = user_agent.replace("Windows","<span class='who-gear>Windows</span>")
+
                 with open('whoin.txt','a',encoding='utf-8') as f:
                     f.write(f"<span class='who-id'>{uid}</span><span class='who-time'>{user_time}</span><span class='who-ip'>{user_ip}</span><span class='who-agent'>{user_agent}</span>\n")
                 session['N_NO'] = uid
