@@ -25,23 +25,29 @@
 
 			<table class="table" style="text-align:right;width:324px;margin-top:10px">
 				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppl&nbsp;</td><td>ppa&nbsp;</td></tr>
-				{% if D['예정수량'] %}
-				<tr><td style="text-align:left;"><span style="color:gray">buy</span></td><td>{{D['예정매가']}}</td><td>{{D['예정수량']}}</td>
+				{% if D['매수예정'] %}
+				<tr><td style="text-align:left;"><span style="color:gray">buy</span></td><td>{{D['매수예가']}}</td><td>{{D['매수예정']}}</td>
 					<td style="color:gray">{{D['매종대비']}}</td><td style="color:gray">{{D['매평대비']}}</td>
 				</tr>
 				{% endif %}
-				{% if D['예정도수'] %}
-				<tr style="border-top:1px solid gray;"><td style="text-align:left;"><span style="color:gray">sell</span></td><td>{{D['예정도가']}}</td><td>{{D['예정도수']}}</td>
+				{% if D['매도예정'] %}
+				<tr style="border-top:1px solid gray;"><td style="text-align:left;"><span style="color:gray">sell</span></td><td>{{D['매도예가']}}</td><td>{{D['매도예정']}}</td>
 					<td style="color:gray">{{D['도종대비']}}</td><td style="color:gray">{{D['도평대비']}}</td>
 				</tr>
 				{% endif %}
 			</table>
-		
-			<!-- {% if D['예정수량'] %}
+
+			{% if D['매수예정'] %}
 			<div style="margin-top:20px;width:100%;text-align:center;">
-				<span style="font-style: italic;color:gray">b qty = int( <b>{{D['배분금액']}}</b> / {{D['예정매가']}} ), The falling trend is {{D['현재연속']}}</span><br>
+				<span style="font-style: italic;color:gray"> 전일종가 : <b>{{D['전일종가']}}</b> ( {{D['종가기준']}} ) - {{D['현재연속']}} </span><br>
 			</div>
-			{% endif %} -->
+			{% endif %}
+
+			{% if D['가상증액'] %}
+			<div style="margin-top:10px;width:100%;text-align:center;">
+				<span style="font-style: italic;color:gray">가상증액금 : <b>{{D['가상증액']}}</b></span><br>
+			</div>
+			{% endif %}
 		
 		</div>
 	</div>

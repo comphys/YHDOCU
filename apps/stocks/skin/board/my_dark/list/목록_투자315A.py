@@ -79,21 +79,27 @@ class 목록_투자315A(SKIN) :
                 
             # 다음 날 주문정보 갖고오기
             LD  = self.DB.line(f"SELECT * FROM {self.D['tbl']} ORDER BY add0 DESC LIMIT 1")
+            CD  = self.DB.last_data_line('add0,add3,add10','h_stockHistory_board') 
 
-            self.D['예정수량'] = f"{int(LD['add22']):,}"  if int(LD['add22']) else 0
-            self.D['예정매가'] = f"{float(LD['add23']):.2f}" 
-            self.D['매평대비'] = self.next_percent(float(LD['add10']),float(self.D['예정매가'])) 
-            self.D['매종대비'] = self.next_percent(float(last_clsp),float(self.D['예정매가']))  
-            self.D['예정도수'] = f"{int(LD['add24']):,}"  if int(LD['add24']) else 0
-            self.D['예정도가'] = f"{float(LD['add25']):.2f}" 
-            self.D['도평대비'] = self.next_percent(float(LD['add10']),float(self.D['예정도가'])) 
-            self.D['도종대비'] = self.next_percent(float(last_clsp),float(self.D['예정도가'])) 
-                
-            self.D['타겟매가'] = self.D['예정매가'] if self.D['예정수량'] else 'null' 
-            self.D['타겟도가'] = self.D['예정도가'] if self.D['예정도수'] else 'null' 
+            self.D['종가기준'] = CD['add0']
+            self.D['전일종가'] = CD['add3']
+            self.D['현재연속'] = CD['add10']
+
+            self.D['매수예정'] = f"{int(LD['add22']):,}"  if int(LD['add22']) else 0
+            self.D['매수예가'] = f"{float(LD['add23']):.2f}" 
+            self.D['매평대비'] = self.next_percent(float(LD['add10']),float(self.D['매수예가'])) 
+            self.D['매종대비'] = self.next_percent(float(last_clsp),float(self.D['매수예가']))  
+            self.D['매도예정'] = f"{int(LD['add24']):,}"  if int(LD['add24']) else 0
+            self.D['매도예가'] = f"{float(LD['add25']):.2f}" 
+            self.D['도평대비'] = self.next_percent(float(LD['add10']),float(self.D['매도예가'])) 
+            self.D['도종대비'] = self.next_percent(float(last_clsp),float(self.D['매도예가'])) 
+  
+            self.D['타겟매가'] = self.D['매수예가'] if self.D['매수예정'] else 'null' 
+            self.D['타겟도가'] = self.D['매도예가'] if self.D['매도예정'] else 'null' 
             
             # 기타 정보 가져오기
             self.D['주문확인'] =  self.DB.parameter('A0710')
+            self.D['가상증액'] =  self.DB.parameter('A0702')
 
             # 통계 자료 가져오기
             # add5(현재잔액), add14(현재수익), add19(초기금액), add20(카테고리)

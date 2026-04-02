@@ -72,8 +72,8 @@ class log :
             self.D['진행상황'] = '익절매도' if self.M['현재수익'] >= 0 else '손실매도'
             self.D['카테고리'] = '수익실현'
 
-            self.M['배분금액'] = int( self.M['현재잔액'] * self.M['분할배분'][0]) 
-            self.M['초기금액'] = self.M['현재잔액']
+            self.M['초기금액'] = self.M['현재잔액']+self.M['가상증액']
+            self.M['배분금액'] = int( self.M['초기금액'] * self.M['분할배분'][0] ) 
             self.D['초기일자'] = self.M['당일날자']
 
 
@@ -140,6 +140,7 @@ class log :
         self.M['수료적용'] = ST['A0501']
         self.M['세금적용'] = ST['A0502']
         self.M['매수차수'] = ST['A0701']
+        self.M['가상증액'] = my.sv(ST['A0702'])
         self.M['진행여부'] = True if ST['A0720'] == 'on' else False
         # 종가 정보
         self.M['당일날자'] = CD['add0']
@@ -261,7 +262,4 @@ else :
             qry = L.DB.qry_update(board,UD,con)
             L.DB.exe(qry)
             L.send_message(f"{today}일 N315A 전략 업데이트") 
-
-
-
          
