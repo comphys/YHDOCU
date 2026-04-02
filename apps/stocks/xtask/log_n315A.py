@@ -260,7 +260,7 @@ else :
             con = f"add0 = '{L.D['진행일자']}'"
             qry = L.DB.qry_update(board,UD,con)
             L.DB.exe(qry)
-            L.send_message(f"{today}일 N315A 전략 업데이트 완료") 
+            L.send_message(f"{today}일 N315A 전략 업데이트") 
 
 
 
