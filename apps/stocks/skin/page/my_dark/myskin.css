@@ -68,6 +68,6 @@
 #N310-statistics {position:fixed;left:1132px;top:112px;width:380px;height:348px;padding:0px;background-color:#24272d;overflow-y:scroll;z-index:5;}
 
 .who-id {display: inline-block;color:yellow;width:80px}
-.who-ip {display: inline-block;color:#BDBDBD;width:110px}
+.who-ip {display: inline-block;color:white;width:110px}
 .who-time {display: inline-block;color:#CEF6F5;width:120px}
 .who-agent {color:gray;}
