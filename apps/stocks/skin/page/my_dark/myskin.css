@@ -66,3 +66,8 @@
 #daily-log-left {padding:70px 10px;font-size:20px;font-weight:bold;font-style:italic;line-height:30px;}
 #N310-next {position:fixed;left:1140px;top:112px;width:370px;height:350px;padding:10px;background-color:#393f4a;border:2px solid black;padding:10px;z-index:7;}
 #N310-statistics {position:fixed;left:1132px;top:112px;width:380px;height:348px;padding:0px;background-color:#24272d;overflow-y:scroll;z-index:5;}
+
+.who-id {display: inline-block;color:yellow;width:80px}
+.who-ip {display: inline-block;color:#BDBDBD;width:100px}
+.who-time {display: inline-block;color:#CEF6F5;width:120px}
+.who-agent {color:gray;}

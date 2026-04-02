@@ -102,7 +102,7 @@ class Board(Control) :
                 user_time = my.timestamp_to_date(ts='now',opt=3)
                 user_agent = request.headers.get('User-Agent')
                 with open('whoin.txt','a',encoding='utf-8') as f:
-                    f.write(f"{uid} logged in at {user_time} from {user_ip} with {user_agent}\n")
+                    f.write(f"<span class='who-id'>{uid}</span><span class='who-time'>{user_time}</span><span class='who-ip'>{user_ip}</span><span class='who-agent'>{user_agent}</span>\n")
                 session['N_NO'] = uid
                 session['CSH'] = {}
                 home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")

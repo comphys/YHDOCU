@@ -1,7 +1,23 @@
 {% extends D['_skn'] + 'page/my_dark/main_layout.html' %}
 
 {% block contents_page  %}
-<div style="background-color:black;padding:20px;border:1px solid darkgray">
+<div id='who-info-div' class='scrollbar' style="background-color:black;padding:20px;border:1px solid darkgray;margin-top:10px;margin-bottom:10px;min-height:200px;max-height:600px;overflow:auto">
 {{D['로긴정보']|safe}}
 </div>
+<button class="btn btn-red" onclick='clear_who()'>비우기</button>
+
+<script>
+function clear_who() {
+ 
+    var url = uri('linkajax') + 'whoin/clear_who';
+	
+	$.post(url,{}).done(function(data){
+		if(data=='___OK___') {
+            h_dialog.notice('작업이 성공적으로 수행되었습니다.');
+            $("#who-info-div").html('');
+        }
+	});   
+
+}
+</script>
 {% endblock %}

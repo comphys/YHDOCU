@@ -15,4 +15,11 @@ class M_whoin(Model) :
 
     def action(self) :
 
-        return        
+        return
+    
+class Ajax(Model) :
+
+    def clear_who(self) :
+        with open("whoin.txt", "w") as f:
+            pass 
+        return '___OK___'
