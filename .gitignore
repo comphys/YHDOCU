@@ -2,6 +2,7 @@
 *.log
 *.ipynb
 config.ini
+whoin.txt
 settings.json
 test*.py
 # db folder, mytest folder는 업데이트 하지 않는다.

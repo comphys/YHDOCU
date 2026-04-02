@@ -1,5 +1,6 @@
 from system.core.load import Control
 from flask import session, request
+import system.core.my_utils as my
 
 class Board(Control) : 
 
@@ -94,7 +95,9 @@ class Board(Control) :
             
             if  uid : 
                 client_ip = request.remote_addr
-                self.info(f"{uid} logged in from {client_ip}")
+                client_time = my.timestamp_to_date(ts='now',opt=3)
+                with open('whoin.txt','a',encoding='utf-8') as f:
+                    f.write(f"{uid} logged in at {client_time} from {client_ip}\n")
                 session['N_NO'] = uid
                 session['CSH'] = {}
                 home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")
