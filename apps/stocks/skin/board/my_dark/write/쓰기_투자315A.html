@@ -252,7 +252,7 @@ JYHEDITOR.UserTable = function() {
 function reset_balance() {
 	
 	nb = $("input[name=add5]").val();
-	let posturl = uri('linkajax')+ 'log315_ljk/reset_balance';
+	let posturl = uri('linkajax')+ 'log315A/reset_balance';
 	$.post(posturl,{n_bl:nb}).done(function(data){
 		if(data == "___OK____") location.href = uri('linkurl') + 'board/list/'+uri(0)
 	});

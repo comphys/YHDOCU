@@ -101,7 +101,6 @@ class log :
             return 
         
         if self.M['보유수량'] :
-
             if  self.M['매수차수'] >  self.M['최대차수']-1 : 
                 self.D['매수예정'] = '0'
                 self.D['매수예가'] = '0.00'
@@ -113,9 +112,9 @@ class log :
             self.D['매수예정'] = int(  self.M['배분금액']/ self.M['매수예가'] ) 
 
         else :
-            self.D['매수예가'] = round(self.M['당일종가']-0.01, 2) if self.M['당일연속'] >= self.M['진입일자']-1 else round(self.M['당일종가'] * self.M['진입가치'],2)     
+            self.D['매수예가'] = round(self.M['당일종가']-0.01, 2) if self.M['당일연속'] >= self.M['진입일자']-1 else round(self.M['당일종가'] * self.M['진입가치'],2)    
             self.D['매수예정'] = int(  self.M['배분금액']/ self.D['매수예가'] ) 
-        
+
     def tomorrow_sell(self) :
         
         if  self.M['보유수량'] : 
@@ -153,7 +152,7 @@ class log :
         self.D['당일종가'] = CD['add3']
         self.D['종가변동'] = CD['add8']
         self.D['현재시즌'] = LD['add1']
-        self.M['진행일수'] = int(LD['add2'])
+        self.M['진행일수'] = 0 if LD['add2'] == 'R' else int(LD['add2'])
         self.M['현재잔액'] = float(LD['add5'])
         self.D['진행상황'] = '매수대기' if int(LD['add9']) else ''
         # self.D['매수수량'] = 0
@@ -254,12 +253,14 @@ else :
             XD = L.print_data()
             qry=L.DB.qry_insert(board,XD)
             L.DB.exe(qry)
-            L.send_message(f"{today}일 N315 업데이트 완료") 
+            L.send_message(f"{today}일 N315A 업데이트 완료") 
 
         else :
-            UD = {'add22':L.D['매수예정'],'add23':L.D['매수예가'],'add18':L.M['당일날자'],'add19':L.M['초기금액'],}
+            UD = {'add22':L.D['매수예정'],'add23':L.D['매수예가'],'add18':L.M['당일날자'],'add19':f"{L.M['초기금액']:.2f}"}
             con = f"add0 = '{L.D['진행일자']}'"
-            L.DB.qry_update(board,UD,con)
+            qry = L.DB.qry_update(board,UD,con)
+            L.DB.exe(qry)
+            L.send_message(f"{today}일 N315A 전략 업데이트 완료") 
 
 
 

@@ -40,5 +40,5 @@ class Ajax(Model) :
         self.DB.exe(qry)
 
         # 파라미터 업데이트
-        self.DB.parameter_update(f"N0701_{self.D['USER']['uid']}",LD['add0'])
+
         return "___OK____"
