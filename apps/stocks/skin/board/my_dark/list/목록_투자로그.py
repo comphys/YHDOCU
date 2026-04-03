@@ -69,9 +69,9 @@ class 목록_투자로그(SKIN) :
             self.D['Stactic_avg'] = [x['s_09'] if float(x['s_09']) != 0 else 'null' for x in chart_data]
             self.D['Ntactic_avg'] = [x['n_09'] if float(x['n_09']) != 0 else 'null' for x in chart_data]
             
-            # 다음 날 주문정보 갖고오기
+            # 다음 날 주문정보 갖고오기, 다음날자의 정보는 주가 테이블의 날자를 기준
             chk_last_date = self.DB.last_date(self.D['tbl'])
-            self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(chk_last_date)
+            self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(last_ohlc)
             현재환율 = self.DB.last_data_one("CAST(add2 AS FLOAT)","h_stockHistory_board")
             NS = self.DB.line(f"SELECT add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20 FROM {self.D['tbl']} WHERE add0='{chk_last_date}' LIMIT 1") 
             for name, key in [('기회','r'),('안정','s'),('생활','n')] :

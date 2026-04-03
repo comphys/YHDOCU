@@ -50,8 +50,8 @@ class 목록_투자315(SKIN) :
 
         if chart_data :
 
-            # 다음 거래 일자 가져오기
-            self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(last_date)
+            # 다음 거래 일자 가져오기는 n315 lib 에서 연산되어 가져옴
+
             현재환율 = self.DB.last_data_one("CAST(add2 AS FLOAT)","h_stockHistory_board")
 
             # # 챠트 정보 가져오기
