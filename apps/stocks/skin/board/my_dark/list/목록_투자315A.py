@@ -50,8 +50,6 @@ class 목록_투자315A(SKIN) :
 
         if chart_data :
 
-            # 다음 거래 일자 가져오기
-            self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(last_date)
             현재환율 = self.DB.last_data_one("CAST(add2 AS FLOAT)","h_stockHistory_board")
 
             # # 챠트 정보 가져오기
@@ -98,6 +96,7 @@ class 목록_투자315A(SKIN) :
             self.D['타겟도가'] = self.D['매도예가'] if self.D['매도예정'] else 'null' 
             
             # 기타 정보 가져오기
+            self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(CD['add0'])
             self.D['주문확인'] =  self.DB.parameter('A0710')
             self.D['가상증액'] =  self.DB.parameter('A0702')
 
