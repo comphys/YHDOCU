@@ -135,6 +135,16 @@ def timestamp_to_date(ts='now',opt=1) :
 
     return datetime.fromtimestamp(ts,kst).strftime(t_format)
 
+def now_to_kordate() : # 현재시각을 한국시간 존으로 요일을 표함해서 출력
+
+    korea_timezone = timezone('Asia/Seoul')
+    now = datetime.now(korea_timezone)
+    days = ['월', '화', '수', '목', '금', '토', '일']
+    weekday = days[now.weekday()]
+    formatted_time = now.strftime(f"%Y-%m-%d({weekday}) %H:%M")
+    return(formatted_time)
+
+
 def date_format_change(v,f1,f2) :
     return datetime.strptime(v,f1).strftime(f2)
 

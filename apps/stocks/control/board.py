@@ -99,7 +99,7 @@ class Board(Control) :
                 else :
                     user_ip = request.remote_addr
 
-                user_time = my.timestamp_to_date(ts='now',opt=3)
+                user_time = my.now_to_kordate()
                 user_agent = request.headers.get('User-Agent')
                 
                 user_agent = user_agent.replace("Android","<span class='who-gear'>Android</span>")
