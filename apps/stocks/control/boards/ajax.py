@@ -10,7 +10,7 @@ class Ajax(Control) :
         
     def reply_save(self) :
 
-        qry     = f"SELECT uid, uname FROM h_user_list WHERE no={session['N_NO']}"
+        qry     = f"SELECT uid, uname FROM h_user_list WHERE no={session['__u_Ino__']}"
         USER    = self.DB.line(qry)
 
         bid     = self.D['post'].pop('bid')

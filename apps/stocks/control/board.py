@@ -12,10 +12,10 @@ class Board(Control) :
         self.DB = self.db('stocks')
         self.D['platform'] = 'On Local' if  self.DB.system == 'Windows' else ''
 
-        if 'N_NO' in session :
+        if '__u_Ino__' in session :
             self.D['bid']  = self.parm[0] if self.parm else self.C['init_board']
             self.D['tbl']  = 'h_'+self.D['bid']+'_board'
-            self.D['USER'] = self.DB.line(f"SELECT * FROM h_user_list WHERE uid='{session['N_NO']}'")
+            self.D['USER'] = self.DB.line(f"SELECT * FROM h_user_list WHERE uid='{session['__u_Ino__']}'")
             self.D['BCONFIG'] = self.DB.line(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'")
 
             if  self.D['USER']['level'] < self.D['BCONFIG']['acc_list'] or  self.D['USER']['level'] < self.D['BCONFIG']['acc_body'] or self.D['USER']['level'] < self.D['BCONFIG']['acc_write']:
@@ -107,7 +107,7 @@ class Board(Control) :
 
                 with open('whoin.txt','a',encoding='utf-8') as f:
                     f.write(f"<span class='who-id'>{uid}</span><span class='who-time'>{user_time}</span><span class='who-ip'>{user_ip}</span><span class='who-agent'>{user_agent}</span>\n")
-                session['N_NO'] = uid
+                session['__u_Ino__'] = uid
                 session['CSH'] = {}
                 home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")
                 return self.moveto(home)
@@ -116,8 +116,8 @@ class Board(Control) :
 
     def logout(self) : 
         
-        if 'N_NO' in session : 
-            del session['N_NO'] 
+        if '__u_Ino__' in session : 
+            del session['__u_Ino__'] 
             del session['CSH']
         return self.moveto('board/login')
     

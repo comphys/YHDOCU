@@ -11,9 +11,9 @@ class Board(Control) :
 
         self.DB = self.db('docu')
         
-        if 'N_NO' in session :
+        if '__u_Ino__' in session :
 
-            self.DB.tbl, self.DB.wre = ("h_user_list",f"no={session['N_NO']}")
+            self.DB.tbl, self.DB.wre = ("h_user_list",f"no={session['__u_Ino__']}")
             self.D['USER'] = self.DB.get("*",many=1, assoc=True)
 
             self.D['bid']     = self.parm[0] if self.parm else self.C['init_board']
@@ -26,7 +26,7 @@ class Board(Control) :
 
 
     def list(self) :
-        if not 'N_NO' in session : return self.moveto('board/login')
+        if not '__u_Ino__' in session : return self.moveto('board/login')
         M = self.model('board-board_list')
         M.list_head()
         M.list_main()
@@ -34,7 +34,7 @@ class Board(Control) :
         return self.echo(D)
 
     def body(self) :
-        if not 'N_NO' in session : return self.moveto('board/login')
+        if not '__u_Ino__' in session : return self.moveto('board/login')
         M = self.model('board-board_list')
         M.list_head()
         M.list_main()
@@ -45,7 +45,7 @@ class Board(Control) :
         return self.echo(D)      
 
     def write(self) :
-        if not 'N_NO' in session : return self.moveto('board/login')
+        if not '__u_Ino__' in session : return self.moveto('board/login')
         self.D['Mode'] = 'write'
         M = self.model('board-board_write')
         M.write_main()
@@ -53,7 +53,7 @@ class Board(Control) :
         return self.echo(D)
 
     def add_body(self) :
-        if not 'N_NO' in session : return self.moveto('board/login')
+        if not '__u_Ino__' in session : return self.moveto('board/login')
         self.D['Mode'] = 'add_body'
         self.D['No'] = self.gets['no']
         self.D['Brother']  = int(self.gets.get('brother','0')) 
@@ -72,7 +72,7 @@ class Board(Control) :
 
 
     def modify(self,mode='modify') :
-        if not 'N_NO' in session : return self.moveto('board/login')
+        if not '__u_Ino__' in session : return self.moveto('board/login')
         self.D['Mode'] = 'modify'
         M = self.model('board-board_write')
         M.write_main()
@@ -86,12 +86,12 @@ class Board(Control) :
             qry = f"SELECT no FROM h_user_list WHERE uid='{self.D['post']['userid']}' and upass='{self.D['post']['userpass']}'"
 
             if self.DB.cnt(qry) == 1 : 
-                session['N_NO'] = self.DB.one(qry)
+                session['__u_Ino__'] = self.DB.one(qry)
                 session['CSH'] = {}
                 return self.moveto('board/list')
         
         return self.echo(D)
 
     def logout(self) : 
-        if 'N_NO' in session : del session['N_NO'] ; del session['CSH']
+        if '__u_Ino__' in session : del session['__u_Ino__'] ; del session['CSH']
         return self.moveto('board/login')

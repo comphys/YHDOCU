@@ -6,7 +6,7 @@ class Docueditor(Control) :
     def docuopen(self) :
         
         self.DB = self.db('docu')
-        if not 'N_NO' in session : return self.moveto('board/login')
+        if not '__u_Ino__' in session : return self.moveto('board/login')
         self.D['f_path'] = self.gets.get('p').replace('-','/')
         self.D['Docu_name'] = self.gets.get('f') 
 
@@ -20,7 +20,7 @@ class Docueditor(Control) :
         return self.html("docueditor/main.html")       
 
     def save(self) :
-        if not 'N_NO' in session : return self.moveto('board/login')
+        if not '__u_Ino__' in session : return self.moveto('board/login')
         save_file = self.D['post']['f_path']+'/'+self.D['post']['f_name']
         
         with open(save_file,'w',encoding='utf-8') as f :
@@ -28,7 +28,7 @@ class Docueditor(Control) :
         return False 
 
     def dialog(self) :
-        if not 'N_NO' in session : return self.moveto('board/login')
+        if not '__u_Ino__' in session : return self.moveto('board/login')
         tool = self.gets['dialog'] 
         return self.html('docueditor/dialog/'+tool+'.html')    
 
@@ -39,7 +39,7 @@ class Docueditor(Control) :
             qry = f"SELECT no FROM h_user_list WHERE uid='{self.D['post']['userid']}' and upass='{self.D['post']['userpass']}'"
 
             if self.DB.cnt(qry) == 1 : 
-                session['N_NO'] = self.DB.one(qry)
+                session['__u_Ino__'] = self.DB.one(qry)
                 session['CSH'] = {}
                 return self.moveto('filemanager/home')
         

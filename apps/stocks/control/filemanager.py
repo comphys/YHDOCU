@@ -75,7 +75,7 @@ class Filemanager(Control) :
         return self.echo(self.F)
 
     def logout(self) : 
-        if 'N_NO' in session : del session['N_NO'] ; del session['CSH']
+        if '__u_Ino__' in session : del session['__u_Ino__'] ; del session['CSH']
         return self.moveto('filemanager/login')
 
     # AJAX SECTION -----------------------------------------------------------------------------------------------------------------------

@@ -9,12 +9,16 @@ app.config.from_object(config.Config)
 app.url_map.strict_slashes = False
 app_root  = os.path.dirname(os.path.abspath(__file__)) # 현재 파일의 절대 경로  C:\YHDOCU
 app.template_folder = os.path.join(app_root,'apps')    # C:\YHDOCU\apps
+white_networks = ['127.0','119.56','118.235']
 # ----------------------------------------------------------------------------------------------------------
+# 허용된 네트워크만 접근 허용
 @app.before_request
-def clear_trailing() :
-    rp = request.path
-    if rp != '/' and rp.endswith('/') :
-        return redirect(rp[:-1])
+def ban__remote_addr():
+    client_ip = request.headers.get('X-Forwarded-For').split(',')[0] if request.headers.get('X-Forwarded-For') else request.remote_addr
+    client_nw = '.'.join(client_ip.split('.')[:2])
+
+    if client_nw not in white_networks:
+        return render_template('sys/sys_msg.html',msg="허용된 접근경로가 아닙니다.")
 
 # href = "/sys/jyh/aaa.js"  url_for('sys',filename='jyh/aaa.js')
 @app.route('/sys/<path:filename>')
@@ -30,17 +34,17 @@ def skn(app,filename) :
 
 @app.route('/download/<path:filename>')
 def download(filename) :
-    if  filename == 'stock_mydata' and session['N_NO'] :
+    if  filename == 'stock_mydata' and session['__u_Ino__'] :
         directory = os.path.join(app_root,'mydb')
         return send_from_directory(directory,'stocks.sqlite')
     else :
         directory = session['epl_path']
         return send_from_directory(directory,filename)    
 
-@app.route('/DOCU_ROOT/<path:filename>')
-def docu_root(filename) :
-    directory = DOCU_ROOT
-    return send_from_directory(directory,filename)
+# @app.route('/DOCU_ROOT/<path:filename>')
+# def docu_root(filename) :
+#     directory = DOCU_ROOT
+#     return send_from_directory(directory,filename)
 
 @app.route('/')
 @app.route('/<string:myapp>/')
@@ -74,7 +78,7 @@ def main(myapp=None, control=None, method=None, option=None):
 
     # log in 
     
-    if not 'N_NO' in session : myapp = 'stocks'; control = 'board'; method  = 'login'
+    if not '__u_Ino__' in session : myapp = 'stocks'; control = 'board'; method  = 'login'
     
     
     data = request.form if request.method == 'POST' else None

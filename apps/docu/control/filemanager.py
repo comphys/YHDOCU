@@ -12,7 +12,7 @@ class Filemanager(Control) :
         self.F ={}
 
     def _base(self) :
-        if not 'N_NO' in session : return self.moveto('filemanager/login')
+        if not '__u_Ino__' in session : return self.moveto('filemanager/login')
         self.D['DIR_LIST']      = self.epl.dir_list()
         self.D['DIR_SLICED']    = self.epl.slice()
         ht = self.gets.get('fname',False)
@@ -34,7 +34,7 @@ class Filemanager(Control) :
 
     
     def move(self) :
-        if not 'N_NO' in session : return self.moveto('filemanager/login')
+        if not '__u_Ino__' in session : return self.moveto('filemanager/login')
         dest2 = [x for x in self.parm if x.find('fname=') == -1]
         if dest2[0] =='home' : self.moveto('filemanager/home')
         dests = self.epl.ROOT + '/' + '/'.join(dest2)
@@ -46,7 +46,7 @@ class Filemanager(Control) :
         else : return "요청하신 경로가 존재하지 않습니다."
 
     def ndir(self) :
-        if not 'N_NO' in session : return self.moveto('filemanager/login')
+        if not '__u_Ino__' in session : return self.moveto('filemanager/login')
         ndir = self.parm[0]
         self.epl.push(ndir)
         self._base()
@@ -54,14 +54,14 @@ class Filemanager(Control) :
         return self.echo(self.F)
 
     def home(self) :
-        if not 'N_NO' in session : return self.moveto('filemanager/login')
+        if not '__u_Ino__' in session : return self.moveto('filemanager/login')
         session['epl_path'] = self.epl.path = self.epl.ROOT
         self._base()
         self.footer()
         return self.echo(self.F)
 
     def set(self) :
-        if not 'N_NO' in session : return self.moveto('filemanager/login')
+        if not '__u_Ino__' in session : return self.moveto('filemanager/login')
         times = int(self.parm[0])
         for x in range(times) : self.epl.up()
         self._base()
@@ -74,7 +74,7 @@ class Filemanager(Control) :
         self.F = {'skin':'filemanager/filemanager.html'}
     
     def up(self) :
-        if not 'N_NO' in session : return self.moveto('filemanager/login')
+        if not '__u_Ino__' in session : return self.moveto('filemanager/login')
         self.epl.up()
         self._base()
         self.footer()
@@ -87,14 +87,14 @@ class Filemanager(Control) :
             qry = f"SELECT no FROM h_user_list WHERE uid='{self.D['post']['userid']}' and upass='{self.D['post']['userpass']}'"
 
             if self.DB.cnt(qry) == 1 : 
-                session['N_NO'] = self.DB.one(qry)
+                session['__u_Ino__'] = self.DB.one(qry)
                 session['CSH'] = {}
                 return self.moveto('filemanager/home')
         
         return self.echo(D)
 
     def logout(self) : 
-        if 'N_NO' in session : del session['N_NO'] ; del session['CSH']
+        if '__u_Ino__' in session : del session['__u_Ino__'] ; del session['CSH']
         return self.moveto('filemanager/login')
 
     # AJAX SECTION -----------------------------------------------------------------------------------------------------------------------

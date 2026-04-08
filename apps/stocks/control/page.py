@@ -9,7 +9,7 @@ class Page(Control) :
         self.DB = self.db('stocks')
         self.D['platform'] = 'On Local' if  self.DB.system == 'Windows' else ''
 
-        self.D['USER'] = self.DB.exe(f"SELECT * FROM h_user_list WHERE uid='{session['N_NO']}'",many=1,assoc=True)
+        self.D['USER'] = self.DB.exe(f"SELECT * FROM h_user_list WHERE uid='{session['__u_Ino__']}'",many=1,assoc=True)
         self.D['bid']     = self.parm[0] 
         self.D['BCONFIG'] = self.DB.exe(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'",many=1,assoc=True)
 
