@@ -49,6 +49,7 @@ class Control :
         self.D['post'] = ImmutableMultiDict(V['_pos']).to_dict() # post data
         self.D['_skn'] = V['_skn']
         self.D['_bse'] = V['_bse']
+        self.D['_lcl'] = V['_lcl']
   
         try :    self.C = self.CFG['general']
         except : self.C = None

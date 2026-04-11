@@ -1,13 +1,12 @@
 from system.core.load import Control
 from flask import session
-import system.core.my_utils as my
 
 class Page(Control) : 
 
 
     def _auto(self) :
         self.DB = self.db('stocks')
-        self.D['platform'] = 'On Local' if  self.DB.system == 'Windows' else ''
+        self.D['platform'] = 'On Local' if  self.D['_lcl'] else ''
 
         self.D['bid']     = self.parm[0] 
         self.D['USER'] = self.DB.exe(f"SELECT * FROM h_user_list WHERE uid='{session['__u_Ino__']}'",many=1,assoc=True)

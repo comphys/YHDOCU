@@ -10,7 +10,7 @@ class Board(Control) :
     def _auto(self) :
 
         self.DB = self.db('stocks')
-        self.D['platform'] = 'On Local' if  self.DB.system == 'Windows' else ''
+        self.D['platform'] = 'On Local' if  self.D['_lcl'] else ''
 
         if '__u_Ino__' in session :
             self.D['bid']  = self.parm[0] if self.parm else self.C['init_board']
@@ -84,43 +84,7 @@ class Board(Control) :
         D={'skin': self.skin + '/write/' + self.D['BCONFIG']['sub_write']}
         return self.echo(D)
 
-    def login(self) :
-        
-        D = {'title':'로그인', 'skin':'board/login.html', 'back':'board/login'}
-        
-        if self.D['post'] :
-
-            qry = f"SELECT uid FROM h_user_list WHERE uid='{self.D['post']['userid']}' and upass='{self.D['post']['userpass']}'"
-            uid = self.DB.one(qry)
-            
-            if  uid : 
-                if request.headers.get('X-Forwarded-For'):
-                    user_ip = request.headers.get('X-Forwarded-For').split(',')[0]
-                else :
-                    user_ip = request.remote_addr
-
-                user_time = my.now_to_kordate()
-                user_agent = request.headers.get('User-Agent')
-                
-                user_agent = user_agent.replace("Android","<span class='who-gear'>Android</span>")
-                user_agent = user_agent.replace("Windows","<span class='who-gear'>Windows</span>")
-
-                with open('whoin.txt','a',encoding='utf-8') as f:
-                    f.write(f"<span class='who-id'>{uid}</span><span class='who-time'>{user_time}</span><span class='who-ip'>{user_ip}</span><span class='who-agent'>{user_agent}</span>\n")
-                session['__u_Ino__'] = uid
-                session['CSH'] = {}
-                home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")
-                return self.moveto(home)
-        
-        return self.echo(D)
-
-    def logout(self) : 
-        
-        if '__u_Ino__' in session : 
-            del session['__u_Ino__'] 
-            del session['CSH']
-        return self.moveto('board/login')
-    
+   
     def ajax(self) :
 
         M = self.load_bajax(self.D['bid'],self.parm[1])

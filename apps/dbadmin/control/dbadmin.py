@@ -6,25 +6,28 @@ from system.hand import myfile
 class Dbadmin(Control) :
 
     def _auto(self) :
-        mydb = session.get('mydb','docu')
-        if newdb := self.gets.get('mydb',None) : mydb = session['mydb'] = newdb
+        self.info('3333333333333333333')
+        self.access = True if '__u_Ino__' in session and session['__u_Ino__'] == 'comphys' else False
+        if self.access :
+            mydb = session.get('mydb','docu')
+            if newdb := self.gets.get('mydb',None) : mydb = session['mydb'] = newdb
 
-        self.DB  = self.load_app_lib('appdb')
-        self.DB.con(mydb)
-        
-        self.D['db_list'] = myfile.get_files("mydb")
-        self.D['db_list'] = [x.replace('.sqlite','') for x in self.D['db_list']]
-        self.D['current_db'] = mydb
+            self.DB  = self.load_app_lib('appdb')
+            self.DB.con(mydb)
+            
+            self.D['db_list'] = myfile.get_files("mydb")
+            self.D['db_list'] = [x.replace('.sqlite','') for x in self.D['db_list']]
+            self.D['current_db'] = mydb
 
     def index(self) :
-        if not '__u_Ino__' in session : return self.moveto('docu/board/login',short=False)
+        if not self.access : return self.echo('허가된 접근이 아닙니다')
         D = {'title':'DB ADMIN','skin':'dbadmin/main.html'}
         M1 = self.model('dbadmin')
         D['db_tables'] = M1.get_tables()
         return self.echo(D)
 
     def list(self) :
-        if not '__u_Ino__' in session : return self.moveto('docu/board/login',short=False)
+        if not self.access : return self.echo('허가된 접근이 아닙니다')
         D = {'title':'DB ADMIN','skin':'dbadmin/list.html'}
         D['nowtbl']= self.parm[0]
        
@@ -36,7 +39,7 @@ class Dbadmin(Control) :
         return self.echo(D)
 
     def tbl_dbinput(self) :
-        if not '__u_Ino__' in session : return self.moveto('docu/board/login',short=False)
+        if not self.access : return self.echo('허가된 접근이 아닙니다')
         D = {'title':'데이타 입력하기','skin':'dbadmin/tbl_dbinput.html'} 
         if self.D['post'] :
             Test = self.DB.validate_insert()
@@ -50,14 +53,14 @@ class Dbadmin(Control) :
         return self.echo(D)
 
     def tbl_delete_row(self) :
-        if not '__u_Ino__' in session : return self.moveto('docu/board/login',short=False)
+        if not self.access : return self.echo('허가된 접근이 아닙니다')
         no  = self.D['post']['no']
         tbl = self.D['post']['tbl']
         self.DB.table_delete_from_no(tbl,no) 
         return self.echo(no)     
 
     def create_tbl(self) :
-        if not '__u_Ino__' in session : return self.moveto('docu/board/login',short=False)
+        if not self.access : return self.echo('허가된 접근이 아닙니다')
         D = {'title':'새 테이블 만들기','skin':'dbadmin/tbl_create.html'}
         copy_tbl = self.D['post'].get('copy_tbl',None)
         if copy_tbl :
@@ -68,7 +71,7 @@ class Dbadmin(Control) :
         return self.echo(D)
 
     def qry_execute(self) :
-        if not '__u_Ino__' in session : return self.moveto('docu/board/login',short=False)
+        if not self.access : return self.echo('허가된 접근이 아닙니다')
         D = {'title':'POST SENDING','skin':'dbadmin/qry_result.html'}
         if self.D['post'] == None : D['qry_rst'] = "데이타가 넘어오지 않았습니다."
         else : 
@@ -78,7 +81,7 @@ class Dbadmin(Control) :
         return self.echo(D)
 
     def qry_commit_many(self) :
-        if not '__u_Ino__' in session : return self.moveto('docu/board/login',short=False)
+        if not self.access : return self.echo('허가된 접근이 아닙니다')
         D = {'title':'POST SENDING','skin':'dbadmin/qry_result.html'}
         if self.D['post'] == None : D['qry_rst'] = "데이타가 넘어오지 않았습니다."
         else : 
@@ -86,13 +89,13 @@ class Dbadmin(Control) :
         return self.echo(D)
 
     def tbl_structure(self) : 
-        if not '__u_Ino__' in session : return self.moveto('docu/board/login',short=False)
+        if not self.access : return self.echo('허가된 접근이 아닙니다')
         D = {'title':'테이블 구조','skin':'dbadmin/tbl_structure.html'}
         D['tbl_structure'] = self.DB.table_info(self.parm[0],info='all') 
         return self.echo(D)
 
     def copy_dbtable(self) :
-        if not '__u_Ino__' in session : return self.moveto('docu/board/login',short=False)
+        if not self.access : return self.echo('허가된 접근이 아닙니다')
         tbl1 = self.D['post']['tbl1'] 
         if not tbl1 : 
             return self.echo('테이블1 선택되어 있지 않음')
@@ -107,7 +110,7 @@ class Dbadmin(Control) :
         return self.echo(qry)
 
     def tbl_live_edit(self) : 
-        if not '__u_Ino__' in session : return self.moveto('docu/board/login',short=False)
+        if not self.access : return self.echo('허가된 접근이 아닙니다')
         tbl = self.D['post']['tbl']
         key = self.D['post']['key']
         val = self.D['post']['val']

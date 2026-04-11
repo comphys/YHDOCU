@@ -10,10 +10,12 @@ app.url_map.strict_slashes = False
 app_root  = os.path.dirname(os.path.abspath(__file__)) # 현재 파일의 절대 경로  C:\YHDOCU
 app.template_folder = os.path.join(app_root,'apps')    # C:\YHDOCU\apps
 white_networks = ['127.0','119.56','118.235','119.201']
+client_ip =''
 # ----------------------------------------------------------------------------------------------------------
 # 허용된 네트워크만 접근 허용
 @app.before_request
 def ban__remote_addr():
+    global client_ip
     client_ip = request.headers.get('X-Forwarded-For').split(',')[0] if request.headers.get('X-Forwarded-For') else request.remote_addr
     client_nw = '.'.join(client_ip.split('.')[:2])
 
@@ -74,7 +76,7 @@ def main(myapp=None, control=None, method=None, option=None):
 
     # log in 
     
-    if not '__u_Ino__' in session : myapp = 'stocks'; control = 'board'; method  = 'login'
+    if not '__u_Ino__' in session : control = 'access'; method  = 'login'
     
     
     data = request.form if request.method == 'POST' else None
@@ -97,6 +99,7 @@ def main(myapp=None, control=None, method=None, option=None):
     except : 
         myconfig = None
 
+    # 기본 매개변수들 전달
     Parameters = {}
     Parameters['_opt'] = option # 매개변수
     Parameters['_pos'] = data
@@ -106,6 +109,7 @@ def main(myapp=None, control=None, method=None, option=None):
     Parameters['_bse'] = mybase
     Parameters['_skn'] = myskin
     Parameters['_mth'] = method
+    Parameters['_lcl'] = True if client_ip == '127.0.0.1' else False  # check if it is on local or not
 
     Instance = CLS(Parameters)
     # _auto 함수에서는 클라이언트에 출력정보를 리턴하지 않으며, 해당 메서드에서만 최종 DATA를 전달받는다.

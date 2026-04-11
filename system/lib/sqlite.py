@@ -1,4 +1,4 @@
-import sqlite3,platform 
+import sqlite3
 
 class SQLITE :
 
@@ -6,8 +6,6 @@ class SQLITE :
 
         self.SYS  = SYS
         self.info = SYS.info
-        self.system = platform.system()
-
         self.rst = ''
 
     def con(self,dbname) :
