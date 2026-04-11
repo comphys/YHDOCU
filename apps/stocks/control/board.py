@@ -18,10 +18,9 @@ class Board(Control) :
             self.D['USER'] = self.DB.line(f"SELECT * FROM h_user_list WHERE uid='{session['__u_Ino__']}'")
             self.D['BCONFIG'] = self.DB.line(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'")
 
-            if  self.D['USER']['level'] < self.D['BCONFIG']['acc_list'] or  self.D['USER']['level'] < self.D['BCONFIG']['acc_body'] or self.D['USER']['level'] < self.D['BCONFIG']['acc_write']:
-                self.D['bid'] = self.D['USER']['home'].split('/')[-1]
-                self.D['tbl']  = 'h_'+self.D['bid']+'_board'
-                self.D['BCONFIG'] = self.DB.line(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'")
+            self.lAccess = True if self.D['USER']['level'] >= self.D['BCONFIG']['acc_list']  else False
+            self.bAccess = True if self.D['USER']['level'] >= self.D['BCONFIG']['acc_body']  else False
+            self.wAccess = True if self.D['USER']['level'] >= self.D['BCONFIG']['acc_write'] else False
 
             self.skin = 'board/'+self.D['BCONFIG']['skin']
             self.model('board-board_main')
@@ -30,7 +29,8 @@ class Board(Control) :
 
 
     def list(self) :
-        
+
+        if not self.lAccess : return self.moveto(self.D['USER']['home'])
         M = self.model('board-board_list')
         M.list_head()
         M.list_main()
@@ -40,6 +40,7 @@ class Board(Control) :
 
     def body(self) :
 
+        if not self.bAccess : return self.moveto(self.D['USER']['home'])
         M = self.model('board-board_list')
         M.list_head()
         M.list_main()
@@ -50,7 +51,8 @@ class Board(Control) :
         return self.echo(D)      
 
     def write(self) :
-
+        
+        if not self.wAccess : return self.moveto(self.D['USER']['home'])
         self.D['Mode'] = 'write'
         M = self.model('board-board_write')
         M.write_main()
@@ -60,6 +62,7 @@ class Board(Control) :
 
     def add_body(self) :
 
+        if not self.wAccess : return self.moveto(self.D['USER']['home'])
         self.D['Mode'] = 'add_body'
         self.D['No'] = self.gets['no']
         self.D['Brother']  = int(self.gets.get('brother','0')) 
@@ -78,6 +81,7 @@ class Board(Control) :
 
     def modify(self,mode='modify') :
 
+        if not self.wAccess : return self.moveto(self.D['USER']['home'])
         self.D['Mode'] = 'modify'
         M = self.model('board-board_write')
         M.write_main()
@@ -87,5 +91,6 @@ class Board(Control) :
    
     def ajax(self) :
 
+        if not self.lAccess : return self.moveto(self.D['USER']['home'])
         M = self.load_bajax(self.D['bid'],self.parm[1])
         return M()
