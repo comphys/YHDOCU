@@ -43,71 +43,44 @@ def download(filename) :
         directory = session['epl_path']
         return send_from_directory(directory,filename)    
 
-
 @app.route('/')
 @app.route('/<string:myapp>/')
 @app.route('/<string:myapp>/<string:control>')
 @app.route('/<string:myapp>/<string:control>/<string:method>/',methods=['GET','POST'])
 @app.route('/<string:myapp>/<string:control>/<string:method>/<path:option>',methods=['GET','POST'])
 def main(myapp=None, control=None, method=None, option=None):
-
-#   log = my_log("my_logger")    
-
-    if not myapp : 
-        myapp = 'stocks'
-        os_myapp = os.path.join(app_root,'apps',myapp)
-        if os.path.isdir(os_myapp) : 
-            mybase = '/'+myapp+'/'
-            myskin = myapp+'/skin/'
-        # return render_template('sys/sys_msg.html',msg="호출하실 앱을 명시하지 않았습니다.") 
-    else :
-        os_myapp = os.path.join(app_root,'apps',myapp)
-        if os.path.isdir(os_myapp) : 
-            mybase = '/'+myapp+'/'
-            myskin = myapp+'/skin/'
-        else : return render_template('sys/sys_msg.html',msg="앱 위치를 찾을 수 없습니다.") 
-
-    if not control : 
-        control = 'board'
-        # return render_template('sys/sys_msg.html',msg="컨트롤이 명시되지 않았습니다.")   
- 
-    if not method  : 
-        return redirect(mybase + control+'/index')
-
-    # log in 
     
     if not '__u_Ino__' in session : control = 'access'; method  = 'login'
     
-    
-    data = request.form if request.method == 'POST' else None
+    loc_myapp = os.path.join(app_root,'apps',myapp)
+    if not myapp or not os.path.isdir(loc_myapp) : return render_template('sys/sys_msg.html',msg=f"[{myapp}] 앱 위치를 찾을 수 없습니다.") 
+    if not control : return render_template('sys/sys_msg.html',msg="컨트롤이 명시되지 않았습니다.")
+    if not method  : method = 'index'
 
     try :  CLS = load_control(control,myapp)
-    except ModuleNotFoundError : 
-        return render_template('sys/sys_msg.html',msg="해당 컨트롤을 찾을 수 없습니다.")
-    if not hasattr(CLS,method): 
-        return render_template('sys/sys_msg.html',msg="해당 메써드를 찾을 수 없습니다.")
+    except ModuleNotFoundError : return render_template('sys/sys_msg.html',msg="해당 컨트롤을 찾을 수 없습니다.")
+    if not hasattr(CLS,method) : return render_template('sys/sys_msg.html',msg="해당 메써드를 찾을 수 없습니다.")
     
     # 기본설정값 읽어 오기 
     config = configparser.ConfigParser()
     config.optionxform = lambda optionstr : optionstr
-    config_file = os.path.join(os_myapp, 'config.ini')
+    config_file = os.path.join(loc_myapp, 'config.ini')
 
     try : 
         config.read(config_file,encoding='utf-8')   
         myconfig = config
-
     except : 
         myconfig = None
 
     # 기본 매개변수들 전달
     Parameters = {}
     Parameters['_opt'] = option # 매개변수
-    Parameters['_pos'] = data
+    Parameters['_pos'] = request.form if request.method == 'POST' else None
     Parameters['_cfg'] = myconfig
     Parameters['_pth'] = app_root
     Parameters['_app'] = myapp
-    Parameters['_bse'] = mybase
-    Parameters['_skn'] = myskin
+    Parameters['_bse'] = '/'+myapp+'/'
+    Parameters['_skn'] = myapp+'/skin/' 
     Parameters['_mth'] = method
     Parameters['_lcl'] = True if client_ip == '127.0.0.1' else False  # check if it is on local or not
 
@@ -118,8 +91,10 @@ def main(myapp=None, control=None, method=None, option=None):
     if DATA :
         if   '_redirect' in DATA  : return redirect(DATA['_redirect'])
         if   type(DATA)  is str   : return DATA
-        elif type(DATA)  is dict  : return render_template(myskin + DATA['skin'],D=DATA)
+        elif type(DATA)  is dict  : return render_template(myapp+'/skin/' + DATA['skin'],D=DATA)
     else : return ''
-# ----------------------------------------------------------------------------------------------------------
 
+
+
+# ----------------------------------------------------------------------------------------------------------
 if __name__ == "__main__": app.run(host='127.0.0.1', port=5000, debug=True)

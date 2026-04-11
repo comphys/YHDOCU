@@ -6,7 +6,7 @@
 <title>{{D['title']}}</title>
 <link href="/sys/bootstrap/bootstrap-old.css" rel="stylesheet" >
 <link href="/sys/fontawesome/css/font-awesome.css" rel="stylesheet">
-<link href="/skn/docu/board/my_dark/unicorn.login.css" rel="stylesheet">
+<link href="/skn/stocks/access/unicorn.login.css" rel="stylesheet">
 <link href="/sys/jyh/yhutils.css" rel="stylesheet">
 <script src="/sys/jyh/jquery-yh-2604.js"></script>
 <script src="/sys/jyh/yhutils.js"></script>
@@ -42,7 +42,7 @@
 		$("input[name='userid']").focus(); 
 		$("#loginform").submit(function() {
 			if(!this.userid.value) { h_dialog.notice('아이디를 입력하세요'); return false; }
-			if(!this.userpass.value)	{ h_dialog.notice('패스워드를 입력하세요'); return false; }
+			if(!this.userpass.value){ h_dialog.notice('패스워드를 입력하세요'); return false; }
 		});
 	}); 
 </script>

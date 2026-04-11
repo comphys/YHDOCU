@@ -5,7 +5,7 @@ import system.core.my_utils as my
 class Access(Control) : 
 
     def index(self) :
-        return self.moveto('board/list')
+        return self.moveto('access/login')
 
     def _auto(self) :
 
@@ -14,19 +14,14 @@ class Access(Control) :
 
     def login(self) :
         
-        D = {'title':'로그인', 'skin':'access/login.html'}
-        
         if self.D['post'] :
 
             qry = f"SELECT uid FROM h_user_list WHERE uid='{self.D['post']['userid']}' and upass='{self.D['post']['userpass']}'"
             uid = self.DB.one(qry)
             
             if  uid : 
-                if request.headers.get('X-Forwarded-For'):
-                    user_ip = request.headers.get('X-Forwarded-For').split(',')[0]
-                else :
-                    user_ip = request.remote_addr
 
+                user_ip   = request.headers.get('X-Forwarded-For').split(',')[0] if request.headers.get('X-Forwarded-For') else request.remote_addr
                 user_time = my.now_to_kordate()
                 user_agent = request.headers.get('User-Agent')
                 
@@ -40,7 +35,7 @@ class Access(Control) :
                 home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")
                 return self.moveto(home)
         
-        return self.echo(D)
+        else : return self.echo({'title':'로그인', 'skin':'access/login.html'})
 
     def logout(self) : 
         
