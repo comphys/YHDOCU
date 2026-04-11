@@ -55,7 +55,7 @@ def main(myapp='stocks', control='board', method='index', option=None):
     if not '__u_Ino__' in session : control = 'access'; method  = 'login'
 
     try :  CLS = load_control(control,myapp)
-    except ModuleNotFoundError : return render_template('sys/sys_msg.html',msg="해당 컨트롤을 찾을 수 없습니다.")
+    except ModuleNotFoundError : return render_template('sys/sys_msg.html',msg=f"{myapp}/{control} 해당 컨트롤을 찾을 수 없습니다.")
     if not hasattr(CLS,method) : return render_template('sys/sys_msg.html',msg="해당 메써드를 찾을 수 없습니다.")
     
     # 기본설정값 읽어 오기 

@@ -6,7 +6,7 @@ from system.hand import myfile
 class Dbadmin(Control) :
 
     def _auto(self) :
-        self.info('3333333333333333333')
+
         self.access = True if '__u_Ino__' in session and session['__u_Ino__'] == 'comphys' else False
         if self.access :
             mydb = session.get('mydb','docu')
