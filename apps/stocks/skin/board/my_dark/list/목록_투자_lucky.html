@@ -190,7 +190,7 @@ $("#daily-check").on('dblclick', function() {
 	$(this).on('keydown',function(e){
 		if(e.which==13) {
 			$(this).attr("contenteditable",false).removeClass('daily-check-on');
-			let odrday  = $(this).text(); odrday = $.trim(odrday);
+			let odrday  = $(this).text(); odrday = odrday.trim();
 			let posturl = uri('linkurl')+'boards-rsnlog_ajax/dailyCheckUpdate';
 			$.post(posturl,{odrday:odrday,option:'LUCKY'}).done(function(){location.replace(location.href);}); 
 		} else if(e.which==69) {$(this).attr("contenteditable",false).removeClass('daily-check-on');}

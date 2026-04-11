@@ -24,12 +24,12 @@ function file_location_get() {
 	else if ( docuSelected.hasAttribute('src'))          my_type = 'src';
 	else h_dialog.close('editor_fattr');
 	
-	oattr_location = $.trim($(docuSelected).attr(my_type));
+	oattr_location = $(docuSelected).attr(my_type).trim();
 
 	if(my_type == 'src' ) { var num = oattr_location.lastIndexOf('/');
 		                    oattr_name = oattr_location.substr(num+1); 
 							oattr_location = oattr_location.substr(0,num);
-	} else oattr_name = $.trim($(docuSelected).text()); 
+	} else oattr_name = $(docuSelected).text().trim(); 
 
 	
 	if( my_type == 'data-mydocu' ) {	oattr_location = oattr_location.replace(/-/g,'/');}
@@ -48,8 +48,8 @@ function file_location_check() {
 }
 
 function change_attach_attr() {
-	var nattr_location  = $.trim($("#file-location").val());
-	var nattr_name = $.trim($("#file-name").val());
+	var nattr_location  = $("#file-location").val().trim();
+	var nattr_name = $("#file-name").val().trim();
 	if( my_type == 'data-mydocu' ) { nattr_location = nattr_location.replace(/\//g,'-'); }
 	if( my_type == 'src' ) { nattr_location += '/'+nattr_name; }
 	

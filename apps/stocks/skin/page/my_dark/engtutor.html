@@ -27,7 +27,7 @@
 <script>
 function do_translate(opt) {
   let txt = $("textarea[name=korean]").val();
-  txt = $.trim(txt);
+  txt = txt.trim();
   if(!txt) { h_dialog.notice("번역할 문장을 입력하여 주세요"); return; }
 	var posturl = uri('linkurl') + 'pages-pajax/eng_reply';
 

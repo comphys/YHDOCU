@@ -45,7 +45,7 @@ $(document).ready(function(){
 
 	$(".file-icon").click(function(){ var sel = $(this).parent().next(); file_run(sel); }); 
 
-	$(".file-delete").click(function(){	var $this = $(this); var f_name = $this.parent().prev().prev().prev().text();	f_name = $.trim(f_name);var ax_file = uri('linkurl')+"filemanager/del_file" ;	var post_val = {};post_val = { operation : 'del_file' , f_name : f_name }; 	h_dialog.confirm("<span style='color:red'>" + f_name +"</span> 파일을 정말로 삭제하시겠습니까?",{x: mouse_X - 400, y: mouse_Y - 70, 	buttons	: [{ text : '삭제', call : function(a) {$.post(ax_file , post_val).done(function(data) {if(data=='delete_ok') $this.parent().parent().remove();	});	h_dialog.close(a);}},h_dialog.cancel_button]});});
+	$(".file-delete").click(function(){	var $this = $(this); var f_name = $this.parent().prev().prev().prev().text();	f_name = f_name.trim();var ax_file = uri('linkurl')+"filemanager/del_file" ;	var post_val = {};post_val = { operation : 'del_file' , f_name : f_name }; 	h_dialog.confirm("<span style='color:red'>" + f_name +"</span> 파일을 정말로 삭제하시겠습니까?",{x: mouse_X - 400, y: mouse_Y - 70, 	buttons	: [{ text : '삭제', call : function(a) {$.post(ax_file , post_val).done(function(data) {if(data=='delete_ok') $this.parent().parent().remove();	});	h_dialog.close(a);}},h_dialog.cancel_button]});});
 
 	$(".file-down").click(function(){ $(this).css("color","red"); });
 
@@ -57,7 +57,7 @@ $(document).ready(function(){
 
 function file_run(sel) {
 	var f_name = sel.text();
-	f_name = $.trim(f_name);
+	f_name = f_name.trim();
 	if(f_name.match(/\.(php|htm|html|js|css|txt|py)$/i)) {open_edit(f_name); }	
 	else if(f_name.match(/\.docu$/i)){
 		var f_path = CUR_PATH.replace(ROOT,'DOCU_ROOT')
@@ -96,7 +96,7 @@ function open_dialog(title,src,imode,opt) {
 
 function file_tool(sel) {
 	var f_name = sel.text(); 
-	f_name = $.trim(f_name);
+	f_name = f_name.trim();
 	Storage.a('FileTool_FileName',f_name);
 	if(f_name.match(/\.(jpg|png|gif|jpeg)$/i)) {
 		var url = uri('linkurl') + 'filemanager/dialog/dialog=file_img';
@@ -157,7 +157,7 @@ function add_file(op) {
 }  
 
 function save_ftp_time(sel) {
-	var cur_time = $.trim($(sel).text());
+	var cur_time = $(sel).text().trim();
 	var post_val = {};
 	post_val = { ftp_time : cur_time }
 	var ax_file = uri('linkurl') + "filemanager/save_config" ;

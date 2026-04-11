@@ -446,7 +446,7 @@ function html_pretty(str) {
   		   .replace(/([^\n])(<\/div>)/g,"$1\n$2")
 		   .replace(/></g,">\n<")
 		   .replace(/class=""/g,'');
-	return $.trim(str);
+	return str.trim();
 }
 
 function src_filter(str) {

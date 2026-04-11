@@ -471,8 +471,8 @@ var JYHEDITOR = {
 
 	removeFile		: function() { if(! docuSelected ) return; 
 
-			var f_name = $.trim($(docuSelected).text());
-			var f_path = $.trim($(docuSelected).attr("data-myfile"));
+			var f_name = $(docuSelected).text().trim();
+			var f_path = $(docuSelected).attr("data-myfile").trim();
 			var d_file = f_path + '/' + f_name;
 			var posturl = uri('linkurl') + 'board-ajax/body_file_delete';
 
