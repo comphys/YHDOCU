@@ -35,7 +35,7 @@ class Access(Control) :
                 home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")
                 return self.moveto(home)
         
-        else : return self.echo({'title':'로그인', 'skin':'access/login.html'})
+        return self.echo({'title':'로그인', 'skin':'access/login.html'})
 
     def logout(self) : 
         
