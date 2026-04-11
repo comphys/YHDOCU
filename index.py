@@ -48,13 +48,11 @@ def download(filename) :
 @app.route('/<string:myapp>/<string:control>')
 @app.route('/<string:myapp>/<string:control>/<string:method>/',methods=['GET','POST'])
 @app.route('/<string:myapp>/<string:control>/<string:method>/<path:option>',methods=['GET','POST'])
-def main(myapp=None, control=None, method=None, option=None):
+def main(myapp='stocks', control='board', method='index', option=None):
     
-    if not '__u_Ino__' in session : control = 'access'; method  = 'login'
-    if not myapp : loc_myapp = os.path.join(app_root,'apps',myapp:='stocks')
+    loc_myapp = os.path.join(app_root,'apps',myapp)
     if not os.path.isdir(loc_myapp) : return render_template('sys/sys_msg.html',msg=f"[{myapp}] 앱 위치를 찾을 수 없습니다.") 
-    if not control : return render_template('sys/sys_msg.html',msg="컨트롤이 명시되지 않았습니다.")
-    if not method  : method = 'index'
+    if not '__u_Ino__' in session : control = 'access'; method  = 'login'
 
     try :  CLS = load_control(control,myapp)
     except ModuleNotFoundError : return render_template('sys/sys_msg.html',msg="해당 컨트롤을 찾을 수 없습니다.")
@@ -92,6 +90,8 @@ def main(myapp=None, control=None, method=None, option=None):
         if   type(DATA)  is str   : return DATA
         elif type(DATA)  is dict  : return render_template(myapp+'/skin/' + DATA['skin'],D=DATA)
     else : return ''
+
+
 
 
 
