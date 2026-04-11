@@ -18,7 +18,7 @@ def ban__remote_addr():
     client_nw = '.'.join(client_ip.split('.')[:2])
 
     if client_nw not in white_networks:
-        return render_template('sys/sys_msg.html',msg="허용된 접근경로가 아닙니다.")
+        return render_template('sys/sys_msg.html',msg=f"{client_ip} 허용된 접근경로가 아닙니다.")
 
 # href = "/sys/jyh/aaa.js"  url_for('sys',filename='jyh/aaa.js')
 @app.route('/sys/<path:filename>')
