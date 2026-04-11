@@ -19,6 +19,86 @@ def sf(v,s='f') :
     temp = v.split('/')
     if s == 'f' : return([float(x) for x in temp])
     else : return([int(x) for x in temp])
+# --------------------------------------------------------------------------------------------
+
+# time & date
+def now_timestamp() :
+    return int(datetime.now().timestamp())
+
+def timestamp_to_date(ts='now',opt=1) :
+
+    kst = timezone('Asia/Seoul')
+
+    if ts=='now' : ts = int(datetime.now().timestamp())
+
+    if    opt == 1 : t_format = "%Y-%m-%d %H:%M:%S"
+    elif  opt == 2 : t_format = "%Y/%m/%d %H:%M:%S"
+    elif  opt == 3 : t_format = "%y-%m-%d %H:%M"  
+    elif  opt == 4 : t_format = "%y%m%d"   
+    elif  opt == 5 : t_format = "%Y/%m/%d %H:%M" 
+    elif  opt == 6 : t_format = "%y/%m/%d %H:%M:%S" 
+    elif  opt == 7 : t_format = "%Y-%m-%d"
+    else  : t_format = opt 
+
+    return datetime.fromtimestamp(ts,kst).strftime(t_format)
+
+def now_to_kordate() : # 현재시각을 한국시간 존으로 요일을 표함해서 출력
+
+    korea_timezone = timezone('Asia/Seoul')
+    now = datetime.now(korea_timezone)
+    days = ['월', '화', '수', '목', '금', '토', '일']
+    weekday = days[now.weekday()]
+    formatted_time = now.strftime(f"%Y-%m-%d({weekday}) %H:%M")
+    return(formatted_time)
+
+
+def date_format_change(v,f1,f2) :
+    return datetime.strptime(v,f1).strftime(f2)
+
+def last_year_day() :
+
+    theday = timestamp_to_date(ts='now',opt=7)
+    return dayofdate(theday,-365)[0]
+
+def back_day(delta) :
+
+    theday = timestamp_to_date(ts='now',opt=7)
+    return dayofdate(theday,delta)[0]
+
+def dayofdate(theday,delta=0) :
+    dow = ('월','화','수','목','금','토','일')
+    a = datetime.strptime(theday,'%Y-%m-%d')
+    if delta : b = a+timedelta(days=delta) ; return (b.strftime('%Y-%m-%d'),dow[b.weekday()])
+    else : return dow[a.weekday()]
+
+def diff_day(day1,day2='') :
+    a = datetime.strptime(day1,'%Y-%m-%d')
+    b = datetime.now() if not day2 else datetime.strptime(day2,'%Y-%m-%d')
+    c = b-a
+    return c.days 
+
+def date_tomorrow(day1) :
+
+    tomorrow = datetime.strptime(day1,'%Y-%m-%d') + timedelta(days=1)
+    return tomorrow.strftime("%Y-%m-%d")
+
+def date_yesterday(day1) :
+
+    yesterday = datetime.strptime(day1,'%Y-%m-%d') + timedelta(days=-1)
+    return yesterday.strftime("%Y-%m-%d")
+
+def kor_loc_date(opt='Asia/Seoul') :
+
+    loc = timezone(opt) 
+
+    ts = int(datetime.now().timestamp())
+    t_format = "%Y-%m-%d %H:%M:%S"
+        
+    loc_time = datetime.fromtimestamp(ts,loc).strftime(t_format)
+    
+    return (loc_time)
+# --------------------------------------------------------------------------------------------
+
 
 # 파일조작 관련 함수 
 def file_split(filename) :
@@ -97,6 +177,7 @@ def copy_file(src, tgt) :
 
 def move_file(src, tgt) :
     shutil.move(src,tgt)
+# --------------------------------------------------------------------------------------------
 
 # string
 def dequote(s):
@@ -112,81 +193,4 @@ def dequote(s):
 def rg_ex(op,txt) :
     if op == 'mobile' : see = re.compile('010-\d{3,4}-\d{4}') 
     return  True if see.match(txt) else False 
-
-
-# time & date
-def now_timestamp() :
-    return int(datetime.now().timestamp())
-
-def timestamp_to_date(ts='now',opt=1) :
-
-    kst = timezone('Asia/Seoul')
-
-    if ts=='now' : ts = int(datetime.now().timestamp())
-
-    if    opt == 1 : t_format = "%Y-%m-%d %H:%M:%S"
-    elif  opt == 2 : t_format = "%Y/%m/%d %H:%M:%S"
-    elif  opt == 3 : t_format = "%y-%m-%d %H:%M"  
-    elif  opt == 4 : t_format = "%y%m%d"   
-    elif  opt == 5 : t_format = "%Y/%m/%d %H:%M" 
-    elif  opt == 6 : t_format = "%y/%m/%d %H:%M:%S" 
-    elif  opt == 7 : t_format = "%Y-%m-%d"
-    else  : t_format = opt 
-
-    return datetime.fromtimestamp(ts,kst).strftime(t_format)
-
-def now_to_kordate() : # 현재시각을 한국시간 존으로 요일을 표함해서 출력
-
-    korea_timezone = timezone('Asia/Seoul')
-    now = datetime.now(korea_timezone)
-    days = ['월', '화', '수', '목', '금', '토', '일']
-    weekday = days[now.weekday()]
-    formatted_time = now.strftime(f"%Y-%m-%d({weekday}) %H:%M")
-    return(formatted_time)
-
-
-def date_format_change(v,f1,f2) :
-    return datetime.strptime(v,f1).strftime(f2)
-
-def last_year_day() :
-
-    theday = timestamp_to_date(ts='now',opt=7)
-    return dayofdate(theday,-365)[0]
-
-def back_day(delta) :
-
-    theday = timestamp_to_date(ts='now',opt=7)
-    return dayofdate(theday,delta)[0]
-
-def dayofdate(theday,delta=0) :
-    dow = ('월','화','수','목','금','토','일')
-    a = datetime.strptime(theday,'%Y-%m-%d')
-    if delta : b = a+timedelta(days=delta) ; return (b.strftime('%Y-%m-%d'),dow[b.weekday()])
-    else : return dow[a.weekday()]
-
-def diff_day(day1,day2='') :
-    a = datetime.strptime(day1,'%Y-%m-%d')
-    b = datetime.now() if not day2 else datetime.strptime(day2,'%Y-%m-%d')
-    c = b-a
-    return c.days 
-
-def date_tomorrow(day1) :
-
-    tomorrow = datetime.strptime(day1,'%Y-%m-%d') + timedelta(days=1)
-    return tomorrow.strftime("%Y-%m-%d")
-
-def date_yesterday(day1) :
-
-    yesterday = datetime.strptime(day1,'%Y-%m-%d') + timedelta(days=-1)
-    return yesterday.strftime("%Y-%m-%d")
-
-def kor_loc_date(opt='Asia/Seoul') :
-
-    loc = timezone(opt) 
-
-    ts = int(datetime.now().timestamp())
-    t_format = "%Y-%m-%d %H:%M:%S"
-        
-    loc_time = datetime.fromtimestamp(ts,loc).strftime(t_format)
-    
-    return (loc_time)
+# --------------------------------------------------------------------------------------------

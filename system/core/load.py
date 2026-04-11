@@ -33,7 +33,7 @@ def load_control(module_name,myapp):
 
 
 class Control :
-    def __init__(self,**V) :
+    def __init__(self,V) :
         '''
         모든 컨트롤러의 부모 컨트롤이다. 
         초기 셋팅값, DB연결, POST값의 dict 변환, 로깅 설정이 이루어진다.  
@@ -41,13 +41,12 @@ class Control :
         self.I = V   # index.py 로 부터 전달받은 초기 파라미터
         self.D = {}  # view에 전달하기 위한 변수 
         
-        imd = ImmutableMultiDict(V['_pos'])
         # control에 전달하는 기본 값
         self.CFG = V['_cfg']
         self.log  = my_log('my_logger') # 사용시 self.log.info(...), self.log.debug(...)
         self.info = self.log.info  
         # view에 전달하는 기본 값
-        self.D['post'] = imd.to_dict()
+        self.D['post'] = ImmutableMultiDict(V['_pos']).to_dict() # post data
         self.D['_skn'] = V['_skn']
         self.D['_bse'] = V['_bse']
   

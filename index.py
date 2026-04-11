@@ -41,10 +41,6 @@ def download(filename) :
         directory = session['epl_path']
         return send_from_directory(directory,filename)    
 
-# @app.route('/DOCU_ROOT/<path:filename>')
-# def docu_root(filename) :
-#     directory = DOCU_ROOT
-#     return send_from_directory(directory,filename)
 
 @app.route('/')
 @app.route('/<string:myapp>/')
@@ -101,14 +97,17 @@ def main(myapp=None, control=None, method=None, option=None):
     except : 
         myconfig = None
 
-    try :
-        global DOCU_ROOT
-        DOCU_ROOT = myconfig['general']['DOCU_ROOT']
-    except :
-        DOCU_ROOT = ''
+    Parameters = {}
+    Parameters['_opt'] = option # 매개변수
+    Parameters['_pos'] = data
+    Parameters['_cfg'] = myconfig
+    Parameters['_pth'] = app_root
+    Parameters['_app'] = myapp
+    Parameters['_bse'] = mybase
+    Parameters['_skn'] = myskin
+    Parameters['_mth'] = method
 
-    # option : 매개변수, via : 수단, data : form data
-    Instance = CLS(_opt=option,_pos=data,_bse=mybase,_url=request.path,_ctr=control,_mtd=method,_app=myapp,_pth=app_root,_skn=myskin,_cfg=myconfig,_ctl=control)
+    Instance = CLS(Parameters)
     # _auto 함수에서는 클라이언트에 출력정보를 리턴하지 않으며, 해당 메서드에서만 최종 DATA를 전달받는다.
     DATA = getattr(Instance,method)()
     
