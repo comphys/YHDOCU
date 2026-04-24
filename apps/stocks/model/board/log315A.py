@@ -45,7 +45,7 @@ class Ajax(Model) :
         LD['add3'] = LD['add4'] = LD['add13'] = LD['add14'] = LD['add15'] = LD['add17'] = LD['add21'] = '0.00' 
         LD['add20'] = '기초셋팅'
         LD['add17'] = 배분금액
-        LD['add19'] = f"{b_mon:,.2f}" #초기금액
+        LD['add19'] = f"{b_mon:.2f}" #초기금액
         LD['add22'] = 매수예정
         LD['add23'] = f"{매수예가:.2f}"
         
