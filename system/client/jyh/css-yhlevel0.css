@@ -1,0 +1,25 @@
+/* html 전체 기본 CSS 형태 및 구조에 대해서만 작성하며, 색깔 등의 요소는 가급적 배제를 원칙으로 한다 */
+body { font-family: "Malgun Gothic", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; }
+* {    box-sizing: border-box;  margin: 0; padding: 0; }
+
+/* html 기본 요소들 */
+img { height: auto; max-width: 100%;  vertical-align: middle;   border: 0; }
+
+select, textarea, input[type="text"], input[type="password"] { 
+    display: inline-block;  height: 30px;  padding: 4px 6px;  font-size: 14px;  line-height: 20px;  vertical-align: middle; border-radius: 4px;
+}
+
+
+/* .input-append, .input-prepend */
+.input-prepend {  display: inline-block;  margin-bottom: 10px;  font-size: 0;  white-space: nowrap;   vertical-align: middle; }
+.input-prepend input {
+  position: relative;  margin-bottom: 0;  vertical-align: top;border-radius: 0 4px 4px 0; padding-left:10px;
+}
+.input-prepend .add-on {
+  display: inline-block;  width: auto;  height: 30px;  min-width: 16px;  padding: 4px 8px; font-size:16px; text-align: center; border-radius: 4px 0 0 4px; margin-right: -1px;
+}
+
+
+
+
+
