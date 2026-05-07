@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, redirect, send_from_directory
 from flask import session
 import config, os, configparser
 from system.core.load import load_control
+from datetime import timedelta
 # ----------------------------------------------------------------------------------------------------------
 app = Flask(__name__)
 #app.config.from_object(config.ProductionConfig)
@@ -9,6 +10,7 @@ app.config.from_object(config.Config)
 app.url_map.strict_slashes = False
 app_root  = os.path.dirname(os.path.abspath(__file__)) # 현재 파일의 절대 경로  C:\YHDOCU
 app.template_folder = os.path.join(app_root,'apps')    # C:\YHDOCU\apps
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)   
 white_networks = ['127.0','119.56','118.235','119.201','183.106']
 client_ip =''
 # ----------------------------------------------------------------------------------------------------------

@@ -27,9 +27,18 @@ class Access(Control) :
                 
                 user_agent = user_agent.replace("Android","<span class='who-gear'>Android</span>")
                 user_agent = user_agent.replace("Windows","<span class='who-gear'>Windows</span>")
+                
+                if uid == 'comphys' and 'Android' in user_agent : 
+                    session.permanent = True 
+                    pil = '['
+                    pir = ']'
+                else : 
+                    session.permanent = False
+                    pil = ''
+                    pir = ''
 
                 with open('whoin.txt','a',encoding='utf-8') as f:
-                    f.write(f"<span class='who-id'>{uid}</span><span class='who-time'>{user_time}</span><span class='who-ip'>{user_ip}</span><span class='who-agent'>{user_agent}</span>\n")
+                    f.write(f"<span class='who-id'>{pil}{uid}{pir}</span><span class='who-time'>{user_time}</span><span class='who-ip'>{user_ip}</span><span class='who-agent'>{user_agent}</span>\n")
                 session['__u_Ino__'] = uid
                 session['CSH'] = {}
                 home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")
