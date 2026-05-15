@@ -11,7 +11,7 @@ app.url_map.strict_slashes = False
 app_root  = os.path.dirname(os.path.abspath(__file__)) # 현재 파일의 절대 경로  C:\YHDOCU
 app.template_folder = os.path.join(app_root,'apps')    # C:\YHDOCU\apps
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)   
-white_networks = ['127.0','119.56','118.235','119.201','183.106']
+white_networks = ['127.0','119.56','118.235','119.201','183.106','211.176']
 client_ip =''
 # ----------------------------------------------------------------------------------------------------------
 # 허용된 네트워크만 접근 허용
