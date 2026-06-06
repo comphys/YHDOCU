@@ -40,7 +40,7 @@ class 목록_투자로그(SKIN) :
         last_date = self.D['LIST'][0]['add0']
         last_ohlc = self.DB.last_date('h_stockHistory_board')
 
-        self.D['업데이트'] = False if last_date == last_ohlc else True
+        self.D['업데이트'] = False if last_date == last_ohlc or self.D['Page'] >= '1' else True
 
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
