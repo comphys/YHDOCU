@@ -117,7 +117,10 @@ class log :
         
         if  self.M['보유수량'] : 
             self.M['매도예정'] = self.M['보유수량']
+            rd = self.DB.last_data_one( "CAST(n_20 as FLOAT)",'h_rsnLog_board' )
             self.M['매도예가'] = my.round_up(self.M['평균단가'] * self.P['각매가치'][self.P['매수차수']-1])
+            sp = max(self.M['매도예가'],rd) if rd else self.M['매도예가'] 
+            self.M['매도예가'] = my.round_up(sp)
 
         else :
             self.M['매도예정'] = '0'
@@ -129,6 +132,7 @@ class log :
         ST = self.DB.parameters_dict('매매전략/N315A')
         LD = self.DB.last_data_line('*','h_log315A_board')
         CD = self.DB.last_data_line('add0,add3,add8,add10','h_stockHistory_board')
+
         self.set_value(['매수수량','매도수량'],0)
         self.set_value(['매수금액','매도금액','평균단가','현재수익','현수익률','평가금액','매수예가','수수료등'],0.0)
         # ---------------------------------------------------------
@@ -155,7 +159,7 @@ class log :
         self.M['현재잔액'] = float(LD['add5'])
         self.M['진행상황'] = '매수대기' if int(LD['add9']) else ''
         # self.M['매수수량'] = 0
-        self.M['매수금액'] = LD['add8']
+        self.M['매수금액'] = float(LD['add8'])
         self.M['보유수량'] = int(LD['add9'])
         self.M['총매수금'] = float(LD['add11'])
         self.M['매수예정'] = int(LD['add22'])
