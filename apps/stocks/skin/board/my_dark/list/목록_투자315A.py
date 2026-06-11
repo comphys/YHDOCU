@@ -99,6 +99,7 @@ class 목록_투자315A(SKIN) :
             self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(CD['add0'])
             self.D['주문확인'] =  self.DB.parameter('A0710')
             self.D['가상증액'] =  self.DB.parameter('A0702')
+            self.D['현재날자'] =  LD['add18']
 
             # 통계 자료 가져오기
             # add5(현재잔액), add14(현재수익), add19(초기금액), add20(카테고리)

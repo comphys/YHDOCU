@@ -113,8 +113,8 @@ else :
 
     RSN.send_message(f"{today}일 VRSN 업데이트 완료")
 
-    if     LD['v_08'] <= -30.0 : RSN.send_message(f"럭키비키 V3 is {LD['v_08']}")
-    elif   LD['v_08'] <= -20.0 : RSN.send_message(f"럭키비키 V2 is {LD['v_08']}")
+    if     float(LD['v_08']) <= -30.0 : RSN.send_message(f"럭키비키 V3 is {LD['v_08']}")
+    elif   float(LD['v_08']) <= -20.0 : RSN.send_message(f"럭키비키 V2 is {LD['v_08']}")
     else   : pass
     
     # 자산현황 업데이트

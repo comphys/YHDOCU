@@ -110,14 +110,16 @@ class Ajax(Model) :
     
     def update_log(self) :
 
-        tday = self.D['post']['tday']
+        # tday = self.D['post']['tday'] 
+        cday = self.DB.last_date('h_rsnLog_board')
         lday = self.DB.last_date('h_stockHistory_board')
+        wday = self.next_stock_day(cday)[0]
 
-        if tday > lday : return self.SYS.json("최종 업데이트가 완료되어 있습니다.")
+        if cday == lday : return self.SYS.json("최종 업데이트가 완료되어 있습니다.")
 
         RSN  = self.SYS.load_app_lib('rsn')
 
-        RSN.do_tacticsLog(tday)
+        RSN.do_tacticsLog(wday)
         DV = RSN.get_simulLog('V')
         DR = RSN.get_simulLog('R')
         DS = RSN.get_simulLog('S')
@@ -128,7 +130,7 @@ class Ajax(Model) :
         else : 카테고리 = '일반진행'
         
         LD = {}
-        LD['add0']  = tday
+        LD['add0']  = wday
         LD['add1']  = RSN.DB.last_data_one('add1','h_rsnLog_board')    # 시즌
         LD['add2']  = DV['sub12']           # 날수
         LD['add3']  = DV['add14']           # 종가
@@ -207,3 +209,13 @@ class Ajax(Model) :
         RSN.DB.exe(qry)
 
         return self.SYS.json("OK")
+    
+    def next_stock_day(self,today) :
+        
+        delta = 1
+        while delta :
+            temp = my.dayofdate(today,delta)
+            weekend = 1 if temp[1] in ('토','일') else 0
+            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}' and cat='미국증시휴장일'") else 0 
+            delta = 0 if not (weekend + holiday) else delta + 1
+        return temp

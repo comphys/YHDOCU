@@ -94,14 +94,14 @@ class log :
         
         if  not self.P['진행여부']  : 
 
-            self.M['매수예정'] = '0'
-            self.M['매수예가'] = '0.00'
+            self.M['매수예정'] = 0
+            self.M['매수예가'] = 0.00
             return 
         
         if self.M['보유수량'] :
             if  self.P['매수차수'] >  self.M['최대차수']-1 : 
-                self.M['매수예정'] = '0'
-                self.M['매수예가'] = '0.00'
+                self.M['매수예정'] = 0
+                self.M['매수예가'] = 0.00
                 return
             
             if  self.P['매수차수'] == self.M['최대차수']-1 : self.M['배분금액'] = int(self.M['현재잔액'])
@@ -123,8 +123,8 @@ class log :
             self.M['매도예가'] = my.round_up(sp)
 
         else :
-            self.M['매도예정'] = '0'
-            self.M['매도예가'] = '0.00'
+            self.M['매도예정'] = 0
+            self.M['매도예가'] = 0.00
 
 
     def init_value(self) :
