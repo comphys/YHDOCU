@@ -63,6 +63,7 @@ class log :
             self.commission(2) 
             
             self.M['평가금액'] = 0.00
+            self.M['매수금액'] = 0.00
             self.M['총매수금'] = 0.00
             self.M['평균단가'] = 0.00
 
