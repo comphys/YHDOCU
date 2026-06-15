@@ -58,3 +58,7 @@ class Ajax(Model) :
         # 파라미터 업데이트
 
         return "___OK____"
+    
+    def update_log(self) :
+        
+        return self.SYS.json("OK")
