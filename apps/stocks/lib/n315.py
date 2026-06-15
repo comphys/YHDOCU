@@ -337,7 +337,7 @@ class N315 :
     # -------------------------------------------------------------------------------------------------------------------------------------------            
     def nextStep(self) :
 
-        self.D['다음날자'],  self.D['다음요일'] = self.next_stock_day(self.D['종료일자'])
+        self.D['다음날자'],  self.D['다음요일'] = my.next_stock_day(self.D['종료일자'],self.DB)
         self.D['현재날자'] = self.M['현재일자']
         self.D['현재종가'] = self.M['당일종가']
         self.D['현재연속'] = self.M['당일연속']
@@ -463,12 +463,3 @@ class N315 :
         return NS
         
 
-    def next_stock_day(self,today) :
-        
-        delta = 1
-        while delta :
-            temp = my.dayofdate(today,delta)
-            weekend = 1 if temp[1] in ('토','일') else 0
-            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}' and cat='미국증시휴장일'") else 0 
-            delta = 0 if not (weekend + holiday) else delta + 1
-        return temp

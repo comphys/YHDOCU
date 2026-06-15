@@ -113,7 +113,7 @@ class Ajax(Model) :
         # tday = self.D['post']['tday'] 
         cday = self.DB.last_date('h_rsnLog_board')
         lday = self.DB.last_date('h_stockHistory_board')
-        wday = self.next_stock_day(cday)[0]
+        wday = my.next_stock_day(cday,self.DB)[0]
 
         if cday == lday : return self.SYS.json("최종 업데이트가 완료되어 있습니다.")
 
@@ -210,12 +210,3 @@ class Ajax(Model) :
 
         return self.SYS.json("OK")
     
-    def next_stock_day(self,today) :
-        
-        delta = 1
-        while delta :
-            temp = my.dayofdate(today,delta)
-            weekend = 1 if temp[1] in ('토','일') else 0
-            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}' and cat='미국증시휴장일'") else 0 
-            delta = 0 if not (weekend + holiday) else delta + 1
-        return temp

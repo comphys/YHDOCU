@@ -82,16 +82,6 @@ class Ajax(Model) :
 
         return self.msg
 
-    def next_stock_day(self,today) :
-        
-        delta = 1
-        while delta :
-            temp = my.dayofdate(today,delta)
-            weekend = 1 if temp[1] in ('토','일') else 0
-            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}' and cat='미국증시휴장일'") else 0 
-            delta = 0 if not (weekend + holiday) else delta + 1
-        return temp
-
 
     def rsn(self,m_in,m_ex,m_nw) :
         
@@ -102,7 +92,7 @@ class Ajax(Model) :
             self.msg = '현재 시즌 진행 중입니다. 시즌 종료 후 작업하시기 바랍니다.'
             return
         
-        next_day = self.next_stock_day(LD['add0'])
+        next_day = my.next_stock_day(LD['add0'],self.DB)
 
         or_mon = my.sv(LD['add18'])
         os_mon = my.sv(LD['add19'])
@@ -180,7 +170,7 @@ class Ajax(Model) :
             self.msg = '현재 시즌 진행 중입니다. 시즌 종료 후 작업하시기 바랍니다.'
             return
         
-        next_day = self.next_stock_day(LD['add0'])
+        next_day = my.next_stock_day(LD['add0'],self.DB)
 
         # 잔액 및 가치합계 재 설정
         o_mon = my.sv(LD['add5'])
@@ -218,7 +208,7 @@ class Ajax(Model) :
             self.msg = '현재 시즌 진행 중입니다. 시즌 종료 후 작업하시기 바랍니다.'
             return
         
-        next_day = self.next_stock_day(LD['add0'])
+        next_day = my.next_stock_day(LD['add0'],self.DB)
 
         # 잔액 및 가치합계 재 설정
         o_mon = my.sv(LD['add5'])

@@ -25,16 +25,6 @@ class 목록_투자_lucky(SKIN) :
         if not a or not b : return ''
         return f"{(b/a-1)*100:.2f}"
 
-    def next_stock_day(self,today) :
-        
-        delta = 1
-        while delta :
-            temp = my.dayofdate(today,delta)
-            weekend = 1 if temp[1] in ('토','일') else 0
-            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}' and cat='미국증시휴장일'") else 0 
-            delta = 0 if not (weekend + holiday) else delta + 1
-        return temp
-    
 
     def chart(self) :
         
@@ -72,7 +62,7 @@ class 목록_투자_lucky(SKIN) :
         
         self.D['매수대기'] = self.D['매도대기'] = False
         
-        self.D['다음날자'],self.D['다음요일'] = self.next_stock_day(last_date)
+        self.D['다음날자'],self.D['다음요일'] = my.next_stock_day(last_date,self.DB)
         self.D['진행시작'] = False
         self.D['주문확인'] = ST['L0500']
 

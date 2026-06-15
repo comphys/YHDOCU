@@ -25,16 +25,7 @@ class 목록_투자315A(SKIN) :
         if not a or not b : return ''
         return f"{(b/a-1)*100:.2f}"
 
-    def next_stock_day(self,today) :
-        
-        delta = 1
-        while delta :
-            temp = my.dayofdate(today,delta)
-            weekend = 1 if temp[1] in ('토','일') else 0
-            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}' and cat='미국증시휴장일'") else 0 
-            delta = 0 if not (weekend + holiday) else delta + 1
-        return temp
-    
+  
 
     def chart(self) :
         
@@ -96,10 +87,13 @@ class 목록_투자315A(SKIN) :
             self.D['타겟도가'] = self.D['매도예가'] if self.D['매도예정'] else 'null' 
             
             # 기타 정보 가져오기
-            self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(CD['add0'])
+            self.D['다음날자'], self.D['다음요일'] = my.next_stock_day(CD['add0'],self.DB)
             self.D['주문확인'] =  self.DB.parameter('A0710')
             self.D['가상증액'] =  self.DB.parameter('A0702')
-            self.D['현재날자'] =  LD['add18']
+            self.D['확인날자'] =  LD['add18']
+
+            last_sday = my.last_stock_day(self.DB)
+            self.D['업데이트'] = False if self.D['확인날자'] == last_sday or last_date < last_sday or self.D['Page'] > '1' else True  # last_date : 주가분석 테이블의 최종날자
 
             # 통계 자료 가져오기
             # add5(현재잔액), add14(현재수익), add19(초기금액), add20(카테고리)

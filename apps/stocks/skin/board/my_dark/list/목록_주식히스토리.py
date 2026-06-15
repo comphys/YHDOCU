@@ -31,18 +31,9 @@ class 목록_주식히스토리(SKIN) :
     def check_updated(self) :
 
         last_ohlc = self.DB.last_date("h_stockHistory_board")
-        delta = 1
-        while delta :
-            temp = my.dayofdate(last_ohlc,delta)
-            weekend = 1 if temp[1] in ('토','일') else 0
-            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}' and cat='미국증시휴장일'") else 0 
-            delta = 0 if not (weekend + holiday) else delta + 1   
+        last_sday = my.last_stock_day(self.DB)
 
-        cur_time = my.kor_loc_date("UTC")
-        self.D['chk_date'] = temp[0]
-        chk_time = my.dayofdate(self.D['chk_date'],1)[0] + " 00:10:00"
-
-        return True if cur_time < chk_time else False
+        return True if last_ohlc == last_sday else False
 
     def list(self) :
 

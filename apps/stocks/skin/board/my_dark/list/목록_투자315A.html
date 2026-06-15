@@ -21,7 +21,7 @@
 		<div id="Next-Strategy" style="height:350px;background-color: #393f4a;border:4px solid rgba(243, 151, 108, 0.7);padding:10px" ondblclick="$('#profit-history').show()">	
 		{% endif %}
 			<span style="font-style: italic;"><span style="color:gray">Strategy for </span><b>{{D['다음날자']}} ({{D['다음요일']}})</b></span>&nbsp;
-			<span style="font-style: italic;color:gray">from {{D['현재날자']}}</span><br>
+			<span style="font-style: italic;color:gray">from {{D['확인날자']}}</span><br>
 
 			<table class="table" style="text-align:right;width:324px;margin-top:10px">
 				<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppl&nbsp;</td><td>ppa&nbsp;</td></tr>
@@ -123,6 +123,9 @@
 <!-- 하단 버튼 [ 목록 쓰기] [페이지네이션]-->
 <div class="row-row clearfix">
 	<div class='pull-left'>
+		{% if D['업데이트'] %}
+		<button class='btn btn-small btn-blue-s6'>업데이트</button></a>&nbsp;
+		{% endif %}
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>쓰 기</button></a>&nbsp;
 	</div>

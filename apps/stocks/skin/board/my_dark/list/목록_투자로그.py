@@ -24,23 +24,14 @@ class 목록_투자로그(SKIN) :
         if not a or not b : return ''
         return f"{(b/a-1)*100:.2f}"
 
-    def next_stock_day(self,today) :
-        
-        delta = 1
-        while delta :
-            temp = my.dayofdate(today,delta)
-            weekend = 1 if temp[1] in ('토','일') else 0
-            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}' and cat='미국증시휴장일'") else 0 
-            delta = 0 if not (weekend + holiday) else delta + 1
-        return temp
-    
 
     def chart(self) :
         
         last_date = self.D['LIST'][0]['add0']
         last_ohlc = self.DB.last_date('h_stockHistory_board')
+        last_sday = my.last_stock_day(self.DB)
 
-        self.D['업데이트'] = False if last_date == last_ohlc or self.D['Page'] > '1' else True
+        self.D['업데이트'] = False if last_date == last_sday or last_ohlc < last_sday or self.D['Page'] > '1' else True
 
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
@@ -71,7 +62,7 @@ class 목록_투자로그(SKIN) :
             
             # 다음 날 주문정보 갖고오기, 다음날자의 정보는 주가 테이블의 날자를 기준
             chk_last_date = self.DB.last_date(self.D['tbl'])
-            self.D['다음날자'], self.D['다음요일'] = self.next_stock_day(last_ohlc)
+            self.D['다음날자'], self.D['다음요일'] = my.next_stock_day(last_ohlc,self.DB)
             현재환율 = self.DB.last_data_one("CAST(add2 AS FLOAT)","h_stockHistory_board")
             NS = self.DB.line(f"SELECT add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20 FROM {self.D['tbl']} WHERE add0='{chk_last_date}' LIMIT 1") 
             for name, key in [('기회','r'),('안정','s'),('생활','n')] :

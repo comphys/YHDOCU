@@ -142,21 +142,4 @@ class update_lucky :
         self.M['당일기록'] = False        
         # 최근 현황 가져오기
         
-         
-    def next_stock_day(self,today) :
-        delta = 1
-        while delta :
-            temp = my.dayofdate(today,delta)
-            weekend = 1 if temp[1] in ('토','일') else 0
-            holiday = 1 if self.DB.cnt(f"SELECT key FROM parameters WHERE val='{temp[0]}' and cat='미국증시휴장일'") else 0 
-            delta = 0 if not (weekend + holiday) else delta + 1
-        return temp
-
-
-
-
-        
-
-
-
-    
+   
