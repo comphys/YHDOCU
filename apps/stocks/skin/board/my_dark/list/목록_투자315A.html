@@ -296,8 +296,7 @@ $("#daily-check").on('dblclick', function() {
 function update_log() {
 	
 	var posturl = uri('linkajax') + 'log315A/update_log'
-	var tday = '2026-06-16'
-	$.post(posturl,{tday:tday},null,'json').done(function(data){
+	$.post(posturl,{},null,'json').done(function(data){
 
 		if(data=='OK') {location.reload(); h_dialog.notice("주가 정보가 업데이트 되었습니다")}
 		else {h_dialog.notice(data);}		

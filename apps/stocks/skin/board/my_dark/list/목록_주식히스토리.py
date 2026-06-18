@@ -33,7 +33,7 @@ class 목록_주식히스토리(SKIN) :
         last_ohlc = self.DB.last_date("h_stockHistory_board")
         last_sday = my.last_stock_day(self.DB)
 
-        return True if last_ohlc == last_sday else False
+        return True if last_sday and last_ohlc == last_sday else False
 
     def list(self) :
 
