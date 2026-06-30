@@ -404,8 +404,23 @@ class update_Log :
             self.M['첫날기록'] = False
             
             # --------------------------------------------------
-            # N 전략은 첫날 매수 없음
-            # --------------------------------------------------   
+            # N 전략은 첫날 매수 없음 > 변경 2026.06.30
+            # --------------------------------------------------  
+            NP = round(self.M['전일종가'] * self.M['첫날가치'],2)
+            NQ = int( self.N['매금단계'][self.N['매수차수']] / NP )
+
+            if  self.M['당일종가'] <  NP :
+                self.N['매수수량']  = NQ
+                self.N['수익현황']  = self.N['현수익률'] = 0.0
+                self.N['보유수량']  = self.N['매수수량']
+                self.N['평균단가']  = self.M['당일종가'] 
+                self.N['매수금액']  = self.M['당일종가'] * self.N['매수수량']
+                self.N['총매수금']  = self.N['평가금액'] = self.N['매수금액']
+                self.N['현재잔액'] -= self.N['매수금액']
+                self.N['매수차수']  = self.N['매수차수'] + 1 
+                self.N['거래코드']  = f"{self.N['매수차수']}B {self.N['매수수량']}"
+                self.commission(tac,1)
+
                
             return True
 
@@ -495,8 +510,8 @@ class update_Log :
         if self.chart and self.D['c_date'] : self.D['s_date'] = self.D['c_date'][0]; self.D['e_date'] = self.D['c_date'][-1]
 
         if  self.stat :
-            self.D['월별구분'] = [ x[0] for x in self.D['월익통계']][-24:]
-            self.D['월별이익'] = [ round(x[1]) for x in self.D['월익통계']][-24:]
+            self.D['월별구분'] = [ x[0] for x in self.D['월익통계']]
+            self.D['월별이익'] = [ round(x[1]) for x in self.D['월익통계']]
             
             if  self.D['월별이익'][0] == 0 :
                 self.D['월별구분'].pop(0)
@@ -517,7 +532,7 @@ class update_Log :
     
             asis_c = len(asis)
             asis_p = [x for x in asis if x >= 0.0 ]
-            asis_u = [x for x in asis if x < 0.0]
+            asis_u = [x for x in asis if x <  0.0 ]
             asispc = len(asis_p)
             asisuc = len(asis_u)
             asispm = sum(asis_p) / asispc if asispc else 0.0
@@ -609,6 +624,7 @@ class update_Log :
             self.M['진입일자']  = ST['TN020']  # TN
             self.M['진입가치']  = ST['TN021']
             self.M['매입가치']  = ST['TN022']  # TN 첫날 매수 이후 (-0%)이상 하락 시 매수
+            self.M['첫날가치']  = ST['TN023']
             
             self.R['진입시점']  = float(self.D['기회시점']) if '기회시점' in self.D else ST['TR021'] #TR
             self.R['회복시점']  = float(self.D['기회회복']) if '기회회복' in self.D else ST['TR022'] #TR
@@ -697,12 +713,13 @@ class update_Log :
             self.D['N_안정기초'] = my.ceil(self.S['일매수금']/self.M['당일종가'])
             
             self.D['N_일반매수가'] = self.D['N_기회매수가'] = round(self.M['당일종가'] * self.M['큰단가치'],2)
-            self.D['N_안정매수가'] = self.D['N_생활매수가'] = 0
-            
+            self.D['N_안정매수가'] = 0
+            self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['첫날가치'],2)
+                    
             self.D['N_일반매수량'] = self.D['N_일반기초']
             self.D['N_기회매수량'] = self.D['N_기회기초']
             self.D['N_안정매수량'] = 0
-            self.D['N_생활매수량'] = 0
+            self.D['N_생활매수량'] = int( self.N['매금단계'][0] / self.D['N_생활매수가'] )
 
             self.D['N_일반매도량'] = self.D['N_기회매도량'] = self.D['N_안정매도량'] = self.D['N_생활매도량'] = 0
 
