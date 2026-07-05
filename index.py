@@ -15,14 +15,14 @@ white_networks = ['127.0','119.56','118.235','119.201','183.106','211.176','175.
 client_ip =''
 # ----------------------------------------------------------------------------------------------------------
 # 허용된 네트워크만 접근 허용
-@app.before_request
-def ban__remote_addr():
-    global client_ip
-    client_ip = request.headers.get('X-Forwarded-For').split(',')[0] if request.headers.get('X-Forwarded-For') else request.remote_addr
-    client_nw = '.'.join(client_ip.split('.')[:2])
+# @app.before_request
+# def ban__remote_addr():
+#     global client_ip
+#     client_ip = request.headers.get('X-Forwarded-For').split(',')[0] if request.headers.get('X-Forwarded-For') else request.remote_addr
+#     client_nw = '.'.join(client_ip.split('.')[:2])
 
-    if client_nw not in white_networks:
-        return render_template('sys/sys_msg.html',msg=f"{client_ip} 허용된 접근경로가 아닙니다.")
+#     if client_nw not in white_networks:
+#         return render_template('sys/sys_msg.html',msg=f"{client_ip} 허용된 접근경로가 아닙니다.")
 
 # href = "/sys/jyh/aaa.js"  url_for('sys',filename='jyh/aaa.js')
 @app.route('/sys/<path:filename>')
