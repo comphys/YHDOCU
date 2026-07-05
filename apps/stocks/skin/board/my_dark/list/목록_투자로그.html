@@ -78,7 +78,6 @@
 		<i class="fa fa-sign-in"></i> <span class="exchange">{{D['총입금합']}}</span> &nbsp;
 		<i class="fa fa-sign-out"></i> <span class="exchange">{{D['총출금합']}}</span> &nbsp;
 		<i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;<span class="exchange"> {{D['누적수익']}} ( {{D['실현수익']}} △ {{D['수수료합']}} )</span> &nbsp;
-		<div id = "season-status" style="display:inline-block;color:gray;margin-left:10px;"></div>
 	</div>
 	<div class="pull-right" style="color:#222121;">
 		<div id ='daily-check'>{{D['주문확인']}}</div>&nbsp;&nbsp;
@@ -340,7 +339,8 @@
 </div>
 
 <div id='div-seasonChart' style="position:absolute;left:21px;top:57px;padding:5px 10px 5px 10px;z-index:2;opacity:0.9;">
-	<div id='div-seasonChart-notice' style="position:absolute;top:14px;left:380px;color:lightgray;font-style:italic">시즌 챠트</div>
+	<div id='div-seasonChart-notice' style="position:absolute;top:24px;left:250px;color:lightgray;font-style:italic">시즌 챠트</div>
+	<div id='div-season-status' style="position:absolute;top:50px;left:250px;color:lightgray;font-style:italic">시즌 챠트</div>
 	<canvas id="seasonChart" style="width:746px;height:346px;background-color:#24272d"></canvas>
 </div>
 
@@ -633,7 +633,9 @@ function draw_seasonChart(data) {
 	myChart_season.data.datasets[10].data= (amin<a0*0.5)? dl50 : dlnl;
 	
 	$("#div-seasonChart").css('z-index',7);
-	$("#season-status").html(" 시즌 "+data.season+" : &nbsp;"+data.sfc+"&nbsp;&nbsp; ▶ &nbsp;"+data.slc+" &nbsp;&nbsp;("+data.scd+"%) &nbsp;&nbsp;&nbsp;&nbsp;  V &nbsp;"+data.vpr+"&nbsp; R &nbsp;"+data.rpr+"&nbsp; S &nbsp;"+data.spr+"&nbsp; N &nbsp;"+data.npr).show();
+	$("#div-season-status").html(data.sfc+"&nbsp;&nbsp;▶&nbsp;"+data.slc+" &nbsp;&nbsp;("+data.scd+"%) &nbsp;&nbsp;&nbsp; V &nbsp;"+data.vpr
+	+"&nbsp; <span style='color:#F6D8CE'>R &nbsp;"+data.rpr+"</span>&nbsp; <span style='color:yellow'>S &nbsp;"
+	+data.spr+"</span>&nbsp; <span style='color:lightgreen'>N &nbsp;"+data.npr+"</span>").show();
 	var myprofit = comma(data.profit);
 	if(data.stocks) { $("#div-seasonChart-notice").html(data.sdate+" 시즌 "+data.season+ "&nbsp; 진행중"); }
 	else { $("#div-seasonChart-notice").html(data.sdate+" 시즌 "+data.season+ "&nbsp; 종료 : 수익 $ "+myprofit+" ( "+data.prate+"% )"); }
