@@ -68,7 +68,7 @@ class Ajax(Model) :
 
         season = self.D['post']['season']
 
-        qry = f"SELECT CAST(add3 as float), CAST(v_09 as float), CAST(r_09 as float), CAST(s_09 as float), CAST(n_09 as float), add0 FROM h_rsnLog_board WHERE add1='{season}' ORDER BY add0 ASC"
+        qry = f"SELECT CAST(add3 as float), CAST(v_09 as float), CAST(r_09 as float), CAST(s_09 as float), CAST(n_09 as float), add0 FROM h_rsnLog_board WHERE add1='{season}' and add2 !='R' and add2 != '0' ORDER BY add0 ASC"
         RST = self.DB.exe(qry)
         sdate = RST[-1][5]
         
