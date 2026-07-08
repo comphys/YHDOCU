@@ -118,10 +118,10 @@ class log :
         
         if  self.M['보유수량'] : 
             self.M['매도예정'] = self.M['보유수량']
-            rd = self.DB.last_data_one( "CAST(n_20 as FLOAT)",'h_rsnLog_board' )
+            # rd = self.DB.last_data_one( "CAST(n_20 as FLOAT)",'h_rsnLog_board' )
             self.M['매도예가'] = my.round_up(self.M['평균단가'] * self.P['각매가치'][self.P['매수차수']-1])
-            sp = max(self.M['매도예가'],rd) if rd else self.M['매도예가'] 
-            self.M['매도예가'] = my.round_up(sp)
+            # sp = max(self.M['매도예가'],rd) if rd else self.M['매도예가'] 
+            # self.M['매도예가'] = my.round_up(sp)
 
         else :
             self.M['매도예정'] = 0
@@ -203,7 +203,7 @@ class log :
         X['add25'] = f"{self.M['매도예가']:.2f}"
         X['add21'] = f"{self.M['수수료등']:.2f}"
         X['add17'] = f"{self.M['배분금액']:.2f}"
-        X['add18'] = self.M['초기일자']
+        X['add18'] = self.M['당일날자']
         X['add19'] = f"{self.M['초기금액']:.2f}"
 
         X['uid']   = 'comphys'
