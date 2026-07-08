@@ -94,7 +94,6 @@ class 목록_투자315A(SKIN) :
 
             last_sday = my.last_stock_day(self.DB)
             self.D['업데이트'] = False if not last_sday or self.D['확인날자'] == last_sday or last_date < last_sday or self.D['Page'] > '1' else True  # last_date : 주가분석 테이블의 최종날자
-            self.info(f"if not {last_sday} or {self.D['확인날자']} == {last_sday} or {last_date} < {last_sday}")
             # 통계 자료 가져오기
             # add5(현재잔액), add14(현재수익), add19(초기금액), add20(카테고리)
             temp = self.DB.exe(f"SELECT add0,CAST(add5 as float),CAST(add14 as float),CAST(add19 as float),add20 FROM {self.D['tbl']} WHERE add20 in ('초기셋팅','수익실현') ORDER BY add0")
