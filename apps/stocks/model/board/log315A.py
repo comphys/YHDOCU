@@ -158,6 +158,7 @@ class Ajax(Model) :
         self.M['매수금액'] = float(LD['add8'])
         self.M['보유수량'] = int(LD['add9'])
         self.M['총매수금'] = float(LD['add11'])
+        self.M['평균단가'] = float(LD['add10'])
         self.M['매수예정'] = int(LD['add22'])
         self.M['매수예가'] = float(LD['add23'])
         self.M['매도예정'] = int(LD['add24'])
@@ -230,12 +231,12 @@ class Ajax(Model) :
                 self.DB.exe(qry)
                 return self.SYS.json("OK")
 
-        else :
-            UD = {'add22':self.M['매수예정'],'add23':self.M['매수예가'],'add18':self.M['당일날자'],'add19':f"{self.M['초기금액']:.2f}"}
-            con = f"add0 = '{self.M['진행일자']}'"
-            qry = self.DB.qry_update(board,UD,con)
-            self.DB.exe(qry)
-            return self.SYS.json("OK")
+            else :
+                UD = {'add22':self.M['매수예정'],'add23':self.M['매수예가'],'add18':self.M['당일날자'],'add19':f"{self.M['초기금액']:.2f}"}
+                con = f"add0 = '{self.M['진행일자']}'"
+                qry = self.DB.qry_update(board,UD,con)
+                self.DB.exe(qry)
+                return self.SYS.json("OK")
         
 
 
