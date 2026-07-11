@@ -78,8 +78,7 @@ class Ajax(Model) :
         
         if   s_ch == 'RSN'  : self.rsn(m_in,m_ex,m_nw)
         elif s_ch == 'N315' : self.n315(m_in,m_ex,m_nw)
-        else : self.lucky(m_in,m_ex,m_nw)
-
+  
         return self.msg
 
 
@@ -200,38 +199,3 @@ class Ajax(Model) :
         self.msg = "N315 에 대한 투자금액 변경에 대한 파라미터가 정상적으로 변경되었습니다."
 
     
-    def lucky(self,m_in,m_ex,m_nw) :
-
-        LD = self.DB.last_record('h_log_lucky_board')
-
-        if  LD['add17'] not in ('수익실현','초기셋팅') : 
-            self.msg = '현재 시즌 진행 중입니다. 시즌 종료 후 작업하시기 바랍니다.'
-            return
-        
-        next_day = my.next_stock_day(LD['add0'],self.DB)
-
-        # 잔액 및 가치합계 재 설정
-        o_mon = my.sv(LD['add5'])
-        if my.sv(m_in) : n_mon = o_mon + my.sv(m_in)
-        if my.sv(m_ex) : n_mon = o_mon - my.sv(m_ex)
-        if my.sv(m_nw) : n_mon  = my.sv(m_nw)
-        x_mon = f"(증) {n_mon-o_mon:,.2f}" if n_mon > o_mon else f"(감) {o_mon-n_mon:,.2f}"
-
-        LD['add0'] = next_day[0]
-        LD['add5'] = LD['add15']  = f"{n_mon:.2f}"
-        LD['add10'] = LD['add20'] = '0.00'
-        LD['add8'] = '0'
-        LD['add9'] = '0.0000'
-        LD['add21']= '초기셋팅' 
-        LD['content'] = f"투자금액 변경 (기존) {o_mon:,.2f} > (변경) {n_mon:,.2f}, {x_mon}, (변경시작일) {next_day[0]}" 
-        LD['add2'] = 'R' # 새로운 베이스 임을 표시 
-        
-        # 새로운 데이타 
-        del(LD['no']); del(LD['brother']); del(LD['tle_color']); del(LD['reply']); del(LD['hit'])
-        del(LD['add21'])
-        LD['wdate'] = LD['mdate'] = my.now_timestamp()
-        qry=self.DB.qry_insert('h_log_lucky_board',LD)
-
-        self.DB.exe(qry)
-
-        self.msg = "Lucky 에 대한 투자금액 변경이 정상적으로 변경되었습니다."

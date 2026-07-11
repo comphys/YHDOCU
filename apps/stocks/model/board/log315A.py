@@ -123,7 +123,7 @@ class Ajax(Model) :
         self.P = {}
         self.M = {}
 
-        ST = self.DB.parameters_dict('매매전략/N315A')
+        ST = self.DB.parameters_dict('매매전략/DIY')
         LD = self.DB.last_data_line('*','h_log315A_board')
         uday = max(LD['add0'],LD['add18'])
         uday = my.next_stock_day(uday,self.DB)[0]
@@ -247,7 +247,7 @@ class Ajax(Model) :
         odrday = self.D['post']['odrday']
         option = self.D['post']['option']
         
-        if  option == 'N315A'  : key = 'A0710'
+        if  option == 'DIY'  : key = 'A0710'
 
         self.DB.parameter_update(key,odrday)
 
@@ -257,7 +257,7 @@ class Ajax(Model) :
         n_bl = self.D['post']['n_bl']
         LD = self.DB.last_record('h_log315A_board')
         CD = self.DB.last_record('h_stockHistory_board')
-        ST = self.DB.parameters_dict('매매전략/N315A')
+        ST = self.DB.parameters_dict('매매전략/DIY')
         
         # 잔액 및 가치합계 재 설정
         o_mon = my.sv(LD['add5'])

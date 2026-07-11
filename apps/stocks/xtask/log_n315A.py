@@ -130,7 +130,7 @@ class log :
 
     def init_value(self) :
 
-        ST = self.DB.parameters_dict('매매전략/N315A')
+        ST = self.DB.parameters_dict('매매전략/DIY')
         LD = self.DB.last_data_line('*','h_log315A_board')
         CD = self.DB.last_data_line('add0,add3,add8,add10','h_stockHistory_board')
 
@@ -250,12 +250,12 @@ else :
             XD = L.print_data()
             qry=L.DB.qry_insert(board,XD)
             L.DB.exe(qry)
-            L.send_message(f"{today}일 N315A 업데이트 완료") 
+            L.send_message(f"{today}일 DIY 업데이트 완료") 
 
         else :
             UD = {'add22':L.M['매수예정'],'add23':L.M['매수예가'],'add18':L.M['당일날자'],'add19':f"{L.M['초기금액']:.2f}"}
             con = f"add0 = '{L.M['진행일자']}'"
             qry = L.DB.qry_update(board,UD,con)
             L.DB.exe(qry)
-            L.send_message(f"{today}일 N315A 전략 업데이트") 
+            L.send_message(f"{today}일 DIY 전략 업데이트") 
          

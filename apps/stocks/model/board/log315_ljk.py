@@ -11,7 +11,6 @@ class Ajax(Model) :
         
         if  option == 'RSN'   : key = 'TX070'
         if  option == 'N315'  : key = 'N0710_' + self.D['USER']['uid']
-        if  option == 'LUCKY' : key = 'L0500'
         self.DB.parameter_update(key,odrday)
 
 
