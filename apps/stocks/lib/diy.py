@@ -26,6 +26,7 @@ class DIY :
             self.M['총매수금'] += self.M['매수금액']
             self.M['평균단가'] =  self.M['총매수금'] / self.M['보유수량'] 
             self.commission(1)
+        else : self.M['매수보류'] = False
         
         self.M['평가금액'] = self.M['당일종가'] * self.M['보유수량'] 
         self.M['수익현황'] = self.M['평가금액'] - self.M['총매수금']
@@ -104,18 +105,19 @@ class DIY :
     def today_buy(self) :
         
         if  self.M['예정수량'] == 0 : return
-        
+
         if  self.M['당일종가'] <= self.M['매수예가'] : 
             self.M['매수수량']  = self.M['예정수량']
             self.M['진행상황']  = self.M['차수명칭'][self.M['매수차수']] + '차매수' if self.M['예정수량'] else ' '
             self.M['매수차수'] += 1
-            
+            self.M['매수보류']  = True
+
     def tomorrow_buy(self) :
         
         if  self.M['매수차수'] >  self.M['최대차수']-1 : self.M['예정수량'] = 0; return
         if  self.M['매수차수'] == self.M['최대차수']-1 : self.M['매금단계'][self.M['최대차수']-1] = int(self.M['현재잔액'])
         
-        self.M['매수예가'] = round(self.M['당일종가'] * self.M['매입가치'],2)
+        self.M['매수예가'] = round(self.M['당일종가'] * self.M['보류가치'],2) if self.M['매수보류'] else round(self.M['당일종가'] * self.M['매입가치'],2)
         self.M['예정수량'] = int(  self.M['매금단계'][self.M['매수차수']]/ self.M['매수예가'] ) 
         
     def tomorrow_sell(self) :
@@ -152,8 +154,9 @@ class DIY :
             self.commission(1)
 
             self.M['진행상황'] = '일차매수'
-            self.M['매수차수']  = 1
+            self.M['매수차수'] = 1
             self.M['첫날기록'] = False
+            self.M['매수보류'] = True
 
             return True
 
@@ -281,11 +284,14 @@ class DIY :
         
         ST = self.DB.parameters_dict('매매전략/DIY')
         # ---------------------------------------------------------
-        self.M['분할배분']  = my.sf(ST['A0101'])
-        self.M['각매가치']  = my.sf(ST['A0301'])
-        self.M['매입가치']  = ST['A0201']
-        self.M['진입일자']  = ST['A0202']
-        self.M['진입가치']  = ST['A0203']
+        self.M['분할배분'] = my.sf(ST['A0101'])
+        self.M['각매가치'] = my.sf(ST['A0301'])
+        self.M['매입가치'] = ST['A0201']
+        self.M['진입일자'] = ST['A0202']
+        self.M['진입가치'] = ST['A0203']
+        self.M['보류가치'] = ST['A0204']
+        self.M['매수보류'] = False
+        self.M['매수지연'] = False
         #----------------------------------------------------------
         self.M['진행상황']  = '매수대기'
         self.M['기록시즌']  = 0
@@ -294,7 +300,7 @@ class DIY :
         if '세금적용' not in self.D : self.D['세금적용']  = 'off'
 
         self.M['현재잔액']  = my.sv(self.D['일반자금'])
-   
+
         # 잔액 분할
         self.M['최대차수'] = len(self.M['분할배분'])
         self.M['차수명칭'] = ['일','이','삼','사','오','육','칠']
