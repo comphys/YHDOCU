@@ -138,7 +138,7 @@ class DIY :
 
         self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가','매수예가','예정수량','매도예가','매수차수'],0)
         
-        진입단가 = round(self.M['전일종가']-0.01, 2) if self.M['당일연속'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
+        진입단가 = round(self.M['전일종가'] * self.M['첫날가치'], 2) if self.M['당일연속'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
         
         if  self.M['당일종가'] <=  진입단가  :
             
@@ -290,6 +290,7 @@ class DIY :
         self.M['진입일자'] = ST['A0202']
         self.M['진입가치'] = ST['A0203']
         self.M['보류가치'] = ST['A0204']
+        self.M['첫날가치'] = ST['A0205']
         self.M['매수보류'] = False
         self.M['매수지연'] = False
         #----------------------------------------------------------
@@ -359,7 +360,7 @@ class DIY :
         if  self.M['첫날기록'] or not self.M['보유수량'] : 
 
             self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['진입가치'],2)
-            if self.M['당일연속'] == self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] -0.01,2 ) 
+            if self.M['당일연속'] >= self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['첫날가치'],2 ) 
             
             self.D['N_생활매수량'] = int( self.M['매금단계'][1] / self.D['N_생활매수가'] )
             self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
