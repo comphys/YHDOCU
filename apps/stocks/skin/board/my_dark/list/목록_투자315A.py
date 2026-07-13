@@ -67,33 +67,36 @@ class 목록_투자315A(SKIN) :
             self.D['Ntactic_avg'] = [ax[x] if x in ax else 'null' for x in self.D['chart_date']]    
                 
             # 다음 날 주문정보 갖고오기
-            LD  = self.DB.line(f"SELECT * FROM {self.D['tbl']} ORDER BY add0 DESC LIMIT 1")
-            CD  = self.DB.last_data_line('add0,add3,add10','h_stockHistory_board') 
+            ini_data   = self.DB.oneline(f"SELECT add18,add19 FROM {self.D['tbl']} ORDER BY add0 DESC LIMIT 1")
+            ini_date = ini_data[0]
+            ini_capital = f"{float(ini_data[1]):,.2f}"
 
-            self.D['종가기준'] = CD['add0']
-            self.D['전일종가'] = CD['add3']
-            self.D['현재연속'] = CD['add10']
+            DIY = self.SYS.load_app_lib('diy')
+            NS  = DIY.get_nextStrategy(ini_date,last_date,ini_capital)
 
-            self.D['매수예정'] = f"{int(LD['add22']):,}"  if int(LD['add22']) else 0
-            self.D['매수예가'] = f"{float(LD['add23']):.2f}" 
-            self.D['매평대비'] = self.next_percent(float(LD['add10']),float(self.D['매수예가'])) 
-            self.D['매종대비'] = self.next_percent(float(last_clsp),float(self.D['매수예가']))  
-            self.D['매도예정'] = f"{int(LD['add24']):,}"  if int(LD['add24']) else 0
-            self.D['매도예가'] = f"{float(LD['add25']):.2f}" 
-            self.D['도평대비'] = self.next_percent(float(LD['add10']),float(self.D['매도예가'])) 
-            self.D['도종대비'] = self.next_percent(float(last_clsp),float(self.D['매도예가'])) 
-  
-            self.D['타겟매가'] = self.D['매수예가'] if self.D['매수예정'] else 'null' 
-            self.D['타겟도가'] = self.D['매도예가'] if self.D['매도예정'] else 'null' 
+            self.D['초기금액'] = ini_capital 
+            self.D['초기일자'] = ini_date 
+            self.D['매수예정'] = f"{NS['예정수량']:,}" if NS['예정수량'] else 0 
+            self.D['매수예가'] = f"{NS['예정매가']:.2f}" 
+            self.D['매평대비'] = NS['매평대비'] 
+            self.D['매종대비'] = NS['매종대비'] 
+            self.D['매도예정'] = f"{NS['예정도수']:,}" if NS['예정도수'] else 0 
+            self.D['매도예가'] = f"{NS['예정도가']:.2f}" 
+            self.D['도평대비'] = NS['도평대비'] 
+            self.D['도종대비'] = NS['도종대비'] 
+            self.D['배분금액'] = f"{NS['배분금액']:,}" 
+            
+            self.D['타겟매가'] = NS['예정매가'] if NS['예정수량'] else 'null' 
+            self.D['타겟도가'] = NS['예정도가'] if NS['예정도수'] else 'null'  
             
             # 기타 정보 가져오기
-            self.D['다음날자'], self.D['다음요일'] = my.next_stock_day(CD['add0'],self.DB)
+            self.D['다음날자'], self.D['다음요일'] = my.next_stock_day(last_date,self.DB)
+            self.D['확인날자'] = last_date
             self.D['주문확인'] =  self.DB.parameter('A0710')
-            self.D['가상증액'] =  self.DB.parameter('A0702')
-            self.D['확인날자'] =  LD['add18']
-
-            last_sday = my.last_stock_day(self.DB)
-            self.D['업데이트'] = False if not last_sday or self.D['확인날자'] == last_sday or last_date < last_sday or self.D['Page'] > '1' else True  # last_date : 주가분석 테이블의 최종날자
+      
+            # last_sday = my.last_stock_day(self.DB)
+            # self.D['업데이트'] = False if not last_sday or  last_date < last_sday or self.D['Page'] > '1' else True  # last_date : 주가분석 테이블의 최종날자
+  
             # 통계 자료 가져오기
             # add5(현재잔액), add14(현재수익), add19(초기금액), add20(카테고리)
             temp = self.DB.exe(f"SELECT add0,CAST(add5 as float),CAST(add14 as float),CAST(add19 as float),add20 FROM {self.D['tbl']} WHERE add20 in ('초기셋팅','수익실현') ORDER BY add0")
