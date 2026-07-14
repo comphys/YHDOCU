@@ -215,7 +215,7 @@ $("#daily-check").on('dblclick', function() {
 		if(e.which==13) {
 			$(this).attr("contenteditable",false).removeClass('daily-check-on');
 			let odrday  = $(this).text(); odrday = odrday.trim();
-			let posturl = uri('linkajax')+ 'log315A/dailyCheckUpdate';
+			let posturl = uri('linkajax')+ 'logDIY/dailyCheckUpdate';
 			$.post(posturl,{odrday:odrday,option:'DIY'}).done(function(){location.replace(location.href);}); 
 		} else if(e.which==69) {$(this).attr("contenteditable",false).removeClass('daily-check-on');}
 	});
@@ -287,7 +287,7 @@ $("#daily-check").on('dblclick', function() {
 
 function update_log() {
 	
-	var posturl = uri('linkajax') + 'log315A/update_log'
+	var posturl = uri('linkajax') + 'logDIY/update_log'
 	$.post(posturl,{},null,'json').done(function(data){
 
 		if(data=='OK') {location.reload(); h_dialog.notice("주가 정보가 업데이트 되었습니다")}

@@ -124,7 +124,7 @@ class Ajax(Model) :
         self.M = {}
 
         ST = self.DB.parameters_dict('매매전략/DIY')
-        LD = self.DB.last_data_line('*','h_log315A_board')
+        LD = self.DB.last_data_line('*','h_logDIY_board')
         uday = max(LD['add0'],LD['add18'])
         uday = my.next_stock_day(uday,self.DB)[0]
         CD = self.DB.line(f"SELECT add0,add3,add8,add10 FROM h_stockHistory_board WHERE add0='{uday}'")
@@ -223,7 +223,7 @@ class Ajax(Model) :
             self.tomorrow_buy()
             self.tomorrow_sell()
 
-            board = 'h_log315A_board'
+            board = 'h_logDIY_board'
 
             if  self.M['매수수량'] or self.M['매도수량'] or self.M['보유수량'] :
                 XD = self.print_data()
@@ -255,7 +255,7 @@ class Ajax(Model) :
     def reset_balance(self) :
         
         n_bl = self.D['post']['n_bl']
-        LD = self.DB.last_record('h_log315A_board')
+        LD = self.DB.last_record('h_logDIY_board')
         CD = self.DB.last_record('h_stockHistory_board')
         ST = self.DB.parameters_dict('매매전략/DIY')
         
@@ -290,7 +290,7 @@ class Ajax(Model) :
         # 새로운 데이타 
         del(LD['no']); del(LD['brother']); del(LD['tle_color']); del(LD['reply']); del(LD['hit'])
         LD['wdate'] = LD['mdate'] = my.now_timestamp()
-        qry=self.DB.qry_insert('h_log315A_board',LD)  
+        qry=self.DB.qry_insert('h_logDIY_board',LD)  
         self.DB.exe(qry)
 
         # 파라미터 업데이트

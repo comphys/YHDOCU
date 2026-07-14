@@ -16,7 +16,7 @@ if  skip :
 
 else :
     
-    board = 'h_log315A_board'
+    board = 'h_logDIY_board'
     ini_data = DIY.DB.oneline(f"SELECT add18,add19,add1 FROM {board} ORDER BY add0 DESC LIMIT 1")
     ini_date = ini_data[0]
     ini_capt = f"{my.sv(ini_data[1]):,.2f}"

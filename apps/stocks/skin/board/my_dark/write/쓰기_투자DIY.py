@@ -1,6 +1,6 @@
 from system.core.load import SKIN
 
-class 쓰기_투자315A(SKIN) :
+class 쓰기_투자DIY(SKIN) :
 
     def write(self) :
 

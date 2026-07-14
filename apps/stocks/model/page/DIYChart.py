@@ -46,10 +46,9 @@ class Ajax(Model) :
     def synchro_diy(self) :
         
         opt = self.D['post']['opt']
-        self.info(opt)
         ldate = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")
+        sdata = self.DB.oneline("SELECT add18,add19 FROM h_logDIY_board ORDER BY add0 DESC LIMIT 1")
 
-        sdata = self.DB.oneline("SELECT add18,add19 FROM h_log315A_board ORDER BY add0 DESC LIMIT 1")
         if  opt == 'real' :
             sdate = sdata[0]
             V_mon = sdata[1]

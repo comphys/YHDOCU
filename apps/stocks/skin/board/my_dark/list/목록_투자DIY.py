@@ -1,7 +1,7 @@
 import system.core.my_utils as my
 from system.core.load import SKIN
 
-class 목록_투자315A(SKIN) :
+class 목록_투자DIY(SKIN) :
 
     def _auto(self) :
         
