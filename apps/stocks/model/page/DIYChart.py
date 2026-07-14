@@ -46,17 +46,20 @@ class Ajax(Model) :
     def synchro_diy(self) :
         
         opt = self.D['post']['opt']
+        self.info(opt)
         ldate = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")
-    
+
+        sdata = self.DB.oneline("SELECT add18,add19 FROM h_log315A_board ORDER BY add0 DESC LIMIT 1")
         if  opt == 'real' :
-            sdate = self.DB.parameter('N0701')
-            V_mon = my.sv(self.DB.parameter('N0702'))
+            sdate = sdata[0]
+            V_mon = sdata[1]
+        
         elif opt == 'test' :
             sdate = my.dayofdate(ldate,delta=-365*2)[0]
-            V_mon = 60000
+            V_mon = '60,000'
         
         RD = {}
         RD['sdate'] = sdate
         RD['ldate'] = ldate
-        RD['V_mon'] = f"{V_mon:,.2f}"
+        RD['V_mon'] = V_mon
         return self.SYS.json(RD)        

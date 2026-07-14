@@ -443,6 +443,12 @@ class update_DIY :
         D['add20']  = '수익실현' if self.M['매도금액'] else '일반진행' # 초기금액
         D['add21']  = f"{self.M['수수료등']:.2f}" # 수수료등
 
+        D['add22'] = self.M['예정수량']
+        D['add23'] = f"{self.M['매수예가']:.2f}"
+        D['add24'] = self.M['보유수량']
+        D['add25'] = f"{self.M['매도예가']:.2f}"
+
+
         return D
     
     

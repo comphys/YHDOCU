@@ -16,9 +16,11 @@ if  skip :
 
 else :
     
-    ini_data = DIY.DB.oneline("SELECT add18,add19 FROM h_log315_board ORDER BY add0 DESC LIMIT 1")
+    board = 'h_log315A_board'
+    ini_data = DIY.DB.oneline(f"SELECT add18,add19,add1 FROM {board} ORDER BY add0 DESC LIMIT 1")
     ini_date = ini_data[0]
     ini_capt = f"{my.sv(ini_data[1]):,.2f}"
+    season   = ini_data[2]
     
     DIY.do_tacticLog(ini_date,today,ini_capt)
     LD = DIY.get_simulLog()
@@ -27,16 +29,14 @@ else :
     LD['uname'] = '정용훈'
     LD['wdate'] = LD['mdate'] = my.now_timestamp() 
 
-    LS = DIY.DB.last_data_one('add1','h_log315_board') # last season
-    
-    LD['add1'] = int(LS) + 1 if LD['add2'] == 1 else LS
+    LD['add1'] = int(season) + 1 if LD['add2'] == 1 else season
         
     if  not LD['첫날기록'] or LD['add6'] in('익절매도','손절매도') :   
         del LD['첫날기록']  
-        qry=DIY.DB.qry_insert('h_log315_board',LD)
+        qry=DIY.DB.qry_insert(board,LD)
         DIY.DB.exe(qry)
-        DIY.send_message(f"{today}일 N315 업데이트 완료")
+        DIY.send_message(f"{today}일 DIY 업데이트 완료")
         
     else :
-        DIY.send_message(f"{today}일 N315 변동사항 없음")
+        DIY.send_message(f"{today}일 DIY 변동사항 없음")
          
