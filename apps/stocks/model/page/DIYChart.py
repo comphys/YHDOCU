@@ -6,7 +6,7 @@ class M_DIYChart(Model) :
     def view(self) :
         
         # 기본 값
-        self.D['종목코드'] = 'SOXL'
+
         self.D['전략선택'] = 'DIY'
         self.D['일반자금'] = f"{my.sv(self.DB.parameter('N0702')):,.2f}"
  
@@ -21,7 +21,7 @@ class M_DIYChart(Model) :
 
     def action(self) :
         D = {}
-        D['종목코드'] = self.D['post']['종목코드']
+
         D['일반자금'] = self.D['post']['일반자금']
 
         D['시작일자'] = self.D['post']['시작일자']

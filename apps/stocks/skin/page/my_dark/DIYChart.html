@@ -7,16 +7,9 @@
 			<br>
 			<div class="well clearfix" style="border-radius:0px;">
     			<div class="pull-left">
-    				<div class='select' style='margin-right:10px;vertical-align:bottom'>
-        				<input placeholder='종목코드' name='종목코드' type='text' value="{{D['종목코드']}}">
-            			<div class='btn-group'>
-                			<button class='btn btn-select dropdown-toggle' data-toggle='dropdown' tabindex='-1'><span class='caret'></span></button>
-                    		<ul class='dropdown-menu'>
-                        		<li><a>종목코드</a></li>
-                        		<li><a href='#'>N310</a></li>
-                    		</ul>
-            			</div>
-    				</div>
+					<div style="display:inline-block;margin-left:10px;margin-right:10px;margin-top:4px;margin-bottom:0px;">
+						<span style="color:yellow;font-size:16px;font-weight:bold;letter-spacing:2px">DIY</span>
+					</div>
 					<div class='i-input-div'>
 						<div class='write-input-left' style="text-align:center;width:100px;font-weight:bold;">투자금액</div>
 						<input type='text' class="i-number" name="일반자금" style="width:120px;;text-align:center;" value="{{D['일반자금']}}">
@@ -187,12 +180,12 @@
 		<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppl</td><td>ppa&nbsp;</td></tr>
 
 		{% if D['N_생활매수량'] %}
-		<tr><td style="text-align:left;">N <span style="color:gray">buy</span></td><td>{{D['N_생활매수가']}}</td><td>{{D['N_생활매수량']}}</td>
+		<tr><td style="text-align:left;">D <span style="color:gray">buy</span></td><td>{{D['N_생활매수가']}}</td><td>{{D['N_생활매수량']}}</td>
 			<td style="color:gray">{{D['N_생활종대비']}}</td><td style="color:gray">{{D['N_생활평대비']}}</td>
 		</tr>
 		{% endif %}
 		{% if D['N_생활매도량'] %}
-		<tr style="border-top:1px solid gray"><td style="text-align:left;">N <span style="color:gray">sell</span></td><td>{{D['N_생활매도가']}}</td><td>{{D['N_생활매도량']}}</td>
+		<tr style="border-top:1px solid gray"><td style="text-align:left;">D <span style="color:gray">sell</span></td><td>{{D['N_생활매도가']}}</td><td>{{D['N_생활매도량']}}</td>
 			<td style="color:gray">{{D['N_생활도종비']}}</td><td style="color:gray">{{D['N_생활도평비']}}</td>
 		</tr>
 		{% endif %}
