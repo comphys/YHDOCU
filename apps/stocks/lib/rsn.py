@@ -347,7 +347,11 @@ class RSN :
 
     def tomorrow_sel_N(self) :
         
-        if self.N['보유수량'] : self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
+        if  self.N['보유수량'] : 
+            self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
+
+            mbp = max(self.R['매수예가'],self.S['매수예가'])
+            if self.N['매도예가'] <= mbp  : self.N['매도예가'] = mbp + 0.01
 
     def tomorrow_step(self) :
         self.tomorrow_buy_V()
@@ -359,7 +363,7 @@ class RSN :
         self.tomorrow_sel_N()
         
         # [최종 매도가 조율 및 강매진행]-------------------------------------------------------------------------------------------------------------
-        
+       
         if  self.M['현재날수'] < self.M['강매시작'] :
             self.M['매도예가'] = min(self.M['매도예가'], my.round_up(self.M['당일종가']*self.M['종가상승'])) 
             self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'])
@@ -369,6 +373,7 @@ class RSN :
 
         for tac in (self.V,self.R,self.S,self.N) : 
             if tac['매수예가'] >= self.M['매도예가'] : tac['매수예가'] = self.M['매도예가'] - 0.01
+
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # new_day : 첫날 매수에 대한 처리를 한다 

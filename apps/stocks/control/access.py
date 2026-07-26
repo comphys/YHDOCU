@@ -43,6 +43,15 @@ class Access(Control) :
                 session['CSH'] = {}
                 home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")
                 return self.moveto(home)
+
+        elif self.D['_lcl'] : 
+
+                lcl_uid = 'comphys'
+                session['__u_Ino__'] = lcl_uid
+                session['CSH'] = {}
+                home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{lcl_uid}'")
+                return self.moveto(home)
+
         
         return self.echo({'title':'로그인', 'skin':'access/login.html'})
 

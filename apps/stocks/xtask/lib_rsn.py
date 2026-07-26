@@ -351,7 +351,11 @@ class update_Log :
 
     def tomorrow_sel_N(self) :
         
-        if self.N['보유수량'] : self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
+        if  self.N['보유수량'] : 
+            self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
+
+            mbp = max(self.R['매수예가'],self.S['매수예가'])
+            if self.N['매도예가'] <= mbp  : self.N['매도예가'] = mbp + 0.01
 
     def tomorrow_step(self) :
         self.tomorrow_buy_V()
@@ -363,7 +367,7 @@ class update_Log :
         self.tomorrow_sel_N()
         
         # [최종 매도가 조율 및 강매진행]-------------------------------------------------------------------------------------------------------------
-        
+       
         if  self.M['현재날수'] < self.M['강매시작'] :
             self.M['매도예가'] = min(self.M['매도예가'], my.round_up(self.M['당일종가']*self.M['종가상승'])) 
             self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'])
@@ -373,6 +377,7 @@ class update_Log :
 
         for tac in (self.V,self.R,self.S,self.N) : 
             if tac['매수예가'] >= self.M['매도예가'] : tac['매수예가'] = self.M['매도예가'] - 0.01
+
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # new_day : 첫날 매수에 대한 처리를 한다 
@@ -384,7 +389,7 @@ class update_Log :
         self.set_value(['예정수량','매수예가','매수금액','매수수량','매도수량','매도예가','매도금액','수익현황','현수익률','실현익률','평균단가','평가금액','중익합계','중도합계'],0)
         self.set_value(['진행상황'],'일반매수')
         self.M['현재날수']  = 1 # 첫날 종가가 전날의 큰단가치 보다 클 경우 현재날수를 0으로 표기하기 위함
-        
+
         if  self.M['당일종가'] <  round(self.M['전일종가'] * self.M['큰단가치'],2) :
             self.M['기록시즌'] += 1
             self.M['현재날수']  = 1
