@@ -26,6 +26,21 @@ class Board(Control) :
             self.model('board-board_main')
             self.D['DOCU_ROOT'] = self.C['DOCU_ROOT']
 
+            # 주가 업데이트 확인 및 업데이트 작업
+
+            self.D['lst_sday'] = my.last_stock_day(self.DB)
+            self.D['lst_ohlc'] = self.DB.last_date('h_stockHistory_board')
+            
+            if  self.D['lst_sday'] != self.D['lst_ohlc'] : 
+                OHLC = self.load_app_lib('ohlc')
+                rst = OHLC.stocks_update('soxl',self.D['lst_sday'])
+                if not rst : self.set_message(f"업데이트된 주가정보를 가져오지 못했습니다")
+                else : self.set_message(f"{self.D['lst_sday']} 일자 정보가 업데이트 되었습니다")
+
+                if self.D['bid'] == 'rsnLog' : self.load_bajax('rsnLog','update_log')()
+
+                # ohlc 최종날자 갱신
+                self.D['lst_ohlc'] = self.DB.last_date('h_stockHistory_board')
 
 
     def list(self) :

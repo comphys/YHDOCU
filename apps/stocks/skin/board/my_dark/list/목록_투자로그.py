@@ -28,10 +28,9 @@ class 목록_투자로그(SKIN) :
     def chart(self) :
         
         last_date = self.D['LIST'][0]['add0']
-        last_ohlc = self.DB.last_date('h_stockHistory_board')
-        last_sday = my.last_stock_day(self.DB)
+        last_ohlc = self.D['lst_ohlc']
 
-        self.D['업데이트'] = False if not last_sday or last_date == last_sday or last_ohlc < last_sday or self.D['Page'] > '1' else True
+        self.D['업데이트'] = False if last_date == last_ohlc or self.D['Page'] > '1' else True
 
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
