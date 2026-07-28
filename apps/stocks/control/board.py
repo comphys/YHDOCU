@@ -30,7 +30,7 @@ class Board(Control) :
 
             self.D['lst_sday'] = my.last_stock_day(self.DB)
             self.D['lst_ohlc'] = self.DB.last_date('h_stockHistory_board')
-            
+
             if  self.D['lst_sday'] != self.D['lst_ohlc'] : 
                 OHLC = self.load_app_lib('ohlc')
                 rst = OHLC.stocks_update('soxl',self.D['lst_sday'])
@@ -38,6 +38,7 @@ class Board(Control) :
                 else : self.set_message(f"{self.D['lst_sday']} 일자 정보가 업데이트 되었습니다")
 
                 if self.D['bid'] == 'rsnLog' : self.load_bajax('rsnLog','update_log')()
+                if self.D['bid'] == 'logDIY' : self.load_bajax('logDIY','update_log')()
 
                 # ohlc 최종날자 갱신
                 self.D['lst_ohlc'] = self.DB.last_date('h_stockHistory_board')
