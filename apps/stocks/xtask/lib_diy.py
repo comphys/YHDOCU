@@ -302,8 +302,8 @@ class update_DIY :
         self.M['진행상황']  = '매수대기'
         self.M['기록시즌']  = 0
         
-        if '수료적용' not in self.D : self.D['수료적용']  = 'on'
-        if '세금적용' not in self.D : self.D['세금적용']  = 'off'
+        if '수료적용' not in self.D : self.D['수료적용']  = ST['A0001'] 
+        if '세금적용' not in self.D : self.D['세금적용']  = ST['A0002']
 
         self.M['현재잔액']  = my.sv(self.D['일반자금'])
 
@@ -407,8 +407,6 @@ class update_DIY :
         self.D['시작일자'] = start
         self.D['종료일자'] = end
         self.D['일반자금'] = ini_money
-        self.D['수료적용'] = 'off' 
-        self.D['세금적용'] = 'off'
         self.get_start()
         self.init_value()
         self.simulate(printOut=False)
