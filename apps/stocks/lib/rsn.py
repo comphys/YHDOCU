@@ -161,7 +161,7 @@ class RSN :
             if   self.M['현재일자'][0:7] == diffd : self.D['월익통계'][-1][1] += difft 
             else : self.D['월익통계'].append([self.M['현재일자'][0:7],difft])
             color = "#F6CECE" if difft >= 0 else "#CED8F6"
-            self.D['손익통계'].append([self.M['현재일자'],f"{total:,.2f}",f"{difft:,.2f}",f"{diffp:.2f}",color,self.M['기록시즌'],f"{diff0:.2f}"])
+            self.D['손익통계'].append([self.M['현재일자'],f"{total:,.2f}",f"{difft:,.2f}",f"{diffp:.2f}",color,self.M['기록시즌'],f"{diff0:.2f}",self.M['현재날수']])
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # today_sell : 당일 매도를 체크한다
@@ -681,7 +681,7 @@ class RSN :
             self.D['일회익절'] = 0; self.D['기회익절'] = 0; self.D['안회익절'] = 0; self.D['생회익절'] = 0
             self.D['일회손절'] = 0; self.D['기회손절'] = 0; self.D['안회손절'] = 0; self.D['생회손절'] = 0
 
-            self.D['손익통계'] = [[self.D['시작일자'],f"{self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE",'','0.00']]
+            self.D['손익통계'] = [[self.D['시작일자'],f"{self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE",'','0.00','-']]
             self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
             self.D['손익저점'] = 100.0
             self.D['저점날자'] = ''

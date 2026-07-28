@@ -296,7 +296,7 @@
 </div>
 
 <div id="statistics-profits" class="scrollbar"
-     style="display:none;position:fixed;left:1110px;top:112px;min-width:410px;height:350px;padding:0px;background-color:black;overflow-y:scroll;border:1px solid black" 
+     style="display:none;position:fixed;left:1080px;top:112px;min-width:410px;height:350px;padding:0px;background-color:black;overflow-y:scroll;border:1px solid black;z-index:500" 
 	 ondblclick="$('#statistics-profits').hide()">
 	 <table class='table table-striped' style="padding:0px">
 		<tr style="background-color: #000000;font-weight:bold;color:white;">
@@ -305,6 +305,7 @@
 			<td style="text-align:right;">{{D['R_총익승률']}}%</td>
 			<td style="text-align:right;">{{D['R_익절평균']}}%</td>
 			<td style="text-align:right;">{{D['R_손절평균']}}%</td>
+			<td style="text-align:right;height:28px;">일수</td>
 		 </tr>
 	 {% for TR in D['손익통계'] %}
 	 <tr>
@@ -313,6 +314,7 @@
 		<td style="text-align:right;color:{{TR[4]}}">{{TR[2]}}</td>
 		<td style="text-align:right;color:{{TR[4]}}">{{TR[3]}}</td>
 		<td style="text-align:right;color:lightgoldenrodyellow">{{TR[6]}}</td>
+		<td style="text-align:right;color:lightgoldenrodyellow">{{TR[7]}}</td>
 	 </tr>
 	 {% endfor %}
 	 </table>
