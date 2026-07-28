@@ -121,6 +121,9 @@
 <!-- 하단 버튼 [ 목록 쓰기] [페이지네이션]-->
 <div class="row-row clearfix">
 	<div class='pull-left'>
+		{% if D['업데이트'] %}
+		<button class='btn btn-small btn-blue-s6' onclick="update_log()">업데이트</button></a>&nbsp;
+		{% endif %}
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>쓰 기</button></a>&nbsp;
 	</div>
@@ -286,6 +289,21 @@ $("#daily-check").on('dblclick', function() {
 		if(monthlyProfit_show) $('#monthlyProfit').css('zIndex',7); else $('#monthlyProfit').css('zIndex',3);
 	}	
 {% endif %}
+
+
+function update_log() {
+	
+	var posturl = uri('linkajax') + 'log315_ljk/update_log'
+	$.post(posturl,{},null,'json').done(function(data){
+
+		if(data=='OK') {location.reload(); h_dialog.notice("주가 정보가 업데이트 되었습니다")}
+		else {h_dialog.notice(data);}		
+		
+	});
+}
+
+
+
 </script>
 
 {% endblock %}

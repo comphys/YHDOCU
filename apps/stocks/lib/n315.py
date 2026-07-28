@@ -439,6 +439,8 @@ class N315 :
         self.D['시작일자'] = start
         self.D['종료일자'] = end
         self.D['일반자금'] = ini_money
+        self.D['수료적용'] = 'off' 
+        self.D['세금적용'] = 'off'
         self.get_start()
         self.init_value()
         self.simulate(printOut=False)
@@ -463,3 +465,46 @@ class N315 :
         return NS
         
 
+    def do_tacticLog(self,start,end,ini_money) :
+        self.chart = False
+        self.stat  = True
+        self.D['시작일자'] = start
+        self.D['종료일자'] = end
+        self.D['일반자금'] = ini_money
+        self.D['수료적용'] = 'off' 
+        self.D['세금적용'] = 'off'
+        self.get_start()
+        self.init_value()
+        self.simulate(printOut=False)
+
+    def get_simulLog(self) :
+        
+        D = {}
+        D['첫날기록']= self.M['첫날기록']
+        D['add0']   = self.M['현재일자'] # 날자
+        D['add1']   = self.M['기록시즌'] # 시즌
+        D['add2']   = self.M['현재날수']-1 # 날수
+        D['add3']   = self.M['당일종가'] # 종가
+        D['add4']   = self.M['종가변동'] # 변동
+        D['add5']   = f"{self.M['현재잔액']:.2f}" # 현재잔액
+        D['add6']   = self.M['진행상황'] if self.M['진행상황'] else '매수대기' # 진행상황
+        D['add7']   = self.M['매수수량'] # 매수량
+        D['add8']   = f"{self.M['매수금액']:.2f}" # 매수금액
+        D['add9']   = self.M['보유수량'] # 보유수량
+        D['add10']  = f"{self.M['평균단가']:.4f}" # 평균단가
+        D['add11']  = f"{self.M['총매수금']:.2f}" # 총매수금
+        D['add12']  = f"{self.M['평가금액']:.2f}" # 평가금액
+        D['add13']  = f"{self.M['매도금액']:.2f}" # 매도금액
+        D['add14']  = f"{self.M['수익현황']:.2f}" # 수익현황
+        if  self.M['매도금액'] :  
+            D['add15'] = my.sv(self.D['손익통계'][-1][3])
+        else :        
+            D['add15']  = f"{self.M['현수익률']:.2f}" # 현수익률
+        D['add16']  = f"{self.M['현재잔액'] + self.M['평가금액']:.2f}" # 가치합계
+        D['add17']  = f"{self.M['매금단계'][self.M['매수차수']]:.0f}"  # 배분금액
+        D['add18']  = self.D['시작일자'] # 초기일자
+        D['add19']  = self.D['일반자금'].replace(',','')  # 초기금액
+        D['add20']  = '수익실현' if self.M['매도금액'] else '일반진행' # 초기금액
+        D['add21']  = f"{self.M['수수료등']:.2f}" # 수수료등
+
+        return D

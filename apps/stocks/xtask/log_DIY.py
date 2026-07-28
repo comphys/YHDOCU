@@ -39,4 +39,8 @@ else :
         
     else :
         DIY.send_message(f"{today}일 DIY 변동사항 없음")
+
+
+    # 최종 업데이트 확인날자 기록
+    DIY.DB.parameter_update('A0721',today)
          

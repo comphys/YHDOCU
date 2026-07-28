@@ -25,14 +25,15 @@ class Ajax(Model) :
         LD['wdate'] = LD['mdate'] = my.now_timestamp() 
 
         LD['add1'] = int(season) + 1 if LD['add2'] == 1 else season
-            
+
+        # 최종 업데이트 확인날자 기록
+        self.DB.parameter_update('A0721',lday)
+
         if  not LD['첫날기록'] or LD['add6'] in('익절매도','손절매도') :   
             del LD['첫날기록']  
             qry=DIY.DB.qry_insert(board,LD)
             DIY.DB.exe(qry)
             return self.SYS.json("OK")
-       
-
 
     # -----------------------------------------------------------------------------------------------------------------------------------------------------
     

@@ -29,6 +29,10 @@ class 목록_투자315(SKIN) :
     def chart(self) :
         
         last_date = self.DB.last_date(self.D['tbl'])
+        last_ohlc = self.D['lst_ohlc']
+        last_chkd = self.DB.parameter('N0720')
+
+        self.D['업데이트'] = False if last_chkd == last_ohlc or self.D['Page'] > '1' else True
 
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
@@ -69,7 +73,7 @@ class 목록_투자315(SKIN) :
             # 다음 날 주문정보 갖고오기
             ini_data   = self.DB.oneline(f"SELECT add18,add19 FROM {self.D['tbl']} ORDER BY add0 DESC LIMIT 1")
             ini_date = ini_data[0]
-            ini_capital = f"{float(ini_data[1]):,.2f}"
+            ini_capital = ini_data[1]
 
             T315 = self.SYS.load_app_lib('n315')
             NS = T315.get_nextStrategy(ini_date,last_date,ini_capital)

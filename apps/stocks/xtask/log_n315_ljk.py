@@ -41,4 +41,7 @@ else :
         
     else :
         N315.send_message(f"{today}일 {bid} 변동사항 없음")
+
+    # 최종 업데이트 확인날자 기록
+    N315.DB.parameter_update('N0720',today)
          

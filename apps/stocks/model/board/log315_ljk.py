@@ -41,3 +41,37 @@ class Ajax(Model) :
         # 파라미터 업데이트
 
         return "___OK____"
+
+
+    def update_log(self) :
+
+        N315 = self.SYS.load_app_lib('n315')
+        board = 'h_log315_ljk_board'
+        
+        ini_data = self.DB.oneline(f"SELECT add18,add19 FROM {board} ORDER BY add0 DESC LIMIT 1")
+        ini_date = ini_data[0]
+        ini_capt = ini_data[1]
+        lday = self.DB.last_date('h_stockHistory_board')
+        
+        N315.do_tacticLog(ini_date,lday,ini_capt)
+        LD = N315.get_simulLog()
+        
+        LD['uid']   = 'ljk6244'
+        LD['uname'] = '이재국'
+        LD['wdate'] = LD['mdate'] = my.now_timestamp() 
+
+        LS = self.DB.last_data_one('add1',board) # last season
+        
+        LD['add1'] = int(LS) + 1 if LD['add2'] == 1 else LS
+
+        # 최종 업데이트 확인날자 기록
+        self.DB.parameter_update('N0720',lday)
+            
+        if  not LD['첫날기록'] or LD['add6'] in('익절매도','손절매도') :   
+            del LD['첫날기록']  
+            qry=self.DB.qry_insert(board,LD)
+            self.DB.exe(qry)
+            return self.SYS.json("OK")
+
+            
+
