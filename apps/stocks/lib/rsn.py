@@ -635,8 +635,8 @@ class RSN :
 
             # 투자옵션 초기화 ----------------------------------------------------------------------------
             if '가상손실' in self.D  and  self.D['가상손실'] == 'on' : self.M['기본진행']  = False     
-            if '수료적용' not in self.D : self.D['수료적용']  = 'on' 
-            if '세금적용' not in self.D : self.D['세금적용']  = 'off'
+            if '수료적용' not in self.D : self.D['수료적용']  = ST['TC021'] 
+            if '세금적용' not in self.D : self.D['세금적용']  = ST['TC022']
             if '일밸런싱' not in self.D : self.D['일밸런싱']  = 'on'
             if '이밸런싱' not in self.D : self.D['이밸런싱']  = 'on'
             
@@ -1006,8 +1006,6 @@ class RSN :
         self.D['안정시점'] = f"{self.DB.parameter('TS021'):.1f}"
         self.D['안정회복'] = f"{self.DB.parameter('TS022'):.1f}"      
         
-        self.D['수료적용'] = 'off' 
-        self.D['세금적용'] = 'off' 
         self.D['일밸런싱'] = 'on' 
         self.D['이밸런싱'] = 'on' 
         self.D['가상손실'] = 'on' if mode_ == '전략진행' else 'off'
