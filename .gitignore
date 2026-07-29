@@ -6,7 +6,7 @@ whoin.txt
 settings.json
 test*.py
 # db folder, mytest folder는 업데이트 하지 않는다.
-mydb/
+# mydb/
 mytest/
 ipynb/
 __pycache__/
