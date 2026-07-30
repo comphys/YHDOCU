@@ -75,9 +75,9 @@
 		<button class='btn btn-small btn-red' onclick="update_stockPrice()">주가 업데이트</button>
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>직접입력</button></a>
 		<span style="display:inline-block;margin-left:10px;"> 
-			<input name='simple-date'  type="text" style="width:100px;text-align:center" value="{{D['chk_date']}}">
-			<input name='simple-close' type="text" style="width:80px;text-align:center"  value="{{D['TR'][0]['add3']|striptags}}">
-			<input name='simple-krw'   type="text" style="width:80px;text-align:center"  value="{{D['TR'][0]['add2']|striptags}}">
+			<input name='simple-date'  type="text" style="width:100px;text-align:center" value="{{D['lst_sday']}}" placeholder="날자입력">
+			<input name='simple-close' type="text" style="width:80px;text-align:center"  placeholder="종가입력">
+			<input name='simple-krw'   type="text" style="width:80px;text-align:center"  placeholder="환율입력">
 			<button class='btn btn-small btn-blue' onclick="simple_stockPrice()">간편 입력</button>
 		</span>
 		{% else %}
