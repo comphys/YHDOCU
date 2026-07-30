@@ -33,12 +33,7 @@ class Board(Control) :
 
             if  self.D['lst_sday'] != self.D['lst_ohlc'] : 
                 OHLC = self.load_app_lib('ohlc')
-                rst = OHLC.stocks_update('soxl',self.D['lst_sday'])
-                if not rst : self.set_message(f"업데이트된 주가정보를 가져오지 못했습니다")
-                else : 
-                    self.set_message(f"{self.D['lst_sday']} 일자 정보가 업데이트 되었습니다")
-                    # ohlc 최종날자 갱신
-                    self.D['lst_ohlc'] = self.D['lst_ohlc']
+                if OHLC.stocks_update('soxl',self.D['lst_sday']) : self.D['lst_ohlc'] = self.D['lst_ohlc']
 
 
     def list(self) :

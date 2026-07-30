@@ -207,5 +207,5 @@
 #daily-check {display:inline-block;width:100px;padding:1px 10px;text-align:center;line-height:16px;}
 .daily-check-on {box-shadow:1px 1px 20px gray;color:white;}
 
-.q-addvalue {font-weight:bold;color:black;background-color: white;}
+.q-addvalue {font-weight:bold;color:white;background-color: black;}
 .season:hover {cursor:pointer; color:yellow; font-weight: bold; }

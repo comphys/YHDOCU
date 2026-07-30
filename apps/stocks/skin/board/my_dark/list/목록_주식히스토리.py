@@ -28,13 +28,29 @@ class 목록_주식히스토리(SKIN) :
                 item['mdate'] = my.timestamp_to_date(item['mdate'],"%m/%d %H:%M")
 
     
-    def check_updated(self) :
+    def chart(self) :
 
-        last_ohlc = self.DB.last_date("h_stockHistory_board")
-        last_sday = my.last_stock_day(self.DB)
+        self.DB.clear()
+        self.DB.tbl = self.D['tbl']
+        self.DB.wre = f"add0 <='{self.D['lst_ohlc']}'"
+        self.DB.odr = "add0 DESC"
+        self.DB.lmt = '60'
+        
+        chart_data = self.DB.get("add0,add3,add2",assoc=True)
 
-        return True if last_sday and last_ohlc == last_sday else False
+        if  chart_data :
 
+            chart_data.reverse()
+        
+            self.D['chart_date']  = [x['add0'][2:] for x in chart_data]
+            self.D['close_price'] = [float(x['add3']) for x in chart_data] 
+            self.D['krwus_price'] = [float(x['add2']) for x in chart_data] 
+            self.D['max_closeP']  = max(self.D['close_price'])
+            self.D['min_closeP']  = min(self.D['close_price'])       
+            self.D['max_krwusP']  = max(self.D['krwus_price'])
+            self.D['min_krwusP']  = min(self.D['krwus_price'])     
+
+        
     def list(self) :
 
         self.D['ot'] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
@@ -46,23 +62,22 @@ class 목록_주식히스토리(SKIN) :
         self.D['ot'][5] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add9 as INTEGER) = 0  and CAST(add10 as INTEGER) = 0 and add1='SOXL'") # equal days
         self.D['ot'][6] = f"{self.D['ot'][5]/self.D['ot'][0]*100:.2f}"
 
-        self.D['ot'][7]  = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 1 and add1='SOXL'") # dn 1
-        self.D['ot'][8]  = f"{self.D['ot'][7]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][9]  = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 2 and add1='SOXL'") # dn 2
-        self.D['ot'][10] = f"{self.D['ot'][9]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][11] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 3 and add1='SOXL'") # dn 3
-        self.D['ot'][12] = f"{self.D['ot'][11]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][13] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 4 and add1='SOXL'") # dn 4
-        self.D['ot'][14] = f"{self.D['ot'][13]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][15] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 5 and add1='SOXL'") # dn 5
-        self.D['ot'][16] = f"{self.D['ot'][15]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][17] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 6 and add1='SOXL'") # dn 6
-        self.D['ot'][18] = f"{self.D['ot'][17]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][19] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 7 and add1='SOXL'") # dn 7
-        self.D['ot'][20] = f"{self.D['ot'][19]/self.D['ot'][3]*100:.2f}"        
-        self.D['ot'][21] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL'") # dn 8
-        self.D['ot'][22] = f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
-
+        self.D['ot'][7] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 1 and add1='SOXL'") # dn 1
+        self.D['ot'][8] = f"{self.D['ot'][7]/self.D['ot'][3]*100:.2f}"
+        self.D['ot'][9] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 2 and add1='SOXL'") # dn 2
+        self.D['ot'][10]= f"{self.D['ot'][9]/self.D['ot'][3]*100:.2f}"
+        self.D['ot'][11]= self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 3 and add1='SOXL'") # dn 3
+        self.D['ot'][12]= f"{self.D['ot'][11]/self.D['ot'][3]*100:.2f}"
+        self.D['ot'][13]= self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 4 and add1='SOXL'") # dn 4
+        self.D['ot'][14]= f"{self.D['ot'][13]/self.D['ot'][3]*100:.2f}"
+        self.D['ot'][15]= self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 5 and add1='SOXL'") # dn 5
+        self.D['ot'][16]= f"{self.D['ot'][15]/self.D['ot'][3]*100:.2f}"
+        self.D['ot'][17]= self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 6 and add1='SOXL'") # dn 6
+        self.D['ot'][18]= f"{self.D['ot'][17]/self.D['ot'][3]*100:.2f}"
+        self.D['ot'][19]= self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 7 and add1='SOXL'") # dn 7
+        self.D['ot'][20]= f"{self.D['ot'][19]/self.D['ot'][3]*100:.2f}"        
+        self.D['ot'][21]= self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL'") # dn 8
+        self.D['ot'][22]= f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
 
         last_year = my.last_year_day()
         self.D['ot1'] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
@@ -74,24 +89,23 @@ class 목록_주식히스토리(SKIN) :
         self.D['ot1'][5] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add9 as INTEGER) = 0  and CAST(add10 as INTEGER) = 0 and add1='SOXL' and add0 > '{last_year}'") # equal days
         self.D['ot1'][6] = f"{self.D['ot1'][5]/self.D['ot1'][0]*100:.2f}"
 
-        self.D['ot1'][7]  = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 1 and add1='SOXL' and add0 > '{last_year}'") # dn 1
-        self.D['ot1'][8]  = f"{self.D['ot1'][7]/self.D['ot1'][3]*100:.2f}"
-        self.D['ot1'][9]  = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 2 and add1='SOXL' and add0 > '{last_year}'") # dn 2
-        self.D['ot1'][10] = f"{self.D['ot1'][9]/self.D['ot1'][3]*100:.2f}"
-        self.D['ot1'][11] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 3 and add1='SOXL' and add0 > '{last_year}'") # dn 3
-        self.D['ot1'][12] = f"{self.D['ot1'][11]/self.D['ot1'][3]*100:.2f}"
-        self.D['ot1'][13] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 4 and add1='SOXL' and add0 > '{last_year}'") # dn 4
-        self.D['ot1'][14] = f"{self.D['ot1'][13]/self.D['ot1'][3]*100:.2f}"
-        self.D['ot1'][15] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 5 and add1='SOXL' and add0 > '{last_year}'") # dn 5
-        self.D['ot1'][16] = f"{self.D['ot1'][15]/self.D['ot1'][3]*100:.2f}"
-        self.D['ot1'][17] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 6 and add1='SOXL' and add0 > '{last_year}'") # dn 6
-        self.D['ot1'][18] = f"{self.D['ot1'][17]/self.D['ot1'][3]*100:.2f}"
-        self.D['ot1'][19] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 7 and add1='SOXL' and add0 > '{last_year}'") # dn 7
-        self.D['ot1'][20] = f"{self.D['ot1'][19]/self.D['ot1'][3]*100:.2f}"        
-        self.D['ot1'][21] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL' and add0 > '{last_year}'") # dn 8
-        self.D['ot1'][22] = f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
+        self.D['ot1'][7] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 1 and add1='SOXL' and add0 > '{last_year}'") # dn 1
+        self.D['ot1'][8] = f"{self.D['ot1'][7]/self.D['ot1'][3]*100:.2f}"
+        self.D['ot1'][9] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 2 and add1='SOXL' and add0 > '{last_year}'") # dn 2
+        self.D['ot1'][10]= f"{self.D['ot1'][9]/self.D['ot1'][3]*100:.2f}"
+        self.D['ot1'][11]= self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 3 and add1='SOXL' and add0 > '{last_year}'") # dn 3
+        self.D['ot1'][12]= f"{self.D['ot1'][11]/self.D['ot1'][3]*100:.2f}"
+        self.D['ot1'][13]= self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 4 and add1='SOXL' and add0 > '{last_year}'") # dn 4
+        self.D['ot1'][14]= f"{self.D['ot1'][13]/self.D['ot1'][3]*100:.2f}"
+        self.D['ot1'][15]= self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 5 and add1='SOXL' and add0 > '{last_year}'") # dn 5
+        self.D['ot1'][16]= f"{self.D['ot1'][15]/self.D['ot1'][3]*100:.2f}"
+        self.D['ot1'][17]= self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 6 and add1='SOXL' and add0 > '{last_year}'") # dn 6
+        self.D['ot1'][18]= f"{self.D['ot1'][17]/self.D['ot1'][3]*100:.2f}"
+        self.D['ot1'][19]= self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 7 and add1='SOXL' and add0 > '{last_year}'") # dn 7
+        self.D['ot1'][20]= f"{self.D['ot1'][19]/self.D['ot1'][3]*100:.2f}"        
+        self.D['ot1'][21]= self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL' and add0 > '{last_year}'") # dn 8
+        self.D['ot1'][22]= f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
         
-
         # 표준편차 구하기(최근5년)
         day_5yr = my.back_day(-1824)
         std_5yr = self.DB.col(f"SELECT CAST(add8 as float) FROM h_stockHistory_board WHERE add1='SOXL' and add0 > '{day_5yr}'")
@@ -109,11 +123,11 @@ class 목록_주식히스토리(SKIN) :
         std_1mt_val = numpy.std(std_1mt)
         self.D['한달변동률'] = f"{std_1mt_val:.2f}"
 
-
         self.D['TimeNow'] = my.timestamp_to_date(ts='now')
         self.head()
         self.data_preprocess()
-        self.D['업데이트'] = self.check_updated()
+        self.chart()
+        self.D['업데이트'] = True if self.D['lst_sday'] == self.D['lst_ohlc'] else False
 
         try :     self.D['code'] = session['CSH']['csh_add1']
         except :  self.D['code'] = 'NONE'
@@ -162,7 +176,7 @@ class 목록_주식히스토리(SKIN) :
                         
                         if cno : tmp += f"<span>{txt}</span>"
                         else :
-                            href  = f"{self.D['_bse']}board/body/{self.D['bid']}/no={item['no']}"
+                            href  = f"{self.D['_bse']}board/modify/{self.D['bid']}/no={item['no']}"
                             tmp += f"<span class='list-subject' data-href='{href}' >{txt}</span>"
 
                         tmp += '</td>'
@@ -196,3 +210,4 @@ class 목록_주식히스토리(SKIN) :
                 tx={}
 
             self.D['TR'] = TR
+

@@ -2,25 +2,25 @@
 
 {% block contents_list %}
 
-	<div class="my-box">
-		<div class="my-box-inner">
+	<div class="my-box" style="border:2px solid black">
+		<div class="my-box-inner" ondblclick="$('#price-chart-div').show()">
 			전체 : {{D['ot'][0]}}일 &nbsp; 상승 {{D['ot'][1]}}( {{D['ot'][2]}}% ) 하락 {{D['ot'][3]}}( {{D['ot'][4]}}% )&nbsp; 
 			최근 1년 : {{D['ot1'][0]}}일 상승 {{D['ot1'][1]}}( {{D['ot1'][2]}}% ) 하락 {{D['ot1'][3]}}( {{D['ot1'][4]}}% )&nbsp;<span id="qty-pcnt" class="list-bear-cnt"></span><br>
-			<table class="table table-bordered table-striped" style="text-align:right;margin-top:10px;">
+			<table class="table" style="text-align:right;margin-top:10px;height:260px">
 				<tr style="background-color:#0A2229;font-weight:bold;">
 					<td>연속하락</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td>
 				</tr>
 				<tr>
-					<td>전체</td><td>{{D['ot'][7]}}</td><td>{{D['ot'][9]}}</td><td>{{D['ot'][11]}}</td><td>{{D['ot'][13]}}</td><td>{{D['ot'][15]}}</td><td>{{D['ot'][17]}}</td><td>{{D['ot'][19]}}</td><td>{{D['ot'][21]}}</td>
+					<td>전체기간</td><td>{{D['ot'][7]}}</td><td>{{D['ot'][9]}}</td><td>{{D['ot'][11]}}</td><td>{{D['ot'][13]}}</td><td>{{D['ot'][15]}}</td><td>{{D['ot'][17]}}</td><td>{{D['ot'][19]}}</td><td>{{D['ot'][21]}}</td>
 				</tr>
-				<tr>
+				<tr style="color:#c1e0ff">
 					<td>비율</td><td data-pcnt="off">{{D['ot'][8]}}</td><td data-pcnt="off">{{D['ot'][10]}}</td><td data-pcnt="off">{{D['ot'][12]}}</td><td data-pcnt="off">{{D['ot'][14]}}</td>
 					<td data-pcnt="off">{{D['ot'][16]}}</td><td data-pcnt="off">{{D['ot'][18]}}</td><td data-pcnt="off">{{D['ot'][20]}}</td><td data-pcnt="off">{{D['ot'][22]}}</td>
 				</tr>
-				<tr>
+				<tr style="border-top:2px solid black;">
 					<td>최근일년</td><td>{{D['ot1'][7]}}</td><td>{{D['ot1'][9]}}</td><td>{{D['ot1'][11]}}</td><td>{{D['ot1'][13]}}</td><td>{{D['ot1'][15]}}</td><td>{{D['ot1'][17]}}</td><td>{{D['ot1'][19]}}</td><td>{{D['ot1'][21]}}</td>
 				</tr>
-				<tr>
+				<tr style="border-bottom:2px solid black;color:#ffc4c4">
 					<td>비율</td><td data-pcnt="off">{{D['ot1'][8]}}</td><td data-pcnt="off">{{D['ot1'][10]}}</td><td data-pcnt="off">{{D['ot1'][12]}}</td><td data-pcnt="off">{{D['ot1'][14]}}</td>
 					<td data-pcnt="off">{{D['ot1'][16]}}</td><td data-pcnt="off">{{D['ot1'][18]}}</td><td data-pcnt="off">{{D['ot1'][20]}}</td><td data-pcnt="off">{{D['ot1'][22]}}</td>
 				</tr>
@@ -89,21 +89,67 @@
 	</ul></div>
 </div>
 
+<div id='price-chart-div' style="background-color:black;border:1px solid black;position:absolute;left:20px;top:50px;padding:5px;opacity:1.0;z-index:3;"  ondblclick="$(this).hide()">
+	<canvas id="priceChart" style="width:868px;height:358px;background-color:#24272d"></canvas>
+	<div id='price-chart-comment' style="position:absolute;left:120px;top:256px;z-index:4;"></div>
+</div>
+
+<script src="/sys/chart/chart.min.js"></script>
 <script>
-function add_newstock() { 
-	var new_stock = $("input[name='add_new_stock']").val();
-	if(! new_stock ) return;
-	h_dialog.alert("일시적으로 중단된 상태입니다."); return;
-	var url = uri('linkurl') + 'boards-stock_update/update_stock/' + new_stock ;
-	location.href = url; 
+
+// 챠트 그리기(메인챠트) -----------------------------------------------------------------------------------------
+const ctx_main = $id('priceChart');
+ctx_main.style.backgroundColor = '#33363b';
+ctx_main.style.border = '2px solid black';
+
+let labels_main     =  {{D['chart_date']|safe}}	
+let close_price     =  {{D['close_price']|safe}} 
+let krwus_price     =  {{D['krwus_price']|safe}}  
+let max_closeP      =  {{D['max_closeP']|safe}}	    
+let min_closeP      =  {{D['min_closeP']|safe}}
+let max_krwusP      =  {{D['max_krwusP']|safe}}	    
+let min_krwusP      =  {{D['min_krwusP']|safe}}
+let diff_closeP     =  (min_closeP - max_closeP)/max_closeP*100
+let diff_krwusP     =  (min_krwusP - max_krwusP)/max_krwusP*100
+
+let maxCloseP   = []
+let minCloseP   = []
+
+for(let x=0; x < labels_main.length; x++) { 
+	maxCloseP.push(max_closeP);
+	minCloseP.push(min_closeP);
 }
 
-function del_oldstock() { 
-	var old_stock = $("input[name='add_new_stock']").val();
-	if(! old_stock ) return;
-	var url = uri('linkurl') + 'boards-stock_update/delete/' + old_stock ;
-	location.href = url; 
-}
+
+const data_main = {
+    labels : labels_main,
+    datasets : [
+		{  label:' 종가변동',  data : close_price,  borderColor:'#58ACFA', borderWidth:2, pointRadius:0, lineTension:0.2, yAxisID : 'y1'	},
+		{  label:' 환율변동',  data : krwus_price,	borderColor:'#F5A9A9', borderWidth:2, pointRadius:0, lineTension:0.2, borderDash:[2,2],},
+		{  label:' 기간최고',  data : maxCloseP,    borderWidth:1,borderColor:'#ffc4c4',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,lineTension:0.2, yAxisID : 'y1'},
+		{  label:' 기간최저',  data : minCloseP,    borderWidth:1,borderColor:'#c1e0ff',borderDash: [2,4],backgroundColor:'yellow',pointRadius:0,pointHoverRadius:0,lineTension:0.2, yAxisID : 'y1'},
+    ]   
+};
+const options_main = {
+	animation : { duration:300},
+	// animation,
+	plugins : { legend: {display:false}, tooltip:{enabled:false}},
+    responsive:false,
+    layout:{padding:20},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'left'},
+		y1:{ type:'linear', display:true, position:'right'}
+    }
+};
+const config_main  = {type:'line',data:data_main,options:options_main};
+const myChart_main = new Chart(ctx_main, config_main);
+let ihtml = "최근 거래일 "+labels_main.length+"일간"+" 최고가 <span style='color:#ffc4c4'>$"+max_closeP+"</span> 최저가 <span style='color:#c1e0ff'>$"+min_closeP +" </span>("+diff_closeP.toFixed(2)+"%)"
+ihtml += " &nbsp;&nbsp;최고환율 <span style='color:#ffc4c4'>"+max_krwusP+"원</span> 최저환율 <span style='color:#c1e0ff'>"+min_krwusP +"원</span>("+diff_krwusP.toFixed(2)+"%)"
+$("#price-chart-comment").html(ihtml);
+// ------------------------------------------------------------------------------------------------------------------------
+
+
 
 $(".list-code").click(function(){
 	var code = $(this).text()
@@ -157,6 +203,7 @@ function simple_stockPrice() {
 
 }
 
+$('#price-chart-div').draggable();
 </script>
 
 {% endblock %}
