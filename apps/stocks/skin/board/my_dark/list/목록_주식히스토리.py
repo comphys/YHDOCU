@@ -127,7 +127,7 @@ class 목록_주식히스토리(SKIN) :
         self.head()
         self.data_preprocess()
         self.chart()
-        self.D['업데이트'] = True if self.D['lst_sday'] == self.D['lst_ohlc'] else False
+        self.D['업데이트안됨'] = False if self.D['lst_sday'] == self.D['lst_ohlc'] else True
 
         try :     self.D['code'] = session['CSH']['csh_add1']
         except :  self.D['code'] = 'NONE'

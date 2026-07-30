@@ -71,7 +71,7 @@
 <!-- 하단 버튼 [ 목록 쓰기] [페이지네이션]-->
 <div class="row-row clearfix">
 	<div class='pull-left'>
-		{% if not D['업데이트'] %}
+		{% if D['업데이트안됨'] %}
 		<button class='btn btn-small btn-red' onclick="update_stockPrice()">주가 업데이트</button>
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>직접입력</button></a>
 		<span style="display:inline-block;margin-left:10px;"> 
@@ -89,13 +89,14 @@
 	</ul></div>
 </div>
 
-<div id='price-chart-div' style="background-color:black;border:1px solid black;position:absolute;left:20px;top:50px;padding:5px;opacity:1.0;z-index:3;"  ondblclick="$(this).hide()">
+<div id='price-chart-div' style="background-color:#24272D;border:1px solid black;position:absolute;left:20px;top:50px;padding:5px;opacity:1.0;z-index:3;"  ondblclick="$(this).hide()">
 	<canvas id="priceChart" style="width:868px;height:358px;background-color:#24272d"></canvas>
 	<div id='price-chart-comment' style="position:absolute;left:120px;top:256px;z-index:4;"></div>
 </div>
 
 <script src="/sys/chart/chart.min.js"></script>
 <script>
+
 
 // 챠트 그리기(메인챠트) -----------------------------------------------------------------------------------------
 const ctx_main = $id('priceChart');
@@ -144,7 +145,7 @@ const options_main = {
 };
 const config_main  = {type:'line',data:data_main,options:options_main};
 const myChart_main = new Chart(ctx_main, config_main);
-let ihtml = "최근 거래일 "+labels_main.length+"일간"+" 최고가 <span style='color:#ffc4c4'>$"+max_closeP+"</span> 최저가 <span style='color:#c1e0ff'>$"+min_closeP +" </span>("+diff_closeP.toFixed(2)+"%)"
+let ihtml = "최근 거래 "+labels_main.length+"일간"+" 최고가 <span style='color:#ffc4c4'>$"+max_closeP+"</span> 최저가 <span style='color:#c1e0ff'>$"+min_closeP +" </span>("+diff_closeP.toFixed(2)+"%)"
 ihtml += " &nbsp;&nbsp;최고환율 <span style='color:#ffc4c4'>"+max_krwusP+"원</span> 최저환율 <span style='color:#c1e0ff'>"+min_krwusP +"원</span>("+diff_krwusP.toFixed(2)+"%)"
 $("#price-chart-comment").html(ihtml);
 // ------------------------------------------------------------------------------------------------------------------------
@@ -204,6 +205,11 @@ function simple_stockPrice() {
 }
 
 $('#price-chart-div').draggable();
+
+{% if D['업데이트안됨'] %}
+h_dialog.notice("주가 정보가 업데이트 되지 않았습니다. 확인이 필요합니다")
+{% endif %}
+
 </script>
 
 {% endblock %}

@@ -33,8 +33,8 @@ class 목록_투자DIY(SKIN) :
         last_ohlc = self.D['lst_ohlc']
         last_chkd = self.DB.parameter('A0721')
 
-        self.D['업데이트'] = False if last_chkd == last_ohlc or self.D['Page'] > '1' else True
-
+        self.D['업데이트안됨'] = False if last_chkd == last_ohlc or self.D['Page'] > '1' else True
+  
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
         self.DB.wre = f"add0 <='{last_date}'"
