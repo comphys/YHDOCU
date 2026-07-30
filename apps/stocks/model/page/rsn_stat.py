@@ -20,7 +20,6 @@ class M_rsn_stat(Model) :
         self.D['세금적용'] = 'off'
         self.D['일밸런싱'] = 'on'
         self.D['이밸런싱'] = 'on'
-        self.D['일반상황'] = 'off'
         self.D['가상손실'] = 'off'
         self.D['기간한정'] = 'off'
         self.D['한정기간'] = '365'
@@ -43,10 +42,10 @@ class M_rsn_stat(Model) :
         D['안정시점'] = self.D['post']['안정시점']
         D['안정회복'] = self.D['post']['안정회복']
 
-        D['수료적용'] = self.D['post'].get('chk_fee','off')
-        D['세금적용'] = self.D['post'].get('chk_tax','off')
-        D['일밸런싱'] = self.D['post'].get('chk_brs','off')
-        D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
+        D['수료적용'] = 'off'
+        D['세금적용'] = 'off'
+        D['일밸런싱'] = 'on'
+        D['이밸런싱'] = 'on'
         D['기간한정'] = self.D['post'].get('chk_lmt','off')
         D['한정기간'] = self.D['post']['한정기간']
         
