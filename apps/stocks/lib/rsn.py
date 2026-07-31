@@ -927,7 +927,8 @@ class RSN :
         sx['생활최락'] = f"{self.D['MDD4']}<span style='color:gray'>({self.D['MDD_DAY4']})</span>"    if self.D['MDD_DAY4'] else ''
         sx['저점기록'] = f"<b>{self.D['손익저점']}</b><span style='color:gray'>({self.D['저점날자'][2:]})</span>" if self.D['저점날자'] else ''
         
-        if float(self.D['MinLP']) >= float(self.D['손익저점']) : self.D['MinLP'] = self.D['손익저점']; self.D['MinDD'] = self.D['시작일자']
+        if float(self.D['MinLP']) >= float(self.D['손익저점']) : self.D['MinLP'] = self.D['손익저점']; self.D['MinDD'] = self.D['시작일자'][2:]
+        if self.D['기간한정'] == 'on' and (float(self.D['MinPR']) >= float(self.D['R_최종익률'])) : self.D['MinPR'] = self.D['R_최종익률']; self.D['MinPRDD'] = self.D['시작일자'][2:]
 
         sx['게임횟수'] = f"{self.D['R_총매도수']}<span style='color:gray'>({self.D['R_총익절수']}/{self.D['R_총손절수']})</span>"
         sx['게임승률'] = self.D['R_총익승률']
@@ -947,7 +948,9 @@ class RSN :
         B = self.get_dateList(self.D['시작일자'],self.D['종료일자'])
         
         self.D['MinLP'] = 100.0
+        self.D['MinPR'] = 500.0
         self.D['MinDD'] = ''
+        self.D['MinPRDD'] = ''
         self.D['SR'] = []
         
         last_day = self.DB.one("SELECT add0 FROM h_stockHistory_board ORDER BY add0 DESC LIMIT 1")

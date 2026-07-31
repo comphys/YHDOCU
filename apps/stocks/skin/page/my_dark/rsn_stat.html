@@ -62,13 +62,13 @@
 				경과일 한정 : 
 				<input role="switch" type="checkbox" name="chk_lmt" {{ 'checked' if D['기간한정'] =='on'  else '' }}>&nbsp;&nbsp;&nbsp; 
 				<input type="text" name="한정기간" value="{{D['한정기간']}}" style="border:1px solid gray;width:80px;text-align:center">&nbsp;일간&nbsp;&nbsp;
-				over 100% profit : {{D['over100st']}} &nbsp;&nbsp;
-				Min LP : {{D['MinLP']}} % when starting on ( {{D['MinDD']}} )
 				{% if D['평균가치'] %}
 				<span style="color:antiquewhite">
-					&nbsp;수익률 평균값 : {{D['평균가치']}}% &nbsp; 표준편차 {{D['표준편차']}}
+					100% 이상 수익은 {{D['over100st']}}% 이며, 수익률 평균값은 {{D['평균가치']}}%, 표준편차는 {{D['표준편차']}} 입니다&nbsp;&nbsp;
 				</span>
 				{% endif %}
+				최대손실 발생은  {{D['MinDD']}}에 시작 시 {{D['MinLP']}}% 입니다
+
 			</div>
 			<div class="pull-right" style="padding:10px 5px;margin-right:0px;height:42px;">
 				<i class="fa fa-line-chart" onclick="show_timeSeries_chart()"></i>
@@ -106,7 +106,7 @@
 {% if D['SR'] %}
 <div id="backTesting-table" class="row-row clearfix" style="width:{{D['xwidth']}};margin-top:110px">
 	
-	<table class='table table-striped table-hover' style="border:2px solid black">
+	<table class='table' style="background-color:black;border:2px solid black">
 		<colgroup>
 			<col style="width:60px"> <!-- No -->
 			<col style="width:90px"> <!-- 시작일 -->
@@ -130,10 +130,10 @@
 
 
 			{% for S in D['SR'] %}
-			{% if S['시작일자'] == D['MaxDD'] %}
-			<tr style="border-top:1px solid #F8E6E0;border-bottom:1px solid #F8E6E0;background-color:black;">
+			{% if S['시작일자'] == D['MinDD'] or S['시작일자'] == D['MinPRDD']%}
+			<tr style="border-top:1px solid #F8E6E0;border-bottom:1px solid #F8E6E0;">
 			{% else %}
-			<tr onclick="$(this).css('backgroundColor','black')" ondblclick="$(this).css('backgroundColor','')">
+			<tr>
 			{% endif %}
 				<td style='text-align:center'>{{loop.index}}</td>
 				<td>{{S['시작일자']}}</td>
