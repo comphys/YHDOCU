@@ -17,9 +17,6 @@ class Board(Control) :
             self.D['tbl']  = 'h_'+self.D['bid']+'_board'
             self.D['USER'] = self.DB.line(f"SELECT * FROM h_user_list WHERE uid='{session['__u_Ino__']}'")
             self.D['BCONFIG'] = self.DB.line(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'")
-            self.D['_mobile'] = session['_is_mobile']
-            self.D['_mobile'] = True
-            self.info(self.D['_mobile'])
 
             self.lAccess = True if self.D['USER']['level'] >= self.D['BCONFIG']['acc_list']  else False
             self.bAccess = True if self.D['USER']['level'] >= self.D['BCONFIG']['acc_body']  else False

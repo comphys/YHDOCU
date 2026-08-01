@@ -12,9 +12,6 @@ class Page(Control) :
         self.D['USER'] = self.DB.exe(f"SELECT * FROM h_user_list WHERE uid='{session['__u_Ino__']}'",many=1,assoc=True)
         self.D['bid']     = self.parm[0] 
         self.D['BCONFIG'] = self.DB.exe(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'",many=1,assoc=True)
-        self.D['_mobile'] = session['_is_mobile']
-        self.D['_mobile'] = True
-        self.info(self.D['_mobile'])
 
         self.page_access = True if self.D['USER']['level'] >= self.D['BCONFIG']['acc_list'] else False
 

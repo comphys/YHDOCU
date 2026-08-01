@@ -43,11 +43,11 @@
 					<div class='label label-info' style="cursor:pointer" onclick="startYearSpan()">S</div>&nbsp;
 					<div class='i-input-div'>
 						<div class='write-input-left' style="text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(0)"> 시작</div>
-						<input type='text' name='시작일자' class="i-date-s" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
+						<input type='text' name='시작일자' class="i-date" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
 					</div>
 					<div class='i-input-div'>
 						<div class='write-input-left' style="text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(1)"> 종료</div>
-						<input type='text' name='종료일자' class="i-date-e" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
+						<input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
 					</div>
     				<button class="btn btn-red-s3" style="vertical-align:middle;user-select:none;">테스팅</button>
     			</div> <!--pull right-->
@@ -488,32 +488,9 @@
 <script src="/sys/chart/chart.min.js"></script>
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 <script>
-{% if D['_mobile'] %}
-$(".i-date-s,.i-date-e").Zebra_DatePicker({format:'Y-m-d', offset:[1000,580], first_day_of_week : 0,
-onOpen: function() {
-    var $input = $(this);
-    var datepicker = $input.data('Zebra_DatePicker');
-    
-    if (datepicker) {
-      // 1. 클릭된 input의 현재 Viewport 기준 실제 위치 좌표 구하기
-      var rect = $input[0].getBoundingClientRect();
-      
-      // 2. 달력 팝업 레이어의 위치를 강제로 지정
-      datepicker.datepicker.css({
-        'position': 'fixed',                  // fixed로 고정하여 스크롤 오차 차단
-        'top': '200px',      // input 바로 아래 5px 지점
-        'left': '1200px',             // input의 왼쪽 시작점
-        'z-index': 999999
-      });
-    }
-  }
 
-
-}); 
-{% else %}
-$(".i-date-s,.i-date-e").Zebra_DatePicker({format:'Y-m-d', offset:[1200,580], first_day_of_week : 0}); 
-{% endif %}
 {% if D['TR'] %}
+
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 
