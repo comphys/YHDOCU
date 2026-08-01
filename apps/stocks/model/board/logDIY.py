@@ -33,7 +33,8 @@ class Ajax(Model) :
             del LD['첫날기록']  
             qry=DIY.DB.qry_insert(board,LD)
             DIY.DB.exe(qry)
-            return self.SYS.json("OK")
+
+        return self.SYS.json("OK")
 
     # -----------------------------------------------------------------------------------------------------------------------------------------------------
     

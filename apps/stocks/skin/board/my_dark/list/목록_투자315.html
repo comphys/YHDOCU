@@ -296,7 +296,7 @@ function update_log() {
 	var posturl = uri('linkajax') + 'log315_ljk/update_log'
 	$.post(posturl,{},null,'json').done(function(data){
 
-		if(data=='OK') {location.reload(); h_dialog.notice("주가 정보가 업데이트 되었습니다")}
+		if(data=='OK') {location.reload(); h_dialog.notice("로그 정보가 업데이트 되었습니다")}
 		else {h_dialog.notice(data);}		
 		
 	});

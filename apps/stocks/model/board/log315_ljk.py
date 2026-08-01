@@ -71,7 +71,8 @@ class Ajax(Model) :
             del LD['첫날기록']  
             qry=self.DB.qry_insert(board,LD)
             self.DB.exe(qry)
-            return self.SYS.json("OK")
+
+        return self.SYS.json("OK")
 
             
 
