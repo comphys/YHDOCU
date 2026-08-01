@@ -33,10 +33,12 @@ class Access(Control) :
                     session.permanent = True 
                     pil = '['
                     pir = ']'
+                    session['_is_mobile']=True
                 else : 
                     session.permanent = False
                     pil = ''
                     pir = ''
+                    session['_is_mobile']=False
 
                 with open('whoin.txt','a',encoding='utf-8') as f:
                     f.write(f"<span class='who-id'>{pil}{uid}{pir}</span><span class='who-time'>{user_time}</span><span class='who-ip'>{user_ip}</span><span class='who-agent'>{user_agent}</span>\n")
