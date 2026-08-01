@@ -489,9 +489,9 @@
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 <script>
 {% if D['_mobile'] %}
-$(".i-date-s,.i-date-e").Zebra_DatePicker({format:'Y-m-d', offset:[1000,280], first_day_of_week : 0}); 
+$(".i-date-s,.i-date-e").Zebra_DatePicker({format:'Y-m-d', offset:[1000,580], first_day_of_week : 0}); 
 {% else %}
-$(".i-date-s,.i-date-e").Zebra_DatePicker({format:'Y-m-d', offset:[1200,280], first_day_of_week : 0}); 
+$(".i-date-s,.i-date-e").Zebra_DatePicker({format:'Y-m-d', offset:[1200,580], first_day_of_week : 0}); 
 {% endif %}
 {% if D['TR'] %}
 $(".i-date_1").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
