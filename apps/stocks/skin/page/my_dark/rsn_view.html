@@ -61,7 +61,7 @@
 			</div>
 			<div class="pull-left" ondblclick="$('#statistics-profits').show()" style="margin-left:10px">
 				<canvas id="myChart_side" style="width:270px;height:330px;background-color:#24272d;"></canvas>
-				<div style="text-align:right;">
+				<div id="h-scroll-body" style="text-align:right;">
 					{% if D['s_date'] %}
 					<input type='text' name='s_date' class="i-date_1" style="width:90px;text-align:center;background:none;border:none" placeholder='시작일자' value="20{{D['s_date']}}"> -
 					<input type='text' name='e_date' class="i-date_2" style="width:90px;text-align:center;background:none;border:none" placeholder='종료일자' value="20{{D['e_date']}}">
@@ -491,8 +491,8 @@
 
 {% if D['TR'] %}
 
-$(".i-date_1").Zebra_DatePicker({onOpen: function () { var datepicker = $(this).data('Zebra_DatePicker'); if (datepicker) {datepicker.update();},position:'absolute !important','z-index':'9999 !important',format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)},});
-$(".i-date_2").Zebra_DatePicker({container:$('body'),position:'absolute !important','z-index':'9999 !important',format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+$(".i-date_1").Zebra_DatePicker({container:$('#h-scroll-body'),format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+$(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 
 $(".ohlc-price").click(function(){
 	if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
