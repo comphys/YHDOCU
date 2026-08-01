@@ -11,6 +11,30 @@
 						<span style="color:yellow;font-size:16px;font-weight:bold;letter-spacing:2px">DIY</span>
 					</div>
 					<div class='i-input-div'>
+						<div class='write-input-left' style="text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(0)"> 시작</div>
+						<input type='text' name='시작일자' class="i-date" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
+					</div>
+					<div class='i-input-div'>
+						<div class='write-input-left' style="text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(1)"> 종료</div>
+						<input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
+					</div>
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(5)">5y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(3)">3y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(2)">2y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(1)">1y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="startYearSpan()">S</div>&nbsp;
+
+					<div style="display:inline-block;margin-right:4px;">
+						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;" onclick="synchro('test')" title="테스트모드"></i>
+					</div>
+					<div style="display:inline-block;margin-right:10px;">
+						<i class="fa fa-superpowers fa-lg" style="color:cadetblue;cursor:pointer;" onclick="synchro('real')" title="동기화모드"></i>
+					</div>
+
+    			</div> <!--pull left-->
+
+    			<div class="pull-right">
+					<div class='i-input-div'>
 						<div class='write-input-left' style="text-align:center;width:100px;font-weight:bold;">투자금액</div>
 						<input type='text' class="i-number" name="일반자금" style="width:120px;;text-align:center;" value="{{D['일반자금']}}">
 					</div>
@@ -20,30 +44,6 @@
 					</div>
 					<div style="display:inline-block;">
 						<input role="switch" type="checkbox" name="chk_tax" {{ 'checked' if D['세금적용'] =='on' else '' }}>&nbsp;세금적용
-					</div>
-    			</div> <!--pull left-->
-
-    			<div class="pull-right">
-
-					<div style="display:inline-block;margin-right:4px;">
-						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;" onclick="synchro('test')" title="테스트모드"></i>
-					</div>
-					<div style="display:inline-block;margin-right:10px;">
-						<i class="fa fa-superpowers fa-lg" style="color:cadetblue;cursor:pointer;" onclick="synchro('real')" title="동기화모드"></i>
-					</div>
-
-					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(5)">5y</div>&nbsp;
-					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(3)">3y</div>&nbsp;
-					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(2)">2y</div>&nbsp;
-					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(1)">1y</div>&nbsp;
-					<div class='label label-info' style="cursor:pointer" onclick="startYearSpan()">S</div>&nbsp;
-					<div class='i-input-div'>
-						<div class='write-input-left' style="text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(0)"> 시작</div>
-						<input type='text' name='시작일자' class="i-date" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
-					</div>
-					<div class='i-input-div'>
-						<div class='write-input-left' style="text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(1)"> 종료</div>
-						<input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
 					</div>
     				<button class="btn btn-red-s3" style="vertical-align:middle;user-select:none;">테스팅</button>
     			</div> <!--pull right-->

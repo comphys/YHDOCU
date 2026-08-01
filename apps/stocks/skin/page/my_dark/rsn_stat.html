@@ -12,6 +12,32 @@
 						<span style="color:yellow;font-size:16px;font-weight:bold;letter-spacing:2px">RSN</span>
 					</div>
 					<div class='i-input-div'>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(0)"> 시작</div>
+						<input type='text' name='통계시작' class="i-date" value="{{D['통계시작']}}" style="width:110px;text-align:center;">
+					</div>
+					<div class='i-input-div'>
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(1)"> 종료</div>
+						<input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
+					</div>
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(5)">5y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(3)">3y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(2)">2y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(1)">1y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="startYearSpan()">S</div>&nbsp;
+
+					<div style="display:inline-block;">
+						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;" onclick="synchro(0,'start')" title="동기화(처음부터)"></i>
+					</div>
+					<div style="display:inline-block;">
+						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro(1,'pick')" title="동기화(back)"></i>
+					</div>
+					<div style="display:inline-block;">
+						<i class="fa fa-superpowers fa-lg" style="color:cadetblue;cursor:pointer;" onclick="synchro(2,'pick')" title="동기화(최근시즌)"></i>
+					</div>
+    			</div> <!--pull left-->
+
+    			<div class="pull-right">
+					<div class='i-input-div'>
 						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:100px;font-weight:bold;">투자자금</div>
 						<input type='text' class="i-number" name="투자자금" style="width:80px;text-align:center;" value="{{D['투자자금']}}">
 					</div>
@@ -26,31 +52,6 @@
 						<input type='text' class="i-number" name="안정회복" style="width:50px;text-align:center;background-color:black;" value="{{D['안정회복']}}">
 					</div>
 
-					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;" onclick="synchro(0,'start')" title="동기화(처음부터)"></i>
-					</div>
-					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro(1,'pick')" title="동기화(back)"></i>
-					</div>
-					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:cadetblue;cursor:pointer;" onclick="synchro(2,'pick')" title="동기화(최근시즌)"></i>
-					</div>
-    			</div> <!--pull left-->
-
-    			<div class="pull-right">
-					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(5)">5y</div>&nbsp;
-					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(3)">3y</div>&nbsp;
-					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(2)">2y</div>&nbsp;
-					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(1)">1y</div>&nbsp;
-					<div class='label label-info' style="cursor:pointer" onclick="startYearSpan()">S</div>&nbsp;
-					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(0)"> 시작</div>
-						<input type='text' name='통계시작' class="i-date" value="{{D['통계시작']}}" style="width:110px;text-align:center;">
-					</div>
-					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(1)"> 종료</div>
-						<input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
-					</div>
     				<button class="btn btn-red-s3" style="vertical-align:middle;user-select:none;">테스팅</button>
     			</div> <!--pull right-->
 

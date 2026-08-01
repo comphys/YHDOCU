@@ -11,6 +11,31 @@
 						<span style="color:yellow;font-size:16px;font-weight:bold;letter-spacing:2px">RSN</span>
 					</div>
 					<div class='i-input-div'>
+						<div class='write-input-left' style="text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(0)"> 시작</div>
+						<input type='text' name='시작일자' class="i-date" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
+					</div>
+					<div class='i-input-div'>
+						<div class='write-input-left' style="text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(1)"> 종료</div>
+						<input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
+					</div>
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(5)">5y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(3)">3y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(2)">2y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(1)">1y</div>&nbsp;
+					<div class='label label-info' style="cursor:pointer" onclick="startYearSpan()">S</div>&nbsp;
+					<div style="display:inline-block;">
+						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;" title="로그기록"></i>
+					</div>
+					<div style="display:inline-block;">	
+						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro('test')" title="테스트모드"></i>
+					</div>
+					<div style="display:inline-block;">
+						<i class="fa fa-superpowers fa-lg" style="color:cadetblue;cursor:pointer;" onclick="synchro('real')" title="동기화모드"></i>
+					</div>
+    			</div> <!--pull left-->
+
+    			<div class="pull-right">
+					<div class='i-input-div'>
 						<div class='write-input-left' style="text-align:center;width:100px;font-weight:bold;">투자자금</div>
 						<input type='text' class="i-number" name="투자자금" style="width:100px;text-align:center;" value="{{D['투자자금']}}">
 					</div>
@@ -24,32 +49,7 @@
 						<input type='text' class="i-number" name="안정시점" style="width:50px;text-align:center;" value="{{D['안정시점']}}">
 						<input type='text' class="i-number" name="안정회복" style="width:50px;text-align:center;background-color:black;" value="{{D['안정회복']}}">
 					</div>
-					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:#F6CECE;cursor:pointer;" title="로그기록"></i>
-					</div>
-					<div style="display:inline-block;">	
-						<i class="fa fa-superpowers fa-lg" style="color:gray;cursor:pointer;" onclick="synchro('test')" title="테스트모드"></i>
-					</div>
-					<div style="display:inline-block;">
-						<i class="fa fa-superpowers fa-lg" style="color:cadetblue;cursor:pointer;" onclick="synchro('real')" title="동기화모드"></i>
-					</div>
-    			</div> <!--pull left-->
-
-    			<div class="pull-right">
-					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(5)">5y</div>&nbsp;
-					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(3)">3y</div>&nbsp;
-					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(2)">2y</div>&nbsp;
-					<div class='label label-info' style="cursor:pointer" onclick="YearSpan(1)">1y</div>&nbsp;
-					<div class='label label-info' style="cursor:pointer" onclick="startYearSpan()">S</div>&nbsp;
-					<div class='i-input-div'>
-						<div class='write-input-left' style="text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(0)"> 시작</div>
-						<input type='text' name='시작일자' class="i-date" value="{{D['시작일자']}}" style="width:110px;text-align:center;">
-					</div>
-					<div class='i-input-div'>
-						<div class='write-input-left' style="text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(1)"> 종료</div>
-						<input type='text' name='종료일자' class="i-date" value="{{D['종료일자']}}" style="width:110px;text-align:center;">
-					</div>
-    				<button class="btn btn-red-s3" style="vertical-align:middle;user-select:none;">테스팅</button>
+					<button class="btn btn-red-s3" style="vertical-align:middle;user-select:none;">테스팅</button>
     			</div> <!--pull right-->
 
 
