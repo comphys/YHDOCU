@@ -491,7 +491,7 @@
 
 {% if D['TR'] %}
 
-$(".i-date_1").Zebra_DatePicker({position:'absolute !important','z-index':'9999 !important',format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
+$(".i-date_1").Zebra_DatePicker({onOpen: function () { var datepicker = $(this).data('Zebra_DatePicker'); if (datepicker) {datepicker.update();},position:'absolute !important','z-index':'9999 !important',format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)},});
 $(".i-date_2").Zebra_DatePicker({position:'absolute !important','z-index':'9999 !important',format:'Y-m-d', first_day_of_week : 0, show_icon:false, onSelect:function(){slice_chart(1)}});
 
 $(".ohlc-price").click(function(){
