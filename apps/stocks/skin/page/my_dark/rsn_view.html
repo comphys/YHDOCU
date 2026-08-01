@@ -489,7 +489,27 @@
 <script src="/sys/chart/chartjs-plugin-datalabels.min.js"></script>
 <script>
 {% if D['_mobile'] %}
-$(".i-date-s,.i-date-e").Zebra_DatePicker({format:'Y-m-d', offset:[1000,580], first_day_of_week : 0}); 
+$(".i-date-s,.i-date-e").Zebra_DatePicker({format:'Y-m-d', offset:[1000,580], first_day_of_week : 0,
+onOpen: function() {
+    var $input = $(this);
+    var datepicker = $input.data('Zebra_DatePicker');
+    
+    if (datepicker) {
+      // 1. 클릭된 input의 현재 Viewport 기준 실제 위치 좌표 구하기
+      var rect = $input[0].getBoundingClientRect();
+      
+      // 2. 달력 팝업 레이어의 위치를 강제로 지정
+      datepicker.datepicker.css({
+        'position': 'fixed',                  // fixed로 고정하여 스크롤 오차 차단
+        'top': '200px',      // input 바로 아래 5px 지점
+        'left': '1200px',             // input의 왼쪽 시작점
+        'z-index': 999999
+      });
+    }
+  }
+
+
+}); 
 {% else %}
 $(".i-date-s,.i-date-e").Zebra_DatePicker({format:'Y-m-d', offset:[1200,580], first_day_of_week : 0}); 
 {% endif %}
