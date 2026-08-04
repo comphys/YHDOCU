@@ -1,6 +1,7 @@
 from system.core.load import Control
 from flask import session
-import easygui,json,os,system.core.my_utils as my
+# import easygui,json,os,system.core.my_utils as my
+import json,os,system.core.my_utils as my
 from PIL import Image
 
 class Ajax(Control) :
@@ -67,23 +68,23 @@ class Ajax(Control) :
         D['f_chk'] = '#00d068' if os.path.isdir(f_path) else '#ff874d'
         return json.dumps(D) 
 
-    def file_select(self) :
-        docu_root = self.D['post']['f_path']
-        f_in = easygui.fileopenbox("파일을 선택하세요",title="Open",default=docu_root+'/',filetypes=["*.*"])
-        f_xx = f_in.replace("\\","/")
-        return f_xx
+    # def file_select(self) :
+    #     docu_root = self.D['post']['f_path']
+    #     f_in = easygui.fileopenbox("파일을 선택하세요",title="Open",default=docu_root+'/',filetypes=["*.*"])
+    #     f_xx = f_in.replace("\\","/")
+    #     return f_xx
 
-    def file_attach(self) :
-        # D:/JYHDOCU/htdocs/YH문서함
-        docu_root = self.D['post']['f_path']
-        f_in = easygui.fileopenbox("파일을 선택하세요",title="Open",default=docu_root+'/',filetypes=["*.*"])
-        f_xx = my.file_split(f_in.replace("\\","/"))
-        if f_xx[2].lower() in ['jpg','png','jpeg','gif'] :
-            f_path = f_xx[0].replace(docu_root,'')
-            f_attach = f"<span data-myimage='{f_path}'>{f_xx[1]}</span>"
-        else :
-            f_attach = f"<span data-myfile='{f_xx[0]}'>{f_xx[1]}</span>"
-        return f_attach
+    # def file_attach(self) :
+    #     # D:/JYHDOCU/htdocs/YH문서함
+    #     docu_root = self.D['post']['f_path']
+    #     f_in = easygui.fileopenbox("파일을 선택하세요",title="Open",default=docu_root+'/',filetypes=["*.*"])
+    #     f_xx = my.file_split(f_in.replace("\\","/"))
+    #     if f_xx[2].lower() in ['jpg','png','jpeg','gif'] :
+    #         f_path = f_xx[0].replace(docu_root,'')
+    #         f_attach = f"<span data-myimage='{f_path}'>{f_xx[1]}</span>"
+    #     else :
+    #         f_attach = f"<span data-myfile='{f_xx[0]}'>{f_xx[1]}</span>"
+    #     return f_attach
 
     def thumb_check(self) :
         thumb_file = self.D['post']['url']
