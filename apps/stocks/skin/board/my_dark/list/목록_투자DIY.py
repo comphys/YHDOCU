@@ -39,7 +39,7 @@ class 목록_투자DIY(SKIN) :
         self.DB.tbl = self.D['tbl']
         self.DB.wre = f"add0 <='{last_date}'"
         self.DB.odr = "add0 DESC"
-        self.DB.lmt = '200'
+        self.DB.lmt = '70'
         
         chart_data = self.DB.get("add0,add10",assoc=True)
 
@@ -54,7 +54,7 @@ class 목록_투자DIY(SKIN) :
             last_clsp  = stock_data[0]['add3']
             self.D['총경과일'] = my.diff_day(first_date,day2=last_date)
             
-            chart_span = 40
+            chart_span = 60
             chart_slice = len(stock_data)
             self.D['chart_start'] = chart_slice - chart_span if chart_slice > chart_span else 0
             
