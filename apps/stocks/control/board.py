@@ -34,6 +34,9 @@ class Board(Control) :
             if  self.D['lst_sday'] != self.D['lst_ohlc'] : 
                 OHLC = self.load_app_lib('ohlc')
                 if OHLC.stocks_update('soxl',self.D['lst_sday']) : self.D['lst_ohlc'] = self.D['lst_ohlc']
+                RSN  =  self.load_bajax('rsnLog','update_log'); RSN()
+                DIY  =  self.load_bajax('logDIY','update_log'); DIY()
+                N315 =  self.load_bajax('log315_ljk','update_log'); N315()
 
 
     def list(self) :
