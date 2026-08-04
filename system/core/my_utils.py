@@ -99,9 +99,10 @@ def kor_loc_date(opt='Asia/Seoul') :
     return (loc_time)
 
 def last_stock_day(mydb) :
-
+    
+    tme = mydb.store('ohlc_time')
     now = now_to_kordate()
-    ldy = now[0:10] if now[14:19] > '09:00' else date_yesterday(now[0:10]) 
+    ldy = now[0:10] if now[14:19] > tme else date_yesterday(now[0:10]) 
     delta = -1
     while delta :
         temp = dayofdate(ldy,delta)

@@ -166,6 +166,7 @@ function submitReply(wysiwigeditor,uname)
 		var docu = $id(wysiwigeditor);
 		var replyTxt = docu.innerHTML;
 		var posturl = uri('linkurl') + 'boards-ajax/reply_save';
+		alert(posturl)
 		$.post( posturl, { bid : bid, no : no, uname : uname, replyTxt : replyTxt }).done( function() { location.reload(); }); 
 	
 	}

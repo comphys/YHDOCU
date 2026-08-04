@@ -1,8 +1,7 @@
 from system.core.load import Control
 from flask import session
-import easygui,json,os,system.core.my_utils as ut
+import easygui,json,os,system.core.my_utils as my
 from PIL import Image
-
 
 class Ajax(Control) :
     def _auto(self) :
@@ -10,17 +9,14 @@ class Ajax(Control) :
         
     def reply_save(self) :
 
-        qry     = f"SELECT uid, uname FROM h_user_list WHERE no={session['__u_Ino__']}"
-        USER    = self.DB.line(qry)
-
         bid     = self.D['post'].pop('bid')
         tbl     = 'h_'+bid+'_reply'
         parent  = self.D['post'].pop('no')
         replyTxt= self.D['post'].pop('replyTxt')
 
         self.D['post']['parent'] = parent
-        self.D['post']['uid'] = USER['uid']
-        self.D['post']['wdate'] = ut.now_timestamp()
+        self.D['post']['uid'] = session['__u_Ino__']
+        self.D['post']['wdate'] = my.now_timestamp()
         self.D['post']['content'] = replyTxt
 
         self.DB.exe(f"UPDATE h_{bid}_board SET reply = reply + 1 WHERE no = {parent}") 
@@ -81,7 +77,7 @@ class Ajax(Control) :
         # D:/JYHDOCU/htdocs/YH문서함
         docu_root = self.D['post']['f_path']
         f_in = easygui.fileopenbox("파일을 선택하세요",title="Open",default=docu_root+'/',filetypes=["*.*"])
-        f_xx = ut.file_split(f_in.replace("\\","/"))
+        f_xx = my.file_split(f_in.replace("\\","/"))
         if f_xx[2].lower() in ['jpg','png','jpeg','gif'] :
             f_path = f_xx[0].replace(docu_root,'')
             f_attach = f"<span data-myimage='{f_path}'>{f_xx[1]}</span>"
