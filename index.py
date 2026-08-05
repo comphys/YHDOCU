@@ -38,7 +38,7 @@ def skn(app,filename) :
 
 @app.route('/download/<path:filename>')
 def download(filename) :
-    if  filename == 'stock_mydata' and session['__u_Ino__'] :
+    if  filename == 'stock_mydata' and session['__u_Ino__'] == 'comphys' :
         directory = os.path.join(app_root,'mydb')
         return send_from_directory(directory,'stocks.sqlite')
     else :
