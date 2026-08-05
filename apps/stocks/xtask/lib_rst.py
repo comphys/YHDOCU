@@ -441,6 +441,7 @@ class update_Log :
         self.D['종목코드']  = 'SOXL'
         if b : self.D['시작일자'] = b
         old_date = my.dayofdate(self.D['시작일자'],-7)[0]
+        self.DB.clear()
         self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{self.D['종료일자']}'",'add0')
         self.B = self.DB.get('add0,add3,add8') # 날자, 종가, 증감 
 
