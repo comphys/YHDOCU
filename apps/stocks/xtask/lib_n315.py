@@ -271,10 +271,8 @@ class update_Log315 :
         self.B = self.DB.get('add0,add3,add8,add10') # 날자, 종가, 증감, 연속하락 
 
         # 데이타 존재 여부 확인
-        self.DB.tbl, self.DB.wre = ("h_stockHistory_board",f"add1='{self.D['종목코드']}'")
-        chk_data = self.DB.get_one("min(add0)")
-        if  chk_data > self.D['시작일자'] : 
-            self.D['NOTICE'] = f" {self.D['시작일자']} 에서 {self.D['종료일자']} 까지 분석을 위한 데이타가 부족합니다. 시작 날자를 {chk_data} 이후 3일 뒤로 조정하시기 바랍니다."
+        chk_data = '2010-03-12'
+        if  chk_data > self.D['시작일자'] : self.D['NOTICE'] = f" {self.D['시작일자']} 에서 {self.D['종료일자']} 까지 분석을 위한 데이타가 부족합니다. 시작 날자를 {chk_data} 이후 3일 뒤로 조정하시기 바랍니다."
             
 
     def increase_count(self,printOut=False) :
