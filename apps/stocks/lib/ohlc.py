@@ -19,9 +19,16 @@ class OHLC :
         one = self.DB.oneline(f"SELECT add0,add4,add5,add6,add3,add7,add8,add9,add10 FROM h_stockHistory_board WHERE add1='{cdx}' ORDER BY add0 DESC LIMIT 1")
         the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
 
+        # 주가 가져오기
+        get_data = self.get_tiingo_price(cdx,today)
+        if not get_data :  get_data = self.fetch_yahoo_chart_data(cdx,today)
+        # 환율 가져오기
+        krw = self.get_naver_fx_rate(today)
+        if not krw : krw = self.fetch_yahoo_chart_data("KRW=X",today)[0][4]
+
         ohlc = []
         ohlc.append(the_first_data)
-        ohlc.append(self.get_tiingo_price(cdx,today))
+        ohlc.append(get_data)
 
         if  not ohlc[1] : return False
                   
@@ -29,9 +36,6 @@ class OHLC :
         ohlc[1][7]  = ohlc[0][7]+1 if ohlc[1][4] >= ohlc[0][4] else 0
         ohlc[1][8]  = ohlc[0][8]+1 if ohlc[1][4] <  ohlc[0][4] else 0
             
-        # 환율 업데이트
-        krw = self.fetch_yahoo_chart_data("KRW=X",today)[0][4]
-
         db_keys = "add0,add4,add5,add6,add3,add7,add8,add9,add10,add1,add2,uid,uname,wdate,mdate"
         time_now = my.now_timestamp()
 
@@ -54,6 +58,25 @@ class OHLC :
         row = requests.get(url,headers).json()[0]
 
         return [today,row['open'],row['high'],row['low'],row['close'],row['volume'],0.0,0,0]
+
+    def get_naver_fx_rate(self,target_date):
+        """
+        네이버 증권 API를 통해 특정 날짜(YYYY-MM-DD)의 원/달러 환율을 조회합니다.
+        """
+        # 1. 네이버 일별 환율 시세 API (pageSize를 늘려 과거 데이터 확보)
+        url = "https://api.stock.naver.com/marketindex/exchange/FX_USDKRW/prices?pageSize=10&page=1"
+        headers = {"User-Agent": "Mozilla/5.0"}
+        
+        res = requests.get(url, headers=headers)
+        data = res.json()
+        
+        # 2. API 응답 데이터 중 입력한 날짜와 일치하는 항목 찾기
+        for item in data:
+            if item['localTradedAt'] == target_date:
+                return my.sv(item['closePrice'])
+            
+        return ''
+
 
     # def get_usd_krw(self):
     #     headers = {'User-Agent' : ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36')}
