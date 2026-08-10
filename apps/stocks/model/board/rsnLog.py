@@ -115,7 +115,7 @@ class Ajax(Model) :
         lday = self.DB.last_date('h_stockHistory_board')
         wday = my.next_stock_day(cday,self.DB)[0]
 
-        if cday == lday : return self.SYS.json("최종 업데이트가 완료되어 있습니다.")
+        if cday >= lday : return self.SYS.json("최종 업데이트가 완료되어 있습니다.")
 
         RSN  = self.SYS.load_app_lib('rsn')
 
