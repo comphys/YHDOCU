@@ -116,19 +116,27 @@ class update_DIY :
             self.M['진행상황']  = self.M['차수명칭'][self.M['매수차수']] + '차매수' if self.M['예정수량'] else ' '
             self.M['매수차수'] += 1
             self.M['매수보류']  = True
+            self.M['자체연속']  = 1
 
     def tomorrow_buy(self) :
         
         if  self.M['매수차수'] >  self.M['최대차수']-1 : self.M['예정수량'] = 0; return
         if  self.M['매수차수'] == self.M['최대차수']-1 : self.M['매금단계'][self.M['최대차수']-1] = int(self.M['현재잔액'])
         
-        self.M['매수예가'] = round(self.M['당일종가'] * self.M['보류가치'],2) if self.M['매수보류'] else round(self.M['당일종가'] * self.M['매입가치'],2)
-        self.M['예정수량'] = int(  self.M['매금단계'][self.M['매수차수']]/ self.M['매수예가'] ) 
+        매수예가1 = round(self.M['당일종가'] * self.M['보류가치'],2) if self.M['매수보류'] else round(self.M['당일종가'] * self.M['매입가치'],2)
+        매수예가2 = round(self.M['당일종가'] * self.M['자체진입'],2) if self.M['자체연속'] >= 1 else 0.0
+        self.M['매수예가'] = max(매수예가1,매수예가2)
+        self.M['예정수량'] = int(  self.M['매금단계'][self.M['매수차수']] / self.M['매수예가'] ) 
         
     def tomorrow_sell(self) :
         
         if not self.M['보유수량'] : return
         self.M['매도예가'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
+
+        if self.M['매수차수'] >  self.M['최대차수']-1 and self.M['현재날수'] > 12 :
+            self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * 1.1),self.M['매도예가']*0.9)
+        
+
 
 
     def tomorrow_step(self)   :
@@ -137,6 +145,7 @@ class update_DIY :
         self.tomorrow_sell()
         
         if  self.M['매수예가']>= self.M['매도예가'] : self.M['매수예가'] = self.M['매도예가'] - 0.01
+
         
     
     def new_day(self) :
@@ -162,6 +171,7 @@ class update_DIY :
             self.M['매수차수'] = 1
             self.M['첫날기록'] = False
             self.M['매수보류'] = True
+            self.M['자체연속'] = 0 
 
             return True
 
@@ -189,6 +199,7 @@ class update_DIY :
             self.M['종가변동'] = float(BD['add8']) 
             self.M['당일연속'] = int(BD['add10']) 
             self.M['전일종가'] = float(self.B[idx-1]['add3'])  
+            self.M['자체연속'] = self.M['자체연속']+1 if  self.M['당일종가'] < self.M['전일종가'] else 0
             self.M['진행상황'] = ''
             self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','수수료등'],0)
             
@@ -267,16 +278,15 @@ class update_DIY :
     def get_start(self,b='') :
 
         self.D['종목코드']  = 'SOXL'
+
         if b : self.D['시작일자'] = b
+        if self.D['시작일자'] < '2010-03-15' : self.D['시작일자'] = '2010-03-15'
         old_date = my.dayofdate(self.D['시작일자'],-7)[0]
+        
         self.DB.clear()
         self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{self.D['종료일자']}'",'add0')
         self.B = self.DB.get('add0,add3,add8,add10') # 날자, 종가, 증감, 연속하락 
 
-        # 데이타 존재 여부 확인
-        chk_data = '2010-03-12'
-        if  chk_data > self.D['시작일자'] : self.D['NOTICE'] = f" {self.D['시작일자']} 에서 {self.D['종료일자']} 까지 분석을 위한 데이타가 부족합니다. 시작 날자를 {chk_data} 이후 3일 뒤로 조정하시기 바랍니다."
-            
 
     def increase_count(self,printOut=False) :
         
@@ -295,6 +305,7 @@ class update_DIY :
         self.M['진입가치'] = ST['A0203']
         self.M['보류가치'] = ST['A0204']
         self.M['첫날가치'] = ST['A0205']
+        self.M['자체진입'] = ST['A0206']
         self.M['매수보류'] = False
         self.M['매수지연'] = False
         #----------------------------------------------------------
@@ -318,6 +329,7 @@ class update_DIY :
         self.M['최장일수']  = 0   # 최고 오래 지속된 시즌의 일수
         self.M['첫날기록']  = False
         self.M['전일종가']  = 0.0
+        self.M['자체연속']  = 0 
         
         self.set_value(['매수수량','매도수량','예정수량','보유수량','진최하락'],0)
         self.set_value(['매수금액','매도금액','총매수금','평균단가','수익현황','현수익률','평가금액','매수예가','수수료등'],0.0)

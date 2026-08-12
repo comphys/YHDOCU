@@ -228,8 +228,8 @@ class update_Log315 :
         if self.chart and self.D['c_date'] : self.D['s_date'] = self.D['c_date'][0]; self.D['e_date'] = self.D['c_date'][-1]
 
         if  self.stat :
-            self.D['월별구분'] = [ x[0] for x in self.D['월익통계']][-28:]
-            self.D['월별이익'] = [ round(x[1]) for x in self.D['월익통계']][-28:]
+            self.D['월별구분'] = [ x[0] for x in self.D['월익통계']]
+            self.D['월별이익'] = [ round(x[1]) for x in self.D['월익통계']]
 
             if  self.D['월별이익'][0] == 0 :
                 self.D['월별구분'].pop(0)
@@ -264,15 +264,14 @@ class update_Log315 :
     def get_start(self,b='') :
 
         self.D['종목코드']  = 'SOXL'
+
         if b : self.D['시작일자'] = b
+        if self.D['시작일자'] < '2010-03-15' : self.D['시작일자'] = '2010-03-15'
         old_date = my.dayofdate(self.D['시작일자'],-7)[0]
+        
         self.DB.clear()
         self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{self.D['종료일자']}'",'add0')
         self.B = self.DB.get('add0,add3,add8,add10') # 날자, 종가, 증감, 연속하락 
-
-        # 데이타 존재 여부 확인
-        chk_data = '2010-03-12'
-        if  chk_data > self.D['시작일자'] : self.D['NOTICE'] = f" {self.D['시작일자']} 에서 {self.D['종료일자']} 까지 분석을 위한 데이타가 부족합니다. 시작 날자를 {chk_data} 이후 3일 뒤로 조정하시기 바랍니다."
             
 
     def increase_count(self,printOut=False) :
@@ -366,6 +365,7 @@ class update_Log315 :
             self.D['N_생활도평비'] = 0
             self.D['N_생활도종비'] = 0
             self.D['N_생활평대비'] = 0
+            self.D['N_생활배분금'] = self.M['매금단계'][1]
             
         else : 
             self.D['N_생활매수량'] = self.M['예정수량']
@@ -373,6 +373,7 @@ class update_Log315 :
             self.D['N_생활평대비'] = self.next_percent(self.M['평균단가'],self.D['N_생활매수가']) 
             self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
             self.D['N_생활매수가'] = self.D['N_생활매수가']
+            self.D['N_생활배분금'] = self.D['배분금액']
             
             self.D['N_생활매도량'] = self.M['보유수량']
             self.D['N_생활매도가'] = self.M['매도예가']

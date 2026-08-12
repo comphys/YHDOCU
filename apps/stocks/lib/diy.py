@@ -128,6 +128,11 @@ class DIY :
         if not self.M['보유수량'] : return
         self.M['매도예가'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
 
+        if self.M['매수차수'] >  self.M['최대차수']-1 and self.M['현재날수'] > 12 :
+            self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * 1.1),self.M['매도예가']*0.9)
+        
+
+
 
     def tomorrow_step(self)   :
 

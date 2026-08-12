@@ -27,7 +27,7 @@ class Board(Control) :
             self.D['lst_sday'] = my.last_stock_day(self.DB)
             self.D['lst_ohlc'] = self.DB.last_date('h_stockHistory_board')
 
-            if  self.D['lst_sday'] != self.D['lst_ohlc'] : 
+            if  self.D['_lcl'] and self.D['lst_sday'] != self.D['lst_ohlc'] : # 로컬에서만 동작하도록 함, 서버에서는 TASK에 의한 업데이트
 
                 OHLC = self.load_app_lib('ohlc')
                 the_next_day = my.next_stock_day(self.D['lst_ohlc'],self.DB)[0]
