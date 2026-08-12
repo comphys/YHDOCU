@@ -133,8 +133,8 @@ class update_DIY :
         if not self.M['보유수량'] : return
         self.M['매도예가'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
 
-        if self.M['매수차수'] >  self.M['최대차수']-1 and self.M['현재날수'] > 12 :
-            self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * 1.1),self.M['매도예가']*0.9)
+        if  self.M['매수차수'] >  self.M['최대차수']-1 and self.M['현재날수'] > self.M['탈출일수'] :
+            self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * self.M['탈출종가']),my.round_up(self.M['매도예가']*self.M['탈출허용'],2))
         
 
 
@@ -306,6 +306,9 @@ class update_DIY :
         self.M['보류가치'] = ST['A0204']
         self.M['첫날가치'] = ST['A0205']
         self.M['자체진입'] = ST['A0206']
+        self.M['탈출일수'] = ST['A0303']
+        self.M['탈출종가'] = ST['A0304']
+        self.M['탈출허용'] = ST['A0305']
         self.M['매수보류'] = False
         self.M['매수지연'] = False
         #----------------------------------------------------------
