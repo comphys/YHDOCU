@@ -11,7 +11,16 @@ class DB :
         self.tbl = ''
         self.err = ''
         self.system = platform.system()
-        mydb = '/YHDOCU/mydb/' + dbname + '.sqlite'  if self.system == 'Windows' else '/home/comphys/YHDOCU/mydb/' + dbname + '.sqlite'
+
+        if  self.system == 'Windows' :
+            mydb = '/YHDOCU/mydb/' + dbname + '.sqlite'  
+        elif self.system == 'Linux'  :
+            mydb = '/home/comphys/YHDOCU/mydb/' + dbname + '.sqlite'
+        elif self.system == 'Android':
+            mydb = '/data/data/com.termux/files/home/YHDOCU/mydb/' + dbname + '.sqlite'
+        else : 
+            mydb = ''
+
         self.con = sqlite3.connect(mydb, check_same_thread=True)
         self.cur = self.con.cursor()
 

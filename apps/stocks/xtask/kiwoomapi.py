@@ -73,7 +73,25 @@ class KIWOOM :
 
         return ohlc
 
+    # 미국주식 원장 잔고 확인
+    def check_the_balance(self) :
 
+        endp = '/api/us/acnt'
+        token = self.get_token()
+        self.headers['authorization'] = f'Bearer {token}'
+        self.headers['api-id'] = 'ust21070'
+
+        params = {}
+
+        response = requests.post(self.host+endp, headers=self.headers, json=params)
+        rst = response.json()
+
+        r = rst['result_list'][0]
+        
+        rst_pretty = {'종목명':r['stk_cd'],'보유수량':r['poss_qty'],'매입단가':r['frgn_stk_book_uv'],'현재가':r['now_pric'],
+                      '매입금액':r['frgn_stk_book_amt'],'평가금액':r['evlt_amt'],'손익금액':r['pl_amt'],'손익율':r['pl_rt'],
+                      'code':rst['return_code'],'rmsg':rst['return_msg']}
+        return rst_pretty 
 
     # 현재 토큰 폐기 시각이 한시간 이내면 재발급 받아서 리턴하고, 그렇지 않으면 현재의 토큰을 반환한다.
     def get_token(self) :
@@ -132,4 +150,6 @@ print(a)
 print('---------------------------------------------------------------------------------------------')
 b = AA.get_ohlc_price('SOXL','20260807')
 print(b)
-
+print('---------------------------------------------------------------------------------------------')
+d = AA.check_the_balance()
+print(d)
