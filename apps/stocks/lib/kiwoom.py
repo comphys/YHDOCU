@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime, timedelta
-from pytz import timezone
+from zoneinfo import ZoneInfo
 
 class KIWOOM :
 
@@ -86,7 +86,7 @@ class KIWOOM :
         app_key = self.DB.store('kiwoom_appkey')
         secret_key = self.DB.store('kiwoom_secretkey')
 
-        kst = timezone("Asia/Seoul")
+        kst = ZoneInfo("Asia/Seoul")
         hour_later_kst = datetime.now(kst) + timedelta(hours=1)
         hour_later_fmt = hour_later_kst.strftime("%Y%m%d%H%M%S")
 

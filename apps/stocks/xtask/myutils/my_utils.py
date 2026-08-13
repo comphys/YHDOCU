@@ -2,7 +2,7 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from bs4 import BeautifulSoup as bs
 from datetime import datetime, timedelta
-from pytz import timezone
+from zoneinfo import ZoneInfo
 import requests, math
 
 # number
@@ -32,7 +32,7 @@ def date_format_change(v,f1,f2) :
 
 def timestamp_to_date(ts='now',opt=1) :
 
-    kst = timezone('Asia/Seoul')
+    kst = ZoneInfo('Asia/Seoul')
 
     if ts=='now' : ts = int(datetime.now().timestamp())
 
@@ -49,7 +49,7 @@ def timestamp_to_date(ts='now',opt=1) :
 
 def now_to_kordate() : # 현재시각을 한국시간 존으로 요일을 표함해서 출력
 
-    korea_timezone = timezone('Asia/Seoul')
+    korea_timezone = ZoneInfo('Asia/Seoul')
     now = datetime.now(korea_timezone)
     days = ['월', '화', '수', '목', '금', '토', '일']
     weekday = days[now.weekday()]
@@ -58,7 +58,7 @@ def now_to_kordate() : # 현재시각을 한국시간 존으로 요일을 표함
 
 def kor_loc_date(opt='Asia/Seoul') :
 
-    loc = timezone(opt)
+    loc = ZoneInfo(opt)
 
     ts = int(datetime.now().timestamp())
     t_format = "%Y-%m-%d %H:%M:%S"
