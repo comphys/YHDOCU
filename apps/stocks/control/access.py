@@ -37,9 +37,9 @@ class Access(Control) :
                     session.permanent = False
                     pil = ''
                     pir = ''
-
-                with open('whoin.txt','a',encoding='utf-8') as f:
-                    f.write(f"<span class='who-id'>{pil}{uid}{pir}</span><span class='who-time'>{user_time}</span><span class='who-ip'>{user_ip}</span><span class='who-agent'>{user_agent}</span>\n")
+                if not self.D['_lcl'] :
+                    with open('whoin.txt','a',encoding='utf-8') as f:
+                        f.write(f"<span class='who-id'>{pil}{uid}{pir}</span><span class='who-time'>{user_time}</span><span class='who-ip'>{user_ip}</span><span class='who-agent'>{user_agent}</span>\n")
                 session['__u_Ino__'] = uid
                 session['CSH'] = {}
                 home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")

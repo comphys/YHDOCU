@@ -2,6 +2,14 @@ import requests
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from myutils.DB import DB
+import sys
+
+def log(*args, **kwargs) :
+
+    with open("kiwoom.txt","a",encoding="utf-8") as f:
+        print(*args, **kwargs, file=f)
+
+
 class KIWOOM :
 
     def __init__(self) :
@@ -76,6 +84,7 @@ class KIWOOM :
                       '매입금액':r['frgn_stk_book_amt'],'평가금액':r['evlt_amt'],'손익금액':r['pl_amt'],'손익율':r['pl_rt']}
         return rst_pretty 
 
+
     # 현재 토큰 폐기 시각이 한시간 이내면 재발급 받아서 리턴하고, 그렇지 않으면 현재의 토큰을 반환한다.
     def get_token(self) :
 
@@ -124,7 +133,8 @@ class KIWOOM :
             nyse_tz = ZoneInfo("America/New_York")
             nyse_time = datetime.now(nyse_tz)
             nyse_time = nyse_time.strftime("%Y-%m-%d %H:%M %Z")
-            print(f"현재의 토큰을 사용합니다. 현지시각 : {nyse_time}")
+            print(f"현지시각 : {nyse_time}")
+            log(f"현지시각 : {nyse_time}")
             return self.DB.store('kiwoom_token')
 
 # 에러메세지들
@@ -138,6 +148,8 @@ print(a)
 print('---------------------------------------------------------------------------------------------')
 b = AA.get_ohlc_price('SOXL','20260813')
 print(b)
-# print('---------------------------------------------------------------------------------------------')
+log(f"실시간 : {a['현재가']} : OHLC :{b['종가']}")
+log('-----------------------------------------')
+print('---------------------------------------------------------------------------------------------')
 # d = AA.check_the_balance()
 # print(d)
