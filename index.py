@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template, redirect, send_from_directory
 from flask import session
-import config, os, configparser
+import config, os, configparser,jsonify
 from system.core.load import load_control
 from datetime import timedelta
 # ----------------------------------------------------------------------------------------------------------
@@ -12,6 +12,7 @@ app_root  = os.path.dirname(os.path.abspath(__file__)) # 현재 파일의 절대
 app.template_folder = os.path.join(app_root,'apps')    # C:\YHDOCU\apps
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)   
 client_ip =''
+user_db = {"id":1,"name":"JUNG YONG HOON"}
 # white_networks = ['127.0','119.56','118.235','119.201','183.106','211.176','175.201']
 
 # ----------------------------------------------------------------------------------------------------------
@@ -25,6 +26,11 @@ def ban__remote_addr():
     #     return render_template('sys/sys_msg.html',msg=f"{client_ip} 허용된 접근경로가 아닙니다.")
 
 # href = "/sys/jyh/aaa.js"  url_for('sys',filename='jyh/aaa.js')
+@app.route('/api/user', methods=['GET','POST'])
+def get_user():
+    return jsonify(user_db),200
+
+
 @app.route('/sys/<path:filename>')
 def sys(filename) :
     directory = os.path.join(app_root,'system','client')
@@ -99,4 +105,4 @@ def main(myapp='stocks', control='board', method='index', option=None):
 
 
 # ----------------------------------------------------------------------------------------------------------
-if __name__ == "__main__": app.run(host='127.0.0.1', port=5000, debug=True)
+if __name__ == "__main__": app.run(host='0,0,0,0', port=5000, debug=True)

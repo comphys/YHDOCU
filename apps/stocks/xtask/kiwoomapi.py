@@ -6,7 +6,7 @@ import sys
 
 def log(*args, **kwargs) :
 
-    with open("kiwoom.txt","a",encoding="utf-8") as f:
+    with open("kiwoom.log","a",encoding="utf-8") as f:
         print(*args, **kwargs, file=f)
 
 
