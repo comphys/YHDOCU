@@ -10,9 +10,13 @@ app.config.from_object(config.Config)
 app.url_map.strict_slashes = False
 app_root  = os.path.dirname(os.path.abspath(__file__)) # 현재 파일의 절대 경로  C:\YHDOCU
 app.template_folder = os.path.join(app_root,'apps')    # C:\YHDOCU\apps
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)   
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)  
+app.config['JSON_AS_ASCII'] = False 
 client_ip =''
-user_db = {"id":1,"name":"JUNG YONG HOON"}
+users_db = [
+    {"id": 1, "name": "김철수", "role": "개발자"},
+    {"id": 2, "name": "이영희", "role": "디자이너"}
+]
 # white_networks = ['127.0','119.56','118.235','119.201','183.106','211.176','175.201']
 
 # ----------------------------------------------------------------------------------------------------------
@@ -26,9 +30,12 @@ def ban__remote_addr():
     #     return render_template('sys/sys_msg.html',msg=f"{client_ip} 허용된 접근경로가 아닙니다.")
 
 # href = "/sys/jyh/aaa.js"  url_for('sys',filename='jyh/aaa.js')
-@app.route('/api/user', methods=['GET','POST'])
-def get_user():
-    return jsonify(user_db),200
+@app.route('/api/users', methods=['GET'])
+def get_users():
+    return jsonify({
+        "status": "success",
+        "data": users_db
+    }), 200
 
 
 @app.route('/sys/<path:filename>')
