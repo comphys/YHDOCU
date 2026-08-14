@@ -14,10 +14,8 @@ class M_DIYChart(Model) :
         self.D['세금적용'] = 'off'
 
         # 기간 설정(최근 2년간)
-        # self.D['end_date'] = my.timestamp_to_date(ts='now',opt=7)
-        self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")
-        # self.D['시작일자'] = my.dayofdate(self.D['종료일자'],delta=-365*2)[0]
-        self.D['시작일자'] = self.DB.parameter('N0701')
+        self.D['종료일자'] = self.DB.last_date("h_stockHistory_board")
+        self.D['시작일자'] = my.dayofdate(self.D['종료일자'],delta=-365*2)[0]
 
     def action(self) :
         D = {}

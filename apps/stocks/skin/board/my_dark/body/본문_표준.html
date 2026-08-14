@@ -24,14 +24,14 @@
 <div class="row-row clearfix">
 	<div class='pull-left'>
 		{% if D['BCONFIG']['type'] =='yhboard' %}
-		<button class="btn btn-blue-s2 btn-small" id="toggle_reply">댓글</button>
+		<button class='btn-transparent' title='댓글' id="toggle_reply"><i class='fa fa-quote-left font-button'></i></button>
 		<a href="{{D['_bse']}}board/add_body/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}/brother={{D['Brother']}}">
-			<button class='btn btn-blue-s2 btn-small'>추가</button>
+			<button class='btn-transparent' title='추가'><i class='fa fa-pencil font-button'></i></button>
 		</a>
 		{% endif %}
-		<button class="btn btn-blue-s3 btn-small" onclick="open_editor()">코드</button>
+		<button class='btn-transparent' title='코드'  onclick="open_editor()"><i class='fa fa-github font-button'></i></button>
 		<div class='btn-group'>
-			<button class='btn btn-blue-s3 btn-small dropdown-toggle' data-toggle='dropdown'>수정</button>
+			<button class='btn-transparent dropdown-toggle' title='수정' data-toggle='dropdown'><i class='fa fa-wrench font-button'></i></button>
 				<ul class='dropdown-menu' style='margin-top:-3px;opacity:0.85;'>
 					<li><a href="{{D['_bse']}}board/modify/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}/brother={{D['Brother']}}{{D['Searchplus']}}">수정하기</a></li>
 					<li onclick="delete_chk('{{D['_bse']}}boards-action/delete/{{D['bid']}}/no={{D['No']}}/page={{D['page']}}')" style="cursor:pointer"><a>삭제하기</a></li>
@@ -40,7 +40,7 @@
 	</div>
 	<div class='pull-right'>
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}/page={{D['page']}}">
-			<button class='btn btn-blue btn-small'>목록</button>
+			<button class='btn-transparent' title='목록'><i class='fa fa-list font-button'></i></button>
 		</a>
 	</div>
 </div>
