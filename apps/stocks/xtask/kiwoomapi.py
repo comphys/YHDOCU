@@ -2,7 +2,7 @@ import requests
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from myutils.DB import DB
-import sys
+
 
 def log(*args, **kwargs) :
 
