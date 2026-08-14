@@ -10,7 +10,7 @@ app.config.from_object(config.Config)
 app.url_map.strict_slashes = False
 app_root  = os.path.dirname(os.path.abspath(__file__)) # 현재 파일의 절대 경로  C:\YHDOCU
 app.template_folder = os.path.join(app_root,'apps')    # C:\YHDOCU\apps
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)  
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=10)  
 app.config['JSON_AS_ASCII'] = False 
 client_ip =''
 # white_networks = ['127.0','119.56','118.235','119.201','183.106','211.176','175.201']
@@ -47,11 +47,27 @@ def download(filename) :
         directory = session['epl_path']
         return send_from_directory(directory,filename)    
 
+# [REST API]------------------------------------------------------------------------------------------------
 
+@app.route('/api/<string:control>/<string:method>',methods=['POST'])
+def rest_api(myapp='api',control=None,method=None) :
+    try : API = load_control(control,myapp)
+    except ModuleNotFoundError : return jsonify({'code':1,'msg':"해당 컨트롤을 찾을 수 없습니다"})
+    if not hasattr(API,method) : return jsonify({'code':1,'msg':"해당 메써드를 찾을 수 없습니다"})
+
+    Parameters = {}
+    Parameters['_aut'] = request.headers.get('Authorization')
+    Parameters['_pos'] = request.form if request.method == 'POST' else None
+    Instance = API(Parameters)
+    DATA = getattr(Instance,method)()
+
+    return jsonify(DATA)
+
+# ----------------------------------------------------------------------------------------------------------
 @app.route('/')
-@app.route('/<string:myapp>/')
+@app.route('/<string:myapp>')
 @app.route('/<string:myapp>/<string:control>')
-@app.route('/<string:myapp>/<string:control>/<string:method>/',methods=['GET','POST'])
+@app.route('/<string:myapp>/<string:control>/<string:method>',methods=['GET','POST'])
 @app.route('/<string:myapp>/<string:control>/<string:method>/<path:option>',methods=['GET','POST'])
 def main(myapp='stocks', control='board', method='index', option=None):
     
@@ -95,11 +111,6 @@ def main(myapp='stocks', control='board', method='index', option=None):
         if   type(DATA)  is str   : return DATA
         elif type(DATA)  is dict  : return render_template(myapp+'/skin/' + DATA['skin'],D=DATA)
     else : return ''
-
-
-
-
-
 
 # ----------------------------------------------------------------------------------------------------------
 if __name__ == "__main__": app.run(host='127,0,0,1', port=5000, debug=True)
