@@ -1,4 +1,5 @@
 from system.core.load import Control
+import jwt #Pyjwt
 
 class Check(Control) : 
 
@@ -6,13 +7,18 @@ class Check(Control) :
     def _auto(self) :
         self.DB = self.db('stocks')
 
-    def get(self) :
-
-        token = self.DB.store('kiwoom_token')
-        self.D['post']['token'] = token
-        return self.D['post']
+    def is_valid_token(self) :
+        s_key = self.DB.store('secret_key')
+        try :
+            jwt.decode(self.D['auth'],s_key,algorithms=['HS256'])
+            return True
+        except jwt.InvalidTokenError :
+            return False
 
     def rsn_check(self):
 
-        self.DB.parameter_update('TX070',self.D['post']['date'])
-        return self.D['post']['date']
+        if  self.is_valid_token() :
+            self.DB.parameter_update('TX070',self.D['post']['date'])
+            return self.D['post']['date']
+        else :
+            return "유효하지 않거나 위변조된 토큰입니다"
