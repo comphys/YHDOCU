@@ -1,6 +1,6 @@
-from flask import Flask, request, render_template, redirect, send_from_directory
+from flask import Flask, request, render_template, redirect, send_from_directory, jsonify
 from flask import session
-import config, os, configparser,jsonify
+import config, os, configparser
 from system.core.load import load_control
 from datetime import timedelta
 # ----------------------------------------------------------------------------------------------------------
@@ -13,10 +13,6 @@ app.template_folder = os.path.join(app_root,'apps')    # C:\YHDOCU\apps
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)  
 app.config['JSON_AS_ASCII'] = False 
 client_ip =''
-users_db = [
-    {"id": 1, "name": "김철수", "role": "개발자"},
-    {"id": 2, "name": "이영희", "role": "디자이너"}
-]
 # white_networks = ['127.0','119.56','118.235','119.201','183.106','211.176','175.201']
 
 # ----------------------------------------------------------------------------------------------------------
@@ -30,13 +26,6 @@ def ban__remote_addr():
     #     return render_template('sys/sys_msg.html',msg=f"{client_ip} 허용된 접근경로가 아닙니다.")
 
 # href = "/sys/jyh/aaa.js"  url_for('sys',filename='jyh/aaa.js')
-@app.route('/api/users', methods=['GET'])
-def get_users():
-    return jsonify({
-        "status": "success",
-        "data": users_db
-    }), 200
-
 
 @app.route('/sys/<path:filename>')
 def sys(filename) :
@@ -57,6 +46,7 @@ def download(filename) :
     else :
         directory = session['epl_path']
         return send_from_directory(directory,filename)    
+
 
 @app.route('/')
 @app.route('/<string:myapp>/')
@@ -112,4 +102,4 @@ def main(myapp='stocks', control='board', method='index', option=None):
 
 
 # ----------------------------------------------------------------------------------------------------------
-if __name__ == "__main__": app.run(host='0,0,0,0', port=5000, debug=True)
+if __name__ == "__main__": app.run(host='127,0,0,1', port=5000, debug=True)
