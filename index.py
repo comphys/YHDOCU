@@ -13,7 +13,6 @@ app.template_folder = os.path.join(app_root,'apps')    # C:\YHDOCU\apps
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=10)  
 app.config['JSON_AS_ASCII'] = False 
 client_ip =''
-# white_networks = ['127.0','119.56','118.235','119.201','183.106','211.176','175.201']
 
 # ----------------------------------------------------------------------------------------------------------
 # 허용된 네트워크만 접근 허용
@@ -26,7 +25,6 @@ def ban__remote_addr():
     #     return render_template('sys/sys_msg.html',msg=f"{client_ip} 허용된 접근경로가 아닙니다.")
 
 # href = "/sys/jyh/aaa.js"  url_for('sys',filename='jyh/aaa.js')
-
 @app.route('/sys/<path:filename>')
 def sys(filename) :
     directory = os.path.join(app_root,'system','client')
