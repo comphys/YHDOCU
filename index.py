@@ -56,12 +56,13 @@ def rest_api(myapp='api',control=None,method=None) :
     if not hasattr(API,method) : return jsonify({'code':1,'msg':"해당 메써드를 찾을 수 없습니다"})
 
     Parameters = {}
+    Parameters['_api'] = True
     Parameters['_aut'] = request.headers.get('Authorization')
-    Parameters['_pos'] = request.form if request.method == 'POST' else None
+    Parameters['_pos'] = request.get_json()
     Instance = API(Parameters)
     DATA = getattr(Instance,method)()
 
-    return jsonify(DATA)
+    return jsonify({'code':0,'msg':'정상적으로 수행되었습니다','result':DATA})
 
 # ----------------------------------------------------------------------------------------------------------
 @app.route('/')
@@ -92,6 +93,7 @@ def main(myapp='stocks', control='board', method='index', option=None):
 
     # 기본 매개변수들 전달
     Parameters = {}
+    Parameters['_api'] = False
     Parameters['_opt'] = option # 매개변수
     Parameters['_pos'] = request.form if request.method == 'POST' else None
     Parameters['_cfg'] = myconfig
