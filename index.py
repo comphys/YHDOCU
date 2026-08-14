@@ -113,4 +113,4 @@ def main(myapp='stocks', control='board', method='index', option=None):
     else : return ''
 
 # ----------------------------------------------------------------------------------------------------------
-if __name__ == "__main__": app.run(host='127,0,0,1', port=5000, debug=True)
+if __name__ == "__main__": app.run(host="http://127.0.0.1", port=5000, debug=True)
