@@ -21,6 +21,8 @@ class KIWOOM :
 
     def get_current_price(self,symbol) :
 
+        if not self.token : return "토큰을 가져올 수 없습니다"
+
         endp = '/api/us/mrkcond'
         self.headers['authorization'] = f'Bearer {self.token}'
         self.headers['api-id'] = 'usa20100'
@@ -33,6 +35,8 @@ class KIWOOM :
         return {'코드':rst['return_code'],'안내':rst['return_msg'],'현재가':rst['cur_prc'],'증감':rst['flu_rt'],'전날종가':rst['base_close_pric'],'환율':rst['base_exrt']}
 
     def get_ohlc_price(self,symbol,date) :
+
+        if not self.token : return "토큰을 가져올 수 없습니다"
 
         endp = '/api/us/mrkcond'
         self.headers['authorization'] = f'Bearer {self.token}'
@@ -67,6 +71,8 @@ class KIWOOM :
 
     # 미국주식 원장 잔고 확인
     def check_the_balance(self) :
+
+        if not self.token : return "토큰을 가져올 수 없습니다"
 
         endp = '/api/us/acnt'
         self.headers['authorization'] = f'Bearer {self.token}'
@@ -109,6 +115,7 @@ class KIWOOM :
             response = requests.post(self.host+endp, headers=self.headers, json=params)
             rst = response.json()
 
+
             if  rst['return_code'] == 0 : # 토큰을 재발급한다.
                 endp = '/oauth2/token'
                 self.headers['api-id']='au10001'
@@ -125,7 +132,9 @@ class KIWOOM :
 
                 else : print(rst['return_msg'])
 
-            else : print(rst['return_msg'])
+            else : 
+                print(rst['return_msg'])
+                return False
 
 
         else :
@@ -148,8 +157,6 @@ print(a)
 print('---------------------------------------------------------------------------------------------')
 b = AA.get_ohlc_price('SOXL','20260813')
 print(b)
-log(f"실시간 : {a['현재가']} : OHLC :{b['종가']}")
-log('-----------------------------------------')
 print('---------------------------------------------------------------------------------------------')
 # d = AA.check_the_balance()
 # print(d)
