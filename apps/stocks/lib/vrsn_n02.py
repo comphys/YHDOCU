@@ -1,6 +1,6 @@
 import system.core.my_utils as my
 
-class VRSN_N01 :
+class VRSN_N02 :
 
     def __init__(self,SYS) :
         self.SYS   = SYS
@@ -115,8 +115,8 @@ class VRSN_N01 :
         if  self.M['첫날기록'] : return
         if  self.M['매수차수'] >  self.M['최대차수']-1 : self.M['예정수량'] = 0; return
         
-        self.M['매수예가'] = round(self.M['평균단가'],2)
-        self.M['예정수량'] = int(self.M['분할자금'] / self.M['당일종가'] ) 
+        self.M['매수예가'] = round(self.M['당일종가']*0.95,2)
+        self.M['예정수량'] = int(self.M['분할자금'] / self.M['매수예가'] ) 
         
     def tomorrow_sell(self) :
         
@@ -278,9 +278,8 @@ class VRSN_N01 :
         
         ST = self.DB.parameters_dict('매매전략/DIY')
         # ---------------------------------------------------------
-        self.M['매도가치'] = 1.10
-        self.M['탈출가치'] = 0.9
-        #----------------------------------------------------------
+        self.M['매도가치'] = 1.01
+        self.M['탈출가치'] = 0.85        #----------------------------------------------------------
         self.M['진행상황']  = '매수대기'
         self.M['기록시즌']  = 0
         
@@ -290,7 +289,7 @@ class VRSN_N01 :
         self.M['현재잔액']  = my.sv(self.D['일반자금'])
 
         # 잔액 분할
-        self.M['최대차수'] = 40
+        self.M['최대차수'] = 5
         self.M['분할자금'] = round(self.M['현재잔액'] /  self.M['최대차수'],2)
         self.M['매수차수'] = 0
         

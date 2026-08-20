@@ -3,6 +3,9 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from myutils.DB import DB
 
+#  정규장 종가는 키움증권의 경우 애프터마켓이(한국시각기준 ~08:00) 끝나는 시각에서 데이마켓이 시작되는 시간 사이에 가져오면 된다. 
+#  즉 아침 08:00 ~ 09:00 사이의 값을 가져오면 됨
+
 
 def log(*args, **kwargs) :
 
@@ -18,6 +21,9 @@ class KIWOOM :
         self.host  = 'https://api.kiwoom.com'
         self.headers = {'Content-Type':'application/json;charset=UTF-8','cont-yn':'N'}
         self.token = self.get_token()
+
+    def strf(self,num) :
+        return round(abs(float(num)),2)    
 
     def get_current_price(self,symbol) :
 
@@ -59,13 +65,13 @@ class KIWOOM :
         ohlc['코드'] = rst['return_code']
         ohlc['안내'] = rst['return_msg']
         ohlc['날자'] = f"{a['dt'][0:4]}-{a['dt'][4:6]}-{a['dt'][6:8]}"
-        ohlc['시가'] = f"{abs(float(a['open_pric'])):.2f}"
-        ohlc['고가'] = f"{abs(float(a['high_pric'])):.2f}"
-        ohlc['저가'] = f"{abs(float(a['low_pric'])):.2f}"
-        ohlc['종가'] = f"{abs(float(a['cur_prc'])):.2f}"
-        ohlc['볼륨'] = a['acc_trde_qty']
-        ohlc['전날'] = f"{float(a['base_pric']):.2f}"
-        ohlc['증감'] = a['flu_rt']
+        ohlc['시가'] = self.strf(a['open_pric'])
+        ohlc['고가'] = self.strf(a['high_pric'])
+        ohlc['저가'] = self.strf(a['low_pric'])
+        ohlc['종가'] = self.strf(a['cur_prc'])
+        ohlc['볼륨'] = int(a['acc_trde_qty'])
+        ohlc['전날'] = self.strf(a['base_pric'])
+        ohlc['증감'] = float(a['flu_rt'])
 
         return ohlc
 
@@ -105,36 +111,31 @@ class KIWOOM :
 
         if  hour_later_fmt >= self.token_valid_date :
             
-            print("토큰을 재발급합니다.")
-            # 현재의 토큰을 폐기하고, 재발급 받는다.
-            endp = '/oauth2/revoke'
-            self.headers['api-id'] = 'au10002'
+            print("토큰을 재발급합니다.") 
+            # # 현재의 토큰을 폐기하고, 재발급 받는다. 기존토큰을 폐기할 필요 없이 그냥 재발급 받으면 된다. 
+            # endp = '/oauth2/revoke'
+            # self.headers['api-id'] = 'au10002'
 
-            params = {'appkey' : app_key,'secretkey' : secret_key,'token' : self.token}
+            # params = {'appkey' : app_key,'secretkey' : secret_key,'token' : self.token}
+
+            # response = requests.post(self.host+endp, headers=self.headers, json=params)
+            # rst = response.json()
+
+            endp = '/oauth2/token'
+            self.headers['api-id']='au10001'
+            params = {'grant_type':'client_credentials','appkey':app_key,'secretkey':secret_key}
 
             response = requests.post(self.host+endp, headers=self.headers, json=params)
-            rst = response.json()
+            rst = response.json()            
 
+            if  rst['return_code'] == 0 :
+                self.DB.store('kiwoom_token',rst['token'])
+                self.DB.store('kiwoom_token_date',rst['expires_dt'])
+                print("새로운 토큰을 발급받았습니다.")
+                return self.DB.store('kiwoom_token')
 
-            if  rst['return_code'] == 0 : # 토큰을 재발급한다.
-                endp = '/oauth2/token'
-                self.headers['api-id']='au10001'
-                params = {'grant_type':'client_credentials','appkey':app_key,'secretkey':secret_key}
+            else : print(rst['return_msg'])
 
-                response = requests.post(self.host+endp, headers=self.headers, json=params)
-                rst = response.json()            
-
-                if  rst['return_code'] == 0 :
-                    self.DB.store('kiwoom_token',rst['token'])
-                    self.DB.store('kiwoom_token_date',rst['expires_dt'])
-                    print("새로운 토큰을 발급받았습니다.")
-                    return self.DB.store('kiwoom_token')
-
-                else : print(rst['return_msg'])
-
-            else : 
-                print(rst['return_msg'])
-                return False
 
 
         else :
@@ -155,7 +156,7 @@ print('-------------------------------------------------------------------------
 a = AA.get_current_price('SOXL')
 print(a)
 print('---------------------------------------------------------------------------------------------')
-b = AA.get_ohlc_price('SOXL','20260813')
+b = AA.get_ohlc_price('SOXL','20260819')
 print(b)
 print('---------------------------------------------------------------------------------------------')
 # d = AA.check_the_balance()

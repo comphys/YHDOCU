@@ -1,7 +1,6 @@
 import system.core.my_utils as my
 import requests
 from datetime import datetime, timezone
-# from bs4 import BeautifulSoup as bs
 
 class OHLC :
 
@@ -15,7 +14,7 @@ class OHLC :
 
         cdx = cdx.upper()
           
-        # # add0 = date / add1 = code / add2 = alias / add4 = open / add5 = high / add6 = low / add7 = volume / add8 = change / add9 = up / add10 = dn
+        # add0 = date / add1 = code / add2 = alias / add4 = open / add5 = high / add6 = low / add7 = volume / add8 = change / add9 = up / add10 = dn
         one = self.DB.oneline(f"SELECT add0,add4,add5,add6,add3,add7,add8,add9,add10 FROM h_stockHistory_board WHERE add1='{cdx}' ORDER BY add0 DESC LIMIT 1")
         the_first_data = [one[0],float(one[1]),float(one[2]),float(one[3]),float(one[4]),int(one[5]),float(one[6]),int(one[7]),int(one[8])]
 
@@ -60,9 +59,7 @@ class OHLC :
         return [today,row['open'],row['high'],row['low'],row['close'],row['volume'],0.0,0,0]
 
     def get_naver_fx_rate(self,target_date):
-        """
-        네이버 증권 API를 통해 특정 날짜(YYYY-MM-DD)의 원/달러 환율을 조회합니다.
-        """
+
         # 1. 네이버 일별 환율 시세 API (pageSize를 늘려 과거 데이터 확보)
         url = "https://api.stock.naver.com/marketindex/exchange/FX_USDKRW/prices?pageSize=10&page=1"
         headers = {"User-Agent": "Mozilla/5.0"}
@@ -76,17 +73,6 @@ class OHLC :
                 return my.sv(item['closePrice'])
             
         return ''
-
-
-    # def get_usd_krw(self):
-    #     headers = {'User-Agent' : ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36')}
-    #     url = "https://finance.naver.com/marketindex/?tabSel=exchange"
-    #     temp = requests.get(url, headers=headers)
-    #     soup = bs(temp.text,'lxml')
-    #     html_value = soup.select("#exchangeList > li.on > a.head.usd > div > span.value")[0]
-    #     html_date  = soup.select("#exchangeList > li.on > div > span.time")[0]
-    #     html_date  = html_date.text.replace('.','-')
-    #     return (html_date[:10],my.sv(html_value.text))
 
 
     # --------------------------------------------------------------------------------------------------------------------------------------------------------
