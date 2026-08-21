@@ -1,11 +1,13 @@
 from system.core.load import Model
-import system.core.my_utils as my
+import requests
 
 class M_whoin(Model) :
 
     def view(self) :
-        
-        # 기본 값
+
+        response = requests.get('https://api.ipify.org?format=json')
+        self.D['공아이피'] = response.json()['ip']
+
         with open('whoin.txt','r',encoding='utf-8') as f:
             content = f.read()
 
