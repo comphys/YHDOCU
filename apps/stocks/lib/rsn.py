@@ -519,12 +519,6 @@ class RSN :
                 self.D['월별구분'].pop(0)
                 self.D['월별이익'].pop(0)
 
-            monthly_total = sum(self.D['월별이익'])
-            monthly_lenth = len(self.D['월별이익'])
-            
-            if monthly_lenth : 
-                self.D['월별구분'].append('AVG')
-                self.D['월별이익'].append(round(monthly_total/monthly_lenth))
 
             self.D['손익저점'] = f"{self.D['손익저점']:.2f}"
 
@@ -921,24 +915,34 @@ class RSN :
 
         sx['최종수익'] = self.D['R_최종수익']
         sx['종수익률'] = self.D['R_최종익률']
-        sx['최장기록'] = f"{self.D['최장일수']}<span style='color:gray'>({self.D['최장일자'][2:]})</span>"
+        # sx['최장기록'] = f"{self.D['최장일수']}<span style='color:gray'>({self.D['최장일자'][2:]})</span>"
+        sx['최장일수'] = self.D['최장일수']
+        sx['최장일자'] = self.D['최장일자'][2:]
+
+
+        # sx['저점기록'] = f"<b>{self.D['손익저점']}</b><span style='color:gray'>({self.D['저점날자'][2:]})</span>" if self.D['저점날자'] else ''
+        sx['최대손절'] = self.D['손익저점']
+        sx['최손날자'] = self.D['저점날자'][2:]
 
         sx['기회최락'] = f"{self.D['MDD2']}<span style='color:gray'>({self.D['MDD_DAY2']})</span>"    if self.D['MDD_DAY2'] else ''
         sx['안정최락'] = f"{self.D['MDD3']}<span style='color:gray'>({self.D['MDD_DAY3']})</span>"    if self.D['MDD_DAY3'] else ''
         sx['생활최락'] = f"{self.D['MDD4']}<span style='color:gray'>({self.D['MDD_DAY4']})</span>"    if self.D['MDD_DAY4'] else ''
-        sx['저점기록'] = f"<b>{self.D['손익저점']}</b><span style='color:gray'>({self.D['저점날자'][2:]})</span>" if self.D['저점날자'] else ''
         
         if float(self.D['MinLP']) >= float(self.D['손익저점']) : self.D['MinLP'] = self.D['손익저점']; self.D['MinDD'] = self.D['시작일자'][2:]
         if self.D['기간한정'] == 'on' and (float(self.D['MinPR']) >= float(self.D['R_최종익률'])) : self.D['MinPR'] = self.D['R_최종익률']; self.D['MinPRDD'] = self.D['시작일자'][2:]
 
-        sx['게임횟수'] = f"{self.D['R_총매도수']}<span style='color:gray'>({self.D['R_총익절수']}/{self.D['R_총손절수']})</span>"
+        # sx['게임횟수'] = f"{self.D['R_총매도수']}<span style='color:gray'>({self.D['R_총익절수']}/{self.D['R_총손절수']})</span>"
+        sx['게임횟수'] = self.D['R_총매도수']
+        sx['게임승수'] = self.D['R_총익절수']
+        sx['게임패수'] = self.D['R_총손절수']
         sx['게임승률'] = self.D['R_총익승률']
         sx['게임익평'] = self.D['R_익절평균']
         sx['게임손평'] = self.D['R_손절평균']
+        
 
-        sx['기회갯수'] = f"{self.D['기정익절']}-{self.D['기정손절']} : {self.D['기회익절']}-{self.D['기회손절']}"
-        sx['안정갯수'] = f"{self.D['안정익절']}-{self.D['안정손절']} : {self.D['안회익절']}-{self.D['안회손절']}"
-        sx['생활갯수'] = f"{self.D['생정익절']}-{self.D['생정손절']} : {self.D['생회익절']}-{self.D['생회손절']}"
+        # sx['기회갯수'] = f"{self.D['기정익절']}-{self.D['기정손절']} : {self.D['기회익절']}-{self.D['기회손절']}"
+        # sx['안정갯수'] = f"{self.D['안정익절']}-{self.D['안정손절']} : {self.D['안회익절']}-{self.D['안회손절']}"
+        # sx['생활갯수'] = f"{self.D['생정익절']}-{self.D['생정손절']} : {self.D['생회익절']}-{self.D['생회손절']}"
 
         return sx
 

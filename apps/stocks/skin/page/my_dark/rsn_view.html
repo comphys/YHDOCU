@@ -60,7 +60,7 @@
 				<canvas id="myChart_main"  style="width:1070px;height:350px;background-color:#24272d;"></canvas>
 			</div>
 			<div class="pull-left" ondblclick="$('#statistics-profits').show()" style="margin-left:10px">
-				<canvas id="myChart_side" style="width:270px;height:330px;background-color:#24272d;"></canvas>
+				<canvas id="myChart_side" style="width:270px;height:328px;background-color:#24272d;"></canvas>
 				<div style="text-align:right;">
 					{% if D['s_date'] %}
 					<input type='text' name='s_date' class="i-date_1" style="width:90px;text-align:center;background:none;border:none" placeholder='시작일자' value="20{{D['s_date']}}"> -
@@ -301,20 +301,20 @@
 	 <table class='table table-striped' style="padding:0px">
 		<tr style="background-color: #000000;font-weight:bold;color:white;">
 			<td style="text-align:left;height:28px;">결과분석</td>
+			<td style="text-align:right;">소요일</td>
 			<td style="text-align:right;">{{D['R_총매도수']}}({{D['R_총익절수']}}/{{D['R_총손절수']}})</td>
 			<td style="text-align:right;">{{D['R_총익승률']}}%</td>
 			<td style="text-align:right;">{{D['R_익절평균']}}%</td>
 			<td style="text-align:right;">{{D['R_손절평균']}}%</td>
-			<td style="text-align:right;height:28px;">일수</td>
 		 </tr>
 	 {% for TR in D['손익통계'] %}
 	 <tr>
 		<td class="pointing_sd1" onclick="show_spanChart('{{TR[0]}}',1)">{{TR[0][2:]}}</td>
+		<td style="text-align:right;color:lightgoldenrodyellow">{{TR[7]}}</td>
 		<td class="pointing_sd2" onclick="show_chart('{{TR[5]}}','{{TR[0]}}','{{TR[2]}}','{{TR[3]}}')">{{TR[1]}}</td>
 		<td style="text-align:right;color:{{TR[4]}}">{{TR[2]}}</td>
 		<td style="text-align:right;color:{{TR[4]}}">{{TR[3]}}</td>
 		<td style="text-align:right;color:lightgoldenrodyellow">{{TR[6]}}</td>
-		<td style="text-align:right;color:lightgoldenrodyellow">{{TR[7]}}</td>
 	 </tr>
 	 {% endfor %}
 	 </table>
@@ -826,14 +826,10 @@ function slice_chart(opt) {
 	ctx_monthly.style.backgroundColor = '#33363b';
 	ctx_monthly.style.border = '2px solid black';
 	
-	let backColor = new Array(labels_monthly.length-1);
-	let boreColor = new Array(labels_monthly.length-1);
+	let backColor = new Array(labels_monthly.length);
+	let boreColor = new Array(labels_monthly.length);
 	backColor.fill('rgba(75, 192, 192, 0.4)');
 	backColor.push('#8F8681');
-	// backColor.push('rgba(255, 205, 86, 0.4)');
-	boreColor.fill('rgb(75, 192, 192)');
-	boreColor.push('#000000');
-	// boreColor.push('rgb(255, 205, 86)');
 
 	const data_monthly = {
 	labels: labels_monthly,

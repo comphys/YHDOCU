@@ -482,12 +482,10 @@ $("#daily-check").on('dblclick', function() {
 
 	let labels_monthly = {{D['월별구분']|safe}};
 	let monthlyProfits = {{D['월별순익']|safe}};
-	let backColor = new Array(labels_monthly.length-1);
-	let boreColor = new Array(labels_monthly.length-1);
+	let backColor = new Array(labels_monthly.length);
+	let boreColor = new Array(labels_monthly.length);
 	backColor.fill('rgba(75, 192, 192, 0.4)');
 	backColor.push('#8F8681');
-	boreColor.fill('rgb(75, 192, 192)');
-	boreColor.push('#000000');
 
 	const data_monthly = {
 	labels: labels_monthly,

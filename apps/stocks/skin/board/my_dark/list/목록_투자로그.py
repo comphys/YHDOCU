@@ -156,11 +156,7 @@ class 목록_투자로그(SKIN) :
                     
                 monthly_total = sum(self.D['월별이익'])
                 monthly_ntsum = sum(self.D['월별순익'])
-                monthly_lenth = len(self.D['월별이익'])
                 fee_sum       = sum(self.D['월수수료'])
-                
-                self.D['월별구분'].append('AVG')
-                self.D['월별순익'].append(round(monthly_ntsum/monthly_lenth))
                 
                 self.D['손익합계'] = f"$ {monthly_ntsum:,.0f} ({monthly_ntsum*현재환율:,.0f}원)" 
                 

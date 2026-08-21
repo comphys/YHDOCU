@@ -81,23 +81,27 @@
 			<table class='table table-striped table-hover' style="border:2px solid black;">
 				<tr style="background-color:#393f4a;border-bottom:1px solid black;">
 					<th style='text-align:center;width:60px;'>No</th>
-					<th style='text-align:center;width:90px;'>시작일</th>
-					<th style='text-align:center;width:90px;'>종료일</th>
+					<th style='text-align:center;width:80px;'>시작일</th>
+					<th style='text-align:center;width:80px;'>종료일</th>
 					<th style='text-align:right;width:60px;'>경과일</th>
 					
 					<th style='text-align:right;width:120px;'>총수익</th>
 					<th style='text-align:right;width:70px;'>수익률</th>
+					<th style='text-align:right;width:50'>LD</th>
+					<th style='text-align:right;width:80'>최장일</th>
+					<th style='text-align:center;width:60px'>LP</th>
+					<th style='text-align:center;width:80px'>최손일자</th>
+
+					<th style='text-align:center;width:130px'>최대하락(R)</th>
+					<th style='text-align:center;width:130px'>최대하락(S)</th>
+					<th style='text-align:center;width:130px'>최대하락(N)</th>
 					
-					<th style='text-align:center;width:100px'>최장기간</th>
-					<th style='text-align:center;width:140px'>최대손실</th>
-					<th style='text-align:center;width:140px'>최대하락(R)</th>
-					<th style='text-align:center;width:140px'>최대하락(S)</th>
-					<th style='text-align:center;width:140px'>최대하락(N)</th>
-					
-					<th style='text-align:right;width:110px'>게임(승/패)</th>
+					<th style='text-align:right;width:60px'>게임</th>
+					<th style='text-align:right;width:50px'>승</th>
+					<th style='text-align:right;width:50px'>패</th>
 					<th style='text-align:right;width:70px'>승률</th>
-					<th style='text-align:center;width:80px;'>익절평균</th>
-					<th style='text-align:right;'>손절평균</th>
+					<th style='text-align:center;width:70px;'>익평</th>
+					<th style='text-align:right;'>손평</th>
 				</tr>
 			</table>
 		</div>
@@ -110,22 +114,26 @@
 	<table class='table' style="background-color:black;border:2px solid black">
 		<colgroup>
 			<col style="width:60px"> <!-- No -->
-			<col style="width:90px"> <!-- 시작일 -->
-			<col style="width:90px"> <!-- 시작일 -->
+			<col style="width:80px"> <!-- 시작일 -->
+			<col style="width:80px"> <!-- 시작일 -->
 			<col style="width:60px;border-right:1px solid gray"> <!-- 경과 -->
 
 			<col style="width:120px"> <!-- 수익 -->
 			<col style="width:70px"> <!-- 수익률 -->
+			<col style="width:50px"> <!-- 최장 -->
+			<col style="width:80px;"> <!-- 최장일 -->
+			<col style="width:60px;"> <!-- LP -->
+			<col style="width:80px;border-right:1px solid gray"> <!-- LP date -->
+
+			<col style="width:130px"> <!-- MDD(R) -->
+			<col style="width:130px"> <!-- MDD(S) -->
+			<col style="width:130px;border-right:1px solid gray"> <!-- MDD(T) -->
 			
-			<col style="width:100px"> <!-- 최장일 -->
-			<col style="width:140px;border-right:1px solid gray"> <!-- LP -->
-			<col style="width:140px"> <!-- MDD(R) -->
-			<col style="width:140px"> <!-- MDD(S) -->
-			<col style="width:140px;border-right:1px solid gray"> <!-- MDD(T) -->
-			
-			<col style="width:110px"><!-- 게임횟수 -->
+			<col style="width:60px"><!-- 게임횟수 -->
+			<col style="width:50px"><!-- 게임횟수 -->
+			<col style="width:50px"><!-- 게임횟수 -->
 			<col style="width:70px"><!-- 게임승률 -->
-			<col style="width:80px"><!-- 평균익률 -->
+			<col style="width:70px"><!-- 평균익률 -->
 			<col><!-- 평균손률 -->
 		</colgroup>
 
@@ -143,14 +151,18 @@
 
 				<td style="text-align:right">{{S['최종수익']}}</td>
 				<td style="text-align:right;color:#CEF6CE">{{S['종수익률']}}</td>
-				<td style="text-align:right">{{S['최장기록']|safe}}</td>
+				<td style="text-align:right">{{S['최장일수']|safe}}</td>
+				<td style="text-align:right;color:gray">{{S['최장일자']|safe}}</td>
 				
-				<td style="text-align:right">{{S['저점기록']|safe}}</td>
+				<td style="text-align:right">{{S['최대손절']|safe}}</td>
+				<td style="text-align:right;color:gray">{{S['최손날자']|safe}}</td>
 				<td style="text-align:right">{{S['기회최락']|safe}}</td>
 				<td style="text-align:right">{{S['안정최락']|safe}}</td>
 				<td style="text-align:right">{{S['생활최락']|safe}}</td>
 
 				<td style="text-align:right">{{S['게임횟수']|safe}}</td>
+				<td style="text-align:right;color:gray">{{S['게임승수']|safe}}</td>
+				<td style="text-align:right;color:gray">{{S['게임패수']|safe}}</td>
 				<td style="text-align:right">{{S['게임승률']}}</td>
 				<td style="text-align:right">{{S['게임익평']}}</td>
 				<td style="text-align:right">{{S['게임손평']}}</td>

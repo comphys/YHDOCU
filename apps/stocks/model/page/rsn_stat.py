@@ -1,5 +1,6 @@
 from system.core.load import Model
 import system.core.my_utils as my
+import csv
 
 class M_rsn_stat(Model) :
 
@@ -54,6 +55,12 @@ class M_rsn_stat(Model) :
         RST.D |= D
 
         RST.do_viewStat(opt)
+
+        fieldnames = ['시작일자','종료일자','경과일자','최종수익','종수익률','최장일수','최장일자','최대손절','최손날자','게임횟수','게임승수','게임패수','게임승률','게임익평','게임손평']
+        with open("rsn_stat.csv","w",newline="",encoding="euc-kr") as f :
+            writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+            writer.writeheader()
+            writer.writerows(RST.D['SR'])
         
         return self.SYS.echo(RST.D)
         

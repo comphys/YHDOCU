@@ -95,7 +95,7 @@ class N315 :
             if   self.M['현재일자'][0:7] == diffd : self.D['월익통계'][-1][1] += difft 
             else : self.D['월익통계'].append([self.M['현재일자'][0:7],difft])
             color = "#F6CECE" if difft >= 0 else "#CED8F6"
-            self.D['손익통계'].append([self.M['현재일자'],f"{self.M['현재잔액']:,.2f}",f"{difft:,.2f}",f"{diffp:.2f}",color,self.M['기록시즌'],f"{diff0:.2f}"])
+            self.D['손익통계'].append([self.M['현재일자'],f"{self.M['현재잔액']:,.2f}",f"{difft:,.2f}",f"{diffp:.2f}",color,self.M['기록시즌'],f"{diff0:.2f}",self.M['현재날수']])
     
     def today_sell(self) :
         
@@ -325,7 +325,7 @@ class N315 :
             self.D['totalV'] = []
             self.D['일정익절'] = self.D['일정손절'] = self.D['일회익절'] = self.D['일회손절'] = 0
 
-            self.D['손익통계'] = [[self.D['시작일자'],f"{self.M['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE",'','0.00']]
+            self.D['손익통계'] = [[self.D['시작일자'],f"{self.M['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE",'','0.00',0]]
             self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
             self.D['손익저점'] = 100
             self.D['저점날자'] = ''

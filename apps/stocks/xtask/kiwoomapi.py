@@ -6,13 +6,6 @@ from myutils.DB import DB
 #  정규장 종가는 키움증권의 경우 애프터마켓이(한국시각기준 ~08:00) 끝나는 시각에서 데이마켓이 시작되는 시간 사이에 가져오면 된다. 
 #  즉 아침 08:00 ~ 09:00 사이의 값을 가져오면 됨
 
-
-def log(*args, **kwargs) :
-
-    with open("kiwoom.log","a",encoding="utf-8") as f:
-        print(*args, **kwargs, file=f)
-
-
 class KIWOOM :
 
     def __init__(self) :
@@ -21,6 +14,12 @@ class KIWOOM :
         self.host  = 'https://api.kiwoom.com'
         self.headers = {'Content-Type':'application/json;charset=UTF-8','cont-yn':'N'}
         self.token = self.get_token()
+
+    def log(self,*args, **kwargs) :
+
+        with open("kiwoom.log","a",encoding="utf-8") as f:
+            print(*args, **kwargs, file=f)
+
 
     def strf(self,num) :
         return round(abs(float(num)),2)    
@@ -144,7 +143,6 @@ class KIWOOM :
             nyse_time = datetime.now(nyse_tz)
             nyse_time = nyse_time.strftime("%Y-%m-%d %H:%M %Z")
             print(f"현지시각 : {nyse_time}")
-            log(f"현지시각 : {nyse_time}")
             return self.DB.store('kiwoom_token')
 
 # 에러메세지들
