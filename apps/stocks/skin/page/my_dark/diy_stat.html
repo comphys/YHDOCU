@@ -3,12 +3,12 @@
 {% block contents_page  %}
 <div class="row-row">
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
-		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/action/rsn_stat" >
+		<form method='post' name='stock_back_testing' action="{{D['_bse']}}page/action/diy_stat" >
 			<br>
 			<div class="well clearfix" style="border-radius:0px;">
     			<div class="pull-left">
 					<div style="display:inline-block;margin-left:10px;margin-right:10px;margin-top:4px;margin-bottom:0px;">
-						<span style="color:yellow;font-size:16px;font-weight:bold;letter-spacing:2px">RSN</span>
+						<span style="color:yellow;font-size:16px;font-weight:bold;letter-spacing:2px">DIY</span>
 					</div>
 					<div class='i-input-div'>
 						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:50px;cursor:pointer;" onclick="year_up_dn(0)"> 시작</div>
@@ -37,20 +37,9 @@
 
     			<div class="pull-right">
 					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:100px;font-weight:bold;">투자자금</div>
-						<input type='text' class="i-number" name="투자자금" style="width:80px;text-align:center;" value="{{D['투자자금']}}">
+						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:100px;font-weight:bold;">일반자금</div>
+						<input type='text' class="i-number" name="일반자금" style="width:80px;text-align:center;" value="{{D['일반자금']}}">
 					</div>
-					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:40px">RP</div>
-						<input type='text' class="i-number" name="기회시점" style="width:50px;text-align:center;" value="{{D['기회시점']}}">
-						<input type='text' class="i-number" name="기회회복" style="width:50px;text-align:center;background-color:black;" value="{{D['기회회복']}}">
-					</div>
-					<div class='i-input-div'>
-						<div class='write-input-left' style="background-color:#333F4F;text-align:center;width:40px">SP</div>
-						<input type='text' class="i-number" name="안정시점" style="width:50px;text-align:center;" value="{{D['안정시점']}}">
-						<input type='text' class="i-number" name="안정회복" style="width:50px;text-align:center;background-color:black;" value="{{D['안정회복']}}">
-					</div>
-
     				<button class="btn btn-red-s3" style="vertical-align:middle;user-select:none;">테스팅</button>
     			</div> <!--pull right-->
 
@@ -64,10 +53,10 @@
 				<input type="text" name="한정기간" value="{{D['한정기간']}}" style="border:1px solid gray;width:80px;text-align:center">&nbsp;일간&nbsp;&nbsp;
 				{% if D['평균가치'] %}
 				<span style="color:antiquewhite">
-					100% 이상 수익은 {{D['over100st']}}% 이며, 수익률 평균값은 {{D['평균가치']}}%, 표준편차는 {{D['표준편차']}} 입니다&nbsp;&nbsp;
+					100% 이상 {{D['over100st']}}% 이며, 수익률 평균값은 {{D['평균가치']}}%, 표준편차는 {{D['표준편차']}} &nbsp;&nbsp;
 				</span>
 				{% endif %}
-				최대손실 발생은  {{D['MinDD']}}에 시작 시 {{D['MinLP']}}% 입니다
+				최대손실 {{D['MinDD']}}에 시작 시 {{D['MinLP']}}% 
 
 			</div>
 			<div class="pull-right" style="padding:10px 5px;margin-right:0px;height:42px;">
@@ -82,24 +71,23 @@
 					<th style='text-align:center;width:60px;'>No</th>
 					<th style='text-align:center;width:80px;'>시작일</th>
 					<th style='text-align:center;width:80px;'>종료일</th>
-					<th style='text-align:right;width:60px;'>경과일</th>
+					<th style='text-align:right;width:80px;'>경과일</th>
 					
 					<th style='text-align:right;width:120px;'>총수익</th>
-					<th style='text-align:right;width:70px;'>수익률</th>
-					<th style='text-align:right;width:50'>LD</th>
-					<th style='text-align:right;width:80'>최장일</th>
-					<th style='text-align:center;width:60px'>LP</th>
-					<th style='text-align:center;width:80px'>최손일자</th>
+					<th style='text-align:right;width:80px;'>수익률</th>
+					<th style='text-align:right;width:60px'>LD</th>
+					<th style='text-align:right;width:80px'>최장일</th>
 
-					<th style='text-align:center;width:130px'>최대하락(R)</th>
-					<th style='text-align:center;width:130px'>최대하락(S)</th>
-					<th style='text-align:center;width:130px'>최대하락(N)</th>
+					<th style='text-align:right;width:60px'>LP</th>
+					<th style='text-align:right;width:80px'>최손일자</th>
+					<th style='text-align:right;width:80px'>MDD</th>
+					<th style='text-align:right;width:80px'>최하일자</th>
 					
 					<th style='text-align:right;width:60px'>게임</th>
-					<th style='text-align:right;width:50px'>승</th>
-					<th style='text-align:right;width:50px'>패</th>
-					<th style='text-align:right;width:70px'>승률</th>
-					<th style='text-align:center;width:70px;'>익평</th>
+					<th style='text-align:right;width:60px'>승</th>
+					<th style='text-align:right;width:60px'>패</th>
+					<th style='text-align:right;width:80px'>승률</th>
+					<th style='text-align:right;width:80px;'>익평</th>
 					<th style='text-align:right;'>손평</th>
 				</tr>
 			</table>
@@ -115,36 +103,35 @@
 			<col style="width:60px"> <!-- No -->
 			<col style="width:80px"> <!-- 시작일 -->
 			<col style="width:80px"> <!-- 시작일 -->
-			<col style="width:60px;border-right:1px solid gray"> <!-- 경과 -->
+			<col style="width:80px;border-right:1px solid gray"> <!-- 경과 -->
 
 			<col style="width:120px"> <!-- 수익 -->
-			<col style="width:70px"> <!-- 수익률 -->
-			<col style="width:50px"> <!-- 최장 -->
-			<col style="width:80px;"> <!-- 최장일 -->
-			<col style="width:60px;"> <!-- LP -->
+			<col style="width:80px"> <!-- 수익률 -->
+			<col style="width:60px"> <!-- 최장 -->
+			<col style="width:80px;border-right:1px solid gray"> <!-- 최장일 -->
+			
+			<col style="width:60px"> <!-- MDD -->
+			<col style="width:80px;"> <!-- 최하일 -->
+			<col style="width:80px;"> <!-- LP -->
 			<col style="width:80px;border-right:1px solid gray"> <!-- LP date -->
 
-			<col style="width:130px"> <!-- MDD(R) -->
-			<col style="width:130px"> <!-- MDD(S) -->
-			<col style="width:130px;border-right:1px solid gray"> <!-- MDD(T) -->
-			
 			<col style="width:60px"><!-- 게임횟수 -->
-			<col style="width:50px"><!-- 게임횟수 -->
-			<col style="width:50px"><!-- 게임횟수 -->
-			<col style="width:70px"><!-- 게임승률 -->
-			<col style="width:70px"><!-- 평균익률 -->
+			<col style="width:60px"><!-- 게임횟수 -->
+			<col style="width:60px"><!-- 게임횟수 -->
+			<col style="width:80px"><!-- 게임승률 -->
+			<col style="width:80px"><!-- 평균익률 -->
 			<col><!-- 평균손률 -->
 		</colgroup>
 
 
 			{% for S in D['SR'] %}
-			{% if S['시작일자'] == D['MinDD'] or S['시작일자'] == D['MinPRDD']%}
+			{% if S['통계시작'] == D['MinDD'] or S['통계시작'] == D['MinPRDD']%}
 			<tr style="border-top:1px solid #F8E6E0;border-bottom:1px solid #F8E6E0;">
 			{% else %}
 			<tr>
 			{% endif %}
 				<td style='text-align:center'>{{loop.index}}</td>
-				<td>{{S['시작일자']}}</td>
+				<td>{{S['진시일자']}}</td>
 				<td>{{S['종료일자']}}</td>
 				<td style="text-align:right">{{S['경과일자']}}</td>
 
@@ -152,12 +139,10 @@
 				<td style="text-align:right;color:#CEF6CE">{{S['종수익률']}}</td>
 				<td style="text-align:right">{{S['최장일수']|safe}}</td>
 				<td style="text-align:right;color:gray">{{S['최장일자']|safe}}</td>
-				
 				<td style="text-align:right">{{S['최대손절']|safe}}</td>
-				<td style="text-align:right;color:gray">{{S['최손날자']|safe}}</td>
-				<td style="text-align:right">{{S['기회최락']|safe}}</td>
-				<td style="text-align:right">{{S['안정최락']|safe}}</td>
-				<td style="text-align:right">{{S['생활최락']|safe}}</td>
+				<td style="text-align:right;color:gray">{{S['최장일자']|safe}}</td>
+				<td style="text-align:right">{{S['진최하락']|safe}}</td>
+				<td style="text-align:right;color:gray">{{S['최하일자']|safe}}</td>
 
 				<td style="text-align:right">{{S['게임횟수']|safe}}</td>
 				<td style="text-align:right;color:gray">{{S['게임승수']|safe}}</td>
@@ -171,8 +156,8 @@
 	</table>
 </div>
 
-<div id='backTestingChart' style="display:none;position:fixed;left:20px;top:150px;width:1500px;background-color:#24272d;padding:10px;border:2px solid black;">
-	<canvas id="mybackTestChart" style="width:1480px;height:380px;background-color:#24272d"></canvas>
+<div id='backTestingChart' style="display:none;position:fixed;left:20px;top:150px;width:720px;background-color:#24272d;padding:10px;border:2px solid black;">
+	<canvas id="mybackTestChart" style="width:700px;height:380px;background-color:#24272d"></canvas>
 </div>
 {% endif %}
 

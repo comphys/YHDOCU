@@ -1,4 +1,5 @@
 import system.core.my_utils as my
+import numpy
 
 class DIY :
 
@@ -132,15 +133,12 @@ class DIY :
             self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * self.M['탈출종가']),my.round_up(self.M['매도예가']*self.M['탈출허용'],2))
         
 
-
-
     def tomorrow_step(self)   :
 
         self.tomorrow_buy()
         self.tomorrow_sell()
         
         if  self.M['매수예가']>= self.M['매도예가'] : self.M['매수예가'] = self.M['매도예가'] - 0.01
-
         
     
     def new_day(self) :
@@ -167,6 +165,8 @@ class DIY :
             self.M['첫날기록'] = False
             self.M['매수보류'] = True
             self.M['자체연속'] = 0 
+
+            if self.stat and self.D['진시일자'] > self.M['현재일자'] : self.D['진시일자'] = self.M['현재일자']
 
             return True
 
@@ -221,7 +221,7 @@ class DIY :
 
         self.D['최장일수'] = self.M['최장일수']
         self.D['최장일자'] = self.M['최장일자']
-        self.D['MDD1'] = f"{self.M['진최하락']:.2f}"; self.D['MDD_DAY1'] = self.M['최하일자'][2:]
+        self.D['진최하락'] = f"{self.M['진최하락']:.2f}"; self.D['최하일자'] = self.M['최하일자'][2:]
         
         초기자본 = float(self.D['일반자금'].replace(',','')); 
         최종자본 = self.M['평가금액']+self.M['현재잔액']; 
@@ -263,17 +263,27 @@ class DIY :
             self.D['R_총매도수'] = asis_c; self.D['R_총익절수'] = asispc; self.D['R_총손절수'] = asisuc
             self.D['R_총익승률'] = f"{win_p:.2f}" ; self.D['R_익절평균'] = f"{asispm:.2f}"; self.D['R_손절평균'] = f"{asisum:.2f}"        
 
-    def get_start(self,b='') :
+    def get_start(self,s='',e='') :
 
         self.D['종목코드']  = 'SOXL'
 
-        if b : self.D['시작일자'] = b
-        if self.D['시작일자'] < '2010-03-15' : self.D['시작일자'] = '2010-03-15'
-        old_date = my.dayofdate(self.D['시작일자'],-7)[0]
+        if not s : s = self.D['시작일자']
+        if not e : e = self.D['종료일자']
         
-        self.DB.clear()
-        self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{self.D['종료일자']}'",'add0')
-        self.B = self.DB.get('add0,add3,add8,add10') # 날자, 종가, 증감, 연속하락 
+        old_date = my.dayofdate(s,-7)[0]  
+        lst_date = self.DB.one("SELECT max(add0) FROM h_stockHistory_board") 
+        
+        if old_date < '2010-03-15' : old_date = '2010-03-15'; s = '2010-03-22'
+        
+        if e > lst_date : e = lst_date
+        if s > e : s = '2020-01-02'; e = lst_date
+        
+        self.D['시작일자'] = s
+        self.D['종료일자'] = e
+
+        self.DB.clear()  
+        self.DB.tbl,self.DB.wre,self.DB.odr = ("h_stockHistory_board",f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{e}'","add0")
+        self.B = self.DB.get('add0,add3,add8,add9,add10') # 날자, 종가, 증감, 연상,연하 
 
 
     def increase_count(self,printOut=False) :
@@ -334,7 +344,6 @@ class DIY :
             self.D['clse_p'] = []
             self.D['avge_v'] = []
 
-
         # 통계자료
         if  self.stat :
 
@@ -345,6 +354,7 @@ class DIY :
             self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
             self.D['손익저점'] = 100
             self.D['저점날자'] = ''
+            self.D['진시일자'] = self.D['종료일자']
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # nextStep : 다음 날에 대한 전략을 계산한다  
@@ -435,8 +445,6 @@ class DIY :
         self.D['TR'].append(tx)
         
 
-        
-
     def do_viewChart(self) :
 
         self.chart = True
@@ -447,7 +455,101 @@ class DIY :
         self.simulate(printOut=True)
         self.result()
         self.nextStep()
+
+
+    # --------------------------------------------------------------------------
+    # STAT
+    # --------------------------------------------------------------------------
+
+    def get_dateList(self,start_date,end_date) :
         
+        qry = f"SELECT add0 FROM h_stockHistory_board WHERE add1='SOXL' AND add0 BETWEEN '{start_date}' AND '{end_date}' ORDER BY add0"
+        return self.DB.col(qry)
+
+    def get_backDateStat(self) :
+
+        sx = {}
+
+        sx['진시일자'] = self.D['진시일자'][2:]
+        sx['종료일자'] = self.D['종료일자'][2:]
+        sx['경과일자'] = self.D['R_총경과일']
+
+        sx['최종수익'] = self.D['R_최종수익']
+        sx['종수익률'] = self.D['R_최종익률']
+        sx['최장일수'] = self.D['최장일수']
+        sx['최장일자'] = self.D['최장일자'][2:]
+        sx['진최하락'] = self.D['진최하락']
+        sx['최하일자'] = self.D['최하일자']
+        sx['최대손절'] = self.D['손익저점']
+        sx['최손날자'] = self.D['저점날자'][2:]
+
+        if float(self.D['MinLP']) >= float(self.D['손익저점']) : self.D['MinLP'] = self.D['손익저점']; self.D['MinDD'] = self.D['시작일자'][2:]
+        if self.D['기간한정'] == 'on' and (float(self.D['MinPR']) >= float(self.D['R_최종익률'])) : self.D['MinPR'] = self.D['R_최종익률']; self.D['MinPRDD'] = self.D['시작일자'][2:]
+
+        # sx['게임횟수'] = f"{self.D['R_총매도수']}<span style='color:gray'>({self.D['R_총익절수']}/{self.D['R_총손절수']})</span>"
+        sx['게임횟수'] = self.D['R_총매도수']
+        sx['게임승수'] = self.D['R_총익절수']
+        sx['게임패수'] = self.D['R_총손절수']
+        sx['게임승률'] = self.D['R_총익승률']
+        sx['게임익평'] = self.D['R_익절평균']
+        sx['게임손평'] = self.D['R_손절평균']
+
+        
+        return sx
+
+    def do_viewStat(self,opt) :
+
+        self.chart = False
+        self.stat = True
+        B = self.get_dateList(self.D['시작일자'],self.D['종료일자'])
+
+        self.D['MinLP'] = 100.0
+        self.D['MinPR'] = 500.0
+        self.D['MinDD'] = ''
+        self.D['MinPRDD'] = ''
+        self.D['SR'] = []        
+
+        last_day = self.DB.one("SELECT add0 FROM h_stockHistory_board ORDER BY add0 DESC LIMIT 1")
+        end = ''
+
+        days = int(self.D['한정기간'])
+        for b in B :
+            if opt == 'lmt_days' : 
+                date1 = my.dayofdate(b,days)[0]
+                if  date1 < last_day : 
+                    end = date1
+                else :
+                    end = '' 
+                    break
+            self.get_start(b,end)
+            self.init_value()
+            self.simulate()
+            self.result()
+            rst = self.get_backDateStat()
+            if  self.D['SR'] :
+                if self.D['SR'][-1]['진시일자'] != rst['진시일자'] and rst['게임횟수'] != 0 : self.D['SR'].append(rst)
+            else :
+                self.D['SR'].append(rst)
+
+        if  self.D['SR'] : 
+            self.D['SR'].pop()
+        
+            self.D['chart_dte'] = [x['진시일자'] for x in self.D['SR']]
+            self.D['chart_val'] = [my.sv(x['종수익률']) for x in self.D['SR']]
+            self.D['chart_dte'].reverse()
+            self.D['chart_val'].reverse()
+            
+            if  opt == 'lmt_days' :
+                self.D['over_100p'] = [x for x in self.D['chart_val'] if x > 100] 
+                totcnt = len(self.D['chart_val'])
+                cnt100 = len(self.D['over_100p'])
+                over_p = cnt100/totcnt*100
+                self.D['over100st'] = f"{cnt100} / {totcnt} ( {over_p:.1f}% )"
+
+                self.D['평균가치'] = f"{numpy.mean(self.D['chart_val']):.2f}"
+                self.D['표준편차'] = f"{numpy.std(self.D['chart_val']):.2f}"
+
+
     def get_nextStrategy(self,start,end,ini_money) :
 
         self.chart = False

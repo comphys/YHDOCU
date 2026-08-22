@@ -977,7 +977,7 @@ class RSN :
             self.D['SR'].append(self.get_backDateStat())
             
         if  self.D['SR'] : 
-            self.D['SR'].pop()
+            self.D['SR'].pop()  # 마지막 데이타를 제거한다. 
         
             self.D['chart_dte'] = [x['시작일자'] for x in self.D['SR']]
             self.D['chart_val'] = [my.sv(x['종수익률']) for x in self.D['SR']]
