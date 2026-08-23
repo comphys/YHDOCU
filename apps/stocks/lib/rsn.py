@@ -70,6 +70,11 @@ class RSN :
         self.calculate_A(self.R)
         self.calculate_A(self.S)
 
+        잔액총액  = self.R['현재잔액'] + self.S['현재잔액'] + self.N['현재잔액']
+        평가총액  = self.R['평가금액'] + self.S['평가금액'] + self.N['평가금액']
+        시즌자금  = 잔액총액 + self.R['총매수금'] + self.S['총매수금'] + self.N['총매수금']
+        self.M['현재손률'] = round(((잔액총액+평가총액)/시즌자금 -1 )*100,2) if 시즌자금 else 0
+        
         if  self.V['매도수량'] :
             self.rstCount() # self.M['기본진행] 값을 재설정하기 전에 수행되어야 함        
             self.N['매도금액'] = self.N['중도합계']
@@ -93,9 +98,10 @@ class RSN :
         
         # 현수익률을 실최하략으로 적용 ( RSN 전략 특성상, 현재잔액+총매수금이 0일 경우도 발생함)
         if not self.stat : return
-        for tac in (self.V,self.R,self.S,self.N) :
-            if  tac['현수익률'] < tac['진최하락'] : 
-                tac['진최하락'] = tac['현수익률']; tac['최하일자'] = self.M['현재일자']
+
+        if  self.M['현재손률'] < self.D['진최하락'] : 
+            self.D['진최하락'] = self.M['현재손률']
+            self.D['최하일자'] = self.M['현재일자']
 
         if  self.M['현재날수'] > self.M['최장일수'] : 
             self.M['최장일수'] = self.M['현재날수'] 
@@ -134,7 +140,7 @@ class RSN :
     def rebalance(self)  :
 
         total = self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액']
-        
+
         # RSN rebalance
         if  self.D['일밸런싱'] == 'on' :
             self.R['현재잔액'] = round(total*self.M['투자배분'][0]/100,2)
@@ -423,7 +429,7 @@ class RSN :
                 self.N['거래코드']  = f"{self.N['매수차수']}B {self.N['매수수량']}"
                 self.commission(tac,1)
 
-               
+            self.M['현재손률'] = 0.0    
             return True
 
         else : return False
@@ -475,10 +481,8 @@ class RSN :
         self.D['최장일수'] = self.M['최장일수']
         self.D['최장일자'] = self.M['최장일자']
         self.D['현재일자'] = self.M['현재일자']
-        self.D['MDD1'] = f"{self.V['진최하락']:.2f}"; self.D['MDD_DAY1'] = self.V['최하일자'][2:]
-        self.D['MDD2'] = f"{self.R['진최하락']:.2f}"; self.D['MDD_DAY2'] = self.R['최하일자'][2:]
-        self.D['MDD3'] = f"{self.S['진최하락']:.2f}"; self.D['MDD_DAY3'] = self.S['최하일자'][2:]
-        self.D['MDD4'] = f"{self.N['진최하락']:.2f}"; self.D['MDD_DAY4'] = self.N['최하일자'][2:]
+        self.D['진최하락'] = f"{self.D['진최하락']:.2f}"; 
+        self.D['최하일자'] = self.D['최하일자'][2:]
 
         총매입금  = self.R['총매수금'] + self.S['총매수금'] + self.N['총매수금']
         총보유량  = self.R['보유수량'] + self.S['보유수량'] + self.N['보유수량']
@@ -584,10 +588,10 @@ class RSN :
         self.M['첫날기록']  = False
         self.R['진행시작']  = self.S['진행시작'] = self.N['진행시작']  = False
         self.D['총수수료'] = 0.0
+
         self.set_value(['예정수량','매수수량','보유수량','매도수량',],0)
         self.set_value(['매수예가','매수금액','총매수금','평균단가','평가금액','매도예가','매도금액','수익현황','현수익률','실현익률','중익합계','중도합계','수수료등'],0.0)
-        self.set_value(['진최하락'],0)
-        self.set_value(['최하일자'],'')
+
 
         if '분할횟수' not in self.M :
             
@@ -638,7 +642,6 @@ class RSN :
             # 투자자금 초기화 ----------------------------------------------------------------------------
             self.M['투자자금'] = my.sv(ST['TC010']) if '투자자금' not in self.D else my.sv(self.D['투자자금'])
             self.M['투자배분'] = my.sf(ST['TC011'])    
-
             self.D['기회자금']  = round(self.M['투자자금']*self.M['투자배분'][0]/100,2)
             self.D['안정자금']  = round(self.M['투자자금']*self.M['투자배분'][1]/100,2)
             self.D['생활자금']  = self.M['투자자금'] - self.D['기회자금'] - self.D['안정자금']
@@ -680,6 +683,9 @@ class RSN :
             self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
             self.D['손익저점'] = 100.0
             self.D['저점날자'] = ''
+            self.M['현재손률'] = 0.0
+            self.D['진최하락'] = 0
+            self.D['최하일자'] = ''
             
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # nextStep : 다음 날에 대한 전략을 계산한다  
@@ -791,7 +797,7 @@ class RSN :
             tx[key+'잔액'] = f"{tac['현재잔액']:,.2f}"
         #--------------------------------------------------------    
         tx['진행상황'] = self.V['진행상황']
-         
+        tx['현재손률'] = self.M['현재손률'] if self.M['현재손률'] else ''
         self.D['TR'].append(tx)
         
     def chart_data(self) :
@@ -924,9 +930,8 @@ class RSN :
         sx['최대손절'] = self.D['손익저점']
         sx['최손날자'] = self.D['저점날자'][2:]
 
-        sx['기회최락'] = f"{self.D['MDD2']}<span style='color:gray'>({self.D['MDD_DAY2']})</span>"    if self.D['MDD_DAY2'] else ''
-        sx['안정최락'] = f"{self.D['MDD3']}<span style='color:gray'>({self.D['MDD_DAY3']})</span>"    if self.D['MDD_DAY3'] else ''
-        sx['생활최락'] = f"{self.D['MDD4']}<span style='color:gray'>({self.D['MDD_DAY4']})</span>"    if self.D['MDD_DAY4'] else ''
+        sx['진최하락'] = self.D['진최하락']
+        sx['최하일자'] = self.D['최하일자']
         
         if float(self.D['MinLP']) >= float(self.D['손익저점']) : self.D['MinLP'] = self.D['손익저점']; self.D['MinDD'] = self.D['시작일자'][2:]
         if self.D['기간한정'] == 'on' and (float(self.D['MinPR']) >= float(self.D['R_최종익률'])) : self.D['MinPR'] = self.D['R_최종익률']; self.D['MinPRDD'] = self.D['시작일자'][2:]
@@ -938,7 +943,6 @@ class RSN :
         sx['게임승률'] = self.D['R_총익승률']
         sx['게임익평'] = self.D['R_익절평균']
         sx['게임손평'] = self.D['R_손절평균']
-        
 
         # sx['기회갯수'] = f"{self.D['기정익절']}-{self.D['기정손절']} : {self.D['기회익절']}-{self.D['기회손절']}"
         # sx['안정갯수'] = f"{self.D['안정익절']}-{self.D['안정손절']} : {self.D['안회익절']}-{self.D['안회손절']}"

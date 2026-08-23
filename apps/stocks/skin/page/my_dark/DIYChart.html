@@ -84,9 +84,9 @@
 		<div>
 			<table class='table table-striped table-hover' style="border:2px solid black;">
 				<tr style="background-color:#0A2229;border-bottom:1px solid black;">
+					<th style='text-align:center;width:50px'>No</th>
 					<th style='text-align:center;width:80px'>일자</th>
-					<th style='text-align:center;width:50px'>시즌</th>
-					<th style='text-align:center;width:50px'>날수</th>
+					<th style='text-align:center;width:50px'>DD</th>
 					<th style='text-align:right;width:70px'>종가</th>
 					<th style='text-align:right;width:70px'>변동</th>
 
@@ -114,9 +114,9 @@
 	
 	<table class='table table-striped table-hover' style="border:2px solid black">
 		<colgroup>
+			<col style="width:50px;"> <!-- No -->
 			<col style="width:80px;"> <!-- 일자 -->
-			<col style="width:50px;"> <!-- 시즌 -->
-			<col style="width:50px;"> <!-- 날수 -->
+			<col style="width:50px;"> <!-- DD -->
 			<col style="width:70px;"> <!-- 당일종가 -->
 			<col style="width:70px;border-right:3px solid #424242;"> <!-- 종가변동 -->
 			
@@ -144,10 +144,10 @@
 			{% else %}
 			<tr>
 			{% endif %}
-				<td class="begin-date" style="cursor:pointer;text-align:center">{{TR['기록일자']}}</td>
-				<td style='text-align:center'>{{TR['기록시즌']}}</td>
-				<!-- <td style='text-align:center'>{{TR['현재날수']}}/{{TR['당일연속']}}</td> -->
 				<td style='text-align:center'>{{TR['현재날수']}}</td>
+				<td class="begin-date" style="cursor:pointer;text-align:center">{{TR['기록일자']}}</td>
+				<!-- <td style='text-align:center'>{{TR['현재날수']}}/{{TR['당일연속']}}</td> -->
+				<td style='text-align:right;color:gray'>{{TR['현재손률']}}</td>
 				<td class='ohlc-price' style='text-align:right;font-weight:bold;cursor:pointer;'>{{TR['당일종가']|safe}}</td>
 				<td style='text-align:right;font-weight:bold;'>{{TR['종가변동']|safe}}</td>
 

@@ -32,6 +32,9 @@ class DIY :
         self.M['평가금액'] = self.M['당일종가'] * self.M['보유수량'] 
         self.M['수익현황'] = self.M['평가금액'] - self.M['총매수금']
         self.M['현수익률'] = self.M['수익현황'] / self.M['총매수금']  * 100  if self.M['총매수금'] else 0.00  
+
+        시즌자금 = self.M['현재잔액']+self.M['총매수금']
+        self.M['현재손률'] = round(((self.M['현재잔액']+self.M['평가금액'])/시즌자금 -1 )*100,2) if 시즌자금 else 0
         
         if  self.M['매도수량'] :
             self.M['매도금액']  =  self.M['매도수량'] * self.M['당일종가']
@@ -59,10 +62,13 @@ class DIY :
         
         if not self.stat : return
 
-        self.M['실최하락'] = (self.M['평가금액']-self.M['총매수금']) / (self.M['현재잔액'] + self.M['총매수금']) * 100
-        
-        if  self.M['실최하락'] < self.M['진최하락'] : self.M['진최하락'] = self.M['실최하락']; self.M['최하일자'] = self.M['현재일자']
-        if  self.M['현재날수'] > self.M['최장일수'] : self.M['최장일수'] = self.M['현재날수']; self.M['최장일자'] = self.M['현재일자']
+        if  self.M['현재손률'] < self.D['진최하락'] : 
+            self.D['진최하락'] = self.M['현재손률']
+            self.D['최하일자'] = self.M['현재일자']
+
+        if  self.M['현재날수'] > self.M['최장일수'] : 
+            self.M['최장일수'] = self.M['현재날수'] 
+            self.M['최장일자'] = self.M['현재일자']
         
     def vCount(self,profit) :
         
@@ -168,6 +174,7 @@ class DIY :
 
             if self.stat and self.D['진시일자'] > self.M['현재일자'] : self.D['진시일자'] = self.M['현재일자']
 
+            self.M['현재손률'] = 0.0 
             return True
 
         else : 
@@ -221,7 +228,8 @@ class DIY :
 
         self.D['최장일수'] = self.M['최장일수']
         self.D['최장일자'] = self.M['최장일자']
-        self.D['진최하락'] = f"{self.M['진최하락']:.2f}"; self.D['최하일자'] = self.M['최하일자'][2:]
+        self.D['진최하락'] = f"{self.D['진최하락']:.2f}" 
+        self.D['최하일자'] = self.D['최하일자'][2:]
         
         초기자본 = float(self.D['일반자금'].replace(',','')); 
         최종자본 = self.M['평가금액']+self.M['현재잔액']; 
@@ -332,9 +340,9 @@ class DIY :
         self.M['전일종가']  = 0.0
         self.M['자체연속']  = 0 
         
-        self.set_value(['매수수량','매도수량','예정수량','보유수량','진최하락'],0)
+        self.set_value(['매수수량','매도수량','예정수량','보유수량'],0)
         self.set_value(['매수금액','매도금액','총매수금','평균단가','수익현황','현수익률','평가금액','매수예가','수수료등'],0.0)
-        self.M['최하일자'] = ''
+        self.D['최하일자'] = ''
         self.D['익절횟수'] = self.D['손절횟수'] = 0
         
         if  self.chart : # 챠트작성
@@ -355,6 +363,9 @@ class DIY :
             self.D['손익저점'] = 100
             self.D['저점날자'] = ''
             self.D['진시일자'] = self.D['종료일자']
+            self.M['현재손률'] = 0.0
+            self.D['진최하락'] = 0
+            self.D['최하일자'] = ''
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # nextStep : 다음 날에 대한 전략을 계산한다  
@@ -441,6 +452,7 @@ class DIY :
         tx['현수익률'] = f"<span style='color:{clr}'>{round(self.M['현수익률'],4):,.2f}</span>"
         
         tx['가치합계'] = f"{가치합계:,.2f}"
+        tx['현재손률'] = f"{self.M['현재손률']:.2f}" if self.M['현재손률'] else ''
             
         self.D['TR'].append(tx)
         
