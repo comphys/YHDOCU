@@ -43,6 +43,13 @@ class Access(Control) :
                 session['__u_Ino__'] = uid
                 session['CSH'] = {}
                 home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")
+
+                # 공인 아이피 기록
+                cur_time = my.now_to_kordate()
+                myIP = my.get_publicIP()
+                with open("publicIP.log","a",encoding="utf-8") as f:
+                    f.write(f"<span class='who-time'>{cur_time}</span><span class='who-ip'>{myIP}</span>\n")
+                # -------------------------------------------------------------------------------------------
                 return self.moveto(home)
 
         

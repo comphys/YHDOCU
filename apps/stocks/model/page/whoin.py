@@ -1,19 +1,25 @@
 from system.core.load import Model
-import requests
+import system.core.my_utils as my
+
 
 class M_whoin(Model) :
 
-    def view(self) :
+    def log(self,strinfo ) :
 
-        response = requests.get('https://api.ipify.org?format=json')
-        self.D['공아이피'] = response.json()['ip']
+        with open("publicIP.log","a",encoding="utf-8") as f:
+            f.write(strinfo)
+
+
+
+    def view(self) :
 
         with open('whoin.txt','r',encoding='utf-8') as f:
             content = f.read()
-
         self.D['로긴정보'] = content.replace('\n','<br>')
-
-
+        
+        self.D['공아이피'] = my.get_publicIP()
+        cur_time = my.now_to_kordate()
+        self.log(f"<span class='who-time'>{cur_time}</span><span class='who-ip'>{self.D['공아이피']}</span>\n")
 
     def action(self) :
 

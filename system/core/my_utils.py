@@ -1,7 +1,9 @@
-import os, re 
-import shutil,math
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
+import requests
+import os, re 
+import shutil,math
+
 
 # number
 
@@ -218,3 +220,8 @@ def rg_ex(op,txt) :
     if op == 'mobile' : see = re.compile('010-\d{3,4}-\d{4}') 
     return  True if see.match(txt) else False 
 # --------------------------------------------------------------------------------------------
+
+def get_publicIP() :
+
+    response = requests.get('https://api.ipify.org?format=json')
+    return response.json()['ip']
