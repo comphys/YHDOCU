@@ -26,7 +26,7 @@ class KIWOOM :
 
     def get_current_price(self,symbol) :
 
-        if not self.token : return "토큰을 가져올 수 없습니다"
+        if not self.token : return None
 
         endp = '/api/us/mrkcond'
         self.headers['authorization'] = f'Bearer {self.token}'
@@ -41,7 +41,7 @@ class KIWOOM :
 
     def get_ohlc_price(self,symbol,date) :
 
-        if not self.token : return "토큰을 가져올 수 없습니다"
+        if not self.token : return None
 
         endp = '/api/us/mrkcond'
         self.headers['authorization'] = f'Bearer {self.token}'
@@ -133,7 +133,9 @@ class KIWOOM :
                 print("새로운 토큰을 발급받았습니다.")
                 return self.DB.store('kiwoom_token')
 
-            else : print(rst['return_msg'])
+            else : 
+                print(rst['return_msg'])
+                return None
 
 
 
@@ -152,10 +154,9 @@ class KIWOOM :
 AA = KIWOOM()
 print('---------------------------------------------------------------------------------------------')
 a = AA.get_current_price('SOXL')
-print(a)
+if a : print(a)
 print('---------------------------------------------------------------------------------------------')
 b = AA.get_ohlc_price('SOXL','20260819')
-print(b)
-print('---------------------------------------------------------------------------------------------')
+if b : print(b)
 # d = AA.check_the_balance()
 # print(d)
