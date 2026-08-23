@@ -1,6 +1,7 @@
 *.pyc
 *.log
 *.ipynb
+*.csv
 config.ini
 whoin.txt
 settings.json
