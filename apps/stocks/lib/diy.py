@@ -33,8 +33,7 @@ class DIY :
         self.M['수익현황'] = self.M['평가금액'] - self.M['총매수금']
         self.M['현수익률'] = self.M['수익현황'] / self.M['총매수금']  * 100  if self.M['총매수금'] else 0.00  
 
-        시즌자금 = self.M['현재잔액']+self.M['총매수금']
-        self.M['현재손률'] = round(((self.M['현재잔액']+self.M['평가금액'])/시즌자금 -1 )*100,2) if 시즌자금 else 0
+        self.M['현재손률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
         
         if  self.M['매도수량'] :
             self.M['매도금액']  =  self.M['매도수량'] * self.M['당일종가']
@@ -150,9 +149,9 @@ class DIY :
     def new_day(self) :
 
         self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가','매수예가','예정수량','매도예가','매수차수'],0)
-        
+        self.M['시즌자금'] = self.M['현재잔액']
+
         진입단가 = round(self.M['전일종가'] * self.M['첫날가치'], 2) if self.M['당일연속'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
-        
         if  self.M['당일종가'] <=  진입단가  :
             
             self.M['기록시즌'] += 1

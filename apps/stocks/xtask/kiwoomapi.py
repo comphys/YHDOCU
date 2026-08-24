@@ -156,7 +156,7 @@ print('-------------------------------------------------------------------------
 a = AA.get_current_price('SOXL')
 if a : print(a)
 print('---------------------------------------------------------------------------------------------')
-b = AA.get_ohlc_price('SOXL','20260819')
+b = AA.get_ohlc_price('SOXL','20260821')
 if b : print(b)
 # d = AA.check_the_balance()
 # print(d)

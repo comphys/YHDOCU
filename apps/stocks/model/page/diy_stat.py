@@ -46,7 +46,7 @@ class M_diy_stat(Model) :
         DIY.do_viewStat(opt)
 
         if D['파일출력'] == 'on' :
-            fieldnames = ['시작일자','종료일자','경과일자','최종수익','종수익률','최장일수','최장일자','최대손절','최손날자','진최하락','최하일자','게임횟수','게임승수','게임패수','게임승률','게임익평','게임손평']
+            fieldnames = ['진시일자','종료일자','경과일자','최종수익','종수익률','최장일수','최장일자','최대손절','최손날자','진최하락','최하일자','게임횟수','게임승수','게임패수','게임승률','게임익평','게임손평']
             with open("diy_stat.csv","w",newline="",encoding="euc-kr") as f :
                 writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
                 writer.writeheader()

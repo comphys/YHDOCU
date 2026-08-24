@@ -54,8 +54,6 @@ class M_rsn_stat(Model) :
         D['파일출력'] = self.D['post'].get('chk_csv','off')
         D['한정기간'] = self.D['post']['한정기간']
 
-        self.info(D)
-        
         opt = 'lmt_days' if D['기간한정'] == 'on' else ''
         RST = self.SYS.load_app_lib('rsn')
         RST.D |= D

@@ -200,7 +200,7 @@
 {% endif %}
 
 <div id='backTestingChart' style="position:fixed;left:20px;top:2170px;width:1100px;background-color:#24272d;padding:10px;border:2px solid black;z-index:7;">
-	<div id='backTestingChart-notice' style="position:absolute;top:11px;left:74px;color:gray;font-style:italic">&nbsp;</div>
+	<div id='backTestingChart-notice' style="position:absolute;top:20px;left:74px;color:gray;font-style:italic">&nbsp;</div>
 	<canvas id="mybackTestChart" style="width:1075px;height:330px;background-color:#24272d"></canvas>
 </div>
 {% if D['월별이익'] %}
@@ -375,7 +375,7 @@ function show_chart(season,sel,profit=null,rate=null) {
 	myChart_season.update();
 
 	if(typeof sel =='object') {
-		var p_date    = $(sel).children("td:eq(0)").text();
+		var p_date    = $(sel).children("td:eq(1)").text();
 		var s_profits = $("#N310-statistics table tr td:contains('"+p_date+"')")
 		var p_profit  = s_profits.next().next().text();
 		var p_rate    = s_profits.next().next().next().text();
