@@ -4,7 +4,8 @@ import system.core.my_utils as my
 
 class Check(Control) : 
 
-
+    def _auto(self) :
+        self.DB = self.db('stocks')
     # def _auto(self) :
     #     self.DB = self.db('stocks')
 
@@ -26,4 +27,11 @@ class Check(Control) :
 
     def ip_check(self) :
 
-        return my.get_publicIP()
+        KW = self.load_app_lib('kiwoom')
+        rst = KW.get_current_price('SOXL')
+        return rst
+
+    def check_rsn(self) :
+        date = self.D['post']['rsn_check']
+        self.DB.parameter_update('TX070',date)
+        return "OK"

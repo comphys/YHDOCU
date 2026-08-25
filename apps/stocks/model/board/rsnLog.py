@@ -1,5 +1,6 @@
 from system.core.load import Model
 import system.core.my_utils as my
+import requests
 
 class Ajax(Model) :
 
@@ -57,13 +58,18 @@ class Ajax(Model) :
 
         odrday = self.D['post']['odrday']
         option = self.D['post']['option']
-        
+       
         if  option == 'RSN'   : key = 'TX070'
-        if  option == 'N315'  : key = 'N0710_' + self.D['USER']['uid']
-
         self.DB.parameter_update(key,odrday)
 
+        # 서버 업데이트 
+        if  self.D['_lcl'] :
+            host = "http://comphys.pythonanywhere.com/api/check/check_rsn"
+            headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':'Royal to JYH'}
+            data = {"rsn_check":odrday}
+            requests.post(host,headers=headers,json=data)
 
+  
     def season_chart(self) :
 
         season = self.D['post']['season']

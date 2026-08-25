@@ -305,7 +305,7 @@
 </div>
 
 <div id="statistics-profits" class="scrollbar"
-     style="display:none;position:fixed;left:1100px;top:112px;min-width:410px;height:350px;padding:0px;background-color:black;overflow-y:scroll;border:1px solid black;z-index:500" 
+     style="display:none;position:fixed;left:1040px;top:112px;width:480px;height:350px;padding:0px;background-color:black;overflow-y:scroll;border:1px solid black;z-index:500" 
 	 ondblclick="$('#statistics-profits').hide()">
 	 <table class='table table-striped' style="padding:0px">
 		<tr style="background-color: #000000;font-weight:bold;color:white;">
@@ -665,8 +665,8 @@ function show_chart(season,sel,profit=null,rate=null) {
 	if(typeof sel =='object') {
 		var p_date    = $(sel).children("td:eq(1)").text();
 		var s_profits = $("#statistics-profits table tr td:contains('"+p_date+"')")
-		var p_profit  = s_profits.next().next().text();
-		var p_rate    = s_profits.next().next().next().text();
+		var p_profit  = s_profits.next().next().next().text();
+		var p_rate    = s_profits.next().next().next().next().text();
 		p_date = '20'+p_date;
 	} else {
 		var p_date    = sel;

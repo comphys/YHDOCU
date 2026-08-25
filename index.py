@@ -45,24 +45,6 @@ def download(filename) :
         directory = session['epl_path']
         return send_from_directory(directory,filename)    
 
-# [REST API]------------------------------------------------------------------------------------------------
-
-@app.route('/api/<string:control>/<string:method>',methods=['POST'])
-def rest_api(myapp='api',control=None,method=None) :
-    try : API = load_control(control,myapp)
-    except ModuleNotFoundError : return jsonify({'code':1,'msg':"해당 컨트롤을 찾을 수 없습니다"})
-    if not hasattr(API,method) : return jsonify({'code':1,'msg':"해당 메써드를 찾을 수 없습니다"})
-
-    Parameters = {}
-    Parameters['_api'] = True
-    Parameters['_aut'] = request.headers.get('Authorization')
-    Parameters['_pos'] = request.get_json()
-    Instance = API(Parameters)
-    DATA = getattr(Instance,method)()
-
-    return jsonify({'code':0,'msg':'정상적으로 수행되었습니다','result':DATA})
-
-# ----------------------------------------------------------------------------------------------------------
 @app.route('/')
 @app.route('/<string:myapp>')
 @app.route('/<string:myapp>/<string:control>')
@@ -72,7 +54,7 @@ def main(myapp='stocks', control='board', method='index', option=None):
     
     loc_myapp = os.path.join(app_root,'apps',myapp)
     if not os.path.isdir(loc_myapp) : return render_template('sys/sys_msg.html',msg=f"[{myapp}] 앱 위치를 찾을 수 없습니다.") 
-    if not '__u_Ino__' in session : control = 'access'; method  = 'login'
+    if myapp != 'api' and not '__u_Ino__' in session : control = 'access'; method  = 'login'
 
     try :  CLS = load_control(control,myapp)
     except ModuleNotFoundError : return render_template('sys/sys_msg.html',msg=f"{myapp}/{control} 해당 컨트롤을 찾을 수 없습니다.")
@@ -91,9 +73,10 @@ def main(myapp='stocks', control='board', method='index', option=None):
 
     # 기본 매개변수들 전달
     Parameters = {}
-    Parameters['_api'] = False
+
     Parameters['_opt'] = option # 매개변수
-    Parameters['_pos'] = request.form if request.method == 'POST' else None
+    Parameters['_pos'] = request.get_json() if myapp == 'api' else request.form
+    Parameters['_aut'] = request.headers.get('Authorization') if myapp == 'api' else None
     Parameters['_cfg'] = myconfig
     Parameters['_pth'] = app_root
     Parameters['_app'] = myapp
@@ -105,11 +88,12 @@ def main(myapp='stocks', control='board', method='index', option=None):
     Instance = CLS(Parameters)
     # _auto 함수에서는 클라이언트에 출력정보를 리턴하지 않으며, 해당 메서드에서만 최종 DATA를 전달받는다.
     DATA = getattr(Instance,method)()
-    
+
     if DATA :
+        if   myapp == 'api'       : return jsonify(DATA)
         if   '_redirect' in DATA  : return redirect(DATA['_redirect'])
         if   type(DATA)  is str   : return DATA
-        elif type(DATA)  is dict  : return render_template(myapp+'/skin/' + DATA['skin'],D=DATA)
+        if   type(DATA)  is dict  : return render_template(myapp+'/skin/' + DATA['skin'],D=DATA)
     else : return ''
 
 # ----------------------------------------------------------------------------------------------------------

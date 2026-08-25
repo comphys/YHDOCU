@@ -42,18 +42,15 @@ class Control :
         self.D = {}  # view에 전달하기 위한 변수 
         
         # control에 전달하는 기본 값
-        if V['_api'] : 
-            self.D['auth'] = V['_aut']
-        else :
-            self.CFG = V['_cfg']
-            self.D['_skn'] = V['_skn']
-            self.D['_bse'] = V['_bse']
-            self.D['_lcl'] = V['_lcl']
+        self.CFG = V['_cfg']
+        self.D['_skn'] = V['_skn']
+        self.D['_bse'] = V['_bse']
+        self.D['_lcl'] = V['_lcl']
 
-            try :    self.C = self.CFG['general']
-            except : self.C = None
-            self.__parm()
-            self.skin_dir = os.path.join(V['_pth'],'apps',V['_app'],'skin')
+        try :    self.C = self.CFG['general']
+        except : self.C = None
+        self.__parm()
+        self.skin_dir = os.path.join(V['_pth'],'apps',V['_app'],'skin')
 
         self.log  = my_log('my_logger') # 사용시 self.log.info(...), self.log.debug(...)
         self.info = self.log.info  

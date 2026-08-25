@@ -8,5 +8,5 @@ myIP = response.json()['ip']
 cur_time = my.now_to_kordate()
 
 with open("/home/comphys/YHDOCU/publicIP.log","a",encoding="utf-8") as f:
-    f.write(f"<span class='who-time'>{cur_time}</span><span class='who-ip'>{myIP}</span>&nbsp;&nbsp; recorded on server side\n")
+    f.write(f"<span class='who-time'>{cur_time}</span><span class='who-ip'>{myIP}</span>&nbsp;&nbsp; recorded on task server side\n")
          

@@ -24,14 +24,18 @@ class KIWOOM :
     def strf(self,num) :
         return round(abs(float(num)),2)    
 
+    def mydeco(func) :
+        def wrapper(self,*args) :
+            if not self.token : return None
+            self.headers['authorization'] = f'Bearer {self.token}'
+            return func(self,*args)
+        return wrapper
+
+    @mydeco
     def get_current_price(self,symbol) :
 
-        if not self.token : return None
-
         endp = '/api/us/mrkcond'
-        self.headers['authorization'] = f'Bearer {self.token}'
         self.headers['api-id'] = 'usa20100'
-
         params = {'stex_tp' : 'NY', 'stk_cd' : symbol}
 
         response = requests.post(self.host+endp, headers=self.headers, json=params)
@@ -39,14 +43,11 @@ class KIWOOM :
 
         return {'코드':rst['return_code'],'안내':rst['return_msg'],'현재가':rst['cur_prc'],'증감':rst['flu_rt'],'전날종가':rst['base_close_pric'],'환율':rst['base_exrt']}
 
+    @mydeco
     def get_ohlc_price(self,symbol,date) :
 
-        if not self.token : return None
-
         endp = '/api/us/mrkcond'
-        self.headers['authorization'] = f'Bearer {self.token}'
         self.headers['api-id'] = 'usa20590'
-
         params = {'stex_tp' : 'NY', 'stk_cd' : symbol, 'base_dt':date}
 
         response = requests.post(self.host+endp, headers=self.headers, json=params)
@@ -136,8 +137,6 @@ class KIWOOM :
             else : 
                 print(rst['return_msg'])
                 return None
-
-
 
         else :
             print(f"{hour_later_fmt} < {self.token_valid_date}")
