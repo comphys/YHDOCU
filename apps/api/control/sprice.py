@@ -12,3 +12,12 @@ class Sprice(Control) :
         rst = KW.get_current_price('SOXL')
         return rst
 
+    def get_token(self) :
+
+        token = self.D['post']['token']
+        token_date = self.D['post']['token_date']
+
+        self.DB.store('kiwoom_token',token)
+        self.DB.store('kiwoom_token_date',token_date)
+
+        return '__OK__'

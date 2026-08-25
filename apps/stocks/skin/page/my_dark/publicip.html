@@ -4,7 +4,17 @@
 <div id='publicIP-info-div' class='scrollbar' style="background-color:black;padding:20px;border:1px solid darkgray;margin-top:10px;margin-bottom:10px;min-height:200px;max-height:600px;overflow:auto">
 {{D['PublicIP']|safe}}
 </div>
-<button class="btn btn-red" onclick='clear_who()'>비우기</button>
+<div style="clear:both">
+    <div style="float:left"><button class="btn btn-red" onclick='clear_who()'>비우기</button></div>
+{% if D['_lcl'] %}
+    <div style="float:right">
+        <button class="btn btn-blue" onclick='get_token()'>토큰받기</button>
+        <button class="btn btn-red" onclick='send_token()'>토큰전송</button>
+    </div>
+{% endif %}
+</div>
+<br>
+<br>
 
 <script>
 function clear_who() {
@@ -17,7 +27,21 @@ function clear_who() {
             $("#publicIP-info-div").html('');
         }
 	});   
-
 }
+{% if D['_lcl'] %}
+
+function get_token() {
+    
+    const url = uri('linkajax') + 'publicip/get_token';
+	$.post(url,{}).done(function(data){	if(data=='___OK___') { h_dialog.notice('작업이 성공적으로 수행되었습니다.');}});   
+}
+
+function send_token() {
+    
+    const url = uri('linkajax') + 'publicip/send_token';
+	$.post(url,{}).done(function(data){	if(data=='___OK___') { h_dialog.notice('작업이 성공적으로 수행되었습니다.');}});   
+}
+
+{% endif %}
 </script>
 {% endblock %}
