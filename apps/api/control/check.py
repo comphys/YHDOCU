@@ -35,3 +35,8 @@ class Check(Control) :
         date = self.D['post']['rsn_check']
         self.DB.parameter_update('TX070',date)
         return "OK"
+
+    def check_diy(self) :
+        date = self.D['post']['diy_check']
+        self.DB.parameter_update('A0710',date)
+        return "OK"

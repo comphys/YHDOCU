@@ -1,5 +1,6 @@
 from system.core.load import Model
 import system.core.my_utils as my
+import requests
 
 class Ajax(Model) :
     # Update Log ------------------------------------------------------------------------------------------------------------------------------------------
@@ -46,6 +47,13 @@ class Ajax(Model) :
         if  option == 'DIY'  : key = 'A0710'
 
         self.DB.parameter_update(key,odrday)
+
+        # 서버 업데이트 
+        if  self.D['_lcl'] :
+            host = "https://comphys.pythonanywhere.com/api/check/check_diy"
+            headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':'Royal to JYH'}
+            data = {"rsn_check":odrday}
+            requests.post(host,headers=headers,json=data)
 
 
     def reset_balance(self) :
