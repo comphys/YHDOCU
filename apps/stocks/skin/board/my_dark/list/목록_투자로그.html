@@ -56,9 +56,9 @@
 				</tr>
 				{% endif %}
 			</table>
-			<div id="real-time-stock-price" style="text-align:center;margin-top:30px;font-size:30px;font-weight:bold;color:gray;">
-				150.00
-			</div>
+			{% if D['_lcl'] %}
+			<div id="real-time-stock-price" style="text-align:center;margin-top:30px;font-size:30px;font-weight:bold;color:gray;">&nbsp;</div>
+			{% endif %}
 		</div>
 	</div>
 </div>
