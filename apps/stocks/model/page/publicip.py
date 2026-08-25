@@ -34,3 +34,16 @@ class Ajax(Model) :
             data = {"token":kiwoom_token,"token_date":kiwoom_token_date}
             rst = requests.post(host,headers=headers,json=data)
             return rst.json()
+
+    def get_token(self) :
+        data = {}
+        # 서버로 요청 
+        if  self.D['_lcl'] :
+            host = "https://comphys.pythonanywhere.com/api/sprice/send_token"
+            headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':'Royal to JYH'}
+            rst = requests.post(host,headers=headers,json=data).json()
+
+            self.DB.store('kiwoom_token',rst['token'])
+            self.DB.store('kiwoom_token_date',rst['token_date'])
+            return '___OK___'
+        return '___OK___'

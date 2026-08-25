@@ -20,4 +20,12 @@ class Sprice(Control) :
         self.DB.store('kiwoom_token',token)
         self.DB.store('kiwoom_token_date',token_date)
 
-        return '__OK__'
+        return '___OK___'
+
+    def send_token(self) :
+
+        tk = {}
+        tk['token'] = self.DB.store('kiwoom_token')
+        tk['token_date'] = self.DB.store('kiwoom_token_date')
+
+        return tk
