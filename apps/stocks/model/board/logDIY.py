@@ -52,7 +52,7 @@ class Ajax(Model) :
         if  self.D['_lcl'] :
             host = "https://comphys.pythonanywhere.com/api/check/check_diy"
             headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':'Royal to JYH'}
-            data = {"rsn_check":odrday}
+            data = {"diy_check":odrday}
             requests.post(host,headers=headers,json=data)
 
 
