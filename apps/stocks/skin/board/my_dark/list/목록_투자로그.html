@@ -651,7 +651,10 @@ function update_log() {
 function loadStockPrice() {
 	const payload = {symbol:'SOXL'}
 	const posturl = uri('linkajax') + 'rsnLog/get_current_price'
-	$.post(posturl, payload,null,'json').done(function(data){$("#real-time-stock-price").html(data['현재가']+" <span style='font-size:14px'>"+data['증감']+'%</span>');});
+	$.post(posturl, payload,null,'json').done(
+		function(data){
+			$("#real-time-stock-price").html(data['현재가']+" <span style='font-size:14px'>"+data['증감']+"%</span> <span style='font-size:20px;'>"+data['환율']+"<span>");
+		});
 }
 loadStockPrice();
 setInterval(loadStockPrice,3000);
