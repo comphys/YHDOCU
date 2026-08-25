@@ -64,7 +64,7 @@ class Ajax(Model) :
 
         # 서버 업데이트 
         if  self.D['_lcl'] :
-            host = "http://comphys.pythonanywhere.com/api/check/check_rsn"
+            host = "https://comphys.pythonanywhere.com/api/check/check_rsn"
             headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':'Royal to JYH'}
             data = {"rsn_check":odrday}
             requests.post(host,headers=headers,json=data)
