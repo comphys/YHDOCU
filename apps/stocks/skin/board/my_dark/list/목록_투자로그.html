@@ -56,11 +56,9 @@
 				</tr>
 				{% endif %}
 			</table>
-			{% if D['다음날자'] != D['주문생활'] %}
-			<div style="padding-top:20px;padding-left:10px;font-style:italic;color:gray;">
-				Please Check the <a href="/stocks/board/list/log315" style='color:white'>N315</a> tactic
+			<div id="real-time-stock-price" style="text-align:center;margin-top:30px;font-size:30px;font-weight:bold;color:gray;">
+				150.00
 			</div>
-			{% endif %}
 		</div>
 	</div>
 </div>
@@ -648,5 +646,15 @@ function update_log() {
 		
 	});
 }
+
+{% if D['_lcl'] %}
+function loadStockPrice() {
+	const payload = {symbol:'SOXL'}
+	const posturl = uri('linkajax') + 'rsnLog/get_current_price'
+	$.post(posturl, payload,null,'json').done(function(data){$("#real-time-stock-price").html(data['현재가']+" <span style='font-size:14px'>"+data['증감']+'%</span>');});
+}
+loadStockPrice();
+setInterval(loadStockPrice,3000);
+{% endif %}
 </script>
 {% endblock %}

@@ -215,4 +215,12 @@ class Ajax(Model) :
         RSN.DB.exe(qry)
 
         return self.SYS.json("OK")
+
+    def get_current_price(self) :
+
+        KW = self.SYS.load_app_lib('kiwoom')
+        rst = KW.get_current_price('SOXL')
+        rst['현재가'] = abs(float(rst['현재가']))
+        rst['현재가'] = f"{rst['현재가']:.2f}"
+        return self.SYS.json(rst)
     
