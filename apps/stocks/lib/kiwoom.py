@@ -51,17 +51,11 @@ class KIWOOM :
             if  rst['return_code'] == 0 :
                 self.DB.store('kiwoom_token',rst['token'])
                 self.DB.store('kiwoom_token_date',rst['expires_dt'])
-
-                # 서버로 요청 
-                if  self.D['_lcl'] :
-                    host = "https://comphys.pythonanywhere.com/api/sprice/get_token"
-                    headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':'Royal to JYH'}
-                    data = {"token":rst['token'],"token_date":rst['expires_dt']}
-                    rst = requests.post(host,headers=headers,json=data)
-
                 return rst['token']
             
-            else : self.log(f"{rst['return_code']} : {rst['return_msg']}")
+            else : 
+                self.log(f"{rst['return_code']} : {rst['return_msg']}")
+                return "error::token_issue"
 
         else :
             return self.DB.store('kiwoom_token')
@@ -75,7 +69,11 @@ class KIWOOM :
 
         response = requests.post(self.host+endp, headers=self.headers, json=params)
         rst = response.json()
-        return {'현재가':rst['cur_prc'],'증감':rst['flu_rt'],'전날종가':rst['base_close_pric'],'환율':rst['base_exrt']}
+        if  rst['return_code'] == 0 :
+            return {'현재가':rst['cur_prc'],'증감':rst['flu_rt'],'전날종가':rst['base_close_pric'],'환율':rst['base_exrt']}
+        else :
+            self.log(f"{rst['return_code']} : {rst['return_msg']}")
+            return "error::token_issue"            
 
     @kiwoom_deco
     def get_ohlc_price(self,symbol,date) :

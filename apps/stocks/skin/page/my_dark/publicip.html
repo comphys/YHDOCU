@@ -8,8 +8,8 @@
     <div style="float:left"><button class="btn btn-red" onclick='clear_who()'>비우기</button></div>
 {% if D['_lcl'] %}
     <div style="float:right">
-        <button class="btn btn-blue" onclick='get_token()'>토큰받기</button>
-        <button class="btn btn-red" onclick='send_token()'>토큰전송</button>
+        <button class="btn btn-blue" onclick='old_token()'>토큰받기</button>
+        <button class="btn btn-red" onclick='new_token()'>토큰전송</button>
     </div>
 {% endif %}
 </div>
@@ -30,15 +30,15 @@ function clear_who() {
 }
 {% if D['_lcl'] %}
 
-function get_token() {
+function new_token() {
     
-    const url = uri('linkajax') + 'publicip/get_token';
+    const url = uri('linkajax') + 'publicip/new_token';
 	$.post(url,{}).done(function(data){	if(data=='___OK___') { h_dialog.notice('작업이 성공적으로 수행되었습니다.');}});   
 }
 
-function send_token() {
+function old_token() {
     
-    const url = uri('linkajax') + 'publicip/send_token';
+    const url = uri('linkajax') + 'publicip/old_token';
 	$.post(url,{}).done(function(data){	if(data=='___OK___') { h_dialog.notice('작업이 성공적으로 수행되었습니다.');}});   
 }
 

@@ -57,7 +57,7 @@
 				{% endif %}
 			</table>
 			{% if D['_lcl'] %}
-			<div id="real-time-stock-price" style="text-align:center;padding-top:50px;font-weight:bold;color:gray;">&nbsp;</div>
+			<div id="real-time-stock-price" style="text-align:center;padding-top:50px;font-weight:bold;color:gray">&nbsp;</div>
 			{% endif %}
 		</div>
 	</div>
@@ -649,22 +649,30 @@ function update_log() {
 }
 
 {% if D['_lcl'] %}
+loadStockPrice();
+const intervalId = setInterval(loadStockPrice,3000);
 function loadStockPrice() {
 	const payload = {symbol:'SOXL'}
 	const posturl = uri('linkajax') + 'rsnLog/get_current_price'
 	$.post(posturl, payload,null,'json').done(
 		function(data){
-			let ov = parseFloat(last_closeP)
-			let nv = parseFloat(data['현재가'])
-			let df = ((nv/ov - 1)*100).toFixed(2)
-			let cp = "<span style='font-size:30px'>"+data['현재가']+"</span> " 
-			let pr = "<span style='font-size:16px'>"+df+"% </span>&nbsp; "
-			let kw = "<span style='font-size:20px'>"+data['환율'].replace(/\B(?=(\d{3})+(?!\d))/g, ",")+"</span> "  
-			$("#real-time-stock-price").html(cp + pr + kw );
+			if(data=='error::token_issue') {
+				clearInterval(intervalId)
+				$("#real-time-stock-price").html("<span style='font-size:20px'>token error</span>");
+			}
+			else {
+				let ov = parseFloat(last_closeP)
+				let nv = parseFloat(data['현재가'])
+				let df = ((nv/ov - 1)*100).toFixed(2)
+				let pm = (df>0)? '+' : ''
+				let dc = (df>0)? 'list-bull' : 'list-bear'
+				let cp = "<span style='font-size:30px'>"+data['현재가']+"</span> " 
+				let pr = "<span class='"+dc+"' style='font-size:16px'>"+pm+df+"% </span>&nbsp; "
+				let kw = "<span style='font-size:20px'>"+data['환율'].replace(/\B(?=(\d{3})+(?!\d))/g, ",")+"</span> "  
+				$("#real-time-stock-price").html(cp + pr + kw );
+			}
 		});
 }
-loadStockPrice();
-setInterval(loadStockPrice,3000);
 {% endif %}
 </script>
 {% endblock %}

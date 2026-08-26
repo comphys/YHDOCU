@@ -12,7 +12,7 @@ class Sprice(Control) :
         rst = KW.get_current_price('SOXL')
         return rst
 
-    def get_token(self) :
+    def new_token(self) :
 
         token = self.D['post']['token']
         token_date = self.D['post']['token_date']
@@ -22,7 +22,7 @@ class Sprice(Control) :
 
         return '___OK___'
 
-    def send_token(self) :
+    def old_token(self) :
 
         tk = {}
         tk['token'] = self.DB.store('kiwoom_token')
