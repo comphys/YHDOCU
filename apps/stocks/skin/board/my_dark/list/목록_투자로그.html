@@ -356,6 +356,7 @@ let s_avg_origin    = {{D['Stactic_avg']|safe}}
 let r_avg_origin    = {{D['Rtactic_avg']|safe}}	
 
 
+
 let ChartStart      = {{D['chart_start']}};	
 
 let labels_main     =  labels_origin.slice(ChartStart); let span_start = labels_main[0]; $("input[name='s_date']").val('20'+span_start)
@@ -363,7 +364,7 @@ let close_price     =  close_origin.slice(ChartStart)
 let n_avg_value     =  n_avg_origin.slice(ChartStart)  
 let s_avg_value     =  s_avg_origin.slice(ChartStart)	
 let r_avg_value     =  r_avg_origin.slice(ChartStart)	
-
+let last_closeP     = close_price.at(-1)
 
 const data_main = {
     labels : labels_main,
@@ -653,11 +654,13 @@ function loadStockPrice() {
 	const posturl = uri('linkajax') + 'rsnLog/get_current_price'
 	$.post(posturl, payload,null,'json').done(
 		function(data){
-			var cp = "<span style='font-size:30px'>"+data['현재가']+"</span> " 
-			var pm = (parseFloat(data['증감'])>0)? 'list-bull' : 'list-bear'
-			var pr = "<span style='font-size:14px'>"+data['증감']+"% </span>&nbsp; "
-			var kw = "<span style='font-size:20px'>"+data['환율'].replace(/\B(?=(\d{3})+(?!\d))/g, ",")+"/$</span> "  
-			$("#real-time-stock-price").html(cp + pr + kw);
+			let ov = parseFloat(last_closeP)
+			let nv = parseFloat(data['현재가'])
+			let df = ((nv/ov - 1)*100).toFixed(2)
+			let cp = "<span style='font-size:30px'>"+data['현재가']+"</span> " 
+			let pr = "<span style='font-size:16px'>"+df+"% </span>&nbsp; "
+			let kw = "<span style='font-size:20px'>"+data['환율'].replace(/\B(?=(\d{3})+(?!\d))/g, ",")+"/$</span> "  
+			$("#real-time-stock-price").html(cp + pr + kw );
 		});
 }
 loadStockPrice();

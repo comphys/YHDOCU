@@ -1,6 +1,7 @@
 from system.core.load import Control
 from flask import session, request
 import system.core.my_utils as my
+import requests
 
 class Access(Control) : 
 
@@ -49,6 +50,14 @@ class Access(Control) :
                 myIP = my.get_publicIP()
                 with open("publicIP.log","a",encoding="utf-8") as f:
                     f.write(f"<span class='who-time'>{cur_time}</span><span class='who-ip'>{myIP}</span>\n")
+
+                # 확인 날자 가져오기 
+                if  self.D['_lcl'] :
+                    host = "https://comphys.pythonanywhere.com/api/check/check_rsndiy"
+                    headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':'Royal to JYH'}
+                    rst = requests.post(host,headers=headers,json={}).json()
+                    self.DB.parameter_update('TX070',rst['rsn'])
+                    self.DB.parameter_update('A0710',rst['diy'])
                 # -------------------------------------------------------------------------------------------
                 return self.moveto(home)
 
