@@ -1,5 +1,4 @@
 from system.core.load import Control
-import system.core.my_utils as my
 # import jwt #Pyjwt
 
 class Check(Control) : 
@@ -34,4 +33,4 @@ class Check(Control) :
     def check_rsndiy(self) :
         rsn = self.DB.parameter('TX070')
         diy = self.DB.parameter('A0710')
-        return {'rsn':rsn,'diy':diy}
+        return self.SYS.json({'rsn':rsn,'diy':diy})
