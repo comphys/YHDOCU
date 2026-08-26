@@ -32,6 +32,6 @@ class Check(Control) :
         return "OK"
 
     def check_rsndiy(self) :
-        rsn = self.DB.parameter_update('TX070')
-        diy = self.DB.parameter_update('A0710')
+        rsn = self.DB.parameter('TX070')
+        diy = self.DB.parameter('A0710')
         return {'rsn':rsn,'diy':diy}
