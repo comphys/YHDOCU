@@ -55,8 +55,7 @@ class Access(Control) :
                 if  self.D['_lcl'] :
                     host = "https://comphys.pythonanywhere.com/api/check/check_rsndiy"
                     headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':'Royal to JYH'}
-                    response = requests.post(host,headers=headers,json=None)
-                    rst = response.json()
+                    rst = requests.post(host,headers=headers,json={}).json()
                     self.info(rst)
                     self.DB.parameter_update('TX070',rst['rsn'])
                     self.DB.parameter_update('A0710',rst['diy'])
