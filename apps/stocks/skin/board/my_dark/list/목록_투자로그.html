@@ -659,7 +659,7 @@ function loadStockPrice() {
 			let df = ((nv/ov - 1)*100).toFixed(2)
 			let cp = "<span style='font-size:30px'>"+data['현재가']+"</span> " 
 			let pr = "<span style='font-size:16px'>"+df+"% </span>&nbsp; "
-			let kw = "<span style='font-size:20px'>"+data['환율'].replace(/\B(?=(\d{3})+(?!\d))/g, ",")+"/$</span> "  
+			let kw = "<span style='font-size:20px'>"+data['환율'].replace(/\B(?=(\d{3})+(?!\d))/g, ",")+"</span> "  
 			$("#real-time-stock-price").html(cp + pr + kw );
 		});
 }
