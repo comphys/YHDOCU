@@ -64,7 +64,6 @@ def main(myapp='stocks', control='board', method='index', option=None):
     config = configparser.ConfigParser()
     config.optionxform = lambda optionstr : optionstr
     config_file = os.path.join(loc_myapp, 'config.ini')
-
     try : 
         config.read(config_file,encoding='utf-8')   
         myconfig = config
@@ -73,7 +72,6 @@ def main(myapp='stocks', control='board', method='index', option=None):
 
     # 기본 매개변수들 전달
     Parameters = {}
-
     Parameters['_opt'] = option # 매개변수
     Parameters['_pos'] = request.get_json() if myapp == 'api' else request.form
     Parameters['_aut'] = request.headers.get('Authorization') if myapp == 'api' else None

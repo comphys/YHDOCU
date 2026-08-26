@@ -57,7 +57,7 @@
 				{% endif %}
 			</table>
 			{% if D['_lcl'] %}
-			<div id="real-time-stock-price" style="text-align:center;margin-top:30px;font-size:30px;font-weight:bold;color:gray;">&nbsp;</div>
+			<div id="real-time-stock-price" style="text-align:center;padding-top:50px;font-weight:bold;color:gray;">&nbsp;</div>
 			{% endif %}
 		</div>
 	</div>
@@ -653,7 +653,11 @@ function loadStockPrice() {
 	const posturl = uri('linkajax') + 'rsnLog/get_current_price'
 	$.post(posturl, payload,null,'json').done(
 		function(data){
-			$("#real-time-stock-price").html(data['현재가']+" <span style='font-size:14px'>"+data['증감']+"%</span> <span style='font-size:20px;'>"+data['환율']+"<span>");
+			var cp = "<span style='font-size:30px'>"+data['현재가']+"</span> " 
+			var pm = (parseFloat(data['증감'])>0)? 'list-bull' : 'list-bear'
+			var pr = "<span style='font-size:14px'>"+data['증감']+"% </span>&nbsp; "
+			var kw = "<span style='font-size:20px'>"+data['환율'].replace(/\B(?=(\d{3})+(?!\d))/g, ",")+"/$</span> "  
+			$("#real-time-stock-price").html(cp + pr + kw);
 		});
 }
 loadStockPrice();
