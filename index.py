@@ -2,20 +2,20 @@ import os
 import configparser
 from datetime import timedelta
 from flask import ( Flask,request,render_template,redirect,send_from_directory,jsonify,session, g,)
-import config
 from system.core.load import load_control
 
 # ----------------------------------------------------------------------------------------------------------
 # Flask 앱 초기화 및 기본 설정
 app = Flask(__name__)
-app.config.from_object(config.Config)
+app.debug = True
 app.url_map.strict_slashes = False
-
 app_root = os.path.dirname(os.path.abspath(__file__))
 app.template_folder = os.path.join(app_root, 'apps')
+# app.config.from_object(config.Config)
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=10)
 app.config['JSON_AS_ASCII'] = False
-
+app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = 'JungYhKimJhJungYj'
 # ----------------------------------------------------------------------------------------------------------
 # 요청 전처리: 스레드 세이프(Thread-Safe)한 클라이언트 IP 저장
 @app.before_request
@@ -25,7 +25,6 @@ def resolve_client_ip():
         g.client_ip = forwarded_for.split(',')[0].strip()
     else :
         g.client_ip = request.remote_addr or ''
-
 # ----------------------------------------------------------------------------------------------------------
 # 정적 에셋 라우팅
 @app.route('/sys/<path:filename>')
@@ -37,7 +36,6 @@ def sys_assets(filename):
 def skin_assets(app_name, filename):
     directory = os.path.join(app_root, 'apps', app_name, 'skin')
     return send_from_directory(directory, filename)
-
 # ----------------------------------------------------------------------------------------------------------
 # 파일 다운로드 (세션 KeyError 및 경로 검증 안전 처리)
 @app.route('/download/<path:filename>')
@@ -53,7 +51,6 @@ def download(filename):
         return render_template('sys/sys_msg.html', msg="다운로드 권한이 없거나 경로가 존재하지 않습니다."), 400
     
     return send_from_directory(epl_path, filename, as_attachment=True)
-
 # ----------------------------------------------------------------------------------------------------------
 # 동적 HMVC 디스패처 라우트
 @app.route('/')
