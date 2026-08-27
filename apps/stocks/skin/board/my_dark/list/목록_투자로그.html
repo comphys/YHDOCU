@@ -59,7 +59,6 @@
 			{% if D['_lcl'] %}
 			<div id="real-nyse-time" style="text-align:center;padding-top:50px;font-size:16px;font-weight:bold;color:lightgray">&nbsp;</div>
 			<div id="real-time-stock-price" style="text-align:center;padding-top:10px;font-weight:bold;color:gray">&nbsp;</div>
-			
 			{% endif %}
 		</div>
 	</div>
@@ -75,6 +74,8 @@
 		<i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;<span class="exchange"> {{D['누적수익']}} ( {{D['실현수익']}} △ {{D['수수료합']}} )</span> &nbsp;
 	</div>
 	<div class="pull-right" style="color:#222121;">
+		<span onclick="start_stock_live('play')"><i class="fa fa-play" style='color:gray;font-size:18px;cursor: pointer;'></i></span>&nbsp;
+		<span onclick="start_stock_live('stop')"><i class="fa fa-pause" style='color:gray;font-size:18px;cursor: pointer;'></i></span>&nbsp;&nbsp;
 		<div id ='daily-check'>{{D['주문확인']}}</div>&nbsp;&nbsp;
 		<form method='post' name='category_search' action="{{D['_bse']}}board/list/{{D['bid']}}" style='display:inline;'>
 			{%- for cats in D['CAT_LIST'] %}
@@ -651,8 +652,9 @@ function update_log() {
 }
 
 {% if D['_lcl'] %}
-loadStockPrice();
-const intervalId = setInterval(loadStockPrice,3000);
+
+let timeID  = null;
+let stockID = null;
 
 function loadStockPrice() {
 	const payload = {symbol:'SOXL'}
@@ -660,7 +662,7 @@ function loadStockPrice() {
 	$.post(posturl, payload,null,'json').done(
 		function(data){
 			if(data=='error::token_issue') {
-				clearInterval(intervalId)
+				clearInterval(stockID)
 				$("#real-time-stock-price").html("<span style='font-size:20px'>token error</span>");
 			}
 			else {
@@ -679,12 +681,24 @@ function loadStockPrice() {
 
 function updateNewYorkTime() {
 	const now = new Date()
-	const options = {timeZone: 'America/New_York',month: '2-digit',day: '2-digit',hour: '2-digit',minute: '2-digit',hour12: true };
+	const options = {timeZone: 'America/New_York',month: '2-digit',day: '2-digit',hour: '2-digit',minute: '2-digit',second:'2-digit',hour12: true };
 	const nyTime = new Intl.DateTimeFormat('en-US', options).format(now);
 	$("#real-nyse-time").html('NY time : '+nyTime);
 }
-updateNewYorkTime()
-setInterval(updateNewYorkTime,60000)
+
+function start_stock_live(opt) {
+	if (opt == 'play' && timeID == null) {
+		updateNewYorkTime()
+		timeID = setInterval(updateNewYorkTime,1000)
+		loadStockPrice()
+		stockID = setInterval(loadStockPrice,3000)
+	} else {
+		clearInterval(timeID)
+		clearInterval(stockID)
+		timeID  = null
+		stockID = null
+	}
+}
 {% endif %}
 </script>
 {% endblock %}

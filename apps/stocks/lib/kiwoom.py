@@ -9,9 +9,9 @@ class KIWOOM :
         self.info  = SYS.info
         self.D     = SYS.D
         self.DB    = SYS.DB
-        self.token = self.get_token()
         self.host  = 'https://api.kiwoom.com'
         self.headers = {'Content-Type':'application/json;charset=UTF-8','cont-yn':'N'}
+        self.token = self.get_token()
 
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H%M%S")  
