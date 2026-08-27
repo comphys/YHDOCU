@@ -687,17 +687,15 @@ function updateNewYorkTime() {
 }
 
 function start_stock_live(opt) {
-	if (opt == 'play' && timeID == null) {
-		updateNewYorkTime()
-		timeID = setInterval(updateNewYorkTime,1000)
-		loadStockPrice()
-		stockID = setInterval(loadStockPrice,3000)
-	} else {
-		clearInterval(timeID)
-		clearInterval(stockID)
-		timeID  = null
-		stockID = null
-	}
+	if (opt == 'play') {
+	if (timeID == null) {
+		updateNewYorkTime(); timeID = setInterval(updateNewYorkTime,1000)
+		loadStockPrice(); 	 stockID = setInterval(loadStockPrice,3000)
+		} else {  return }
+	} else { if (timeID == null) return; else { 
+		$("#real-time-stock-price").html('');
+		$("#real-nyse-time").html('');
+		clearInterval(timeID); clearInterval(stockID); 	timeID  = null; stockID = null }}
 }
 {% endif %}
 </script>
