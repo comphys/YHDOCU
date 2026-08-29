@@ -1,7 +1,5 @@
-import os
-import configparser
-from datetime import timedelta
-from flask import ( Flask,request,render_template,redirect,send_from_directory,jsonify,session, g,)
+import os,configparser,config
+from flask import ( Flask,request,render_template,redirect,send_from_directory,jsonify,session, g)
 from system.core.load import load_control
 
 # ----------------------------------------------------------------------------------------------------------
@@ -11,11 +9,7 @@ app.debug = True
 app.url_map.strict_slashes = False
 app_root = os.path.dirname(os.path.abspath(__file__))
 app.template_folder = os.path.join(app_root, 'apps')
-# app.config.from_object(config.Config)
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=10)
-app.config['JSON_AS_ASCII'] = False
-app.config['DEBUG'] = True
-app.config['SECRET_KEY'] = 'JungYhKimJhJungYj'
+app.config.from_object(config.Config)
 # ----------------------------------------------------------------------------------------------------------
 # 요청 전처리: 스레드 세이프(Thread-Safe)한 클라이언트 IP 저장
 @app.before_request
