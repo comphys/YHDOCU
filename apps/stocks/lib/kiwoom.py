@@ -1,5 +1,5 @@
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
 class KIWOOM :
@@ -29,11 +29,9 @@ class KIWOOM :
     # 현재 토큰 폐기 시각이 한시간 이내면 재발급 받아서 리턴하고, 그렇지 않으면 현재의 토큰을 반환한다.
     def get_token(self) :
 
-        kst = ZoneInfo("Asia/Seoul")
-        hour_later_kst = datetime.now(kst) + timedelta(hours=1)
-        hour_later_fmt = hour_later_kst.strftime("%Y%m%d%H%M%S")
+        current_time = datetime.now(ZoneInfo("Asia/Seoul")) .strftime("%Y%m%d%H%M%S")
 
-        if  hour_later_fmt >= self.DB.store('kiwoom_token_date') :
+        if  current_time >= self.DB.store('kiwoom_token_date') :
             
             self.log("토큰을 재발급합니다.")
 

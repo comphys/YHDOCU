@@ -36,6 +36,8 @@ class update_DIY :
         self.M['평가금액'] = self.M['당일종가'] * self.M['보유수량'] 
         self.M['수익현황'] = self.M['평가금액'] - self.M['총매수금']
         self.M['현수익률'] = self.M['수익현황'] / self.M['총매수금']  * 100  if self.M['총매수금'] else 0.00  
+
+        self.M['현재손률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
         
         if  self.M['매도수량'] :
             self.M['매도금액']  =  self.M['매도수량'] * self.M['당일종가']
@@ -53,6 +55,7 @@ class update_DIY :
             self.M['첫날기록'] = True
             
             self.vCount(self.M['수익현황'])
+            self.tax()
             self.rebalance() 
             
 
@@ -63,10 +66,13 @@ class update_DIY :
         
         if not self.stat : return
 
-        self.M['실최하락'] = (self.M['평가금액']-self.M['총매수금']) / (self.M['현재잔액'] + self.M['총매수금']) * 100
-        
-        if  self.M['실최하락'] < self.M['진최하락'] : self.M['진최하락'] = self.M['실최하락']; self.M['최하일자'] = self.M['현재일자']
-        if  self.M['현재날수'] > self.M['최장일수'] : self.M['최장일수'] = self.M['현재날수']; self.M['최장일자'] = self.M['현재일자']
+        if  self.M['현재손률'] < self.D['진최하락'] : 
+            self.D['진최하락'] = self.M['현재손률']
+            self.D['최하일자'] = self.M['현재일자']
+
+        if  self.M['현재날수'] > self.M['최장일수'] : 
+            self.M['최장일수'] = self.M['현재날수'] 
+            self.M['최장일자'] = self.M['현재일자']
         
     def vCount(self,profit) :
         
@@ -82,7 +88,15 @@ class update_DIY :
             if opt==2 : fee += round(mm*0.0008)/100
             self.M['수수료등']  = fee
             self.M['현재잔액'] -= fee
-        
+
+    def tax(self) :
+
+        if  self.D['세금적용'] == 'on' :
+            if  self.M['현재일자'] > str(int(self.M['시작일자'][0:4])+1) + self.M['시작일자'][4:] : 
+                self.M['현재잔액'] -= int(self.M['현재잔액']*0.22) 
+                self.M['시작일자']  = self.M['현재일자']
+
+    
     def rebalance(self)  :
 
         for i in range(self.M['최대차수']) : self.M['매금단계'][i] = int( self.M['현재잔액'] * self.M['분할배분'][i]) 
@@ -101,7 +115,7 @@ class update_DIY :
             if   self.M['현재일자'][0:7] == diffd : self.D['월익통계'][-1][1] += difft 
             else : self.D['월익통계'].append([self.M['현재일자'][0:7],difft])
             color = "#F6CECE" if difft >= 0 else "#CED8F6"
-            self.D['손익통계'].append([self.M['현재일자'],f"{self.M['현재잔액']:,.2f}",f"{difft:,.2f}",f"{diffp:.2f}",color,self.M['기록시즌'],f"{diff0:.2f}"])
+            self.D['손익통계'].append([self.M['현재일자'],f"{self.M['현재잔액']:,.2f}",f"{difft:,.2f}",f"{diffp:.2f}",color,self.M['기록시즌'],f"{diff0:.2f}",self.M['현재날수']])
     
     def today_sell(self) :
         
@@ -137,23 +151,20 @@ class update_DIY :
             self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * self.M['탈출종가']),my.round_up(self.M['매도예가']*self.M['탈출허용'],2))
         
 
-
-
     def tomorrow_step(self)   :
 
         self.tomorrow_buy()
         self.tomorrow_sell()
         
         if  self.M['매수예가']>= self.M['매도예가'] : self.M['매수예가'] = self.M['매도예가'] - 0.01
-
         
     
     def new_day(self) :
 
         self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가','매수예가','예정수량','매도예가','매수차수'],0)
-        
+        self.M['시즌자금'] = self.M['현재잔액']
+
         진입단가 = round(self.M['전일종가'] * self.M['첫날가치'], 2) if self.M['당일연속'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
-        
         if  self.M['당일종가'] <=  진입단가  :
             
             self.M['기록시즌'] += 1
@@ -173,6 +184,9 @@ class update_DIY :
             self.M['매수보류'] = True
             self.M['자체연속'] = 0 
 
+            if self.stat and self.D['진시일자'] > self.M['현재일자'] : self.D['진시일자'] = self.M['현재일자']
+
+            self.M['현재손률'] = 0.0 
             return True
 
         else : 
@@ -226,7 +240,8 @@ class update_DIY :
 
         self.D['최장일수'] = self.M['최장일수']
         self.D['최장일자'] = self.M['최장일자']
-        self.D['MDD1'] = f"{self.M['진최하락']:.2f}"; self.D['MDD_DAY1'] = self.M['최하일자'][2:]
+        self.D['진최하락'] = f"{self.D['진최하락']:.2f}" 
+        self.D['최하일자'] = self.D['최하일자'][2:]
         
         초기자본 = float(self.D['일반자금'].replace(',','')); 
         최종자본 = self.M['평가금액']+self.M['현재잔액']; 
@@ -249,13 +264,6 @@ class update_DIY :
                 self.D['월별구분'].pop(0)
                 self.D['월별이익'].pop(0)
 
-            monthly_total = sum(self.D['월별이익'])
-            monthly_lenth = len(self.D['월별이익'])
-            
-            if monthly_lenth : 
-                self.D['월별구분'].append('AVG')
-                self.D['월별이익'].append(round(monthly_total/monthly_lenth))
-
             self.D['손익저점'] = f"{self.D['손익저점']:.2f}"
 
             # 손익통계 분석
@@ -275,17 +283,27 @@ class update_DIY :
             self.D['R_총매도수'] = asis_c; self.D['R_총익절수'] = asispc; self.D['R_총손절수'] = asisuc
             self.D['R_총익승률'] = f"{win_p:.2f}" ; self.D['R_익절평균'] = f"{asispm:.2f}"; self.D['R_손절평균'] = f"{asisum:.2f}"        
 
-    def get_start(self,b='') :
+    def get_start(self,s='',e='') :
 
         self.D['종목코드']  = 'SOXL'
 
-        if b : self.D['시작일자'] = b
-        if self.D['시작일자'] < '2010-03-15' : self.D['시작일자'] = '2010-03-15'
-        old_date = my.dayofdate(self.D['시작일자'],-7)[0]
+        if not s : s = self.D['시작일자']
+        if not e : e = self.D['종료일자']
         
-        self.DB.clear()
-        self.DB.tbl, self.DB.wre, self.DB.odr = ('h_stockHistory_board',f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{self.D['종료일자']}'",'add0')
-        self.B = self.DB.get('add0,add3,add8,add10') # 날자, 종가, 증감, 연속하락 
+        old_date = my.dayofdate(s,-7)[0]  
+        lst_date = self.DB.one("SELECT max(add0) FROM h_stockHistory_board") 
+        
+        if old_date < '2010-03-15' : old_date = '2010-03-15'; s = '2010-03-22'
+        
+        if e > lst_date : e = lst_date
+        if s > e : s = '2020-01-02'; e = lst_date
+        
+        self.D['시작일자'] = s
+        self.D['종료일자'] = e
+
+        self.DB.clear()  
+        self.DB.tbl,self.DB.wre,self.DB.odr = ("h_stockHistory_board",f"add1='{self.D['종목코드']}' AND add0 BETWEEN '{old_date}' AND '{e}'","add0")
+        self.B = self.DB.get('add0,add3,add8,add9,add10') # 날자, 종가, 증감, 연상,연하 
 
 
     def increase_count(self,printOut=False) :
@@ -312,6 +330,7 @@ class update_DIY :
         self.M['매수보류'] = False
         self.M['매수지연'] = False
         #----------------------------------------------------------
+        self.M['시작일자']  = self.D['시작일자']
         self.M['진행상황']  = '매수대기'
         self.M['기록시즌']  = 0
         
@@ -334,9 +353,9 @@ class update_DIY :
         self.M['전일종가']  = 0.0
         self.M['자체연속']  = 0 
         
-        self.set_value(['매수수량','매도수량','예정수량','보유수량','진최하락'],0)
+        self.set_value(['매수수량','매도수량','예정수량','보유수량'],0)
         self.set_value(['매수금액','매도금액','총매수금','평균단가','수익현황','현수익률','평가금액','매수예가','수수료등'],0.0)
-        self.M['최하일자'] = ''
+        self.D['최하일자'] = ''
         self.D['익절횟수'] = self.D['손절횟수'] = 0
         
         if  self.chart : # 챠트작성
@@ -346,17 +365,20 @@ class update_DIY :
             self.D['clse_p'] = []
             self.D['avge_v'] = []
 
-
         # 통계자료
         if  self.stat :
 
             self.D['totalV'] = []
             self.D['일정익절'] = self.D['일정손절'] = self.D['일회익절'] = self.D['일회손절'] = 0
 
-            self.D['손익통계'] = [[self.D['시작일자'],f"{self.M['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE",'','0.00']]
+            self.D['손익통계'] = [[self.D['시작일자'],f"{self.M['현재잔액']:,.2f}",'0.00','0.00',"#F6CECE",'','0.00',0]]
             self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
             self.D['손익저점'] = 100
             self.D['저점날자'] = ''
+            self.D['진시일자'] = self.D['종료일자']
+            self.M['현재손률'] = 0.0
+            self.D['진최하락'] = 0
+            self.D['최하일자'] = ''
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # nextStep : 다음 날에 대한 전략을 계산한다  

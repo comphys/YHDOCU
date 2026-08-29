@@ -51,6 +51,7 @@ class DIY :
             self.M['첫날기록'] = True
             
             self.vCount(self.M['수익현황'])
+            self.tax()
             self.rebalance() 
             
 
@@ -83,7 +84,15 @@ class DIY :
             if opt==2 : fee += round(mm*0.0008)/100
             self.M['수수료등']  = fee
             self.M['현재잔액'] -= fee
-        
+
+    def tax(self) :
+
+        if  self.D['세금적용'] == 'on' :
+            if  self.M['현재일자'] > str(int(self.M['시작일자'][0:4])+1) + self.M['시작일자'][4:] : 
+                self.M['현재잔액'] -= int(self.M['현재잔액']*0.22) 
+                self.M['시작일자']  = self.M['현재일자']
+
+    
     def rebalance(self)  :
 
         for i in range(self.M['최대차수']) : self.M['매금단계'][i] = int( self.M['현재잔액'] * self.M['분할배분'][i]) 
@@ -317,6 +326,7 @@ class DIY :
         self.M['매수보류'] = False
         self.M['매수지연'] = False
         #----------------------------------------------------------
+        self.M['시작일자']  = self.D['시작일자']
         self.M['진행상황']  = '매수대기'
         self.M['기록시즌']  = 0
         

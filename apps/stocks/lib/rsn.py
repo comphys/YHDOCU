@@ -57,7 +57,6 @@ class RSN :
             tac['총매수금']  = 0.0
 
             self.commission(tac,2)
-            self.tax(tac)
             if  tac == self.N : 
                 self.N['매수차수'] = 0 
                 self.N['매도예가'] = 0
@@ -89,7 +88,7 @@ class RSN :
                 self.set_value(['진행상황'],'손절매도')
             
             self.M['첫날기록'] = True
-
+            self.tax()
             self.rebalance()
         
         self.realMDD()
@@ -128,9 +127,15 @@ class RSN :
             tac['수수료등']  = fee
             tac['현재잔액'] -= fee
         
-    def tax(self,tac) :
+    def tax(self) :
 
-        if self.D['세금적용'] == 'on' : tac['현재잔액'] -= int(tac['수익현황']*0.22) 
+        if  self.D['세금적용'] == 'on' :
+            if  self.M['현재일자'] > str(int(self.M['시작일자'][0:4])+1) + self.M['시작일자'][4:] : 
+                self.R['현재잔액'] -= int(self.R['현재잔액']*0.22) 
+                self.S['현재잔액'] -= int(self.S['현재잔액']*0.22) 
+                self.N['현재잔액'] -= int(self.N['현재잔액']*0.22) 
+                self.M['시작일자']  = self.M['현재일자']
+
    
     def rebalance_N(self) :
 
@@ -588,6 +593,7 @@ class RSN :
         self.M['현재날수']  = 1
         self.M['최장일수']  = 0   # 최고 오래 지속된 시즌의 일수
         self.M['첫날기록']  = False
+        self.M['시작일자']  = self.D['시작일자']
         self.R['진행시작']  = self.S['진행시작'] = self.N['진행시작']  = False
         self.D['총수수료'] = 0.0
 

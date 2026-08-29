@@ -16,7 +16,6 @@ class M_whoin(Model) :
         with open('logs/whoin.txt','r',encoding='utf-8') as f:
             content = f.read()
         self.D['로긴정보'] = content.replace('\n','<br>')
-        
         self.D['공아이피'] = my.get_publicIP()
         cur_time = my.now_to_kordate()
         self.log(f"<span class='who-time'>{cur_time}</span><span class='who-ip'>{self.D['공아이피']}</span>\n")

@@ -61,7 +61,6 @@ class update_Log :
             tac['총매수금']  = 0.0
 
             self.commission(tac,2)
-            self.tax(tac)
             if  tac == self.N : 
                 self.N['매수차수'] = 0 
                 self.N['매도예가'] = 0
@@ -74,6 +73,11 @@ class update_Log :
         self.calculate_A(self.R)
         self.calculate_A(self.S)
 
+        잔액총액  = self.R['현재잔액'] + self.S['현재잔액'] + self.N['현재잔액']
+        평가총액  = self.R['평가금액'] + self.S['평가금액'] + self.N['평가금액']
+        
+        self.M['현재손률'] = round(((잔액총액+평가총액)/self.M['시즌자금'] -1 )*100,2) 
+        
         if  self.V['매도수량'] :
             self.rstCount() # self.M['기본진행] 값을 재설정하기 전에 수행되어야 함        
             self.N['매도금액'] = self.N['중도합계']
@@ -88,7 +92,7 @@ class update_Log :
                 self.set_value(['진행상황'],'손절매도')
             
             self.M['첫날기록'] = True
-
+            self.tax()
             self.rebalance()
         
         self.realMDD()
@@ -97,9 +101,10 @@ class update_Log :
         
         # 현수익률을 실최하략으로 적용 ( RSN 전략 특성상, 현재잔액+총매수금이 0일 경우도 발생함)
         if not self.stat : return
-        for tac in (self.V,self.R,self.S,self.N) :
-            if  tac['현수익률'] < tac['진최하락'] : 
-                tac['진최하락'] = tac['현수익률']; tac['최하일자'] = self.M['현재일자']
+
+        if  self.M['현재손률'] < self.D['진최하락'] : 
+            self.D['진최하락'] = self.M['현재손률']
+            self.D['최하일자'] = self.M['현재일자']
 
         if  self.M['현재날수'] > self.M['최장일수'] : 
             self.M['최장일수'] = self.M['현재날수'] 
@@ -126,9 +131,15 @@ class update_Log :
             tac['수수료등']  = fee
             tac['현재잔액'] -= fee
         
-    def tax(self,tac) :
+    def tax(self) :
 
-        if self.D['세금적용'] == 'on' : tac['현재잔액'] -= int(tac['수익현황']*0.22) 
+        if  self.D['세금적용'] == 'on' :
+            if  self.M['현재일자'] > str(int(self.M['시작일자'][0:4])+1) + self.M['시작일자'][4:] : 
+                self.R['현재잔액'] -= int(self.R['현재잔액']*0.22) 
+                self.S['현재잔액'] -= int(self.S['현재잔액']*0.22) 
+                self.N['현재잔액'] -= int(self.N['현재잔액']*0.22) 
+                self.M['시작일자']  = self.M['현재일자']
+
    
     def rebalance_N(self) :
 
@@ -138,7 +149,7 @@ class update_Log :
     def rebalance(self)  :
 
         total = self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액']
-        
+
         # RSN rebalance
         if  self.D['일밸런싱'] == 'on' :
             self.R['현재잔액'] = round(total*self.M['투자배분'][0]/100,2)
@@ -390,6 +401,8 @@ class update_Log :
         self.set_value(['진행상황'],'일반매수')
         self.M['현재날수']  = 1 # 첫날 종가가 전날의 큰단가치 보다 클 경우 현재날수를 0으로 표기하기 위함
 
+        self.M['시즌자금'] = self.R['현재잔액'] + self.S['현재잔액'] + self.N['현재잔액']
+
         if  self.M['당일종가'] <  round(self.M['전일종가'] * self.M['큰단가치'],2) :
             self.M['기록시즌'] += 1
             self.M['현재날수']  = 1
@@ -427,7 +440,7 @@ class update_Log :
                 self.N['거래코드']  = f"{self.N['매수차수']}B {self.N['매수수량']}"
                 self.commission(tac,1)
 
-               
+            self.M['현재손률'] = 0.0    
             return True
 
         else : return False
@@ -479,10 +492,8 @@ class update_Log :
         self.D['최장일수'] = self.M['최장일수']
         self.D['최장일자'] = self.M['최장일자']
         self.D['현재일자'] = self.M['현재일자']
-        self.D['MDD1'] = f"{self.V['진최하락']:.2f}"; self.D['MDD_DAY1'] = self.V['최하일자'][2:]
-        self.D['MDD2'] = f"{self.R['진최하락']:.2f}"; self.D['MDD_DAY2'] = self.R['최하일자'][2:]
-        self.D['MDD3'] = f"{self.S['진최하락']:.2f}"; self.D['MDD_DAY3'] = self.S['최하일자'][2:]
-        self.D['MDD4'] = f"{self.N['진최하락']:.2f}"; self.D['MDD_DAY4'] = self.N['최하일자'][2:]
+        self.D['진최하락'] = f"{self.D['진최하락']:.2f}"; 
+        self.D['최하일자'] = self.D['최하일자'][2:]
 
         총매입금  = self.R['총매수금'] + self.S['총매수금'] + self.N['총매수금']
         총보유량  = self.R['보유수량'] + self.S['보유수량'] + self.N['보유수량']
@@ -523,12 +534,6 @@ class update_Log :
                 self.D['월별구분'].pop(0)
                 self.D['월별이익'].pop(0)
 
-            monthly_total = sum(self.D['월별이익'])
-            monthly_lenth = len(self.D['월별이익'])
-            
-            if monthly_lenth : 
-                self.D['월별구분'].append('AVG')
-                self.D['월별이익'].append(round(monthly_total/monthly_lenth))
 
             self.D['손익저점'] = f"{self.D['손익저점']:.2f}"
 
@@ -592,12 +597,13 @@ class update_Log :
         self.M['현재날수']  = 1
         self.M['최장일수']  = 0   # 최고 오래 지속된 시즌의 일수
         self.M['첫날기록']  = False
+        self.M['시작일자']  = self.D['시작일자']
         self.R['진행시작']  = self.S['진행시작'] = self.N['진행시작']  = False
         self.D['총수수료'] = 0.0
+
         self.set_value(['예정수량','매수수량','보유수량','매도수량',],0)
         self.set_value(['매수예가','매수금액','총매수금','평균단가','평가금액','매도예가','매도금액','수익현황','현수익률','실현익률','중익합계','중도합계','수수료등'],0.0)
-        self.set_value(['진최하락'],0)
-        self.set_value(['최하일자'],'')
+
 
         if '분할횟수' not in self.M :
             
@@ -648,7 +654,6 @@ class update_Log :
             # 투자자금 초기화 ----------------------------------------------------------------------------
             self.M['투자자금'] = my.sv(ST['TC010']) if '투자자금' not in self.D else my.sv(self.D['투자자금'])
             self.M['투자배분'] = my.sf(ST['TC011'])    
-
             self.D['기회자금']  = round(self.M['투자자금']*self.M['투자배분'][0]/100,2)
             self.D['안정자금']  = round(self.M['투자자금']*self.M['투자배분'][1]/100,2)
             self.D['생활자금']  = self.M['투자자금'] - self.D['기회자금'] - self.D['안정자금']
@@ -690,6 +695,9 @@ class update_Log :
             self.D['월익통계'] = [[self.D['시작일자'][:7],0.00]]
             self.D['손익저점'] = 100.0
             self.D['저점날자'] = ''
+            self.M['현재손률'] = 0.0
+            self.D['진최하락'] = 0
+            self.D['최하일자'] = ''
             
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # nextStep : 다음 날에 대한 전략을 계산한다  
