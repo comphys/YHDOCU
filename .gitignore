@@ -2,6 +2,7 @@
 *.log
 *.ipynb
 *.csv
+config.py
 config.ini
 whoin.txt
 settings.json
