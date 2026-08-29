@@ -6,7 +6,7 @@ class M_publicip(Model) :
     def view(self) :
 
 
-        with open('publicIP.log','r',encoding='utf-8') as f:
+        with open('logs/publicIP.log','r',encoding='utf-8') as f:
             content = f.read()
 
         self.D['PublicIP'] = content.replace('\n','<br>')
@@ -19,7 +19,7 @@ class M_publicip(Model) :
 class Ajax(Model) :
 
     def clear_publicip(self) :
-        with open("publicIP.log", "w") as f:
+        with open("logs/publicIP.log", "w") as f:
             pass 
         return '___OK___'
 

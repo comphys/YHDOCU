@@ -17,7 +17,7 @@ class KIWOOM :
 
     def log(self,*args, **kwargs) :
 
-        with open("kiwoom.log","a",encoding="utf-8") as f:
+        with open("logs/kiwoom.log","a",encoding="utf-8") as f:
             print(*args, **kwargs, file=f)
 
 

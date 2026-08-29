@@ -6,16 +6,13 @@ class KIWOOM :
 
     def __init__(self,SYS) :
         self.SYS   = SYS
-        self.info  = SYS.info
-        self.D     = SYS.D
         self.DB    = SYS.DB
         self.host  = 'https://api.kiwoom.com'
         self.headers = {'Content-Type':'application/json;charset=UTF-8','cont-yn':'N'}
-        self.token = self.get_token()
 
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H%M%S")  
-        with open("kiwoom.log","a",encoding="utf-8") as f:
+        with open("logs/kiwoom.log","a",encoding="utf-8") as f:
             f.write(f"{hour_now} : {str}\n")
 
     def strf(self,num) :
@@ -23,8 +20,9 @@ class KIWOOM :
 
     def kiwoom_deco(func) :
         def wrapper(self,*args) :
-            if not self.token : return None
-            self.headers['authorization'] = f'Bearer {self.token}'
+            token = self.get_token()
+            if not token : return False
+            self.headers['authorization'] = f'Bearer {token}'
             return func(self,*args)
         return wrapper
 
@@ -55,8 +53,7 @@ class KIWOOM :
             
             else : 
                 self.log(f"{rst['return_code']} : {rst['return_msg']}")
-                return "error::token_issue"
-
+                return False
         else :
             return self.DB.store('kiwoom_token')
     
@@ -73,7 +70,7 @@ class KIWOOM :
             return {'현재가':rst['cur_prc'],'증감':rst['flu_rt'],'전날종가':rst['base_close_pric'],'환율':rst['base_exrt']}
         else :
             self.log(f"{rst['return_code']} : {rst['return_msg']}")
-            return "error::token_issue"            
+            return "error"            
 
     @kiwoom_deco
     def get_ohlc_price(self,symbol,date) :

@@ -5,7 +5,6 @@ from system.core.load import load_control
 # ----------------------------------------------------------------------------------------------------------
 # Flask 앱 초기화 및 기본 설정
 app = Flask(__name__)
-app.debug = True
 app.url_map.strict_slashes = False
 app_root = os.path.dirname(os.path.abspath(__file__))
 app.template_folder = os.path.join(app_root, 'apps')
@@ -15,10 +14,8 @@ app.config.from_object(config.Config)
 @app.before_request
 def resolve_client_ip():
     forwarded_for = request.headers.get('X-Forwarded-For')
-    if forwarded_for :
-        g.client_ip = forwarded_for.split(',')[0].strip()
-    else :
-        g.client_ip = request.remote_addr or ''
+    if forwarded_for : g.client_ip = forwarded_for.split(',')[0].strip()
+    else : g.client_ip = request.remote_addr or ''
 # ----------------------------------------------------------------------------------------------------------
 # 정적 에셋 라우팅
 @app.route('/sys/<path:filename>')
@@ -106,7 +103,6 @@ def main(myapp='stocks', control='board', method='index', option=None):
         if isinstance(data, dict) and 'skin' in data: return render_template(f"{myapp}/skin/{data['skin']}", D=data)
 
     return ''
-
 # ----------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

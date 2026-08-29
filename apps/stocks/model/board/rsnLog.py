@@ -220,7 +220,9 @@ class Ajax(Model) :
 
         KW = self.SYS.load_app_lib('kiwoom')
         rst = KW.get_current_price('SOXL')
-        rst['현재가'] = abs(float(rst['현재가']))
-        rst['현재가'] = f"{rst['현재가']:.2f}"
-        return self.SYS.json(rst)
+        if rst :
+            rst['현재가'] = abs(float(rst['현재가']))
+            rst['현재가'] = f"{rst['현재가']:.2f}"
+            return self.SYS.json(rst)
+        else : return self.SYS.json("error::token_issue")
     

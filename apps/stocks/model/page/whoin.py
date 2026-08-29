@@ -6,14 +6,14 @@ class M_whoin(Model) :
 
     def log(self,strinfo ) :
 
-        with open("publicIP.log","a",encoding="utf-8") as f:
+        with open("logs/publicIP.log","a",encoding="utf-8") as f:
             f.write(strinfo)
 
 
 
     def view(self) :
 
-        with open('whoin.txt','r',encoding='utf-8') as f:
+        with open('logs/whoin.txt','r',encoding='utf-8') as f:
             content = f.read()
         self.D['로긴정보'] = content.replace('\n','<br>')
         
@@ -28,6 +28,6 @@ class M_whoin(Model) :
 class Ajax(Model) :
 
     def clear_who(self) :
-        with open("whoin.txt", "w") as f:
+        with open("logs/whoin.txt", "w") as f:
             pass 
         return '___OK___'
