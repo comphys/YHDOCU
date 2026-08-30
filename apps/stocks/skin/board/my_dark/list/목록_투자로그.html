@@ -74,8 +74,10 @@
 		<i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;<span class="exchange"> {{D['누적수익']}} ( {{D['실현수익']}} △ {{D['수수료합']}} )</span> &nbsp;
 	</div>
 	<div class="pull-right" style="color:#222121;">
+		{% if D['_lcl'] %}
 		<span onclick="start_stock_live('play')"><i class="fa fa-play" style='color:gray;font-size:18px;cursor: pointer;'></i></span>&nbsp;
 		<span onclick="start_stock_live('stop')"><i class="fa fa-pause" style='color:gray;font-size:18px;cursor: pointer;'></i></span>&nbsp;&nbsp;
+		{% endif %}
 		<div id ='daily-check'>{{D['주문확인']}}</div>&nbsp;&nbsp;
 		<form method='post' name='category_search' action="{{D['_bse']}}board/list/{{D['bid']}}" style='display:inline;'>
 			{%- for cats in D['CAT_LIST'] %}
