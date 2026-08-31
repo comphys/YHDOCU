@@ -145,7 +145,8 @@ class DIY :
         self.M['매도예가'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
 
         if  self.M['매수차수'] >  self.M['최대차수']-1 and self.M['현재날수'] > self.M['탈출일수'] :
-            self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * self.M['탈출종가']),my.round_up(self.M['매도예가']*self.M['탈출허용'],2))
+            # self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * self.M['탈출종가']),my.round_up(self.M['평균단가']*self.M['탈출허용'],2))
+            self.M['매도예가'] = my.round_up(self.M['평균단가']*self.M['탈출허용'],2)
         
 
     def tomorrow_step(self)   :
