@@ -59,7 +59,7 @@
 	</form>
 
 	<!-- 메인 챠트 -->
-		<div id="myChart_main-div" style="position:fixed;top:780px;left:1530px"><canvas id="myChart_main" style="width:700px;height:350px;"></canvas></div>
+		<div id="myChart_main-div" style="position:fixed;top:780px;left:1530px"><canvas id="myChart_main" style="width:1050px;height:525px;"></canvas></div>
 
 		<div class="clearfix" style="border-radius:0px;padding:10px;">
 			{% if D['최장일수'] %}
@@ -300,10 +300,10 @@
 <div style="padding:20px;font-size:24px;color:gray">{{D['NOTICE']}}</div>
 {% endif %}
 
-<div id='backTestingChart' style="position:fixed;left:1530px;top:2170px;"><canvas id="mybackTestChart" style="width:700px;height:330px;"></canvas></div>
+<div id='backTestingChart' style="position:fixed;left:1530px;top:2170px;"><canvas id="mybackTestChart" style="width:1050px;height:525px;"></canvas></div>
 {% if D['월별이익'] %}
 <div id='monthlyProfit' style="position:fixed;left:1530px;top:430px;">
-	<canvas id="monthlyProfitChart" style="width:700px;height:350px;"></canvas>
+	<canvas id="monthlyProfitChart" style="width:1050px;height:525px;"></canvas>
 </div>
 {% endif %}
 
@@ -364,13 +364,13 @@ const labels_season = Array.from(new Array(10),(x,i)=> i+1);
 const data_season = {
 	labels : labels_season,
 	datasets : [
-		{ label:'당일종가',  data : [2,5,6,3,8], borderColor:'blue', borderWidth:2,borderDash: [2,2],pointRadius:0, pointHoverRadius:0, backgroundColor:'#58ACFA',lineTension:0.2	},
-		{ label:'D 평균',	data : [3,6,7,8,5],	borderColor:'red', borderWidth:2, pointRadius:3,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
-		{ label:'추세+10',	data : [4,7,5,3,4], borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
-		{ label:'추세+0',	data : [4,7,5,3,4], borderWidth:1,borderColor:'gray',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,	lineTension:0.2	},
-		{ label:'추세-10', 	data : [4,7,5,3,4], borderWidth:1,borderColor:'white',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,	lineTension:0.2	},
-		{ label:'추세-20', 	data : [4,7,5,3,4], borderWidth:1,borderColor:'white',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
-		{ label:'추세-30', 	data : [4,7,5,3,4],	borderWidth:1,borderColor:'white',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,	lineTension:0.2},
+		{ label:'당일종가',  data : [2,5,6,3,8], borderColor:'blue', borderWidth:3,pointRadius:0, pointHoverRadius:0, backgroundColor:'#58ACFA',lineTension:0.2	},
+		{ label:'D 평균',	data : [3,6,7,8,5],	borderColor:'red', borderWidth:3, pointRadius:2,pointHoverRadius:24, backgroundColor:'red',lineTension:0.2},
+		{ label:'추세+10',	data : [4,7,5,3,4], borderWidth:2,borderColor:'gray',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+		{ label:'추세+0',	data : [4,7,5,3,4], borderWidth:2,borderColor:'gray',borderDash: [2,4],backgroundColor:'gray',pointRadius:0,pointHoverRadius:0,	lineTension:0.2	},
+		{ label:'추세-10', 	data : [4,7,5,3,4], borderWidth:2,borderColor:'white',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,	lineTension:0.2	},
+		{ label:'추세-20', 	data : [4,7,5,3,4], borderWidth:2,borderColor:'white',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,lineTension:0.2},
+		{ label:'추세-30', 	data : [4,7,5,3,4],	borderWidth:2,borderColor:'white',borderDash: [2,4],backgroundColor:'#CEF6F5',pointRadius:0,pointHoverRadius:0,	lineTension:0.2},
 	]   
 };
 const options_season = {
@@ -379,8 +379,8 @@ const options_season = {
 	responsive:false,
 	layout:{padding:20},
 	scales:{
-		x:{ ticks : {color:'black'}, grid:{color:'white'}},
-		y:{ ticks : {color:'black'}, grid:{color:'white'}}
+		x:{ ticks : {color:'black',font:{size:16}}, grid:{color:'white'}},
+		y:{ ticks : {color:'black',font:{size:16}}, grid:{color:'white'}}
 	}
 };
 const config_season  = {type:'line',data:data_season,options:options_season};
@@ -493,24 +493,18 @@ const data_main = {
 		{
             label:' 종가변동',
             data : closeP,
-			borderColor:'blue', borderWidth:2, pointRadius:0, 
+			borderColor:'blue', borderWidth:3, pointRadius:0, 
   			lineTension:0.2
     	},
 		{
             label:' 평균단가D',
             data : avge_v,
-			borderColor:'red', borderWidth:2, pointRadius:2,pointHoverRadius:0, backgroundColor:'red',
+			borderColor:'red', borderWidth:3, pointRadius:2,pointHoverRadius:0, backgroundColor:'red',
 			lineTension:0.2,
 			yAxisID : 'y'
         },
 
-		{
-            label:' 평가밸류R',
-            data : totalV,
-			borderColor:'red', borderWidth:2,pointRadius:0,
-			lineTension:0.2,
-			yAxisID : 'y1'
-        },
+		{   label:' 평가밸류R', data : totalV, borderColor:'red', borderWidth:3,pointRadius:0,lineTension:0.2,	yAxisID : 'y1' },
     ]   
 };
 const options_main = {
@@ -520,8 +514,8 @@ const options_main = {
     responsive:false,
     layout:{padding:20},
     scales:{
-        x: { ticks : {color:'black'}, grid:{color:'white'}},
-		y: { ticks : {color:'black'}, grid:{color:'white'},position:'left'},
+        x: { ticks : {color:'black',font:{size:16}}, grid:{color:'white'}},
+		y: { ticks : {color:'black',font:{size:16}}, grid:{color:'white'},position:'left'},
 		y1:{ type:'linear', display:true, position:'right'}
     }
 };
@@ -581,7 +575,7 @@ myChart_main.update();
 		data: monthlyProfits,
 		backgroundColor: backColor,
 		borderColor: boreColor,
-		borderWidth: 1
+		borderWidth: 2
 	}]
 	};
 
@@ -598,8 +592,8 @@ myChart_main.update();
 					datalabels : {display:false,color:'white', anchor:'end', align:'end', offset: 3, font:{size:12}}			
 		},
 		scales: {
-		x: { ticks : {color:'black'}, grid:{color:'white'}},
-		y: {
+		x: { ticks : {color:'black',font:{size:16}}, grid:{color:'white'}},
+		y: {ticks : {color:'black',font:{size:16}},
 			grid : {
 				lineWidth:2,
 				color: function(context) {

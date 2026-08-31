@@ -91,11 +91,12 @@ class update_DIY :
 
     def tax(self) :
 
-        if  self.D['세금적용'] == 'on' :
-            if  self.M['현재일자'] > str(int(self.M['시작일자'][0:4])+1) + self.M['시작일자'][4:] : 
-                self.M['현재잔액'] -= int(self.M['현재잔액']*0.22) 
-                self.M['시작일자']  = self.M['현재일자']
-
+        if  self.D['세금적용'] == 'on' and self.M['현재일자'] > self.M['세금일자'] :
+            순수이익 = self.M['현재잔액'] - self.M['투자자금']
+            양도세금 = int(순수이익*0.22)
+            self.M['현재잔액'] -= 양도세금
+            self.M['투자자금']  = self.M['현재잔액']
+            self.M['세금일자'] = str(int(self.M['현재일자'][0:4])+1) + '-04-30'
     
     def rebalance(self)  :
 
@@ -148,7 +149,8 @@ class update_DIY :
         self.M['매도예가'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
 
         if  self.M['매수차수'] >  self.M['최대차수']-1 and self.M['현재날수'] > self.M['탈출일수'] :
-            self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * self.M['탈출종가']),my.round_up(self.M['매도예가']*self.M['탈출허용'],2))
+            # self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * self.M['탈출종가']),my.round_up(self.M['평균단가']*self.M['탈출허용'],2))
+            self.M['매도예가'] = my.round_up(self.M['평균단가']*self.M['탈출허용'],2)
         
 
     def tomorrow_step(self)   :
@@ -330,7 +332,7 @@ class update_DIY :
         self.M['매수보류'] = False
         self.M['매수지연'] = False
         #----------------------------------------------------------
-        self.M['시작일자']  = self.D['시작일자']
+        self.M['세금일자']  = str(int(self.D['시작일자'][0:4])+1) +  '-04-30'
         self.M['진행상황']  = '매수대기'
         self.M['기록시즌']  = 0
         
@@ -338,6 +340,7 @@ class update_DIY :
         if '세금적용' not in self.D : self.D['세금적용']  = ST['A0002']
 
         self.M['현재잔액']  = my.sv(self.D['일반자금'])
+        self.M['투자자금']  = self.M['현재잔액']
 
         # 잔액 분할
         self.M['최대차수'] = len(self.M['분할배분'])

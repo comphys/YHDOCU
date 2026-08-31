@@ -92,7 +92,6 @@ class update_Log :
                 self.set_value(['진행상황'],'손절매도')
             
             self.M['첫날기록'] = True
-            self.tax()
             self.rebalance()
         
         self.realMDD()
@@ -131,15 +130,6 @@ class update_Log :
             tac['수수료등']  = fee
             tac['현재잔액'] -= fee
         
-    def tax(self) :
-
-        if  self.D['세금적용'] == 'on' :
-            if  self.M['현재일자'] > str(int(self.M['시작일자'][0:4])+1) + self.M['시작일자'][4:] : 
-                self.R['현재잔액'] -= int(self.R['현재잔액']*0.22) 
-                self.S['현재잔액'] -= int(self.S['현재잔액']*0.22) 
-                self.N['현재잔액'] -= int(self.N['현재잔액']*0.22) 
-                self.M['시작일자']  = self.M['현재일자']
-
    
     def rebalance_N(self) :
 
@@ -149,7 +139,14 @@ class update_Log :
     def rebalance(self)  :
 
         total = self.R['현재잔액']+self.S['현재잔액']+self.N['현재잔액']
-
+        # 세금계산 
+        if  self.D['세금적용'] == 'on' and self.M['현재일자'] > self.M['세금일자'] :
+            순수이익 = total - self.M['투자자금']
+            양도세금 = int(순수이익*0.22)
+            total -= 양도세금
+            self.M['투자자금'] = total
+            self.M['세금일자'] = str(int(self.M['현재일자'][0:4])+1) + '-04-30'
+                
         # RSN rebalance
         if  self.D['일밸런싱'] == 'on' :
             self.R['현재잔액'] = round(total*self.M['투자배분'][0]/100,2)
@@ -597,7 +594,7 @@ class update_Log :
         self.M['현재날수']  = 1
         self.M['최장일수']  = 0   # 최고 오래 지속된 시즌의 일수
         self.M['첫날기록']  = False
-        self.M['시작일자']  = self.D['시작일자']
+        self.M['세금일자']  = str(int(self.D['시작일자'][0:4])+1) + '-04-30'
         self.R['진행시작']  = self.S['진행시작'] = self.N['진행시작']  = False
         self.D['총수수료'] = 0.0
 
