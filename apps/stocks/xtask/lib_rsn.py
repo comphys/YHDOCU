@@ -435,7 +435,7 @@ class update_Log :
                 self.N['현재잔액'] -= self.N['매수금액']
                 self.N['매수차수']  = self.N['매수차수'] + 1 
                 self.N['거래코드']  = f"{self.N['매수차수']}B {self.N['매수수량']}"
-                self.commission(tac,1)
+                self.commission(self.N,1)
 
             self.M['현재손률'] = 0.0    
             return True
