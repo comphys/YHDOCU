@@ -356,25 +356,22 @@ ctx_main.style.border = '2px solid black';
 
 let labels_origin   = {{D['chart_date']|safe}}				// labels main origin
 let close_origin    = {{D['close_price']|safe}} 		    // soxl close price origin 
-let n_avg_origin    = {{D['Ntactic_avg']|safe}}	            // soxl average in v tactic
-let s_avg_origin    = {{D['Stactic_avg']|safe}}	
-let r_avg_origin    = {{D['Rtactic_avg']|safe}}	
+let t_avg_origin    = {{D['Ttactic_avg']|safe}}	
 let ChartStart      = {{D['chart_start']}};	
 
 let labels_main     =  labels_origin.slice(ChartStart); let span_start = labels_main[0]; $("input[name='s_date']").val('20'+span_start)
 let close_price     =  close_origin.slice(ChartStart)	
-let n_avg_value     =  n_avg_origin.slice(ChartStart)  
-let s_avg_value     =  s_avg_origin.slice(ChartStart)	
-let r_avg_value     =  r_avg_origin.slice(ChartStart)	
+let t_avg_value     =  t_avg_origin.slice(ChartStart)	
 let last_closeP     = close_price.at(-1)
 
 const data_main = {
     labels : labels_main,
     datasets : [
-		{   label:' 종가변동',data : close_price,borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,3],lineTension:0.2},
-		{   label:' 기회평균',data : r_avg_value,borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
-		{   label:' 안정평균',data : s_avg_value,borderColor:'yellow', borderWidth:3, pointRadius:2,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
-		{   label:' 생활평균',data : n_avg_value,borderColor:'lightgreen', borderWidth:2, pointRadius:3,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
+		{   label:' 종가변동',data : close_price,borderColor:'#58ACFA', borderWidth:3, pointRadius:0, borderDash:[2,3],lineTension:0.2},
+		{   label:' 종합평균',data : t_avg_value,borderColor:'lightgreen', borderWidth:3, pointRadius:2,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
+		// {   label:' 기회평균',data : r_avg_value,borderColor:'#f78181', borderWidth:2, pointRadius:1,pointHoverRadius:24, backgroundColor:'#f78181',lineTension:0.2},
+		// {   label:' 안정평균',data : s_avg_value,borderColor:'yellow', borderWidth:3, pointRadius:2,pointHoverRadius:24, backgroundColor:'yellow',lineTension:0.2},
+		// {   label:' 생활평균',data : n_avg_value,borderColor:'lightgreen', borderWidth:2, pointRadius:3,pointHoverRadius:24, backgroundColor:'lightgreen',lineTension:0.2},
     ]   
 };
 const options_main = {

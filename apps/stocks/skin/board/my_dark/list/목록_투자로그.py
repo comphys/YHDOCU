@@ -37,8 +37,8 @@ class 목록_투자로그(SKIN) :
         self.DB.wre = f"add0 <='{last_date}'"
         self.DB.odr = "add0 DESC"
         self.DB.lmt = '70'
-        
-        chart_data = self.DB.get("add0,add3,r_09,s_09,n_09",assoc=True)
+        # chart_data = self.DB.get("add0,add3,r_09,s_09,n_09",assoc=True)
+        chart_data = self.DB.get("add0,add3,add8",assoc=True)
         
         if chart_data :
 
@@ -55,9 +55,7 @@ class 목록_투자로그(SKIN) :
             self.D['chart_date']  = [x['add0'][2:] for x in chart_data]
             self.D['close_price'] = [x['add3'] for x in chart_data]
             
-            self.D['Rtactic_avg'] = [x['r_09'] if float(x['r_09']) != 0 else 'null' for x in chart_data]
-            self.D['Stactic_avg'] = [x['s_09'] if float(x['s_09']) != 0 else 'null' for x in chart_data]
-            self.D['Ntactic_avg'] = [x['n_09'] if float(x['n_09']) != 0 else 'null' for x in chart_data]
+            self.D['Ttactic_avg'] = [x['add8'] if float(x['add8']) != 0 else 'null' for x in chart_data]
             
             # 다음 날 주문정보 갖고오기, 다음날자의 정보는 주가 테이블의 날자를 기준
             chk_last_date = self.DB.last_date(self.D['tbl'])
