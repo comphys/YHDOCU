@@ -359,9 +359,6 @@ let close_origin    = {{D['close_price']|safe}} 		    // soxl close price origin
 let n_avg_origin    = {{D['Ntactic_avg']|safe}}	            // soxl average in v tactic
 let s_avg_origin    = {{D['Stactic_avg']|safe}}	
 let r_avg_origin    = {{D['Rtactic_avg']|safe}}	
-
-
-
 let ChartStart      = {{D['chart_start']}};	
 
 let labels_main     =  labels_origin.slice(ChartStart); let span_start = labels_main[0]; $("input[name='s_date']").val('20'+span_start)
