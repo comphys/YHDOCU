@@ -1,5 +1,5 @@
 from system.core.load import Control
-# import jwt #Pyjwt
+import jwt #Pyjwt
 
 class Check(Control) : 
 
@@ -13,6 +13,17 @@ class Check(Control) :
     #         return True
     #     except jwt.InvalidTokenError :
     #         return False
+
+    def validate(func) :
+        def wrapper(self) :
+            sec_key  = '정용훈은정유진을사랑해'
+            try :
+                jwt.decode(self.I['_aut'],sec_key,algorithms=['HS256'])
+            except jwt.InvalidTokenError :
+                return {'Err':1,'Emsg':'Wrong token'}
+            return func(self)
+        return wrapper
+
 
     def ip_check(self) :
 
@@ -30,8 +41,10 @@ class Check(Control) :
         self.DB.parameter_update('A0710',date)
         return "OK"
 
+    @ validate
     def check_rsndiy(self) :
         cd = {}
         cd['rsn'] = self.DB.parameter('TX070')
         cd['diy'] = self.DB.parameter('A0710')
+        self.info(self.I['_aut'])
         return cd
