@@ -684,15 +684,14 @@ function updateNewYorkTime() {
 
 function start_stock_live(opt) {
 	if (opt == 'play') {
-	if (timeID == null) {
-		updateNewYorkTime(); timeID = setInterval(updateNewYorkTime,1000)
-		loadStockPrice(); 	 stockID = setInterval(loadStockPrice,3000)
-		} else {  return }
-	} else { if (timeID == null) return; else { 
-		$("#real-time-stock-price").html('');
-		$("#real-nyse-time").html('');
-		clearInterval(timeID); clearInterval(stockID); 	timeID  = null; stockID = null }}
+		if (timeID == null) { updateNewYorkTime(); timeID = setInterval(updateNewYorkTime,1000); }
+		if (stockID== null) { loadStockPrice();   stockID = setInterval(loadStockPrice,3000);} 
+	} else { 
+		if (timeID)  {   $("#real-nyse-time").html(''); clearInterval(timeID); timeID  = null; }
+		if (stockID) {   $("#real-time-stock-price").html(''); clearInterval(stockID);  stockID = null;} 
+	}	
 }
+
 {% endif %}
 </script>
 {% endblock %}
