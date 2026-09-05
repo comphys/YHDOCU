@@ -56,7 +56,7 @@
 				</tr>
 				{% endif %}
 			</table>
-			{% if D['_lcl'] %}
+			{% if not D['_lcl'] %}
 			<div id="real-nyse-time" style="text-align:center;padding-top:50px;font-size:16px;font-weight:bold;color:lightgray">&nbsp;</div>
 			<div id="real-time-stock-price" style="text-align:center;padding-top:10px;font-weight:bold;color:gray">&nbsp;</div>
 			{% endif %}
@@ -74,7 +74,7 @@
 		<i class="fa fa-plus-square" aria-hidden="true"></i>&nbsp;<span class="exchange"> {{D['누적수익']}} ( {{D['실현수익']}} △ {{D['수수료합']}} )</span> &nbsp;
 	</div>
 	<div class="pull-right" style="color:#222121;">
-		{% if D['_lcl'] %}
+		{% if not D['_lcl'] %}
 		<span onclick="start_stock_live('play')"><i class="fa fa-play" style='color:gray;font-size:18px;cursor: pointer;'></i></span>&nbsp;
 		<span onclick="start_stock_live('stop')"><i class="fa fa-pause" style='color:gray;font-size:18px;cursor: pointer;'></i></span>&nbsp;&nbsp;
 		{% endif %}
@@ -647,7 +647,7 @@ function update_log() {
 	});
 }
 
-{% if D['_lcl'] %}
+{% if not D['_lcl'] %}
 
 let timeID  = null;
 let stockID = null;
