@@ -827,6 +827,7 @@ class RSN :
         
         self.D['종료일자'] = self.DB.one("SELECT max(add0) FROM h_stockHistory_board") if not end else end
         self.D['시작일자'] = my.dayofdate(self.D['종료일자'],delta=-365*2)[0] if not start else start 
+        if result : self.stat = True
         self.get_start()
         self.init_value()
         self.simulate()
