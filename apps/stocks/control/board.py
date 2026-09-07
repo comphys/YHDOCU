@@ -5,7 +5,7 @@ import system.core.my_utils as my
 class Board(Control) : 
 
     def index(self) :
-        return self.moveto('board/list')
+        return self.moveto(self.D['USER']['home'])
 
     def _auto(self) :
 
@@ -13,9 +13,10 @@ class Board(Control) :
         self.D['platform'] = 'On Local' if  self.D['_lcl'] else ''
 
         if '__u_Ino__' in session :
-            self.D['bid']  = self.parm[0] if self.parm else self.C['init_board']
-            self.D['tbl']  = 'h_'+self.D['bid']+'_board'
             self.D['USER'] = self.DB.line(f"SELECT * FROM h_user_list WHERE uid='{session['__u_Ino__']}'")
+            self.D['bid']  = self.parm[0] if self.parm else self.D['USER']['home'].split('/')[-1]
+            self.D['tbl']  = 'h_'+self.D['bid']+'_board'
+            
             self.D['BCONFIG'] = self.DB.line(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'")
 
             self.lAccess = True if self.D['USER']['level'] >= self.D['BCONFIG']['acc_list']  else False

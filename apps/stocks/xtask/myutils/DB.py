@@ -233,7 +233,7 @@ class DB :
     # json 형태처럼 key 값과 value 값으로 데이터를 저장 및 불러오기
 
     def store(self,key,val=None) :
-        if  val :
+        if  val != None :
             qry = f"UPDATE STORAGE SET val='{val}' WHERE key='{key}'"
             self.exe(qry)
         else :
