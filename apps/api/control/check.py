@@ -46,5 +46,4 @@ class Check(Control) :
         cd = {}
         cd['rsn'] = self.DB.parameter('TX070')
         cd['diy'] = self.DB.parameter('A0710')
-        self.info(self.I['_aut'])
         return cd
