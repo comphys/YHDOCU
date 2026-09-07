@@ -41,7 +41,7 @@ class Check(Control) :
         self.DB.parameter_update('A0710',date)
         return "OK"
 
-    @ validate
+    # @ validate
     def check_rsndiy(self) :
         cd = {}
         cd['rsn'] = self.DB.parameter('TX070')

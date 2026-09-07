@@ -55,7 +55,7 @@ class Access(Control) :
                 if  self.D['_lcl'] :
                     api_token = self.DB.store('api_token')
                     host = "https://comphys.pythonanywhere.com/api/check/check_rsndiy"
-                    # host = "http://127.0.0.1:5000/api/check/check_rsndiy"
+                    # host = "http://192.168.0.20:5000/api/check/check_rsndiy"
                     headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':api_token}
                     rst = requests.post(host,headers=headers,json={}).json()
                     self.DB.parameter_update('TX070',rst['rsn'])
