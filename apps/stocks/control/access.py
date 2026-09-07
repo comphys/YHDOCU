@@ -53,8 +53,9 @@ class Access(Control) :
 
                 # 확인 날자 가져오기 
                 if  self.D['_lcl'] :
+                    api_token = self.DB.store('api_token')
                     host = "https://comphys.pythonanywhere.com/api/check/check_rsndiy"
-                    headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':'Royal to JYH'}
+                    headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':api_token}
                     rst = requests.post(host,headers=headers,json={}).json()
                     self.DB.parameter_update('TX070',rst['rsn'])
                     self.DB.parameter_update('A0710',rst['diy'])

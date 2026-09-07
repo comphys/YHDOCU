@@ -16,7 +16,7 @@ class Check(Control) :
 
     def validate(func) :
         def wrapper(self) :
-            sec_key  = '정용훈은정유진을사랑해'
+            sec_key  = self.DB.store('api_key')
             try :
                 jwt.decode(self.I['_aut'],sec_key,algorithms=['HS256'])
             except jwt.InvalidTokenError :
