@@ -44,7 +44,7 @@ class Admin(Control) :
         if session['__u_Ino__'] != 'comphys' : return self.echo({'title' : '접근금지','skin' : 'admin/donotenter.html'})
         self.model('admin-board')
         tab = int(self.gets.get('tab',0))
-        self.D['active_tab'] = ['','','','']
+        self.D['active_tab'] = ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','']
         self.D['active_tab'][tab] = 'active'
         D = {'title' : '보드관리자', 'header' : 'YH Admin', 'skin' : 'admin/board_sort.html'}
         return self.echo(D)

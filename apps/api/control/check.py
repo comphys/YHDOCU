@@ -18,7 +18,6 @@ class Check(Control) :
 
     @ validate
     def ip_check(self) :
-
         KW = self.load_app_lib('kiwoom')
         rst = KW.get_current_price('SOXL')
         return rst

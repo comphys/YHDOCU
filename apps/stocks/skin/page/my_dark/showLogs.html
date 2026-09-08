@@ -1,0 +1,58 @@
+{% extends D['_skn'] + 'page/my_dark/main_layout.html' %}
+
+{% block contents_page  %}
+<div class="clearfix">
+    <form method='post' action="{{D['_bse']}}page/action/showLogs" >
+    <select name="log_file" onchange="this.form.submit()" style="height:30px;padding:2px 2px 2px 20px;border:1px solid gray;color:lightyellow;font-size:16px;">
+        <option value = "">로그파일보기</option>
+        {% for log in D['logs'] %}
+        <option value="{{log}}" {{ 'selected' if D['logfile']==log else '' }}>{{log}}</option>
+        {% endfor %} 
+    </select>
+    </form>
+</div>
+<div id='logContent-info-div' class='scrollbar' style="background-color:black;padding:20px;border:1px solid darkgray;margin-top:10px;margin-bottom:10px;min-height:200px;max-height:600px;overflow:auto">
+{{D['logContent']|safe}}
+</div>
+<div style="clear:both">
+    <div style="float:left"><button class="btn btn-red" onclick='clear_log()'>비우기</button></div>
+    {% if D['_lcl'] %}
+    <div style="float:right">
+        <button class="btn btn-blue" onclick='old_token()'>토큰받기</button>
+        <button class="btn btn-red" onclick='new_token()'>토큰전송</button>
+    </div>
+    {% endif %}
+</div>
+<br>
+<br>
+
+<script>
+function clear_log() {
+ 
+    var url = uri('linkajax') + 'showLogs/clear_logcontent';
+
+	$.post(url,{'logfile':$("select[name=log_file]").val()}).done(function(data){
+		if(data=='___OK___') {
+            h_dialog.notice('작업이 성공적으로 수행되었습니다.');
+            $("#logContent-info-div").html('');
+        }
+	});   
+}
+{% if D['_lcl'] %}
+
+function new_token() {
+    
+    const url = uri('linkajax') + 'showLogs/new_token';
+	$.post(url,{}).done(function(data){	if(data=='___OK___') { h_dialog.notice('작업이 성공적으로 수행되었습니다.');}});   
+}
+
+function old_token() {
+    
+    const url = uri('linkajax') + 'showLogs/old_token';
+	$.post(url,{}).done(function(data){	if(data=='___OK___') { h_dialog.notice('작업이 성공적으로 수행되었습니다.');}});   
+}
+
+{% endif %}
+
+</script>
+{% endblock %}

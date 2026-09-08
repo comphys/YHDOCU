@@ -39,7 +39,7 @@ class Access(Control) :
                     pil = ''
                     pir = ''
                 if not self.D['_lcl'] :
-                    with open('logs/whoin.txt','a',encoding='utf-8') as f:
+                    with open('logs/whoin.log','a',encoding='utf-8') as f:
                         f.write(f"<span class='who-id'>{pil}{uid}{pir}</span><span class='who-time'>{user_time}</span><span class='who-ip'>{user_ip}</span><span class='who-agent'>{user_agent}</span>\n")
                 session['__u_Ino__'] = uid
                 session['CSH'] = {}
