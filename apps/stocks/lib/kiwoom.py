@@ -11,9 +11,9 @@ class KIWOOM :
         self.headers = {'Content-Type':'application/json;charset=UTF-8','cont-yn':'N'}
 
     def log(self,str) :
-        hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H%M%S")  
+        hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
         with open("logs/kiwoom.log","a",encoding="utf-8") as f:
-            f.write(f"{hour_now} : {str}\n")
+            f.write(f"<span class='who-ip'>{hour_now} :</span> {str}\n")
 
     def strf(self,num) :
         return round(abs(float(num)),2) 

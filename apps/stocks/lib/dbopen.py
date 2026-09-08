@@ -1,23 +1,23 @@
 import requests
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from myutils.DB import DB
 
 
 # FY : newyork, FN : nasdaq, FA : amax
 # SOXL 은 FA
 
-class DBAPI :
+class DBOPEN :
 
-    def __init__(self) :
-        self.DB = DB('stocks')
+    def __init__(self,SYS) :
+        self.SYS   = SYS
+        self.DB    = SYS.DB
         self.host  = 'https://openapi.dbsec.co.kr:8443'
         self.headers = {'Content-Type':'application/json;charset=UTF-8','cont_yn':'N'}
 
     def log(self,str) :
-        hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M %S")  
+        hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
         with open("logs/dbapi.log","a",encoding="utf-8") as f:
-            f.write(f"{hour_now} : {str}\n")
+            f.write(f"<span class='who-ip'>{hour_now} :</span> {str}\n")
 
     def dbapi_deco(func) :
         def wrapper(self,*args,**kargs) :
@@ -35,7 +35,7 @@ class DBAPI :
         if response.status_code == 200 :
             rst = response.json()
             pr = {'종목코드':symbol,'현재가':rst['Out']['Prpr']}
-            print(pr)
+            return pr
         else : 
             self.log(f"{response.status_code} : {response.text}")
             return False
@@ -116,18 +116,3 @@ class DBAPI :
             for p in pr : print(p)
         else :
             print(f"코드 : {rst['rsp_cd']}  메세지 : {rst['rsp_msg']}")
-
-
-# FY : newyork, FN : nasdaq, FA : amax
-api = DBAPI()
-# api.get_current_price('SGOV')
-print('----------------------------------------------------------------------------------------------------')
-# api.get_ohlc('SGOV','20260904','20260904')
-# api.revoke_token()
-# api.temp()
-# token = api.get_token()
-# print(token)
-# extime = api.check_token_expired()
-# print(extime)
-# api.get_trading_history('20260907','20260908','SGOV')
-api.get_current_price('SOXL',mk='FA')
