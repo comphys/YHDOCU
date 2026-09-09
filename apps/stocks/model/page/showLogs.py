@@ -34,14 +34,14 @@ class Ajax(Model) :
         return '___OK___'
 
     def new_token(self) :
-        kiwoom_token = self.DB.store('kiwoom_token')
-        kiwoom_token_date = self.DB.store('kiwoom_token_date')
+        dbapi_token = self.DB.store('dbapi_token')
+        dbapi_time  = self.DB.store('dbapi_time')
         # 서버로 요청 
         if  self.D['_lcl'] :
             api_token= self.DB.store('api_token')
             host = "https://comphys.pythonanywhere.com/api/sprice/new_token"
             headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':api_token}
-            data = {"token":kiwoom_token,"token_date":kiwoom_token_date}
+            data = {"token":dbapi_token,"token_date":dbapi_time}
             rst = requests.post(host,headers=headers,json=data)
             return rst.json()
 
@@ -54,7 +54,7 @@ class Ajax(Model) :
             headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':api_token}
             rst = requests.post(host,headers=headers,json=data).json()
 
-            self.DB.store('kiwoom_token',rst['token'])
-            self.DB.store('kiwoom_token_date',rst['token_date'])
+            self.DB.store('dbapi_token',rst['token'])
+            self.DB.store('dbapi_time',rst['token_date'])
             return '___OK___'
         return '___OK___'
