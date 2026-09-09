@@ -28,8 +28,8 @@ class Sprice(Control) :
         token = self.D['post']['token']
         token_date = self.D['post']['token_date']
 
-        self.DB.store('kiwoom_token',token)
-        self.DB.store('kiwoom_token_date',token_date)
+        self.DB.store('dbapi_token',token)
+        self.DB.store('dbapi_time',token_date)
 
         return '___OK___'
 
@@ -37,7 +37,7 @@ class Sprice(Control) :
     def old_token(self) :
 
         tk = {}
-        tk['token'] = self.DB.store('kiwoom_token')
-        tk['token_date'] = self.DB.store('kiwoom_token_date')
+        tk['token'] = self.DB.store('dbapi_token')
+        tk['token_date'] = self.DB.store('dbapi_time')
 
         return tk
