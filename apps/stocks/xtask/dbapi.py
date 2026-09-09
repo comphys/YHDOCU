@@ -41,12 +41,18 @@ class DBAPI :
             return False
 
     @dbapi_deco
-    def get_ohlc(self,symbol,date1,date2,mk='FA') :
+    def get_ohlc(self,symbol,date1,mk='FA') :
         endp = '/api/v1/quote/overseas-stock/chart/day'
-        params = { "In": {	"InputOrgAdjPrc":"1", "InputCondMrktDivCode": mk,	"InputIscd1": symbol,	"InputDate1": date1, "InputDate2": date2}}
+        params = { "In": {	"InputOrgAdjPrc":"1", "InputCondMrktDivCode": mk,	"InputIscd1": symbol,	"InputDate1": date1, "InputDate2": date1}}
         response = requests.post(self.host+endp, headers=self.headers, json=params)
-        rst = response.json()
-        print(rst)
+        if response.status_code == 200 :
+            rst = response.json()
+            rst = rst['Out'][0]
+            pr = {'날자':rst['Date'],'종목':symbol,'시가':rst['Oprc'],'고가':rst['Hprc'],'저가':rst['Lprc'],'종가':rst['Prpr'],'거래량':rst['AcmlVol']}
+            print(pr)
+        else : 
+            self.log(f"{response.status_code} : {response.text}")
+            return False
 
     def check_token_expired(self) :
         token_time = self.DB.store('dbapi_time')
@@ -122,12 +128,12 @@ class DBAPI :
 api = DBAPI()
 # api.get_current_price('SGOV')
 print('----------------------------------------------------------------------------------------------------')
-# api.get_ohlc('SGOV','20260904','20260904')
+api.get_ohlc('SOXL','20260430',mk='FA')
 # api.revoke_token()
 # api.temp()
 # token = api.get_token()
 # print(token)
-# extime = api.check_token_expired()
-# print(extime)
+extime = api.check_token_expired()
+print(extime)
 # api.get_trading_history('20260907','20260908','SGOV')
-api.get_current_price('SOXL',mk='FA')
+# api.get_current_price('SOXL',mk='FA')
