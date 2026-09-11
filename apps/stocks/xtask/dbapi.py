@@ -128,7 +128,7 @@ class DBAPI :
 api = DBAPI()
 # api.get_current_price('SGOV')
 print('----------------------------------------------------------------------------------------------------')
-api.get_ohlc('SOXL','20260430',mk='FA')
+api.get_ohlc('SOXL','20260910',mk='FA')
 # api.revoke_token()
 # api.temp()
 # token = api.get_token()

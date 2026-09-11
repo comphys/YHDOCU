@@ -10,7 +10,7 @@ class SU :
         self.tkey = self.DB.store("tiingo")
 
     def send_message(self,message) :
-        if self.DB.system == "Linux" : my.post_slack(self.skey,message)
+        if self.DB.system in ("Linux","Android") : my.post_slack(self.skey,message)
         else : print(message)
 
     def stocks_update(self,cdx,today) :

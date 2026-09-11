@@ -19,7 +19,7 @@ class update_Log :
         self.D = {}
 
     def send_message(self,message) :
-        if self.DB.system == "Linux" : my.post_slack(self.skey,message)
+        if self.DB.system in ("Linux","Android") : my.post_slack(self.skey,message)
         else : print(message)  
 
 # ------------------------------------------------------------------------------------------------------------------------------------------
