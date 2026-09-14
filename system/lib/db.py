@@ -16,8 +16,8 @@ class DB :
     def clear(self) :
         self.wre =  self.odr = self.lmt = self.qry = self.tbl = self.err = ''
         
-    def con(self,dbname) :
-        mydb = 'mydb/' + dbname + '.sqlite'
+    def con(self,dbname,path='') :
+        mydb = path+'mydb/' + dbname + '.sqlite'
         self.con = sqlite3.connect(mydb, check_same_thread=True)
         self.cur = self.con.cursor() 
 
