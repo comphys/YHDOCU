@@ -1,15 +1,21 @@
 class Control :
     def __init__(self) :
         self.D = {}
+        self.C = {}
         self.I = {}
-
         self.I['_app'] = 'stocks'
-        self.info = None
         self.DB = None
+        self.info = None
+        self.parm = None
+        self.gets = None
+        self.skin_dir = None
         self._auto()
 
     def _auto(self) :
         pass
+
+    def json(self,D) :
+        return D 
 
     def model(self,module_name):
         if '-' in module_name : 

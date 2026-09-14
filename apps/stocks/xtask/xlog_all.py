@@ -41,12 +41,11 @@ class yourClass(Control) :
 
         self.D['lst_sday'] = my.last_stock_day(self.DB)
         self.D['lst_ohlc'] = self.DB.last_date('h_stockHistory_board')
-
         if  self.D['lst_sday'] != self.D['lst_ohlc'] : 
             OHLC = self.load_app_lib('ohlc')
             the_next_day = my.next_stock_day(self.D['lst_ohlc'],self.DB)[0]
             if OHLC.stocks_update('soxl',the_next_day) : self.D['lst_ohlc'] = self.DB.last_date('h_stockHistory_board')
-            time.sleep(10)
+            # time.sleep(10)
             RSN  =  self.load_bajax('rsnLog','update_log'); RSN()
             time.sleep(2)
             DIY  =  self.load_bajax('logDIY','update_log'); DIY()
