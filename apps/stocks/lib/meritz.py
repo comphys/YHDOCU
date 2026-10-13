@@ -8,6 +8,7 @@ class MERITZ :
         self.SYS   = SYS
         self.DB    = SYS.DB
         self.host  = 'https://openapi.imeritz.com:9443'
+        self.headers = {'Content-Type':'application/json;charset=utf-8'}
 
         self.appname = 'meritz-app01'
         self.secname = 'meritz-sec01'
@@ -62,10 +63,12 @@ class MERITZ :
             return self.DB.store(self.tkname)
 
     # 현재의 실시간 가격 정보를 리턴한다 (메리츠 api의 특이점 이용)
-    @meritz_deco
+  
     def get_current_price(self) :
-        cc = self.account
+        aa = self.account
         self.change_account('03')
+        token = self.get_token()
+        self.headers['authorization'] = f'Bearer {token}'
         endp = '/accounts/v1/me/overseas/holdings'
         params = {}
         response = requests.get(self.host+endp, headers=self.headers, params=params)
@@ -73,11 +76,11 @@ class MERITZ :
             rst = response.json()
             rt = rst['data'][0]
             pr = {'종목':rt['ovrs_stck_symb_iscd'],'현재가격':rt['psnt_prc'],'환율':rt['exrt']}
-            self.change_account(cc)
+            self.change_account(aa)
             return pr
         else : 
             self.log(f"{response.status_code} : {response.text}")
-            self.change_account(cc)
+            self.change_account(aa)
             return False
 
 
@@ -182,12 +185,10 @@ class MERITZ :
         params = {}
         response = requests.get(self.host+endp, headers=self.headers, params=params)
         if response.status_code == 200 :
-            pr = []
             rst = response.json()
             rt = rst['data']
             for r in rt :
-                pr.append({'추정예수금':r['estm_frcr_amt'],'평가환율':r['vltn_exrt'],'원화환산':r['excl_wncr_vltn_amt']})
-            return pr
+                if r['crcd'] == 'USD' : return {'추정예수금':r['estm_frcr_amt'],'평가환율':r['vltn_exrt'],'원화환산':r['excl_wncr_vltn_amt']}
         else : 
             self.log(f"{response.status_code} : {response.text}")
             return False    

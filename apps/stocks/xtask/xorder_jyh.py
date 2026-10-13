@@ -1,4 +1,9 @@
 import sys, platform
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
+from datetime import datetime
+from zoneinfo import ZoneInfo
+import time
 
 sysos = platform.system()
 if    sysos == 'Windows' :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
@@ -8,12 +13,7 @@ else: sysos == ''
 sys.path.append(rootpath)
 
 from apps.stocks.xtask.xload import Control
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
-from datetime import datetime
-from zoneinfo import ZoneInfo
 import system.core.my_utils as my
-import time
 
 class yourClass(Control) :
 
@@ -23,6 +23,10 @@ class yourClass(Control) :
 
         self.API = self.load_app_lib('meritz')
         self.API.headers = {'Content-Type':'application/json;charset=UTF-8','mac_address':macaddress}     
+
+        self.today = my.kor_loc_date('US/Eastern')[0:10]
+        self.weekd = my.dayofdate(self.today)
+        self.cp = self.API.get_current_price()
 
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
@@ -67,21 +71,74 @@ class yourClass(Control) :
             assert e.response["error"]
             self.log(f"slack error : {e.response['error']}")
 
+    def do_rsn_order(self) :
+        odday = self.today.replace('-','') 
+        c_upl = round(float(self.cp['현재가격'])*1.18,2)
+        c_dnl = round(float(self.cp['현재가격'])*0.78,2)
 
+        rsn = self.rsn_order_data()
+        buy_total_rsn = 0.0
+        total_rsn = self.API.get_money_balance()
+
+        for r in rsn :
+            if  r['매매구분'] == '1' and float(r['주문가격']) < c_dnl : r['주문가격'] = f"{c_dnl:.2f}" # for sell
+            if  r['매매구분'] == '2' and float(r['주문가격']) > c_upl : 
+                r['주문가격'] = f"{c_upl:.2f}" 
+                buy_total_rsn += float(r['주문가격']) * int(r['주문수량'])
+        
+        if float(total_rsn['추정예수금']) >= buy_total_rsn :
+            for r in rsn :
+                if r['매매구분'] == '1' : 
+                    # self.API.do_reserved_sell('SOXL',r['주문수량'],r['주문가격'],odday,'Y')
+                    time.sleep(0.5)
+                
+                if r['매매구분'] == '2' : 
+                    # self.API.do_reserved_buy('SOXL',r['주문수량'],r['주문가격'],odday,'Y')
+                    time.sleep(0.5)
+
+            self.send_message("RSN 주문을 완료하였습니다")
+        else :
+            self.send_message("RSN 계좌 예수금 부족")
+
+    def do_diy_order(self) :
+        odday = self.today.replace('-','') 
+        c_upl = round(float(self.cp['현재가격'])*1.18,2)
+        c_dnl = round(float(self.cp['현재가격'])*0.78,2)
+        
+        diy = self.diy_order_data() 
+        buy_total_diy = 0.0
+        total_diy = self.API.get_money_balance()
+
+        for d in diy :
+            if  d['매매구분'] == '1' and float(d['주문가격']) < c_dnl : d['주문가격'] = f"{c_dnl:.2f}" # for sell
+            if  d['매매구분'] == '2' and float(d['주문가격']) > c_upl : 
+                d['주문가격'] = f"{c_upl:.2f}" 
+                buy_total_diy += float(d['주문가격']) * int(d['주문수량'])
+
+        if float(total_diy['추정예수금']) >= buy_total_diy :
+            for d in diy :
+                if d['매매구분'] == '1' : 
+                    # self.API.do_reserved_sell('SOXL',d['주문수량'],d['주문가격'],odday,'Y')
+                    time.sleep(0.5)
+                
+                if d['매매구분'] == '2' : 
+                    # self.API.do_reserved_buy('SOXL',d['주문수량'],d['주문가격'],odday,'Y')
+                    time.sleep(0.5)
+            
+            self.send_message("DIY 주문을 완료하였습니다")
+        else :
+            self.send_message("DIY 계좌 예수금 부족")
 # ------------------------------------------------------------------------------------------------------------------
-today = my.kor_loc_date('US/Eastern')[0:10]
-weekd = my.dayofdate(today)
 A = yourClass()
-B = A.API
 
 # # 증시 휴장일 체크하기
-ck_holiday = A.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
+ck_holiday = A.DB.exe(f"SELECT description FROM parameters WHERE val='{A.today}' AND cat='미국증시휴장일'")
 is_holiday = ck_holiday[0][0] if ck_holiday else ''
 
 skip = ''
-if weekd in ['토','일'] : skip = f"{weekd}요일 입니다"
+if A.weekd in ['토','일'] : skip = f"{A.weekd}요일 입니다"
 if is_holiday : skip = is_holiday
-if today > '2027-09-30' : skip = 'API 키 갱신이 필요합니다'
+if A.today > '2027-09-30' : skip = 'API 키 갱신이 필요합니다'
 
 if  skip :
     A.send_message(skip)
@@ -89,61 +146,8 @@ if  skip :
 else :
     # 작업코드 시작-------------------------------------------------------------------------------------------------------------------
 
-    odday = today.replace('-','') 
-    # 현재 주가 정보를 가져온다
-    cp = B.get_current_price()
-    c_upl = round(float(cp['현재가격'])*1.18,2)
-    c_dnl = round(float(cp['현재가격'])*0.78,2)
-
-    # RSN 의 주문 정보를 가져온다
-    rsn = A.rsn_order_data() 
-    buy_total_rsn = 0.0
-    total_rsn = B.get_money_balance()
-
-    for r in rsn :
-        if  r['매매구분'] == '1' and float(r['주문가격']) < c_dnl : r['주문가격'] = f"{c_dnl:.2f}" # for sell
-        if  r['매매구분'] == '2' and float(r['주문가격']) > c_upl : 
-            r['주문가격'] = f"{c_upl:.2f}" 
-            buy_total_rsn += float(r['주문가격']) * int(r['주문수량'])
-    
-    if float(total_rsn['추정예수금']) >= buy_total_rsn :
-        for r in rsn :
-            if r['매매구분'] == '1' : 
-                B.do_reserved_sell('SOXL',r['주문수량'],r['주문가격'],odday,'Y')
-                time.sleep(0.5)
-            
-            if r['매매구분'] == '2' : 
-                B.do_reserved_buy('SOXL',r['주문수량'],r['주문가격'],odday,'Y')
-                time.sleep(0.5)
-
-        A.send_message("RSN 주문을 완료하였습니다")
-    else :
-        A.send_message("RSN 계좌 예수금 부족")
-
-    # DIY 의 주문 정보를 가져온다
-    B.change_account('02')
-    diy = A.diy_order_data() 
-    buy_total_diy = 0.0
-    total_diy = B.get_money_balance()
-    
-    for d in diy :
-        if  d['매매구분'] == '1' and float(d['주문가격']) < c_dnl : d['주문가격'] = f"{c_dnl:.2f}" # for sell
-        if  d['매매구분'] == '2' and float(d['주문가격']) > c_upl : 
-            d['주문가격'] = f"{c_upl:.2f}" 
-            buy_total_diy += float(d['주문가격']) * int(d['주문수량'])
-
-    if float(total_diy['추정예수금']) >= buy_total_diy :
-        for d in diy :
-            if d['매매구분'] == '1' : 
-                B.do_reserved_sell('SOXL',r['주문수량'],r['주문가격'],odday,'Y')
-                time.sleep(0.5)
-            
-            if d['매매구분'] == '2' : 
-                B.do_reserved_buy('SOXL',r['주문수량'],r['주문가격'],odday,'Y')
-                time.sleep(0.5)
-        
-        A.send_message("DIY 주문을 완료하였습니다")
-    else :
-        A.send_message("DIY 계좌 예수금 부족")
+    A.do_rsn_order()
+    A.API.change_account('02')
+    A.do_diy_order()
 
     # 작업코드 종료-------------------------------------------------------------------------------------------------------------------
