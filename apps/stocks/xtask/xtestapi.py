@@ -30,5 +30,6 @@ class yourClass(Control) :
 A = yourClass()
 B = A.API
 
-b = B.renew_token()
+b = B.get_current_price()
+print(b)
 
