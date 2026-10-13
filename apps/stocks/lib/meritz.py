@@ -87,6 +87,8 @@ class MERITZ :
                 self.DB.store(self.tktime,str(current_time+43200))
             else : 
                 self.log(f"{response.status_code} : {response.text}")
+        
+        self.change_account('01')
 
 
 
