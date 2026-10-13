@@ -3,7 +3,7 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from datetime import datetime
 from zoneinfo import ZoneInfo
-import time
+import time,requests
 
 sysos = platform.system()
 if    sysos == 'Windows' :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
@@ -96,7 +96,13 @@ class yourClass(Control) :
                     self.API.do_reserved_buy('SOXL',r['주문수량'],r['주문가격'],odday,'Y')
                     time.sleep(0.5)
 
-            self.send_message("RSN 주문을 완료하였습니다")
+            self.send_message(f"{self.today} RSN 주문을 완료")
+            # 확인 날자 업데이트 
+            self.DB.parameter_update('TX070',self.today)
+            api_token = self.DB.store('api_token')
+            host = "https://comphys.pythonanywhere.com/api/check/check_rsn"
+            headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':api_token}
+            requests.post(host,headers=headers,json={'rsn_check':self.today})
         else :
             self.send_message("RSN 계좌 예수금 부족")
 
@@ -125,7 +131,13 @@ class yourClass(Control) :
                     self.API.do_reserved_buy('SOXL',d['주문수량'],d['주문가격'],odday,'Y')
                     time.sleep(0.5)
             
-            self.send_message("DIY 주문을 완료하였습니다")
+            self.send_message(f"{self.today} DIY 주문을 완료")
+            # 확인 날자 업데이트 
+            self.DB.parameter_update('A0710',self.today)
+            api_token = self.DB.store('api_token')
+            host = "https://comphys.pythonanywhere.com/api/check/check_diy"
+            headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':api_token}
+            requests.post(host,headers=headers,json={'rsn_check':self.today})
         else :
             self.send_message("DIY 계좌 예수금 부족")
 # ------------------------------------------------------------------------------------------------------------------

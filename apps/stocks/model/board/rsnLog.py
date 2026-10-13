@@ -218,7 +218,7 @@ class Ajax(Model) :
         return self.SYS.json("OK")
 
     def get_current_price(self) :
-        if self.D['_lcl'] :
+        if self.SYS.I['_dev'] == 'Windows' :
             DB = self.SYS.load_app_lib('dbopen')
             rst = DB.get_current_price('SOXL',mk='FA')
             if rst :
@@ -226,7 +226,8 @@ class Ajax(Model) :
                 rst['현재가'] = f"{rst['현재가']:.2f}"
                 return self.SYS.json(rst)
             else : return self.SYS.json("error::token_issue")
-        else :
+        
+        elif self.SYS.I['_dev'] == 'Linux' :
             KW = self.SYS.load_app_lib('kiwoom')
             rst = KW.get_current_price('SOXL')
             if rst :
@@ -234,4 +235,13 @@ class Ajax(Model) :
                 rst['현재가'] = f"{rst['현재가']:.2f}"
                 return self.SYS.json(rst)
             else : return self.SYS.json("error::token_issue")
+        
+        elif self.SYS.I['_dev'] == 'Android' :
+            MR = self.SYS.load_app_lib('meritz')
+            rst = MR.get_current_price()
+            if rst :
+                rst['현재가'] = f"{float(rst['현재가격']):.2f}"
+                return self.SYS.json(rst)
+            else : return self.SYS.json("error::token_issue")
+
     

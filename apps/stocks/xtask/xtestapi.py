@@ -15,6 +15,7 @@ import system.core.my_utils as my
 class yourClass(Control) :
 
     def _auto(self) :
+
         self.DB = self.db('stocks',path=rootpath+'/')
         self.skey = self.DB.store("slack_key")
 
@@ -29,6 +30,5 @@ class yourClass(Control) :
 A = yourClass()
 B = A.API
 
-b = B.get_current_price()
+b = B.get_ohlc('20261012')
 print(b)
-print(B.account)

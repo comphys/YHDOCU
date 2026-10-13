@@ -91,6 +91,22 @@ class MERITZ :
             return False
 
 
+    # 특정날자의 ohlc 정보를 가져온다
+    @meritz_deco
+    def get_ohlc(self,date) :
+        endp = '/market/v1/overseas/candles/days'
+        params = {'mrkt_div_code':'OV','mrkt_cls_code':'AX','iscd':'SOXL','dely_rltm_cls_code':'1','mod_stpr_cls_code':'1','from':date,'to':date}
+        response = requests.get(self.host+endp, headers=self.headers, params=params)
+        if response.status_code == 200 :
+            rst = response.json()
+            rt = rst['data'][0]
+            pr = {'날자':rt['date'],'시가':rt['oprc'],'고가':rt['hprc'],'저가':rt['lprc'],'종가':rt['prpr'],'거래량':rt['acml_vol'],'증감':rt['prdy_ctrt']}
+            return pr
+        else : 
+            self.log(f"{response.status_code} : {response.text}")
+            return False
+
+
     @meritz_deco
     def get_current_balance(self) :
         endp = '/accounts/v1/me/overseas/holdings'

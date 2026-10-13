@@ -1,4 +1,4 @@
-import os,re,pprint,logging,html,json
+import os,re,pprint,logging,html,json,platform
 from werkzeug.datastructures import ImmutableMultiDict
 
 def my_log(logger_name) :
@@ -39,6 +39,7 @@ class Control :
         초기 셋팅값, DB연결, POST값의 dict 변환, 로깅 설정이 이루어진다.  
         '''
         self.I = V   # index.py 로 부터 전달받은 초기 파라미터
+        self.I['_dev'] = platform.system()
         self.D = {}  # view에 전달하기 위한 변수 
         
         # control에 전달하는 기본 값
