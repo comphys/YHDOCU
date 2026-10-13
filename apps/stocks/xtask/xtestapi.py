@@ -30,6 +30,31 @@ class yourClass(Control) :
 A = yourClass()
 B = A.API
 
-b = B.get_current_price()
-print(b)
+today = my.kor_loc_date('US/Eastern')[0:10].replace('-','')
 
+while True :
+    print("----------------------------")
+    print("1. 현재 주가 불러 오기")
+    print("2. 특정 일 OHLC 불러 오기")
+    print("3. 당일 체결 현황 보기(RSN)")
+    print("4. 당일 체결 현황 보기(DIY)")
+    print("5. 현재 잔고 현황 보기(RSN)")
+    print("6. 현재 잔고 현황 보기(DIY)")
+    print("0. 나가기")
+    print("----------------------------")
+    ch = input("메뉴를 선택하세요 : ")
+    
+    if ch == '0' : break
+    if ch == '10' : B.renew_token() ; print("토큰을 모두 리뉴얼 했습니다")
+    if ch == '1' : rst = B.get_current_price() ; print(rst)
+    if ch == '2' : rst = B.get_ohlc(today) ; print(rst)
+    if ch == '3' : 
+        rst = B.check_orders_today('0','0') ; 
+        for r in rst : print(r)
+    if ch == '4' :
+        B.change_account('02') 
+        rst = B.check_orders_today('0','0') ; 
+        for r in rst : print(r)
+        B.change_account('01')
+    if ch == '5' : rst = B.get_current_balance() ; print(rst)
+    if ch == '6' : B.change_account('02'); rst = B.get_current_balance() ; B.change_account('01'); print(rst)
