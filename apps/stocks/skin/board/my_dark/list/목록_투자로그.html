@@ -665,12 +665,7 @@ function loadStockPrice() {
 				let dc = (df>0)? 'list-bull' : 'list-bear'
 				let cp = "<span style='font-size:30px'>"+data['현재가']+"</span> " 
 				let pr = "<span class='"+dc+"' style='font-size:16px'>"+pm+df+"% </span>&nbsp; "
-				{% if D['_lcl'] %}
 				$("#real-time-stock-price").html(cp + pr );
-				{% else %}
-				let kw = "<span style='font-size:20px'>"+data['환율'].replace(/\B(?=(\d{3})+(?!\d))/g, ",")+"</span> "  
-				$("#real-time-stock-price").html(cp + pr + kw );
-				{% endif %}
 			}
 		});
 }
