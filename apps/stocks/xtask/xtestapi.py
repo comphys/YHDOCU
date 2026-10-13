@@ -30,5 +30,5 @@ class yourClass(Control) :
 A = yourClass()
 B = A.API
 
-b = B.get_ohlc('20261012')
-print(b)
+b = B.renew_token()
+

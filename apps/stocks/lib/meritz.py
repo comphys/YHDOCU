@@ -47,10 +47,10 @@ class MERITZ :
 
     def get_token(self) :
 
-        current_time = int(datetime.now().timestamp() )+3600
+        current_time = int(datetime.now().timestamp())
         token_extime = int(self.DB.store(self.tktime))
 
-        if  token_extime < current_time :
+        if  token_extime < current_time + 3600 :
             self.log(self.account+" 토큰을 발급합니다.")
             endp = '/oauth2/token'
             app_key = self.DB.store(self.appname)
@@ -69,6 +69,26 @@ class MERITZ :
                 return False
         else :
             return self.DB.store(self.tkname)
+
+    def renew_token(self) :
+        current_time = int(datetime.now().timestamp() )+3600
+        endp = '/oauth2/token'
+        
+        for x in ['01','02','03'] : 
+            self.change_account(x)
+            self.log(self.account+" 토큰을 다시 발급합니다.")
+            app_key = self.DB.store(self.appname)
+            secret_key = self.DB.store(self.secname)
+            params = {'grant_type':'client_credentials','client_id':app_key,'client_secret':secret_key, 'scope':'login'}
+            response = requests.post(self.host+endp, headers={'Content-Type':'application/x-www-form-urlencoded'}, data=params)
+            if  response.status_code == 200  :
+                rst = response.json()  
+                self.DB.store(self.tkname,rst['access_token'])
+                self.DB.store(self.tktime,str(current_time+43200))
+            else : 
+                self.log(f"{response.status_code} : {response.text}")
+
+
 
     # 현재의 실시간 가격 정보를 리턴한다 (메리츠 api의 특이점 이용)
     def get_current_price(self) :
