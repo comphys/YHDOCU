@@ -1,6 +1,14 @@
 import requests
+import platform
 from datetime import datetime
 from zoneinfo import ZoneInfo
+
+sysos = platform.system()
+if    sysos == 'Windows' :  rootpath = '/YHDOCU'
+elif  sysos == 'Linux'   :  rootpath = '/home/comphys/YHDOCU'
+elif  sysos == 'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'
+else: sysos == '' 
+
 
 class MERITZ :
 
@@ -19,7 +27,7 @@ class MERITZ :
 
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
-        with open("logs/meritzapi.log","a",encoding="utf-8") as f:
+        with open(rootpath+"/logs/meritzapi.log","a",encoding="utf-8") as f:
             f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
 
     def change_account(self,opt) :
@@ -63,7 +71,6 @@ class MERITZ :
             return self.DB.store(self.tkname)
 
     # 현재의 실시간 가격 정보를 리턴한다 (메리츠 api의 특이점 이용)
-  
     def get_current_price(self) :
         aa = self.account
         self.change_account('03')
