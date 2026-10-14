@@ -46,7 +46,7 @@ B.change_account('lth')
 print("\033[H\033[J", end="")
 
 while True :
-    print("----------------------------")
+    print("\033[90m----------------------------")
     print(" 1. 현재 주가 불러 오기")
     print(" 2. 특정 일 OHLC 불러 오기")
     print(" 3. 당일 체결 현황 보기")
@@ -56,7 +56,7 @@ while True :
     print(" 7. 현재 계좌 잔액 확인")
     print("00. 나가기")
     print("----------------------------")
-    ch = input("메뉴를 선택하세요 : ")
+    ch = input("메뉴를 선택하세요 : \033[0m")
     
     if ch == '00' : break
     if ch == '88' : B.renew_token() ; print("토큰을 리뉴얼 했습니다")

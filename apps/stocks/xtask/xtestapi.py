@@ -60,7 +60,7 @@ today = my.kor_loc_date('US/Eastern')[0:10].replace('-','')
 print("\033[H\033[J", end="")
 
 while True :
-    print("----------------------------")
+    print("\033[90m----------------------------")
     print(" 1. 현재 주가 불러 오기")
     print(" 2. 특정 일 OHLC 불러 오기")
     print(" 3. 당일 체결 현황 보기(RSN)")
@@ -74,7 +74,7 @@ while True :
     print("11. 현재 계좌 잔액($) 확인(DIY)")
     print("00. 나가기")
     print("----------------------------")
-    ch = input("메뉴를 선택하세요 : ")
+    ch = input("메뉴를 선택하세요 : \033[0m")
     
     if ch == '00' : break
     if ch == '33' : rst = A.test(); A.print_contents(rst)
