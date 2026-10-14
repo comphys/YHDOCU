@@ -9,7 +9,6 @@ elif  sysos == 'Linux'   :  rootpath = '/home/comphys/YHDOCU'
 elif  sysos == 'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'
 else: sysos == '' 
 
-
 class MERITZ :
 
     def __init__(self,SYS) :
@@ -89,6 +88,7 @@ class MERITZ :
                 self.log(f"{response.status_code} : {response.text}")
         
         self.change_account('01')
+
 
 
 

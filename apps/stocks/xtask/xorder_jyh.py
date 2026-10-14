@@ -137,9 +137,11 @@ class yourClass(Control) :
             api_token = self.DB.store('api_token')
             host = "https://comphys.pythonanywhere.com/api/check/check_diy"
             headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':api_token}
-            requests.post(host,headers=headers,json={'rsn_check':self.today})
+            requests.post(host,headers=headers,json={'diy_check':self.today})
         else :
             self.send_message("DIY 계좌 예수금 부족")
+
+
 # ------------------------------------------------------------------------------------------------------------------
 A = yourClass()
 
