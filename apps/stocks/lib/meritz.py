@@ -90,8 +90,6 @@ class MERITZ :
         self.change_account('01')
 
 
-
-
     # 현재의 실시간 가격 정보를 리턴한다 (메리츠 api의 특이점 이용)
     def get_current_price(self) :
         aa = self.account

@@ -82,9 +82,8 @@ class yourClass(Control) :
 
         for r in rsn :
             if  r['매매구분'] == '1' and float(r['주문가격']) < c_dnl : r['주문가격'] = f"{c_dnl:.2f}" # for sell
-            if  r['매매구분'] == '2' and float(r['주문가격']) > c_upl : 
-                r['주문가격'] = f"{c_upl:.2f}" 
-                buy_total_rsn += float(r['주문가격']) * int(r['주문수량'])
+            if  r['매매구분'] == '2' and float(r['주문가격']) > c_upl : r['주문가격'] = f"{c_upl:.2f}" # for buy
+            if  r['매매구분'] == '2' : buy_total_rsn += float(r['주문가격']) * int(r['주문수량'])
         
         if float(total_rsn['추정예수금']) >= buy_total_rsn :
             for r in rsn :
@@ -114,12 +113,12 @@ class yourClass(Control) :
         diy = self.diy_order_data() 
         buy_total_diy = 0.0
         total_diy = self.API.get_money_balance()
+        print(total_diy)
 
         for d in diy :
             if  d['매매구분'] == '1' and float(d['주문가격']) < c_dnl : d['주문가격'] = f"{c_dnl:.2f}" # for sell
-            if  d['매매구분'] == '2' and float(d['주문가격']) > c_upl : 
-                d['주문가격'] = f"{c_upl:.2f}" 
-                buy_total_diy += float(d['주문가격']) * int(d['주문수량'])
+            if  d['매매구분'] == '2' and float(d['주문가격']) > c_upl : d['주문가격'] = f"{c_upl:.2f}" 
+            if  d['매매구분'] == '2' : buy_total_diy += float(d['주문가격']) * int(d['주문수량'])
 
         if float(total_diy['추정예수금']) >= buy_total_diy :
             for d in diy :
@@ -161,7 +160,6 @@ else :
     # 작업코드 시작-------------------------------------------------------------------------------------------------------------------
 
     A.do_rsn_order()
-    A.API.change_account('02')
-    A.do_diy_order()
+    A.API.change_account('02');    A.do_diy_order();    A.API.change_account('01')
 
     # 작업코드 종료-------------------------------------------------------------------------------------------------------------------

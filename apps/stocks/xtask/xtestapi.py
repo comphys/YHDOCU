@@ -45,21 +45,23 @@ print("\033[H\033[J", end="")
 
 while True :
     print("----------------------------")
-    print("1. 현재 주가 불러 오기")
-    print("2. 특정 일 OHLC 불러 오기")
-    print("3. 당일 체결 현황 보기(RSN)")
-    print("4. 당일 체결 현황 보기(DIY)")
-    print("5. 현재 잔고 현황 보기(RSN)")
-    print("6. 현재 잔고 현황 보기(DIY)")
-    print("7. 현재 예약 현황 보기(RSN)")
-    print("8. 현재 예약 현황 보기(DIY)")
-    print("9. 토큰 만료 시간 보기")
-    print("0. 나가기")
+    print(" 1. 현재 주가 불러 오기")
+    print(" 2. 특정 일 OHLC 불러 오기")
+    print(" 3. 당일 체결 현황 보기(RSN)")
+    print(" 4. 당일 체결 현황 보기(DIY)")
+    print(" 5. 현재 잔고 현황 보기(RSN)")
+    print(" 6. 현재 잔고 현황 보기(DIY)")
+    print(" 7. 현재 예약 현황 보기(RSN)")
+    print(" 8. 현재 예약 현황 보기(DIY)")
+    print(" 9. 토큰 만료 시간 보기")
+    print("10. 현재 계좌 잔액($) 확인(RSN)")
+    print("11. 현재 계좌 잔액($) 확인(DIY)")
+    print("00. 나가기")
     print("----------------------------")
     ch = input("메뉴를 선택하세요 : ")
     
-    if ch == '0' : break
-    if ch == '10' : B.renew_token() ; print("토큰을 모두 리뉴얼 했습니다")
+    if ch == '00' : break
+    if ch == '88' : B.renew_token() ; print("토큰을 모두 리뉴얼 했습니다")
     if ch == '1' : rst = B.get_current_price() ; print(rst)
     if ch.startswith('20') : rst = B.get_ohlc(ch) ; print(rst)
     if ch == '3' : 
@@ -81,4 +83,7 @@ while True :
     if ch == '9' : 
         rst = A.get_token_duetime() 
         for r in rst : print(r)
+    
+    if ch == '10' : rst = B.get_money_balance() ; print(rst)
+    if ch == '11' : B.change_account('02'); rst = B.get_money_balance() ; B.change_account('01'); print(rst)
 
