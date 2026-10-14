@@ -85,7 +85,7 @@ class yourClass(Control) :
             if  r['매매구분'] == '2' and float(r['주문가격']) > c_upl : r['주문가격'] = f"{c_upl:.2f}" # for buy
             if  r['매매구분'] == '2' : buy_total_rsn += float(r['주문가격']) * int(r['주문수량'])
         
-        if float(total_rsn['추정예수금']) >= buy_total_rsn :
+        if float(total_rsn['통합달러']) >= buy_total_rsn :
             for r in rsn :
                 if r['매매구분'] == '1' : 
                     self.API.do_reserved_sell('SOXL',r['주문수량'],r['주문가격'],odday,'Y')
@@ -120,7 +120,7 @@ class yourClass(Control) :
             if  d['매매구분'] == '2' and float(d['주문가격']) > c_upl : d['주문가격'] = f"{c_upl:.2f}" 
             if  d['매매구분'] == '2' : buy_total_diy += float(d['주문가격']) * int(d['주문수량'])
 
-        if float(total_diy['추정예수금']) >= buy_total_diy :
+        if float(total_diy['통합달러']) >= buy_total_diy :
             for d in diy :
                 if d['매매구분'] == '1' : 
                     self.API.do_reserved_sell('SOXL',d['주문수량'],d['주문가격'],odday,'Y')

@@ -224,14 +224,30 @@ class MERITZ :
     # 외화 잔고 현황을 가져온다
     @meritz_deco
     def get_money_balance(self) : 
+        pr = {}
+        # get 외화($) 예수금
         endp = '/accounts/v1/me/overseas/currencies'
-        params = {}
-        response = requests.get(self.host+endp, headers=self.headers, params=params)
+        response = requests.get(self.host+endp, headers=self.headers, params={})
         if response.status_code == 200 :
             rst = response.json()
             rt = rst['data']
             for r in rt :
-                if r['crcd'] == 'USD' : return {'추정예수금':r['estm_frcr_amt'],'평가환율':r['vltn_exrt'],'원화환산':r['excl_wncr_vltn_amt']}
+                if r['crcd'] == 'USD' : pr = {'달러예수금':r['estm_frcr_amt'],'평가환율':r['vltn_exrt'],'원화환산':r['excl_wncr_vltn_amt']}
         else : 
             self.log(f"{response.status_code} : {response.text}")
-            return False    
+            return False
+        # get 원화 예수금
+        endp = '/accounts/v1/me/deposit'
+        response = requests.get(self.host+endp, headers=self.headers, params={})
+        if response.status_code == 200 :
+            rst = response.json()
+            rt = rst['data']
+            pr['원화예수금'] = rt['oder_able_cash_amt']
+            통합달러 = round(float(pr['달러예수금']) + float(pr['원화예수금'])/float(pr['평가환율']),2)
+            통합원화 = round(float(pr['원화예수금']) + float(pr['달러예수금'])*float(pr['평가환율']),2)
+            pr['통합달러'] = f"{통합달러:.2f}"
+            pr['통합원화'] = f"{통합원화:.0f}"
+            return pr
+        else : 
+            self.log(f"{response.status_code} : {response.text}")
+            return False
