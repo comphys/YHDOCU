@@ -120,6 +120,7 @@ class MERITZ :
         if response.status_code == 200 :
             rst = response.json()
             rt = rst['data'][0]
+            if not rt : return False
             pr = {'날자':rt['date'],'시가':rt['oprc'],'고가':rt['hprc'],'저가':rt['lprc'],'종가':rt['prpr'],'거래량':rt['acml_vol'],'증감':rt['prdy_ctrt']}
             return pr
         else : 
