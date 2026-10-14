@@ -50,7 +50,6 @@ class yourClass(Control) :
         return OD
 
     def diy_order_data(self) :
-        # 다음 날 주문정보 갖고오기
         ini_data   = self.DB.oneline(f"SELECT add18,add19 FROM h_logDIY_board ORDER BY add0 DESC LIMIT 1")
         ini_date = ini_data[0]
         ini_capital = f"{float(ini_data[1]):,.2f}"

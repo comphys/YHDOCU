@@ -42,7 +42,7 @@ class MERITZ :
         current_time = int(datetime.now().timestamp())
         token_extime = int(self.DB.store(self.tktime))
 
-        if  token_extime < current_time + 3600 :
+        if  token_extime < current_time + 60 :
             self.log(self.account+" 토큰을 발급합니다.")
             endp = '/oauth2/token'
             app_key = self.DB.store(self.appname)
@@ -52,6 +52,7 @@ class MERITZ :
 
             if  response.status_code == 200  :
                 rst = response.json()  
+                print(rst)
                 self.DB.store(self.tkname,rst['access_token'])
                 self.DB.store(self.tktime,str(current_time+43200))
                 return rst['access_token']
@@ -62,13 +63,33 @@ class MERITZ :
         else :
             return self.DB.store(self.tkname)
 
+    def revoke_token(self) :
+        self.log(self.account+" 토큰을 폐기합니다.")
+        endp = '/oauth2/revoke'
+        app_key = self.DB.store(self.appname)
+        secret_key = self.DB.store(self.secname)
+        token = self.DB.store(self.tkname)
+        params = {'client_id':app_key,'client_secret':secret_key, 'scope':'login','token_type_hint':'access_token','token':token}
+        response = requests.post(self.host+endp, headers={'Content-Type':'application/x-www-form-urlencoded'}, data=params)
+        if  response.status_code == 200  :
+            rst = response.json()  
+            print(rst)
+            self.DB.store(self.tkname,' ')
+            self.DB.store(self.tktime,'0')
+            return True
+        
+        else : 
+            self.log(f"{response.status_code} : {response.text}")
+            return False        
+
     def renew_token(self,account) :
-        current_time = int(datetime.now().timestamp() )+3600
+        current_time = int(datetime.now().timestamp())
         endp = '/oauth2/token'
         
         for x in account : 
             self.change_account(x)
             self.log(self.account+" 토큰을 다시 발급합니다.")
+            self.revoke_token()
             app_key = self.DB.store(self.appname)
             secret_key = self.DB.store(self.secname)
             params = {'grant_type':'client_credentials','client_id':app_key,'client_secret':secret_key, 'scope':'login'}

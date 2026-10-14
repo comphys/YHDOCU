@@ -71,3 +71,4 @@ while True :
         A.print_contents(rst)
     if ch == '6' : rst = A.get_token_duetime(); print(rst)
     if ch == '7' : rst = B.get_money_balance() ; print(rst)
+    if ch == '33': rst = B.revoke_token(); print(rst)
