@@ -1,7 +1,6 @@
 import sys, platform
 from datetime import datetime
 from zoneinfo import ZoneInfo
-import requests
 
 sysos = platform.system()
 if    sysos == 'Windows' :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
@@ -34,7 +33,24 @@ class yourClass(Control) :
             ts = self.DB.store('meritz-time'+x)
             rst.append(my.timestamp_to_date(int(ts),opt=1))
         return rst
+    
+    def print_contents(self,data) :
+        if data :
+            for d in data : print(d)
+        else : print(data)
 
+
+    def test(self) :
+        chk_last_date = self.DB.last_date('h_rsnLog_board')
+        last_ohlc = self.DB.last_date('h_stockHistory_board')
+        다음날자 = my.next_stock_day(last_ohlc,self.DB)[0].replace('-','')
+        NS = self.DB.line(f"SELECT add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20 FROM h_rsnLog_board WHERE add0='{chk_last_date}' LIMIT 1") 
+        OD = []
+        for key in ['r','s','n'] :
+            if int(NS[key+'_17']) :  OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'2','주문수량':NS[key+'_17'],'주문가격':NS[key+'_18']})
+            if int(NS[key+'_19']) :  OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':NS[key+'_19'],'주문가격':NS[key+'_20']})
+       
+        return OD
 
 
 A = yourClass()
@@ -61,28 +77,31 @@ while True :
     ch = input("메뉴를 선택하세요 : ")
     
     if ch == '00' : break
-    if ch == '88' : B.renew_token() ; print("토큰을 모두 리뉴얼 했습니다")
+    if ch == '33' : rst = A.test(); A.print_contents(rst)
+    if ch == '88' : B.renew_token(['01','02','03']) ; print("토큰을 모두 리뉴얼 했습니다")
     if ch == '1' : rst = B.get_current_price() ; print(rst)
     if ch.startswith('20') : rst = B.get_ohlc(ch) ; print(rst)
     if ch == '3' : 
-        rst = B.check_orders_today('0','0') ; 
-        for r in rst : print(r)
+        rst = B.get_orders_today('0','0') ; 
+        A.print_contents(rst)
     if ch == '4' :
         B.change_account('02') 
-        rst = B.check_orders_today('0','0') ; 
-        for r in rst : print(r)
+        rst = B.get_orders_today('0','0') ; 
+        A.print_contents(rst)
         B.change_account('01')
-    if ch == '5' : rst = B.get_current_balance() ; print(rst)
+    if ch == '5' : 
+        rst = B.get_current_balance()
+        A.print_contents(rst)
     if ch == '6' : B.change_account('02'); rst = B.get_current_balance() ; B.change_account('01'); print(rst)
     if ch == '7' : 
-        rst = B.check_reserved_order(today,code='2')  
-        for r in rst : print(r)
+        rst = B.get_reserved_order(today,code='2')  
+        A.print_contents(rst)
     if ch == '8' : 
-        B.change_account('02'); rst = B.check_reserved_order(today,code='2'); B.change_account('01');  
-        for r in rst : print(r)
+        B.change_account('02'); rst = B.get_reserved_order(today,code='2'); B.change_account('01');  
+        A.print_contents(rst)
     if ch == '9' : 
         rst = A.get_token_duetime() 
-        for r in rst : print(r)
+        A.print_contents(rst)
     
     if ch == '10' : rst = B.get_money_balance() ; print(rst)
     if ch == '11' : B.change_account('02'); rst = B.get_money_balance() ; B.change_account('01'); print(rst)

@@ -46,7 +46,6 @@ class yourClass(Control) :
         return OD
 
     def diy_order_data(self) :
-        # 다음 날 주문정보 갖고오기
         ini_data   = self.DB.oneline(f"SELECT add18,add19 FROM h_logDIY_board ORDER BY add0 DESC LIMIT 1")
         ini_date = ini_data[0]
         ini_capital = f"{float(ini_data[1]):,.2f}"
@@ -56,8 +55,8 @@ class yourClass(Control) :
         DIY = self.load_app_lib('diy')
         NS  = DIY.get_nextStrategy(ini_date,last_date,ini_capital)
         OD = []
-        if int(NS['예정수량']) : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'2','주문수량':NS['예정수량'],'주문가격':NS['예정매가']})
-        if int(NS['예정도수']) : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':NS['예정도수'],'주문가격':NS['예정도가']})
+        if int(NS['예정수량']) : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'2','주문수량':str(NS['예정수량']),'주문가격':str(NS['예정매가'])})
+        if int(NS['예정도수']) : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':str(NS['예정도수']),'주문가격':str(NS['예정도가'])})
         
         return OD
     
