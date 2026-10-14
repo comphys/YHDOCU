@@ -221,7 +221,7 @@ class MERITZ :
             self.log(f"{response.status_code} : {response.text}")
             return False
 
-    # 외화 잔고 현황을 가져온다
+    # 현금 잔고 현황을 가져온다
     @meritz_deco
     def get_money_balance(self) : 
         pr = {}
@@ -247,6 +247,7 @@ class MERITZ :
             통합원화 = round(float(pr['원화예수금']) + float(pr['달러예수금'])*float(pr['평가환율']),2)
             pr['통합달러'] = f"{통합달러:.2f}"
             pr['통합원화'] = f"{통합원화:.0f}"
+            pr = {k: (v if isinstance(v, str) else str(v)) for k, v in pr.items()}
             return pr
         else : 
             self.log(f"{response.status_code} : {response.text}")
