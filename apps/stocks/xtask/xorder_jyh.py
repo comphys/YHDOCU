@@ -27,6 +27,7 @@ class yourClass(Control) :
         self.today = my.kor_loc_date('US/Eastern')[0:10]
         self.weekd = my.dayofdate(self.today)
         self.cp = self.API.get_current_price()
+        time.sleep(1)
 
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  

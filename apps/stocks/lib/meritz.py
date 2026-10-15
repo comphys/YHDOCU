@@ -52,7 +52,6 @@ class MERITZ :
 
             if  response.status_code == 200  :
                 rst = response.json()  
-                print(rst)
                 self.DB.store(self.tkname,rst['access_token'])
                 self.DB.store(self.tktime,str(current_time+43200))
                 return rst['access_token']
@@ -72,8 +71,7 @@ class MERITZ :
         params = {'client_id':app_key,'client_secret':secret_key, 'scope':'login','token_type_hint':'access_token','token':token}
         response = requests.post(self.host+endp, headers={'Content-Type':'application/x-www-form-urlencoded'}, data=params)
         if  response.status_code == 200  :
-            rst = response.json()  
-            print(rst)
+            # rst = response.json()  
             self.DB.store(self.tkname,' ')
             self.DB.store(self.tktime,'0')
             return True
@@ -256,7 +254,8 @@ class MERITZ :
             rt = rst['data']
             if rt : 
                 for r in rt :
-                    if r['crcd'] == 'USD' : pr = {'달러예수금':r['estm_frcr_amt'],'평가환율':r['vltn_exrt'],'원화환산':r['excl_wncr_vltn_amt']}
+                    if r['crcd'] == 'USD' and float(r['estm_frcr_amt']) > 0 : pr = {'달러예수금':r['estm_frcr_amt'],'평가환율':r['vltn_exrt'],'원화환산':r['excl_wncr_vltn_amt']}
+
         else : 
             self.log(f"{response.status_code} : {response.text}")
             return False
@@ -274,10 +273,10 @@ class MERITZ :
                 pr['통합원화'] = f"{통합원화:.0f}"
                 pr = {k: (v if isinstance(v, str) else str(v)) for k, v in pr.items()}
             else : 
-                pr = {'원화예수금':rt['oder_able_cash_amt']}
-                pr['평가환율'] = self.DB.last_data_one('add2','h_stockHistory_board')
-                통합달러 = round(float(pr['원화예수금'])/float(pr['평가환율']),2)
-                pr['통합달러'] = f"{통합달러:.2f}"
+                원화금액 = str(rt['oder_able_cash_amt'])
+                평가환율 = self.get_current_price()['환율']
+                통합달러 = f"{float(원화금액)/float(평가환율):.2f}"
+                pr = {'달러예수금':'0.00','평가환율':평가환율,'원화환산':'0','원화예수금':원화금액,'통합달러':통합달러,'통합원화':원화금액}
             return pr
         else : 
             self.log(f"{response.status_code} : {response.text}")
