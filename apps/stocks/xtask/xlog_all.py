@@ -62,7 +62,7 @@ class yourClass(Control) :
         cur_time = my.now_to_kordate()
 
         with open(rootpath+"/logs/publicIP.log","a",encoding="utf-8") as f:
-            f.write(f"<span class='who-time'>{cur_time}</span><span class='who-ip'>{myIP}</span>&nbsp;&nbsp; recorded on task server side\n")
+            f.write(f"<span class='who-time'>{cur_time}</span><span class='who-ip'>{myIP}</span>&nbsp;&nbsp; recorded on {sysos} \n")
 
 
 today = my.kor_loc_date('US/Eastern')[0:10]
@@ -83,4 +83,4 @@ if  skip :
 
 else :
     LOG.log_update()
-    # LOG.publicIP()
+    LOG.publicIP()
