@@ -28,14 +28,14 @@ class Board(Control) :
             self.D['lst_sday'] = my.last_stock_day(self.DB)
             self.D['lst_ohlc'] = self.DB.last_date('h_stockHistory_board')
 
-            if  self.I['_dev'] == 'Windows' and self.D['lst_sday'] != self.D['lst_ohlc'] : # 로컬에서만 동작하도록 함, 서버에서는 TASK에 의한 업데이트
+            # if  self.I['_dev'] == 'Windows' and self.D['lst_sday'] != self.D['lst_ohlc'] : # 로컬에서만 동작하도록 함, 서버에서는 TASK에 의한 업데이트
 
-                OHLC = self.load_app_lib('ohlc')
-                the_next_day = my.next_stock_day(self.D['lst_ohlc'],self.DB)[0]
-                if OHLC.stocks_update('soxl',the_next_day) : self.D['lst_ohlc'] = self.DB.last_date('h_stockHistory_board')
-                RSN  =  self.load_bajax('rsnLog','update_log'); RSN()
-                DIY  =  self.load_bajax('logDIY','update_log'); DIY()
-                N315 =  self.load_bajax('log315_ljk','update_log'); N315()
+            #     OHLC = self.load_app_lib('ohlc')
+            #     the_next_day = my.next_stock_day(self.D['lst_ohlc'],self.DB)[0]
+            #     if OHLC.stocks_update('soxl',the_next_day) : self.D['lst_ohlc'] = self.DB.last_date('h_stockHistory_board')
+            #     RSN  =  self.load_bajax('rsnLog','update_log'); RSN()
+            #     DIY  =  self.load_bajax('logDIY','update_log'); DIY()
+            #     N315 =  self.load_bajax('log315_ljk','update_log'); N315()
 
 
             self.skin = 'board/'+self.D['BCONFIG']['skin']
