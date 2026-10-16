@@ -20,7 +20,8 @@ class yourClass(Control) :
         self.skey = self.DB.store("slack_key")
 
         self.API = self.load_app_lib('meritz')
-        self.API.headers = {'Content-Type':'application/json;charset=UTF-8','mac_address':macaddress}     
+        self.API.root = rootpath
+        self.API.maca = macaddress     
 
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
