@@ -1,4 +1,5 @@
 import requests
+import time
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -26,7 +27,7 @@ class MERITZ :
         self.tktime  = 'meritz-time'+opt
         self.account = opt
 
-    def rst_api(self,mean,endp,params) :
+    def rst_api(self,mean,endp,params,retry_count=0, max_retries=3) :
 
         current_time = int(datetime.now().timestamp())
         token_extime = int(self.DB.store(self.tktime))
@@ -49,18 +50,22 @@ class MERITZ :
         if not code : 
             if resp.status_code == 200 : self.log(f"{resp.status_code} [{code}] : API 손상 {resp.text}"); return False
             else : self.log(f"{resp.status_code} [{code}] : 전송 계층 실패 {resp.text}"); return False
-        
         elif code in ['0000','0001','5620','5762','5766','5820','5822','00000'] :
             rows = body.get('data') or [] 
             if rows : return rows
             else :    return None
-        
+        elif code == 'EGW00200' : 
+            self.log(self.account+" 초당 호출 한도가 초과되었습니다.") 
+            time.sleep(1.0)
+            return self.rst_api(mean,endp,params,retry_count + 1, max_retries)
+        elif code == 'EGW00123' : self.log(self.account+" 기간이 만료된 토큰입니다."); return False
         else :
             self.log(f"{resp.status_code} [{code}] : {resp.text}")
             return False
 
         
-    def get_token(self) :
+    def get_token(self,retry_count=0, max_retries=3) :
+        if retry_count >= max_retries: self.log(self.account+" 토큰 시도 최대 횟수를 초과했습니다."); return False
         self.log(self.account+" 토큰을 발급합니다.")
         endp = '/oauth2/token'
         app_key = self.DB.store(self.appname)
