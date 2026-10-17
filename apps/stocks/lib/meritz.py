@@ -14,7 +14,6 @@ class MERITZ :
         self.headers = {'Content-Type':'application/json;charset=utf-8'}
         self.change_account('01')
 
-
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
         with open(self.root+"/logs/meritzapi.log","a",encoding="utf-8") as f:
@@ -62,7 +61,6 @@ class MERITZ :
         else :
             self.log(f"{resp.status_code} [{code}] : {resp.text}")
             return False
-
         
     def get_token(self,retry_count=0, max_retries=3) :
         if retry_count >= max_retries: self.log(self.account+" 토큰 시도 최대 횟수를 초과했습니다."); return False
@@ -74,13 +72,14 @@ class MERITZ :
         resp = requests.post(self.host+endp, headers={'Content-Type':'application/x-www-form-urlencoded'},data=params)
         rst = resp.json()
         if  rst :
+            kst = ZoneInfo("Asia/Seoul")
+            dt = datetime.strptime(rst['expires_date'], "%Y-%m-%d %H:%M:%S").replace(tzinfo=kst)
+            expires = int(dt.timestamp())
             self.DB.store(self.tkname,rst['access_token'])
-            current_time = int(datetime.now().timestamp())
-            self.DB.store(self.tktime,str(current_time+43200))
+            self.DB.store(self.tktime,str(expires))
             return rst['access_token']
         else : 
             return False
-
 
     def revoke_token(self) :
         self.log(self.account+" 토큰을 폐기합니다.")
@@ -98,13 +97,10 @@ class MERITZ :
         else : 
             return False        
 
-
     # 현재의 실시간 가격 정보를 리턴한다 (메리츠 api의 특이점 이용)
     def get_current_price(self) :
         aa = self.account
         self.change_account('03')
-        token = self.get_token()
-        self.headers['authorization'] = f'Bearer {token}'
         rst = self.rst_api('get','/accounts/v1/me/overseas/holdings',{})
         if  rst  :
             rt = rst[0]
@@ -114,7 +110,6 @@ class MERITZ :
         else : 
             self.change_account(aa)
             return rst
-
 
     # 특정날자의 ohlc 정보를 가져온다
     def get_ohlc(self,date) :
@@ -126,7 +121,6 @@ class MERITZ :
             pr = {'날자':rt['date'],'시가':rt['oprc'],'고가':rt['hprc'],'저가':rt['lprc'],'종가':rt['prpr'],'거래량':rt['acml_vol'],'증감':rt['prdy_ctrt']}
             return pr
         else : return rst
-
 
     def get_current_balance(self) :
         endp = '/accounts/v1/me/overseas/holdings'
@@ -155,7 +149,6 @@ class MERITZ :
                         })
             return pr
         else : return rst
-
 
     def do_reserved_buy(self,symbol,qty,price,date,check) :
         endp = '/trading/v1/overseas/reserved-orders/buy'
