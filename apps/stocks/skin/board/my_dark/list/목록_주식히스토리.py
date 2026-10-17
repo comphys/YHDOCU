@@ -53,7 +53,7 @@ class 목록_주식히스토리(SKIN) :
         
     def list(self) :
 
-        self.D['ot'] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        self.D['ot'] = [0]*27
         self.D['ot'][0] = self.DB.one("SELECT count(add0) FROM h_stockHistory_board WHERE add1='SOXL'") # total count
         self.D['ot'][1] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add9 as INTEGER)  > 0 and add1='SOXL'") # updays
         self.D['ot'][2] = f"{self.D['ot'][1]/self.D['ot'][0]*100:.2f}"
@@ -61,26 +61,14 @@ class 목록_주식히스토리(SKIN) :
         self.D['ot'][4] = f"{self.D['ot'][3]/self.D['ot'][0]*100:.2f}"
         self.D['ot'][5] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add9 as INTEGER) = 0  and CAST(add10 as INTEGER) = 0 and add1='SOXL'") # equal days
         self.D['ot'][6] = f"{self.D['ot'][5]/self.D['ot'][0]*100:.2f}"
-
-        self.D['ot'][7] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 1 and add1='SOXL'") # dn 1
-        self.D['ot'][8] = f"{self.D['ot'][7]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][9] = self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 2 and add1='SOXL'") # dn 2
-        self.D['ot'][10]= f"{self.D['ot'][9]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][11]= self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 3 and add1='SOXL'") # dn 3
-        self.D['ot'][12]= f"{self.D['ot'][11]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][13]= self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 4 and add1='SOXL'") # dn 4
-        self.D['ot'][14]= f"{self.D['ot'][13]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][15]= self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 5 and add1='SOXL'") # dn 5
-        self.D['ot'][16]= f"{self.D['ot'][15]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][17]= self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 6 and add1='SOXL'") # dn 6
-        self.D['ot'][18]= f"{self.D['ot'][17]/self.D['ot'][3]*100:.2f}"
-        self.D['ot'][19]= self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 7 and add1='SOXL'") # dn 7
-        self.D['ot'][20]= f"{self.D['ot'][19]/self.D['ot'][3]*100:.2f}"        
-        self.D['ot'][21]= self.DB.one("SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL'") # dn 8
-        self.D['ot'][22]= f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
+        cnt = 1
+        for x in range(7,27,2) :
+            self.D['ot'][x] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = {cnt} and add1='SOXL'") # dn 1
+            self.D['ot'][x+1] = f"{self.D['ot'][x]/self.D['ot'][3]*100:.2f}"
+            cnt +=1
 
         last_year = my.last_year_day()
-        self.D['ot1'] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        self.D['ot1'] = [0]*27
         self.D['ot1'][0] = self.DB.one(f"SELECT count(add0) FROM h_stockHistory_board WHERE add1='SOXL' and add0 > '{last_year}'") # total count
         self.D['ot1'][1] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add9 as INTEGER)  > 0 and add1='SOXL' and add0 > '{last_year}'") # updays
         self.D['ot1'][2] = f"{self.D['ot1'][1]/self.D['ot1'][0]*100:.2f}"
@@ -89,22 +77,11 @@ class 목록_주식히스토리(SKIN) :
         self.D['ot1'][5] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add9 as INTEGER) = 0  and CAST(add10 as INTEGER) = 0 and add1='SOXL' and add0 > '{last_year}'") # equal days
         self.D['ot1'][6] = f"{self.D['ot1'][5]/self.D['ot1'][0]*100:.2f}"
 
-        self.D['ot1'][7] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 1 and add1='SOXL' and add0 > '{last_year}'") # dn 1
-        self.D['ot1'][8] = f"{self.D['ot1'][7]/self.D['ot1'][3]*100:.2f}"
-        self.D['ot1'][9] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 2 and add1='SOXL' and add0 > '{last_year}'") # dn 2
-        self.D['ot1'][10]= f"{self.D['ot1'][9]/self.D['ot1'][3]*100:.2f}"
-        self.D['ot1'][11]= self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 3 and add1='SOXL' and add0 > '{last_year}'") # dn 3
-        self.D['ot1'][12]= f"{self.D['ot1'][11]/self.D['ot1'][3]*100:.2f}"
-        self.D['ot1'][13]= self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 4 and add1='SOXL' and add0 > '{last_year}'") # dn 4
-        self.D['ot1'][14]= f"{self.D['ot1'][13]/self.D['ot1'][3]*100:.2f}"
-        self.D['ot1'][15]= self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 5 and add1='SOXL' and add0 > '{last_year}'") # dn 5
-        self.D['ot1'][16]= f"{self.D['ot1'][15]/self.D['ot1'][3]*100:.2f}"
-        self.D['ot1'][17]= self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 6 and add1='SOXL' and add0 > '{last_year}'") # dn 6
-        self.D['ot1'][18]= f"{self.D['ot1'][17]/self.D['ot1'][3]*100:.2f}"
-        self.D['ot1'][19]= self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 7 and add1='SOXL' and add0 > '{last_year}'") # dn 7
-        self.D['ot1'][20]= f"{self.D['ot1'][19]/self.D['ot1'][3]*100:.2f}"        
-        self.D['ot1'][21]= self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = 8 and add1='SOXL' and add0 > '{last_year}'") # dn 8
-        self.D['ot1'][22]= f"{self.D['ot'][21]/self.D['ot'][3]*100:.2f}" 
+        cnt = 1
+        for x in range(7,27,2) :
+            self.D['ot1'][x] = self.DB.one(f"SELECT count(add9) FROM h_stockHistory_board WHERE CAST(add10 as INTEGER) = {cnt} and add1='SOXL' and add0 > '{last_year}'") # dn 1
+            self.D['ot1'][x+1] = f"{self.D['ot1'][x]/self.D['ot1'][3]*100:.2f}"
+            cnt +=1
         
         # 표준편차 구하기(최근5년)
         day_5yr = my.back_day(-1824)
