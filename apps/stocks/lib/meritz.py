@@ -26,35 +26,31 @@ class MERITZ :
         self.tktime  = 'meritz-time'+opt
         self.account = opt
 
-    def meritz_deco(func) :
-        def wrapper(self,*args,**kargs) :
-            token = self.get_token()
-            if not token : return False
-            return func(self,*args,**kargs)
-        return wrapper
-
     def rst_api(self,mean,endp,params) :
-        token = self.DB.store(self.tkname)
-        headers_token = {'Content-Type':'application/x-www-form-urlencoded'}
-        headers_basic = {'Content-Type':'application/json;charset=UTF-8','authorization':f'Bearer {token}','mac_address':self.maca}
 
-        if   mean == 'token':  resp = requests.post(self.host+endp, headers=headers_token,data=params)
-        elif mean == 'get'  :  resp = requests.get(self.host+endp, headers=headers_basic,params=params)
-        elif mean == 'post' :  resp = requests.post(self.host+endp, headers=headers_basic,data=params)
+        current_time = int(datetime.now().timestamp())
+        token_extime = int(self.DB.store(self.tktime))
+        if  token_extime < current_time + 60 :
+            token = self.get_token()
+        else : 
+            token = self.DB.store(self.tkname)
+        if  not token : 
+            self.log("token을 가져오지 못하였습니다.")
+            return False
+        
+        headers = {'Content-Type':'application/json;charset=UTF-8','authorization':f'Bearer {token}','mac_address':self.maca}
+        resp = requests.get(self.host+endp, headers=headers,params=params) if mean == 'get' else requests.post(self.host+endp, headers=headers,data=params)
 
         # 오류 판단 
         body = resp.json()
-        if  not body : self.log("데이타를 가져오는데 실폐하였습니다.");return False
-        
-        # 토큰 발급 및 폐기에서는 리턴값에 'rst_cd' 값이 없음
-        if mean == 'token' : return body
+        if  not body : self.log(f"{resp.status_code} 데이타를 가져오는데 실폐하였습니다."); return False
         
         code = body.get('rsp_cd')
         if not code : 
             if resp.status_code == 200 : self.log(f"{resp.status_code} [{code}] : API 손상 {resp.text}"); return False
             else : self.log(f"{resp.status_code} [{code}] : 전송 계층 실패 {resp.text}"); return False
         
-        if code in ['0000','0001','5620','5762','5766','5820','5822','00000']:
+        elif code in ['0000','0001','5620','5762','5766','5820','5822','00000'] :
             rows = body.get('data') or [] 
             if rows : return rows
             else :    return None
@@ -65,25 +61,21 @@ class MERITZ :
 
         
     def get_token(self) :
+        self.log(self.account+" 토큰을 발급합니다.")
+        endp = '/oauth2/token'
+        app_key = self.DB.store(self.appname)
+        secret_key = self.DB.store(self.secname)
+        params = {'grant_type':'client_credentials','client_id':app_key,'client_secret':secret_key, 'scope':'login'}
+        resp = requests.post(self.host+endp, headers={'Content-Type':'application/x-www-form-urlencoded'},data=params)
+        rst = resp.json()
+        if  rst :
+            self.DB.store(self.tkname,rst['access_token'])
+            current_time = int(datetime.now().timestamp())
+            self.DB.store(self.tktime,str(current_time+43200))
+            return rst['access_token']
+        else : 
+            return False
 
-        current_time = int(datetime.now().timestamp())
-        token_extime = int(self.DB.store(self.tktime))
-
-        if  token_extime < current_time + 60 :
-            self.log(self.account+" 토큰을 발급합니다.")
-            endp = '/oauth2/token'
-            app_key = self.DB.store(self.appname)
-            secret_key = self.DB.store(self.secname)
-            params = {'grant_type':'client_credentials','client_id':app_key,'client_secret':secret_key, 'scope':'login'}
-            rst = self.rst_api('token',endp,params)
-            if  rst :
-                self.DB.store(self.tkname,rst['access_token'])
-                self.DB.store(self.tktime,str(current_time+43200))
-                return rst['access_token']
-            else : 
-                return False
-        else :
-            return self.DB.store(self.tkname)
 
     def revoke_token(self) :
         self.log(self.account+" 토큰을 폐기합니다.")
@@ -92,33 +84,14 @@ class MERITZ :
         secret_key = self.DB.store(self.secname)
         token = self.DB.store(self.tkname)
         params = {'client_id':app_key,'client_secret':secret_key, 'scope':'login','token_type_hint':'access_token','token':token}
-        rst = self.rst_api('token',endp,params)
+        resp = requests.post(self.host+endp, headers={'Content-Type':'application/x-www-form-urlencoded'},data=params)
+        rst = resp.json()
         if  rst  :
             self.DB.store(self.tkname,' ')
             self.DB.store(self.tktime,'0')
             return True
         else : 
             return False        
-
-    def renew_token(self,account) :
-        current_time = int(datetime.now().timestamp())
-        endp = '/oauth2/token'
-        
-        for x in account : 
-            self.change_account(x)
-            self.log(self.account+" 토큰을 다시 발급합니다.")
-            self.revoke_token()
-            app_key = self.DB.store(self.appname)
-            secret_key = self.DB.store(self.secname)
-            params = {'grant_type':'client_credentials','client_id':app_key,'client_secret':secret_key, 'scope':'login'}
-            rst = self.rst_api('token',endp,params)
-            if  rst  :
-                self.DB.store(self.tkname,rst['access_token'])
-                self.DB.store(self.tktime,str(current_time+43200))
-            else : 
-                return False
-        
-        self.change_account('01')
 
 
     # 현재의 실시간 가격 정보를 리턴한다 (메리츠 api의 특이점 이용)
@@ -127,9 +100,7 @@ class MERITZ :
         self.change_account('03')
         token = self.get_token()
         self.headers['authorization'] = f'Bearer {token}'
-        endp = '/accounts/v1/me/overseas/holdings'
-        params = {}
-        rst = self.rst_api('get',endp,params)
+        rst = self.rst_api('get','/accounts/v1/me/overseas/holdings',{})
         if  rst  :
             rt = rst[0]
             pr = {'종목':rt['ovrs_stck_symb_iscd'],'현재가격':rt['psnt_prc'],'환율':rt['exrt']}
@@ -141,7 +112,6 @@ class MERITZ :
 
 
     # 특정날자의 ohlc 정보를 가져온다
-    @meritz_deco
     def get_ohlc(self,date) :
         endp = '/market/v1/overseas/candles/days'
         params = {'mrkt_div_code':'OV','mrkt_cls_code':'AX','iscd':'SOXL','dely_rltm_cls_code':'1','mod_stpr_cls_code':'1','from':date,'to':date}
@@ -153,7 +123,6 @@ class MERITZ :
         else : return rst
 
 
-    @meritz_deco
     def get_current_balance(self) :
         endp = '/accounts/v1/me/overseas/holdings'
         params = {}
@@ -169,7 +138,6 @@ class MERITZ :
             return rpr
         else : return rst
 
-    @meritz_deco
     def get_reserved_order(self,date,code='1') : # code 0 전체, 1 전체(취소분제외), 2(예약상태인 건만)
         endp = '/trading/v1/overseas/reserved-orders'
         params = {'iqry_sta_date':date,'iqry_fin_date':date,'seln_byov_clcd':'0','iqry_cls_code':'2','iqry_idnt_clcd':code,'tday_deal_yn':'N'}
@@ -184,7 +152,6 @@ class MERITZ :
         else : return rst
 
 
-    @meritz_deco
     def do_reserved_buy(self,symbol,qty,price,date,check) :
         endp = '/trading/v1/overseas/reserved-orders/buy'
         params = {'ovrs_stck_symb_iscd':symbol,'ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
@@ -197,7 +164,6 @@ class MERITZ :
         else : 
             return rst
 
-    @meritz_deco
     def do_reserved_sell(self,symbol,qty,price,date,check) :
         endp = '/trading/v1/overseas/reserved-orders/sell'
         params = {'ovrs_stck_symb_iscd':symbol,'ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
@@ -210,7 +176,6 @@ class MERITZ :
         else : 
             return rst
 
-    @meritz_deco
     def do_reserved_cancel(self,date,orno) :
         # date 는 접수일자 임
         endp = '/trading/v1/overseas/reserved-orders/cancel'
@@ -220,7 +185,6 @@ class MERITZ :
         else :   return rst
 
     # 당일 체결 현황을 보여준다
-    @meritz_deco
     def get_orders_today(self,done,bs) : # done(체결여부) 0 전체, 1 체결 2 미체결 / bs(매수매도) 0 전체, 1 매도, 2 매수
         endp = '/trading/v1/overseas/orders/today'
         params = {'cntg_cls_code':done,'seln_byov_clcd':bs}
@@ -237,21 +201,16 @@ class MERITZ :
             return rst
 
     # 현금 잔고 현황을 가져온다
-    @meritz_deco
     def get_money_balance(self) : 
         pr = {}
         # get 외화($) 예수금
-        endp = '/accounts/v1/me/overseas/currencies'
-        rst = self.rst_api('get',endp,{})
+        rst = self.rst_api('get','/accounts/v1/me/overseas/currencies',{})
         if rst :
             for r in rst :
                 if r['crcd'] == 'USD' and float(r['estm_frcr_amt']) > 0 : pr = {'달러예수금':r['estm_frcr_amt'],'평가환율':r['vltn_exrt'],'원화환산':r['excl_wncr_vltn_amt']}
 
-        else : 
-            return rst
         # get 원화 예수금
-        endp = '/accounts/v1/me/deposit'
-        rst = self.rst_api('get',endp,{})
+        rst = self.rst_api('get','/accounts/v1/me/deposit',{})
         if rst :
             if pr :
                 pr['원화예수금'] = rst['oder_able_cash_amt']

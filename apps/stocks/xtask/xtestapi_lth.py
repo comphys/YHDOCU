@@ -60,7 +60,6 @@ while True :
     ch = input("메뉴를 선택하세요 : \033[0m")
     
     if ch == '00' : break
-    if ch == '88' : B.renew_token() ; print("토큰을 리뉴얼 했습니다")
     if ch == '1' : rst = B.get_current_price() ; print(rst)
     if ch.startswith('20') : rst = B.get_ohlc(ch) ; print(rst)
     if ch == '3' : 

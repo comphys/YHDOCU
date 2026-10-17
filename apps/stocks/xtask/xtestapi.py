@@ -79,7 +79,6 @@ while True :
     
     if ch == '00' : break
     if ch == '33' : rst = A.test(); A.print_contents(rst)
-    if ch == '88' : B.renew_token(['01','02','03']) ; print("토큰을 모두 리뉴얼 했습니다")
     if ch == '1' : rst = B.get_current_price() ; print(rst)
     if ch.startswith('20') : rst = B.get_ohlc(ch) ; print(rst)
     if ch == '3' : 
