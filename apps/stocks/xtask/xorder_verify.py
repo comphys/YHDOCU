@@ -78,7 +78,7 @@ class yourClass(Control) :
         order = self.rsn_order_data()
         acted = self.API.get_orders_today('2','0')  
 
-        if len(order) != len(acted) : return (False,"RSN 주문수량 오류")
+        if len(order) != len(acted) : return (False,"RSN 주문 건수 오류")
         cnt = 0
         for o in order :
             for a in acted :
@@ -93,7 +93,7 @@ class yourClass(Control) :
         order = self.diy_order_data()
         acted = self.API.get_orders_today('2','0') 
 
-        if len(order) != len(acted) : return (False,"DIY 주문수량 오류")
+        if len(order) != len(acted) : return (False,"DIY 주문 건수 오류")
         cnt = 0
         for o in order :
             for a in acted :

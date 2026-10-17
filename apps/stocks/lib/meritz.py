@@ -26,72 +26,64 @@ class MERITZ :
         self.tktime  = 'meritz-time'+opt
         self.account = opt
 
-    def rst_api(self,mean,endp,params,retry_count=0, max_retries=3) :
-
-        current_time = int(datetime.now().timestamp())
-        token_extime = int(self.DB.store(self.tktime))
-        if  token_extime < current_time + 60 :
-            token = self.get_token()
-        else : 
-            token = self.DB.store(self.tkname)
-        if  not token : 
+    def rst_api(self,mean,endp,params,retry_count=0,max_retries=3) :
+        if retry_count >= max_retries: self.log(self.account+" API 시도 최대 횟수를 초과했습니다."); return False
+        if  not (token:=self.DB.store(self.tkname) if int(self.DB.store(self.tktime)) > int(time.time()) + 60 else self.get_token()) :
             self.log("token을 가져오지 못하였습니다.")
             return False
-        
-        headers = {'Content-Type':'application/json;charset=UTF-8','authorization':f'Bearer {token}','mac_address':self.maca}
-        resp = requests.get(self.host+endp, headers=headers,params=params) if mean == 'get' else requests.post(self.host+endp, headers=headers,data=params)
+
+        headers={'Content-Type':'application/json;charset=UTF-8','authorization':f'Bearer {token}','mac_address':self.maca}
+        resp=requests.get(self.host+endp, headers=headers,params=params) if mean=='get' else requests.post(self.host+endp,headers=headers,data=params)
 
         # 오류 판단 
-        body = resp.json()
-        if  not body : self.log(f"{resp.status_code} 데이타를 가져오는데 실폐하였습니다."); return False
+        if  not (body:=resp.json()) : 
+            self.log(f"{resp.status_code} 데이타를 가져오는데 실폐하였습니다.")
+            return False
         
-        code = body.get('rsp_cd')
-        if not code : 
-            if resp.status_code == 200 : self.log(f"{resp.status_code} [{code}] : API 손상 {resp.text}"); return False
-            else : self.log(f"{resp.status_code} [{code}] : 전송 계층 실패 {resp.text}"); return False
+        if  not (code:=body.get('rsp_cd')) : 
+            if resp.status_code == 200 : self.log(f"{resp.status_code} [{code}] : API 손상 {resp.text}")
+            else : self.log(f"{resp.status_code} [{code}] : 전송 계층 실패 {resp.text}")
+            return False
+
+        # 응답이 성공적일 때
         elif code in ['0000','0001','5620','5762','5766','5820','5822','00000'] :
-            rows = body.get('data') or [] 
-            if rows : return rows
-            else :    return None
+            if (rows:= body.get('data') or []) : 
+                return rows
+            else :    
+                return None
+        
         elif code == 'EGW00200' : 
             self.log(self.account+" 초당 호출 한도가 초과되었습니다.") 
             time.sleep(1.0)
             return self.rst_api(mean,endp,params,retry_count + 1, max_retries)
-        elif code == 'EGW00123' : self.log(self.account+" 기간이 만료된 토큰입니다."); return False
+        
+        elif code == 'EGW00123' : 
+            self.log(self.account+" 기간이 만료된 토큰입니다.")
+            return False
+        
         else :
             self.log(f"{resp.status_code} [{code}] : {resp.text}")
             return False
         
-    def get_token(self,retry_count=0, max_retries=3) :
-        if retry_count >= max_retries: self.log(self.account+" 토큰 시도 최대 횟수를 초과했습니다."); return False
+    def get_token(self) :
         self.log(self.account+" 토큰을 발급합니다.")
-        endp = '/oauth2/token'
-        app_key = self.DB.store(self.appname)
-        secret_key = self.DB.store(self.secname)
-        params = {'grant_type':'client_credentials','client_id':app_key,'client_secret':secret_key, 'scope':'login'}
-        resp = requests.post(self.host+endp, headers={'Content-Type':'application/x-www-form-urlencoded'},data=params)
-        rst = resp.json()
-        if  rst :
-            kst = ZoneInfo("Asia/Seoul")
-            dt = datetime.strptime(rst['expires_date'], "%Y-%m-%d %H:%M:%S").replace(tzinfo=kst)
-            expires = int(dt.timestamp())
+        para={'grant_type':'client_credentials','client_id':self.DB.store(self.appname),'client_secret':self.DB.store(self.secname),'scope':'login'}
+        resp=requests.post(self.host+'/oauth2/token', headers={'Content-Type':'application/x-www-form-urlencoded'},data=para)
+        if  (rst:=resp.json()) :
+            exp=datetime.strptime(rst['expires_date'],"%Y-%m-%d %H:%M:%S").replace(tzinfo=ZoneInfo("Asia/Seoul")).timestamp()
             self.DB.store(self.tkname,rst['access_token'])
-            self.DB.store(self.tktime,str(expires))
+            self.DB.store(self.tktime,str(int(exp)))
             return rst['access_token']
         else : 
             return False
 
     def revoke_token(self) :
         self.log(self.account+" 토큰을 폐기합니다.")
-        endp = '/oauth2/revoke'
-        app_key = self.DB.store(self.appname)
-        secret_key = self.DB.store(self.secname)
-        token = self.DB.store(self.tkname)
-        params = {'client_id':app_key,'client_secret':secret_key, 'scope':'login','token_type_hint':'access_token','token':token}
-        resp = requests.post(self.host+endp, headers={'Content-Type':'application/x-www-form-urlencoded'},data=params)
-        rst = resp.json()
-        if  rst  :
-            self.DB.store(self.tkname,' ')
+        token=self.DB.store(self.tkname)
+        para={'client_id':self.DB.store(self.appname),'client_secret':self.DB.store(self.secname), 'scope':'login','token_type_hint':'access_token','token':token}
+        resp=requests.post(self.host+'/oauth2/revoke',headers={'Content-Type':'application/x-www-form-urlencoded'},data=para)
+        if  resp.json() :
+            self.DB.store(self.tkname,'')
             self.DB.store(self.tktime,'0')
             return True
         else : 
@@ -99,35 +91,27 @@ class MERITZ :
 
     # 현재의 실시간 가격 정보를 리턴한다 (메리츠 api의 특이점 이용)
     def get_current_price(self) :
-        aa = self.account
+        oldc = self.account
         self.change_account('03')
-        rst = self.rst_api('get','/accounts/v1/me/overseas/holdings',{})
-        if  rst  :
-            rt = rst[0]
-            pr = {'종목':rt['ovrs_stck_symb_iscd'],'현재가격':rt['psnt_prc'],'환율':rt['exrt']}
-            self.change_account(aa)
-            return pr
+        if  (rst:=self.rst_api('get','/accounts/v1/me/overseas/holdings',{})) :
+            self.change_account(oldc)
+            return {'종목':rst[0]['ovrs_stck_symb_iscd'],'현재가격':rst[0]['psnt_prc'],'환율':rst[0]['exrt']}
         else : 
-            self.change_account(aa)
+            self.change_account(oldc)
             return rst
 
     # 특정날자의 ohlc 정보를 가져온다
     def get_ohlc(self,date) :
-        endp = '/market/v1/overseas/candles/days'
-        params = {'mrkt_div_code':'OV','mrkt_cls_code':'AX','iscd':'SOXL','dely_rltm_cls_code':'1','mod_stpr_cls_code':'1','from':date,'to':date}
-        rst = self.rst_api('get',endp,params)
-        if rst :
+        para={'mrkt_div_code':'OV','mrkt_cls_code':'AX','iscd':'SOXL','dely_rltm_cls_code':'1','mod_stpr_cls_code':'1','from':date,'to':date}
+        if (rst:=self.rst_api('get','/market/v1/overseas/candles/days',para)) :
             rt=rst[0] 
-            pr = {'날자':rt['date'],'시가':rt['oprc'],'고가':rt['hprc'],'저가':rt['lprc'],'종가':rt['prpr'],'거래량':rt['acml_vol'],'증감':rt['prdy_ctrt']}
-            return pr
-        else : return rst
+            return {'날자':rt['date'],'시가':rt['oprc'],'고가':rt['hprc'],'저가':rt['lprc'],'종가':rt['prpr'],'거래량':rt['acml_vol'],'증감':rt['prdy_ctrt']}
+        else : 
+            return rst
 
     def get_current_balance(self) :
-        endp = '/accounts/v1/me/overseas/holdings'
-        params = {}
-        rst = self.rst_api('get',endp,params)
         rpr = []
-        if rst :
+        if (rst:=self.rst_api('get','/accounts/v1/me/overseas/holdings',{})) :
             for rt in rst :
                 pr = {'종목':rt['ovrs_stck_symb_iscd'],'수량':rt['rmnd_dqty'],'매도가능수량':rt['seln_able_dqty'],'현재가격':rt['psnt_prc'],'평균단가':rt['avrg_unpr'],
                     '평가손익':rt['vltn_prls_camt'],'평가수익률':rt['vltn_ert'],
@@ -135,59 +119,55 @@ class MERITZ :
                     }
                 rpr.append(pr)
             return rpr
-        else : return rst
+        else : 
+            return rst
 
     def get_reserved_order(self,date,code='1') : # code 0 전체, 1 전체(취소분제외), 2(예약상태인 건만)
-        endp = '/trading/v1/overseas/reserved-orders'
-        params = {'iqry_sta_date':date,'iqry_fin_date':date,'seln_byov_clcd':'0','iqry_cls_code':'2','iqry_idnt_clcd':code,'tday_deal_yn':'N'}
-        rst = self.rst_api('get',endp,params)
-        if rst :
+        para={'iqry_sta_date':date,'iqry_fin_date':date,'seln_byov_clcd':'0','iqry_cls_code':'2','iqry_idnt_clcd':code,'tday_deal_yn':'N'}
+        if (rst:=self.rst_api('get','/trading/v1/overseas/reserved-orders',para)) :
             pr = []
             for r in rst :
                 pr.append({'종목코드':r['ovrs_stck_symb_iscd'],'접수일자':r['rsev_acpt_date'],'접수번호':r['rsev_acpt_srno'],'매매구분':r['seln_byov_clcd'],'호가유형':r['rsev_aspr_tpcd'],
                         '주문수량':r['odqt'],'주문가격':r['ovrs_stck_oder_prc'],'예약시간구분':r['oder_rsev_hour_clcd'],'주문시작':r['oder_sta_date']
                         })
             return pr
-        else : return rst
+        else : 
+            return rst
 
     def do_reserved_buy(self,symbol,qty,price,date,check) :
-        endp = '/trading/v1/overseas/reserved-orders/buy'
-        params = {'ovrs_stck_symb_iscd':symbol,'ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
-                  'warn_cnfr_yn':check,'oder_rsev_cls_code':'1','oder_rsev_hour_clcd':'0',
-                  'oder_sta_date':date,'oder_fin_date':date}
-        rst = self.rst_api('post',endp,params)
-        if rst :
+        para={'ovrs_stck_symb_iscd':symbol,'ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
+              'warn_cnfr_yn':check,'oder_rsev_cls_code':'1','oder_rsev_hour_clcd':'0',
+              'oder_sta_date':date,'oder_fin_date':date}
+        if (rst:=self.rst_api('post','/trading/v1/overseas/reserved-orders/buy',para)) :
             # 경고 안내 메세지가 없을 경우 예약번호를 리턴
             if rst['warn_msg'] =='' : return rst['oder_rsev_mst_no']
+            else : self.log(rst['warn_msg'])
         else : 
             return rst
 
     def do_reserved_sell(self,symbol,qty,price,date,check) :
-        endp = '/trading/v1/overseas/reserved-orders/sell'
-        params = {'ovrs_stck_symb_iscd':symbol,'ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
-                  'warn_cnfr_yn':check,'oder_rsev_cls_code':'1','oder_rsev_hour_clcd':'0',
-                  'oder_sta_date':date,'oder_fin_date':date}
-        rst = self.rst_api('post',endp,params)
-        if rst :
+        para={'ovrs_stck_symb_iscd':symbol,'ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
+              'warn_cnfr_yn':check,'oder_rsev_cls_code':'1','oder_rsev_hour_clcd':'0',
+              'oder_sta_date':date,'oder_fin_date':date}
+        if (rst:=self.rst_api('post','/trading/v1/overseas/reserved-orders/sell',para)) :
             # 경고 안내 메세지가 없을 경우 예약번호를 리턴
             if rst['warn_msg'] =='' : return rst['oder_rsev_mst_no']
+            else : self.log(rst['warn_msg'])
         else : 
             return rst
 
     def do_reserved_cancel(self,date,orno) :
         # date 는 접수일자 임
-        endp = '/trading/v1/overseas/reserved-orders/cancel'
-        params = {'oder_rsev_mst_date':date,'oder_rsev_mst_no':orno}
-        rst = self.rst_api('post',endp,params)
-        if rst : return True
-        else :   return rst
+        para={'oder_rsev_mst_date':date,'oder_rsev_mst_no':orno}
+        if (rst:=self.rst_api('post','/trading/v1/overseas/reserved-orders/cancel',para)) :
+            return True
+        else :
+            return rst
 
     # 당일 체결 현황을 보여준다
     def get_orders_today(self,done,bs) : # done(체결여부) 0 전체, 1 체결 2 미체결 / bs(매수매도) 0 전체, 1 매도, 2 매수
-        endp = '/trading/v1/overseas/orders/today'
-        params = {'cntg_cls_code':done,'seln_byov_clcd':bs}
-        rst = self.rst_api('get',endp,params)
-        if rst :
+        para={'cntg_cls_code':done,'seln_byov_clcd':bs}
+        if (rst:=self.rst_api('get','/trading/v1/overseas/orders/today',para)) :
             pr = []
             for r in rst :
                 pr.append({'종목코드':r['ovrs_stck_symb_iscd'],'매매구분':r['seln_byov_clcd'],'호가유형':r['aspr_type_code'],
@@ -202,14 +182,12 @@ class MERITZ :
     def get_money_balance(self) : 
         pr = {}
         # get 외화($) 예수금
-        rst = self.rst_api('get','/accounts/v1/me/overseas/currencies',{})
-        if rst :
+        if (rst:=self.rst_api('get','/accounts/v1/me/overseas/currencies',{})) :
             for r in rst :
-                if r['crcd'] == 'USD' and float(r['estm_frcr_amt']) > 0 : pr = {'달러예수금':r['estm_frcr_amt'],'평가환율':r['vltn_exrt'],'원화환산':r['excl_wncr_vltn_amt']}
+                if r['crcd'] == 'USD' and float(r['estm_frcr_amt']) > 0 : pr={'달러예수금':r['estm_frcr_amt'],'평가환율':r['vltn_exrt'],'원화환산':r['excl_wncr_vltn_amt']}
 
         # get 원화 예수금
-        rst = self.rst_api('get','/accounts/v1/me/deposit',{})
-        if rst :
+        if (rst:=self.rst_api('get','/accounts/v1/me/deposit',{})) :
             if pr :
                 pr['원화예수금'] = rst['oder_able_cash_amt']
                 통합달러 = round(float(pr['달러예수금']) + float(pr['원화예수금'])/float(pr['평가환율']),2)

@@ -18,10 +18,9 @@ class yourClass(Control) :
 
         self.DB = self.db('stocks',path=rootpath+'/')
         self.skey = self.DB.store("slack_key")
-
         self.API = self.load_app_lib('meritz')
         self.API.root = rootpath
-        self.API.maca = macaddress     
+        self.API.maca = macaddress   
 
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
@@ -30,8 +29,7 @@ class yourClass(Control) :
 
     def get_token_duetime(self) :
         ts = self.DB.store('meritz-time'+'lth')
-        rst = my.timestamp_to_date(int(ts),opt=1)
-        return rst
+        return my.timestamp_to_date(int(ts),opt=1)
 
     def print_contents(self,data) :
         if data :

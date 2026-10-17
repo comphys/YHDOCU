@@ -18,7 +18,6 @@ class yourClass(Control) :
 
         self.DB = self.db('stocks',path=rootpath+'/')
         self.skey = self.DB.store("slack_key")
-
         self.API = self.load_app_lib('meritz')
         self.API.root = rootpath
         self.API.maca = macaddress
