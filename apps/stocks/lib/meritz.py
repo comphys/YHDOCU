@@ -11,7 +11,6 @@ class MERITZ :
         self.root    = '/data/data/com.termux/files/home/YHDOCU'
         self.maca    = 'A475B980D0CA'
         self.host    = 'https://openapi.imeritz.com:9443'
-        self.headers = {'Content-Type':'application/json;charset=utf-8'}
         self.change_account('01')
 
     def log(self,str) :
@@ -27,7 +26,9 @@ class MERITZ :
         self.account = opt
 
     def rst_api(self,mean,endp,params,retry_count=0,max_retries=3) :
+        
         if retry_count >= max_retries: self.log(self.account+" API 시도 최대 횟수를 초과했습니다."); return False
+
         if  not (token:=self.DB.store(self.tkname) if int(self.DB.store(self.tktime)) > int(time.time()) + 60 else self.get_token()) :
             self.log("token을 가져오지 못하였습니다.")
             return False
@@ -62,10 +63,11 @@ class MERITZ :
             return False
         
         else :
-            self.log(f"{resp.status_code} [{code}] : {resp.text}")
+            self.log(f"{resp.status_code} [{code}] : {body}")
             return False
         
     def get_token(self) :
+        # 서버에 발급된 유효시간 내의 토큰이 있을 경우, 서버는 갱신요청 시 기존 토큰을 반환한다.
         self.log(self.account+" 토큰을 발급합니다.")
         para={'grant_type':'client_credentials','client_id':self.DB.store(self.appname),'client_secret':self.DB.store(self.secname),'scope':'login'}
         resp=requests.post(self.host+'/oauth2/token', headers={'Content-Type':'application/x-www-form-urlencoded'},data=para)

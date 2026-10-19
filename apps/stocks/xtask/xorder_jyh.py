@@ -17,15 +17,24 @@ import system.core.my_utils as my
 
 class yourClass(Control) :
 
+    sel_type = '1'
+    buy_type = '2'
+    
     def _auto(self) :
         self.DB = self.db('stocks',path=rootpath+'/')
         self.skey = self.DB.store("slack_key")
 
         self.API = self.load_app_lib('meritz')
-        self.API.headers = {'Content-Type':'application/json;charset=UTF-8','mac_address':macaddress}     
+        self.API.root = rootpath
+        self.API.maca = macaddress
 
         self.today = my.kor_loc_date('US/Eastern')[0:10]
         self.weekd = my.dayofdate(self.today)
+        self.my_token   = self.DB.store('api_token')
+        self.my_host    = "https://comphys.pythonanywhere.com/api"
+        self.my_headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':self.my_token}
+
+        
         self.cp = self.API.get_current_price()
         time.sleep(1)
 
@@ -81,27 +90,28 @@ class yourClass(Control) :
         total_rsn = self.API.get_money_balance()
 
         for r in rsn :
-            if  r['매매구분'] == '1' and float(r['주문가격']) < c_dnl : r['주문가격'] = f"{c_dnl:.2f}" # for sell
-            if  r['매매구분'] == '2' and float(r['주문가격']) > c_upl : r['주문가격'] = f"{c_upl:.2f}" # for buy
-            if  r['매매구분'] == '2' : buy_total_rsn += float(r['주문가격']) * int(r['주문수량'])
-        
+            if    r['매매구분'] == self.sel_type and float(r['주문가격']) < c_dnl : r['주문가격'] = f"{c_dnl:.2f}" # for sell
+            elif  r['매매구분'] == self.buy_type and float(r['주문가격']) > c_upl : r['주문가격'] = f"{c_upl:.2f}" # for buy
+            if    r['매매구분'] == self.buy_type : buy_total_rsn += float(r['주문가격']) * int(r['주문수량'])
+
+        for r in rsn :
+            if r['매매구분'] == self.sel_type : 
+                rst = self.API.do_reserved_sell('SOXL',r['주문수량'],'110.00',odday,'Y')
+                if not rst : self.log(f"RSN 매도주문 오류 : {rst}"); return
+                time.sleep(0.5)
+                
+        self.send_message(f"{self.today} RSN 매도주문 완료")
+
         if float(total_rsn['통합달러']) >= buy_total_rsn :
             for r in rsn :
-                if r['매매구분'] == '1' : 
-                    self.API.do_reserved_sell('SOXL',r['주문수량'],r['주문가격'],odday,'Y')
+                if r['매매구분'] == self.buy_type : 
+                    rst = self.API.do_reserved_buy('SOXL',r['주문수량'],r['주문가격'],odday,'Y')
+                    if not rst : self.log(f"RSN 매수주문 오류 : {rst}"); return
                     time.sleep(0.5)
-                
-                if r['매매구분'] == '2' : 
-                    self.API.do_reserved_buy('SOXL',r['주문수량'],r['주문가격'],odday,'Y')
-                    time.sleep(0.5)
-
-            self.send_message(f"{self.today} RSN 주문을 완료")
+            self.send_message(f"{self.today} RSN 매수주문 완료")
             # 확인 날자 업데이트 
             self.DB.parameter_update('TX070',self.today)
-            api_token = self.DB.store('api_token')
-            host = "https://comphys.pythonanywhere.com/api/check/check_rsn"
-            headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':api_token}
-            requests.post(host,headers=headers,json={'rsn_check':self.today})
+            requests.post(self.my_host+'/check/check_rsn',headers=self.my_headers,json={'rsn_check':self.today})
         else :
             self.send_message("RSN 계좌 예수금 부족")
 
@@ -113,32 +123,32 @@ class yourClass(Control) :
         diy = self.diy_order_data() 
         buy_total_diy = 0.0
         total_diy = self.API.get_money_balance()
-        print(total_diy)
 
         for d in diy :
-            if  d['매매구분'] == '1' and float(d['주문가격']) < c_dnl : d['주문가격'] = f"{c_dnl:.2f}" # for sell
-            if  d['매매구분'] == '2' and float(d['주문가격']) > c_upl : d['주문가격'] = f"{c_upl:.2f}" 
-            if  d['매매구분'] == '2' : buy_total_diy += float(d['주문가격']) * int(d['주문수량'])
+            if    d['매매구분'] == self.sel_type and float(d['주문가격']) < c_dnl : d['주문가격'] = f"{c_dnl:.2f}" # for sell
+            elif  d['매매구분'] == self.buy_type and float(d['주문가격']) > c_upl : d['주문가격'] = f"{c_upl:.2f}" 
+            if    d['매매구분'] == self.buy_type : buy_total_diy += float(d['주문가격']) * int(d['주문수량'])
+
+        for d in diy :
+            if d['매매구분'] == self.sel_type : 
+                rst  = self.API.do_reserved_sell('SOXL',d['주문수량'],d['주문가격'],odday,'Y')
+                if not rst : self.log(f"DIY 매도주문 오류 : {rst}"); return
+                time.sleep(0.5)
 
         if float(total_diy['통합달러']) >= buy_total_diy :
             for d in diy :
-                if d['매매구분'] == '1' : 
-                    self.API.do_reserved_sell('SOXL',d['주문수량'],d['주문가격'],odday,'Y')
-                    time.sleep(0.5)
-                
-                if d['매매구분'] == '2' : 
-                    self.API.do_reserved_buy('SOXL',d['주문수량'],d['주문가격'],odday,'Y')
+                if d['매매구분'] == self.buy_type : 
+                    rst  = self.API.do_reserved_buy('SOXL',d['주문수량'],d['주문가격'],odday,'Y')
+                    if not rst : self.log(f"DIY 매수주문 오류 : {rst}"); return
                     time.sleep(0.5)
             
             self.send_message(f"{self.today} DIY 주문을 완료")
             # 확인 날자 업데이트 
             self.DB.parameter_update('A0710',self.today)
-            api_token = self.DB.store('api_token')
-            host = "https://comphys.pythonanywhere.com/api/check/check_diy"
-            headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':api_token}
-            requests.post(host,headers=headers,json={'diy_check':self.today})
+            requests.post(self.my_host+'/check/check_diy',headers=self.my_headers,json={'diy_check':self.today})
         else :
             self.send_message("DIY 계좌 예수금 부족")
+
 
 
 # ------------------------------------------------------------------------------------------------------------------

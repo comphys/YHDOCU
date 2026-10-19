@@ -452,6 +452,7 @@ class DIY :
         tx['진행상황'] = self.M['진행상황']
         
         tx['매수수량'] = f"{self.M['매수수량']:,}" if self.M['매수수량'] else ''
+        tx['매도수량'] = f"{self.M['매도수량']:,}" if self.M['매도수량'] else ''
         tx['매수금액'] = f"{self.M['매수금액']:,.2f}" if self.M['매수금액'] else ''
         
         tx['평균단가'] = f"<span class='avgv{self.M['기록시즌']}'>{round(self.M['평균단가'],4):,.2f}</span>" if self.M['평균단가'] else f"<span class='avgv{self.M['기록시즌']}'></span>"

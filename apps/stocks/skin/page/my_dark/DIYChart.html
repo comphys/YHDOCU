@@ -86,13 +86,14 @@
 				<tr style="background-color:#0A2229;border-bottom:1px solid black;">
 					<th style='text-align:center;width:50px'>No</th>
 					<th style='text-align:center;width:80px'>일자</th>
-					<th style='text-align:center;width:50px'>DD</th>
+					<!-- <th style='text-align:center;width:50px'>DD</th> -->
 					<th style='text-align:right;width:70px'>종가</th>
 					<th style='text-align:right;width:70px'>변동</th>
 
 					<th style='text-align:right;width:80px'>진행상황</th>
 					<th style='text-align:right;width:120px;'>현재잔액</th>
 					<th style='text-align:right;width:80px'>매수량</th>
+					<th style='text-align:right;width:80px'>매도량</th>
 					<th style='text-align:right;width:120px'>매수금액</th>
 					<th style='text-align:right;width:80px;'>보유수량</th>
 					<th style='text-align:right;width:100px'>평균단가</th>
@@ -116,7 +117,7 @@
 		<colgroup>
 			<col style="width:50px;"> <!-- No -->
 			<col style="width:80px;"> <!-- 일자 -->
-			<col style="width:50px;"> <!-- DD -->
+			<!-- <col style="width:50px;">  -->
 			<col style="width:70px;"> <!-- 당일종가 -->
 			<col style="width:70px;border-right:3px solid #424242;"> <!-- 종가변동 -->
 			
@@ -124,6 +125,7 @@
 			<col style="width:120px;border-right:3px solid #424242;"> <!--현재잔액 -->
 
 			<col style="width:80px;"> <!-- 매수량 -->
+			<col style="width:80px;"> <!-- 매도량 -->
 			<col style="width:120px;"> <!-- 매수금액 -->
 			<col style="width:80px;"> <!-- 보유수량 -->
 			<col style="width:100px;border-right:3px solid #424242"> <!-- 평균단가 -->
@@ -147,7 +149,7 @@
 				<td style='text-align:center'>{{TR['현재날수']}}</td>
 				<td class="begin-date" style="cursor:pointer;text-align:center">{{TR['기록일자']}}</td>
 				<!-- <td style='text-align:center'>{{TR['현재날수']}}/{{TR['당일연속']}}</td> -->
-				<td style='text-align:right;color:gray'>{{TR['현재손률']}}</td>
+				<!-- <td style='text-align:right;color:gray'>{{TR['현재손률']}}</td> -->
 				<td class='ohlc-price' style='text-align:right;font-weight:bold;cursor:pointer;'>{{TR['당일종가']|safe}}</td>
 				<td style='text-align:right;font-weight:bold;'>{{TR['종가변동']|safe}}</td>
 
@@ -155,6 +157,7 @@
 				<td style='text-align:right;font-weight:bold;'>{{TR['일반잔액']}}</td>
 
 				<td style='text-align:right'>{{TR['매수수량']|safe}}</td>
+				<td style='text-align:right'>{{TR['매도수량']|safe}}</td>
 				<td style='text-align:right;'>{{TR['매수금액']|safe}}</td>
 				<td style='text-align:right;'>{{TR['보유수량']}}</td>
 				<td style='text-align:right;color:#F6CECE;'>{{TR['평균단가']|safe}}</td>
@@ -187,6 +190,11 @@
 		{% if D['N_생활매도량'] %}
 		<tr style="border-top:1px solid gray"><td style="text-align:left;">D <span style="color:gray">sell</span></td><td>{{D['N_생활매도가']}}</td><td>{{D['N_생활매도량']}}</td>
 			<td style="color:gray">{{D['N_생활도종비']}}</td><td style="color:gray">{{D['N_생활도평비']}}</td>
+		</tr>
+		{% endif %}
+		{% if D['N_생활매도량2'] %}
+		<tr style="border-top:1px solid gray"><td style="text-align:left;">E <span style="color:gray">sell</span></td><td>{{D['N_생활매도가2']}}</td><td>{{D['N_생활매도량2']}}</td>
+			<td style="color:gray">{{D['N_생활도종비2']}}</td><td style="color:gray">{{D['N_생활도평비2']}}</td>
 		</tr>
 		{% endif %}
 	</table>
