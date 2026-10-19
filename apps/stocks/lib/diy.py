@@ -156,9 +156,7 @@ class DIY :
         if  self.M['매수차수'] == self.M['최대차수']-1 : self.M['매금단계'][self.M['최대차수']-1] = int(self.M['현재잔액'])
         
         매수예가1 = round(self.M['당일종가'] * self.M['보류가치'],2) if self.M['매수보류'] else round(self.M['당일종가'] * self.M['매입가치'],2)
-        self.info(f"{매수예가1}=round({self.M['당일종가']} * {self.M['보류가치']},2) if {self.M['매수보류']} else round({self.M['당일종가']} * {self.M['매입가치']},2)")
         매수예가2 = round(self.M['당일종가'] * self.M['자체진입'],2) if self.M['자체연속'] >= 1 else 0.0
-        self.info(f"{매수예가2} = round({self.M['당일종가']} * {self.M['자체진입']},2) if {self.M['자체연속']} >= 1 else 0.0")
         self.M['매수예가'] = max(매수예가1,매수예가2)
         self.M['예정수량'] = int(  self.M['매금단계'][self.M['매수차수']] / self.M['매수예가'] ) 
         
