@@ -32,7 +32,6 @@ class DIY :
         self.M['평가금액'] = self.M['당일종가'] * self.M['보유수량'] 
         self.M['수익현황'] = self.M['평가금액'] - self.M['총매수금']
         self.M['현수익률'] = self.M['수익현황'] / self.M['총매수금']  * 100  if self.M['총매수금'] else 0.00  
-
         self.M['현재손률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
         
         if  self.M['매도수량'] :
@@ -41,18 +40,30 @@ class DIY :
             self.M['보유수량'] -=  self.M['매도수량'];  self.M['현재잔액'] += self.M['매도금액'] 
             self.M['현수익률'] = round( self.M['수익현황'] / self.M['총매수금'] * 100, 2 )   
             self.commission(2) 
-            
-            self.M['평가금액'] = 0.00
-            self.M['총매수금'] = 0.00
-            self.M['평균단가'] = 0.00
 
-            self.M['진행상황'] = '익절매도' if self.M['수익현황'] >= 0 else '손절매도'
-            self.M['매수차수'] = 0
-            self.M['첫날기록'] = True
+            if not self.M['보유수량'] :
+                self.M['평가금액'] = 0.00
+                self.M['총매수금'] = 0.00
+                self.M['평균단가'] = 0.00
+
+                self.M['진행상황'] = '익절매도' if self.M['수익현황'] >= 0 else '손절매도'
+                self.M['매수차수'] = 0
+                self.M['첫날기록'] = True
+                
+                self.vCount(self.M['수익현황'])
+                self.tax()
+                self.rebalance() 
             
-            self.vCount(self.M['수익현황'])
-            self.tax()
-            self.rebalance() 
+            else :
+                self.M['평가금액'] = self.M['당일종가'] * self.M['보유수량'] 
+                self.M['총매수금'] = self.M['총매수금'] - self.M['매도금액']
+                self.M['평균단가'] = self.M['총매수금'] / self.M['보유수량'] 
+                self.M['수익현황'] = self.M['평가금액'] - self.M['총매수금']
+                self.M['현수익률'] = self.M['수익현황'] / self.M['총매수금']  * 100
+                self.M['현재손률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
+
+                self.M['진행상황'] = '꼬리매도' 
+                self.M['매수차수'] = self.M['최대차수'] - 1            
             
 
         self.realMDD()
@@ -116,7 +127,12 @@ class DIY :
     
     def today_sell(self) :
         
-        if  self.M['당일종가'] >= self.M['매도예가'] : self.M['매도수량'] = self.M['보유수량']
+        if  self.M['당일종가'] >= self.M['매도예가1'] : 
+            self.M['매도수량']  = self.M['보유수량']
+        
+        elif self.M['매도수량2'] and self.M['당일종가'] >= self.M['매도예가2'] and self.M['매수차수'] == self.M['최대차수']:
+            self.M['매도수량'] += self.M['매도수량2']
+
 
     def today_buy(self) :
         
@@ -128,6 +144,11 @@ class DIY :
             self.M['매수차수'] += 1
             self.M['매수보류']  = True
             self.M['자체연속']  = 1
+            # 꼬리매수
+            if  self.M['매수차수'] == self.M['최대차수'] :
+                self.M['막차수량'] =  self.M['매수수량']
+                self.M['막차수가'] =  self.M['당일종가']    
+
 
     def tomorrow_buy(self) :
         
@@ -135,18 +156,29 @@ class DIY :
         if  self.M['매수차수'] == self.M['최대차수']-1 : self.M['매금단계'][self.M['최대차수']-1] = int(self.M['현재잔액'])
         
         매수예가1 = round(self.M['당일종가'] * self.M['보류가치'],2) if self.M['매수보류'] else round(self.M['당일종가'] * self.M['매입가치'],2)
+        self.info(f"{매수예가1}=round({self.M['당일종가']} * {self.M['보류가치']},2) if {self.M['매수보류']} else round({self.M['당일종가']} * {self.M['매입가치']},2)")
         매수예가2 = round(self.M['당일종가'] * self.M['자체진입'],2) if self.M['자체연속'] >= 1 else 0.0
+        self.info(f"{매수예가2} = round({self.M['당일종가']} * {self.M['자체진입']},2) if {self.M['자체연속']} >= 1 else 0.0")
         self.M['매수예가'] = max(매수예가1,매수예가2)
         self.M['예정수량'] = int(  self.M['매금단계'][self.M['매수차수']] / self.M['매수예가'] ) 
         
     def tomorrow_sell(self) :
         
         if not self.M['보유수량'] : return
-        self.M['매도예가'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
+        self.M['매도예가1'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
+        self.M['매도수량1'] = self.M['보유수량']
 
-        if  self.M['매수차수'] >  self.M['최대차수']-1 and self.M['현재날수'] > self.M['탈출일수'] :
-            # self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * self.M['탈출종가']),my.round_up(self.M['평균단가']*self.M['탈출허용'],2))
-            self.M['매도예가'] = my.round_up(self.M['평균단가']*self.M['탈출허용'],2)
+        # if  self.M['매수차수'] >  self.M['최대차수']-1 and self.M['현재날수'] > self.M['탈출일수'] :
+        #     # self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * self.M['탈출종가']),my.round_up(self.M['평균단가']*self.M['탈출허용'],2))
+        #     self.M['매도예가'] = my.round_up(self.M['평균단가']*self.M['탈출허용'],2)
+
+        # 꼬리 매매 2026.10.20 시행
+        if  self.M['매수차수'] == self.M['최대차수'] :
+            self.M['매도예가2'] = self.M['막차수가']
+            self.M['매도수량2'] = self.M['막차수량']
+            if  self.M['매도예가2'] >= self.M['매도예가1'] : 
+                self.M['매도수량2'] = 0
+
         
 
     def tomorrow_step(self)   :
@@ -154,12 +186,12 @@ class DIY :
         self.tomorrow_buy()
         self.tomorrow_sell()
         
-        if  self.M['매수예가']>= self.M['매도예가'] : self.M['매수예가'] = self.M['매도예가'] - 0.01
+        if  self.M['매수예가']>= self.M['매도예가1'] : self.M['매수예가'] = self.M['매도예가1'] - 0.01
         
     
     def new_day(self) :
 
-        self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가','매수예가','예정수량','매도예가','매수차수'],0)
+        self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가','매수예가','예정수량','매도예가','매수차수','매도예가1','매도수량1','매도수량2','매도예가2'],0)
         self.M['시즌자금'] = self.M['현재잔액']
 
         진입단가 = round(self.M['전일종가'] * self.M['첫날가치'], 2) if self.M['당일연속'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
@@ -420,10 +452,16 @@ class DIY :
             self.D['N_생활매수가'] = self.D['N_생활매수가']
             self.D['N_생활배분금'] = self.D['배분금액']
             
-            self.D['N_생활매도량'] = self.M['보유수량']
-            self.D['N_생활매도가'] = self.M['매도예가']
-            self.D['N_생활도평비'] = self.next_percent(self.M['평균단가'],self.M['매도예가'])
-            self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.M['매도예가'])
+            self.D['N_생활매도량'] = self.M['매도수량1']
+            self.D['N_생활매도가'] = self.M['매도예가1']
+            self.D['N_생활도평비'] = self.next_percent(self.M['평균단가'],self.M['매도예가1'])
+            self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.M['매도예가1'])
+
+            if self.M['매도수량2'] :
+                self.D['N_생활매도량2'] = self.M['매도수량2']
+                self.D['N_생활매도가2'] = self.M['매도예가2']
+                self.D['N_생활도평비2'] = self.next_percent(self.M['평균단가'],self.M['매도예가2'])
+                self.D['N_생활도종비2'] = self.next_percent(self.M['당일종가'],self.M['매도예가2'])
             
     def next_percent(self,a,b) :
         
@@ -604,6 +642,11 @@ class DIY :
         NS['도평대비'] = self.D['N_생활도평비']
         NS['도종대비'] = self.D['N_생활도종비']
         NS['배분금액'] = self.D['N_생활배분금']
+        # 꼬리매매
+        NS['예정도수2'] = self.D['N_생활매도량2']
+        NS['예정도가2'] = self.D['N_생활매도가2']
+        NS['도평대비2'] = self.D['N_생활도평비2']
+        NS['도종대비2'] = self.D['N_생활도종비2']
         return NS
 
 
@@ -650,7 +693,7 @@ class DIY :
         D['add22'] = self.M['예정수량']
         D['add23'] = f"{self.M['매수예가']:.2f}"
         D['add24'] = self.M['보유수량']
-        D['add25'] = f"{self.M['매도예가']:.2f}"
+        D['add25'] = f"{self.M['매도예가1']:.2f}"
 
 
         return D
