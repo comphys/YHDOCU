@@ -19,7 +19,7 @@ class yourClass(Control) :
 
     sel_type = '1'
     buy_type = '2'
-    exe_type =  False # 실제 실행 / 테스트   
+    exe_type =  True # 실제 실행 / 테스트   
     
     def _auto(self) :
         self.DB = self.db('stocks',path=rootpath+'/')
