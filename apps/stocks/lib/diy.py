@@ -127,11 +127,11 @@ class DIY :
     
     def today_sell(self) :
         
-        if  self.M['당일종가'] >= self.M['매도예가1'] : 
+        if  self.M['당일종가'] >= self.M['몸통가격'] : 
             self.M['매도수량']  = self.M['보유수량']
         
-        elif self.M['매도수량2'] and self.M['당일종가'] >= self.M['매도예가2'] and self.M['매수차수'] == self.M['최대차수']:
-            self.M['매도수량'] += self.M['매도수량2']
+        elif self.M['꼬리수량'] and self.M['당일종가'] >= self.M['꼬리가격'] and self.M['매수차수'] == self.M['최대차수']:
+            self.M['매도수량'] += self.M['꼬리수량']
 
 
     def today_buy(self) :
@@ -163,8 +163,8 @@ class DIY :
     def tomorrow_sell(self) :
         
         if not self.M['보유수량'] : return
-        self.M['매도예가1'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
-        self.M['매도수량1'] = self.M['보유수량']
+        self.M['몸통가격'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
+        self.M['몸통수량'] = self.M['보유수량']
 
         # if  self.M['매수차수'] >  self.M['최대차수']-1 and self.M['현재날수'] > self.M['탈출일수'] :
         #     # self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * self.M['탈출종가']),my.round_up(self.M['평균단가']*self.M['탈출허용'],2))
@@ -172,10 +172,12 @@ class DIY :
 
         # 꼬리 매매 2026.10.20 시행
         if  self.M['매수차수'] == self.M['최대차수'] :
-            self.M['매도예가2'] = self.M['막차수가']
-            self.M['매도수량2'] = self.M['막차수량']
-            if  self.M['매도예가2'] >= self.M['매도예가1'] : 
-                self.M['매도수량2'] = 0
+            self.M['꼬리가격'] = self.M['막차수가']
+            self.M['꼬리수량'] = self.M['막차수량']
+            if  self.M['꼬리가격'] >= self.M['몸통가격'] : 
+                self.M['꼬리수량'] = 0
+            else :
+                self.M['몸통수량'] -= self.M['꼬리수량']
 
         
 
@@ -184,12 +186,12 @@ class DIY :
         self.tomorrow_buy()
         self.tomorrow_sell()
         
-        if  self.M['매수예가']>= self.M['매도예가1'] : self.M['매수예가'] = self.M['매도예가1'] - 0.01
+        if  self.M['매수예가']>= self.M['몸통가격'] : self.M['매수예가'] = self.M['몸통가격'] - 0.01
         
     
     def new_day(self) :
 
-        self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가','매수예가','예정수량','매도예가','매수차수','매도예가1','매도수량1','매도수량2','매도예가2'],0)
+        self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가','매수예가','예정수량','매도예가','매수차수','몸통가격','몸통수량','꼬리수량','꼬리가격'],0)
         self.M['시즌자금'] = self.M['현재잔액']
 
         진입단가 = round(self.M['전일종가'] * self.M['첫날가치'], 2) if self.M['당일연속'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
@@ -450,16 +452,16 @@ class DIY :
             self.D['N_생활매수가'] = self.D['N_생활매수가']
             self.D['N_생활배분금'] = self.D['배분금액']
             
-            self.D['N_생활매도량'] = self.M['매도수량1']
-            self.D['N_생활매도가'] = self.M['매도예가1']
-            self.D['N_생활도평비'] = self.next_percent(self.M['평균단가'],self.M['매도예가1'])
-            self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.M['매도예가1'])
+            self.D['N_생활매도량'] = self.M['몸통수량']
+            self.D['N_생활매도가'] = self.M['몸통가격']
+            self.D['N_생활도평비'] = self.next_percent(self.M['평균단가'],self.M['몸통가격'])
+            self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.M['몸통가격'])
 
-            if self.M['매도수량2'] :
-                self.D['N_생활매도량2'] = self.M['매도수량2']
-                self.D['N_생활매도가2'] = self.M['매도예가2']
-                self.D['N_생활도평비2'] = self.next_percent(self.M['평균단가'],self.M['매도예가2'])
-                self.D['N_생활도종비2'] = self.next_percent(self.M['당일종가'],self.M['매도예가2'])
+            if  self.M['꼬리수량'] :
+                self.D['N_꼬리매도량'] = self.M['꼬리수량']
+                self.D['N_꼬리매도가'] = self.M['꼬리가격']
+                self.D['N_꼬리도평비'] = self.next_percent(self.M['평균단가'],self.M['꼬리가격'])
+                self.D['N_꼬리도종비'] = self.next_percent(self.M['당일종가'],self.M['꼬리가격'])
             
     def next_percent(self,a,b) :
         
@@ -641,10 +643,10 @@ class DIY :
         NS['도종대비'] = self.D['N_생활도종비']
         NS['배분금액'] = self.D['N_생활배분금']
         # 꼬리매매
-        NS['예정도수2'] = self.D['N_생활매도량2']
-        NS['예정도가2'] = self.D['N_생활매도가2']
-        NS['도평대비2'] = self.D['N_생활도평비2']
-        NS['도종대비2'] = self.D['N_생활도종비2']
+        NS['꼬리도수'] = self.D['N_꼬리매도량']
+        NS['꼬리도가'] = self.D['N_꼬리매도가']
+        NS['꼬평대비'] = self.D['N_꼬리도평비']
+        NS['꼬종대비'] = self.D['N_꼬리도종비']
         return NS
 
 
@@ -691,7 +693,7 @@ class DIY :
         D['add22'] = self.M['예정수량']
         D['add23'] = f"{self.M['매수예가']:.2f}"
         D['add24'] = self.M['보유수량']
-        D['add25'] = f"{self.M['매도예가1']:.2f}"
+        D['add25'] = f"{self.M['몸통가격']:.2f}"
 
 
         return D

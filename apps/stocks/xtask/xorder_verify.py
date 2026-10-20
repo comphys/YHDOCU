@@ -1,4 +1,4 @@
-import sys, platform
+import sys, platform,subprocess
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from datetime import datetime
@@ -34,8 +34,8 @@ class yourClass(Control) :
         with open(rootpath+"/logs/xtask.log","a",encoding="utf-8") as f:
             f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
 
-    def print_contents(self,data) :
-        if data :
+    def lprint(self,data) :
+        if isinstance(data,list) :
             for d in data : print(d)
         else : print(data)
     
@@ -62,23 +62,30 @@ class yourClass(Control) :
         OD = []
         if int(NS['예정수량']) : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'2','주문수량':str(NS['예정수량']),'주문가격':str(NS['예정매가'])})
         if int(NS['예정도수']) : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':str(NS['예정도수']),'주문가격':str(NS['예정도가'])})
+        if int(NS['꼬리도수']) : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':str(NS['꼬리도수']),'주문가격':str(NS['꼬리도가'])})
         
         return OD
     
     def send_message(self,message,ch='주식') :
-        client = WebClient(token=self.skey)
-        try:
-            client.chat_postMessage(channel= ch, text= message)
-            return True
-        except SlackApiError as e:
-            assert e.response["ok"] is False
-            assert e.response["error"]
-            self.log(f"slack error : {e.response['error']}")
+        
+        if sysos == 'Android' :
+            title = "주식 주문 검증 보고"
+            subprocess.run(["termux-notification","--title",title,"--content",message])
+        
+        else :  
+            client = WebClient(token=self.skey)
+            try:
+                client.chat_postMessage(channel= ch, text= message)
+                return True
+            except SlackApiError as e:
+                assert e.response["ok"] is False
+                assert e.response["error"]
+                self.log(f"slack error : {e.response['error']}")
 
     def verify_rsn_order(self) :
         order = self.rsn_order_data()
         acted = self.API.get_orders_today('2','0')  
-
+        
         if len(order) != len(acted) : return (False,"RSN 주문 건수 오류")
         cnt = 0
         for o in order :
@@ -92,7 +99,9 @@ class yourClass(Control) :
 
     def verify_diy_order(self) :
         order = self.diy_order_data()
+        self.lprint(order)
         acted = self.API.get_orders_today('2','0') 
+        self.lprint(acted)
 
         if len(order) != len(acted) : return (False,"DIY 주문 건수 오류")
         cnt = 0
@@ -122,6 +131,7 @@ if  not skip :
     # 작업코드 시작-------------------------------------------------------------------------------------------------------------------
     A.API.change_account('01')
     rst1 = A.verify_rsn_order()
+    A.lprint(rst1)
     A.send_message(rst1[1]) 
     time.sleep(1)
 
