@@ -28,7 +28,7 @@ class yourClass(Control) :
         self.API.root = rootpath
         self.API.maca = macaddress
 
-        self.today = my.kor_loc_date('US/Eastern')[0:10]
+        self.today = my.kor_loc_date('Asia/Seoul')[0:10]
         self.weekd = my.dayofdate(self.today)
         self.my_token   = self.DB.store('api_token')
         self.my_host    = "https://comphys.pythonanywhere.com/api"
@@ -65,8 +65,9 @@ class yourClass(Control) :
         DIY = self.load_app_lib('diy')
         NS  = DIY.get_nextStrategy(ini_date,last_date,ini_capital)
         OD = []
-        if int(NS['예정수량']) : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'2','주문수량':str(NS['예정수량']),'주문가격':str(NS['예정매가'])})
-        if int(NS['예정도수']) : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':str(NS['예정도수']),'주문가격':str(NS['예정도가'])})
+        if int(NS['예정수량'])  : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'2','주문수량':str(NS['예정수량']),'주문가격':str(NS['예정매가'])})
+        if int(NS['예정도수'])  : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':str(NS['예정도수']),'주문가격':str(NS['예정도가'])})
+        if int(NS['예정도수2']) : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':str(NS['예정도수2']),'주문가격':str(NS['예정도가2'])})
         
         return OD
     

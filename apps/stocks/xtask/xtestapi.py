@@ -35,27 +35,18 @@ class yourClass(Control) :
         return rst
     
     def print_contents(self,data) :
-        if data :
+        if isinstance(data,list):
             for d in data : print(d)
         else : print(data)
 
 
     def test(self) :
-        chk_last_date = self.DB.last_date('h_rsnLog_board')
-        last_ohlc = self.DB.last_date('h_stockHistory_board')
-        다음날자 = my.next_stock_day(last_ohlc,self.DB)[0].replace('-','')
-        NS = self.DB.line(f"SELECT add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20 FROM h_rsnLog_board WHERE add0='{chk_last_date}' LIMIT 1") 
-        OD = []
-        for key in ['r','s','n'] :
-            if int(NS[key+'_17']) :  OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'2','주문수량':NS[key+'_17'],'주문가격':NS[key+'_18']})
-            if int(NS[key+'_19']) :  OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':NS[key+'_19'],'주문가격':NS[key+'_20']})
-       
-        return OD
+        return self.API.get_market_date()    
 
 
 A = yourClass()
 B = A.API
-today = my.kor_loc_date('US/Eastern')[0:10].replace('-','')
+today = B.get_market_date()
 
 print("\033[H\033[J", end="")
 
@@ -74,11 +65,11 @@ while True :
     print("11. 현재 계좌 잔액($) 확인(DIY)")
     print("00. 나가기")
     print("----------------------------")
-    ch = input("메뉴를 선택하세요 : \033[0m")
+    ch = input(f"{today} 메뉴를 선택하세요 : \033[0m")
     
     if ch == '00' : break
-    if ch == '33' : rst = A.test(); A.print_contents(rst)
-    if ch == '1' : rst = B.get_current_price() ; print(rst)
+    if ch == '33' : rst = A.test(); print(rst)
+    if ch == '1' : rst = B.get_current_price() ; A.print_contents(rst)
     if ch.startswith('20') : rst = B.get_ohlc(ch) ; print(rst)
     if ch == '3' : 
         rst = B.get_orders_today('0','0') ; 

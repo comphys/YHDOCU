@@ -1,5 +1,6 @@
 import requests
 import time
+import inspect
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -26,7 +27,10 @@ class MERITZ :
         self.account = opt
 
     def rst_api(self,mean,endp,params,retry_count=0,max_retries=3) :
-        
+
+        caller_frame = inspect.currentframe().f_back
+        caller_name = caller_frame.f_code.co_name
+
         if retry_count >= max_retries: self.log(self.account+" API 시도 최대 횟수를 초과했습니다."); return False
 
         if  not (token:=self.DB.store(self.tkname) if int(self.DB.store(self.tktime)) > int(time.time()) + 60 else self.get_token()) :
@@ -34,16 +38,16 @@ class MERITZ :
             return False
 
         headers={'Content-Type':'application/json;charset=UTF-8','authorization':f'Bearer {token}','mac_address':self.maca}
-        resp=requests.get(self.host+endp, headers=headers,params=params) if mean=='get' else requests.post(self.host+endp,headers=headers,data=params)
+        resp=requests.get(self.host+endp, headers=headers,params=params) if mean=='get' else requests.post(self.host+endp,headers=headers,json=params)
 
         # 오류 판단 
         if  not (body:=resp.json()) : 
-            self.log(f"{resp.status_code} 데이타를 가져오는데 실폐하였습니다.")
+            self.log(f"{caller_name} :: {resp.status_code} 데이타를 가져오는데 실폐하였습니다.")
             return False
         
         if  not (code:=body.get('rsp_cd')) : 
             if resp.status_code == 200 : self.log(f"{resp.status_code} [{code}] : API 손상 {resp.text}")
-            else : self.log(f"{resp.status_code} [{code}] : 전송 계층 실패 {resp.text}")
+            else : self.log(f"{caller_name} :: {resp.status_code} [{code}] : 전송 계층 실패 {resp.text}")
             return False
 
         # 응답이 성공적일 때
@@ -63,14 +67,14 @@ class MERITZ :
             return False
         
         else :
-            self.log(f"{resp.status_code} [{code}] : {body}")
+            self.log(f"{caller_name} :: {resp.status_code} [{code}] : {body}")
             return False
         
     def get_token(self) :
         # 서버에 발급된 유효시간 내의 토큰이 있을 경우, 서버는 갱신요청 시 기존 토큰을 반환한다.
         self.log(self.account+" 토큰을 발급합니다.")
         para={'grant_type':'client_credentials','client_id':self.DB.store(self.appname),'client_secret':self.DB.store(self.secname),'scope':'login'}
-        resp=requests.post(self.host+'/oauth2/token', headers={'Content-Type':'application/x-www-form-urlencoded'},data=para)
+        resp=requests.post(self.host+'/oauth2/token', headers={'content-type':'application/x-www-form-urlencoded'},data=para)
         if  (rst:=resp.json()) :
             exp=datetime.strptime(rst['expires_date'],"%Y-%m-%d %H:%M:%S").replace(tzinfo=ZoneInfo("Asia/Seoul")).timestamp()
             self.DB.store(self.tkname,rst['access_token'])
@@ -150,7 +154,7 @@ class MERITZ :
     def do_reserved_sell(self,symbol,qty,price,date,check) :
         para={'ovrs_stck_symb_iscd':symbol,'ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
               'warn_cnfr_yn':check,'oder_rsev_cls_code':'1','oder_rsev_hour_clcd':'0',
-              'oder_sta_date':date,'oder_fin_date':date}
+              'oder_sta_date':date,'oder_fin_date':date,}
         if (rst:=self.rst_api('post','/trading/v1/overseas/reserved-orders/sell',para)) :
             # 경고 안내 메세지가 없을 경우 예약번호를 리턴
             if rst['warn_msg'] =='' : return rst['oder_rsev_mst_no']
@@ -203,5 +207,12 @@ class MERITZ :
                 통합달러 = f"{float(원화금액)/float(평가환율):.2f}"
                 pr = {'달러예수금':'0.00','평가환율':평가환율,'원화환산':'0','원화예수금':원화금액,'통합달러':통합달러,'통합원화':원화금액}
             return pr
+        else : 
+            return rst
+    
+    # 해외 영업일 조회
+    def get_market_date(self) :
+        if  (rst:=self.rst_api('get','/reference/v1/overseas/market-days',{'ovrs_exch_vndr_idno':'0066'})) :
+            return rst['bsop_date']
         else : 
             return rst
