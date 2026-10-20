@@ -4,6 +4,11 @@ import inspect
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+# requests.post(매개변수)
+# data(딕션너리,리스트형,바이트,파일객체) for application/x-www-form-urlencoded 또는 폼데이터
+# json(딕션너리,json 직렬화 가능한 객체)
+# params (dict,bytes) URL 쿼리 스트링에 포함될 데이터, get 요청에 사용, post 요청인경우도 url 뒤에 ?key=value 형태일 경우에 사용
+
 class MERITZ :
 
     def __init__(self,SYS) :
