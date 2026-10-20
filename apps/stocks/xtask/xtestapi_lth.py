@@ -40,10 +40,10 @@ class yourClass(Control) :
 A = yourClass()
 B = A.API
 today = B.get_market_date()
+
 B.change_account('lth')
 
 print("\033[H\033[J", end="")
-
 while True :
     print("\033[90m----------------------------")
     print(" 1. 현재 주가 불러 오기")

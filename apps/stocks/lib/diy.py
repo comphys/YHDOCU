@@ -10,6 +10,7 @@ class DIY :
         self.DB    = SYS.DB
         self.chart = False
         self.stat  = False
+        self.tail  = True
 
         self.B = {}
         self.M = {}
@@ -166,18 +167,22 @@ class DIY :
         self.M['몸통가격'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
         self.M['몸통수량'] = self.M['보유수량']
 
-        # if  self.M['매수차수'] >  self.M['최대차수']-1 and self.M['현재날수'] > self.M['탈출일수'] :
-        #     # self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * self.M['탈출종가']),my.round_up(self.M['평균단가']*self.M['탈출허용'],2))
-        #     self.M['매도예가'] = my.round_up(self.M['평균단가']*self.M['탈출허용'],2)
+        if self.tail : 
+            if  self.M['매수차수'] == self.M['최대차수'] :
+                self.M['꼬리가격'] = self.M['막차수가']
+                self.M['꼬리수량'] = self.M['막차수량']
+                if  self.M['꼬리가격'] >= self.M['몸통가격'] : 
+                    self.M['꼬리수량'] = 0
+                else :
+                    self.M['몸통수량'] -= self.M['꼬리수량']
+        else :
+            if  self.M['매수차수'] >  self.M['최대차수']-1 and self.M['현재날수'] > self.M['탈출일수'] :
+                # self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * self.M['탈출종가']),my.round_up(self.M['평균단가']*self.M['탈출허용'],2))
+                self.M['몸통가격'] = my.round_up(self.M['평균단가']*self.M['탈출허용'],2)
+                self.M['몸통수량'] = self.M['보유수량']
 
         # 꼬리 매매 2026.10.20 시행
-        if  self.M['매수차수'] == self.M['최대차수'] :
-            self.M['꼬리가격'] = self.M['막차수가']
-            self.M['꼬리수량'] = self.M['막차수량']
-            if  self.M['꼬리가격'] >= self.M['몸통가격'] : 
-                self.M['꼬리수량'] = 0
-            else :
-                self.M['몸통수량'] -= self.M['꼬리수량']
+
 
         
 
