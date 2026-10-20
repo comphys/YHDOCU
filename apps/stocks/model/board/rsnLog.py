@@ -238,11 +238,10 @@ class Ajax(Model) :
         
         elif self.SYS.I['_dev'] == 'Android' :
             MR = self.SYS.load_app_lib('meritz')
-            MR.headers['mac_address'] = 'A475B980D0CA'     
+            MR.root = '/data/data/com.termux/files/home/YHDOCU'
+            MR.maca = 'A475B980D0CA'
             rst = MR.get_current_price()
             if rst :
                 rst['현재가'] = f"{float(rst['현재가격']):.2f}"
                 return self.SYS.json(rst)
             else : return self.SYS.json("error::token_issue")
-
-    
