@@ -39,7 +39,7 @@ class yourClass(Control) :
 
 A = yourClass()
 B = A.API
-today = my.kor_loc_date('US/Eastern')[0:10].replace('-','')
+today = B.get_market_date()
 B.change_account('lth')
 
 print("\033[H\033[J", end="")
@@ -55,7 +55,7 @@ while True :
     print(" 7. 현재 계좌 잔액 확인")
     print("00. 나가기")
     print("----------------------------")
-    ch = input("메뉴를 선택하세요 : \033[0m")
+    ch = input(f"이태훈 계좌 : {today} 메뉴를 선택하세요 : \033[0m")
     
     if ch == '00' : break
     if ch == '1' : rst = B.get_current_price() ; print(rst)
