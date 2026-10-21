@@ -24,8 +24,6 @@ class M_change_balance(Model) :
             RSN.D['투자자금'] = self.D['기본자금']
             RSN.D['수료적용'] = 'off' 
             RSN.D['세금적용'] = 'off' 
-            RSN.D['일밸런싱'] = 'on' 
-            RSN.D['이밸런싱'] = 'on' 
             RSN.D['가상손실'] = 'off'
 
             RSN.get_simResult(start=self.D['기준일자'],end=lpd,result=True)

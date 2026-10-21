@@ -19,8 +19,6 @@ class M_rsn_view(Model) :
 
         self.D['수료적용'] = 'off'
         self.D['세금적용'] = 'off'
-        self.D['일밸런싱'] = 'on'
-        self.D['이밸런싱'] = 'on'
         self.D['일반상황'] = 'on'
         self.D['가상손실'] = 'off'
 
@@ -48,8 +46,6 @@ class M_rsn_view(Model) :
 
         D['수료적용'] = self.D['post'].get('chk_fee','off')
         D['세금적용'] = self.D['post'].get('chk_tax','off')
-        D['일밸런싱'] = self.D['post'].get('chk_brs','off')
-        D['이밸런싱'] = self.D['post'].get('chk_rs_','off')
         D['일반상황'] = self.D['post'].get('chk_von','off')
         D['가상손실'] = self.D['post'].get('chk_chx','off')
         
@@ -105,8 +101,6 @@ class Ajax(Model) :
         
         PD['수료적용'] = 'on' if self.D['post']['수료적용'] == 'true' else 'off'
         PD['세금적용'] = 'on' if self.D['post']['세금적용'] == 'true' else 'off'
-        PD['일밸런싱'] = 'on' if self.D['post']['일밸런싱'] == 'true' else 'off'
-        PD['이밸런싱'] = 'on' if self.D['post']['이밸런싱'] == 'true' else 'off'
         PD['가상손실'] = 'on' if self.D['post']['가상손실'] == 'true' else 'off'
 
        

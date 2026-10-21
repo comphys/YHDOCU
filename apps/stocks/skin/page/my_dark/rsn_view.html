@@ -78,12 +78,6 @@
 					<input role="switch" type="checkbox" name="chk_tax" {{ 'checked' if D['세금적용'] =='on' else '' }}><span>Tax</span> 
 				</div>
 				<div class="toggle-block">
-					<input role="switch" type="checkbox" name="chk_brs" {{ 'checked' if D['일밸런싱'] =='on' else '' }}><span>RSN=</span> 
-				</div>
-				<div class="toggle-block">
-					<input role="switch" type="checkbox" name="chk_rs_" {{ 'checked' if D['이밸런싱'] =='on' else '' }}><span>RS>N</span> 
-				</div>
-				<div class="toggle-block">
 					<input role="switch" type="checkbox" name="chk_von" {{ 'checked' if D['일반상황'] =='on' else '' }}><span>V_on</span> 
 				</div>
 				<div class="toggle-block">
@@ -506,7 +500,7 @@ $(".i-date_2").Zebra_DatePicker({format:'Y-m-d', first_day_of_week : 0, show_ico
 $(".ohlc-price").click(function(){
 	if ($id("OHLC_DAY")) {h_dialog.close("OHLC_DAY"); return;}
 	var code = 'SOXL'
-	var date = '20'+$(this).prev().text();
+	var date = '20'+$(this).prev().prev().text();
 	var url = uri('linkurl') + 'page/ajax/rsn_view/get_ohlc/date=' + date + '/code=' + code;
 	var ypos= mouse_Y
 	if(ypos > 800) ypos = ypos-280
@@ -987,8 +981,6 @@ function get_pdat(){
 
 	pdat['수료적용'] = $("input[name='chk_fee']").is(':checked');
 	pdat['세금적용'] = $("input[name='chk_tax']").is(':checked');
-	pdat['일밸런싱'] = $("input[name='chk_brs']").is(':checked');
-	pdat['이밸런싱'] = $("input[name='chk_rs_']").is(':checked');
 	pdat['가상손실'] = $("input[name='chk_chx']").is(':checked');
 }
 

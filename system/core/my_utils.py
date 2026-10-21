@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 import requests
-import os, re 
+import os, re, subprocess
 import shutil,math
 
 
@@ -124,8 +124,6 @@ def next_stock_day(today,mydb) :
         delta = 0 if not (weekend + holiday) else delta + 1
     return temp
 # --------------------------------------------------------------------------------------------
-
-
 # 파일조작 관련 함수 
 def file_split(filename) :
     '''
@@ -220,8 +218,16 @@ def rg_ex(op,txt) :
     if op == 'mobile' : see = re.compile('010-\d{3,4}-\d{4}') 
     return  True if see.match(txt) else False 
 # --------------------------------------------------------------------------------------------
-
+# 기타 유틸
 def get_publicIP() :
 
     response = requests.get('https://api.ipify.org?format=json')
     return response.json()['ip']
+
+# Android 의 termux-api 를 통해 문자메세지를 보낸다.(사전권한 획득 필요, 안드로이드에서만 동작)
+def send_sms(phone_number='01027208737',message="") :
+    subprocess.run(['termux-sms-send','-n',phone_number,message])
+
+# Android 의 termux-api 를 통해 push 알림을 보낸다.(사전권한 획득 필요, 안드로이드에서만 동작)
+def send_push(title='JYH',message='') :
+    subprocess.run(["termux-notification","--title",title,"--content",message])

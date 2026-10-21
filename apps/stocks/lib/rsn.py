@@ -10,6 +10,7 @@ class RSN :
         self.DB    = SYS.DB
         self.chart = False
         self.stat  = False
+        self.flow  = False
 
         self.B = {}
         self.V = {}
@@ -79,7 +80,8 @@ class RSN :
             self.N['매도금액'] = self.N['중도합계']
             self.N['수익현황'] = self.N['중익합계']
             self.N['현수익률'] = self.N['실현익률']
-            
+            self.M['종가추이'] = 0
+
             if  self.V['수익현황'] >= 0 : # 현수익률은 RS>N 에 의해 수익이라도 손실로 계산될 수 있어, 수익현황으로 판단하여야 함 
                 self.M['기본진행'] = True
                 self.set_value(['진행상황'],'익절매도')
@@ -144,10 +146,9 @@ class RSN :
             self.M['세금일자'] = str(int(self.M['현재일자'][0:4])+1) + '-04-30'
                 
         # RSN rebalance
-        if  self.D['일밸런싱'] == 'on' :
-            self.R['현재잔액'] = round(total*self.M['투자배분'][0]/100,2)
-            self.S['현재잔액'] = round(total*self.M['투자배분'][1]/100,2)
-            self.N['현재잔액'] = total - self.R['현재잔액'] - self.S['현재잔액']
+        self.R['현재잔액'] = round(total*self.M['투자배분'][0]/100,2)
+        self.S['현재잔액'] = round(total*self.M['투자배분'][1]/100,2)
+        self.N['현재잔액'] = total - self.R['현재잔액'] - self.S['현재잔액']
 
         for tac in (self.V,self.R,self.S) :   
             tac['일매수금'] = int(tac['현재잔액']/self.M['분할횟수']) 
@@ -203,7 +204,7 @@ class RSN :
             if  not self.R['진행시작'] and self.M['현재날수'] > 2 :
                 self.R['거래코드'] = f"B{self.R['매수수량']}/{self.R['기초수량']}" 
                 self.R['진행시작'] = True
-                self.R['잔액이동'] = True if self.D['이밸런싱'] == 'on' else False
+                self.R['잔액이동'] = True 
     
     def today_buy_S(self) :
         
@@ -214,7 +215,7 @@ class RSN :
             if  not self.S['진행시작'] and self.M['현재날수']>self.M['전략대기'] :
                 self.S['거래코드'] = f"B{self.S['매수수량']}/{self.S['기초수량']}" 
                 self.S['진행시작'] = True
-                self.S['잔액이동'] = True if self.D['이밸런싱'] == 'on' else False
+                self.S['잔액이동'] = True 
 
     def today_buy_N(self) :
         
@@ -245,7 +246,7 @@ class RSN :
         if tac['매수예가'] == 0 : return 0
         cq = 0   
         day_limit = 6 if tac == self.R else 7 
-        day_count = min(self.M['현재날수']+1+self.M['찬스일가'],day_limit)
+        day_count = min(self.M['현재날수']+1+self.M['찬스일가'],int(day_limit-self.M['종가추이']))
         for i in range(0,day_count) : cq += my.ceil( tac['기초수량'] *(i*self.M['비중조절'] + 1))
         # cq에 의한 매수금액 예상치는 현재 잔액을 초과하지 않아야 함
         if cq * tac['매수예가'] > tac['현재잔액'] : cq = int(tac['현재잔액']/tac['매수예가'])
@@ -273,42 +274,47 @@ class RSN :
     # R tactic
     def tomorrow_buy_R(self) :
         
-        if not self.R['현재잔액'] : self.R['예정수량'] = 0; self.R['매수예가'] = 0; return
+        if self.R['진행시작'] : self.R['예정수량'] = 0; self.R['매수예가'] = 0; return
         
-        if  self.R['진행시작'] :
-            self.R['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
-            self.R['예정수량'] = my.ceil(self.R['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
-            
-        else :
-            if      self.M['현재날수'] == 1 :
-                    self.R['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
-                    self.R['예정수량'] = my.ceil(self.R['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
-            else :
-                    매수예가 = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >= 2 else round(self.M['당일종가'] * self.R['기회진입'],2)  
-                    self.R['매수예가'] = min(매수예가,self.take_chance(self.R)) # 순서주의 ( 매수예가 부터 계산해야함 )
-                    self.R['예정수량'] = self.chance_qty(self.R)
+        else  :
 
-        self.check_balance(self.R)    
+            if  self.M['현재날수'] == 1 :
+                self.R['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
+                self.R['예정수량'] = my.ceil(self.R['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
+            
+            elif self.M['현재날수'] > 1 + self.M['종가추이'] :
+                
+                매수예가 = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >= 2 else round(self.M['당일종가'] * self.R['기회진입'],2)  
+                self.R['매수예가'] = min(매수예가,self.take_chance(self.R)) # 순서주의 ( 매수예가 부터 계산해야함 )
+                self.R['예정수량'] = self.chance_qty(self.R)
+
+            else :
+                self.R['예정수량'] = 0
+                self.R['매수예가'] = 0
+
+   
     
     # S tactic    
     def tomorrow_buy_S(self) :
         
-        if not self.S['현재잔액'] : self.S['예정수량'] = 0; self.S['매수예가'] = 0; return
+        if  self.S['진행시작'] or self.M['현재날수'] == 1 : self.S['예정수량'] = 0; self.S['매수예가'] = 0; return
         
-        if  self.S['진행시작'] :
-            self.S['매수예가'] = round(self.M['당일종가']*self.M['평단가치'],2)
-            self.S['예정수량'] = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
+        else : 
+
+            if  self.M['현재날수'] == 2 : 
+                self.S['매수예가'] = round(self.M['당일종가'] - 0.01, 2) if self.M['연속하락'] == 2 else round(self.M['당일종가'] * self.M['진입가치'],2)  
+                self.S['예정수량'] = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
             
-        else :
-            if      self.M['현재날수'] == 2 : 
-                    self.S['매수예가'] = round(self.M['당일종가'] - 0.01, 2) if self.M['연속하락'] == 2 else round(self.M['당일종가'] * self.M['진입가치'],2)  
-                    self.S['예정수량'] = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
+            elif self.M['현재날수'] >= self.M['전략대기']  :
+
+                self.S['매수예가'] = self.take_chance(self.S)   # 순서주의 ( 매수예가 부터 계산해야함 )
+                self.S['예정수량'] = self.chance_qty(self.S) 
             
-            elif    self.M['현재날수'] >= self.M['전략대기'] : 
-                    self.S['매수예가'] = self.take_chance(self.S)   # 순서주의 ( 매수예가 부터 계산해야함 )
-                    self.S['예정수량'] = self.chance_qty(self.S) 
+            else :
+                self.S['예정수량'] = 0
+                self.S['매수예가'] = 0
                 
-        self.check_balance(self.S)        
+
     
     # N tactic               
     def tomorrow_buy_N(self) :
@@ -451,6 +457,11 @@ class RSN :
             self.M['당일종가'] = float(BD['add3'])
             self.M['전일종가'] = float(self.B[idx-1]['add3']) 
             self.M['종가변동'] = float(BD['add8']) 
+            
+            if self.flow :
+                if self.M['종가변동'] >   4.0 : self.M['종가추이'] += 1
+                if self.M['종가변동'] < -14.0 : self.M['종가추이'] -= 1
+
             self.M['연속상승'] = int(BD['add9'])
             self.M['연속하락'] = int(BD['add10'])
             self.V['거래코드'] = self.R['거래코드'] = self.S['거래코드'] = self.N['거래코드'] = ' '
@@ -590,6 +601,7 @@ class RSN :
         self.M['현재날수']  = 1
         self.M['최장일수']  = 0   # 최고 오래 지속된 시즌의 일수
         self.M['첫날기록']  = False
+        self.M['종가추이']  = 0
         self.M['세금일자']  = str(int(self.D['시작일자'][0:4])+1) + '-04-30'
         self.R['진행시작']  = self.S['진행시작'] = self.N['진행시작']  = False
         self.D['총수수료'] = 0.0
@@ -641,8 +653,7 @@ class RSN :
             if '가상손실' in self.D  and  self.D['가상손실'] == 'on' : self.M['기본진행']  = False     
             if '수료적용' not in self.D : self.D['수료적용']  = ST['TC021'] 
             if '세금적용' not in self.D : self.D['세금적용']  = ST['TC022']
-            if '일밸런싱' not in self.D : self.D['일밸런싱']  = 'on'
-            if '이밸런싱' not in self.D : self.D['이밸런싱']  = 'on'
+            
             
             # 투자자금 초기화 ----------------------------------------------------------------------------
             self.M['투자자금'] = my.sv(ST['TC010']) if '투자자금' not in self.D else my.sv(self.D['투자자금'])
@@ -1024,8 +1035,6 @@ class RSN :
         self.D['안정시점'] = f"{self.DB.parameter('TS021'):.1f}"
         self.D['안정회복'] = f"{self.DB.parameter('TS022'):.1f}"      
         
-        self.D['일밸런싱'] = 'on' 
-        self.D['이밸런싱'] = 'on' 
         self.D['가상손실'] = 'on' if mode_ == '전략진행' else 'off'
         
         self.stat = True

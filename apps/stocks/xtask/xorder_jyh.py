@@ -1,4 +1,4 @@
-import sys, platform,subprocess
+import sys, platform
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from datetime import datetime
@@ -83,8 +83,7 @@ class yourClass(Control) :
     def send_message(self,message,ch='주식') :
 
         if sysos == 'Android' :
-            title = "주식 예약주문 보고"
-            subprocess.run(["termux-notification","--title",title,"--content",message])
+            my.send_push("주식 예약주문 보고",message)
         else :
             if self.exe_type :
                 client = WebClient(token=self.skey)

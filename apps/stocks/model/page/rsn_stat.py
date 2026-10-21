@@ -19,8 +19,6 @@ class M_rsn_stat(Model) :
 
         self.D['수료적용'] = 'on'
         self.D['세금적용'] = 'off'
-        self.D['일밸런싱'] = 'on'
-        self.D['이밸런싱'] = 'on'
         self.D['파일출력'] = 'off'
         self.D['가상손실'] = 'off'
         self.D['기간한정'] = 'off'
@@ -48,8 +46,6 @@ class M_rsn_stat(Model) :
 
         D['수료적용'] = 'off'
         D['세금적용'] = 'off'
-        D['일밸런싱'] = 'on'
-        D['이밸런싱'] = 'on'
         D['기간한정'] = self.D['post'].get('chk_lmt','off')
         D['파일출력'] = self.D['post'].get('chk_csv','off')
         D['한정기간'] = self.D['post']['한정기간']

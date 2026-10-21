@@ -47,6 +47,7 @@ class N315 :
             self.M['첫날기록'] = True
             
             self.vCount(self.M['수익현황'])
+            self.tax()
             self.rebalance() 
             
 
@@ -76,7 +77,16 @@ class N315 :
             if opt==2 : fee += round(mm*0.0008)/100
             self.M['수수료등']  = fee
             self.M['현재잔액'] -= fee
-        
+
+    def tax(self) :
+
+        if  self.D['세금적용'] == 'on' and self.M['현재일자'] > self.M['세금일자'] :
+            순수이익 = self.M['현재잔액'] - self.M['투자자금']
+            양도세금 = int(순수이익*0.22)
+            self.M['현재잔액'] -= 양도세금
+            self.M['투자자금']  = self.M['현재잔액']
+            self.M['세금일자'] = str(int(self.M['현재일자'][0:4])+1) + '-01-31'
+
     def rebalance(self)  :
 
         for i in range(self.M['최대차수']) : self.M['매금단계'][i] = int( self.M['현재잔액'] * self.M['분할배분'][i]) 
@@ -287,11 +297,13 @@ class N315 :
         #----------------------------------------------------------
         self.M['진행상황']  = '매수대기'
         self.M['기록시즌']  = 0
+        self.M['세금일자']  = str(int(self.D['시작일자'][0:4])+1) +  '-01-31'
         
         if '수료적용' not in self.D : self.D['수료적용']  = 'on'
         if '세금적용' not in self.D : self.D['세금적용']  = 'off'
 
         self.M['현재잔액']  = my.sv(self.D['일반자금'])
+        self.M['투자자금']  = self.M['현재잔액']
    
         # 잔액 분할
         self.M['최대차수'] = len(self.M['분할배분'])
