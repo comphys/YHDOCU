@@ -64,20 +64,20 @@ class yourClass(Control) :
        
         return OD
 
-    def diy_order_data(self) :
-        ini_data   = self.DB.oneline(f"SELECT add18,add19 FROM h_logDIY_board ORDER BY add0 DESC LIMIT 1")
+    def diy_order_data(self,board='logDIY') :
+        ini_data   = self.DB.oneline(f"SELECT add18,add19 FROM h_{board}_board ORDER BY add0 DESC LIMIT 1")
         ini_date = ini_data[0]
-        ini_capital = f"{float(ini_data[1]):,.2f}"
-        last_date = self.DB.last_date('h_rsnLog_board')
-        다음날자 = my.next_stock_day(last_date,self.DB)[0].replace('-','')
+        ini_capital = f"{float(ini_data[1]):,.2f}" 
+        last_ohlc = self.DB.last_date('h_stockHistory_board')
+        다음날자 = my.next_stock_day(last_ohlc,self.DB)[0].replace('-','')
+        DIY= self.load_app_lib('diy')
+        NS = DIY.get_nextStrategy(ini_date,last_ohlc,ini_capital)
 
-        DIY = self.load_app_lib('diy')
-        NS  = DIY.get_nextStrategy(ini_date,last_date,ini_capital)
         OD = []
         if int(NS['예정수량'])  : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'2','주문수량':str(NS['예정수량']),'주문가격':str(NS['예정매가'])})
         if int(NS['예정도수'])  : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':str(NS['예정도수']),'주문가격':str(NS['예정도가'])})
         if int(NS['꼬리도수'])  : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':str(NS['꼬리도수']),'주문가격':str(NS['꼬리도가'])})
-        
+        del NS
         return OD
     
     def send_message(self,message,ch='주식') :
@@ -102,7 +102,7 @@ class yourClass(Control) :
         rsn = self.rsn_order_data()
         buy_total = 0.0
         cur_total = self.API.get_money_balance()['통합달러']
-        buy_total = sum( float(x.get('주문가격'),0) for x in rsn if x.get('매매구분') == self.buy_type )
+        buy_total = sum(float(x.get('주문가격',0)) for x in rsn if x.get('매매구분') == self.buy_type )
 
         if float(cur_total) < buy_total : self.send_message("RSN 계좌 예수금 부족"); return         
 
@@ -131,14 +131,14 @@ class yourClass(Control) :
         requests.post(self.my_host+'/check/check_rsn',headers=self.my_headers,json={'rsn_check':self.today})
 
 
-    def do_diy_order(self) :
+    def do_diy_order(self,t="DIY",b="logDIY") :
 
-        diy = self.diy_order_data()
+        diy = self.diy_order_data(b)
         buy_total = 0.0
         cur_total = self.API.get_money_balance()['통합달러']
-        buy_total = sum( float(x.get('주문가격'),0) for x in diy if x.get('매매구분') == self.buy_type )
+        buy_total = sum(float(x.get('주문가격',0)) for x in diy if x.get('매매구분') == self.buy_type )
 
-        if float(cur_total) < buy_total : self.send_message("DIY 계좌 예수금 부족"); return 
+        if float(cur_total) < buy_total : self.send_message(f"{t} 계좌 예수금 부족"); return 
         
         for d in diy :
 
@@ -146,7 +146,7 @@ class yourClass(Control) :
                 price = max(float(d['주문가격']),self.dnl)
                 if  self.exe_type :
                     if not (rst:=self.API.do_reserved_sell('SOXL',d['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
-                        self.log(f"DIY 매도주문 오류 : {rst}")
+                        self.log(f"{t} 매도주문 오류 : {rst}")
                         return
                 else : print('DIY SOXL 매도 : ',d['주문수량'],f"{price:.2f}",self.odday,'Y') 
             
@@ -154,16 +154,17 @@ class yourClass(Control) :
                 price = min(float(d['주문가격']),self.upl)
                 if  self.exe_type :
                     if not (rst:=self.API.do_reserved_buy('SOXL',d['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
-                        self.log(f"DIY 매수주문 오류 : {rst}")
+                        self.log(f"{t} 매수주문 오류 : {rst}")
                         return
                 else : print('DIY SOXL 매수 : ',d['주문수량'],f"{price:.2f}",self.odday,'Y') 
             
             time.sleep(0.5)
 
         # 확인 날자 업데이트 
-        self.send_message(f"{self.today} DIY 예약주문 완료")
-        self.DB.parameter_update('A0710',self.today)
-        requests.post(self.my_host+'/check/check_diy',headers=self.my_headers,json={'diy_check':self.today})
+        self.send_message(f"{self.today} {t} 예약주문 완료")
+        if t=='DIY' :
+            self.DB.parameter_update('A0710',self.today)
+            requests.post(self.my_host+'/check/check_diy',headers=self.my_headers,json={'diy_check':self.today})
 
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -184,6 +185,7 @@ if  skip :
 else :
     # 작업코드 시작-------------------------------------------------------------------------------------------------------------------
     A.do_rsn_order()
-    A.API.change_account('02');    A.do_diy_order();    A.API.change_account('01')
-
+    A.API.change_account('02'); A.do_diy_order(t='DIY', b='logDIY')
+    A.API.change_account('03'); A.do_diy_order(t='DIY2',b='logDIY2') 
+    A.API.change_account('01')
     # 작업코드 종료-------------------------------------------------------------------------------------------------------------------

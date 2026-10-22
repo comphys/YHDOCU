@@ -448,6 +448,10 @@ class DIY :
             self.D['N_생활도종비'] = 0
             self.D['N_생활평대비'] = 0
             self.D['N_생활배분금'] = self.M['매금단계'][1]
+            self.D['N_꼬리매도량'] = 0
+            self.D['N_꼬리매도가'] = 0
+            self.D['N_꼬리도평비'] = 0.0
+            self.D['N_꼬리도종비'] = 0.0
             
         else : 
             self.D['N_생활매수량'] = self.M['예정수량']
@@ -462,11 +466,10 @@ class DIY :
             self.D['N_생활도평비'] = self.next_percent(self.M['평균단가'],self.M['몸통가격'])
             self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.M['몸통가격'])
 
-            if  self.M['꼬리수량'] :
-                self.D['N_꼬리매도량'] = self.M['꼬리수량']
-                self.D['N_꼬리매도가'] = self.M['꼬리가격']
-                self.D['N_꼬리도평비'] = self.next_percent(self.M['평균단가'],self.M['꼬리가격'])
-                self.D['N_꼬리도종비'] = self.next_percent(self.M['당일종가'],self.M['꼬리가격'])
+            self.D['N_꼬리매도량'] = self.M['꼬리수량']
+            self.D['N_꼬리매도가'] = self.M['꼬리가격']
+            self.D['N_꼬리도평비'] = self.next_percent(self.M['평균단가'],self.M['꼬리가격']) if self.M['꼬리수량'] else 0.0
+            self.D['N_꼬리도종비'] = self.next_percent(self.M['당일종가'],self.M['꼬리가격']) if self.M['꼬리수량'] else 0.0
             
     def next_percent(self,a,b) :
         
@@ -652,9 +655,9 @@ class DIY :
         NS['꼬리도가'] = self.D['N_꼬리매도가']
         NS['꼬평대비'] = self.D['N_꼬리도평비']
         NS['꼬종대비'] = self.D['N_꼬리도종비']
+    
         return NS
-
-
+    
     def do_tacticLog(self,start,end,ini_money) :
         self.chart = False
         self.stat  = True
