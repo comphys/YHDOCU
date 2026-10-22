@@ -37,34 +37,19 @@ class yourClass(Control) :
             assert e.response["error"]
             self.log(f"slack error : {e.response['error']}")
 
-    def log_update(self) :
+    def log_update(self,day) :
 
-        self.D['lst_sday'] = my.last_stock_day(self.DB)
-        self.D['lst_ohlc'] = self.DB.last_date('h_stockHistory_board')
-        if  self.D['lst_sday'] != self.D['lst_ohlc'] : 
-            OHLC = self.load_app_lib('ohlc')
-            the_next_day = my.next_stock_day(self.D['lst_ohlc'],self.DB)[0]
-            if OHLC.stocks_update('soxl',the_next_day) : self.D['lst_ohlc'] = self.DB.last_date('h_stockHistory_board')
-            # time.sleep(10)
-            RSN  =  self.load_bajax('rsnLog','update_log'); RSN()
-            time.sleep(2)
-            DIY  =  self.load_bajax('logDIY','update_log'); DIY()
-            time.sleep(2)
-            DIY2 =  self.load_bajax('logDIY2','update_log'); DIY2()
-            time.sleep(2)
-            N315 =  self.load_bajax('log315_ljk','update_log'); N315()
-            self.send_message(the_next_day+" Updated")
-        else :
-            self.send_message("nothing to update")
-
-
-    def publicIP(self) :
-        response = requests.get('https://api.ipify.org?format=json')
-        myIP = response.json()['ip']
-        cur_time = my.now_to_kordate()
-
-        with open(rootpath+"/logs/publicIP.log","a",encoding="utf-8") as f:
-            f.write(f"<span class='who-time'>{cur_time}</span><span class='who-ip'>{myIP}</span>&nbsp;&nbsp; recorded on {sysos} \n")
+        OHLC = self.load_app_lib('ohlc')
+        OHLC.stocks_update('soxl',day)
+        time.sleep(1)
+        RSN  =  self.load_bajax('rsnLog','update_log'); RSN()
+        time.sleep(2)
+        DIY  =  self.load_bajax('logDIY','update_log'); DIY()
+        time.sleep(2)
+        DIY2 =  self.load_bajax('logDIY2','update_log'); DIY2()
+        time.sleep(2)
+        N315 =  self.load_bajax('log315_ljk','update_log'); N315()
+        self.send_message(day+" Updated")
 
 
 today = my.kor_loc_date('US/Eastern')[0:10]
@@ -84,5 +69,4 @@ if  skip :
     pass
 
 else :
-    LOG.log_update()
-    LOG.publicIP()
+    LOG.log_update(today)
