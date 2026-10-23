@@ -214,9 +214,6 @@ def dequote(s):
         return s[1:-1]
     return s
 
-def rg_ex(op,txt) :
-    if op == 'mobile' : see = re.compile('010-\d{3,4}-\d{4}') 
-    return  True if see.match(txt) else False 
 # --------------------------------------------------------------------------------------------
 # 기타 유틸
 def get_publicIP() :

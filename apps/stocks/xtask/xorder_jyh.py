@@ -84,18 +84,17 @@ class yourClass(Control) :
 
         if sysos == 'Android' :
             my.send_push("주식 예약주문 보고",message)
+        elif sysos=='Windows' :
+            print(message)
         else :
-            if self.exe_type :
-                client = WebClient(token=self.skey)
-                try:
-                    client.chat_postMessage(channel= ch, text= message)
-                    return True
-                except SlackApiError as e:
-                    assert e.response["ok"] is False
-                    assert e.response["error"]
-                    self.log(f"slack error : {e.response['error']}")
-            else : 
-                print(message)
+            client = WebClient(token=self.skey)
+            try:
+                client.chat_postMessage(channel= ch, text= message)
+                return True
+            except SlackApiError as e:
+                assert e.response["ok"] is False
+                assert e.response["error"]
+                self.log(f"slack error : {e.response['error']}")
 
     def do_rsn_order(self) :
 
