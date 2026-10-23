@@ -220,7 +220,6 @@ def rg_ex(op,txt) :
 # --------------------------------------------------------------------------------------------
 # 기타 유틸
 def get_publicIP() :
-
     response = requests.get('https://api.ipify.org?format=json')
     return response.json()['ip']
 

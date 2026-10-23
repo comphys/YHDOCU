@@ -29,7 +29,7 @@ class yourClass(Control) :
 
     def get_token_duetime(self) :
         rst = []
-        for x in ['01','02','03'] : 
+        for x in ['01','02','03','lth'] : 
             ts = self.DB.store('meritz-time'+x)
             rst.append(my.timestamp_to_date(int(ts),opt=1))
         return rst
@@ -58,7 +58,7 @@ while True :
     print(" 4. 현재 잔고 현황 보기")
     print(" 5. 현재 예약 현황 보기")
     print(" 6. 토큰 만료 시간 보기")
-    print(" 7. 현재 계좌 잔액($) 확인")
+    print(" 7. 현재 계좌 잔액 확인")
     print(" 8. 실시간 매도 주문(기본:지정가)")
     print(" 9. 실시간 매수 주문(기본:지정가)")
     print(" 0. 나가기")
