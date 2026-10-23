@@ -25,6 +25,7 @@ class MERITZ :
         with open(self.root+"/logs/meritzapi.log","a",encoding="utf-8") as f:
             f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
 
+    # 게정 변경 opt = '01'|'02'|'03'
     def change_account(self,opt) :
         self.appname = 'meritz-app'+opt
         self.secname = 'meritz-sec'+opt
@@ -32,6 +33,7 @@ class MERITZ :
         self.tktime  = 'meritz-time'+opt
         self.account = opt
 
+    # rest api를 호출하고 결과를 리턴한다. 에러 발생 시 False를 리턴하고 응답메세지는 로그로 남긴다. 
     def rst_api(self,mean,endp,params,retry_count=0,max_retries=3) :
 
         caller_frame = inspect.currentframe().f_back
@@ -75,7 +77,8 @@ class MERITZ :
         else :
             self.log(f"{caller_name} :: {resp.status_code} [{code}] : {body}")
             return False
-        
+
+    # 토큰을 가져온다. rest_api 에서 호출하며 별도로 호출하지는 않는다. 재발급을 요청하더라도 서버에서 유효기간이 만료되지 않았을 경우 기존의 토큰을 넘겨준다.    
     def get_token(self) :
         # 서버에 발급된 유효시간 내의 토큰이 있을 경우, 서버는 갱신요청 시 기존 토큰을 반환한다.
         self.log(self.account+" 토큰을 발급합니다.")
@@ -88,7 +91,8 @@ class MERITZ :
             return rst['access_token']
         else : 
             return False
-
+    
+    # 토큰을 폐기한다. 
     def revoke_token(self) :
         self.log(self.account+" 토큰을 폐기합니다.")
         token=self.DB.store(self.tkname)
@@ -101,7 +105,7 @@ class MERITZ :
         else : 
             return False        
 
-    # 현재의 실시간 가격 정보를 리턴한다 (메리츠 api의 특이점 이용)
+    # 현재의 실시간 가격 정보를 리턴한다 (메리츠 api의 특이점 이용, 주간장, 애프터장 모두 해당이다. 3번 계좌의 1주는 이를 위해 항상 남겨두자.)
     def get_current_price(self) :
         oldc = self.account
         self.change_account('03')
@@ -112,7 +116,7 @@ class MERITZ :
             self.change_account(oldc)
             return rst
 
-    # 특정날자의 ohlc 정보를 가져온다
+    # 특정날자의 ohlc 정보를 가져온다 date 형태는 20260101 형식이다. 
     def get_ohlc(self,date) :
         para={'mrkt_div_code':'OV','mrkt_cls_code':'AX','iscd':'SOXL','dely_rltm_cls_code':'1','mod_stpr_cls_code':'1','from':date,'to':date}
         if (rst:=self.rst_api('get','/market/v1/overseas/candles/days',para)) :
@@ -120,7 +124,8 @@ class MERITZ :
             return {'날자':rt['date'],'시가':rt['oprc'],'고가':rt['hprc'],'저가':rt['lprc'],'종가':rt['prpr'],'거래량':rt['acml_vol'],'증감':rt['prdy_ctrt']}
         else : 
             return rst
-
+    
+    # 계좌의 보유주식에 대한 현황을 가져온다. 
     def get_current_balance(self) :
         rpr = []
         if (rst:=self.rst_api('get','/accounts/v1/me/overseas/holdings',{})) :
@@ -133,7 +138,8 @@ class MERITZ :
             return rpr
         else : 
             return rst
-
+    
+    # 예약된 현황을 기져온다.  
     def get_reserved_order(self,date,code='1') : # code 0 전체, 1 전체(취소분제외), 2(예약상태인 건만)
         para={'iqry_sta_date':date,'iqry_fin_date':date,'seln_byov_clcd':'0','iqry_cls_code':'2','iqry_idnt_clcd':code,'tday_deal_yn':'N'}
         if (rst:=self.rst_api('get','/trading/v1/overseas/reserved-orders',para)) :
@@ -145,7 +151,8 @@ class MERITZ :
             return pr
         else : 
             return rst
-
+    
+    # 예약주문 매수를 실행한다.
     def do_reserved_buy(self,symbol,qty,price,date,check) :
         para={'ovrs_stck_symb_iscd':symbol,'ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
               'warn_cnfr_yn':check,'oder_rsev_cls_code':'1','oder_rsev_hour_clcd':'0',
@@ -157,6 +164,7 @@ class MERITZ :
         else : 
             return rst
 
+    # 예약주문 매도를 실행한다.
     def do_reserved_sell(self,symbol,qty,price,date,check) :
         para={'ovrs_stck_symb_iscd':symbol,'ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
               'warn_cnfr_yn':check,'oder_rsev_cls_code':'1','oder_rsev_hour_clcd':'0',
@@ -168,12 +176,43 @@ class MERITZ :
         else : 
             return rst
 
+    # 예약된 주문을 취소한다.
     def do_reserved_cancel(self,date,orno) :
         # date 는 접수일자 임
         para={'oder_rsev_mst_date':date,'oder_rsev_mst_no':orno}
         if (rst:=self.rst_api('post','/trading/v1/overseas/reserved-orders/cancel',para)) :
             return True
         else :
+            return rst
+
+    # 실시간 매도 주문을 실행한다. code = '01'지정가|'05'시장가|'32'LOC|'35'Limit VWAP|'36'Limit TWAP ccode = '0'시장가,지정가|'7'종가
+    def do_real_sell(self,qty,price,code='01',ccode='0') :
+        para={'ovrs_stck_symb_iscd':'SOXL','ovrs_exch_vndr_idno':'0066','oder_cls_code':code,
+              'odqt':qty,'ovrs_stck_oder_prc':price,'oder_cond_cls_code':ccode}
+        if (rst:=self.rst_api('post','/trading/v1/overseas/orders/sell',para)) :
+            # 경고 안내 메세지가 없을 경우 예약번호를 리턴
+            if rst['warn_msg'] =='' : return rst['oder_no']
+            else : self.log(rst['warn_msg'])
+        else : 
+            return rst
+
+    # 실시간 매수 주문을 실행한다. code = '01'지정가|'05'시장가|'32'LOC|'35'Limit VWAP|'36'Limit TWAP ccode = '0'시장가,지정가|'7'종가
+    def do_real_buy(self,qty,price,code='01',ccode='0') :
+        para={'ovrs_stck_symb_iscd':'SOXL','ovrs_exch_vndr_idno':'0066','oder_cls_code':code,
+              'odqt':qty,'ovrs_stck_oder_prc':price,'oder_cond_cls_code':ccode}
+        if (rst:=self.rst_api('post','/trading/v1/overseas/orders/buy',para)) :
+            # 경고 안내 메세지가 없을 경우 예약번호를 리턴
+            if rst['warn_msg'] =='' : return rst['oder_no']
+            else : self.log(rst['warn_msg'])
+        else : 
+            return rst
+    
+    # 주문을 취소한다. 코드(oder_cond_cls_code)는 주문구분코드(oder_cls_code)가 01·05·35~38이면 0, 31·33이면 2, 32·34이면 7 이어야 합니다.
+    def do_real_cancel(self,date,ordnum,qty,code='0') :
+        para={'oder_date':date,'orgl_oder_no':ordnum,'oder_cond_cls_code':code,'odqt':qty}
+        if (rst:=self.rst_api('post','/trading/v1/overseas/orders/cancel',para)) :
+            return True
+        else : 
             return rst
 
     # 당일 체결 현황을 보여준다
@@ -190,7 +229,7 @@ class MERITZ :
         else : 
             return rst
 
-    # 현금 잔고 현황을 가져온다
+    # 현금 잔고 현황을 가져온다. 주문가능한 금액을 원화 및 달러로 가져온다.
     def get_money_balance(self) : 
         pr = {}
         # get 외화($) 예수금
@@ -216,7 +255,7 @@ class MERITZ :
         else : 
             return rst
     
-    # 해외 영업일 조회
+    # 해외 영업일 조회 다음 정규장에 해당하는 날자를 가져온다. 현재 정규장이 시작되었으면 다음 정규장의 날자를 가져온다. 
     def get_market_date(self) :
         if  (rst:=self.rst_api('get','/reference/v1/overseas/market-days',{'ovrs_exch_vndr_idno':'0066'})) :
             return rst['bsop_date']

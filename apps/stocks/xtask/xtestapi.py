@@ -1,4 +1,4 @@
-import sys, platform
+import sys, platform, time
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -54,45 +54,56 @@ while True :
     print("\033[90m----------------------------")
     print(" 1. 현재 주가 불러 오기")
     print(" 2. 특정 일 OHLC 불러 오기")
-    print(" 3. 당일 체결 현황 보기(RSN)")
-    print(" 4. 당일 체결 현황 보기(DIY)")
-    print(" 5. 현재 잔고 현황 보기(RSN)")
-    print(" 6. 현재 잔고 현황 보기(DIY)")
-    print(" 7. 현재 예약 현황 보기(RSN)")
-    print(" 8. 현재 예약 현황 보기(DIY)")
-    print(" 9. 토큰 만료 시간 보기")
-    print("10. 현재 계좌 잔액($) 확인(RSN)")
-    print("11. 현재 계좌 잔액($) 확인(DIY)")
-    print("00. 나가기")
+    print(" 3. 당일 체결 현황 보기(300,310,320)")
+    print(" 4. 현재 잔고 현황 보기")
+    print(" 5. 현재 예약 현황 보기")
+    print(" 6. 토큰 만료 시간 보기")
+    print(" 7. 현재 계좌 잔액($) 확인")
+    print(" 8. 실시간 매도 주문(기본:지정가)")
+    print(" 9. 실시간 매수 주문(기본:지정가)")
+    print(" 0. 나가기")
     print("----------------------------")
-    ch = input(f"{today} 메뉴를 선택하세요 : \033[0m")
-    
-    if ch == '00' : break
-    if ch == '33' : rst = A.test(); print(rst)
-    if ch == '1' : rst = B.get_current_price() ; A.print_contents(rst)
-    if ch.startswith('20') : rst = B.get_ohlc(ch) ; print(rst)
-    if ch == '3' : 
-        rst = B.get_orders_today('0','0') ; 
+    ch = input(f"계좌[{B.account}] 메뉴를 선택하세요 : \033[0m")
+    if ch == '0' : break
+    elif ch in ['01','02','03','lth'] : B.change_account(ch)
+    elif ch == '1'  : rst = B.get_current_price() ; A.print_contents(rst)
+    elif ch.startswith('20') : rst = B.get_ohlc(ch) ; print(rst)
+    elif ch in ['300','310','320'] : 
+        rst = B.get_orders_today(ch[1],ch[2])
         A.print_contents(rst)
-    if ch == '4' :
-        B.change_account('02') 
-        rst = B.get_orders_today('0','0') ; 
-        A.print_contents(rst)
-        B.change_account('01')
-    if ch == '5' : 
+    elif ch == '4' : 
         rst = B.get_current_balance()
         A.print_contents(rst)
-    if ch == '6' : B.change_account('02'); rst = B.get_current_balance() ; B.change_account('01'); print(rst)
-    if ch == '7' : 
+    elif ch == '5' : 
         rst = B.get_reserved_order(today,code='2')  
         A.print_contents(rst)
-    if ch == '8' : 
-        B.change_account('02'); rst = B.get_reserved_order(today,code='2'); B.change_account('01');  
-        A.print_contents(rst)
-    if ch == '9' : 
+    elif ch == '6' : 
         rst = A.get_token_duetime() 
         A.print_contents(rst)
-    
-    if ch == '10' : rst = B.get_money_balance() ; print(rst)
-    if ch == '11' : B.change_account('02'); rst = B.get_money_balance() ; B.change_account('01'); print(rst)
+    elif ch == '7' : rst = B.get_money_balance() ; print(rst)
+    elif ch == '8' : 
+        order = input("실시간 매도 : 수량/가격/[01/0|32/7] : ") 
+        if order != '0' : 
+            order = order.split('/')
+            B.do_real_sell(order[0],order[1],order[2],order[3]) 
+            time.sleep(1)
+            rst = B.get_orders_today('2','0')
+            A.print_contents(rst)
+    elif ch == '9' : 
+        order = input("실시간 매수 : 수량/가격/[01/0|32/7] : ")
+        if order != '0' : 
+            order = order.split('/')
+            B.do_real_buy(order[0],order[1],order[2],order[3]) 
+            time.sleep(1)
+            rst = B.get_orders_today('2','0')
+            A.print_contents(rst)
+    elif ch == 'X' : 
+        cancel = input("주문을 취소 : 날자/주문번호/수량 : ")
+        if cancel != '0' : 
+            cancel = cancel.split('/')
+            B.do_real_cancel(cancel[0],cancel[1],cancel[2]) 
+            time.sleep(1)
+            rst = B.get_orders_today('2','0')
+            A.print_contents(rst)
+
 
