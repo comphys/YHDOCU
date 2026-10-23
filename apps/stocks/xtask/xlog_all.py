@@ -49,6 +49,7 @@ class yourClass(Control) :
         self.send_message(day+" Updated")
 
 
+# today 는 증권거래소의 시각(미국 뉴욕)을 기준으로 하고 있다. 날자가 변경되기 전에 실행시켜야 한다. 
 today = my.kor_loc_date('US/Eastern')[0:10]
 weekd = my.dayofdate(today)
 LOG = yourClass()
@@ -58,7 +59,7 @@ ck_holiday = LOG.DB.exe(f"SELECT description FROM parameters WHERE val='{today}'
 is_holiday = ck_holiday[0][0] if ck_holiday else ''
 
 skip = ''
-if weekd in ['토','일'] : skip = f"{weekd}요일 입니다"
+if weekd in ['토','일'] : skip = f"쉬는날 입니다."
 elif is_holiday : skip = is_holiday
 
 if  skip :

@@ -134,7 +134,7 @@ class Ajax(Model) :
         else : 카테고리 = '일반진행'
         
         LD = {}
-        LD['add0']  = wday
+        LD['add0']  = lday  
         LD['add1']  = RSN.DB.last_data_one('add1','h_rsnLog_board')    # 시즌
         LD['add2']  = DV['sub12']           # 날수
         LD['add3']  = DV['add14']           # 종가
