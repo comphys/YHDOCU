@@ -45,13 +45,16 @@ class Ajax(Model) :
 
     def update_log(self) :
 
-        N315 = self.SYS.load_app_lib('n315')
         board = 'h_log315_ljk_board'
-        
+
+        cday = self.DB.last_date(board)
+        lday = self.DB.last_date('h_stockHistory_board')
+        if cday >= lday : return 
+
+        N315 = self.SYS.load_app_lib('n315')
         ini_data = self.DB.oneline(f"SELECT add18,add19 FROM {board} ORDER BY add0 DESC LIMIT 1")
         ini_date = ini_data[0]
         ini_capt = ini_data[1]
-        lday = self.DB.last_date('h_stockHistory_board')
         
         N315.do_tacticLog(ini_date,lday,ini_capt)
         LD = N315.get_simulLog()

@@ -9,7 +9,10 @@ class Ajax(Model) :
     def update_log(self) :
 
         board = 'h_logDIY2_board'
+        cday = self.DB.last_date(board)
         lday = self.DB.last_date('h_stockHistory_board')
+        if cday >= lday : return 
+
         DIY = self.SYS.load_app_lib('diy')
 
         ini_data = self.DB.oneline(f"SELECT add18,add19,add1 FROM {board} ORDER BY add0 DESC LIMIT 1")

@@ -117,16 +117,13 @@ class Ajax(Model) :
     
     def update_log(self) :
 
-        # tday = self.D['post']['tday'] 
         cday = self.DB.last_date('h_rsnLog_board')
         lday = self.DB.last_date('h_stockHistory_board')
-        wday = my.next_stock_day(cday,self.DB)[0]
-
-        if cday >= lday : return self.SYS.json("최종 업데이트가 완료되어 있습니다.")
+        if cday >= lday : return 
 
         RSN  = self.SYS.load_app_lib('rsn')
 
-        RSN.do_tacticsLog(wday)
+        RSN.do_tacticsLog(lday)
         DV = RSN.get_simulLog('V')
         DR = RSN.get_simulLog('R')
         DS = RSN.get_simulLog('S')

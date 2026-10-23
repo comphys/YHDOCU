@@ -43,11 +43,8 @@ class yourClass(Control) :
         OHLC.stocks_update('soxl',day)
         time.sleep(1)
         RSN  =  self.load_bajax('rsnLog','update_log'); RSN()
-        time.sleep(2)
         DIY  =  self.load_bajax('logDIY','update_log'); DIY()
-        time.sleep(2)
         DIY2 =  self.load_bajax('logDIY2','update_log'); DIY2()
-        time.sleep(2)
         N315 =  self.load_bajax('log315_ljk','update_log'); N315()
         self.send_message(day+" Updated")
 
