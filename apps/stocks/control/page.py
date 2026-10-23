@@ -13,7 +13,7 @@ class Page(Control) :
         self.D['bid']     = self.parm[0] 
         self.D['BCONFIG'] = self.DB.exe(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'",many=1,assoc=True)
 
-        self.page_access = True if self.D['USER']['level'] >= self.D['BCONFIG']['acc_list'] else False
+        self.page_access = True if (self.D['USER']['level']>=self.D['BCONFIG']['acc_list']) or (self.D['USER']['uid']==self.D['BCONFIG']['owner']) else False
 
         if self.page_access :
         

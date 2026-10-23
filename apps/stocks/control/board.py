@@ -19,9 +19,11 @@ class Board(Control) :
             
             self.D['BCONFIG'] = self.DB.line(f"SELECT * FROM h_board_config WHERE bid='{self.D['bid']}'")
 
-            self.lAccess = True if self.D['USER']['level'] >= self.D['BCONFIG']['acc_list']  else False
-            self.bAccess = True if self.D['USER']['level'] >= self.D['BCONFIG']['acc_body']  else False
-            self.wAccess = True if self.D['USER']['level'] >= self.D['BCONFIG']['acc_write'] else False
+            is_owner = True if self.D['USER']['uid']==self.D['BCONFIG']['owner'] else False
+            
+            self.lAccess = True if (self.D['USER']['level']>=self.D['BCONFIG']['acc_list'])  or is_owner  else False
+            self.bAccess = True if (self.D['USER']['level']>=self.D['BCONFIG']['acc_body'])  or is_owner  else False
+            self.wAccess = True if (self.D['USER']['level']>=self.D['BCONFIG']['acc_write']) or is_owner  else False
 
             # 주가 업데이트 확인 및 업데이트 작업
 
