@@ -10,7 +10,6 @@ class DIY :
         self.DB    = SYS.DB
         self.chart = False
         self.stat  = False
-        self.tail  = True
 
         self.B = {}
         self.M = {}
@@ -37,12 +36,15 @@ class DIY :
         
         if  self.M['매도수량'] :
             self.M['매도금액']  =  self.M['매도수량'] * self.M['당일종가']
-            self.M['수익현황']  =  self.M['매도금액'] - self.M['총매수금']
             self.M['보유수량'] -=  self.M['매도수량'];  self.M['현재잔액'] += self.M['매도금액'] 
-            self.M['현수익률'] = round( self.M['수익현황'] / self.M['총매수금'] * 100, 2 )   
             self.commission(2) 
 
             if not self.M['보유수량'] :
+
+                # 전체 매도시 현수익률은 시즌자금대비 수익률을 나나낸다.
+                self.M['수익현황'] =  self.M['현재잔액'] - self.M['시즌자금']
+                self.M['현수익률'] = round( self.M['수익현황']/self.M['시즌자금'] * 100, 2 ) 
+
                 self.M['평가금액'] = 0.00
                 self.M['총매수금'] = 0.00
                 self.M['평균단가'] = 0.00
@@ -56,10 +58,9 @@ class DIY :
                 self.rebalance() 
             
             else :
+                # 부분매수 시 평균단가를 변경시키지 않는다(실제계좌에 보여지는 수치와 일치시키고, 다음 매수 시 평단가를 낮추어 탈출을 빨리하기 위함이다(손절가능))
                 self.M['평가금액'] = self.M['당일종가'] * self.M['보유수량'] 
-                # 꼬리매수를 사기 이전과 같은 평단가를 유지하기 위해 총매수금을 다음과 같이 계산, 매도에 따른 손실여부는 가치합계에 반영됨
-                self.M['총매수금'] = self.M['총매수금'] - (self.M['매도수량']*self.M['막차수가'])
-                self.M['평균단가'] = self.M['총매수금'] / self.M['보유수량'] 
+                self.M['총매수금'] = self.M['평균단가'] * self.M['보유수량']
                 self.M['수익현황'] = self.M['평가금액'] - self.M['총매수금']
                 self.M['현수익률'] = self.M['수익현황'] / self.M['총매수금']  * 100
                 self.M['현재손률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
@@ -146,10 +147,6 @@ class DIY :
             self.M['매수차수'] += 1
             self.M['매수보류']  = True
             self.M['자체연속']  = 1
-            # 꼬리매수
-            if  self.M['매수차수'] == self.M['최대차수'] :
-                self.M['막차수량'] =  self.M['매수수량']
-                self.M['막차수가'] =  self.M['당일종가']    
 
 
     def tomorrow_buy(self) :
@@ -168,24 +165,15 @@ class DIY :
         self.M['몸통가격'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
         self.M['몸통수량'] = self.M['보유수량']
 
-        if self.tail : 
-            if  self.M['매수차수'] == self.M['최대차수'] :
-                self.M['꼬리가격'] = self.M['막차수가']
-                self.M['꼬리수량'] = self.M['막차수량']
-                if  self.M['꼬리가격'] >= self.M['몸통가격'] : 
-                    self.M['꼬리수량'] = 0
-                else :
-                    self.M['몸통수량'] -= self.M['꼬리수량']
-        else :
-            if  self.M['매수차수'] >  self.M['최대차수']-1 and self.M['현재날수'] > self.M['탈출일수'] :
-                # self.M['매도예가'] = min(my.round_up(self.M['당일종가'] * self.M['탈출종가']),my.round_up(self.M['평균단가']*self.M['탈출허용'],2))
-                self.M['몸통가격'] = my.round_up(self.M['평균단가']*self.M['탈출허용'],2)
-                self.M['몸통수량'] = self.M['보유수량']
+        if  self.M['매수차수'] == self.M['최대차수'] and self.M['현재날수'] > self.M['탈출일수'] :
+            self.M['꼬리가격'] = self.M['당일종가'] * self.M['탈출종가']
+            self.M['꼬리수량'] = int(self.M['보유수량'] * self.M['탈출허용'])
+            if  self.M['꼬리가격'] >= self.M['몸통가격'] : 
+                self.M['꼬리수량'] = 0
+            else :
+                self.M['몸통수량'] -= self.M['꼬리수량']
 
         # 꼬리 매매 2026.10.20 시행
-
-
-        
 
     def tomorrow_step(self)   :
 
