@@ -162,7 +162,7 @@ class DIY :
         
     def tomorrow_sell(self) :
         
-        if self.M['보유수량'] : return
+        if not self.M['보유수량'] : return
         
         self.M['몸통가격'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
         self.M['몸통수량'] = self.M['보유수량']
