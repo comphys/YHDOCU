@@ -35,8 +35,9 @@ class DIY :
         self.M['현재손률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
         
         if  self.M['매도수량'] :
-            self.M['매도금액']  =  self.M['매도수량'] * self.M['당일종가']
-            self.M['보유수량'] -=  self.M['매도수량'];  self.M['현재잔액'] += self.M['매도금액'] 
+            self.M['매도금액']  = self.M['매도수량'] * self.M['당일종가']
+            self.M['보유수량'] -= self.M['매도수량']  
+            self.M['현재잔액'] += self.M['매도금액'] 
             self.commission(2) 
 
             if not self.M['보유수량'] :
@@ -161,7 +162,8 @@ class DIY :
         
     def tomorrow_sell(self) :
         
-        if not self.M['보유수량'] : return
+        if self.M['보유수량'] : return
+        
         self.M['몸통가격'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
         self.M['몸통수량'] = self.M['보유수량']
 

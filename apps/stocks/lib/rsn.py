@@ -10,10 +10,7 @@ class RSN :
         self.DB    = SYS.DB
         self.chart = False
         self.stat  = False
-        # 안정성 강화를 위한 전략, 연속하락시 (2026.10:9일 연속 하락) N 전략의 대응 방안 향상, 적용 시 매도에서는 기본전략만 취함
-        # self.flow 와 리밸런싱 전략 RSN 80%, 예비 20% 전략 선택에 대한 고민 필요 
-        self.flow  =  False
-
+   
         self.B = {}
         self.V = {}
         self.R = {}
@@ -55,15 +52,14 @@ class RSN :
             tac['현수익률']  = tac['수익현황'] / tac['총매수금'] * 100  if tac['총매수금'] else 0.00 # for N tactic 중간 실현수익률
             tac['중익합계'] += tac['수익현황']  
             tac['실현익률']  = round( tac['중익합계']/(tac['중도합계']-tac['중익합계']) * 100,2 )
-            tac['평가금액']  = 0.0 # 그래프에서 토탈가치 표시를 위해 매도일 평가금액도 표시해 주어야 한다.
-            tac['평균단가']  = 0.0
-            tac['총매수금']  = 0.0
+            tac['총매수금']  = tac['보유수량'] * tac['평균단가']
+            tac['평가금액']  = tac['보유수량'] * self.M['당일종가'] 
 
             self.commission(tac,2)
-            if  tac == self.N : 
+            if  tac == self.N and not self.N['보유수량'] : 
                 self.N['매수차수'] = 0
-                self.N['자체연속'] = 0 
-                self.N['매도예가'] = 0                
+                self.N['매도예가'] = 0   
+                self.N['평균단가'] = 0.0               
                 if not self.V['매도수량'] : self.rebalance_N() # just for N tactic 
 
     def calculate(self)  :
@@ -221,18 +217,11 @@ class RSN :
 
     def today_buy_N(self) :
 
-        if self.flow :
-            if  self.M['당일종가'] < self.M['전일종가'] : 
-                self.N['자체연속'] +=1
-            else : 
-                self.N['자체연속'] -= 1
-
         if  self.M['당일종가'] <= self.N['매수예가'] and self.N['예정수량'] :
             self.N['매수수량']  = self.N['예정수량']
             self.N['매수차수']  = self.N['매수차수'] + 1 if self.N['매수차수'] < self.M['최대차수'] else self.M['최대차수']
             self.N['거래코드']  = f"{self.N['매수차수']}B {self.N['매수수량']}"
 
-            if self.N['매수차수'] == 2 : self.N['자체연속'] = self.M['현재날수']
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # tomorrow_buy : 다음 날의 매수예정 수량을 계산한다 
@@ -331,8 +320,6 @@ class RSN :
         
         if self.N['매수차수'] >= self.M['최대차수']   : self.N['예정수량'] = 0; return
         if self.N['매수차수'] == self.M['최대차수']-1 : self.N['매금단계'][self.M['최대차수']-1] = int(self.N['현재잔액'])
-        if self.flow :
-            if self.N['매수차수'] == 2 and self.N['자체연속'] >= self.M['현재날수'] :  self.N['예정수량'] = 0; return
         
         if  self.N['보유수량'] and self.R['진행시작'] : 
             self.N['매수예가'] = round(self.M['당일종가'] * self.M['매입가치'],2 )
@@ -350,7 +337,7 @@ class RSN :
         
         # [기본진행]---------------------------------------------------------------------------------------------
 
-        if  self.M['기본진행'] or self.flow :
+        if  self.M['기본진행'] :
 
             if  self.V['진행상황'] not in ('매수제한','매수중단') : 
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
@@ -374,7 +361,11 @@ class RSN :
     def tomorrow_sel_N(self) :
         
         if  self.N['보유수량'] : 
-            self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
+            
+            if  self.M['현재날수'] >= self.M['매도대기'] and self.N['매수차수'] == self.M['최대차수'] : 
+                self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['강매가치']) 
+            else :
+                self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
 
             mbp = max(self.R['매수예가'],self.S['매수예가'])
             if self.N['매도예가'] <= mbp  : self.N['매도예가'] = mbp + 0.01
@@ -391,8 +382,8 @@ class RSN :
         # [최종 매도가 조율 및 강매진행]-------------------------------------------------------------------------------------------------------------
        
         if  self.M['현재날수'] < self.M['강매시작'] :
-            self.M['매도예가'] = min(self.M['매도예가'], my.round_up(self.M['당일종가']*self.M['종가상승'])) 
-            self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'])
+            self.M['매도예가'] = min(self.M['매도예가'],my.round_up(self.M['당일종가']*self.M['종가상승'])) 
+            self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'],my.round_up(self.V['평균단가']*self.M['강매가치']))
         else :
             self.M['매도예가'] = my.round_up( self.V['평균단가'] * self.M['강매가치'] )
             self.N['매도예가'] = min(self.M['매도예가'],self.N['매도예가'])
@@ -678,7 +669,6 @@ class RSN :
         # 매수금 분할 ( N tactic )
         self.N['매금단계'] = [0.0] * self.M['최대차수']
         self.N['매수차수'] = 0
-        self.N['자체연속'] = 0
         self.rebalance_N()
         self.V['일매수금'] = int(self.V['현재잔액'] / self.M['분할횟수'])
         self.R['일매수금'] = int(self.R['현재잔액'] / self.M['분할횟수'])
@@ -820,7 +810,6 @@ class RSN :
         #--------------------------------------------------------    
         tx['진행상황'] = self.V['진행상황']
         tx['현재손률'] = self.M['현재손률'] if self.M['현재손률'] else ''
-        # tx['현재손률'] = self.N['자체연속']
         self.D['TR'].append(tx)
         
     def chart_data(self) :
