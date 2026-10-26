@@ -153,7 +153,7 @@ class Ajax(Model) :
 
     def get_current_price(self) :
 
-        if self.SYS.I['_dev'] == 'Windows' :
+        if self.SYS.I['_dev'] in ['Windows','Android'] :
             DB = self.SYS.load_app_lib('dbopen')
             rst = DB.get_current_price('SOXL',mk='FA')
             if rst :
