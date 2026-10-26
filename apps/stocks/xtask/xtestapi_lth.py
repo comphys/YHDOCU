@@ -63,7 +63,7 @@ while True :
     if ch == '3' : 
         rst = B.get_orders_today('0','0') ; 
         A.print_contents(rst)
-    if ch == '4' : rst = B.get_current_balance() ; print(rst)
+    if ch == '4' : rst = B.get_account_balance() ; print(rst)
     if ch == '5' : 
         rst = B.get_reserved_order(today,code='2')  
         A.print_contents(rst)

@@ -126,13 +126,14 @@ class MERITZ :
             return rst
     
     # 계좌의 보유주식에 대한 현황을 가져온다. 
-    def get_current_balance(self) :
+    def get_account_balance(self) :
         rpr = []
         if (rst:=self.rst_api('get','/accounts/v1/me/overseas/holdings',{})) :
             for rt in rst :
-                pr = {'종목':rt['ovrs_stck_symb_iscd'],'수량':rt['rmnd_dqty'],'매도가능수량':rt['seln_able_dqty'],'현재가격':rt['psnt_prc'],'평균단가':rt['avrg_unpr'],
-                    '평가손익':rt['vltn_prls_camt'],'평가수익률':rt['vltn_ert'],
-                    '평가금액':rt['frcr_vltn_amt'],'매입금액':rt['byov_camt'],'환율':rt['exrt']
+                pr = {'종목':rt['ovrs_stck_symb_iscd'],'수량':f"{float(rt['rmnd_dqty']):.0f}",'매도가능':f"{float(rt['seln_able_dqty']):.0f}",
+                    '현재가격':f"{float(rt['psnt_prc']):.2f}",'평균단가':f"{float(rt['avrg_unpr']):.4f}",
+                    '평가금액':f"{float(rt['frcr_vltn_amt']):.2f}",'평가손익':f"{float(rt['vltn_prls_camt']):.2f}",'평가수익률':f"{float(rt['vltn_ert']):.2f}",
+                    '매입금액':f"{float(rt['byov_camt']):.2f}",'환율':f"{float(rt['exrt']):.2f}"
                     }
                 rpr.append(pr)
             return rpr
@@ -222,7 +223,7 @@ class MERITZ :
             pr = []
             for r in rst :
                 pr.append({'종목코드':r['ovrs_stck_symb_iscd'],'매매구분':r['seln_byov_clcd'],'호가유형':r['aspr_type_code'],
-                        '주문수량':str(r['odqt']),'주문가격':f"{float(r['ovrs_stck_oder_prc']):.2f}",'체결수량':r['cntg_qty'],'체결가격':r['cntg_crnc_prc'],
+                        '주문수량':str(r['odqt']),'주문가격':f"{float(r['ovrs_stck_oder_prc']):.2f}",'체결수량':r['cntg_qty'],'체결가격':f"{float(r['cntg_crnc_prc']):.2f}",
                         '주문시간':r['oder_exec_ymdh'],'주문상태':r['ovrs_stck_oder_stat_cls_code'],'주문일자':r['oder_date'],'주문번호':r['oder_no']
                         })
             return pr

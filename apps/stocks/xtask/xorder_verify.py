@@ -136,7 +136,7 @@ if  not skip :
     time.sleep(1)
 
     A.API.change_account('02')
-    rst2 = A.verify_diy_order('DIY','logDIY2')
+    rst2 = A.verify_diy_order('DIY2','logDIY2')
     A.send_message(rst2[1])
     time.sleep(1)
 

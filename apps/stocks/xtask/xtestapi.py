@@ -72,7 +72,7 @@ while True :
         rst = B.get_orders_today(ch[1],ch[2])
         A.print_contents(rst)
     elif ch == '4' : 
-        rst = B.get_current_balance()
+        rst = B.get_account_balance()
         A.print_contents(rst)
     elif ch == '5' : 
         rst = B.get_reserved_order(today,code='2')  

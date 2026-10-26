@@ -1,0 +1,301 @@
+{% extends D['_skn'] + 'page/my_dark/main_layout.html' %}
+
+{% block contents_page %}
+<style>
+	.my_block {margin-top:10px;padding:10px;background-color:#33363b;border:2px solid black;} 
+	.choice {text-align:center;cursor: pointer;}
+	.choice:hover{background-color:black;}
+	.list-bull {text-align:right; color:#ffc4c4}
+	.list-bear {text-align:right; color:#c1e0ff}
+	.real-cancel {color:#F6CECE;cursor:pointer;text-align:center;}
+	.api-input {background:transparent;border:1px solid gray;width:100px;margin-top:-2px;text-align:center;color:yellow;}
+</style>
+
+<div class="row-row">
+	<div style="padding:10px;background-color:#24272d;border:1px solid black;">
+		<canvas id="ohlc_chart"  style="width:1178px;height:350px;background-color:#24272d;"></canvas>
+		{% if D['balance'] %}
+		<div class="clearfix" style="border:2px solid black;background-color:rgb(34, 33, 33);padding:5px 20px;margin-bottom:-12px">
+			<div style="float:left">
+				<span onclick="start_stock_live('play')"><i class="fa fa-play" style='color:gray;font-size:18px;cursor: pointer;'></i></span>&nbsp;
+				<span onclick="start_stock_live('stop')"><i class="fa fa-pause" style='color:gray;font-size:18px;cursor: pointer;'></i></span>&nbsp;&nbsp;
+			</div>
+			<div id="real-nyse-time" style="float:left;font-weight:bold;color:gray;margin-right:20px;">&nbsp;</div>
+			<div id="real-time-stock-price" style="float:right;font-weight:bold;color:gray">&nbsp;</div>
+		</div>
+		<div class='my_block'>
+			<table class='table table-striped table-hover' style="border:2px solid black">
+				<tr style="background-color:#393f4a;border-bottom:1px solid black;">
+					<th style="text-align:left;padding-left:20px;">계좌구분</th>
+					<th style="text-align:right;">달러예수금</th>
+					<th style="text-align:right;">원화환산</th>
+					<th style="text-align:right;">원화예수금</th>
+					<th style="text-align:right;">통합달러</th>
+					<th style="text-align:right;">통합원화</th>
+					<th style="text-align:center;">계좌현황</th>
+					<th style="text-align:center;">예약현황</th>
+					<th style="text-align:center;">주문현황</th>
+					<th style="text-align:center;">예약하기</th>
+					<th style="text-align:center;">주문하기</th>
+				</tr>
+				<tr>
+					<td style="padding-left:24px;font-weight:bold;color:#F5F6CE;">RSN</td>
+					<td style="text-align:right;">{{D['balance'][0]['달러예수금']}}</td>
+					<td style="text-align:right;">{{D['balance'][0]['원화환산']}}</td>
+					<td style="text-align:right;">{{D['balance'][0]['원화예수금']}}</td>
+					<td style="text-align:right;color:#CEF6D8;">{{D['balance'][0]['통합달러']}}</td>
+					<td style="text-align:right;">{{D['balance'][0]['통합원화']}}</td>
+					<td class="choice" onclick="get_account_balance('01')"><i class="fa fa-font" style="color:#F6CECE;"></i></td>
+					<td class="choice" onclick="get_reserved_order('01')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_orders_today('01')"><i class="fa fa-check" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="do_reserved_order('01')"><i class="fa fa-pencil-square-o" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="do_real_order('01')"><i class="fa fa-check-square-o" style="color:#F6CECE;"></td>
+				</tr>
+				<tr>
+					<td style="padding-left:24px;font-weight:bold;color:#F5F6CE;">DIV</td>
+					<td style="text-align:right;">{{D['balance'][1]['달러예수금']}}</td>
+					<td style="text-align:right;">{{D['balance'][1]['원화환산']}}</td>
+					<td style="text-align:right;">{{D['balance'][1]['원화예수금']}}</td>
+					<td style="text-align:right;color:#CEF6D8">{{D['balance'][1]['통합달러']}}</td>
+					<td style="text-align:right;color:#CEF6D8;font-weight:bold;">{{D['balance'][1]['통합원화']}}</td>
+					<td class="choice" onclick="get_account_balance('02')"><i class="fa fa-font" style="color:#F6CECE"></i></td>
+					<td class="choice" onclick="get_reserved_order('02')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_orders_today('02')"><i class="fa fa-check" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="do_reserved_order('02')"><i class="fa fa-pencil-square-o" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="do_real_order('02')"><i class="fa fa-check-square-o" style="color:#F6CECE;"></td>
+				</tr>
+				<tr>
+					<td style="padding-left:24px;font-weight:bold;color:#F5F6CE;">Pocket</td>
+					<td style="text-align:right;">{{D['balance'][2]['달러예수금']}}</td>
+					<td style="text-align:right;">{{D['balance'][2]['원화환산']}}</td>
+					<td style="text-align:right;">{{D['balance'][2]['원화예수금']}}</td>
+					<td style="text-align:right;color:#CEF6D8">{{D['balance'][2]['통합달러']}}</td>
+					<td style="text-align:right;color:#CEF6D8;font-weight:bold;">{{D['balance'][2]['통합원화']}}</td>
+					<td class="choice" onclick="get_account_balance('03')"><i class="fa fa-font" style="color:#F6CECE"></i></td>
+					<td class="choice" onclick="get_reserved_order('03')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_orders_today('03')"><i class="fa fa-check" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="do_reserved_order('03')"><i class="fa fa-pencil-square-o" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="do_real_order('03')"><i class="fa fa-check-square-o" style="color:#F6CECE;"></td>
+				</tr>
+				<tr>
+					<td style="padding-left:24px;font-weight:bold;color:#F5F6CE;">lth</td>
+					<td style="text-align:right;">{{D['balance'][3]['달러예수금']}}</td>
+					<td style="text-align:right;">{{D['balance'][3]['원화환산']}}</td>
+					<td style="text-align:right;">{{D['balance'][3]['원화예수금']}}</td>
+					<td style="text-align:right;color:#CEF6D8">{{D['balance'][3]['통합달러']}}</td>
+					<td style="text-align:right;color:#CEF6D8;font-weight:bold;">{{D['balance'][3]['통합원화']}}</td>
+					<td class="choice" onclick="get_account_balance('lth')"><i class="fa fa-font" style="color:#F6CECE"></i></td>
+					<td class="choice" onclick="get_reserved_order('lth')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_orders_today('lth')"><i class="fa fa-check" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="do_reserved_order('lth')"><i class="fa fa-pencil-square-o" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="do_real_order('lth')"><i class="fa fa-check-square-o" style="color:#F6CECE;"></td>
+				</tr>
+			</table>	
+		</div>
+		<div class='my_block' id="real-order-div" style="display:none;">
+			<div id="real-order-body" style="width:100%;padding:10px;background-color:black;min-height:50px;border:2px solid gray;">
+				계좌구분 : <span id="real-account" style="display:inline-block"></span>
+				<span style="display:inline-block">종목 : SOXL </span>
+				<span style="display:inline-block">
+					수량 : <input name='real-qty' class="api-input" />
+				</span>
+				<span style="display:inline-block">
+					가격 : <input name='real-price' class="api-input"/>
+				</span>
+				<button class="btn btn-blue" onclick="real_order()">주문실행</button>
+			</div>
+		</div>
+		<div class='my_block' style="padding:10px;">
+			<div id="information-div" style="width:100%;background-color:black;min-height:50px;"></div>
+		</div>
+		{% endif %}
+	</div>
+</div>
+
+
+<script src="/sys/chart/chart.min.js"></script>
+
+<script>
+
+// 본챠트 그리기
+const ctx_main = $id('ohlc_chart');
+ctx_main.style.backgroundColor = '#33363b';
+ctx_main.style.border = '2px solid black';
+
+let cls_d = {{D['cls_d']|safe}};
+let cls_p = {{D['cls_p']|safe}};
+let last_closeP     = cls_p.at(-1)
+
+const data_main = {
+    labels : cls_d,
+    datasets : [
+		{
+            label:' 종가변동',
+            data : cls_p,
+			borderColor:'#58ACFA', borderWidth:2, pointRadius:0, borderDash:[2,2],
+  			lineTension:0.2
+    	},
+    ]   
+};
+const options_main = {
+	animation : { duration:300},
+	// animation,
+	plugins : { legend: {display:false}, tooltip:{enabled:false}},
+    responsive:false,
+    layout:{padding:20},
+    scales:{
+        x: { ticks : {color:'gray'}, grid:{color:'#272727'}},
+        y: { ticks : {color:'gray'}, grid:{color:'#272727'},position:'right'},
+    }
+};
+const config_main  = {type:'line',data:data_main,options:options_main};
+const myChart_main = new Chart(ctx_main, config_main);
+
+
+
+{% if D['balance'] %}
+function get_reserved_order(opt) {
+	let posturl = uri('linkurl') + 'page/ajax/myhts/reserved';
+	$.post(posturl, { opt : opt },null,'json').done(function(data){
+		if(data) {
+		html ="<table class='table table-bordered'><tr><th style='color:yellow'>"+"예약현황 "+opt+"</th><th>접수일자</th><th>접수번호</th>"
+		html+="<th>매매구분</th><th>호가유형</th><th>주문수량</th><th>주문가격</th><th>예약시간구분</th><th>주문시작</th><th>취소하기</th></tr>"
+		for (rd of data){
+			html+="<tr>"
+			for (key in rd) { 
+				txt = rd[key]
+				if(key=='매매구분' && txt=='1') {txt='매도'}
+				if(key=='매매구분' && txt=='2') {txt='매수'}
+				if(key=='호가유형' && txt=='5') {txt='LOC'}
+				html+= "<td style='text-align:center'>"+txt+"</td>"
+			}
+			html += "<td style='color:#F6CECE;cursor:pointer;text-align:center;'>"+rd['접수번호']+"</td>" 
+		}	html += '</tr>'
+		html +="</table>"}
+		else {
+			html = "<div style='padding:20px'>"+"예약현황 "+opt+" 이 없습니다.</div>"
+		}
+		$("#information-div").html(html)
+	});
+}
+
+function get_account_balance(opt) {
+	let posturl = uri('linkurl') + 'page/ajax/myhts/account';
+	$.post(posturl, { opt : opt },null,'json').done(function(data){
+		if(data){
+		html ="<table class='table table-bordered'><tr><th style='color:yellow'>"+"계좌현황 "+opt+"</th><th>수량</th><th>매도가능</th>"
+		html+="<th>현재가격</th><th>평균단가</th><th>평가금액</th><th>평가손익</th><th>수익률</th><th>매입금액</th><th>환율</th></tr>"
+		for (rd of data){
+			html+="<tr>"
+			for (key in rd) { html+= "<td style='text-align:center'>"+rd[key]+"</td>"} 
+		}	html += '</tr>'
+		html +="</table>"}
+		else {
+			html = "<div style='padding:20px'>"+"계좌현황 "+opt+" 에 표시할 정보가 없습니다.</div>"
+		}
+		$("#information-div").html(html)
+	});
+}
+
+function get_orders_today(opt) {
+	let posturl = uri('linkurl') + 'page/ajax/myhts/orders_today';
+	let code = ''
+	$.post(posturl, { opt : opt },null,'json').done(function(data){
+		if(data) {
+		html ="<table class='table table-bordered'><tr><th style='color:yellow'>"+"예약현황 "+opt+"</th><th>매매구분</th><th>호가유형</th>"
+		html+="<th>주문수량</th><th>주문가격</th><th>체결수량</th><th>체결가격</th><th>주문시간</th><th>주문상태</th><th>주문일자</th><th>주문번호</th><th>취소하기</th></tr>"
+		for (rd of data){
+			html+="<tr>"
+			for (key in rd) { 
+				txt = rd[key]
+				if(key=='매매구분' && txt=='1') {txt='매도'}
+				if(key=='매매구분' && txt=='2') {txt='매수'}
+				if(key=='호가유형' && txt=='5') {txt='LOC'; code='7'}
+				html+= "<td style='text-align:center'>"+txt+"</td>"
+			}
+			html += "<td onclick='real_cancel(this)' class='real-cancel' data-a='"+opt+"' data-d='"+rd['주문일자']+"' data-q='"+rd['주문수량']+"' data-c='"+code+"'>"+rd['주문번호']+"</td>"
+		}	html += '</tr>'
+		html +="</table>"}
+		else {
+			html = "<div style='padding:20px'>"+"주문현황 "+opt+" 이 없습니다.</div>"
+		}
+		$("#information-div").html(html)
+	});
+}
+
+function real_cancel(sel) {
+	a = $(sel).data('a')
+	d = $(sel).data('d')
+	q = $(sel).data('q')
+	c = $(sel).data('c')
+	n = $(sel).text()
+	let posturl = uri('linkurl') + 'page/ajax/myhts/real_cancel';
+	$.post(posturl, {a:a,d:d,q:q,c:c,n:n},null,'json').done(function(){get_orders_today(a);});
+}
+
+
+function do_real_order(opt) {
+	$("#real-order-div").toggle()
+	$("#real-account").text(opt)
+}
+function real_order(opt) {
+	acc = $("#real-account").text()
+	qty = $("input[name='real-qty']").val()
+	price=$("input[name='real-price']").val()
+	let posturl = uri('linkurl') + 'page/ajax/myhts/real_sell';
+	$.post(posturl, {acc:acc,qty:qty,price:price},null,'json').done(function(){get_orders_today(acc);});	
+}
+
+let timeID  = null;
+let stockID = null;
+
+function loadStockPrice() {
+	const payload = {symbol:'SOXL'}
+	const posturl = uri('linkurl') + 'page/ajax/myhts/get_current_price'
+	$.post(posturl, payload,null,'json').done(
+		function(data){
+			if(data=='error::token_issue') {
+				clearInterval(stockID)
+				$("#real-time-stock-price").html("<span style='font-size:20px'>token error</span>");
+			}
+			else {
+				let ov = parseFloat(last_closeP)
+				let nv = parseFloat(data['현재가'])
+				let df = ((nv/ov - 1)*100).toFixed(2)
+				let pm = (df>=0)? '+' : ''
+				let dc = (df>0)? 'list-bull' : 'list-bear'
+				let cp = "<span style='font-size:30px'>"+data['현재가']+"</span> " 
+				let pr = "<span class='"+dc+"' style='font-size:16px'>"+pm+df+"% </span>&nbsp; "
+				$("#real-time-stock-price").html(cp + pr );
+			}
+		});
+}
+
+function updateNewYorkTime() {
+	const now = new Date()
+	const options = {timeZone: 'America/New_York',month: '2-digit',day: '2-digit',hour: '2-digit',minute: '2-digit',second:'2-digit',hour12: true };
+	const nyTime = new Intl.DateTimeFormat('en-US', options).format(now);
+	const options2 = {timeZone: 'Asia/Seoul',month: '2-digit',day: '2-digit',hour: '2-digit',minute: '2-digit',second:'2-digit',hour12: true };
+	const nyTime2 = new Intl.DateTimeFormat('en-US', options2).format(now);
+	$("#real-nyse-time").html('NY : '+nyTime+' &nbsp;&nbsp;&nbsp;&nbsp'+' KR : '+nyTime2);
+}
+
+function start_stock_live(opt) {
+	if (opt == 'play') {
+		if (timeID == null) { updateNewYorkTime(); timeID = setInterval(updateNewYorkTime,1000); }
+		if (stockID== null) { loadStockPrice();   stockID = setInterval(loadStockPrice,3000);} 
+	} else { 
+		clearInterval(timeID); timeID  = null; 
+		clearInterval(stockID);  stockID = null; 
+		$("#real-nyse-time").html('');
+		$("#real-time-stock-price").html('');
+	}	
+}
+
+// start_stock_live('play')
+
+{% endif %}
+
+
+</script>
+{% endblock %}

@@ -49,11 +49,11 @@ class M_rsn_view(Model) :
         D['일반상황'] = self.D['post'].get('chk_von','off')
         D['가상손실'] = self.D['post'].get('chk_chx','off')
         
-        RST = self.SYS.load_app_lib('rsn')
-        RST.D |= D
+        RSN = self.SYS.load_app_lib('rsn')
+        RSN.D |= D
 
-        RST.do_viewChart()
-        D |= RST.D
+        RSN.do_viewChart()
+        D |= RSN.D
 
 # ----------------------------------------------------------------------------------------------
 # AJAX 
