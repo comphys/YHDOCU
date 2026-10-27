@@ -28,14 +28,14 @@ class yourClass(Control) :
             f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
 
     def send_message(self,message,ch='주식') :
-        client = WebClient(token=self.skey)
-        try:
+        if sysos == 'Android' :
+            my.send_push(message)
+        elif sysos == 'Windows' :
+            print(message)
+        else :  
+            client = WebClient(token=self.skey)
             client.chat_postMessage(channel= ch, text= message)
-            return True
-        except SlackApiError as e:
-            assert e.response["ok"] is False
-            assert e.response["error"]
-            self.log(f"slack error : {e.response['error']}")
+
 
     def log_update(self,day) :
 

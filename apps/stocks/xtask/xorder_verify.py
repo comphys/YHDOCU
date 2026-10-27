@@ -66,20 +66,14 @@ class yourClass(Control) :
         return OD
     
     def send_message(self,message,ch='주식') :
-        
         if sysos == 'Android' :
             my.send_push("주식 주문 검증 보고",message)
         elif sysos == 'Windows' :
             print("주식 주문 검증 보고",message)
         else :  
             client = WebClient(token=self.skey)
-            try:
-                client.chat_postMessage(channel= ch, text= message)
-                return True
-            except SlackApiError as e:
-                assert e.response["ok"] is False
-                assert e.response["error"]
-                self.log(f"slack error : {e.response['error']}")
+            client.chat_postMessage(channel= ch, text= message)
+
 
     def verify_rsn_order(self) :
         order = self.rsn_order_data()
