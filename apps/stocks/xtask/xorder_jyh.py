@@ -201,6 +201,38 @@ class yourClass(Control) :
 
         self.send_message(f"{self.today} POCKET 예약주문 완료")
 
+    def do_lth_order(self) :
+
+        diy = self.diy_order_data('logLTH')
+        buy_total = 0.0
+        cur_total = float(self.API.get_money_balance()['통합달러'])
+        buy_total = sum(float(x.get('주문가격',0))*int(x.get('주문수량'),0) for x in diy if x.get('매매구분') == self.buy_type )
+        if  cur_total < buy_total : 
+            short = f"{buy_total-cur_total:,.2f}"
+            self.send_message(f"LTH 예수금 {short} 부족"); return 
+        
+        for d in diy :
+
+            if  d['매매구분'] == self.sel_type : 
+                price = max(float(d['주문가격']),self.dnl)
+                if  self.exe_type :
+                    if not (rst:=self.API.do_reserved_sell('SOXL',d['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
+                        self.log(f"LTH 매도주문 오류 : {rst}")
+                        return
+                else : print('LTH SOXL 매도 : ',d['주문수량'],f"{price:.2f}",self.odday,'Y') 
+            
+            else : 
+                price = min(float(d['주문가격']),self.upl)
+                if  self.exe_type :
+                    if not (rst:=self.API.do_reserved_buy('SOXL',d['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
+                        self.log(f"POCKET 매수주문 오류 : {rst}")
+                        return
+                else : print('LTH SOXL 매수 : ',d['주문수량'],f"{price:.2f}",self.odday,'Y') 
+            
+            time.sleep(0.5)
+
+        self.send_message(f"{self.today} LTH 예약주문 완료")
+
 
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -225,8 +257,9 @@ if Action :
     else :
         # 작업코드 시작-------------------------------------------------------------------------------------------------------------------
         A.do_rsn_order()
-        A.API.change_account('02'); A.do_diy_order()
-        A.API.change_account('03'); A.do_pocket_order() 
+        A.API.change_account('02');  A.do_diy_order()
+        A.API.change_account('03');  A.do_pocket_order() 
+        A.API.change_account('lth'); A.do_lth_order() 
         # 작업코드 종료-------------------------------------------------------------------------------------------------------------------
 
 else :

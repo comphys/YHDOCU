@@ -41,25 +41,23 @@ class Access(Control) :
                 if not self.D['_lcl'] :
                     with open('logs/whoin.log','a',encoding='utf-8') as f:
                         f.write(f"<span class='who-id'>{pil}{uid}{pir}</span><span class='who-time'>{user_time}</span><span class='who-ip'>{user_ip}</span><span class='who-agent'>{user_agent}</span>\n")
+                
                 session['__u_Ino__'] = uid
                 session['CSH'] = {}
                 home = self.DB.one(f"SELECT home FROM h_user_list WHERE uid='{uid}'")
-
-                # 공인 아이피 기록
-                cur_time = my.now_to_kordate()
-                myIP = my.get_publicIP()
-                with open("logs/publicIP.log","a",encoding="utf-8") as f:
-                    f.write(f"<span class='who-time'>{cur_time}</span><span class='who-ip'>{myIP}</span>\n")
 
                 # 확인 날자 가져오기 
                 if  self.D['_lcl'] :
                     api_token = self.DB.store('api_token')
                     host = "https://comphys.pythonanywhere.com/api/check/check_rsndiy"
-                    # host = "http://192.168.0.20:5000/api/check/check_rsndiy"
                     headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':api_token}
-                    rst = requests.post(host,headers=headers,json={}).json()
-                    self.DB.parameter_update('TX070',rst['rsn'])
-                    self.DB.parameter_update('A0710',rst['diy'])
+                    try :
+                        rst = requests.post(host,headers=headers,json={}).json()
+                    except :
+                        self.log("서버로부터 확인날자 가여오기 작업 오류")
+                    else :
+                        self.DB.parameter_update('TX070',rst['rsn'])
+                        self.DB.parameter_update('A0710',rst['diy'])
                 # -------------------------------------------------------------------------------------------
                 return self.moveto(home)
 

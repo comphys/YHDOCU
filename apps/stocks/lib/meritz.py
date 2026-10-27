@@ -153,7 +153,7 @@ class MERITZ :
         else : 
             return rst
     
-    # 예약주문 매수를 실행한다.
+    # 예약주문 매수를 실행한다(LOC 주문을 기본으로 한다).
     def do_reserved_buy(self,symbol,qty,price,date,check) :
         para={'ovrs_stck_symb_iscd':symbol,'ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
               'warn_cnfr_yn':check,'oder_rsev_cls_code':'1','oder_rsev_hour_clcd':'0',
@@ -165,7 +165,7 @@ class MERITZ :
         else : 
             return rst
 
-    # 예약주문 매도를 실행한다.
+    # 예약주문 매도를 실행한다(LOC 주문을 기본으로 한다).
     def do_reserved_sell(self,symbol,qty,price,date,check) :
         para={'ovrs_stck_symb_iscd':symbol,'ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
               'warn_cnfr_yn':check,'oder_rsev_cls_code':'1','oder_rsev_hour_clcd':'0',

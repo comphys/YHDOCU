@@ -61,9 +61,10 @@ while True :
     print(" 7. 현재 계좌 잔액 확인")
     print(" 8. 실시간 매도 주문(기본:지정가)")
     print(" 9. 실시간 매수 주문(기본:지정가)")
+    print("10. 예약 매수 주문(기본:LOC)")
     print(" 0. 나가기")
     print("----------------------------")
-    ch = input(f"계좌[{B.account}] 메뉴를 선택하세요 : \033[0m")
+    ch = input(f"{today} 계좌[{B.account}] 메뉴를 선택하세요 : \033[0m")
     if ch == '0' : break
     elif ch in ['01','02','03','lth'] : B.change_account(ch)
     elif ch == '1'  : rst = B.get_current_price() ; A.print_contents(rst)
@@ -96,6 +97,14 @@ while True :
             B.do_real_buy(order[0],order[1],order[2],order[3]) 
             time.sleep(1)
             rst = B.get_orders_today('2','0')
+            A.print_contents(rst)
+    elif ch == '10' : 
+        order = input("예약 매수 : 수량/가격 : ")
+        if order != '0' : 
+            order = order.split('/')
+            B.do_reserved_buy('SOXL',order[0],order[1],today,'Y')
+            time.sleep(1)
+            rst = B.get_reserved_order(today,code='2') 
             A.print_contents(rst)
     elif ch == 'X' : 
         cancel = input("주문을 취소 : 날자/주문번호/수량 : ")

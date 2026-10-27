@@ -59,7 +59,8 @@ class RSN :
             if  tac == self.N and not self.N['보유수량'] : 
                 self.N['매수차수'] = 0
                 self.N['매도예가'] = 0   
-                self.N['평균단가'] = 0.0               
+                self.N['평균단가'] = 0.0 
+                self.N['생활날수'] = 0              
                 if not self.V['매도수량'] : self.rebalance_N() # just for N tactic 
 
     def calculate(self)  :
@@ -220,7 +221,9 @@ class RSN :
         if  self.M['당일종가'] <= self.N['매수예가'] and self.N['예정수량'] :
             self.N['매수수량']  = self.N['예정수량']
             self.N['매수차수']  = self.N['매수차수'] + 1 if self.N['매수차수'] < self.M['최대차수'] else self.M['최대차수']
-            self.N['거래코드']  = f"{self.N['매수차수']}B {self.N['매수수량']}"
+            self.N['거래코드']  = f"{self.N['매수차수']}B {self.N['매수수량']}" 
+
+            if self.N['매수차수'] == 1: self.N['생활날수'] = self.M['현재날수']
 
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -362,7 +365,7 @@ class RSN :
         
         if  self.N['보유수량'] : 
             
-            if  self.M['현재날수'] >= self.M['매도대기'] and self.N['매수차수'] == self.M['최대차수'] : 
+            if  self.M['현재날수'] - self.N['생활날수'] > self.M['생활대기'] and self.N['매수차수'] == self.M['최대차수'] : 
                 self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['강매가치']) 
             else :
                 self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
@@ -639,6 +642,7 @@ class RSN :
             self.M['진입가치']  = ST['TN021']
             self.M['매입가치']  = ST['TN022']  # TN 첫날 매수 이후 (-0%)이상 하락 시 매수
             self.M['첫날가치']  = ST['TN023']
+            self.M['생활대기']  = ST['TN024']
             
             self.R['진입시점']  = float(self.D['기회시점']) if '기회시점' in self.D else ST['TR021'] #TR
             self.R['회복시점']  = float(self.D['기회회복']) if '기회회복' in self.D else ST['TR022'] #TR
@@ -669,6 +673,7 @@ class RSN :
         # 매수금 분할 ( N tactic )
         self.N['매금단계'] = [0.0] * self.M['최대차수']
         self.N['매수차수'] = 0
+        self.N['생활날수'] = 0
         self.rebalance_N()
         self.V['일매수금'] = int(self.V['현재잔액'] / self.M['분할횟수'])
         self.R['일매수금'] = int(self.R['현재잔액'] / self.M['분할횟수'])
@@ -809,7 +814,8 @@ class RSN :
             tx[key+'잔액'] = f"{tac['현재잔액']:,.2f}"
         #--------------------------------------------------------    
         tx['진행상황'] = self.V['진행상황']
-        tx['현재손률'] = self.M['현재손률'] if self.M['현재손률'] else ''
+        # tx['현재손률'] = self.M['현재손률'] if self.M['현재손률'] else ''
+        tx['현재손률'] = self.M['현재날수']-self.N['생활날수']
         self.D['TR'].append(tx)
         
     def chart_data(self) :

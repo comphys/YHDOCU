@@ -3,7 +3,7 @@
 {% block contents_page  %}
 <div class="row-row">
 	<div style="position:fixed;left:20px;top:30px;width:{{D['xwidth']}};background-color:#33363b;">
-		<form method='post' name='n310_chart_dashboard' action="{{D['_bse']}}page/action/N315Chart">
+		<form method='post' name='n315_chart' action="{{D['_bse']}}page/action/N315Chart">
 			<br>
 			<div class="well clearfix" style="border-radius:0px;">
     			<div class="pull-left">
@@ -660,7 +660,7 @@ function synchro(opt) {
 		$("input[name='시작일자']").val(data.sdate);
 		$("input[name='종료일자']").val(data.ldate);
 		$("input[name='일반자금']").val(data.V_mon);
-		if(opt=='real'||opt=='test') {$("form[name='n310_chart_dashboard']").submit();}
+		if(opt=='real'||opt=='test') {$("form[name='n315_chart']").submit();}
 	});
 }
 //

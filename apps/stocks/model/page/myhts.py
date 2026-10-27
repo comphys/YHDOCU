@@ -25,6 +25,8 @@ class M_myhts(Model) :
             API = self.SYS.load_app_lib('meritz')
             API.root = rootpath
             API.maca = macaddress
+            oddday = API.get_market_date()
+            self.D['기준날자'] = oddday[0:4]+'-'+oddday[4:6]+'-'+oddday[6:8]
 
             self.D['balance'] = []
             # self.D['balance'] = [
@@ -67,8 +69,7 @@ class Ajax(Model) :
             API.root = rootpath
             API.maca = macaddress        
 
-            today = my.kor_loc_date('US/Eastern')[0:10]
-            odday = today.replace('-','')
+            odday = API.get_market_date()
             opt = self.D['post']['opt']
             API.change_account(opt)
             rst = API.get_reserved_order(odday,code='2')

@@ -45,6 +45,7 @@ class yourClass(Control) :
         RSN  =  self.load_bajax('rsnLog','update_log'); RSN()
         DIY  =  self.load_bajax('logDIY','update_log'); DIY()
         DIY2 =  self.load_bajax('logDIY2','update_log'); DIY2()
+        DIY3 =  self.load_bajax('logLTH','update_log'); DIY3()
         N315 =  self.load_bajax('log315_ljk','update_log'); N315()
         self.send_message(day+" Updated")
 

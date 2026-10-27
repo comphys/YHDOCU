@@ -42,7 +42,7 @@ class 목록_주식히스토리(SKIN) :
 
             chart_data.reverse()
         
-            self.D['chart_date']  = [x['add0'][2:] for x in chart_data]
+            self.D['chart_date']  = [x['add0'][5:] for x in chart_data]
             self.D['close_price'] = [float(x['add3']) for x in chart_data] 
             self.D['krwus_price'] = [float(x['add2']) for x in chart_data] 
             self.D['max_closeP']  = max(self.D['close_price'])
