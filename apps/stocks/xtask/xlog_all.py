@@ -1,5 +1,5 @@
 import sys, platform
-import requests
+
 sysos = platform.system()
 if    sysos == 'Windows' :  rootpath = '/YHDOCU'  
 elif  sysos == 'Linux'   :  rootpath = '/home/comphys/YHDOCU'
@@ -65,7 +65,6 @@ elif is_holiday : skip = is_holiday
 
 if  skip :
     LOG.send_message(skip)
-    pass
 
 else :
     LOG.log_update(today)

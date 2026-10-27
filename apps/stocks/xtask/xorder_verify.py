@@ -69,7 +69,8 @@ class yourClass(Control) :
         
         if sysos == 'Android' :
             my.send_push("주식 주문 검증 보고",message)
-        
+        elif sysos == 'Windows' :
+            print("주식 주문 검증 보고",message)
         else :  
             client = WebClient(token=self.skey)
             try:
@@ -83,7 +84,6 @@ class yourClass(Control) :
     def verify_rsn_order(self) :
         order = self.rsn_order_data()
         acted = self.API.get_orders_today('2','0')  
-        
         if len(order) != len(acted) : return (False,"RSN 주문 건수 오류")
         cnt = 0
         for o in order :
@@ -99,12 +99,12 @@ class yourClass(Control) :
         order = self.diy_order_data(b)
         acted = self.API.get_orders_today('2','0') 
 
-        if len(order) != len(acted) : return (False,"DIY 주문 건수 오류")
+        if len(order) != len(acted) : return (False,f"{t} 주문건수 오류")
         cnt = 0
         for o in order :
             for a in acted :
-                if a['주문상태'] != '0' : return (False,"DIY 주문상태 오류") 
-                if a['호가유형'] != '5' : return (False,"DIY 호가유형 오류")
+                if a['주문상태'] != '0' : return (False,f"{t} 주문상태 오류") 
+                if a['호가유형'] != '5' : return (False,f"{t} 호가유형 오류")
                 if o.items() <= a.items() :  cnt += 1
         if cnt != len(order) : return (False,f"{t} 주문내용 상이")
         
@@ -135,9 +135,14 @@ if  not skip :
     A.send_message(rst2[1])
     time.sleep(1)
 
-    A.API.change_account('02')
-    rst2 = A.verify_diy_order('DIY2','logDIY2')
-    A.send_message(rst2[1])
+    A.API.change_account('03')
+    rst3 = A.verify_diy_order('Pocket','logDIY2')
+    A.send_message(rst3[1])
+    time.sleep(1)
+
+    A.API.change_account('lth')
+    rst4 = A.verify_diy_order('LTH','logLTH')
+    A.send_message(rst4[1])
     time.sleep(1)
 
     # 작업코드 종료-------------------------------------------------------------------------------------------------------------------

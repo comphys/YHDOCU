@@ -256,7 +256,7 @@ if Action :
 
     else :
         # 작업코드 시작-------------------------------------------------------------------------------------------------------------------
-        A.do_rsn_order()
+        A.API.change_account('01');  A.do_rsn_order()
         A.API.change_account('02');  A.do_diy_order()
         A.API.change_account('03');  A.do_pocket_order() 
         A.API.change_account('lth'); A.do_lth_order() 

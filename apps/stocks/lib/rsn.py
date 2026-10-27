@@ -345,10 +345,11 @@ class RSN :
             if  self.V['진행상황'] not in ('매수제한','매수중단') : 
                 self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
             else : 
-                self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])  
+                self.M['매도예가'] = my.round_up(self.V['평균단가'] * self.M['둘매가치']) 
 
-            if  self.S['진행시작'] : self.M['매도예가'] = min(self.M['매도예가'],my.round_up(self.S['평균단가'] * self.S['매도보정']))
-        
+            if  self.S['진행시작'] : 
+                self.M['매도예가'] = min(self.M['매도예가'],my.round_up(self.S['평균단가'] * self.S['매도보정']))
+                
         # [전략진행]---------------------------------------------------------------------------------------------
 
         else :
@@ -385,8 +386,10 @@ class RSN :
         # [최종 매도가 조율 및 강매진행]-------------------------------------------------------------------------------------------------------------
        
         if  self.M['현재날수'] < self.M['강매시작'] :
-            self.M['매도예가'] = min(self.M['매도예가'],my.round_up(self.M['당일종가']*self.M['종가상승'])) 
+            self.M['매도예가'] = min(self.M['매도예가'],my.round_up(self.M['당일종가']*self.M['종가상승']))
+            
             self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'],my.round_up(self.V['평균단가']*self.M['강매가치']))
+           
         else :
             self.M['매도예가'] = my.round_up( self.V['평균단가'] * self.M['강매가치'] )
             self.N['매도예가'] = min(self.M['매도예가'],self.N['매도예가'])
