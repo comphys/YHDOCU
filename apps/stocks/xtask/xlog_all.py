@@ -9,7 +9,6 @@ sys.path.append(rootpath)
 
 from apps.stocks.xtask.xload import Control
 from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import system.core.my_utils as my
@@ -46,20 +45,27 @@ class yourClass(Control) :
             L = self.load_bajax(L,'update_log')
             L()
         self.send_message(day+" Updated")
+        
 
 
-# today 는 증권거래소의 시각(미국 뉴욕)을 기준으로 하고 있다. 날자가 변경되기 전에 실행시켜야 한다. 
-today = my.kor_loc_date('US/Eastern')[0:10]
-weekd = my.dayofdate(today)
+# today 는 증권거래소의 시각(미국 뉴욕)을 기준으로 하고 있다. 날자가 변경되기 전에 실행시켜야 한다. 국내시간기준 오후1시(섬머타임 기간), 오후2시 이전에 실행되어야 함
 LOG = yourClass()
 
+last_date = LOG.DB.last_date('h_stockHistory_board')
+today_time = my.kor_loc_date('US/Eastern')
+today = today_time[0:10]
+hour  = int(today_time[11:13])
+weekd = my.dayofdate(today)
+
 # 증시 휴장일 체크하기
-ck_holiday = LOG.DB.exe(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
-is_holiday = ck_holiday[0][0] if ck_holiday else ''
+ck_holiday = LOG.DB.one(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
+is_holiday = ck_holiday if ck_holiday else ''
 
 skip = ''
 if weekd in ['토','일'] : skip = f"쉬는날 입니다."
-elif is_holiday : skip = is_holiday
+if is_holiday : skip = is_holiday
+if today <= last_date : skip = "이전 날자입니다."
+if int(hour) < 18 : skip = "시간을 확인해 주세요"
 
 if  skip :
     LOG.send_message(skip)
