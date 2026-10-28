@@ -3,12 +3,14 @@
 {% block contents_page %}
 <style>
 	.my_block {margin-top:10px;padding:10px;background-color:#33363b;border:2px solid black;} 
+	.my_block + .my_block {margin-top:-12px;border-top:none;}
 	.choice {text-align:center;cursor: pointer;}
 	.choice:hover{background-color:black;}
 	.list-bull {text-align:right; color:#ffc4c4}
 	.list-bear {text-align:right; color:#c1e0ff}
 	.real-cancel {color:#F6CECE;cursor:pointer;text-align:center;}
 	.api-input {background:transparent;border:1px solid gray;width:100px;margin-top:-2px;text-align:center;color:yellow;}
+	.td-title {font-weight:bold;color:#F5F6CE;border-right:1px solid black;}
 </style>
 
 <div class="row-row">
@@ -27,7 +29,7 @@
 		<div class='my_block'>
 			<table class='table table-striped table-hover' style="border:2px solid black">
 				<tr style="background-color:#393f4a;border-bottom:1px solid black;">
-					<th style="text-align:left;padding-left:20px;">계좌구분</th>
+					<th style="text-align:left;padding-left:20px;width:100px;border-right:1px solid black;">계좌구분</th>
 					<th style="text-align:right;">달러예수금</th>
 					<th style="text-align:right;">원화환산</th>
 					<th style="text-align:right;">원화예수금</th>
@@ -40,54 +42,54 @@
 					<th style="text-align:center;">주문하기</th>
 				</tr>
 				<tr>
-					<td style="padding-left:24px;font-weight:bold;color:#F5F6CE;">RSN</td>
+					<td class='td-title' style="padding-left:24px">RSN</td>
 					<td style="text-align:right;">{{D['balance'][0]['달러예수금']}}</td>
 					<td style="text-align:right;">{{D['balance'][0]['원화환산']}}</td>
 					<td style="text-align:right;">{{D['balance'][0]['원화예수금']}}</td>
 					<td style="text-align:right;color:#CEF6D8;">{{D['balance'][0]['통합달러']}}</td>
 					<td style="text-align:right;">{{D['balance'][0]['통합원화']}}</td>
-					<td class="choice" onclick="get_account_balance('01')"><i class="fa fa-font" style="color:#F6CECE;"></i></td>
-					<td class="choice" onclick="get_reserved_order('01')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
-					<td class="choice" onclick="get_orders_today('01')"><i class="fa fa-check" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_account_balance('01','RSN')"><i class="fa fa-font" style="color:#F6CECE;"></i></td>
+					<td class="choice" onclick="get_reserved_order('01','RSN')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_orders_today('01','RSN')"><i class="fa fa-check" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_reserved_order('01')"><i class="fa fa-pencil-square-o" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_real_order('01')"><i class="fa fa-check-square-o" style="color:#F6CECE;"></td>
 				</tr>
 				<tr>
-					<td style="padding-left:24px;font-weight:bold;color:#F5F6CE;">DIV</td>
+					<td class='td-title' style="padding-left:24px">DIV</td>
 					<td style="text-align:right;">{{D['balance'][1]['달러예수금']}}</td>
 					<td style="text-align:right;">{{D['balance'][1]['원화환산']}}</td>
 					<td style="text-align:right;">{{D['balance'][1]['원화예수금']}}</td>
 					<td style="text-align:right;color:#CEF6D8">{{D['balance'][1]['통합달러']}}</td>
 					<td style="text-align:right;color:#CEF6D8;font-weight:bold;">{{D['balance'][1]['통합원화']}}</td>
-					<td class="choice" onclick="get_account_balance('02')"><i class="fa fa-font" style="color:#F6CECE"></i></td>
-					<td class="choice" onclick="get_reserved_order('02')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
-					<td class="choice" onclick="get_orders_today('02')"><i class="fa fa-check" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_account_balance('02','DIV')"><i class="fa fa-font" style="color:#F6CECE"></i></td>
+					<td class="choice" onclick="get_reserved_order('02','DIV')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_orders_today('02','DIV')"><i class="fa fa-check" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_reserved_order('02')"><i class="fa fa-pencil-square-o" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_real_order('02')"><i class="fa fa-check-square-o" style="color:#F6CECE;"></td>
 				</tr>
 				<tr>
-					<td style="padding-left:24px;font-weight:bold;color:#F5F6CE;">Pocket</td>
+					<td class='td-title' style="padding-left:24px">Pocket</td>
 					<td style="text-align:right;">{{D['balance'][2]['달러예수금']}}</td>
 					<td style="text-align:right;">{{D['balance'][2]['원화환산']}}</td>
 					<td style="text-align:right;">{{D['balance'][2]['원화예수금']}}</td>
 					<td style="text-align:right;color:#CEF6D8">{{D['balance'][2]['통합달러']}}</td>
 					<td style="text-align:right;color:#CEF6D8;font-weight:bold;">{{D['balance'][2]['통합원화']}}</td>
-					<td class="choice" onclick="get_account_balance('03')"><i class="fa fa-font" style="color:#F6CECE"></i></td>
-					<td class="choice" onclick="get_reserved_order('03')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
-					<td class="choice" onclick="get_orders_today('03')"><i class="fa fa-check" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_account_balance('03','POC')"><i class="fa fa-font" style="color:#F6CECE"></i></td>
+					<td class="choice" onclick="get_reserved_order('03','POC')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_orders_today('03','POC')"><i class="fa fa-check" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_reserved_order('03')"><i class="fa fa-pencil-square-o" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_real_order('03')"><i class="fa fa-check-square-o" style="color:#F6CECE;"></td>
 				</tr>
 				<tr>
-					<td style="padding-left:24px;font-weight:bold;color:#F5F6CE;">lth</td>
+					<td class='td-title' style="padding-left:24px">lth</td>
 					<td style="text-align:right;">{{D['balance'][3]['달러예수금']}}</td>
 					<td style="text-align:right;">{{D['balance'][3]['원화환산']}}</td>
 					<td style="text-align:right;">{{D['balance'][3]['원화예수금']}}</td>
 					<td style="text-align:right;color:#CEF6D8">{{D['balance'][3]['통합달러']}}</td>
 					<td style="text-align:right;color:#CEF6D8;font-weight:bold;">{{D['balance'][3]['통합원화']}}</td>
-					<td class="choice" onclick="get_account_balance('lth')"><i class="fa fa-font" style="color:#F6CECE"></i></td>
-					<td class="choice" onclick="get_reserved_order('lth')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
-					<td class="choice" onclick="get_orders_today('lth')"><i class="fa fa-check" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_account_balance('lth','LTH')"><i class="fa fa-font" style="color:#F6CECE"></i></td>
+					<td class="choice" onclick="get_reserved_order('lth','LTH')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_orders_today('lth','LTH')"><i class="fa fa-check" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_reserved_order('lth')"><i class="fa fa-pencil-square-o" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_real_order('lth')"><i class="fa fa-check-square-o" style="color:#F6CECE;"></td>
 				</tr>
@@ -106,8 +108,14 @@
 				<button class="btn btn-blue" onclick="real_order()">주문실행</button>
 			</div>
 		</div>
-		<div class='my_block' style="padding:10px;">
-			<div id="information-div" style="width:100%;background-color:black;min-height:50px;"></div>
+		<div id="information-block1" class='my_block' style="display:none;padding:10px;" ondblclick="$(this).hide()">
+			<div id="information-div1" style="width:100%;background-color:black;min-height:50px;"></div>
+		</div>
+		<div id="information-block2" class='my_block' style="display:none;padding:10px;" ondblclick="$(this).hide()">
+			<div id="information-div2" style="width:100%;background-color:black;min-height:50px;"></div>
+		</div>
+		<div id="information-block3" class='my_block' style="display:none;padding:10px;" ondblclick="$(this).hide()">
+			<div id="information-div3" style="width:100%;background-color:black;min-height:50px;"></div>
 		</div>
 		{% endif %}
 	</div>
@@ -152,39 +160,45 @@ const options_main = {
 const config_main  = {type:'line',data:data_main,options:options_main};
 const myChart_main = new Chart(ctx_main, config_main);
 
-
-
 {% if D['balance'] %}
-function get_reserved_order(opt) {
+
+function get_reserved_order(opt,tle) {
 	let posturl = uri('linkurl') + 'page/ajax/myhts/reserved';
 	$.post(posturl, { opt : opt },null,'json').done(function(data){
 		if(data) {
-		html ="<table class='table table-bordered'><tr><th style='color:yellow'>"+"예약현황 "+opt+"</th><th>접수일자</th><th>접수번호</th>"
-		html+="<th>매매구분</th><th>호가유형</th><th>주문수량</th><th>주문가격</th><th>예약시간구분</th><th>주문시작</th><th>취소하기</th></tr>"
-		for (rd of data){
-			html+="<tr>"
-			for (key in rd) { 
-				txt = rd[key]
-				if(key=='매매구분' && txt=='1') {txt='매도'}
-				if(key=='매매구분' && txt=='2') {txt='매수'}
-				if(key=='호가유형' && txt=='5') {txt='LOC'}
-				html+= "<td style='text-align:center'>"+txt+"</td>"
-			}
-			html += "<td style='color:#F6CECE;cursor:pointer;text-align:center;'>"+rd['접수번호']+"</td>" 
-		}	html += '</tr>'
-		html +="</table>"}
-		else {
-			html = "<div style='padding:20px'>"+"예약현황 "+opt+" 이 없습니다.</div>"
+			rows = data.length + 1 
+			html ="<table class='table table-bordered'><tr>"
+			html+="<th rowspan='"+rows+"' style='color:#F5F6CE;font-size:20px;width:100px;border-right:1px solid #2f3236;'>"+tle+"</th>"
+			html+="<th>종목</th><th>접수일자</th><th>접수번호</th>"
+			html+="<th>매매구분</th><th>호가유형</th><th>주문수량</th><th>주문가격</th><th>예약시간구분</th><th>주문시작</th><th>취소하기</th></tr>"
+			for (rd of data){
+				html+="<tr>"
+				for (key in rd) { 
+					txt = rd[key]
+					if(key=='매매구분' && txt=='1') {txt='매도'}
+					if(key=='매매구분' && txt=='2') {txt='매수'}
+					if(key=='호가유형' && txt=='5') {txt='LOC'}
+					html+= "<td style='text-align:center'>"+txt+"</td>"
+				}
+				html += "<td style='color:#F6CECE;cursor:pointer;text-align:center;'>"+rd['접수번호']+"</td>" 
+			}	html += '</tr>'
+			html +="</table>"
+		} else {
+			html = "<div style='padding:20px'>"+tle +" 예약현황이 없습니다.</div>"
 		}
-		$("#information-div").html(html)
+		$("#information-block2").show()
+		$("#information-div2").html(html)
 	});
 }
 
-function get_account_balance(opt) {
+function get_account_balance(opt,tle) {
 	let posturl = uri('linkurl') + 'page/ajax/myhts/account';
 	$.post(posturl, { opt : opt },null,'json').done(function(data){
 		if(data){
-		html ="<table class='table table-bordered'><tr><th style='color:yellow'>"+"계좌현황 "+opt+"</th><th>수량</th><th>매도가능</th>"
+		rows = data.length + 1 
+		html ="<table class='table table-bordered'><tr>"
+		html+="<th rowspan='"+rows+"' style='color:#F5F6CE;font-size:20px;width:100px;border-right:1px solid #2f3236;'>"+tle+"</th>"
+		html+="<th>종목</th><th>수량</th><th>매도가능</th>"
 		html+="<th>현재가격</th><th>평균단가</th><th>평가금액</th><th>평가손익</th><th>수익률</th><th>매입금액</th><th>환율</th></tr>"
 		for (rd of data){
 			html+="<tr>"
@@ -192,18 +206,22 @@ function get_account_balance(opt) {
 		}	html += '</tr>'
 		html +="</table>"}
 		else {
-			html = "<div style='padding:20px'>"+"계좌현황 "+opt+" 에 표시할 정보가 없습니다.</div>"
+			html = "<div style='padding:20px'>"+tle+" 계좌현황에 표시할 정보가 없습니다.</div>"
 		}
-		$("#information-div").html(html)
+		$("#information-block1").show()
+		$("#information-div1").html(html)
 	});
 }
 
-function get_orders_today(opt) {
+function get_orders_today(opt,tle) {
 	let posturl = uri('linkurl') + 'page/ajax/myhts/orders_today';
 	let code = ''
 	$.post(posturl, { opt : opt },null,'json').done(function(data){
-		if(data) {
-		html ="<table class='table table-bordered'><tr><th style='color:yellow'>"+"예약현황 "+opt+"</th><th>매매구분</th><th>호가유형</th>"
+		if(data) { 
+		rows = data.length + 1 
+		html ="<table class='table table-bordered'><tr>"
+		html+="<th rowspan='"+rows+"' style='color:#F5F6CE;font-size:20px;width:100px;border-right:1px solid #2f3236;'>"+tle+"</th>"
+		html+="<th>종목</th><th>매매구분</th><th>호가유형</th>"
 		html+="<th>주문수량</th><th>주문가격</th><th>체결수량</th><th>체결가격</th><th>주문시간</th><th>주문상태</th><th>주문일자</th><th>주문번호</th><th>취소하기</th></tr>"
 		for (rd of data){
 			html+="<tr>"
@@ -218,9 +236,10 @@ function get_orders_today(opt) {
 		}	html += '</tr>'
 		html +="</table>"}
 		else {
-			html = "<div style='padding:20px'>"+"주문현황 "+opt+" 이 없습니다.</div>"
+			html = "<div style='padding:20px'>"+opt+" 주문현황이 없습니다.</div>"
 		}
-		$("#information-div").html(html)
+		$("#information-block2").show()
+		$("#information-div2").html(html)
 	});
 }
 
