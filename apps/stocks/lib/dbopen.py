@@ -71,7 +71,7 @@ class DBOPEN :
         token_extime = int(self.DB.store('dbapi_time'))
 
         if  token_extime < current_time +60 :
-            # self.revoke_token()
+            self.revoke_token()
             self.log("토큰을 재발급합니다.")
             self.headers = {'Content-Type':'application/x-www-form-urlencoded'}
             endp = '/oauth2/token'

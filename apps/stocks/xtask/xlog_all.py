@@ -29,7 +29,7 @@ class yourClass(Control) :
 
     def send_message(self,message,ch='주식') :
         if sysos == 'Android' :
-            my.send_push(message)
+            my.send_push('주식 로그기록 보고',message)
         elif sysos == 'Windows' :
             print(message)
         else :  
@@ -42,11 +42,9 @@ class yourClass(Control) :
         OHLC = self.load_app_lib('ohlc')
         OHLC.stocks_update('soxl',day)
         time.sleep(1)
-        RSN  =  self.load_bajax('rsnLog','update_log'); RSN()
-        DIY  =  self.load_bajax('logDIY','update_log'); DIY()
-        DIY2 =  self.load_bajax('logDIY2','update_log'); DIY2()
-        DIY3 =  self.load_bajax('logLTH','update_log'); DIY3()
-        N315 =  self.load_bajax('log315_ljk','update_log'); N315()
+        for L in ['rsnLog','logDIY','logDIY2','logLTH'] :
+            L = self.load_bajax(L,'update_log')
+            L()
         self.send_message(day+" Updated")
 
 

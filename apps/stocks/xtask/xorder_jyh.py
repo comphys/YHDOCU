@@ -19,7 +19,7 @@ class yourClass(Control) :
 
     sel_type = '1'
     buy_type = '2'
-    exe_type =  True # 실제 실행 / 테스트   
+    exe_type =  False # 실제 실행 / 테스트   
     
     def _auto(self) :
         self.DB = self.db('stocks',path=rootpath+'/')
@@ -52,8 +52,8 @@ class yourClass(Control) :
             for d in data : print(d)
         else : print(data)
 
-    def rsn_order_data(self) :
-        chk_last_date = self.DB.last_date('h_rsnLog_board')
+    def rsn_order_data(self,board) :
+        chk_last_date = self.DB.last_date(f"h_{board}_board")
         last_ohlc = self.DB.last_date('h_stockHistory_board')
         다음날자 = my.next_stock_day(last_ohlc,self.DB)[0].replace('-','')
         NS = self.DB.line(f"SELECT add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20 FROM h_rsnLog_board WHERE add0='{chk_last_date}' LIMIT 1") 
@@ -61,7 +61,6 @@ class yourClass(Control) :
         for key in ['r','s','n'] :
             if int(NS[key+'_17']) :  OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'2','주문수량':NS[key+'_17'],'주문가격':NS[key+'_18']})
             if int(NS[key+'_19']) :  OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':NS[key+'_19'],'주문가격':NS[key+'_20']})
-       
         return OD
 
     def diy_order_data(self,board) :
@@ -81,164 +80,54 @@ class yourClass(Control) :
         return OD
     
     def send_message(self,message,ch='주식') :
-
         if sysos == 'Android' :
             my.send_push("주식 예약주문 보고",message)
         elif sysos=='Windows' :
             print(message)
         else :
             client = WebClient(token=self.skey)
-            try:
-                client.chat_postMessage(channel= ch, text= message)
-                return True
-            except SlackApiError as e:
-                assert e.response["ok"] is False
-                assert e.response["error"]
-                self.log(f"slack error : {e.response['error']}")
+            client.chat_postMessage(channel= ch, text= message)
 
-    def do_rsn_order(self) :
 
-        rsn = self.rsn_order_data()
+    def do_my_order(self,key,orders) :
+
         buy_total = 0.0
         cur_total = float(self.API.get_money_balance()['통합달러'])
-        buy_total = sum(float(x.get('주문가격',0))*int(x.get('주문수량'),0) for x in rsn if x.get('매매구분') == self.buy_type )
+        buy_total = sum(float(x.get('주문가격',0))*int(x.get('주문수량'),0) for x in orders if x.get('매매구분') == self.buy_type )
 
         if  cur_total < buy_total : 
             short = f"{buy_total-cur_total:,.2f}"
-            self.send_message(f"RSN 예수금 {short} 부족"); return         
+            self.send_message(f"{key} 예수금 {short} 부족"); return         
 
-        for r in rsn :
+        for o in orders :
 
-            if  r['매매구분'] == self.sel_type :
-                price = max(float(r['주문가격']),self.dnl)
+            if  o['매매구분'] == self.sel_type :
+                price = max(float(o['주문가격']),self.dnl)
                 if  self.exe_type :
-                    if not (rst:=self.API.do_reserved_sell('SOXL',r['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
-                        self.log(f"RSN 매도주문 오류 : {rst}")
+                    if not (rst:=self.API.do_reserved_sell('SOXL',o['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
+                        self.log(f"{key} 매도주문 오류 : {rst}")
                         return
-                else : print('RSN SOXL 매도 : ',r['주문수량'],f"{price:.2f}",self.odday,'Y') 
+                else : print(key,' SOXL 매도 : ',o['주문수량'],f"{price:.2f}",self.odday,'Y') 
   
             else : 
-                price = min(float(r['주문가격']),self.upl)
+                price = min(float(o['주문가격']),self.upl)
                 if  self.exe_type :
-                    if not (rst:=self.API.do_reserved_buy('SOXL',r['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
-                        self.log(f"RSN 매수주문 오류 : {rst}")
+                    if not (rst:=self.API.do_reserved_buy('SOXL',o['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
+                        self.log(f"{key} 매수주문 오류 : {rst}")
                         return
-                else : print('RSN SOXL 매수 : ',r['주문수량'],f"{price:.2f}",self.odday,'Y') 
+                else : print(key,' SOXL 매수 : ',o['주문수량'],f"{price:.2f}",self.odday,'Y') 
             
             time.sleep(0.5)
 
-        self.send_message(f"{self.today} RSN 예약주문 완료")
-        self.DB.parameter_update('TX070',self.today)
-        requests.post(self.my_host+'/check/check_rsn',headers=self.my_headers,json={'rsn_check':self.today})
-
-
-    def do_diy_order(self) :
-
-        diy = self.diy_order_data('logDIY')
-        buy_total = 0.0
-        cur_total = float(self.API.get_money_balance()['통합달러'])
-        buy_total = sum(float(x.get('주문가격',0))*int(x.get('주문수량'),0) for x in diy if x.get('매매구분') == self.buy_type )
-
-        if  cur_total < buy_total : 
-            short = f"{buy_total-cur_total:,.2f}"
-            self.send_message(f"DIY 예수금 {short} 부족"); return 
-        
-        for d in diy :
-
-            if  d['매매구분'] == self.sel_type : 
-                price = max(float(d['주문가격']),self.dnl)
-                if  self.exe_type :
-                    if not (rst:=self.API.do_reserved_sell('SOXL',d['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
-                        self.log(f"DIY 매도주문 오류 : {rst}")
-                        return
-                else : print('DIY SOXL 매도 : ',d['주문수량'],f"{price:.2f}",self.odday,'Y') 
-            
-            else : 
-                price = min(float(d['주문가격']),self.upl)
-                if  self.exe_type :
-                    if not (rst:=self.API.do_reserved_buy('SOXL',d['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
-                        self.log(f"DIY 매수주문 오류 : {rst}")
-                        return
-                else : print('DIY SOXL 매수 : ',d['주문수량'],f"{price:.2f}",self.odday,'Y') 
-            
-            time.sleep(0.5)
-
-        # 확인 날자 업데이트 
-        self.send_message(f"{self.today} DIY 예약주문 완료")
-        self.DB.parameter_update('A0710',self.today)
-        requests.post(self.my_host+'/check/check_diy',headers=self.my_headers,json={'diy_check':self.today})
-
-
-    def do_pocket_order(self) :
-
-        diy = self.diy_order_data('logDIY2')
-        buy_total = 0.0
-        cur_total = float(self.API.get_money_balance()['통합달러'])
-        buy_total = sum(float(x.get('주문가격',0))*int(x.get('주문수량'),0) for x in diy if x.get('매매구분') == self.buy_type )
-        if  cur_total < buy_total : 
-            short = f"{buy_total-cur_total:,.2f}"
-            self.send_message(f"POCKET 예수금 {short} 부족"); return 
-        
-        for d in diy :
-
-            if  d['매매구분'] == self.sel_type : 
-                price = max(float(d['주문가격']),self.dnl)
-                if  self.exe_type :
-                    if not (rst:=self.API.do_reserved_sell('SOXL',d['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
-                        self.log(f"POCKET 매도주문 오류 : {rst}")
-                        return
-                else : print('DIY SOXL 매도 : ',d['주문수량'],f"{price:.2f}",self.odday,'Y') 
-            
-            else : 
-                price = min(float(d['주문가격']),self.upl)
-                if  self.exe_type :
-                    if not (rst:=self.API.do_reserved_buy('SOXL',d['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
-                        self.log(f"POCKET 매수주문 오류 : {rst}")
-                        return
-                else : print('DIY SOXL 매수 : ',d['주문수량'],f"{price:.2f}",self.odday,'Y') 
-            
-            time.sleep(0.5)
-
-        self.send_message(f"{self.today} POCKET 예약주문 완료")
-
-    def do_lth_order(self) :
-
-        diy = self.diy_order_data('logLTH')
-        buy_total = 0.0
-        cur_total = float(self.API.get_money_balance()['통합달러'])
-        buy_total = sum(float(x.get('주문가격',0))*int(x.get('주문수량'),0) for x in diy if x.get('매매구분') == self.buy_type )
-        if  cur_total < buy_total : 
-            short = f"{buy_total-cur_total:,.2f}"
-            self.send_message(f"LTH 예수금 {short} 부족"); return 
-        
-        for d in diy :
-
-            if  d['매매구분'] == self.sel_type : 
-                price = max(float(d['주문가격']),self.dnl)
-                if  self.exe_type :
-                    if not (rst:=self.API.do_reserved_sell('SOXL',d['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
-                        self.log(f"LTH 매도주문 오류 : {rst}")
-                        return
-                else : print('LTH SOXL 매도 : ',d['주문수량'],f"{price:.2f}",self.odday,'Y') 
-            
-            else : 
-                price = min(float(d['주문가격']),self.upl)
-                if  self.exe_type :
-                    if not (rst:=self.API.do_reserved_buy('SOXL',d['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
-                        self.log(f"POCKET 매수주문 오류 : {rst}")
-                        return
-                else : print('LTH SOXL 매수 : ',d['주문수량'],f"{price:.2f}",self.odday,'Y') 
-            
-            time.sleep(0.5)
-
-        self.send_message(f"{self.today} LTH 예약주문 완료")
-
-
+        self.send_message(f"{self.today} {key} 예약주문 완료")
 
 # ------------------------------------------------------------------------------------------------------------------
-# A.today 의 시각은 한국시각 기준이다. 이페이지의 실행은 한국시각 10:00 ~ 22:00 사이에 실행된다고 가정한다. 
-
+# 예약을 위한 코드임으로 이페이지의 현재 시간(A.today) 기준은 한국시간 기준이다. 
+# 이 페이지의 실행은 한국시간 09:00 ~ 22:00 사이에 실행된다고 가정한다. 
+# ------------------------------------------------------------------------------------------------------------------
 A = yourClass()
+A.exe_type = False
+
 Action = True
 
 if Action :
@@ -255,13 +144,31 @@ if Action :
         A.send_message(skip)
 
     else :
-        # 작업코드 시작-------------------------------------------------------------------------------------------------------------------
-        A.API.change_account('01');  A.do_rsn_order()
-        A.API.change_account('02');  A.do_diy_order()
-        A.API.change_account('03');  A.do_pocket_order() 
-        A.API.change_account('lth'); A.do_lth_order() 
-        # 작업코드 종료-------------------------------------------------------------------------------------------------------------------
+        # RSN
+        A.API.change_account('01')
+        orders = A.rsn_order_data('rsnLog')
+        A.do_my_order('RSN',orders)
+        if A.exe_type :
+            A.DB.parameter_update('TX070',A.today)
+            requests.post(A.my_host+'/check/check_rsn',headers=A.my_headers,json={'rsn_check':A.today})
 
+        # DIY
+        A.API.change_account('02')
+        orders = A.diy_order_data('logDIY')
+        A.do_my_order('DIY',orders)
+        if A.exe_type :
+            A.DB.parameter_update('A0710',A.today)
+            requests.post(A.my_host+'/check/check_diy',headers=A.my_headers,json={'diy_check':A.today})
+
+        # DIY2
+        A.API.change_account('03')
+        orders = A.diy_order_data('logDIY2')
+        A.do_my_order('DIY2',orders)
+
+        # LTH
+        A.API.change_account('lth')
+        orders = A.diy_order_data('logLTH')
+        A.do_my_order('LTH',orders)
+       
 else :
-    A.exe_type = False
-    A.API.change_account('03')
+    print("Action 스위치가 꺼져 있습니다.")
