@@ -1,2 +1,2 @@
-echo python flask is running...
-start cmd /k "python -u index.py > NUL 2>&1"
+set FLASK_APP=index.py
+python -m flask --debug run 

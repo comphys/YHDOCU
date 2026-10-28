@@ -187,7 +187,7 @@ class MERITZ :
             return rst
 
     # 실시간 매도 주문을 실행한다. code = '01'지정가|'05'시장가|'32'LOC|'35'Limit VWAP|'36'Limit TWAP ccode = '0'시장가,지정가|'7'종가
-    def do_real_sell(self,qty,price,code='01',ccode='0') :
+    def do_real_sell(self,qty,price,code,ccode) :
         para={'ovrs_stck_symb_iscd':'SOXL','ovrs_exch_vndr_idno':'0066','oder_cls_code':code,
               'odqt':qty,'ovrs_stck_oder_prc':price,'oder_cond_cls_code':ccode}
         if (rst:=self.rst_api('post','/trading/v1/overseas/orders/sell',para)) :
@@ -198,7 +198,7 @@ class MERITZ :
             return rst
 
     # 실시간 매수 주문을 실행한다. code = '01'지정가|'05'시장가|'32'LOC|'35'Limit VWAP|'36'Limit TWAP ccode = '0'시장가,지정가|'7'종가
-    def do_real_buy(self,qty,price,code='01',ccode='0') :
+    def do_real_buy(self,qty,price,code,ccode) :
         para={'ovrs_stck_symb_iscd':'SOXL','ovrs_exch_vndr_idno':'0066','oder_cls_code':code,
               'odqt':qty,'ovrs_stck_oder_prc':price,'oder_cond_cls_code':ccode}
         if (rst:=self.rst_api('post','/trading/v1/overseas/orders/buy',para)) :

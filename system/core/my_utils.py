@@ -92,13 +92,8 @@ def date_yesterday(day1) :
 def kor_loc_date(opt='Asia/Seoul') :
 
     loc = ZoneInfo(opt) 
-
-    ts = int(datetime.now().timestamp())
-    t_format = "%Y-%m-%d %H:%M:%S"
-        
-    loc_time = datetime.fromtimestamp(ts,loc).strftime(t_format)
-    
-    return (loc_time)
+    loc_time = datetime.now(loc).strftime("%Y-%m-%d %H:%M:%S")  
+    return loc_time
 
 def last_stock_day(mydb) :
     

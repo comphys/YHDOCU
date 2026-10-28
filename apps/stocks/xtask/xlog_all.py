@@ -41,9 +41,9 @@ class yourClass(Control) :
         OHLC = self.load_app_lib('ohlc')
         OHLC.stocks_update('soxl',day)
         time.sleep(1)
-        for L in ['rsnLog','logDIY','logDIY2','logLTH'] :
-            L = self.load_bajax(L,'update_log')
-            L()
+        for log in ['rsnLog','logDIY','logDIY2','logLTH'] :
+            log = self.load_bajax(log,'update_log')
+            log()
         self.send_message(day+" Updated")
         
 

@@ -40,7 +40,7 @@ class M_myhts(Model) :
                 API.change_account(x)
                 rst = API.get_money_balance()
                 self.D['balance'].append(rst)
-                time.sleep(0.2)
+                time.sleep(0.3)
 
             for B in self.D['balance'] :
                 B['달러예수금'] = f"{float(B['달러예수금']):,.2f}"
@@ -145,11 +145,29 @@ class Ajax(Model) :
             API.root = rootpath
             API.maca = macaddress  
 
-            acc    = self.D['post']['acc']
+            acc   = self.D['post']['acc']
             qty   = self.D['post']['qty']
             price = self.D['post']['price']
             API.change_account(acc)
-            API.do_real_sell(qty,price,code='32',ccode='7') 
+            API.do_real_sell(qty,price,'32','7') 
+            time.sleep(1)
+            return self.SYS.json("OK")
+
+    def real_buy(self) :
+        
+        if self.SYS.I['_dev'] in ['Windows','Android'] :
+            
+            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
+            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
+            API = self.SYS.load_app_lib('meritz')
+            API.root = rootpath
+            API.maca = macaddress  
+
+            acc   = self.D['post']['acc']
+            qty   = self.D['post']['qty']
+            price = self.D['post']['price']
+            API.change_account(acc)
+            API.do_real_buy(qty,price,'32','7')
             time.sleep(1)
             return self.SYS.json("OK")
 

@@ -11,6 +11,7 @@
 	.real-cancel {color:#F6CECE;cursor:pointer;text-align:center;}
 	.api-input {background:transparent;border:1px solid gray;width:100px;margin-top:-2px;text-align:center;color:yellow;}
 	.td-title {font-weight:bold;color:#F5F6CE;border-right:1px solid black;}
+	#real-order-body {width:100%;padding:10px;background-color:black;min-height:50px;border:2px solid gray;font-size:20px;color:gray;font-weight:bold;}
 </style>
 
 <div class="row-row">
@@ -95,17 +96,15 @@
 				</tr>
 			</table>	
 		</div>
-		<div class='my_block' id="real-order-div" style="display:none;">
-			<div id="real-order-body" style="width:100%;padding:10px;background-color:black;min-height:50px;border:2px solid gray;">
-				계좌구분 : <span id="real-account" style="display:inline-block"></span>
-				<span style="display:inline-block">종목 : SOXL </span>
-				<span style="display:inline-block">
-					수량 : <input name='real-qty' class="api-input" />
-				</span>
-				<span style="display:inline-block">
-					가격 : <input name='real-price' class="api-input"/>
-				</span>
-				<button class="btn btn-blue" onclick="real_order()">주문실행</button>
+		<div class='my_block' id="real-order-div" style="display:none;" ondblclick="$(this).hide()">
+			<div id="real-order-body">
+				<span id="real-account-tle" style="color:#F5F6CE;margin-left:20px;"></span>
+				<span style="display:inline-block;margin-left:30px;"> SOXL </span>
+				<span style="display:inline-block;margin-left:20px;">수량 : <input name='real-qty' class="api-input" /></span>
+				<span style="display:inline-block;margin-right:20px;">가격 : <input name='real-price' class="api-input"/></span>
+				<button class="btn btn-blue" onclick="real_order_sell()">매도주문</button>
+				<button class="btn btn-red" onclick="real_order_buy()">매수주문</button>
+				<span id="real-account" style="color:black;"></span>
 			</div>
 		</div>
 		<div id="information-block1" class='my_block' style="display:none;padding:10px;" ondblclick="$(this).hide()">
@@ -161,6 +160,8 @@ const config_main  = {type:'line',data:data_main,options:options_main};
 const myChart_main = new Chart(ctx_main, config_main);
 
 {% if D['balance'] %}
+
+let title = {'01':'RSN','02':'DIY','03':'POC','lth':'LTH'}
 
 function get_reserved_order(opt,tle) {
 	let posturl = uri('linkurl') + 'page/ajax/myhts/reserved';
@@ -236,34 +237,62 @@ function get_orders_today(opt,tle) {
 		}	html += '</tr>'
 		html +="</table>"}
 		else {
-			html = "<div style='padding:20px'>"+opt+" 주문현황이 없습니다.</div>"
+			html = "<div style='padding:20px;color:gray;font-size:20px;font-weight:bold;'>"+tle+" 주문현황이 없습니다.</div>"
 		}
 		$("#information-block2").show()
 		$("#information-div2").html(html)
 	});
 }
 
-function real_cancel(sel) {
-	a = $(sel).data('a')
-	d = $(sel).data('d')
-	q = $(sel).data('q')
-	c = $(sel).data('c')
-	n = $(sel).text()
+function real_cancel(sel) 
+{	
+	let a = $(sel).data('a')
+	let d = $(sel).data('d')
+	let q = $(sel).data('q')
+	let c = $(sel).data('c')
+	let n = $(sel).text()
+	let tle = title[a]
 	let posturl = uri('linkurl') + 'page/ajax/myhts/real_cancel';
-	$.post(posturl, {a:a,d:d,q:q,c:c,n:n},null,'json').done(function(){get_orders_today(a);});
+
+	h_dialog.confirm('<b>'+tle+'</b> 주문번호 <b>'+n+'</b> 취소 하시겠습니까?',
+		{ 
+		   buttons:  [
+						{text : '돌아가기', call: function(cd) { h_dialog.close(cd); }},
+						{text : '주문취소', call: function(cd) { 
+							h_dialog.close(cd);
+							$.post(posturl, {a:a,d:d,q:q,c:c,n:n},null,'json').done(function(){
+								get_orders_today(a,tle);
+							});
+						}}
+					]
+	});
 }
+
 
 
 function do_real_order(opt) {
-	$("#real-order-div").toggle()
+	let tle = title[opt]
+	$("#real-order-div").show()
 	$("#real-account").text(opt)
+	$("input[name='real-qty']").val('')
+	$("input[name='real-price']").val('')
+	$("#real-account-tle").text(tle)
 }
-function real_order(opt) {
-	acc = $("#real-account").text()
-	qty = $("input[name='real-qty']").val()
-	price=$("input[name='real-price']").val()
+function real_order_sell() {
+	let acc = $("#real-account").text()
+	let qty = $("input[name='real-qty']").val()
+	let price=$("input[name='real-price']").val()
+	let tle = title[acc]
 	let posturl = uri('linkurl') + 'page/ajax/myhts/real_sell';
-	$.post(posturl, {acc:acc,qty:qty,price:price},null,'json').done(function(){get_orders_today(acc);});	
+	$.post(posturl, {acc:acc,qty:qty,price:price},null,'json').done(function(){get_orders_today(acc,tle);});	
+}
+function real_order_buy() {
+	let acc = $("#real-account").text()
+	let qty = $("input[name='real-qty']").val()
+	let price=$("input[name='real-price']").val()
+	let tle = title[acc]
+	let posturl = uri('linkurl') + 'page/ajax/myhts/real_buy';
+	$.post(posturl, {acc:acc,qty:qty,price:price},null,'json').done(function(){get_orders_today(acc,tle);});	
 }
 
 let timeID  = null;

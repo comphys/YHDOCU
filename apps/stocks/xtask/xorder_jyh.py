@@ -20,6 +20,8 @@ class yourClass(Control) :
     sel_type = '1'
     buy_type = '2'
     exe_type =  False # 실제 실행 / 테스트   
+    ord_date = ''
+    lst_date = ''
     
     def _auto(self) :
         self.DB = self.db('stocks',path=rootpath+'/')
@@ -29,9 +31,6 @@ class yourClass(Control) :
         self.API.root = rootpath
         self.API.maca = macaddress
 
-        self.today = my.kor_loc_date('Asia/Seoul')[0:10]
-        self.odday = self.today.replace('-','')
-        self.weekd = my.dayofdate(self.today)
         self.my_token   = self.DB.store('api_token')
         self.my_host    = "https://comphys.pythonanywhere.com/api"
         self.my_headers = {'Content-Type':'application/json;charset=UTF-8','Authorization':self.my_token}
@@ -54,28 +53,24 @@ class yourClass(Control) :
 
     def rsn_order_data(self,board) :
         chk_last_date = self.DB.last_date(f"h_{board}_board")
-        last_ohlc = self.DB.last_date('h_stockHistory_board')
-        다음날자 = my.next_stock_day(last_ohlc,self.DB)[0].replace('-','')
         NS = self.DB.line(f"SELECT add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20 FROM h_rsnLog_board WHERE add0='{chk_last_date}' LIMIT 1") 
         OD = []
         for key in ['r','s','n'] :
-            if int(NS[key+'_17']) :  OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'2','주문수량':NS[key+'_17'],'주문가격':NS[key+'_18']})
-            if int(NS[key+'_19']) :  OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':NS[key+'_19'],'주문가격':NS[key+'_20']})
+            if int(NS[key+'_17']) :  OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'2','주문수량':NS[key+'_17'],'주문가격':NS[key+'_18']})
+            if int(NS[key+'_19']) :  OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'1','주문수량':NS[key+'_19'],'주문가격':NS[key+'_20']})
         return OD
 
     def diy_order_data(self,board) :
         ini_data   = self.DB.oneline(f"SELECT add18,add19 FROM h_{board}_board ORDER BY add0 DESC LIMIT 1")
         ini_date = ini_data[0]
         ini_capital = f"{float(ini_data[1]):,.2f}" 
-        last_ohlc = self.DB.last_date('h_stockHistory_board')
-        다음날자 = my.next_stock_day(last_ohlc,self.DB)[0].replace('-','')
         DIY= self.load_app_lib('diy')
-        NS = DIY.get_nextStrategy(ini_date,last_ohlc,ini_capital)
+        NS = DIY.get_nextStrategy(ini_date,self.lst_date,ini_capital)
 
         OD = []
-        if int(NS['예정수량'])  : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'2','주문수량':str(NS['예정수량']),'주문가격':str(NS['예정매가'])})
-        if int(NS['예정도수'])  : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':str(NS['예정도수']),'주문가격':str(NS['예정도가'])})
-        if int(NS['꼬리도수'])  : OD.append({'종목코드':'SOXL','주문일자':다음날자,'매매구분':'1','주문수량':str(NS['꼬리도수']),'주문가격':str(NS['꼬리도가'])})
+        if int(NS['예정수량'])  : OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'2','주문수량':str(NS['예정수량']),'주문가격':str(NS['예정매가'])})
+        if int(NS['예정도수'])  : OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'1','주문수량':str(NS['예정도수']),'주문가격':str(NS['예정도가'])})
+        if int(NS['꼬리도수'])  : OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'1','주문수량':str(NS['꼬리도수']),'주문가격':str(NS['꼬리도가'])})
         del NS
         return OD
     
@@ -119,7 +114,7 @@ class yourClass(Control) :
             
             time.sleep(0.5)
 
-        self.send_message(f"{self.today} {key} 예약주문 완료")
+        self.send_message(f"{self.ord_date} {key} 예약주문 완료")
 
 # ------------------------------------------------------------------------------------------------------------------
 # 예약을 위한 코드임으로 이페이지의 현재 시간(A.today) 기준은 한국시간 기준이다. 
@@ -128,17 +123,25 @@ class yourClass(Control) :
 A = yourClass()
 A.exe_type = True
 
+last_date = A.DB.last_date('h_stockHistory_board')
+nextStock = my.next_stock_day(last_date,A.DB)
+today_kor = my.kor_loc_date('Asia/Seoul')
+todayWeek = my.dayofdate(today_kor[0:10])
+todayTime = int(today_kor[11:13])
+
 Action = True
 
 if Action :
-    # # 증시 휴장일 체크하기
-    ck_holiday = A.DB.exe(f"SELECT description FROM parameters WHERE val='{A.today}' AND cat='미국증시휴장일'")
-    is_holiday = ck_holiday[0][0] if ck_holiday else ''
 
+    # # 증시 휴장일 체크하기
     skip = ''
-    if A.weekd in ['토','일'] : skip = f"{A.weekd}요일 입니다"
-    if is_holiday : skip = is_holiday
-    if A.today > '2027-09-30' : skip = 'API 키 갱신이 필요합니다'
+    if todayWeek in ['토','일'] : skip = f"{todayWeek}요일 입니다"
+    elif today_kor[0:10] != nextStock[0] : skip = "예약 가능 날자가 아닙니다."
+    elif A.today > '2027-09-30' : skip = 'API 키 갱신이 필요합니다'
+    elif todayTime < 9 or todayTime < 22 : skip = '예약 가능 시간이 아닙니다.' 
+    else :
+        A.lst_date = last_date
+        A.ord_date = nextStock[0]
 
     if  skip :
         A.send_message(skip)
@@ -149,8 +152,8 @@ if Action :
         orders = A.rsn_order_data('rsnLog')
         A.do_my_order('RSN',orders)
         if A.exe_type :
-            A.DB.parameter_update('TX070',A.today)
-            requests.post(A.my_host+'/check/check_rsn',headers=A.my_headers,json={'rsn_check':A.today})
+            A.DB.parameter_update('TX070')
+            requests.post(A.my_host+'/check/check_rsn',headers=A.my_headers,json={'rsn_check':A.ord_date})
 
         # DIY
         A.API.change_account('02')
@@ -158,7 +161,7 @@ if Action :
         A.do_my_order('DIY',orders)
         if A.exe_type :
             A.DB.parameter_update('A0710',A.today)
-            requests.post(A.my_host+'/check/check_diy',headers=A.my_headers,json={'diy_check':A.today})
+            requests.post(A.my_host+'/check/check_diy',headers=A.my_headers,json={'diy_check':A.ord_date})
 
         # DIY2
         A.API.change_account('03')

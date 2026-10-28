@@ -817,8 +817,8 @@ class RSN :
             tx[key+'잔액'] = f"{tac['현재잔액']:,.2f}"
         #--------------------------------------------------------    
         tx['진행상황'] = self.V['진행상황']
-        # tx['현재손률'] = self.M['현재손률'] if self.M['현재손률'] else ''
-        tx['현재손률'] = self.M['현재날수']-self.N['생활날수']
+        tx['현재손률'] = self.M['현재손률'] if self.M['현재손률'] else ''
+        # tx['현재손률'] = self.M['현재날수']-self.N['생활날수']
         self.D['TR'].append(tx)
         
     def chart_data(self) :
