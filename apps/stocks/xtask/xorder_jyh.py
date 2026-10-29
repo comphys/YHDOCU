@@ -152,7 +152,7 @@ if Action :
         orders = A.rsn_order_data('rsnLog')
         A.do_my_order('RSN',orders)
         if A.exe_type :
-            A.DB.parameter_update('TX070')
+            A.DB.parameter_update('TX070',A.ord_date)
             requests.post(A.my_host+'/check/check_rsn',headers=A.my_headers,json={'rsn_check':A.ord_date})
 
         # DIY
@@ -160,7 +160,7 @@ if Action :
         orders = A.diy_order_data('logDIY')
         A.do_my_order('DIY',orders)
         if A.exe_type :
-            A.DB.parameter_update('A0710',A.today)
+            A.DB.parameter_update('A0710',A.ord_date)
             requests.post(A.my_host+'/check/check_diy',headers=A.my_headers,json={'diy_check':A.ord_date})
 
         # DIY2
