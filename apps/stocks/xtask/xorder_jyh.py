@@ -99,18 +99,18 @@ class yourClass(Control) :
             if  o['매매구분'] == self.sel_type :
                 price = max(float(o['주문가격']),self.dnl)
                 if  self.exe_type :
-                    if not (rst:=self.API.do_reserved_sell('SOXL',o['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
+                    if not (rst:=self.API.do_reserved_sell('SOXL',o['주문수량'],f"{price:.2f}",self.ord_date,'Y')) : 
                         self.log(f"{key} 매도주문 오류 : {rst}")
                         return
-                else : print(key,' SOXL 매도 : ',o['주문수량'],f"{price:.2f}",self.odday,'Y') 
+                else : print(key,' SOXL 매도 : ',o['주문수량'],f"{price:.2f}",self.ord_date,'Y') 
   
             else : 
                 price = min(float(o['주문가격']),self.upl)
                 if  self.exe_type :
-                    if not (rst:=self.API.do_reserved_buy('SOXL',o['주문수량'],f"{price:.2f}",self.odday,'Y')) : 
+                    if not (rst:=self.API.do_reserved_buy('SOXL',o['주문수량'],f"{price:.2f}",self.ord_date,'Y')) : 
                         self.log(f"{key} 매수주문 오류 : {rst}")
                         return
-                else : print(key,' SOXL 매수 : ',o['주문수량'],f"{price:.2f}",self.odday,'Y') 
+                else : print(key,' SOXL 매수 : ',o['주문수량'],f"{price:.2f}",self.ord_date,'Y') 
             
             time.sleep(0.5)
 
