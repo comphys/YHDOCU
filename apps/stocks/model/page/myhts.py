@@ -8,14 +8,15 @@ class M_myhts(Model) :
 
     def view(self) :
 
-        closeP = self.DB.exe("SELECT add0,add3 FROM h_stockHistory_board ORDER BY add0 DESC LIMIT 60")
-        closeP.reverse()
+        # closeP = self.DB.exe("SELECT add0,add3 FROM h_stockHistory_board ORDER BY add0 DESC LIMIT 60")
+        # closeP.reverse()
 
-        self.D['cls_d'] = []
-        self.D['cls_p'] = []
-        for c in closeP :
-            self.D['cls_d'].append(c[0][5:])
-            self.D['cls_p'].append(c[1])
+        # self.D['cls_d'] = []
+        # self.D['cls_p'] = []
+        # for c in closeP :
+        #     self.D['cls_d'].append(c[0][5:])
+        #     self.D['cls_p'].append(c[1])
+        self.D['lst_clsP'] = self.DB.last_data_one('add3','h_stockHistory_board')
 
         if self.SYS.I['_dev'] in ['Windows','Android'] : 
 
@@ -26,6 +27,7 @@ class M_myhts(Model) :
             API.maca = macaddress
             oddday = API.get_market_date()
             self.D['기준날자'] = oddday[0:4]+'-'+oddday[4:6]+'-'+oddday[6:8]
+            self.D['예약날자'] = oddday
             self.D['balance'] = []
             
             # self.D['balance'] = [
@@ -114,6 +116,24 @@ class Ajax(Model) :
         else :
             return None
 
+    def reserved_cancel(self) :
+        
+        if self.SYS.I['_dev'] in ['Windows','Android'] :
+            
+            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
+            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
+            API = self.SYS.load_app_lib('meritz')
+            API.root = rootpath
+            API.maca = macaddress  
+
+            acc    = self.D['post']['a']
+            date   = self.D['post']['d']
+            ordnum = self.D['post']['n']
+            API.change_account(acc)
+            API.do_reserved_cancel(date,ordnum)
+            time.sleep(1)
+            return self.SYS.json("OK")
+
     def real_cancel(self) :
         
         if self.SYS.I['_dev'] in ['Windows','Android'] :
@@ -167,6 +187,44 @@ class Ajax(Model) :
             price = self.D['post']['price']
             API.change_account(acc)
             API.do_real_buy(qty,price,'32','7')
+            time.sleep(1)
+            return self.SYS.json("OK")
+
+    def reserved_sell(self) :
+        
+        if self.SYS.I['_dev'] in ['Windows','Android'] :
+            
+            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
+            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
+            API = self.SYS.load_app_lib('meritz')
+            API.root = rootpath
+            API.maca = macaddress  
+
+            acc   = self.D['post']['acc']
+            qty   = self.D['post']['qty']
+            price = self.D['post']['price']
+            ord_d = self.D['post']['ord_d']
+            API.change_account(acc)
+            API.do_reserved_sell('SOXL',qty,price,ord_d,'Y')
+            time.sleep(1)
+            return self.SYS.json("OK")
+
+    def reserved_buy(self) :
+        
+        if self.SYS.I['_dev'] in ['Windows','Android'] :
+            
+            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
+            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
+            API = self.SYS.load_app_lib('meritz')
+            API.root = rootpath
+            API.maca = macaddress  
+
+            acc   = self.D['post']['acc']
+            qty   = self.D['post']['qty']
+            price = self.D['post']['price']
+            ord_d = self.D['post']['ord_d']
+            API.change_account(acc)
+            API.do_reserved_buy('SOXL',qty,price,ord_d,'Y')
             time.sleep(1)
             return self.SYS.json("OK")
 
