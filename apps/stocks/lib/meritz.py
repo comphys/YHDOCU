@@ -151,8 +151,8 @@ class MERITZ :
             return rst
     
     # 예약주문 매수를 실행한다(LOC 주문을 기본으로 한다).
-    def do_reserved_buy(self,symbol,qty,price,date) :
-        para={'ovrs_stck_symb_iscd':symbol,'ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
+    def do_reserved_buy(self,qty,price,date) :
+        para={'ovrs_stck_symb_iscd':'SOXL','ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
               'oder_rsev_cls_code':'1','oder_rsev_hour_clcd':'0','oder_sta_date':date,'oder_fin_date':date}
         if (rst:=self.rst_api('post','/trading/v1/overseas/reserved-orders/buy',para)) :
             if rst['warn_cls_code'] =='0' : return True
@@ -161,8 +161,8 @@ class MERITZ :
             return rst
 
     # 예약주문 매도를 실행한다(LOC 주문을 기본으로 한다).
-    def do_reserved_sell(self,symbol,qty,price,date) :
-        para={'ovrs_stck_symb_iscd':symbol,'ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
+    def do_reserved_sell(self,qty,price,date) :
+        para={'ovrs_stck_symb_iscd':'SOXL','ovrs_exch_vndr_idno':'0066','rsev_aspr_tpcd':'5','odqt':qty,'ovrs_stck_oder_prc':price,
               'oder_rsev_cls_code':'1','oder_rsev_hour_clcd':'0','oder_sta_date':date,'oder_fin_date':date}
         if (rst:=self.rst_api('post','/trading/v1/overseas/reserved-orders/sell',para)) :
             if rst['warn_cls_code'] =='0' : return True

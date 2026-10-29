@@ -98,14 +98,6 @@ while True :
             time.sleep(1)
             rst = B.get_orders_today('2','0')
             A.print_contents(rst)
-    elif ch == '10' : 
-        order = input("예약 매수 : 수량/가격 : ")
-        if order != '0' : 
-            order = order.split('/')
-            B.do_reserved_buy('SOXL',order[0],order[1],today)
-            time.sleep(1)
-            rst = B.get_reserved_order(today,code='2') 
-            A.print_contents(rst)
     elif ch == 'X' : 
         cancel = input("주문을 취소 : 날자/주문번호/수량 : ")
         if cancel != '0' : 

@@ -205,7 +205,7 @@ class Ajax(Model) :
             price = self.D['post']['price']
             ord_d = self.D['post']['ord_d']
             API.change_account(acc)
-            API.do_reserved_sell('SOXL',qty,price,ord_d)
+            API.do_reserved_sell(qty,price,ord_d)
             time.sleep(1)
             return self.SYS.json("OK")
 
@@ -224,7 +224,7 @@ class Ajax(Model) :
             price = self.D['post']['price']
             ord_d = self.D['post']['ord_d']
             API.change_account(acc)
-            API.do_reserved_buy('SOXL',qty,price,ord_d)
+            API.do_reserved_buy(qty,price,ord_d)
             time.sleep(1)
             return self.SYS.json("OK")
 
