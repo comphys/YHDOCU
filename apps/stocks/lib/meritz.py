@@ -34,12 +34,10 @@ class MERITZ :
         self.account = opt
 
     # rest api를 호출하고 결과를 리턴한다. 에러 발생 시 False를 리턴하고 응답메세지는 로그로 남긴다. 
-    def rst_api(self,mean,endp,params,retry_count=0,max_retries=3) :
+    def rst_api(self,mean,endp,params) :
 
         caller_frame = inspect.currentframe().f_back
         caller_name = caller_frame.f_code.co_name
-
-        if retry_count >= max_retries: self.log(self.account+" API 시도 최대 횟수를 초과했습니다."); return False
 
         if  not (token:=self.DB.store(self.tkname) if int(self.DB.store(self.tktime)) > int(time.time()) + 60 else self.get_token()) :
             self.log("token을 가져오지 못하였습니다.")
@@ -67,8 +65,7 @@ class MERITZ :
         
         elif code == 'EGW00200' : 
             self.log(self.account+" 초당 호출 한도가 초과되었습니다.") 
-            time.sleep(1.0)
-            return self.rst_api(mean,endp,params,retry_count + 1, max_retries)
+            return False
         
         elif code == 'EGW00123' : 
             self.log(self.account+" 기간이 만료된 토큰입니다.")

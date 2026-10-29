@@ -141,7 +141,7 @@ if Action :
     elif todayTime < 9 or todayTime > 22 : skip = '예약 가능 시간이 아닙니다.' 
     else :
         A.lst_date = last_date
-        A.ord_date = nextStock[0]
+        A.ord_date = nextStock[0].replace('-','')
 
     if  skip :
         A.send_message(skip)

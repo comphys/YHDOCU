@@ -181,5 +181,3 @@ class Ajax(Model) :
                 return self.SYS.json(rst)
             else : return self.SYS.json("error::token_issue")
         
-
-        
