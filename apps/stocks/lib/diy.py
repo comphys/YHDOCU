@@ -1,6 +1,10 @@
 import system.core.my_utils as my
 import numpy
 
+#  매매계산 시 올림처리
+#  매수 = round(x,2)
+#  매도 = my.round_up(x)
+
 class DIY :
 
     def __init__(self,SYS) :
@@ -163,12 +167,12 @@ class DIY :
     def tomorrow_sell(self) :
         
         if not self.M['보유수량'] : return
-        
+         
         self.M['몸통가격'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
         self.M['몸통수량'] = self.M['보유수량']
 
         if  self.M['매수차수'] == self.M['최대차수'] and self.M['현재날수'] > self.M['탈출일수'] :
-            self.M['꼬리가격'] = self.M['당일종가'] * self.M['탈출종가']
+            self.M['꼬리가격'] = my.round_up(self.M['당일종가'] * self.M['탈출종가'])
             self.M['꼬리수량'] = int(self.M['보유수량'] * self.M['탈출허용'])
             if  self.M['꼬리가격'] >= self.M['몸통가격'] : 
                 self.M['꼬리수량'] = 0

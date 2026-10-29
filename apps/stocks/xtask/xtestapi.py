@@ -102,7 +102,7 @@ while True :
         order = input("예약 매수 : 수량/가격 : ")
         if order != '0' : 
             order = order.split('/')
-            B.do_reserved_buy('SOXL',order[0],order[1],today,'Y')
+            B.do_reserved_buy('SOXL',order[0],order[1],today)
             time.sleep(1)
             rst = B.get_reserved_order(today,code='2') 
             A.print_contents(rst)

@@ -25,10 +25,6 @@ class yourClass(Control) :
         self.API.root = rootpath
         self.API.maca = macaddress  
 
-        self.today = my.kor_loc_date('US/Eastern')[0:10]
-        self.weekd = my.dayofdate(self.today)
-
-
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
         with open(rootpath+"/logs/xtask.log","a",encoding="utf-8") as f:
@@ -108,17 +104,28 @@ class yourClass(Control) :
 # ------------------------------------------------------------------------------------------------------------------
 A = yourClass()
 
+today = my.kor_loc_date('US/Eastern')
+weekd = my.dayofdate(today[0:10])
+chk_date = today[0:10]
+chk_time = today[11:16]
+# A.today 는 미국 현지 시간을 기준으로 한다. 
+# 이 파일의 실행은 한국시간으로 22:30 또는 23:30분 이후여야 한다.  
+
 # # 증시 휴장일 체크하기
-ck_holiday = A.DB.exe(f"SELECT description FROM parameters WHERE val='{A.today}' AND cat='미국증시휴장일'")
+ck_holiday = A.DB.exe(f"SELECT description FROM parameters WHERE val='{chk_date}' AND cat='미국증시휴장일'")
 is_holiday = ck_holiday[0][0] if ck_holiday else ''
 
 skip = ''
-if A.weekd in ['토','일'] : skip = f"{A.weekd}요일 입니다"
+if weekd in ['토','일'] : skip = f"{weekd}요일 입니다"
 if is_holiday : skip = is_holiday
-if A.today > '2027-09-30' : skip = 'API 키 갱신이 필요합니다'
+if chk_time <  '09:30' or chk_time > '16:00' : skip = '정규장 시간이 아닙니다.'
+if chk_date > '2027-09-30' : skip = 'API 키 갱신이 필요합니다'
 
-if  not skip :
-    # 작업코드 시작-------------------------------------------------------------------------------------------------------------------
+if  skip :
+    A.send_message(skip)
+
+else :
+
     A.API.change_account('01')
     rst1 = A.verify_rsn_order()
     A.send_message(rst1[1]) 
@@ -130,7 +137,7 @@ if  not skip :
     time.sleep(1)
 
     A.API.change_account('03')
-    rst3 = A.verify_diy_order('Pocket','logDIY2')
+    rst3 = A.verify_diy_order('POC','logDIY2')
     A.send_message(rst3[1])
     time.sleep(1)
 
@@ -138,5 +145,3 @@ if  not skip :
     rst4 = A.verify_diy_order('LTH','logLTH')
     A.send_message(rst4[1])
     time.sleep(1)
-
-    # 작업코드 종료-------------------------------------------------------------------------------------------------------------------

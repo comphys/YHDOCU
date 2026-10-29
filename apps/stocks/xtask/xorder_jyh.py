@@ -99,18 +99,20 @@ class yourClass(Control) :
             if  o['매매구분'] == self.sel_type :
                 price = max(float(o['주문가격']),self.dnl)
                 if  self.exe_type :
-                    if not (rst:=self.API.do_reserved_sell('SOXL',o['주문수량'],f"{price:.2f}",self.ord_date,'Y')) : 
+                    rst = self.API.do_real_sell(o['주문수량'],f"{price:.2f}",'32','7')
+                    if not rst : 
                         self.log(f"{key} 매도주문 오류 : {rst}")
                         return
-                else : print(key,' SOXL 매도 : ',o['주문수량'],f"{price:.2f}",self.ord_date,'Y') 
+                else : print(key,' SOXL 매도 : ',o['주문수량'],f"{price:.2f}",self.ord_date) 
   
             else : 
                 price = min(float(o['주문가격']),self.upl)
                 if  self.exe_type :
-                    if not (rst:=self.API.do_reserved_buy('SOXL',o['주문수량'],f"{price:.2f}",self.ord_date,'Y')) : 
+                    rst = self.API.do_real_buy(o['주문수량'],f"{price:.2f}",'32','7')
+                    if not rst : 
                         self.log(f"{key} 매수주문 오류 : {rst}")
                         return
-                else : print(key,' SOXL 매수 : ',o['주문수량'],f"{price:.2f}",self.ord_date,'Y') 
+                else : print(key,' SOXL 매수 : ',o['주문수량'],f"{price:.2f}",self.ord_date) 
             
             time.sleep(0.5)
 
@@ -119,6 +121,7 @@ class yourClass(Control) :
 # ------------------------------------------------------------------------------------------------------------------
 # 예약을 위한 코드임으로 이페이지의 현재 시간(A.today) 기준은 한국시간 기준이다. 
 # 이 페이지의 실행은 한국시간 09:00 ~ 22:00 사이에 실행된다고 가정한다. 
+# LOC 예약은 프리타임부터 가능함으로, 10시 예약에서 18시 실시간 주문(LOC)로 변경한다. 2026.10.30일 부터 적용
 # ------------------------------------------------------------------------------------------------------------------
 A = yourClass()
 A.exe_type = True
@@ -138,7 +141,7 @@ if Action :
     if todayWeek in ['토','일'] : skip = f"{todayWeek}요일 입니다"
     elif today_kor[0:10] != nextStock[0] : skip = "예약 가능 날자가 아닙니다."
     elif today_kor[0:10] > '2027-09-30' : skip = 'API 키 갱신이 필요합니다'
-    elif todayTime < 9 or todayTime > 22 : skip = '예약 가능 시간이 아닙니다.' 
+    elif todayTime < 18 : skip = '예약 가능 시간이 아닙니다.' 
     else :
         A.lst_date = last_date
         A.ord_date = nextStock[0].replace('-','')
