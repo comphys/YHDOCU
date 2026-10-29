@@ -1,6 +1,8 @@
 import os,configparser,config
 from flask import ( Flask,request,render_template,redirect,send_from_directory,jsonify,session, g)
+from flask_caching import Cache
 from system.core.load import load_control
+
 
 # ----------------------------------------------------------------------------------------------------------
 # Flask 앱 초기화 및 기본 설정
@@ -9,6 +11,9 @@ app.url_map.strict_slashes = False
 app_root = os.path.dirname(os.path.abspath(__file__))
 app.template_folder = os.path.join(app_root, 'apps')
 app.config.from_object(config.Config)
+app.config["CACHE_TYPE"] = "SimpleCache"
+app.config["CACHE_DEFAULT_TIMEOUT"] = 300
+cache = Cache(app)
 # ----------------------------------------------------------------------------------------------------------
 # 요청 전처리: 스레드 세이프(Thread-Safe)한 클라이언트 IP 저장
 @app.before_request
@@ -49,6 +54,7 @@ def download(filename):
 @app.route('/<string:myapp>/<string:control>')
 @app.route('/<string:myapp>/<string:control>/<string:method>', methods=['GET', 'POST'])
 @app.route('/<string:myapp>/<string:control>/<string:method>/<path:option>', methods=['GET', 'POST'])
+@cache.cached(timeout=3600,unless=lambda: request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.method == "POST",)
 def main(myapp='stocks', control='board', method='index', option=None):
     
     loc_myapp = os.path.join(app_root, 'apps', myapp)

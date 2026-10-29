@@ -54,12 +54,12 @@ class RSN :
             tac['실현익률']  = round( tac['중익합계']/(tac['중도합계']-tac['중익합계']) * 100,2 )
             tac['총매수금']  = tac['보유수량'] * tac['평균단가']
             tac['평가금액']  = tac['보유수량'] * self.M['당일종가'] 
-
+            tac['평균단가']  = 0.0
             self.commission(tac,2)
+
             if  tac == self.N and not self.N['보유수량'] : 
                 self.N['매수차수'] = 0
                 self.N['매도예가'] = 0   
-                self.N['평균단가'] = 0.0 
                 self.N['생활날수'] = 0              
                 if not self.V['매도수량'] : self.rebalance_N() # just for N tactic 
 

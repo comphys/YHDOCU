@@ -1,5 +1,4 @@
 from system.core.load import Model
-import system.core.my_utils as my
 import time
 
 #
