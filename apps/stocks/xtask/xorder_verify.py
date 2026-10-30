@@ -7,12 +7,11 @@ import system.core.my_utils as my
 class myClass(Control) :
 
     def _auto(self) :
-        self.DB = self.db('stocks',path=self._root+'/')
+        self.DB = self.db('stocks')
         self.skey = self.DB.store("slack_key")
         self.title= '주식주문 검증 보고'
 
         self.API = self.load_app_lib('meritz')
-        self.API.root = self._root
         self.API.maca = self._macA  
 
     def log(self,str) :

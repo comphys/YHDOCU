@@ -7,7 +7,7 @@ from xload import Control
 class myClass(Control) :
 
     def _auto(self) :
-        self.DB = self.db('stocks',path=self._root+'/')
+        self.DB = self.db('stocks')
         self.skey = self.DB.store("slack_key")
         self.title= '주식 로그기록 보고'
 

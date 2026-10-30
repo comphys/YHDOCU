@@ -11,7 +11,6 @@ class myClass(Control) :
         self.DB = self.db('stocks')
         self.skey = self.DB.store("slack_key")
         self.API = self.load_app_lib('meritz')
-        self.API.root = self._root
         self.API.maca = self._macA
 
     def log(self,str) :
