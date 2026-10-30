@@ -1,20 +1,10 @@
-import sys, platform
-from slack_sdk import WebClient
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import time,requests
 
-sysos = platform.system()
-if    sysos == 'Windows' :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
-elif  sysos == 'Linux'   :  rootpath = '/home/comphys/YHDOCU'; macaddress = 'A475B980D0CA'
-elif  sysos == 'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
-else: sysos == '' 
-sys.path.append(rootpath)
-
-from apps.stocks.xtask.xload import Control
+from xload import Control
 import system.core.my_utils as my
-
-class yourClass(Control) :
+class myClass(Control) :
 
     sel_type = '1'
     buy_type = '2'
@@ -23,12 +13,13 @@ class yourClass(Control) :
     lst_date = ''
     
     def _auto(self) :
-        self.DB = self.db('stocks',path=rootpath+'/')
+        self.DB = self.db('stocks',path=self._root+'/')
         self.skey = self.DB.store("slack_key")
+        self.title= '주식 예약주문 보고'
 
         self.API = self.load_app_lib('meritz')
-        self.API.root = rootpath
-        self.API.maca = macaddress
+        self.API.root = self._root
+        self.API.maca = self._macA
 
         self.my_token   = self.DB.store('api_token')
         self.my_host    = "https://comphys.pythonanywhere.com/api"
@@ -42,13 +33,8 @@ class yourClass(Control) :
 
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
-        with open(rootpath+"/logs/xtask.log","a",encoding="utf-8") as f:
+        with open(self._root+"/logs/xtask.log","a",encoding="utf-8") as f:
             f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
-
-    def lprint(self,data) :
-        if isinstance(data,list):
-            for d in data : print(d)
-        else : print(data)
 
     def rsn_order_data(self,board) :
         chk_last_date = self.DB.last_date(f"h_{board}_board")
@@ -73,16 +59,6 @@ class yourClass(Control) :
         del NS
         return OD
     
-    def send_message(self,message,ch='주식') :
-        if sysos == 'Android' :
-            my.send_push("주식 예약주문 보고",message)
-        elif sysos=='Windows' :
-            print(message)
-        else :
-            client = WebClient(token=self.skey)
-            client.chat_postMessage(channel= ch, text= message)
-
-
     def do_my_order(self,key,orders) :
 
         buy_total = 0.0
@@ -122,7 +98,7 @@ class yourClass(Control) :
 # 이 페이지의 실행은 한국시간 09:00 ~ 22:00 사이에 실행된다고 가정한다. 
 # LOC 예약은 프리타임부터 가능함으로, 10시 예약에서 18시 실시간 주문(LOC)로 변경한다. 2026.10.30일 부터 적용
 # ------------------------------------------------------------------------------------------------------------------
-A = yourClass()
+A = myClass()
 A.exe_type = True
 
 last_date = A.DB.last_date('h_stockHistory_board')

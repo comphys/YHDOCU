@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 import requests
-import os, subprocess
+import os
 import shutil,math
 
 
@@ -215,10 +215,3 @@ def get_publicIP() :
     response = requests.get('https://api.ipify.org?format=json')
     return response.json()['ip']
 
-# Android 의 termux-api 를 통해 문자메세지를 보낸다.(사전권한 획득 필요, 안드로이드에서만 동작)
-def send_sms(phone_number='01027208737',message="") :
-    subprocess.run(['termux-sms-send','-n',phone_number,message])
-
-# Android 의 termux-api 를 통해 push 알림을 보낸다.(사전권한 획득 필요, 안드로이드에서만 동작)
-def send_push(title='JYH',message='') :
-    subprocess.run(["termux-notification","--title",title,"--content",message])

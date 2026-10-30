@@ -1,40 +1,25 @@
-import sys, platform
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import time
 
-sysos = platform.system()
-if    sysos == 'Windows' :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
-elif  sysos == 'Linux'   :  rootpath = '/home/comphys/YHDOCU'; macaddress = 'A475B980D0CA'
-elif  sysos == 'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
-else: sysos == '' 
-sys.path.append(rootpath)
-
-from apps.stocks.xtask.xload import Control
+from xload import Control
 import system.core.my_utils as my
-
-class yourClass(Control) :
+class myClass(Control) :
 
     def _auto(self) :
-        self.DB = self.db('stocks',path=rootpath+'/')
+        self.DB = self.db('stocks',path=self._root+'/')
         self.skey = self.DB.store("slack_key")
+        self.title= '주식주문 검증 보고'
 
         self.API = self.load_app_lib('meritz')
-        self.API.root = rootpath
-        self.API.maca = macaddress  
+        self.API.root = self._root
+        self.API.maca = self._macA  
 
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
-        with open(rootpath+"/logs/xtask.log","a",encoding="utf-8") as f:
+        with open(self._root+"/logs/xtask.log","a",encoding="utf-8") as f:
             f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
 
-    def lprint(self,data) :
-        if isinstance(data,list) :
-            for d in data : print(d)
-        else : print(data)
-    
     def rsn_order_data(self) :
         last_ohlc = self.DB.last_date('h_stockHistory_board')
         next_date = my.next_stock_day(last_ohlc,self.DB)[0].replace('-','')
@@ -61,16 +46,6 @@ class yourClass(Control) :
         
         return OD
     
-    def send_message(self,message,ch='주식') :
-        if sysos == 'Android' :
-            my.send_push("주식 주문 검증 보고",message)
-        elif sysos == 'Windows' :
-            print("주식 주문 검증 보고",message)
-        else :  
-            client = WebClient(token=self.skey)
-            client.chat_postMessage(channel= ch, text= message)
-
-
     def verify_rsn_order(self) :
         order = self.rsn_order_data()
         acted = self.API.get_orders_today('2','0')  
@@ -102,7 +77,7 @@ class yourClass(Control) :
 
 
 # ------------------------------------------------------------------------------------------------------------------
-A = yourClass()
+A = myClass()
 
 today = my.kor_loc_date('US/Eastern')
 weekd = my.dayofdate(today[0:10])

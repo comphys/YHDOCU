@@ -1,40 +1,20 @@
-import sys, platform
-
-sysos = platform.system()
-if    sysos == 'Windows' :  rootpath = '/YHDOCU'  
-elif  sysos == 'Linux'   :  rootpath = '/home/comphys/YHDOCU'
-elif  sysos == 'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'
-else: sysos == '' 
-sys.path.append(rootpath)
-
-from apps.stocks.xtask.xload import Control
-from slack_sdk import WebClient
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import system.core.my_utils as my
 import time
 
-
-class yourClass(Control) :
+from xload import Control
+class myClass(Control) :
 
     def _auto(self) :
-        self.DB = self.db('stocks',path=rootpath+'/')
+        self.DB = self.db('stocks',path=self._root+'/')
         self.skey = self.DB.store("slack_key")
+        self.title= '주식 로그기록 보고'
 
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
-        with open(rootpath+"/logs/xtask.log","a",encoding="utf-8") as f:
+        with open(self._root+"/logs/xtask.log","a",encoding="utf-8") as f:
             f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
-
-    def send_message(self,message,ch='주식') :
-        if sysos == 'Android' :
-            my.send_push('주식 로그기록 보고',message)
-        elif sysos == 'Windows' :
-            print(message)
-        else :  
-            client = WebClient(token=self.skey)
-            client.chat_postMessage(channel= ch, text= message)
-
 
     def log_update(self,day) :
 
@@ -49,7 +29,7 @@ class yourClass(Control) :
 
 
 # today 는 증권거래소의 시각(미국 뉴욕)을 기준으로 하고 있다. 날자가 변경되기 전에 실행시켜야 한다. 국내시간기준 오후1시(섬머타임 기간), 오후2시 이전에 실행되어야 함
-LOG = yourClass()
+LOG = myClass()
 
 last_date = LOG.DB.last_date('h_stockHistory_board')
 today_time = my.kor_loc_date('US/Eastern')
