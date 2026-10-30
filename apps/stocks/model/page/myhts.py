@@ -30,18 +30,18 @@ class M_myhts(Model) :
             self.D['예약날자'] = oddday
             self.D['balance'] = []
             
-            # self.D['balance'] = [
-            #     {'달러예수금': '0.00', '평가환율': '1324.3000', '원화환산': '0', '원화예수금': '0', '통합달러': '0.00', '통합원화': '0'},
-            #     {'달러예수금': '0.00', '평가환율': '1324.3000', '원화환산': '0', '원화예수금': '0', '통합달러': '0.00', '통합원화': '0'},
-            #     {'달러예수금': '0.00', '평가환율': '1324.3000', '원화환산': '0', '원화예수금': '4197633', '통합달러': '3169.70', '통합원화': '4197633'},
-            #     {'달러예수금': '746.970', '평가환율': '1324.3000', '원화환산': '989212', '원화예수금': '10665.653', '통합달러': '8800.77', '통합원화': '11654865'}
-            #     ]
+            self.D['balance'] = [
+                {'달러예수금': '0.00', '평가환율': '1324.3000', '원화환산': '0', '원화예수금': '0', '통합달러': '0.00', '통합원화': '0'},
+                {'달러예수금': '0.00', '평가환율': '1324.3000', '원화환산': '0', '원화예수금': '0', '통합달러': '0.00', '통합원화': '0'},
+                {'달러예수금': '0.00', '평가환율': '1324.3000', '원화환산': '0', '원화예수금': '4197633', '통합달러': '3169.70', '통합원화': '4197633'},
+                {'달러예수금': '746.970', '평가환율': '1324.3000', '원화환산': '989212', '원화예수금': '10665.653', '통합달러': '8800.77', '통합원화': '11654865'}
+                ]
 
-            for x in ['01','02','03','lth'] :
-                API.change_account(x)
-                rst = API.get_money_balance()
-                self.D['balance'].append(rst)
-                time.sleep(0.3)
+            # for x in ['01','02','03','lth'] :
+            #     API.change_account(x)
+            #     rst = API.get_money_balance()
+            #     self.D['balance'].append(rst)
+            #     time.sleep(0.3)
 
             for B in self.D['balance'] :
                 B['달러예수금'] = f"{float(B['달러예수금']):,.2f}"
@@ -167,8 +167,10 @@ class Ajax(Model) :
             acc   = self.D['post']['acc']
             qty   = self.D['post']['qty']
             price = self.D['post']['price']
+            code  = self.D['post']['code']
+            cond  = self.D['post']['cond']
             API.change_account(acc)
-            API.do_real_sell(qty,price,'32','7') 
+            API.do_real_sell(qty,price,code,cond) 
             time.sleep(1)
             return self.SYS.json("OK")
 
@@ -185,8 +187,10 @@ class Ajax(Model) :
             acc   = self.D['post']['acc']
             qty   = self.D['post']['qty']
             price = self.D['post']['price']
+            code  = self.D['post']['code']
+            cond  = self.D['post']['cond']
             API.change_account(acc)
-            API.do_real_buy(qty,price,'32','7')
+            API.do_real_buy(qty,price,code,cond)
             time.sleep(1)
             return self.SYS.json("OK")
 

@@ -1,6 +1,5 @@
 import sys, platform
 from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import time,requests

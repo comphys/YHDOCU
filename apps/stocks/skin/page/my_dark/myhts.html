@@ -109,13 +109,19 @@
 		</div>
 		<div class='my_block' id="real-order-div" style="display:none;" ondblclick="$(this).hide()">
 			<div id="real-order-body">
-				<span id="real-account-tle" style="color:#F5F6CE;margin-left:20px;"></span>
-				<span style="display:inline-block;margin-left:30px;"> SOXL </span>
-				<span style="display:inline-block;margin-left:20px;">수량 : <input name='real-qty' class="api-input" /></span>
-				<span style="display:inline-block;margin-right:20px;">가격 : <input name='real-price' class="api-input"/></span>
-				<button class="btn btn-blue" onclick="real_order_sell()">매도주문</button>
-				<button class="btn btn-red" onclick="real_order_buy()">매수주문</button>
-				<span id="real-account" style="color:black;"></span>
+				<table><tr>
+					<td style="width:100px;border-right:2x solid gray"><span id="real-account-tle" style="color:#F5F6CE;margin-left:20px;"></span></td>
+					<td>
+						<span style="display:inline-block;">주문 SOXL LOC </span>
+						<span style="display:inline-block;margin-left:20px;">수량 : <input name='real-qty' class="api-input" /></span>
+						<span style="display:inline-block;margin-right:20px;">가격 : <input name='real-price' class="api-input"/></span>
+						<button class="btn btn-blue" onclick="real_order_sell()">매도주문</button>
+						<button class="btn btn-red" onclick="real_order_buy()">매수주문</button>
+						<span id="real-account" style="color:black;"></span> 
+						<span style="display:inline-block;margin-top:6px;"><input role="switch" type="checkbox" name="chk_market"> 시장가</span>&nbsp;
+						<span style="display:inline-block;margin-top:6px;"><input role="switch" type="checkbox" name="chk_limitp"> 지정가</span>
+					</td>
+				</tr></table>
 			</div>
 		</div>
 
@@ -313,23 +319,41 @@ function do_real_order(opt) {
 	$("#real-account").text(opt)
 	$("input[name='real-qty']").val('')
 	$("input[name='real-price']").val('')
-	$("#real-account-tle").text(tle+' 주문')
+	$("#real-account-tle").text(tle)
 }
 function real_order_sell() {
 	let acc = $("#real-account").text()
 	let qty = $("input[name='real-qty']").val()
 	let price=$("input[name='real-price']").val()
+	let is_market = $('input[name="chk_market"]').is(':checked') 
+	let is_limitp = $('input[name="chk_limitp"]').is(':checked')
 	let tle = title[acc]
+	let code = '32'
+	let cond = '7'
+	if(is_market) {code="05"; cond="0";price="0"}
+	if(is_limitp) {code="01"; cond="0"}
+	if(! qty)   {h_dialog.notice("수량을 입력해 주세요."); return;}
+	if(! price) {h_dialog.notice("가격을 입력해 주세요."); return;}
+	if(is_market && is_limitp) {h_dialog.notice("시정가와 지정가 중 하나만 선택해 주세요."); return;}
 	let posturl = uri('linkurl') + 'page/ajax/myhts/real_sell';
-	$.post(posturl, {acc:acc,qty:qty,price:price},null,'json').done(function(){get_orders_today(acc);});	
+	$.post(posturl, {acc:acc,qty:qty,price:price,code:code,cond:cond},null,'json').done(function(){get_orders_today(acc);});	
 }
 function real_order_buy() {
 	let acc = $("#real-account").text()
 	let qty = $("input[name='real-qty']").val()
 	let price=$("input[name='real-price']").val()
+	let is_market = $('input[name="chk_market"]').is(':checked') 
+	let is_limitp = $('input[name="chk_limitp"]').is(':checked')
+	if(is_market && is_limitp) {h_dialog.notice("시정가와 지정가 중 하나만 선택해 주세요."); return}
 	let tle = title[acc]
+	let code = '32'
+	let cond = '7'
+	if(! qty)   {h_dialog.notice("수량을 입력해 주세요."); return;}
+	if(! price) {h_dialog.notice("가격을 입력해 주세요."); return;}
+	if(is_market) {code="05"; cond="0";price="0"}
+	if(is_limitp) {code="01"; cond="0"}
 	let posturl = uri('linkurl') + 'page/ajax/myhts/real_buy';
-	$.post(posturl, {acc:acc,qty:qty,price:price},null,'json').done(function(){get_orders_today(acc);});	
+	$.post(posturl, {acc:acc,qty:qty,price:price,code:code,cond:cond},null,'json').done(function(){get_orders_today(acc);});	
 }
 
 function do_reserved_order(opt) {
