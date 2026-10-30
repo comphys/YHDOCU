@@ -13,11 +13,11 @@ from zoneinfo import ZoneInfo
 class MERITZ :
 
     def __init__(self,SYS) :
-        self.DB      = SYS.DB
         # 기본 작동 서버는 스마트폰임
         self.root    = '/data/data/com.termux/files/home/YHDOCU'
         self.maca    = 'A475B980D0CA'
         self.host    = 'https://openapi.imeritz.com:9443'
+        self.MS      = SYS.db('mysafe')
         self.change_account('01')
 
     def log(self,str) :
@@ -27,10 +27,10 @@ class MERITZ :
 
     # 게정 변경 opt = '01'|'02'|'03'
     def change_account(self,opt) :
-        self.appname = 'meritz-app'+opt
-        self.secname = 'meritz-sec'+opt
-        self.tkname  = 'meritz-token'+opt
-        self.tktime  = 'meritz-time'+opt
+        self.app     = self.MS.store('meritz-app'+opt)
+        self.sec     = self.MS.store('meritz-sec'+opt)
+        self.token   = self.MS.store('meritz-token'+opt)
+        self.tktime  = self.MS.store('meritz-time'+opt)
         self.account = opt
 
     # rest api를 호출하고 결과를 리턴한다. 에러 발생 시 False를 리턴하고 응답메세지는 로그로 남긴다. 
@@ -39,11 +39,11 @@ class MERITZ :
         caller_frame = inspect.currentframe().f_back
         caller_name = caller_frame.f_code.co_name
 
-        if  not (token:=self.DB.store(self.tkname) if int(self.DB.store(self.tktime)) > int(time.time()) + 60 else self.get_token()) :
+        if  not self.token if int(self.tktime) > int(time.time()) + 60 else self.get_token() :
             self.log("token을 가져오지 못하였습니다.")
             return False
 
-        headers={'Content-Type':'application/json;charset=UTF-8','authorization':f'Bearer {token}','mac_address':self.maca}
+        headers={'Content-Type':'application/json;charset=UTF-8','authorization':f'Bearer {self.token}','mac_address':self.maca}
         resp=requests.get(self.host+endp, headers=headers,params=params) if mean=='get' else requests.post(self.host+endp,headers=headers,json=params)
 
         # 오류 판단 
@@ -79,12 +79,12 @@ class MERITZ :
     def get_token(self) :
         # 서버에 발급된 유효시간 내의 토큰이 있을 경우, 서버는 갱신요청 시 기존 토큰을 반환한다.
         self.log(self.account+" 토큰을 발급합니다.")
-        para={'grant_type':'client_credentials','client_id':self.DB.store(self.appname),'client_secret':self.DB.store(self.secname),'scope':'login'}
+        para={'grant_type':'client_credentials','client_id':self.app,'client_secret':self.sec,'scope':'login'}
         resp=requests.post(self.host+'/oauth2/token', headers={'content-type':'application/x-www-form-urlencoded'},data=para)
         if  (rst:=resp.json()) :
             exp=datetime.strptime(rst['expires_date'],"%Y-%m-%d %H:%M:%S").replace(tzinfo=ZoneInfo("Asia/Seoul")).timestamp()
-            self.DB.store(self.tkname,rst['access_token'])
-            self.DB.store(self.tktime,str(int(exp)))
+            self.MS.store('meritz-token'+self.account,rst['access_token'])
+            self.MS.store('meritz-time'+self.account,str(int(exp)))
             return rst['access_token']
         else : 
             return False
@@ -92,12 +92,11 @@ class MERITZ :
     # 토큰을 폐기한다. 
     def revoke_token(self) :
         self.log(self.account+" 토큰을 폐기합니다.")
-        token=self.DB.store(self.tkname)
-        para={'client_id':self.DB.store(self.appname),'client_secret':self.DB.store(self.secname), 'scope':'login','token_type_hint':'access_token','token':token}
+        para={'client_id':self.app,'client_secret':self.sec, 'scope':'login','token_type_hint':'access_token','token':self.token}
         resp=requests.post(self.host+'/oauth2/revoke',headers={'Content-Type':'application/x-www-form-urlencoded'},data=para)
         if  resp.json() :
-            self.DB.store(self.tkname,'')
-            self.DB.store(self.tktime,'0')
+            self.MS.store('meritz-token'+self.account,'')
+            self.MS.store('meritz-time'+self.account,'0')
             return True
         else : 
             return False        

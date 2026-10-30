@@ -127,9 +127,9 @@ class Control :
         mod = __import__('%s' %(module), fromlist=[classn])
         return getattr( mod, classn )(self)
 
-    def db(self,dbname) :
+    def db(self,dbname,path='') :
         tmp =  self.load_lib('db')
-        tmp.con(dbname)
+        tmp.con(dbname,path)
         return tmp
 
     def load_app_lib(self,module_name):
