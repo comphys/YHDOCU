@@ -7,7 +7,7 @@ import system.core.my_utils as my
 class myClass(Control) :
 
     def _auto(self) :
-        self.DB = self.db('stocks')
+        self.DB = self.db('stocks',path=self._root+'/')
         self.skey = self.DB.store("slack_key")
         self.title= '주식주문 검증 보고'
 

@@ -13,7 +13,7 @@ class myClass(Control) :
     lst_date = ''
     
     def _auto(self) :
-        self.DB = self.db('stocks')
+        self.DB = self.db('stocks',path=self._root+'/')
         self.skey = self.DB.store("slack_key")
         self.title= '주식 예약주문 보고'
 
