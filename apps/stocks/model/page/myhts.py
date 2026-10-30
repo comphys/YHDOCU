@@ -1,4 +1,5 @@
 from system.core.load import Model
+import system.core.my_utils as my
 import time
 
 #
@@ -23,11 +24,9 @@ class M_myhts(Model) :
             if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
             elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
             API = self.SYS.load_app_lib('meritz')
-            API.root = rootpath
             API.maca = macaddress
-            oddday = API.get_market_date()
-            self.D['기준날자'] = oddday[0:4]+'-'+oddday[4:6]+'-'+oddday[6:8]
-            self.D['예약날자'] = oddday
+            self.D['예약날자'] = my.kor_loc_date("Asia/Seoul")
+            self.D['예약날자'] = self.D['예약날자'].replace('-','')
             self.D['balance'] = []
             
             # self.D['balance'] = [
