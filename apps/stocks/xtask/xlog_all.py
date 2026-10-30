@@ -1,9 +1,9 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
-import system.core.my_utils as my
 import time
 
 from xload import Control
+import system.core.my_utils as my
 class myClass(Control) :
 
     def _auto(self) :
