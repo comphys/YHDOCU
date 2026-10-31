@@ -26,8 +26,6 @@ class MERITZ :
 
     # 게정 변경 opt = '01'|'02'|'03'
     def change_account(self,opt) :
-        self.app     = self.MS.store('meritz-app'+opt)
-        self.sec     = self.MS.store('meritz-sec'+opt)
         self.token   = self.MS.store('meritz-token'+opt)
         self.tktime  = self.MS.store('meritz-time'+opt)
         self.account = opt
@@ -78,7 +76,9 @@ class MERITZ :
     def get_token(self) :
         # 서버에 발급된 유효시간 내의 토큰이 있을 경우, 서버는 갱신요청 시 기존 토큰을 반환한다.
         self.log(self.account+" 토큰을 발급합니다.")
-        para={'grant_type':'client_credentials','client_id':self.app,'client_secret':self.sec,'scope':'login'}
+        Aapp = self.MS.store('meritz-app'+self.account)
+        Asec = self.MS.store('meritz-sec'+self.account)
+        para={'grant_type':'client_credentials','client_id':Aapp,'client_secret':Asec,'scope':'login'}
         resp=requests.post(self.host+'/oauth2/token', headers={'content-type':'application/x-www-form-urlencoded'},data=para)
         if  (rst:=resp.json()) :
             exp=datetime.strptime(rst['expires_date'],"%Y-%m-%d %H:%M:%S").replace(tzinfo=ZoneInfo("Asia/Seoul")).timestamp()
@@ -86,7 +86,6 @@ class MERITZ :
             self.tktime = str(int(exp))
             self.MS.store('meritz-token'+self.account,self.token)
             self.MS.store('meritz-time'+self.account,self.tktime)
-
             return self.token
         else : 
             return ''
