@@ -40,15 +40,13 @@ class M_myhts(Model) :
                 API.change_account(x)
                 rst = API.get_money_balance()
                 self.D['balance'].append(rst)
-                time.sleep(0.3)
-
+   
             for B in self.D['balance'] :
-                B['달러예수금'] = f"{float(B['달러예수금']):,.2f}"
-                B['평가환율']   = f"{float(B['평가환율']):,.2f}"
-                B['원화환산']   = f"{float(B['원화환산']):,.0f}"
-                B['원화예수금'] = f"{float(B['원화예수금']):,.0f}"
-                B['통합달러']   = f"{float(B['통합달러']):,.2f}"
-                B['통합원화']   = f"{float(B['통합원화']):,.0f}"
+                B['달러예수금'] = f"{float(B['달러예수금']):,.2f}" 
+                B['원화환산']   = f"{float(B['원화환산']):,.0f}"  
+                B['원화예수금'] = f"{float(B['원화예수금']):,.0f}" 
+                B['통합달러']   = f"{float(B['통합달러']):,.2f}"  
+                B['통합원화']   = f"{float(B['통합원화']):,.0f}"  
 
 
 
