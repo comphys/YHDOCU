@@ -38,11 +38,11 @@ class MERITZ :
         caller_frame = inspect.currentframe().f_back
         caller_name = caller_frame.f_code.co_name
 
-        if  not self.token if int(self.tktime) > int(time.time()) + 60 else self.get_token() :
+        if  not (token:=self.token if int(self.tktime)> int(time.time())+60 else self.get_token()) :
             self.log("token을 가져오지 못하였습니다.")
             return False
-
-        headers={'Content-Type':'application/json;charset=UTF-8','authorization':f'Bearer {self.token}','mac_address':self.maca}
+ 
+        headers={'Content-Type':'application/json;charset=UTF-8','authorization':f'Bearer {token}','mac_address':self.maca}
         resp=requests.get(self.host+endp, headers=headers,params=params) if mean=='get' else requests.post(self.host+endp,headers=headers,json=params)
 
         # 오류 판단 
@@ -82,11 +82,14 @@ class MERITZ :
         resp=requests.post(self.host+'/oauth2/token', headers={'content-type':'application/x-www-form-urlencoded'},data=para)
         if  (rst:=resp.json()) :
             exp=datetime.strptime(rst['expires_date'],"%Y-%m-%d %H:%M:%S").replace(tzinfo=ZoneInfo("Asia/Seoul")).timestamp()
-            self.MS.store('meritz-token'+self.account,rst['access_token'])
-            self.MS.store('meritz-time'+self.account,str(int(exp)))
-            return rst['access_token']
+            self.token  = rst['access_token']
+            self.tktime = str(int(exp))
+            self.MS.store('meritz-token'+self.account,self.token)
+            self.MS.store('meritz-time'+self.account,self.tktime)
+
+            return self.token
         else : 
-            return False
+            return ''
     
     # 토큰을 폐기한다. 
     def revoke_token(self) :
@@ -96,7 +99,8 @@ class MERITZ :
         if  resp.json() :
             self.MS.store('meritz-token'+self.account,'')
             self.MS.store('meritz-time'+self.account,'0')
-            return True
+            self.token  = ''
+            self.tktime = '0'
         else : 
             return False        
 
