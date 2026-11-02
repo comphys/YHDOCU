@@ -114,9 +114,9 @@ if Action :
     # # 증시 휴장일 체크하기
     skip = ''
     if todayWeek in ['토','일'] : skip = f"{todayWeek}요일 입니다"
-    elif today_kor[0:10] != nextStock[0] : skip = "예약 가능 날자가 아닙니다."
+    # elif today_kor[0:10] != nextStock[0] : skip = "예약 가능 날자가 아닙니다."
     elif today_kor[0:10] > '2027-09-30' : skip = 'API 키 갱신이 필요합니다'
-    elif todayTime < 18 : skip = '예약 가능 시간이 아닙니다.' 
+    # elif todayTime < 18 : skip = '예약 가능 시간이 아닙니다.' 
     else :
         A.lst_date = last_date
         A.ord_date = nextStock[0].replace('-','')
