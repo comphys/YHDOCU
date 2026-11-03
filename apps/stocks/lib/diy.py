@@ -172,7 +172,11 @@ class DIY :
         self.M['몸통수량'] = self.M['보유수량']
 
         if  self.M['매수차수'] == self.M['최대차수'] and self.M['현재날수'] > self.M['탈출일수'] :
-            self.M['꼬리가격'] = my.round_up(self.M['당일종가'] * self.M['탈출종가'])
+
+            if     self.M['연속상승'] >= 2 : self.M['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.02) 
+            elif   self.M['연속상승'] == 1 : self.M['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.05) 
+            else : self.M['꼬리가격'] = my.round_up(self.M['당일종가']*1.1)
+
             self.M['꼬리수량'] = int(self.M['보유수량'] * self.M['탈출허용'])
             if  self.M['꼬리가격'] >= self.M['몸통가격'] : 
                 self.M['꼬리수량'] = 0
@@ -194,7 +198,7 @@ class DIY :
         self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가','매수예가','예정수량','매도예가','매수차수','몸통가격','몸통수량','꼬리수량','꼬리가격'],0)
         self.M['시즌자금'] = self.M['현재잔액']
 
-        진입단가 = round(self.M['전일종가'] * self.M['첫날가치'], 2) if self.M['당일연속'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
+        진입단가 = round(self.M['전일종가'] * self.M['첫날가치'], 2) if self.M['연속하락'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
         if  self.M['당일종가'] <=  진입단가  :
             
             self.M['기록시즌'] += 1
@@ -241,7 +245,8 @@ class DIY :
             self.M['현재일자'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
             self.M['종가변동'] = float(BD['add8']) 
-            self.M['당일연속'] = int(BD['add10']) 
+            self.M['연속상승'] = int(BD['add9'])
+            self.M['연속하락'] = int(BD['add10']) 
             self.M['전일종가'] = float(self.B[idx-1]['add3'])  
             self.M['자체연속'] = self.M['자체연속']+1 if  self.M['당일종가'] < self.M['전일종가'] else 0
             self.M['진행상황'] = ''
@@ -420,7 +425,7 @@ class DIY :
         self.D['다음날자'],  self.D['다음요일'] = my.next_stock_day(self.D['종료일자'],self.DB)
         self.D['현재날자'] = self.M['현재일자']
         self.D['현재종가'] = self.M['당일종가']
-        self.D['현재연속'] = self.M['당일연속']
+        self.D['현재연속'] = self.M['연속하락']
         # 매수차수는 매수가 이루어졌을 경우에 증가함
         if     self.M['매수차수'] >  self.M['최대차수']-1 : self.D['배분금액'] = 0
         elif   self.M['매수차수'] == self.M['최대차수']-1 : self.D['배분금액'] = int(self.M['현재잔액'])
@@ -433,7 +438,7 @@ class DIY :
         if  self.M['첫날기록'] or not self.M['보유수량'] : 
 
             self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['진입가치'],2)
-            if self.M['당일연속'] >= self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['첫날가치'],2 ) 
+            if self.M['연속하락'] >= self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['첫날가치'],2 ) 
             
             self.D['N_생활매수량'] = int( self.M['매금단계'][1] / self.D['N_생활매수가'] )
             self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
@@ -480,7 +485,7 @@ class DIY :
         #--------------------------------------------------------
         tx['현재날수'] = self.M['현재날수']; tx['기록시즌'] = self.M['기록시즌']
         tx['자체연속'] = self.M['자체연속'] 
-        tx['당일연속'] = self.M['당일연속']
+        tx['연속하락'] = self.M['연속하락']
         tx['현재차수'] = self.M['매수차수']
         tx['기록일자'] = self.M['현재일자'][2:]
         tx['당일종가'] = f"<span class='clsp{self.M['기록시즌']}'>{round(self.M['당일종가'],4):,.2f}</span>"

@@ -55,7 +55,6 @@ class OHLC :
         url = f"https://api.tiingo.com/tiingo/daily/{symbol}/prices?startDate={today}&endDate={today}&token={app_key}"
         
         row = requests.get(url,headers).json()[0]
-
         return [today,row['open'],row['high'],row['low'],row['close'],row['volume'],0.0,0,0]
 
     def get_naver_fx_rate(self,target_date):

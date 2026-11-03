@@ -38,10 +38,10 @@ class RSN :
                 tac['진행상황'] = '매수중단'
                 tac['잔액이동'] = False
                 self.rebalance_N()
-        
+
         tac['평가금액'] =  tac['보유수량'] * self.M['당일종가']  
         tac['수익현황'] =  tac['평가금액'] - tac['총매수금']
-        tac['현수익률'] =  tac['수익현황'] / tac['총매수금'] *  100  if tac['총매수금'] else 0.00    
+        tac['현수익률'] =  tac['수익현황'] / tac['총매수금'] *  100  if tac['총매수금'] else 0.00 
         
         if  tac['매도수량'] : # VRS 의 매도는 같이 이루어진다.
             tac['매도금액']  = tac['매도수량'] * self.M['당일종가']
@@ -52,21 +52,56 @@ class RSN :
             tac['현수익률']  = tac['수익현황'] / tac['총매수금'] * 100  if tac['총매수금'] else 0.00 # for N tactic 중간 실현수익률
             tac['중익합계'] += tac['수익현황']  
             tac['실현익률']  = round( tac['중익합계']/(tac['중도합계']-tac['중익합계']) * 100,2 )
-            tac['총매수금']  = tac['보유수량'] * tac['평균단가']
-            tac['평가금액']  = tac['보유수량'] * self.M['당일종가'] 
+            tac['총매수금']  = 0.0
+            tac['평가금액']  = 0.0
             tac['평균단가']  = 0.0
             self.commission(tac,2)
 
-            if  tac == self.N and not self.N['보유수량'] : 
+
+    def calculate_N(self) :
+
+        if  self.N['매수수량'] : 
+            self.N['매수금액'] = self.N['매수수량'] * self.M['당일종가']
+            self.N['보유수량']+= self.N['매수수량']
+            self.N['현재잔액']-= self.N['매수금액']
+            self.N['총매수금']+= self.N['매수금액']
+            self.N['평균단가'] = self.N['총매수금'] / self.N['보유수량'] 
+            self.commission(self.N,1)
+
+        self.N['평가금액'] =  self.N['보유수량'] * self.M['당일종가']  
+        self.N['수익현황'] =  self.N['평가금액'] - self.N['총매수금']
+        self.N['현수익률'] =  self.N['수익현황'] / self.N['총매수금'] *  100  if self.N['총매수금'] else 0.0 
+
+        if  self.N['매도수량'] : # VRS 의 매도는 같이 이루어진다.
+            self.N['매도금액'] = self.N['매도수량'] * self.M['당일종가']
+            self.N['보유수량']-= self.N['매도수량']
+            self.N['현재잔액']+= self.N['매도금액']
+            self.N['중도합계']+= self.N['매도금액']
+            self.N['평가금액'] = self.N['보유수량'] * self.M['당일종가'] 
+
+            if  self.N['보유수량'] :
+                self.N['총매수금'] = self.N['평균단가'] * self.N['보유수량']
+                self.N['수익현황'] = self.N['평가금액'] - self.N['총매수금']
+
+            else :
+                self.N['수익현황'] = self.N['매도금액'] - self.N['총매수금']
+                self.N['총매수금'] = 0.0
+                self.N['평균단가'] = 0.0
                 self.N['매수차수'] = 0
                 self.N['매도예가'] = 0   
                 self.N['생활날수'] = 0              
                 if not self.V['매도수량'] : self.rebalance_N() # just for N tactic 
+            
+            self.N['현수익률'] = self.N['수익현황'] / self.N['총매수금']  * 100 if self.N['총매수금'] else 0.0
+            self.N['중익합계']+= self.N['수익현황']  
+            self.N['실현익률'] = round(self.N['중익합계']/(self.N['중도합계']-self.N['중익합계'])*100,2)
+
+            self.commission(self.N,2)
 
     def calculate(self)  :
         
         self.calculate_A(self.V) # 계산순서 ( V-N-R-S ) V는 기준, N은 RS의 잔액이동의 영향을 피하기 위해 RS보다 우선 계산함
-        self.calculate_A(self.N) 
+        self.calculate_N() 
         self.calculate_A(self.R)
         self.calculate_A(self.S)
 

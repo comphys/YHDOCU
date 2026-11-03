@@ -7,13 +7,13 @@ class Ajax(Model) :
     def update_stock(self) :
 
         last_date = self.DB.last_date('h_stockHistory_board')
-        next_date = my.next_stock_day(last_date,self.DB)
+        next_date = my.next_stock_day(last_date,self.DB)[0]
 
-        OHLC = self.load_app_lib('ohlc')
+        OHLC = self.SYS.load_app_lib('ohlc')
         OHLC.stocks_update('soxl',next_date)
         time.sleep(1)
         for log in ['rsnLog','logDIY','logDIY2','logLTH','log315_ljk'] :
-            log = self.load_bajax(log,'update_log')
+            log = self.SYS.load_bajax(log,'update_log')
             log()
         return self.SYS.json("OK")
 
