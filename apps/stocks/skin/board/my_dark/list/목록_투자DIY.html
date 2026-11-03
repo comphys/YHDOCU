@@ -31,12 +31,12 @@
 				</tr>
 				{% endif %}
 				{% if D['매도예정'] %}
-				<tr style="border-top:1px solid gray;"><td style="text-align:left;"><span style="color:gray">sell</span></td><td>{{D['매도예가']}}</td><td>{{D['매도예정']}}</td>
+				<tr style="border-top:1px solid gray;"><td style="text-align:left;"><span style="color:gray">D sell</span></td><td>{{D['매도예가']}}</td><td>{{D['매도예정']}}</td>
 					<td style="color:gray">{{D['도종대비']}}</td><td style="color:gray">{{D['도평대비']}}</td>
 				</tr>
 				{% endif %}
 				{% if D['꼬리예정'] %}
-				<tr><td style="text-align:left;"><span style="color:gray">sell</span></td><td>{{D['꼬리예가']}}</td><td>{{D['꼬리예정']}}</td>
+				<tr><td style="text-align:left;"><span style="color:gray">E sell</span></td><td>{{D['꼬리예가']}}</td><td>{{D['꼬리예정']}}</td>
 					<td style="color:gray">{{D['꼬종대비']}}</td><td style="color:gray">{{D['꼬평대비']}}</td>
 				</tr>
 				{% endif %}

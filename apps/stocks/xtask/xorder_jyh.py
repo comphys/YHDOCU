@@ -67,7 +67,6 @@ class myClass(Control) :
 
         if  cur_total < buy_total : 
             short = f"{buy_total-cur_total:,.2f}"
-            self.send_message(f"{key} 예수금 {short} 부족"); return         
 
         for o in orders :
 
@@ -81,13 +80,17 @@ class myClass(Control) :
                 else : print(key,' SOXL 매도 : ',o['주문수량'],f"{price:.2f}",self.ord_date) 
   
             else : 
-                price = min(float(o['주문가격']),self.upl)
-                if  self.exe_type :
-                    rst = self.API.do_real_buy(o['주문수량'],f"{price:.2f}",'32','7')
-                    if not rst : 
-                        self.log(f"{key} 매수주문 오류 : {rst}")
-                        return
-                else : print(key,' SOXL 매수 : ',o['주문수량'],f"{price:.2f}",self.ord_date) 
+                if  cur_total > buy_total :
+                    price = min(float(o['주문가격']),self.upl)
+                    if  self.exe_type :
+                        rst = self.API.do_real_buy(o['주문수량'],f"{price:.2f}",'32','7')
+                        if not rst : 
+                            self.log(f"{key} 매수주문 오류 : {rst}")
+                            return
+                    else : print(key,' SOXL 매수 : ',o['주문수량'],f"{price:.2f}",self.ord_date) 
+                else :
+                    self.send_message(f"{key} 예수금 {short} 부족");
+
             
             time.sleep(0.5)
 

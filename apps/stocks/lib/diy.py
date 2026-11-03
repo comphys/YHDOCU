@@ -138,8 +138,7 @@ class DIY :
         if  self.M['당일종가'] >= self.M['몸통가격'] : 
             self.M['매도수량']  = self.M['보유수량']
         
-        elif self.M['꼬리수량'] and self.M['당일종가'] >= self.M['꼬리가격'] and self.M['매수차수'] == self.M['최대차수']:
-            self.M['매도수량'] += self.M['꼬리수량']
+        elif self.M['꼬리수량'] and self.M['당일종가'] >= self.M['꼬리가격'] and self.M['매수차수'] == self.M['최대차수'] : self.M['매도수량'] = self.M['꼬리수량']
 
  
     def today_buy(self) :
