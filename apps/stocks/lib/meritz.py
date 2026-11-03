@@ -22,7 +22,6 @@ class MERITZ :
         self.change_account('01')
 
     def log(self,str) :
-        self.SYS.info(self.root)
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
         with open(self.root+"logs/meritzapi.log","a",encoding="utf-8") as f:
             f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
