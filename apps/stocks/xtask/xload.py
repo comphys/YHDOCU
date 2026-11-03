@@ -54,7 +54,7 @@ class Control :
         mod = __import__('%s' %(module), fromlist=[classn])
         return getattr( mod, classn )(self)
 
-    def db(self,dbname,path='') :
+    def db(self,dbname,path=rootpath) :
         tmp =  self.load_lib('db')
         tmp.con(dbname,path)
         return tmp
