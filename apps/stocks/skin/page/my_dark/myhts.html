@@ -95,6 +95,9 @@
 				</tr>
 			</table>	
 		</div>
+		<div id="information-block1" class='my_block' style="display:none;padding:10px;" ondblclick="$(this).hide()">
+			<div id="information-div1" style="width:100%;background-color:black;min-height:50px;"></div>
+		</div>
 		<div class='my_block' id="reserved-order-div" style="display:none;" ondblclick="$(this).hide()">
 			<div id="reserved-order-body">
 				<span id="reserved-account-tle" style="color:#F5F6CE;margin-left:20px;"></span>
@@ -123,13 +126,6 @@
 					</td>
 				</tr></table>
 			</div>
-		</div>
-
-		<div id="information-block1" class='my_block' style="display:none;padding:10px;" ondblclick="$(this).hide()">
-			<div id="information-div1" style="width:100%;background-color:black;min-height:50px;"></div>
-		</div>
-		<div id="information-block2" class='my_block' style="display:none;padding:10px;" ondblclick="$(this).hide()">
-			<div id="information-div2" style="width:100%;background-color:black;min-height:50px;"></div>
 		</div>
 		{% endif %}
 	</div>
@@ -204,10 +200,10 @@ function get_reserved_order(opt) {
 			}	html += '</tr>'
 			html +="</table>"
 		} else {
-			html = "<div style='padding:20px'>"+tle +" 예약현황이 없습니다.</div>"
+			html = "<div style='padding:20px;color:gray;font-size:20px;font-weight:bold;'>"+tle+" 예약현황이 없습니다.</div>"
 		}
-		$("#information-block2").show()
-		$("#information-div2").html(html)
+		$("#information-block1").show()
+		$("#information-div1").html(html)
 	});
 }
 
@@ -260,8 +256,8 @@ function get_orders_today(opt) {
 		else {
 			html = "<div style='padding:20px;color:gray;font-size:20px;font-weight:bold;'>"+tle+" 주문현황이 없습니다.</div>"
 		}
-		$("#information-block2").show()
-		$("#information-div2").html(html)
+		$("#information-block1").show()
+		$("#information-div1").html(html)
 	});
 }
 
