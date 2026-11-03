@@ -3,9 +3,9 @@ import subprocess
 from slack_sdk import WebClient
 
 sysos = platform.system()
-if    sysos == 'Windows' :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
-elif  sysos == 'Linux'   :  rootpath = '/home/comphys/YHDOCU'; macaddress = 'A475B980D0CA'
-elif  sysos == 'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
+if    sysos == 'Windows' :  rootpath = '/YHDOCU/'; macaddress = 'BCFCE7C9911F'
+elif  sysos == 'Linux'   :  rootpath = '/home/comphys/YHDOCU/'; macaddress = 'A475B980D0CA'
+elif  sysos == 'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU/'; macaddress = 'A475B980D0CA'
 else: sysos == '' 
 sys.path.append(rootpath)
 
