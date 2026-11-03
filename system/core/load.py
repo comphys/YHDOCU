@@ -2,10 +2,9 @@ import os,re,pprint,logging,html,json,platform
 from werkzeug.datastructures import ImmutableMultiDict
 
 _sysos = platform.system()
-if    _sysos == 'Windows' :  rootpath = '/YHDOCU/'; macaddress = 'BCFCE7C9911F'
-elif  _sysos == 'Linux'   :  rootpath = '/home/comphys/YHDOCU/'; macaddress = 'A475B980D0CA'
-elif  _sysos == 'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU/'; macaddress = 'A475B980D0CA'
-else: _sysos == '' 
+_sysos = platform.system()
+_mac_addr = {'Windows':'BCFCE7C9911F','Linux':'A475B980D0CA','Android':'A475B980D0CA'}
+_rootpath = {'Windows':'/YHDOCU/','Linux':'/home/comphys/YHDOCU/','Android':'/data/data/com.termux/files/home/YHDOCU/'}
 
 
 def my_log(logger_name) :
@@ -47,8 +46,8 @@ class Control :
         '''
         self.I = V   # index.py 로 부터 전달받은 초기 파라미터
         self.I['_dev'] = _sysos
-        self.I['_rth'] = rootpath
-        self.I['_mac'] = macaddress
+        self.I['_rth'] = _rootpath[_sysos]
+        self.I['_mac'] = _mac_addr[_sysos]
         self.D = {}  # view에 전달하기 위한 변수 
         
         # control에 전달하는 기본 값
@@ -136,9 +135,9 @@ class Control :
         mod = __import__('%s' %(module), fromlist=[classn])
         return getattr( mod, classn )(self)
 
-    def db(self,dbname,path=rootpath) :
+    def db(self,dbname) :
         tmp =  self.load_lib('db')
-        tmp.con(dbname,path)
+        tmp.con(dbname,path=self.I['_rth'])
         return tmp
 
     def load_app_lib(self,module_name):

@@ -21,10 +21,7 @@ class M_myhts(Model) :
 
         if self.SYS.I['_dev'] in ['Windows','Android'] : 
 
-            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
-            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
             API = self.SYS.load_app_lib('meritz')
-            API.maca = macaddress
             self.D['예약날자'] = my.kor_loc_date("Asia/Seoul")
             self.D['예약날자'] = self.D['예약날자'].replace('-','')
             self.D['balance'] = []
@@ -62,12 +59,7 @@ class Ajax(Model) :
 
         if self.SYS.I['_dev'] in ['Windows','Android'] : 
 
-            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
-            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
             API = self.SYS.load_app_lib('meritz')
-            API.root = rootpath
-            API.maca = macaddress        
-
             odday = API.get_market_date()
             opt = self.D['post']['opt']
             API.change_account(opt)
@@ -81,12 +73,7 @@ class Ajax(Model) :
         
         if self.SYS.I['_dev'] in ['Windows','Android'] :
             
-            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
-            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
             API = self.SYS.load_app_lib('meritz')
-            API.root = rootpath
-            API.maca = macaddress  
-
             opt = self.D['post']['opt']
             API.change_account(opt)
             rst = API.get_account_balance()
@@ -98,13 +85,8 @@ class Ajax(Model) :
     def orders_today(self) :
         
         if self.SYS.I['_dev'] in ['Windows','Android'] :
-            
-            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
-            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
-            API = self.SYS.load_app_lib('meritz')
-            API.root = rootpath
-            API.maca = macaddress  
 
+            API = self.SYS.load_app_lib('meritz')
             opt = self.D['post']['opt']
             API.change_account(opt)
             rst = API.get_orders_today('2','0')
@@ -117,12 +99,7 @@ class Ajax(Model) :
         
         if self.SYS.I['_dev'] in ['Windows','Android'] :
             
-            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
-            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
             API = self.SYS.load_app_lib('meritz')
-            API.root = rootpath
-            API.maca = macaddress  
-
             acc    = self.D['post']['a']
             date   = self.D['post']['d']
             ordnum = self.D['post']['n']
@@ -135,12 +112,7 @@ class Ajax(Model) :
         
         if self.SYS.I['_dev'] in ['Windows','Android'] :
             
-            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
-            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
             API = self.SYS.load_app_lib('meritz')
-            API.root = rootpath
-            API.maca = macaddress  
-
             acc    = self.D['post']['a']
             date   = self.D['post']['d']
             ordnum = self.D['post']['n']
@@ -155,12 +127,7 @@ class Ajax(Model) :
         
         if self.SYS.I['_dev'] in ['Windows','Android'] :
             
-            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
-            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
             API = self.SYS.load_app_lib('meritz')
-            API.root = rootpath
-            API.maca = macaddress  
-
             acc   = self.D['post']['acc']
             qty   = self.D['post']['qty']
             price = self.D['post']['price']
@@ -175,12 +142,7 @@ class Ajax(Model) :
         
         if self.SYS.I['_dev'] in ['Windows','Android'] :
             
-            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
-            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
             API = self.SYS.load_app_lib('meritz')
-            API.root = rootpath
-            API.maca = macaddress  
-
             acc   = self.D['post']['acc']
             qty   = self.D['post']['qty']
             price = self.D['post']['price']
@@ -195,12 +157,7 @@ class Ajax(Model) :
         
         if self.SYS.I['_dev'] in ['Windows','Android'] :
             
-            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
-            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
             API = self.SYS.load_app_lib('meritz')
-            API.root = rootpath
-            API.maca = macaddress  
-
             acc   = self.D['post']['acc']
             qty   = self.D['post']['qty']
             price = self.D['post']['price']
@@ -214,12 +171,7 @@ class Ajax(Model) :
         
         if self.SYS.I['_dev'] in ['Windows','Android'] :
             
-            if    self.SYS.I['_dev'] == 'Windows'  :  rootpath = '/YHDOCU'; macaddress = 'BCFCE7C9911F'
-            elif  self.SYS.I['_dev'] ==  'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU'; macaddress = 'A475B980D0CA'
             API = self.SYS.load_app_lib('meritz')
-            API.root = rootpath
-            API.maca = macaddress  
-
             acc   = self.D['post']['acc']
             qty   = self.D['post']['qty']
             price = self.D['post']['price']

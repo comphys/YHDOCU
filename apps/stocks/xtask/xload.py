@@ -4,12 +4,10 @@ from slack_sdk import WebClient
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-sysos = platform.system()
-if    sysos == 'Windows' :  rootpath = '/YHDOCU/'; macaddress = 'BCFCE7C9911F'
-elif  sysos == 'Linux'   :  rootpath = '/home/comphys/YHDOCU/'; macaddress = 'A475B980D0CA'
-elif  sysos == 'Android' :  rootpath = '/data/data/com.termux/files/home/YHDOCU/'; macaddress = 'A475B980D0CA'
-else: sysos == '' 
-sys.path.append(rootpath)
+_sysos = platform.system()
+_mac_addr = {'Windows':'BCFCE7C9911F','Linux':'A475B980D0CA','Android':'A475B980D0CA'}
+_rootpath = {'Windows':'/YHDOCU/','Linux':'/home/comphys/YHDOCU/','Android':'/data/data/com.termux/files/home/YHDOCU/'}
+sys.path.append(_rootpath[_sysos])
 
 class Control :
 
@@ -17,9 +15,9 @@ class Control :
         self.D = {}
         self.I = {}
         self.I['_app'] = 'stocks'
-        self.I['_dev'] = sysos
-        self.I['_rth'] = rootpath
-        self.I['_mac'] = macaddress
+        self.I['_dev'] = _sysos
+        self.I['_rth'] = _rootpath[_sysos]
+        self.I['_mac'] = _mac_addr[_sysos]
         self.DB = None
         self.info = None
         self.parm = None
@@ -54,9 +52,9 @@ class Control :
         mod = __import__('%s' %(module), fromlist=[classn])
         return getattr( mod, classn )(self)
 
-    def db(self,dbname,path=rootpath) :
+    def db(self,dbname) :
         tmp =  self.load_lib('db')
-        tmp.con(dbname,path)
+        tmp.con(dbname,self.I['_rth'])
         return tmp
 
     def load_app_lib(self,module_name):

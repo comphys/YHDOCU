@@ -11,11 +11,6 @@ class myClass(Control) :
         self.skey = self.DB.store("slack_key")
         self.title= '주식 로그기록 보고'
 
-    def log(self,str) :
-        hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
-        with open(self._root+"/logs/xtask.log","a",encoding="utf-8") as f:
-            f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
-
     def log_update(self,day) :
 
         OHLC = self.load_app_lib('ohlc')
