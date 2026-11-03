@@ -20,6 +20,7 @@ class Control :
         self.C = {}
         self.I = {}
         self.I['_app'] = 'stocks'
+        self.I['_rth'] = rootpath
         self.DB = None
         self.info = None
         self.parm = None
