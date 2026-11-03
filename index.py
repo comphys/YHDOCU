@@ -1,4 +1,4 @@
-import os,configparser,config
+import os,config
 from flask import ( Flask,request,render_template,redirect,send_from_directory,jsonify,session, g)
 from system.core.load import load_control
 
@@ -68,22 +68,11 @@ def main(myapp='stocks', control='board', method='index', option=None):
     target_method = getattr(controller_class, method)
     if not callable(target_method): return render_template('sys/sys_msg.html', msg="호출 가능한 메서드가 아닙니다."), 404
 
-    # 앱 설정 파일 로드 (변수 섀도잉 방지: cfg_parser 사용)
-    cfg_parser = configparser.ConfigParser()
-    cfg_parser.optionxform = lambda optionstr: optionstr
-    config_file = os.path.join(loc_myapp, 'config.ini')
-    try:
-        cfg_parser.read(config_file, encoding='utf-8')
-        myconfig = cfg_parser
-    except Exception:
-        myconfig = None
-
     # 컨트롤러 전달 파라미터 패킹 (g.client_ip 사용으로 스레드 세이프)
     parameters = {
         '_opt': option,
         '_pos': request.get_json(silent=True) if (myapp == 'api' and request.is_json) else request.form,
         '_aut': request.headers.get('Authorization') if myapp == 'api' else None,
-        '_cfg': myconfig,
         '_pth': app_root,
         '_app': myapp,
         '_bse': f'/{myapp}/',

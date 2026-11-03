@@ -11,8 +11,7 @@ class Docueditor(Control) :
 
         self.D['Docu_path']  = self.D['f_path'].replace('DOCU_ROOT',self.C['DOCU_ROOT'])
         self.D['Docu_file']  = self.D['Docu_path'] + '/' + self.D['Docu_name']
-        self.D['DOCU_ROOT'] = self.C['DOCU_ROOT']
-
+  
         with open(self.D['Docu_file'],'r',encoding='utf-8') as f :
             self.D['DOCU_CONT'] = f.read()
 

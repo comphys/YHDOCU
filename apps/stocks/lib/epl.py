@@ -9,9 +9,7 @@ class EPL :
         self.info = SYS.info
         self.delimiter = '/'
         self.path = ''
-        self.C = SYS.C
-        self.ROOT = self.C['DOCU_ROOT']
-
+  
         session['epl_path'] = session.get('epl_path',self.ROOT )
         self.path = session['epl_path']
 

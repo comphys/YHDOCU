@@ -30,7 +30,6 @@ class Board(Control) :
 
             self.skin = 'board/'+self.D['BCONFIG']['skin']
             self.model('board-board_main')
-            self.D['DOCU_ROOT'] = self.C['DOCU_ROOT']
 
 
     def list(self) :

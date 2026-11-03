@@ -21,7 +21,6 @@ class Page(Control) :
             else : self.D['xwidth'] = '815px'
                 
             self.skin = 'page/'+self.D['BCONFIG']['skin']
-            self.D['DOCU_ROOT'] = self.C['DOCU_ROOT']
 
             qry = f"SELECT section FROM h_board_config WHERE acc_sect <={self.D['USER']['level']} GROUP BY section ORDER BY sposition"
             self.D['MENU_SECTION'] = self.DB.exe(qry)
