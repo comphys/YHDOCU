@@ -47,6 +47,7 @@ class Control :
         '''
         self.I = V   # index.py 로 부터 전달받은 초기 파라미터
         self.I['_dev'] = _sysos
+        self.I['_rth'] = rootpath
         self.D = {}  # view에 전달하기 위한 변수 
         
         # control에 전달하는 기본 값

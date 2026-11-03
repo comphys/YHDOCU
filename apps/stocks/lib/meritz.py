@@ -16,12 +16,13 @@ class MERITZ :
         # 기본 작동 서버는 스마트폰임
         self.maca    = 'A475B980D0CA'
         self.host    = 'https://openapi.imeritz.com:9443'
+        self.root    = SYS.I['_rth']
         self.MS      = SYS.db('mysafe')
         self.change_account('01')
 
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
-        with open("logs/meritzapi.log","a",encoding="utf-8") as f:
+        with open(self.root+"logs/meritzapi.log","a",encoding="utf-8") as f:
             f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
 
     # 게정 변경 opt = '01'|'02'|'03'
