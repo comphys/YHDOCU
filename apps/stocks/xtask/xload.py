@@ -1,6 +1,8 @@
 import sys,platform
 import subprocess
 from slack_sdk import WebClient
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 sysos = platform.system()
 if    sysos == 'Windows' :  rootpath = '/YHDOCU/'; macaddress = 'BCFCE7C9911F'
@@ -11,16 +13,13 @@ sys.path.append(rootpath)
 
 class Control :
 
-    _root = rootpath
-    _macA = macaddress
-    _syso = sysos        
-
     def __init__(self) :
         self.D = {}
-        self.C = {}
         self.I = {}
         self.I['_app'] = 'stocks'
+        self.I['_dev'] = sysos
         self.I['_rth'] = rootpath
+        self.I['_mac'] = macaddress
         self.DB = None
         self.info = None
         self.parm = None
@@ -90,9 +89,9 @@ class Control :
         else : print(data)
 
     def send_message(self,message) :
-        if self._syso == 'Android' :
+        if self.I['_dev'] == 'Android' :
             subprocess.run(["termux-notification","--title",self.title,"--content",message])
-        elif self._syso == 'Windows' :
+        elif self.I['_dev'] == 'Windows' :
             print(self.title,message)
         else :  
             client = WebClient(token=self.skey)
@@ -101,6 +100,11 @@ class Control :
     # Android 의 termux-api 를 통해 문자메세지를 보낸다.(사전권한 획득 필요, 안드로이드에서만 동작)
     def send_sms(phone_number='01027208737',message="") :
         subprocess.run(['termux-sms-send','-n',phone_number,message])
+
+    def log(self,str) :
+        hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
+        with open(self.I['_rth']+"logs/xtask.log","a",encoding="utf-8") as f:
+            f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
 # --------------------------------------------------------------------------------------------------------------
 class Model :
     def __init__(self,SYS) :

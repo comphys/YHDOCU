@@ -1,5 +1,3 @@
-from datetime import datetime
-from zoneinfo import ZoneInfo
 import time,requests
 
 from xload import Control
@@ -8,7 +6,7 @@ class myClass(Control) :
 
     sel_type = '1'
     buy_type = '2'
-    exe_type =  False # 실제 실행 / 테스트   
+    exe_type = True # 실제 실행 / 테스트   
     ord_date = ''
     lst_date = ''
     
@@ -18,8 +16,6 @@ class myClass(Control) :
         self.title= '주식 예약주문 보고'
 
         self.API = self.load_app_lib('meritz')
-        self.API.root = self._root
-        self.API.maca = self._macA
 
         self.my_token   = self.DB.store('api_token')
         self.my_host    = "https://comphys.pythonanywhere.com/api"
@@ -31,10 +27,6 @@ class myClass(Control) :
 
         time.sleep(1)
 
-    def log(self,str) :
-        hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
-        with open(self._root+"/logs/xtask.log","a",encoding="utf-8") as f:
-            f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
 
     def rsn_order_data(self,board) :
         chk_last_date = self.DB.last_date(f"h_{board}_board")
@@ -98,7 +90,7 @@ class myClass(Control) :
 
 # ------------------------------------------------------------------------------------------------------------------
 # 예약을 위한 코드임으로 이페이지의 현재 시간(A.today) 기준은 한국시간 기준이다. 
-# 이 페이지의 실행은 한국시간 09:00 ~ 22:00 사이에 실행된다고 가정한다. 
+# 이 페이지의 실행은 한국시간 18:00 ~ 22:00 사이에 실행된다고 가정한다. (프리장부터 주문, 예약주문은 정규장부터 적용됨으로 적용시간을 빠르게 하기 위함)
 # LOC 예약은 프리타임부터 가능함으로, 10시 예약에서 18시 실시간 주문(LOC)로 변경한다. 2026.10.30일 부터 적용
 # ------------------------------------------------------------------------------------------------------------------
 A = myClass()
@@ -107,8 +99,10 @@ A.exe_type = True
 last_date = A.DB.last_date('h_stockHistory_board')
 nextStock = my.next_stock_day(last_date,A.DB)
 today_kor = my.kor_loc_date('Asia/Seoul')
+today_nyk = my.kor_loc_date("US/Eastern")
 todayWeek = my.dayofdate(today_kor[0:10])
 todayTime = int(today_kor[11:13])
+
 
 Action = True
 
@@ -117,9 +111,9 @@ if Action :
     # # 증시 휴장일 체크하기
     skip = ''
     if todayWeek in ['토','일'] : skip = f"{todayWeek}요일 입니다"
-    elif today_kor[0:10] != nextStock[0] : skip = "예약 가능 날자가 아닙니다."
+    elif today_nyk[0:10] != nextStock[0] : skip = "예약 가능 날자가 아닙니다."
     elif today_kor[0:10] > '2027-09-30' : skip = 'API 키 갱신이 필요합니다'
-    elif todayTime < 18 : skip = '예약 가능 시간이 아닙니다.' 
+    elif todayTime < 18 and todayTime > 5 : skip = '예약 가능 시간이 아닙니다.' 
     else :
         A.lst_date = last_date
         A.ord_date = nextStock[0].replace('-','')
@@ -133,21 +127,23 @@ if Action :
         orders = A.rsn_order_data('rsnLog')
         A.do_my_order('RSN',orders)
         if A.exe_type :
-            A.DB.parameter_update('TX070',A.ord_date)
-            requests.post(A.my_host+'/check/check_rsn',headers=A.my_headers,json={'rsn_check':A.ord_date})
+            A.DB.parameter_update('TX070',today_nyk[0:10])
+            requests.post(A.my_host+'/check/check_rsn',headers=A.my_headers,json={'rsn_check':today_nyk[0:10]})
 
         # DIY
         A.API.change_account('02')
         orders = A.diy_order_data('logDIY')
+        A.lprint(orders)
         A.do_my_order('DIY',orders)
         if A.exe_type :
-            A.DB.parameter_update('A0710',A.ord_date)
-            requests.post(A.my_host+'/check/check_diy',headers=A.my_headers,json={'diy_check':A.ord_date})
+            A.DB.parameter_update('A0710',today_nyk[0:10])
+            requests.post(A.my_host+'/check/check_diy',headers=A.my_headers,json={'diy_check':today_nyk[0:10]})
 
-        # DIY2
+        # POC
         A.API.change_account('03')
         orders = A.diy_order_data('logDIY2')
-        A.do_my_order('DIY2',orders)
+        A.lprint(orders)
+        A.do_my_order('POC',orders)
 
         # LTH
         A.API.change_account('lth')

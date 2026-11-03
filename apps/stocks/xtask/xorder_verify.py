@@ -1,5 +1,3 @@
-from datetime import datetime
-from zoneinfo import ZoneInfo
 import time
 
 from xload import Control
@@ -10,14 +8,7 @@ class myClass(Control) :
         self.DB = self.db('stocks')
         self.skey = self.DB.store("slack_key")
         self.title= '주식주문 검증 보고'
-
         self.API = self.load_app_lib('meritz')
-        self.API.maca = self._macA  
-
-    def log(self,str) :
-        hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
-        with open(self._root+"/logs/xtask.log","a",encoding="utf-8") as f:
-            f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
 
     def rsn_order_data(self) :
         last_ohlc = self.DB.last_date('h_stockHistory_board')

@@ -14,10 +14,10 @@ class MERITZ :
 
     def __init__(self,SYS) :
         # 기본 작동 서버는 스마트폰임
-        self.maca    = 'A475B980D0CA'
-        self.host    = 'https://openapi.imeritz.com:9443'
-        self.root    = SYS.I['_rth']
-        self.MS      = SYS.db('mysafe')
+        self.host  = 'https://openapi.imeritz.com:9443'
+        self.root  = SYS.I['_rth']
+        self.macA  = SYS.I['_mac']
+        self.MS    = SYS.db('mysafe')
         self.change_account('01')
 
     def log(self,str) :
@@ -41,7 +41,7 @@ class MERITZ :
             self.log("token을 가져오지 못하였습니다.")
             return False
  
-        headers={'Content-Type':'application/json;charset=UTF-8','authorization':f'Bearer {token}','mac_address':self.maca}
+        headers={'Content-Type':'application/json;charset=UTF-8','authorization':f'Bearer {token}','mac_address':self.macA}
         resp=requests.get(self.host+endp, headers=headers,params=params) if mean=='get' else requests.post(self.host+endp,headers=headers,json=params)
 
         # 오류 판단 

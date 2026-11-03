@@ -1,6 +1,3 @@
-from datetime import datetime
-from zoneinfo import ZoneInfo
-
 from xload import Control
 import system.core.my_utils as my
 class myClass(Control) :
@@ -10,12 +7,6 @@ class myClass(Control) :
         self.DB = self.db('stocks')
         self.skey = self.DB.store("slack_key")
         self.API = self.load_app_lib('meritz')
-        self.API.maca = self._macA   
-
-    def log(self,str) :
-        hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
-        with open(self._root+"/logs/xtask.log","a",encoding="utf-8") as f:
-            f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
 
     def get_token_duetime(self) :
         ts = self.DB.store('meritz-time'+'lth')
