@@ -82,9 +82,11 @@ class RSN :
             if  self.N['보유수량'] :
                 self.N['총매수금'] = self.N['평균단가'] * self.N['보유수량']
                 self.N['수익현황'] = self.N['평가금액'] - self.N['총매수금']
+                self.N['현수익률'] = self.N['수익현황'] / self.N['총매수금']  * 100 
 
             else :
                 self.N['수익현황'] = self.N['매도금액'] - self.N['총매수금']
+                self.N['현수익률'] = self.N['수익현황'] / self.N['총매수금']  * 100 
                 self.N['총매수금'] = 0.0
                 self.N['평균단가'] = 0.0
                 self.N['매수차수'] = 0
@@ -92,9 +94,9 @@ class RSN :
                 self.N['생활날수'] = 0              
                 if not self.V['매도수량'] : self.rebalance_N() # just for N tactic 
             
-            self.N['현수익률'] = self.N['수익현황'] / self.N['총매수금']  * 100 if self.N['총매수금'] else 0.0
             self.N['중익합계']+= self.N['수익현황']  
             self.N['실현익률'] = round(self.N['중익합계']/(self.N['중도합계']-self.N['중익합계'])*100,2)
+
 
             self.commission(self.N,2)
 
