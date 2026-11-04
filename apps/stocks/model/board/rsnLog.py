@@ -204,6 +204,9 @@ class Ajax(Model) :
         LD['add18'] = DR['add3']
         LD['add19'] = DS['add3']
         LD['add20'] = DN['add3']
+        # 꼬리매도
+        LD['n_24']  = DN['n_24'] # 꼬리매도량
+        LD['n_25']  = DN['n_25'] # 꼬리매도가   
         
         LD['uid']   = 'comphys'
         LD['uname'] = '정용훈'

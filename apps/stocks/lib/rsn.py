@@ -22,7 +22,7 @@ class RSN :
 # same with xtask BEGIN
 # ------------------------------------------------------------------------------------------------------------------------------------------ 
 
-    def calculate_A(self,tac) :
+    def calculate_T(self,tac) :
 
         if  tac['매수수량'] : 
             tac['매수금액'] =  tac['매수수량'] * self.M['당일종가']
@@ -83,6 +83,7 @@ class RSN :
                 self.N['총매수금'] = self.N['평균단가'] * self.N['보유수량']
                 self.N['수익현황'] = self.N['평가금액'] - self.N['총매수금']
                 self.N['현수익률'] = self.N['수익현황'] / self.N['총매수금']  * 100 
+                self.N['매수차수'] = self.M['최대차수'] - 1  # 부분매도 시 최대차수 1 감소
 
             else :
                 self.N['수익현황'] = self.N['매도금액'] - self.N['총매수금']
@@ -90,7 +91,8 @@ class RSN :
                 self.N['총매수금'] = 0.0
                 self.N['평균단가'] = 0.0
                 self.N['매수차수'] = 0
-                self.N['매도예가'] = 0   
+                self.N['생활가격'] = 0.0
+                self.N['꼬리가격'] = 0.0   
                 self.N['생활날수'] = 0              
                 if not self.V['매도수량'] : self.rebalance_N() # just for N tactic 
             
@@ -102,10 +104,10 @@ class RSN :
 
     def calculate(self)  :
         
-        self.calculate_A(self.V) # 계산순서 ( V-N-R-S ) V는 기준, N은 RS의 잔액이동의 영향을 피하기 위해 RS보다 우선 계산함
+        self.calculate_T(self.V) # 계산순서 ( V-N-R-S ) V는 기준, N은 RS의 잔액이동의 영향을 피하기 위해 RS보다 우선 계산함
         self.calculate_N() 
-        self.calculate_A(self.R)
-        self.calculate_A(self.S)
+        self.calculate_T(self.R)
+        self.calculate_T(self.S)
 
         잔액총액  = self.R['현재잔액'] + self.S['현재잔액'] + self.N['현재잔액']
         평가총액  = self.R['평가금액'] + self.S['평가금액'] + self.N['평가금액']
@@ -211,15 +213,19 @@ class RSN :
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # today_sell : 당일 매도를 체크한다
     # -------------------------------------------------------------------------------------------------------------------------------------------      
-    def today_sell(self) :
+    def today_sell_T(self) :
 
         for tac in (self.V,self.R,self.S) : 
             
             if  self.M['당일종가'] >= self.M['매도예가'] : 
                 tac['매도수량'] = tac['보유수량']
-                
-        if  self.M['당일종가'] >= self.N['매도예가'] :  # N 매도예가는 M 매도예가과 같거나 작아야 한다.
+
+    def today_sell_N(self) :
+
+        if  self.M['당일종가'] >= self.N['생활가격'] :  # N 매도예가는 M 매도예가과 같거나 작아야 한다.
             self.N['매도수량']  = self.N['보유수량']
+
+        elif self.N['꼬리수량'] and self.M['당일종가']  >= self.N['꼬리가격'] and self.N['매수차수'] == self.M['최대차수'] : self.N['매도수량'] = self.N['꼬리수량']
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # today_buy : 당일 매수를 체크한다
@@ -404,12 +410,28 @@ class RSN :
         if  self.N['보유수량'] : 
             
             if  self.M['현재날수'] - self.N['생활날수'] > self.M['생활대기'] and self.N['매수차수'] == self.M['최대차수'] : 
-                self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['강매가치']) 
+                self.N['생활가격'] = my.round_up(self.N['평균단가']*self.M['강매가치'])
+                self.N['생활수량'] = self.N['보유수량']
+
+                if     self.M['연속상승'] >= 2 : self.N['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.02) 
+                elif   self.M['연속상승'] == 1 : self.N['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.05) 
+                else : self.N['꼬리가격'] = my.round_up(self.M['당일종가']*1.1)
+
+                self.N['꼬리수량'] = int(self.N['보유수량'] * 0.1)
+                
+                if  self.N['꼬리가격'] >= self.N['생활가격'] : 
+                    self.N['꼬리수량'] = 0
+                else :
+                    self.N['생활수량'] -= self.N['꼬리수량']
+
             else :
-                self.N['매도예가'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
+                self.N['생활가격'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
+                self.N['생활수량'] = self.N['보유수량']
+                self.N['꼬리가격'] = 0.0
+                self.N['꼬리수량'] = 0
 
             mbp = max(self.R['매수예가'],self.S['매수예가'])
-            if self.N['매도예가'] <= mbp  : self.N['매도예가'] = mbp + 0.01
+            if self.N['생활가격'] <= mbp  : self.N['생활가격'] = mbp + 0.01
 
     def tomorrow_step(self) :
         self.tomorrow_buy_V()
@@ -425,11 +447,11 @@ class RSN :
         if  self.M['현재날수'] < self.M['강매시작'] :
             self.M['매도예가'] = min(self.M['매도예가'],my.round_up(self.M['당일종가']*self.M['종가상승']))
             
-            self.M['매도예가'] = max(self.M['매도예가'],self.N['매도예가'],my.round_up(self.V['평균단가']*self.M['강매가치']))
+            self.M['매도예가'] = max(self.M['매도예가'],self.N['생활가격'],my.round_up(self.V['평균단가']*self.M['강매가치']))
            
         else :
             self.M['매도예가'] = my.round_up( self.V['평균단가'] * self.M['강매가치'] )
-            self.N['매도예가'] = min(self.M['매도예가'],self.N['매도예가'])
+            self.N['생활가격'] = min(self.M['매도예가'],self.N['생활가격'])
 
         for tac in (self.V,self.R,self.S,self.N) : 
             if tac['매수예가'] >= self.M['매도예가'] : tac['매수예가'] = self.M['매도예가'] - 0.01
@@ -512,7 +534,8 @@ class RSN :
                 if  self.new_day() : self.chart_data(); self.tomorrow_step(); self.increase_count(printOut); continue
                 else : self.M['첫날기록'] = True; self.chart_data(); continue
 
-            self.today_sell()
+            self.today_sell_T()
+            self.today_sell_N()
             self.today_buy_V()
             self.today_buy_R()
             self.today_buy_S()
@@ -719,7 +742,12 @@ class RSN :
         self.R['일매수금'] = int(self.R['현재잔액'] / self.M['분할횟수'])
         self.S['일매수금'] = int(self.S['현재잔액'] / self.M['분할횟수'])
         self.R['잔액이동'] = self.S['잔액이동'] = self.V['잔액이동'] = self.N['잔액이동'] = False
-         # -------------------------------------------------------------------------------------------
+        # 꼬리자르기 전략 ( N tactic )
+        self.N['생활가격'] = 0.0
+        self.N['생활수량'] = 0
+        self.N['꼬리가격'] = 0.0
+        self.N['꼬리수량'] = 0
+        # -------------------------------------------------------------------------------------------
         if  self.chart : # 챠트작성
             
             self.D['TR'] = []
@@ -781,9 +809,9 @@ class RSN :
             self.D['N_안정매수량'] = 0
             self.D['N_생활매수량'] = int( self.N['매금단계'][0] / self.D['N_생활매수가'] )
 
-            self.D['N_일반매도량'] = self.D['N_기회매도량'] = self.D['N_안정매도량'] = self.D['N_생활매도량'] = 0
+            self.D['N_일반매도량'] = self.D['N_기회매도량'] = self.D['N_안정매도량'] = self.D['N_생활매도량'] = self.D['N_꼬리매도량'] = 0
 
-            self.D['N_일반매도가'] = self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = 0
+            self.D['N_일반매도가'] = self.D['N_기회매도가'] = self.D['N_안정매도가'] = self.D['N_생활매도가'] = self.D['N_꼬리매도가'] = 0
             self.D['N_일반종대비'] = self.D['N_기회종대비'] = self.next_percent(self.M['당일종가'],self.D['N_기회매수가'])
             self.D['N_안정종대비'] = self.D['N_공통종대비'] = ''
             self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
@@ -812,10 +840,15 @@ class RSN :
             self.D['N_생활평대비'] = self.next_percent(self.N['평균단가'],self.N['매수예가']) 
             self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.N['매수예가'])
             
-            self.D['N_생활매도량'] = self.N['보유수량']
-            self.D['N_생활매도가'] = f"{self.N['매도예가']:.2f}"
-            self.D['N_생활도평비'] = self.next_percent(self.N['평균단가'],self.N['매도예가'])
-            self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.N['매도예가'])
+            self.D['N_생활매도량'] = self.N['생활수량']
+            self.D['N_생활매도가'] = f"{self.N['생활가격']:.2f}"
+            self.D['N_생활도평비'] = self.next_percent(self.N['평균단가'],self.N['생활가격'])
+            self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.N['생활가격'])
+
+            self.D['N_꼬리매도량'] = self.N['꼬리수량']
+            self.D['N_꼬리매도가'] = f"{self.N['꼬리가격']:.2f}"
+            self.D['N_꼬리도평비'] = self.next_percent(self.N['평균단가'],self.N['꼬리가격'])
+            self.D['N_꼬리도종비'] = self.next_percent(self.M['당일종가'],self.N['꼬리가격'])
             
     def next_percent(self,a,b) :
         
@@ -962,6 +995,10 @@ class RSN :
         LD['sub3']  = f"{self.D['N_'+key+'매도량']:}"
         LD['sub19'] = self.D['N_'+key+'매수가'] 
         LD['sub20'] = self.D['N_'+key+'매도가']
+
+        # 꼬리 매수 매도를 위한 정보
+        LD['n_24'] = self.D['N_꼬리매도량']
+        LD['n_25'] = self.D['N_꼬리매도가']
         
         return LD
 

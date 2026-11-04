@@ -30,11 +30,14 @@ class myClass(Control) :
 
     def rsn_order_data(self,board) :
         chk_last_date = self.DB.last_date(f"h_{board}_board")
-        NS = self.DB.line(f"SELECT add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20 FROM h_rsnLog_board WHERE add0='{chk_last_date}' LIMIT 1") 
+        NS = self.DB.line(f"SELECT add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20,n_24,n_25 FROM h_rsnLog_board WHERE add0='{chk_last_date}' LIMIT 1") 
         OD = []
         for key in ['r','s','n'] :
             if int(NS[key+'_17']) :  OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'2','주문수량':NS[key+'_17'],'주문가격':NS[key+'_18']})
             if int(NS[key+'_19']) :  OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'1','주문수량':NS[key+'_19'],'주문가격':NS[key+'_20']})
+        
+        # 꼬리매도
+        if int(NS[key+'_24']) :  OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'1','주문수량':NS[key+'_24'],'주문가격':NS[key+'_25']})    
         return OD
 
     def diy_order_data(self,board) :
@@ -133,7 +136,6 @@ if Action :
         # DIY
         A.API.change_account('02')
         orders = A.diy_order_data('logDIY')
-        A.lprint(orders)
         A.do_my_order('DIY',orders)
         if A.exe_type :
             A.DB.parameter_update('A0710',today_nyk[0:10])
@@ -142,7 +144,6 @@ if Action :
         # POC
         A.API.change_account('03')
         orders = A.diy_order_data('logDIY2')
-        A.lprint(orders)
         A.do_my_order('POC',orders)
 
         # LTH

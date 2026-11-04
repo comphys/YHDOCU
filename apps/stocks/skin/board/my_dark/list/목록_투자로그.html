@@ -51,6 +51,11 @@
 					<td style="color:gray">{{D['N_생활도종비']}}</td><td style="color:gray">{{D['N_생활도평비']}}</td>
 				</tr>
 				{% endif %}
+				{% if D['N_꼬리매도량'] %}
+				<tr><td style="text-align:left;">N <span style="color:gray">sell</span></td><td>{{D['N_꼬리매도가']}}</td><td data-scnt="off">{{D['N_꼬리매도량']}}</td>
+					<td style="color:gray">{{D['N_꼬리도종비']}}</td><td style="color:gray">{{D['N_꼬리도평비']}}</td>
+				</tr>
+				{% endif %}
 			</table>
 
 			<div id="real-nyse-time" style="text-align:center;padding-top:50px;font-size:16px;font-weight:bold;color:lightgray">&nbsp;</div>
