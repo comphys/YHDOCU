@@ -144,11 +144,19 @@ if Action :
         # POC
         A.API.change_account('03')
         orders = A.diy_order_data('logDIY2')
+        # 임시적용 20261105
+        ordable = A.API.get_account_balance()[0]['매도가능']
+        for O in orders :
+            if O['매매구분'] == '1' : O['주문수량'] = ordable
         A.do_my_order('POC',orders)
 
         # LTH
         A.API.change_account('lth')
         orders = A.diy_order_data('logLTH')
+        # 임시적용 20261105
+        ordable = A.API.get_account_balance()[0]['매도가능']
+        for O in orders :
+            if O['매매구분'] == '1' : O['주문수량'] = ordable
         A.do_my_order('LTH',orders)
        
 else :

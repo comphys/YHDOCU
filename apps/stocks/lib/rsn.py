@@ -78,8 +78,10 @@ class RSN :
             self.N['현재잔액']+= self.N['매도금액']
             self.N['중도합계']+= self.N['매도금액']
             self.N['평가금액'] = self.N['보유수량'] * self.M['당일종가'] 
+            self.commission(self.N,2)
 
             if  self.N['보유수량'] :
+                # 부분매수 시 평균단가를 변경시키지 않는다(실제계좌에 보여지는 수치와 일치시키고, 다음 매수 시 평단가를 낮추어 탈출을 빨리하기 위함이다(손절가능))
                 self.N['총매수금'] = self.N['평균단가'] * self.N['보유수량']
                 self.N['수익현황'] = self.N['평가금액'] - self.N['총매수금']
                 self.N['현수익률'] = self.N['수익현황'] / self.N['총매수금']  * 100 
@@ -90,6 +92,7 @@ class RSN :
                 self.N['현수익률'] = self.N['수익현황'] / self.N['총매수금']  * 100 
                 self.N['총매수금'] = 0.0
                 self.N['평균단가'] = 0.0
+
                 self.N['매수차수'] = 0
                 self.N['생활가격'] = 0.0
                 self.N['꼬리가격'] = 0.0   
@@ -99,8 +102,6 @@ class RSN :
             self.N['중익합계']+= self.N['수익현황']  
             self.N['실현익률'] = round(self.N['중익합계']/(self.N['중도합계']-self.N['중익합계'])*100,2)
 
-
-            self.commission(self.N,2)
 
     def calculate(self)  :
         

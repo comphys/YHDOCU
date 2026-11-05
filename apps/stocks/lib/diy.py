@@ -42,15 +42,23 @@ class DIY :
             self.M['매도금액']  = self.M['매도수량'] * self.M['당일종가']
             self.M['보유수량'] -= self.M['매도수량']  
             self.M['현재잔액'] += self.M['매도금액'] 
+            self.M['평가금액']  = self.M['당일종가'] * self.M['보유수량'] 
             self.commission(2) 
 
-            if not self.M['보유수량'] :
+            if  self.M['보유수량'] :
+                # 부분매수 시 평균단가를 변경시키지 않는다(실제계좌에 보여지는 수치와 일치시키고, 다음 매수 시 평단가를 낮추어 탈출을 빨리하기 위함이다(손절가능))
+                self.M['총매수금'] = self.M['평균단가'] * self.M['보유수량']
+                self.M['수익현황'] = self.M['평가금액'] - self.M['총매수금']
+                self.M['현수익률'] = self.M['수익현황'] / self.M['총매수금']  * 100
+                self.M['현재손률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
+                self.M['진행상황'] = '꼬리매도' 
+                self.M['매수차수'] = self.M['최대차수'] - 1   
+
+            else  :
 
                 # 전체 매도시 현수익률은 시즌자금대비 수익률을 나나낸다.
                 self.M['수익현황'] =  self.M['현재잔액'] - self.M['시즌자금']
                 self.M['현수익률'] = round( self.M['수익현황']/self.M['시즌자금'] * 100, 2 ) 
-
-                self.M['평가금액'] = 0.00
                 self.M['총매수금'] = 0.00
                 self.M['평균단가'] = 0.00
 
@@ -61,18 +69,6 @@ class DIY :
                 self.vCount(self.M['수익현황'])
                 self.tax()
                 self.rebalance() 
-            
-            else :
-                # 부분매수 시 평균단가를 변경시키지 않는다(실제계좌에 보여지는 수치와 일치시키고, 다음 매수 시 평단가를 낮추어 탈출을 빨리하기 위함이다(손절가능))
-                self.M['평가금액'] = self.M['당일종가'] * self.M['보유수량'] 
-                self.M['총매수금'] = self.M['평균단가'] * self.M['보유수량']
-                self.M['수익현황'] = self.M['평가금액'] - self.M['총매수금']
-                self.M['현수익률'] = self.M['수익현황'] / self.M['총매수금']  * 100
-                self.M['현재손률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
-
-                self.M['진행상황'] = '꼬리매도' 
-                self.M['매수차수'] = self.M['최대차수'] - 1            
-            
 
         self.realMDD()
 
