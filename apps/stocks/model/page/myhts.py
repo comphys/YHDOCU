@@ -191,4 +191,20 @@ class Ajax(Model) :
                 rst['현재가'] = f"{rst['현재가']:.2f}"
                 return self.SYS.json(rst)
             else : return self.SYS.json("error::token_issue")
+
+    def get_money_balance(self) :
+
+        if self.SYS.I['_dev'] in ['Windows','Android'] :
+
+            API = self.SYS.load_app_lib('meritz')
+            acc   = self.D['post']['acc']
+            API.change_account(acc)
+            rst = API.get_money_balance()
+            rst['달러예수금'] = f"{float(rst['달러예수금']):,.2f}" 
+            rst['원화환산']   = f"{float(rst['원화환산']):,.0f}"  
+            rst['원화예수금'] = f"{float(rst['원화예수금']):,.0f}" 
+            rst['통합달러']   = f"{float(rst['통합달러']):,.2f}"  
+            rst['통합원화']   = f"{float(rst['통합원화']):,.0f}"  
+
+            return self.SYS.json(rst)
         

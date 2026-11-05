@@ -3,6 +3,7 @@
 {% block contents_page %}
 <style>
 	.my_block {margin-top:10px;padding:10px;background-color:#33363b;border:2px solid black;} 
+	.my_block2 {margin-top:20px;padding:10px;background-color:black;border:2px solid #33363b;}
 	.my_block + .my_block {margin-top:-12px;border-top:none;}
 	.choice {text-align:center;cursor: pointer;}
 	.choice:hover{background-color:black;}
@@ -10,7 +11,8 @@
 	.list-bear {text-align:right; color:#c1e0ff}
 	.real-cancel, .reserved-cancel {color:#F6CECE;cursor:pointer;text-align:center;}
 	.api-input {background:transparent;border:1px solid gray;width:100px;margin-top:-2px;text-align:center;color:yellow;}
-	.td-title {font-weight:bold;color:#F5F6CE;border-right:1px solid black;}
+	.td-title {font-weight:bold;color:#F5F6CE;border-right:1px solid black;cursor:pointer;}
+	.td-title:hover{background-color:black;color:cyan;}
 	#real-order-body,#reserved-order-body {width:100%;padding:10px;background-color:black;min-height:50px;border:2px solid gray;font-size:20px;color:gray;font-weight:bold;}
 </style>
 
@@ -98,6 +100,9 @@
 		<div id="information-block1" class='my_block' style="display:none;padding:10px;" ondblclick="$(this).hide()">
 			<div id="information-div1" style="width:100%;background-color:black;min-height:50px;"></div>
 		</div>
+		<div id="information-block2" class='my_block' style="display:none;padding:10px;" ondblclick="$(this).hide()">
+			<div id="information-div2" style="width:100%;background-color:black;min-height:50px;"></div>
+		</div>
 		<div class='my_block' id="reserved-order-div" style="display:none;" ondblclick="$(this).hide()">
 			<div id="reserved-order-body">
 				<span id="reserved-account-tle" style="color:#F5F6CE;margin-left:20px;"></span>
@@ -123,12 +128,14 @@
 						<label><input style="margin-top:4px" type="radio" name="order_type" value="chk_loc" checked /> LOC</label>&nbsp;
 						<label><input style="margin-top:4px" type="radio" name="order_type" value="chk_lmt" /> 지정가</label>&nbsp;
 						<label><input style="margin-top:4px" type="radio" name="order_type" value="chk_mkt" /> 시장가</label>
+						<span style="display:inline-block;margin-left:10px;cursor:pointer;" onclick="trading_guide()"><i class="fa fa-pencil"></i></span>
 					</td>
 				</tr></table>
 			</div>
 		</div>
 		{% endif %}
 	</div>
+	
 </div>
 
 
@@ -175,6 +182,7 @@ const myChart_main = new Chart(ctx_main, config_main);
 {% if D['balance'] %}
 
 let title = {'01':'RSN','02':'DIY','03':'POC','lth':'LTH'}
+let accno = {'RSN':'01','DIV':'02','POC':'03','LTH':'lth'}
 let last_closeP = {{D['lst_clsP']}}
 
 function get_reserved_order(opt) {
@@ -227,6 +235,7 @@ function get_account_balance(opt) {
 		}
 		$("#information-block1").show()
 		$("#information-div1").html(html)
+		h_dialog.notice(tle +" 계좌 현황을 업데이트 하였습니다.")
 	});
 }
 
@@ -245,9 +254,13 @@ function get_orders_today(opt) {
 			html+="<tr>"
 			for (key in rd) { 
 				txt = rd[key]
-				if(key=='매매구분' && txt=='1') {txt='매도'}
-				if(key=='매매구분' && txt=='2') {txt='매수'}
-				if(key=='호가유형' && txt=='5') {txt='LOC'; code='7'}
+				if(key=='매매구분' && txt=='1') {txt="<span class='list-bull'>매도</span>"}
+				if(key=='매매구분' && txt=='2') {txt="<span class='list-bear'>매수</span>"}
+				if(key=='호가유형' && txt=='5') {txt='LOC'; code='32'}
+				if(key=='호가유형' && txt=='2') {txt='지정가'; code='01'}
+				if(key=='호가유형' && txt=='0') {txt='시장가'; code='05'}
+				if(key=='주문수량') {txt="<span style='color:#F5F6CE;font-weight:bold;'>"+txt+"</span>"}
+				if(key=='주문가격') {txt="<span style='color:#F6D8CE;font-weight:bold;'>"+txt+"</span>"}
 				html+= "<td style='text-align:center'>"+txt+"</td>"
 			}
 			html += "<td onclick='real_cancel(this)' class='real-cancel' data-a='"+opt+"' data-d='"+rd['주문일자']+"' data-q='"+rd['주문수량']+"' data-c='"+code+"'>"+rd['주문번호']+"</td>"
@@ -256,8 +269,9 @@ function get_orders_today(opt) {
 		else {
 			html = "<div style='padding:20px;color:gray;font-size:20px;font-weight:bold;'>"+tle+" 주문현황이 없습니다.</div>"
 		}
-		$("#information-block1").show()
-		$("#information-div1").html(html)
+		$("#information-block2").show()
+		$("#information-div2").html(html)
+		h_dialog.notice(tle +" 주문 현황을 업데이트 하였습니다.")
 	});
 }
 
@@ -333,7 +347,7 @@ function real_order_sell() {
 	if(! qty)   {h_dialog.notice("수량을 입력해 주세요."); return;}
 	if(! price) {h_dialog.notice("가격을 입력해 주세요."); return;}
 	let posturl = uri('linkurl') + 'page/ajax/myhts/real_sell';
-	$.post(posturl, {acc:acc,qty:qty,price:price,code:code,cond:cond},null,'json').done(function(){get_orders_today(acc);});	
+	$.post(posturl, {acc:acc,qty:qty,price:price,code:code,cond:cond},null,'json').done(function(){get_orders_today(acc);});
 }
 function real_order_buy() {
 	let acc = $("#real-account").text()
@@ -428,6 +442,21 @@ function start_stock_live(opt) {
 	}	
 }
 
+
+$(".td-title").click(function(){
+	let sel = $(this)
+	let tle = $(this).text()
+	let acc = accno[tle]
+	let posturl = uri('linkurl') + 'page/ajax/myhts/get_money_balance';
+	$.post(posturl, {acc:acc},null,'json').done(function(data){
+		$(sel).next().text(data['달러예수금'])
+		$(sel).next().next().text(data['원화환산'])
+		$(sel).next().next().next().text(data['원화예수금'])
+		$(sel).next().next().next().next().text(data['통합달러'])
+		$(sel).next().next().next().next().next().text(data['통합원화'])
+		h_dialog.notice(tle +" 계좌 현황을 업데이트 하였습니다.")
+	});	
+})
 // start_stock_live('play')
 
 {% endif %}

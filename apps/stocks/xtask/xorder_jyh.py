@@ -106,58 +106,49 @@ today_nyk = my.kor_loc_date("US/Eastern")
 todayWeek = my.dayofdate(today_kor[0:10])
 todayTime = int(today_kor[11:13])
 
-
-Action = True
-
-if Action :
-
-    # # 증시 휴장일 체크하기
-    skip = ''
-    if todayWeek in ['토','일'] : skip = f"{todayWeek}요일 입니다"
-    elif today_nyk[0:10] != nextStock[0] : skip = "예약 가능 날자가 아닙니다."
-    elif today_kor[0:10] > '2027-09-30' : skip = 'API 키 갱신이 필요합니다'
-    elif todayTime < 18 and todayTime > 5 : skip = '예약 가능 시간이 아닙니다.' 
-    else :
-        A.lst_date = last_date
-        A.ord_date = nextStock[0].replace('-','')
-
-    if  skip :
-        A.send_message(skip)
-
-    else :
-        # RSN
-        A.API.change_account('01')
-        orders = A.rsn_order_data('rsnLog')
-        A.do_my_order('RSN',orders)
-        if A.exe_type :
-            A.DB.parameter_update('TX070',today_nyk[0:10])
-            requests.post(A.my_host+'/check/check_rsn',headers=A.my_headers,json={'rsn_check':today_nyk[0:10]})
-
-        # DIY
-        A.API.change_account('02')
-        orders = A.diy_order_data('logDIY')
-        A.do_my_order('DIY',orders)
-        if A.exe_type :
-            A.DB.parameter_update('A0710',today_nyk[0:10])
-            requests.post(A.my_host+'/check/check_diy',headers=A.my_headers,json={'diy_check':today_nyk[0:10]})
-
-        # POC
-        A.API.change_account('03')
-        orders = A.diy_order_data('logDIY2')
-        # 임시적용 20261105
-        ordable = A.API.get_account_balance()[0]['매도가능']
-        for O in orders :
-            if O['매매구분'] == '1' : O['주문수량'] = ordable
-        A.do_my_order('POC',orders)
-
-        # LTH
-        A.API.change_account('lth')
-        orders = A.diy_order_data('logLTH')
-        # 임시적용 20261105
-        ordable = A.API.get_account_balance()[0]['매도가능']
-        for O in orders :
-            if O['매매구분'] == '1' : O['주문수량'] = ordable
-        A.do_my_order('LTH',orders)
-       
+skip = ''
+if todayWeek in ['토','일'] : skip = f"{todayWeek}요일 입니다"
+elif today_nyk[0:10] != nextStock[0] : skip = "예약 가능 날자가 아닙니다."
+elif today_kor[0:10] > '2027-09-30' : skip = 'API 키 갱신이 필요합니다'
+elif todayTime < 18 and todayTime > 5 : skip = '예약 가능 시간이 아닙니다.' 
 else :
-    print("Action 스위치가 꺼져 있습니다.")
+    A.lst_date = last_date
+    A.ord_date = nextStock[0].replace('-','')
+
+if  skip :
+    A.send_message(skip)
+
+else :
+    # RSN
+    A.API.change_account('01')
+    orders = A.rsn_order_data('rsnLog')
+    A.do_my_order('RSN',orders)
+    if A.exe_type :
+        A.DB.parameter_update('TX070',today_nyk[0:10])
+        requests.post(A.my_host+'/check/check_rsn',headers=A.my_headers,json={'rsn_check':today_nyk[0:10]})
+
+    # DIY
+    A.API.change_account('02')
+    orders = A.diy_order_data('logDIY')
+    A.do_my_order('DIY',orders)
+    if A.exe_type :
+        A.DB.parameter_update('A0710',today_nyk[0:10])
+        requests.post(A.my_host+'/check/check_diy',headers=A.my_headers,json={'diy_check':today_nyk[0:10]})
+
+    # POC
+    A.API.change_account('03')
+    orders = A.diy_order_data('logDIY2')
+    # 임시적용 20261105
+    ordable = A.API.get_account_balance()[0]['매도가능']
+    for O in orders :
+        if O['매매구분'] == '1' : O['주문수량'] = ordable
+    A.do_my_order('POC',orders)
+
+    # LTH
+    A.API.change_account('lth')
+    orders = A.diy_order_data('logLTH')
+    # 임시적용 20261105
+    ordable = A.API.get_account_balance()[0]['매도가능']
+    for O in orders :
+        if O['매매구분'] == '1' : O['주문수량'] = ordable
+    A.do_my_order('LTH',orders)

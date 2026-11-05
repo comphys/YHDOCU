@@ -202,9 +202,9 @@ class MERITZ :
         else : 
             return rst
     
-    # 주문을 취소한다. 코드(oder_cond_cls_code)는 주문구분코드(oder_cls_code)가 01·05·35~38이면 0, 31·33이면 2, 32·34이면 7 이어야 합니다.
+    # 주문을 취소한다. 
     def do_real_cancel(self,date,ordnum,qty,code='0') :
-        para={'oder_date':date,'orgl_oder_no':ordnum,'oder_cond_cls_code':code,'odqt':qty}
+        para={'oder_date':date,'orgl_oder_no':ordnum,'oder_cls_code':code,'odqt':qty}
         if (rst:=self.rst_api('post','/trading/v1/overseas/orders/cancel',para)) :
             return True
         else : 
