@@ -183,9 +183,9 @@ class Ajax(Model) :
 
     def get_current_price(self) :
 
-        if self.SYS.I['_dev'] in ['Windows','Android'] :
-            DB = self.SYS.load_app_lib('dbopen')
-            rst = DB.get_current_price('SOXL',mk='FA')
+        if self.SYS.I['_dev'] in ['Windows','Linux'] :
+            DB = self.SYS.load_app_lib('kiwoom')
+            rst = DB.get_current_price('SOXL')
             if rst :
                 rst['현재가'] = abs(float(rst['현재가']))
                 rst['현재가'] = f"{rst['현재가']:.2f}"

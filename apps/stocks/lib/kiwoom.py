@@ -7,12 +7,13 @@ class KIWOOM :
     def __init__(self,SYS) :
         self.SYS   = SYS
         self.DB    = SYS.DB
+        self.root  = SYS.I['_rth']
         self.host  = 'https://api.kiwoom.com'
         self.headers = {'Content-Type':'application/json;charset=UTF-8','cont-yn':'N'}
 
     def log(self,str) :
         hour_now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M:%S")  
-        with open("logs/kiwoom.log","a",encoding="utf-8") as f:
+        with open(self.root+"logs/kiwoom.log","a",encoding="utf-8") as f:
             f.write(f"<span class='who-time'>{hour_now} :</span> {str}\n")
 
     def strf(self,num) :

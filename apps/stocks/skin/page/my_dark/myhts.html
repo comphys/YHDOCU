@@ -14,6 +14,7 @@
 	.td-title {font-weight:bold;color:#F5F6CE;border-right:1px solid black;cursor:pointer;}
 	.td-title:hover{background-color:black;color:cyan;}
 	#real-order-body,#reserved-order-body {width:100%;padding:10px;background-color:black;min-height:50px;border:2px solid gray;font-size:20px;color:gray;font-weight:bold;}
+	#price-guider {float:right;margin-right:20px;}
 </style>
 
 <div class="row-row">
@@ -27,6 +28,11 @@
 			</div>
 			<div id="real-nyse-time" style="float:left;font-weight:bold;color:gray;margin-right:20px;">&nbsp;</div>
 			<div id="real-time-stock-price" style="float:right;font-weight:bold;color:gray">&nbsp;</div>
+			<div id="price-guider">
+				<span id="pg-ep" style="color:gray;font-size:24px;font-weight:bold;"></span>
+				<span id="pg-pr" style="font-weight:bold;font-size:16px;"></span>
+				<span id="pg-bp" style="color:gray;font-size:24px;font-weight:bold;"></span>
+			</div>
 		</div>
 		<div class='my_block'>
 			<table class='table table-bordered' style="background-color:#24272d;">
@@ -39,8 +45,8 @@
 					<th style="text-align:right;">통합원화</th>
 					<th style="text-align:center;">계좌현황</th>
 					<th style="text-align:center;">예약현황</th>
-					<th style="text-align:center;">주문현황</th>
 					<th style="text-align:center;">예약하기</th>
+					<th style="text-align:center;">주문현황</th>
 					<th style="text-align:center;">주문하기</th>
 				</tr>
 				<tr>
@@ -52,8 +58,8 @@
 					<td style="text-align:right;color:#CEF6D8;font-weight:bold;">{{D['balance'][0]['통합원화']}}</td>
 					<td class="choice" onclick="get_account_balance('01')"><i class="fa fa-font" style="color:#F6CECE;"></i></td>
 					<td class="choice" onclick="get_reserved_order('01')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
-					<td class="choice" onclick="get_orders_today('01')"><i class="fa fa-check" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_reserved_order('01')"><i class="fa fa-pencil-square-o" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_orders_today('01')"><i class="fa fa-check" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_real_order('01')"><i class="fa fa-check-square-o" style="color:#F6CECE;"></td>
 				</tr>
 				<tr>
@@ -65,8 +71,8 @@
 					<td style="text-align:right;color:#CEF6D8;font-weight:bold;">{{D['balance'][1]['통합원화']}}</td>
 					<td class="choice" onclick="get_account_balance('02')"><i class="fa fa-font" style="color:#F6CECE"></i></td>
 					<td class="choice" onclick="get_reserved_order('02')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
-					<td class="choice" onclick="get_orders_today('02')"><i class="fa fa-check" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_reserved_order('02')"><i class="fa fa-pencil-square-o" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_orders_today('02')"><i class="fa fa-check" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_real_order('02')"><i class="fa fa-check-square-o" style="color:#F6CECE;"></td>
 				</tr>
 				<tr>
@@ -78,8 +84,8 @@
 					<td style="text-align:right;color:#CEF6D8;font-weight:bold;">{{D['balance'][2]['통합원화']}}</td>
 					<td class="choice" onclick="get_account_balance('03')"><i class="fa fa-font" style="color:#F6CECE"></i></td>
 					<td class="choice" onclick="get_reserved_order('03')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
-					<td class="choice" onclick="get_orders_today('03')"><i class="fa fa-check" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_reserved_order('03')"><i class="fa fa-pencil-square-o" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_orders_today('03')"><i class="fa fa-check" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_real_order('03')"><i class="fa fa-check-square-o" style="color:#F6CECE;"></td>
 				</tr>
 				<tr>
@@ -91,8 +97,8 @@
 					<td style="text-align:right;color:#CEF6D8;font-weight:bold;">{{D['balance'][3]['통합원화']}}</td>
 					<td class="choice" onclick="get_account_balance('lth')"><i class="fa fa-font" style="color:#F6CECE"></i></td>
 					<td class="choice" onclick="get_reserved_order('lth')"><i class="fa fa-pencil" style="color:#F6CECE;"></td>
-					<td class="choice" onclick="get_orders_today('lth')"><i class="fa fa-check" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_reserved_order('lth')"><i class="fa fa-pencil-square-o" style="color:#F6CECE;"></td>
+					<td class="choice" onclick="get_orders_today('lth')"><i class="fa fa-check" style="color:#F6CECE;"></td>
 					<td class="choice" onclick="do_real_order('lth')"><i class="fa fa-check-square-o" style="color:#F6CECE;"></td>
 				</tr>
 			</table>	
@@ -114,21 +120,24 @@
 				<span id="reserved-account" style="color:black;"></span>
 			</div>
 		</div>
-		<div class='my_block' id="real-order-div" style="display:none;" ondblclick="$(this).hide()">
+		<div class='my_block' id="real-order-div" style="display:none;" >
 			<div id="real-order-body">
 				<table><tr>
-					<td style="width:100px;"><span id="real-account-tle" style="color:#F5F6CE;margin-left:20px;"></span></td>
+					<td ondblclick="$('#real-order-div').hide()" style="width:100px;"><span id="real-account-tle" style="color:#F5F6CE;margin-left:20px;"></span></td>
 					<td>
-						<span style="display:inline-block;">주문 SOXL</span>
+						<span style="display:inline-block;">SOXL</span>
 						<span style="display:inline-block;margin-left:20px;">수량 : <input name='real-qty' class="api-input" /></span>
 						<span style="display:inline-block;margin-right:20px;">가격 : <input name='real-price' class="api-input"/></span>
-						<button class="btn btn-blue" onclick="real_order_sell()">매도주문</button>
-						<button class="btn btn-red" onclick="real_order_buy()">매수주문</button>
+						<span onclick="price_guider('1')" style="cursor:pointer"><i class="fa fa-circle"></i></span>
+						<span onclick="price_guider('2')" style="cursor:pointer"><i class="fa fa-plus"></i></span>
+						<span onclick="price_guider('3')" style="cursor:pointer"><i class="fa fa-minus"></i></span>&nbsp;&nbsp;&nbsp;
+						<button class="btn btn-red" onclick="real_order_sell()">매도주문</button>
+						<button class="btn btn-blue" onclick="real_order_buy()">매수주문</button>
 						<span id="real-account" style="color:black;"></span> 
-						<label><input style="margin-top:4px" type="radio" name="order_type" value="chk_loc" checked /> LOC</label>&nbsp;
+						
 						<label><input style="margin-top:4px" type="radio" name="order_type" value="chk_lmt" /> 지정가</label>&nbsp;
-						<label><input style="margin-top:4px" type="radio" name="order_type" value="chk_mkt" /> 시장가</label>
-						<span style="display:inline-block;margin-left:10px;cursor:pointer;" onclick="trading_guide()"><i class="fa fa-pencil"></i></span>
+						<label><input style="margin-top:4px" type="radio" name="order_type" value="chk_mkt" /> 시장가</label>&nbsp;
+						<label><input style="margin-top:4px" type="radio" name="order_type" value="chk_loc" checked /> LOC</label>&nbsp;
 					</td>
 				</tr></table>
 			</div>
@@ -216,6 +225,7 @@ function get_reserved_order(opt) {
 }
 
 function get_account_balance(opt) {
+
 	let posturl = uri('linkurl') + 'page/ajax/myhts/account';
 	let tle = title[opt]
 	$.post(posturl, { opt : opt },null,'json').done(function(data){
@@ -457,10 +467,42 @@ $(".td-title").click(function(){
 		h_dialog.notice(tle +" 계좌 현황을 업데이트 하였습니다.")
 	});	
 })
-// start_stock_live('play')
 
+
+let g_pr = 0
+
+
+function price_guider(opt) {
+	if(opt=='1') {
+		g_pr = 0;
+		let price=$("input[name='real-price']").val();
+		if(!price) {$("#pg-bp").text('');$("#pg-pr").text('');$("#pg-ep").text('');return;}
+		price = parseFloat(price)
+		$("#pg-bp").text(price.toFixed(2));
+		$("#pg-pr").text('+0.0%');
+		$("#pg-ep").text(price.toFixed(2));
+	} if(opt=='2') {
+		let bp = $("#pg-bp").text();
+		if(!bp) return;
+		g_pr += 0.5;
+		if(g_pr >=0){$("#pg-pr").attr("class","list-bull"); txt="+"+g_pr.toFixed(1)+"%"}else{$("#pg-pr").attr("class","list-bear"); txt=g_pr.toFixed(1)+"%"}
+		$("#pg-pr").text(txt)
+		let gp = parseFloat(bp)*(1+ g_pr/100);
+		$("#pg-ep").text(gp.toFixed(2))
+		$("input[name='real-price']").val(gp.toFixed(2))
+	} if(opt=='3') {
+		let bp = $("#pg-bp").text();
+		if(!bp) return;
+		g_pr -= 0.5;
+		if(g_pr >=0){$("#pg-pr").attr("class","list-bull"); txt="+"+g_pr.toFixed(1)+"%"}else{$("#pg-pr").attr("class","list-bear"); txt=g_pr.toFixed(1)+"%"}
+		$("#pg-pr").text(txt)
+		let gp = parseFloat(bp)*(1+ g_pr/100);
+		$("#pg-ep").text(gp.toFixed(2))
+		$("input[name='real-price']").val(gp.toFixed(2))
+	}
+
+}
 {% endif %}
-
 
 </script>
 {% endblock %}
