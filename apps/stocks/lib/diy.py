@@ -177,6 +177,9 @@ class DIY :
                 self.M['꼬리수량'] = 0
             else :
                 self.M['몸통수량'] -= self.M['꼬리수량']
+        else :
+            self.M['꼬리수량'] = 0
+            self.M['꼬리가격'] = 0.0
 
         # 꼬리 매매 2026.10.20 시행
 
