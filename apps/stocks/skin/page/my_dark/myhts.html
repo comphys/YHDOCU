@@ -13,7 +13,7 @@
 	.api-input {background:transparent;border:1px solid gray;width:100px;margin-top:-2px;text-align:center;color:yellow;}
 	.td-title {font-weight:bold;color:#F5F6CE;border-right:1px solid black;cursor:pointer;}
 	.td-title:hover{background-color:black;color:cyan;}
-	#real-order-body,#reserved-order-body {width:100%;padding:10px;background-color:black;min-height:50px;border:2px solid gray;font-size:20px;color:gray;font-weight:bold;}
+	#real-order-body,#reserved-order-body {width:100%;padding:10px;background-color:black;min-height:50px;border:2px solid gray;font-size:20px;color:gray;font-weight:bold;user-select: none;}
 	#price-guider {float:right;margin-right:20px;}
 </style>
 
@@ -125,16 +125,16 @@
 				<table><tr>
 					<td ondblclick="$('#real-order-div').hide()" style="width:100px;"><span id="real-account-tle" style="color:#F5F6CE;margin-left:20px;"></span></td>
 					<td>
-						<span style="display:inline-block;">SOXL</span>
-						<span style="display:inline-block;margin-left:20px;">수량 : <input name='real-qty' class="api-input" /></span>
-						<span style="display:inline-block;margin-right:20px;">가격 : <input name='real-price' class="api-input"/></span>
-						<span onclick="price_guider('1')" style="cursor:pointer"><i class="fa fa-circle"></i></span>
-						<span onclick="price_guider('2')" style="cursor:pointer"><i class="fa fa-plus"></i></span>
-						<span onclick="price_guider('3')" style="cursor:pointer"><i class="fa fa-minus"></i></span>&nbsp;&nbsp;&nbsp;
+						<span style="display:inline-block;margin-left:20px;">SOXL 수량 : </span>
+						<span onclick="qty_guider('+')" style="cursor:pointer"><i class="fa fa-plus"></i></span>
+						<span onclick="qty_guider('-')" style="cursor:pointer"><i class="fa fa-minus"></i></span>
+						<input name='real-qty' class="api-input" />
+						<span style="display:inline-block;margin-right:10px;">가격 : <input name='real-price' class="api-input"/></span>
+						<span onclick="price_guider('0')" style="cursor:pointer"><i class="fa fa-circle"></i></span>
+						<span onclick="price_guider('+')" style="cursor:pointer"><i class="fa fa-plus"></i></span>
+						<span onclick="price_guider('-')" style="cursor:pointer"><i class="fa fa-minus"></i></span>&nbsp;&nbsp;
 						<button class="btn btn-red" onclick="real_order_sell()">매도주문</button>
-						<button class="btn btn-blue" onclick="real_order_buy()">매수주문</button>
-						<span id="real-account" style="color:black;"></span> 
-						
+						<button class="btn btn-blue" onclick="real_order_buy()">매수주문</button>&nbsp;
 						<label><input style="margin-top:4px" type="radio" name="order_type" value="chk_lmt" /> 지정가</label>&nbsp;
 						<label><input style="margin-top:4px" type="radio" name="order_type" value="chk_mkt" /> 시장가</label>&nbsp;
 						<label><input style="margin-top:4px" type="radio" name="order_type" value="chk_loc" checked /> LOC</label>&nbsp;
@@ -336,18 +336,17 @@ function reserved_cancel(sel)
 function do_real_order(opt) {
 	let tle = title[opt]
 	$("#real-order-div").show()
-	$("#real-account").text(opt)
 	$("input[name='real-qty']").val('')
 	$("input[name='real-price']").val('')
 	$("#real-account-tle").text(tle)
 }
 function real_order_sell() {
-	let acc = $("#real-account").text()
+	let tle = $("#real-account-tle").text()
 	let qty = $("input[name='real-qty']").val()
 	let price=$("input[name='real-price']").val()
 	let is_market = $('input[name="chk_market"]').is(':checked') 
 	let is_limitp = $('input[name="chk_limitp"]').is(':checked')
-	let tle = title[acc]
+	let acc = accno[tle]
 	let code = '32'
 	let cond = '7'
 	let order_type = $('input[name="order_type"]:checked').val()
@@ -360,12 +359,12 @@ function real_order_sell() {
 	$.post(posturl, {acc:acc,qty:qty,price:price,code:code,cond:cond},null,'json').done(function(){get_orders_today(acc);});
 }
 function real_order_buy() {
-	let acc = $("#real-account").text()
+	let tle = $("#real-account-tle").text()
 	let qty = $("input[name='real-qty']").val()
 	let price=$("input[name='real-price']").val()
 	let is_market = $('input[name="chk_market"]').is(':checked') 
 	let is_limitp = $('input[name="chk_limitp"]').is(':checked')
-	let tle = title[acc]
+	let acc = accno[tle]
 	let code = '32'
 	let cond = '7'
 	let order_type = $('input[name="order_type"]:checked').val()
@@ -471,9 +470,8 @@ $(".td-title").click(function(){
 
 let g_pr = 0
 
-
 function price_guider(opt) {
-	if(opt=='1') {
+	if(opt=='0') {
 		g_pr = 0;
 		let price=$("input[name='real-price']").val();
 		if(!price) {$("#pg-bp").text('');$("#pg-pr").text('');$("#pg-ep").text('');return;}
@@ -481,7 +479,7 @@ function price_guider(opt) {
 		$("#pg-bp").text(price.toFixed(2));
 		$("#pg-pr").text('+0.0%');
 		$("#pg-ep").text(price.toFixed(2));
-	} if(opt=='2') {
+	} if(opt=='+') {
 		let bp = $("#pg-bp").text();
 		if(!bp) return;
 		g_pr += 0.5;
@@ -490,7 +488,7 @@ function price_guider(opt) {
 		let gp = parseFloat(bp)*(1+ g_pr/100);
 		$("#pg-ep").text(gp.toFixed(2))
 		$("input[name='real-price']").val(gp.toFixed(2))
-	} if(opt=='3') {
+	} if(opt=='-') {
 		let bp = $("#pg-bp").text();
 		if(!bp) return;
 		g_pr -= 0.5;
@@ -501,6 +499,17 @@ function price_guider(opt) {
 		$("input[name='real-price']").val(gp.toFixed(2))
 	}
 
+}
+
+function qty_guider(opt) {
+	let qt = $("input[name='real-qty']").val()
+	if(!qt) return;
+	if(opt=='+'){
+		$("input[name='real-qty']").val(qt*2)
+	} if(opt=='-'){
+		qt = qt/2;
+		if(qt>=1) {$("input[name='real-qty']").val(qt)}
+	}
 }
 {% endif %}
 

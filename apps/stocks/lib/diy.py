@@ -685,7 +685,7 @@ class DIY :
         D['add12']  = f"{self.M['평가금액']:.2f}" # 평가금액
         D['add13']  = f"{self.M['매도금액']:.2f}" # 매도금액
         D['add14']  = f"{self.M['수익현황']:.2f}" # 수익현황
-        if  self.M['매도금액'] :  
+        if  self.M['매도금액'] and self.M['보유수량'] == 0 :  
             D['add15'] = my.sv(self.D['손익통계'][-1][3])
         else :        
             D['add15']  = f"{self.M['현수익률']:.2f}" # 현수익률
