@@ -136,8 +136,11 @@ class DIY :
         
         # elif self.M['꼬리수량'] and self.M['당일종가'] >= self.M['꼬리가격'] and self.M['매수차수'] == self.M['최대차수'] : self.M['매도수량'] = self.M['꼬리수량']
         # 꼬리매도가 연속적으로 수행될 수 있도록 변경(2026.11.11.)
-        elif self.M['꼬리수량'] and self.M['당일종가'] >= self.M['꼬리가격'] : self.M['매도수량'] = self.M['꼬리수량']
-
+        elif self.M['꼬리수량'] and self.M['당일종가'] >= self.M['꼬리가격'] : 
+            # 꼬리매도
+            self.M['매도수량'] = self.M['꼬리수량']
+            self.M['꼬리총수']+= self.M['꼬리수량']
+            self.M['꼬리총매']+= self.M['매도수량']*self.M['당일종가'] 
 
  
     def today_buy(self) :
@@ -151,6 +154,8 @@ class DIY :
             self.M['매수보류']  = True
             self.M['자체연속']  = 1
 
+            if self.M['꼬리총수'] : self.M['꼬리총수'] = 0
+
 
     def tomorrow_buy(self) :
         
@@ -160,6 +165,10 @@ class DIY :
         매수예가1 = round(self.M['당일종가'] * self.M['보류가치'],2) if self.M['매수보류'] else round(self.M['당일종가'] * self.M['매입가치'],2)
         매수예가2 = round(self.M['당일종가'] * self.M['자체진입'],2) if self.M['자체연속'] >= 1 else 0.0
         self.M['매수예가'] = max(매수예가1,매수예가2)
+
+        if  self.M['꼬리총수'] :
+            self.M['매수예가'] = round(self.M['꼬리총매']/self.M['꼬리총수'],2)
+
         self.M['예정수량'] = int(  self.M['매금단계'][self.M['매수차수']] / self.M['매수예가'] ) 
         
     def tomorrow_sell(self) :
@@ -198,6 +207,8 @@ class DIY :
 
         self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가','매수예가','예정수량','매수차수','몸통가격','몸통수량','꼬리수량','꼬리가격'],0)
         self.M['시즌자금'] = self.M['현재잔액']
+        self.M['꼬리총수'] = 0
+        self.M['꼬리총매'] = 0
 
         진입단가 = round(self.M['전일종가'] * self.M['첫날가치'], 2) if self.M['연속하락'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
         if  self.M['당일종가'] <=  진입단가  :

@@ -228,7 +228,11 @@ class RSN :
         if  self.M['당일종가'] >= self.N['생활가격'] :  # N 매도예가는 M 매도예가과 같거나 작아야 한다.
             self.N['매도수량']  = self.N['보유수량']
         # elif self.N['꼬리수량'] and self.M['당일종가']  >= self.N['꼬리가격'] and self.N['매수차수'] == self.M['최대차수'] : self.N['매도수량'] = self.N['꼬리수량']
-        elif self.N['꼬리수량'] and self.M['당일종가']  >= self.N['꼬리가격']  : self.N['매도수량'] = self.N['꼬리수량']
+        elif self.N['꼬리수량'] and self.M['당일종가']  >= self.N['꼬리가격']  : 
+            # 꼬리매도
+            self.N['매도수량'] = self.N['꼬리수량'] 
+            self.N['꼬리총수']+= self.N['매도수량']
+            self.N['꼬리총매']+= self.N['매도수량']*self.M['당일종가']
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # today_buy : 당일 매수를 체크한다
@@ -270,6 +274,9 @@ class RSN :
             self.N['거래코드']  = f"{self.N['매수차수']}B {self.N['매수수량']}" 
 
             if self.N['매수차수'] == 1: self.N['생활날수'] = self.M['현재날수']
+            if self.N['꼬리총수'] : self.N['꼬리총수'] = 0
+
+
 
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -374,6 +381,10 @@ class RSN :
             self.N['매수예가'] = round(self.M['당일종가'] * self.M['매입가치'],2 )
         else :
             self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >=(self.M['진입일자']-1) else round(self.M['당일종가'] * self.M['진입가치'],2)    
+
+        if  self.N['꼬리총수'] : 
+            # 꼬리매수
+            self.N['매수예가'] = round(self.N['꼬리총매']/self.N['꼬리총수'],2)
         
         self.N['예정수량'] = int( self.N['매금단계'][self.N['매수차수']] / self.N['매수예가'] ) 
 
@@ -412,9 +423,10 @@ class RSN :
         
         if  self.N['보유수량'] : 
 
+            self.N['생활가격'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
+
             # if  self.M['현재날수'] - self.N['생활날수'] > self.M['생활대기'] and self.N['매수차수'] == self.M['최대차수'] : 
             if  self.M['현재날수'] - self.N['생활날수'] > self.M['생활대기']  : 
-                self.N['생활가격'] = my.round_up(self.N['평균단가']*self.M['강매가치'])
                 self.N['생활수량'] = self.N['보유수량']
 
                 if     self.M['연속상승'] >= 2 : self.N['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.02) 
@@ -429,7 +441,6 @@ class RSN :
                     self.N['생활수량'] -= self.N['꼬리수량']
 
             else :
-                self.N['생활가격'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
                 self.N['생활수량'] = self.N['보유수량']
                 self.N['꼬리가격'] = 0.0
                 self.N['꼬리수량'] = 0
@@ -470,7 +481,9 @@ class RSN :
         self.R['진행시작'] = self.S['진행시작'] = False
         self.set_value(['예정수량','매수예가','매수금액','매수수량','매도수량','매도예가','매도금액','수익현황','현수익률','실현익률','평균단가','평가금액','중익합계','중도합계'],0)
         self.set_value(['진행상황'],'일반매수')
-        self.M['현재날수']  = 1 # 첫날 종가가 전날의 큰단가치 보다 클 경우 현재날수를 0으로 표기하기 위함
+        self.M['현재날수'] = 1 # 첫날 종가가 전날의 큰단가치 보다 클 경우 현재날수를 0으로 표기하기 위함
+        self.N['꼬리총수'] = 0
+        self.N['꼬리총매'] = 0.0
 
         self.M['시즌자금'] = self.R['현재잔액'] + self.S['현재잔액'] + self.N['현재잔액']
 
@@ -508,6 +521,7 @@ class RSN :
                 self.N['총매수금']  = self.N['평가금액'] = self.N['매수금액']
                 self.N['현재잔액'] -= self.N['매수금액']
                 self.N['매수차수']  = self.N['매수차수'] + 1 
+                self.N['생활날수']  = 1
                 self.N['거래코드']  = f"{self.N['매수차수']}B {self.N['매수수량']}"
                 self.commission(self.N,1)
 
@@ -892,8 +906,8 @@ class RSN :
             tx[key+'잔액'] = f"{tac['현재잔액']:,.2f}"
         #--------------------------------------------------------    
         tx['진행상황'] = self.V['진행상황']
-        tx['현재손률'] = self.M['현재손률'] if self.M['현재손률'] else ''
-        # tx['현재손률'] = self.M['현재날수']-self.N['생활날수']
+        # tx['현재손률'] = self.M['현재손률'] if self.M['현재손률'] else ''
+        tx['현재손률'] = self.M['현재날수']-self.N['생활날수']
         self.D['TR'].append(tx)
         
     def chart_data(self) :
