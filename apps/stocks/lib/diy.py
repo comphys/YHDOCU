@@ -134,7 +134,10 @@ class DIY :
         if  self.M['당일종가'] >= self.M['몸통가격'] : 
             self.M['매도수량']  = self.M['보유수량']
         
-        elif self.M['꼬리수량'] and self.M['당일종가'] >= self.M['꼬리가격'] and self.M['매수차수'] == self.M['최대차수'] : self.M['매도수량'] = self.M['꼬리수량']
+        # elif self.M['꼬리수량'] and self.M['당일종가'] >= self.M['꼬리가격'] and self.M['매수차수'] == self.M['최대차수'] : self.M['매도수량'] = self.M['꼬리수량']
+        # 꼬리매도가 연속적으로 수행될 수 있도록 변경(2026.11.11.)
+        elif self.M['꼬리수량'] and self.M['당일종가'] >= self.M['꼬리가격'] : self.M['매도수량'] = self.M['꼬리수량']
+
 
  
     def today_buy(self) :
@@ -166,8 +169,7 @@ class DIY :
         self.M['몸통가격'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
         self.M['몸통수량'] = self.M['보유수량']
         
-        # 탈출허용은 수익률에 영향을 주나, 탈출일수 조건은 큰 영향을 주지 않는다. 향후 탈출일수 조건을 제거하자.(2026.11.11)
-        if  self.M['매수차수'] == self.M['최대차수'] and self.M['현재날수'] > self.M['탈출일수'] :
+        if  self.M['현재날수'] > self.M['탈출일수'] :
 
             if     self.M['연속상승'] >= 2 : self.M['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.02) 
             elif   self.M['연속상승'] == 1 : self.M['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.05) 

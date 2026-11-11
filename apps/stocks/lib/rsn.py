@@ -225,8 +225,8 @@ class RSN :
 
         if  self.M['당일종가'] >= self.N['생활가격'] :  # N 매도예가는 M 매도예가과 같거나 작아야 한다.
             self.N['매도수량']  = self.N['보유수량']
-
-        elif self.N['꼬리수량'] and self.M['당일종가']  >= self.N['꼬리가격'] and self.N['매수차수'] == self.M['최대차수'] : self.N['매도수량'] = self.N['꼬리수량']
+        # elif self.N['꼬리수량'] and self.M['당일종가']  >= self.N['꼬리가격'] and self.N['매수차수'] == self.M['최대차수'] : self.N['매도수량'] = self.N['꼬리수량']
+        elif self.N['꼬리수량'] and self.M['당일종가']  >= self.N['꼬리가격']  : self.N['매도수량'] = self.N['꼬리수량']
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # today_buy : 당일 매수를 체크한다
@@ -409,8 +409,9 @@ class RSN :
     def tomorrow_sel_N(self) :
         
         if  self.N['보유수량'] : 
-            
-            if  self.M['현재날수'] - self.N['생활날수'] > self.M['생활대기'] and self.N['매수차수'] == self.M['최대차수'] : 
+
+            # if  self.M['현재날수'] - self.N['생활날수'] > self.M['생활대기'] and self.N['매수차수'] == self.M['최대차수'] : 
+            if  self.M['현재날수'] - self.N['생활날수'] > self.M['생활대기']  : 
                 self.N['생활가격'] = my.round_up(self.N['평균단가']*self.M['강매가치'])
                 self.N['생활수량'] = self.N['보유수량']
 
