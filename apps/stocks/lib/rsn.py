@@ -94,6 +94,8 @@ class RSN :
                 self.N['평균단가'] = 0.0
 
                 self.N['매수차수'] = 0
+                self.N['생활수량'] = 0
+                self.N['꼬리수량'] = 0
                 self.N['생활가격'] = 0.0
                 self.N['꼬리가격'] = 0.0   
                 self.N['생활날수'] = 0              
@@ -434,6 +436,7 @@ class RSN :
 
             mbp = max(self.R['매수예가'],self.S['매수예가'])
             if self.N['생활가격'] <= mbp  : self.N['생활가격'] = mbp + 0.01
+
 
     def tomorrow_step(self) :
         self.tomorrow_buy_V()
