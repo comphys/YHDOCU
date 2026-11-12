@@ -179,6 +179,7 @@ class DIY :
         self.M['몸통수량'] = self.M['보유수량']
         
         if  self.M['현재날수'] > self.M['탈출일수'] :
+        # if self.M['꼬리총수'] or self.M['매수차수'] == self.M['최대차수'] :
 
             if     self.M['연속상승'] >= 2 : self.M['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.02) 
             elif   self.M['연속상승'] == 1 : self.M['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.05) 

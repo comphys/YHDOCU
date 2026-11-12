@@ -425,7 +425,6 @@ class RSN :
 
             self.N['생활가격'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
 
-            # if  self.M['현재날수'] - self.N['생활날수'] > self.M['생활대기'] and self.N['매수차수'] == self.M['최대차수'] : 
             if  self.M['현재날수'] - self.N['생활날수'] > self.M['생활대기']  : 
                 self.N['생활수량'] = self.N['보유수량']
 
