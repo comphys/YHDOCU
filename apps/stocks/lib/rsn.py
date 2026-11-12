@@ -86,6 +86,7 @@ class RSN :
                 self.N['수익현황'] = self.N['평가금액'] - self.N['총매수금']
                 self.N['현수익률'] = self.N['수익현황'] / self.N['총매수금']  * 100 
                 self.N['매수차수'] = self.M['최대차수'] - 1  # 부분매도 시 최대차수 1 감소
+                self.N['거래코드']  = f"E {self.N['매도수량']}" 
 
             else :
                 self.N['수익현황'] = self.N['매도금액'] - self.N['총매수금']
@@ -897,7 +898,8 @@ class RSN :
         tx['일반잔액'] = f"{self.V['현재잔액']:,.2f}"
         #--------------------------------------------------------
         for tac,key,key2 in [(self.R,'기회','r'),(self.S,'안정','s'),(self.N,'생활','n')] :
-            tx[key+'진행'] = f"{round(tac['매도금액'],4):,.2f}" if tac['매도금액'] else tac['거래코드']
+            tx[key+'진행'] = tac['거래코드'] if tac['보유수량'] else f"{round(tac['매도금액'],4):,.2f}"
+            if tx[key+'진행'] == '0.00' : tx[key+'진행'] = ''
             tx[key+'평균'] = f"<span class='avg{key2}{self.M['기록시즌']}'>{round(tac['평균단가'],4):,.2f}</span>" if tac['평균단가'] else f"<span class='avg{key2}{self.M['기록시즌']}'></span>"
             clr = "#F6CECE" if tac['현수익률'] > 0 else "#CED8F6"
             tx[key+'수익'] = f"<span style='color:{clr}'>{round(tac['수익현황'],4):,.2f}</span>" 

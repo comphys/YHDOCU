@@ -33,6 +33,12 @@ class Ajax(Model) :
             pass 
         return '___OK___'
 
+    def renew_logcontent(self) :
+        renew_file = self.D['post']['logfile']
+        with open("logs/"+renew_file+".log", "r") as f:
+            content = f.read()
+        return content.replace('\n','<br>')
+
     def new_token(self) :
         dbapi_token = self.DB.store('dbapi_token')
         dbapi_time  = self.DB.store('dbapi_time')

@@ -89,7 +89,7 @@ class myClass(Control) :
             
             time.sleep(0.5)
 
-        self.send_message(f"{self.ord_date} {key} 예약주문 완료")
+        self.send_message(f"{self.ord_date} {key} 주문 완료")
 
 # ------------------------------------------------------------------------------------------------------------------
 # 예약을 위한 코드임으로 이페이지의 현재 시간(A.today) 기준은 한국시간 기준이다. 
@@ -108,17 +108,16 @@ todayTime = int(today_kor[11:13])
 
 skip = ''
 if todayWeek in ['토','일'] : skip = f"{todayWeek}요일 입니다"
-elif today_nyk[0:10] != nextStock[0] : skip = "예약 가능 날자가 아닙니다."
-elif today_kor[0:10] > '2027-09-30' : skip = 'API 키 갱신이 필요합니다'
-elif todayTime < 18 and todayTime > 5 : skip = '예약 가능 시간이 아닙니다.' 
-else :
-    A.lst_date = last_date
-    A.ord_date = nextStock[0].replace('-','')
+if today_nyk[0:10] != nextStock[0] :  skip = "예약 가능 날자가 아닙니다."
+if today_kor[0:10] > '2027-09-30' :   skip = 'API 키 갱신이 필요합니다'
+if todayTime < 18 and todayTime > 5 : skip = '예약 가능 시간이 아닙니다.' 
 
-if  skip :
+if  skip and A.exe_type :
     A.send_message(skip)
 
 else :
+    A.lst_date = last_date
+    A.ord_date = nextStock[0].replace('-','')
     # RSN
     A.API.change_account('01')
     orders = A.rsn_order_data('rsnLog')

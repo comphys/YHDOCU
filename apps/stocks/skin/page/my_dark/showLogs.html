@@ -15,7 +15,10 @@
 {{D['logContent']|safe}}
 </div>
 <div style="clear:both">
-    <div style="float:left"><button class="btn btn-red" onclick='clear_log()'>비우기</button></div>
+    <div style="float:left">
+        <button class="btn btn-red" onclick='clear_log()'>비우기</button>
+        <button class="btn btn-blue" onclick='renew_log()'>새로고침</button>
+    </div>
     {% if D['_lcl'] %}
     <div style="float:right">
         <button class="btn btn-blue" onclick='old_token()'>토큰받기</button>
@@ -27,6 +30,13 @@
 <br>
 
 <script>
+function renew_log() {
+    var url = uri('linkajax') + 'showLogs/renew_logcontent';
+	$.post(url,{'logfile':$("select[name=log_file]").val()}).done(function(data){
+        $("#logContent-info-div").html(data);
+        h_dialog.notice('작업이 성공적으로 수행되었습니다.');
+    }); 
+}
 function clear_log() {
  
     var url = uri('linkajax') + 'showLogs/clear_logcontent';

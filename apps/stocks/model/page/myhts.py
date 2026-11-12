@@ -77,6 +77,11 @@ class Ajax(Model) :
             opt = self.D['post']['opt']
             API.change_account(opt)
             rst = API.get_account_balance()
+            for r in rst :
+                r['원화평가'] = f"{float(r['평가금액'])*float(r['환율']):,.0f}"
+                r['평가금액'] = f"{float(r['평가금액']):,.2f}"
+                r['평가손익'] = f"{float(r['평가손익']):,.2f}"
+                r['매입금액'] = f"{float(r['매입금액']):,.2f}"
             return self.SYS.json(rst)
         
         else :

@@ -234,7 +234,7 @@ function get_account_balance(opt) {
 		html ="<table class='table table-bordered'><tr>"
 		html+="<th rowspan='"+rows+"' style='color:#F5F6CE;font-size:20px;width:100px;border-right:1px solid #2f3236;'>"+tle+"</th>"
 		html+="<th>종목</th><th>수량</th><th>매도가능</th>"
-		html+="<th>현재가격</th><th>평균단가</th><th>평가금액</th><th>평가손익</th><th>수익률</th><th>매입금액</th><th>환율</th></tr>"
+		html+="<th>현재가격</th><th>평균단가</th><th>평가금액</th><th>평가손익</th><th>수익률</th><th>매입금액</th><th>환율</th><th>원화평가</th></tr>"
 		for (rd of data){
 			html+="<tr>"
 			for (key in rd) { html+= "<td style='text-align:center'>"+rd[key]+"</td>"} 
