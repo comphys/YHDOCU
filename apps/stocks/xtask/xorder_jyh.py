@@ -37,7 +37,7 @@ class myClass(Control) :
             if int(NS[key+'_19']) :  OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'1','주문수량':NS[key+'_19'],'주문가격':NS[key+'_20']})
         
         # 꼬리매도
-        if int(NS[key+'_24']) :  OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'1','주문수량':NS[key+'_24'],'주문가격':NS[key+'_25']})    
+        if int(NS['n_24']) :  OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'1','주문수량':NS['n_24'],'주문가격':NS['n_25']})    
         return OD
 
     def diy_order_data(self,board) :
@@ -118,6 +118,7 @@ if  skip and A.exe_type :
 else :
     A.lst_date = last_date
     A.ord_date = nextStock[0].replace('-','')
+    
     # RSN
     A.API.change_account('01')
     orders = A.rsn_order_data('rsnLog')

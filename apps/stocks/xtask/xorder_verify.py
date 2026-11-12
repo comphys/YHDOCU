@@ -13,11 +13,14 @@ class myClass(Control) :
     def rsn_order_data(self) :
         last_ohlc = self.DB.last_date('h_stockHistory_board')
         next_date = my.next_stock_day(last_ohlc,self.DB)[0].replace('-','')
-        NS = self.DB.line(f"SELECT add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20 FROM h_rsnLog_board WHERE add0='{last_ohlc}' LIMIT 1") 
+        NS = self.DB.line(f"SELECT add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20,n_24,n_25 FROM h_rsnLog_board WHERE add0='{last_ohlc}' LIMIT 1") 
         OD = []
         for key in ['r','s','n'] :
             if int(NS[key+'_17']) :  OD.append({'종목코드':'SOXL','주문일자':next_date,'매매구분':'2','주문수량':NS[key+'_17'],'주문가격':NS[key+'_18']})
             if int(NS[key+'_19']) :  OD.append({'종목코드':'SOXL','주문일자':next_date,'매매구분':'1','주문수량':NS[key+'_19'],'주문가격':NS[key+'_20']})
+        
+        # 꼬리매도
+        if int(NS['n_24']) :  OD.append({'종목코드':'SOXL','주문일자':next_date,'매매구분':'1','주문수량':NS['n_24'],'주문가격':NS['n_25']})  
         return OD
 
     def diy_order_data(self,b='logDIY') :
