@@ -188,7 +188,9 @@ class DIY :
             else : self.M['꼬리가격'] = my.round_up(self.M['당일종가']*1.1)
 
             self.M['꼬리수량'] = self.M['꼬리총수'] * 2 if self.M['꼬리총수'] else int(self.M['보유수량'] * 0.02)
-            if  self.M['꼬리수량'] >  self.M['보유수량'] : self.M['꼬리수량'] = self.M['보유수량']
+            if  self.M['꼬리수량'] >  self.M['보유수량'] : 
+                self.M['꼬리수량'] = 0
+                self.M['꼬리가격'] = 0.0
 
             if  self.M['꼬리가격'] >= self.M['몸통가격'] : 
                 self.M['꼬리수량'] = 0

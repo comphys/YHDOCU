@@ -1,0 +1,61 @@
+from system.core.load import Model
+import system.core.my_utils as my
+
+class M_CDSview(Model) :
+
+    def view(self) :
+        
+        # 기본 값
+
+        self.D['전략선택'] = 'CDS'
+        self.D['일반자금'] = '100000.00'
+        self.D['수료적용'] = 'off'
+        self.D['세금적용'] = 'off'
+
+        # 기간 설정(최근 2년간)
+        self.D['종료일자'] = self.DB.last_date("h_stockHistory_board")
+        self.D['시작일자'] = my.dayofdate(self.D['종료일자'],delta=-365*2)[0]
+
+    def action(self) :
+        D = {}
+
+        D['일반자금'] = self.D['post']['일반자금']
+
+        D['시작일자'] = self.D['post']['시작일자']
+        D['종료일자'] = self.D['post']['종료일자']
+
+        D['수료적용'] = self.D['post'].get('chk_fee','off')
+        D['세금적용'] = self.D['post'].get('chk_tax','off')
+        
+        VB = self.SYS.load_app_lib('cds')
+        VB.D |= D
+
+        VB.do_viewChart()
+
+        return self.SYS.echo(VB.D)
+
+# ----------------------------------------------------------------------------------------------
+# AJAX 
+# ----------------------------------------------------------------------------------------------
+
+class Ajax(Model) :
+
+    def synchro_diy(self) :
+        
+        opt = self.D['post']['opt']
+        ldate = self.DB.one("SELECT max(add0) FROM h_stockHistory_board")
+        sdata = self.DB.oneline("SELECT add18,add19 FROM h_logDIY_board ORDER BY add0 DESC LIMIT 1")
+
+        if  opt == 'real' :
+            sdate = sdata[0]
+            V_mon = sdata[1]
+        
+        elif opt == 'test' :
+            sdate = my.dayofdate(ldate,delta=-365*2)[0]
+            V_mon = '60,000'
+        
+        RD = {}
+        RD['sdate'] = sdate
+        RD['ldate'] = ldate
+        RD['V_mon'] = V_mon
+        return self.SYS.json(RD)        

@@ -439,7 +439,9 @@ class RSN :
                 # self.N['꼬리수량'] = int(self.N['보유수량'] * 0.1)
                 # 다음 시즌부터 적용 검토 2026.11.13.
                 self.N['꼬리수량'] = self.N['꼬리총수'] * 2 if self.N['꼬리총수'] else int(self.N['보유수량'] * 0.02)
-                if self.N['꼬리수량'] > self.N['보유수량'] : self.N['꼬리수량'] = self.N['보유수량']
+                if  self.N['꼬리수량'] > self.N['보유수량'] : 
+                    self.N['꼬리수량'] = 0
+                    self.N['꼬리가격'] = 0.0
                 
                 if  self.N['꼬리가격'] >= self.N['생활가격'] : 
                     self.N['꼬리수량'] = 0
@@ -448,8 +450,8 @@ class RSN :
 
             else :
                 self.N['생활수량'] = self.N['보유수량']
-                self.N['꼬리가격'] = 0.0
                 self.N['꼬리수량'] = 0
+                self.N['꼬리가격'] = 0.0
 
             mbp = max(self.R['매수예가'],self.S['매수예가'])
             if self.N['생활가격'] <= mbp  : self.N['생활가격'] = mbp + 0.01
