@@ -115,11 +115,16 @@ class Ajax(Model) :
         
         return self.SYS.json(PD)    
     
-    def update_log(self) :
+    def update_log(self,theday=None) :
+        # 직접 호출
+        day = theday
+        # Ajax 호출
+        if (self.D.get('post',None)) : day = self.D['post'].get('day',theday)
 
         cday = self.DB.last_date('h_rsnLog_board')
         lday = self.DB.last_date('h_stockHistory_board')
-        if cday >= lday : return 
+        if not day and cday >= lday : return 
+        if day : lday = day
 
         RSN  = self.SYS.load_app_lib('rsn')
 

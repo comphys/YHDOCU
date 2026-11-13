@@ -140,7 +140,7 @@
 <div class="row-row clearfix">
 	<div class='pull-left'>
 		{% if D['업데이트안됨'] %}
-		<button class='btn btn-small btn-blue-s6' onclick="update_log()">업데이트</button></a>&nbsp;
+		<button class='btn btn-small btn-blue-s6' onclick="update_log('{{D['다음날자']}}')">업데이트</button></a>&nbsp;
 		{% endif %}
 		<a href="{{D['_bse']}}board/list/{{D['bid']}}"><button class='btn btn-small btn-blue'>목 록</button></a>
 		<a href="{{D['_bse']}}board/write/{{D['bid']}}{{D['Searchplus']}}"><button class='btn btn-small btn-red'>쓰 기</button></a>&nbsp;
@@ -636,11 +636,10 @@ function draw_seasonChart(data) {
 
 // Update log
 
-function update_log() {
+function update_log(day) {
 	
-	var tday = "{{D['다음날자']}}";
 	var posturl = uri('linkajax') + 'rsnLog/update_log'
-	$.post(posturl,{tday:tday},null,'json').done(function(data){
+	$.post(posturl,{day:day},null,'json').done(function(data){
 
 		if(data=='OK') {location.reload(); h_dialog.notice("로그 정보가 업데이트 되었습니다")}
 		else {h_dialog.notice(data);}		

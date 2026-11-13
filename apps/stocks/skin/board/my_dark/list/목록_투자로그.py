@@ -34,7 +34,6 @@ class 목록_투자로그(SKIN) :
 
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
-        self.DB.wre = f"add0 <='{last_date}'"
         self.DB.odr = "add0 DESC"
         self.DB.lmt = '70'
         # chart_data = self.DB.get("add0,add3,r_09,s_09,n_09",assoc=True)
@@ -57,11 +56,10 @@ class 목록_투자로그(SKIN) :
             
             self.D['Ttactic_avg'] = [x['add8'] if float(x['add8']) != 0 else 'null' for x in chart_data]
             
-            # 다음 날 주문정보 갖고오기, 다음날자의 정보는 주가 테이블의 날자를 기준
-            chk_last_date = self.DB.last_date(self.D['tbl'])
-            self.D['다음날자'], self.D['다음요일'] = my.next_stock_day(last_ohlc,self.DB)
+            # 다음 날 주문정보 갖고오기
+            self.D['다음날자'], self.D['다음요일'] = my.next_stock_day(last_date,self.DB)
             현재환율 = self.DB.last_data_one("CAST(add2 AS FLOAT)","h_stockHistory_board")
-            NS = self.DB.line(f"SELECT add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20,n_24,n_25 FROM {self.D['tbl']} WHERE add0='{chk_last_date}' LIMIT 1") 
+            NS = self.DB.line(f"SELECT add3,r_09,r_17,r_18,r_19,r_20,s_09,s_17,s_18,s_19,s_20,n_09,n_17,n_18,n_19,n_20,n_24,n_25 FROM {self.D['tbl']} WHERE add0='{last_date}' LIMIT 1") 
             for name, key in [('기회','r'),('안정','s'),('생활','n')] :
                 self.D['N_'+name+'매수량'] = f"{int(NS[key+'_17']):,}" if float(NS[key+'_17']) else 0
                 self.D['N_'+name+'평대비'] = self.next_percent(float(NS[key+'_09']), float(NS[key+'_18']))
@@ -89,9 +87,7 @@ class 목록_투자로그(SKIN) :
             self.D['총매도금'] =  f"{temp[1]:,.2f}"
             self.D['투자익률'] =  f"{(temp[1]/temp[0]-1)*100:.2f}"
             self.D['주문확인'] =  self.DB.parameter('TX070')
-            # self.D['주문생활'] =  self.DB.parameter('N0710')
-            # self.D['주문럭키'] =  self.DB.parameter('L0500')
-            self.D['주문생활'] = self.D['주문럭키'] = self.D['다음날자']
+
             
             # 통계 자료 가져오기
             # add12(현재잔액), add10(현재수익), rsn_21(초기금액), add17(카테고리)

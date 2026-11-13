@@ -6,14 +6,19 @@ class Ajax(Model) :
 
 
 
-    def update_log(self) :
+    def update_log(self,theday=None) :
+        # 직접 호출
+        day = theday
+        # Ajax 호출
+        if (self.D.get('post',None)) : day = self.D['post'].get('day',theday)
 
         board = 'h_logDIY2_board'
         cday = self.DB.last_date(board)
         lday = self.DB.last_date('h_stockHistory_board')
-        if cday >= lday : return 
+        if not day and cday >= lday : return 
 
         DIY = self.SYS.load_app_lib('diy')
+        if day : lday = day
 
         ini_data = self.DB.oneline(f"SELECT add18,add19,add1 FROM {board} ORDER BY add0 DESC LIMIT 1")
         ini_date = ini_data[0]

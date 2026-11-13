@@ -19,29 +19,37 @@ class myClass(Control) :
             log()
         self.send_message(day+" Updated")
         
-
+    def log_update_each(self,day,board) :
+            log = self.load_bajax(board,'update_log')
+            log(day)
+        
 
 # today 는 증권거래소의 시각(미국 뉴욕)을 기준으로 하고 있다. 날자가 변경되기 전에 실행시켜야 한다. 국내시간기준 오후1시(섬머타임 기간), 오후2시 이전에 실행되어야 함
+Auto = True
 LOG = myClass()
 
-last_date = LOG.DB.last_date('h_stockHistory_board')
-today_time = my.kor_loc_date('US/Eastern')
-today = today_time[0:10]
-hour  = int(today_time[11:13])
-weekd = my.dayofdate(today)
+if Auto :
+    last_date = LOG.DB.last_date('h_stockHistory_board')
+    today_time = my.kor_loc_date('US/Eastern')
+    today = today_time[0:10]
+    hour  = int(today_time[11:13])
+    weekd = my.dayofdate(today)
 
-# 증시 휴장일 체크하기
-ck_holiday = LOG.DB.one(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
-is_holiday = ck_holiday if ck_holiday else ''
+    # 증시 휴장일 체크하기
+    ck_holiday = LOG.DB.one(f"SELECT description FROM parameters WHERE val='{today}' AND cat='미국증시휴장일'")
+    is_holiday = ck_holiday if ck_holiday else ''
 
-skip = ''
-if weekd in ['토','일'] : skip = f"쉬는날 입니다."
-if is_holiday : skip = is_holiday
-if today <= last_date : skip = "이전 날자입니다."
-if int(hour) < 18 : skip = "시간을 확인해 주세요"
+    skip = ''
+    if weekd in ['토','일'] : skip = f"쉬는날 입니다."
+    if is_holiday : skip = is_holiday
+    if today <= last_date : skip = "이전 날자입니다."
+    if int(hour) < 18 : skip = "시간을 확인해 주세요"
 
-if  skip :
-    LOG.send_message(skip)
+    if  skip :
+        LOG.send_message(skip)
 
+    else :
+        LOG.log_update(today)
 else :
-    LOG.log_update(today)
+     LOG.log_update_each('2026-11-12','rsnLog')
+     print("The job was done...")

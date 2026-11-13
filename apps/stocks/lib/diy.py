@@ -154,7 +154,9 @@ class DIY :
             self.M['매수보류']  = True
             self.M['자체연속']  = 1
 
-            if self.M['꼬리총수'] : self.M['꼬리총수'] = 0
+            if  self.M['꼬리총수'] : 
+                self.M['꼬리총수'] = 0
+                self.M['꼬리총매'] = 0.0
 
 
     def tomorrow_buy(self) :
@@ -178,14 +180,16 @@ class DIY :
         self.M['몸통가격'] = my.round_up(self.M['평균단가'] * self.M['각매가치'][self.M['매수차수']-1])
         self.M['몸통수량'] = self.M['보유수량']
         
-        if  self.M['현재날수'] > self.M['탈출일수'] :
-        # if self.M['꼬리총수'] or self.M['매수차수'] == self.M['최대차수'] :
+        # if  self.M['현재날수'] > self.M['탈출일수'] :
+        if self.M['꼬리총수'] or self.M['매수차수'] == self.M['최대차수'] :
 
             if     self.M['연속상승'] >= 2 : self.M['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.02) 
             elif   self.M['연속상승'] == 1 : self.M['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.05) 
             else : self.M['꼬리가격'] = my.round_up(self.M['당일종가']*1.1)
 
-            self.M['꼬리수량'] = int(self.M['보유수량'] * self.M['탈출허용'])
+            self.M['꼬리수량'] = self.M['꼬리총수'] * 2 if self.M['꼬리총수'] else int(self.M['보유수량'] * 0.02)
+            if  self.M['꼬리수량'] >  self.M['보유수량'] : self.M['꼬리수량'] = self.M['보유수량']
+
             if  self.M['꼬리가격'] >= self.M['몸통가격'] : 
                 self.M['꼬리수량'] = 0
             else :

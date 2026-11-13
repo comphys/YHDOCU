@@ -275,7 +275,9 @@ class RSN :
             self.N['거래코드']  = f"{self.N['매수차수']}B {self.N['매수수량']}" 
 
             if self.N['매수차수'] == 1: self.N['생활날수'] = self.M['현재날수']
-            if self.N['꼬리총수'] : self.N['꼬리총수'] = 0
+            if  self.N['꼬리총수'] : 
+                self.N['꼬리총수'] = 0
+                self.N['꼬리총매'] = 0.0
 
 
 
@@ -433,7 +435,10 @@ class RSN :
                 elif   self.M['연속상승'] == 1 : self.N['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.05) 
                 else : self.N['꼬리가격'] = my.round_up(self.M['당일종가']*1.1)
 
-                self.N['꼬리수량'] = int(self.N['보유수량'] * 0.1)
+                # self.N['꼬리수량'] = int(self.N['보유수량'] * 0.1)
+                # 다음 시즌부터 적용 검토 2026.11.13.
+                self.N['꼬리수량'] = self.N['꼬리총수'] * 2 if self.N['꼬리총수'] else int(self.N['보유수량'] * 0.02)
+                if self.N['꼬리수량'] > self.N['보유수량'] : self.N['꼬리수량'] = self.N['보유수량']
                 
                 if  self.N['꼬리가격'] >= self.N['생활가격'] : 
                     self.N['꼬리수량'] = 0

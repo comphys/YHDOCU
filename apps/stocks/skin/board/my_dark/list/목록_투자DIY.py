@@ -29,15 +29,13 @@ class 목록_투자DIY(SKIN) :
 
     def chart(self) :
         
-        last_date = self.D['LIST'][0]['add0']
+        last_lday = self.D['LIST'][0]['add0']
         last_ohlc = self.D['lst_ohlc']
-        last_chkd = self.DB.parameter('A0721')
 
-        self.D['업데이트안됨'] = False if last_chkd == last_ohlc or self.D['Page'] > '1' else True
+        self.D['업데이트안됨'] = False if last_lday == last_ohlc or self.D['Page'] > '1' else True
   
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
-        self.DB.wre = f"add0 <='{last_date}'"
         self.DB.odr = "add0 DESC"
         self.DB.lmt = '70'
         
@@ -51,7 +49,6 @@ class 목록_투자DIY(SKIN) :
             first_date = chart_data[-1]['add0']
             stock_data = self.DB.exe(f"SELECT add0,add3 FROM h_stockHistory_board WHERE add0 >= '{first_date}' ORDER BY add0 DESC",assoc=True)
             last_date  = stock_data[0]['add0']
-            last_clsp  = stock_data[0]['add3']
             self.D['총경과일'] = my.diff_day(first_date,day2=last_date)
             
             chart_span = 60
@@ -100,13 +97,10 @@ class 목록_투자DIY(SKIN) :
             self.D['타겟도가'] = NS['예정도가'] if NS['예정도수'] else 'null'  
             
             # 기타 정보 가져오기
-            self.D['다음날자'], self.D['다음요일'] = my.next_stock_day(last_date,self.DB)
+            self.D['다음날자'], self.D['다음요일'] = my.next_stock_day(last_lday,self.DB)
             self.D['확인날자'] = last_date
-            self.D['주문확인'] =  self.DB.parameter('A0710')
+            self.D['주문확인'] = self.DB.parameter('A0710')
       
-            # last_sday = my.last_stock_day(self.DB)
-            # self.D['업데이트'] = False if not last_sday or  last_date < last_sday or self.D['Page'] > '1' else True  # last_date : 주가분석 테이블의 최종날자
-  
             # 통계 자료 가져오기
             # add5(현재잔액), add14(현재수익), add19(초기금액), add20(카테고리)
             temp = self.DB.exe(f"SELECT add0,CAST(add5 as float),CAST(add14 as float),CAST(add19 as float),add20 FROM {self.D['tbl']} WHERE add20 in ('초기셋팅','수익실현') ORDER BY add0")
