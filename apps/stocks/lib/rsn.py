@@ -95,9 +95,9 @@ class RSN :
                 self.N['평균단가'] = 0.0
 
                 self.N['매수차수'] = 0
-                self.N['생활수량'] = 0
+                self.N['몸통수량'] = 0
                 self.N['꼬리수량'] = 0
-                self.N['생활가격'] = 0.0
+                self.N['몸통가격'] = 0.0
                 self.N['꼬리가격'] = 0.0   
                 self.N['생활날수'] = 0              
                 if not self.V['매도수량'] : self.rebalance_N() # just for N tactic 
@@ -226,7 +226,7 @@ class RSN :
 
     def today_sell_N(self) :
 
-        if  self.M['당일종가'] >= self.N['생활가격'] :  # N 매도예가는 M 매도예가과 같거나 작아야 한다.
+        if  self.M['당일종가'] >= self.N['몸통가격'] :  # N 매도예가는 M 매도예가과 같거나 작아야 한다.
             self.N['매도수량']  = self.N['보유수량']
         # elif self.N['꼬리수량'] and self.M['당일종가']  >= self.N['꼬리가격'] and self.N['매수차수'] == self.M['최대차수'] : self.N['매도수량'] = self.N['꼬리수량']
         elif self.N['꼬리수량'] and self.M['당일종가']  >= self.N['꼬리가격']  : 
@@ -372,8 +372,6 @@ class RSN :
                 self.S['예정수량'] = 0
                 self.S['매수예가'] = 0
                 
-
-    
     # N tactic               
     def tomorrow_buy_N(self) :
         
@@ -424,38 +422,34 @@ class RSN :
 
     def tomorrow_sel_N(self) :
         
-        if  self.N['보유수량'] : 
+        if  not self.N['보유수량'] : return
 
-            self.N['생활가격'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
+        self.N['몸통가격'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
+        self.N['몸통수량'] = self.N['보유수량']
 
-            if  self.M['현재날수'] - self.N['생활날수'] > self.M['생활대기']  : 
+        if  self.M['현재날수'] - self.N['생활날수'] > self.M['생활대기']  : 
+            if     self.M['연속상승'] >= 2 : self.N['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.02) 
+            elif   self.M['연속상승'] == 1 : self.N['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.05) 
+            else : self.N['꼬리가격'] = my.round_up(self.M['당일종가']*1.1)
 
-                self.N['생활수량'] = self.N['보유수량']
-
-                if     self.M['연속상승'] >= 2 : self.N['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.02) 
-                elif   self.M['연속상승'] == 1 : self.N['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.05) 
-                else : self.N['꼬리가격'] = my.round_up(self.M['당일종가']*1.1)
-
-                # self.N['꼬리수량'] = int(self.N['보유수량'] * 0.1)
-                # 다음 시즌부터 적용 검토 2026.11.13.
-                self.N['꼬리수량'] = self.N['꼬리총수'] * 2 if self.N['꼬리총수'] else int(self.N['보유수량'] * 0.02)
-                if  self.N['꼬리수량'] > self.N['보유수량'] : 
-                    self.N['꼬리수량'] = 0
-                    self.N['꼬리가격'] = 0.0
-                
-                if  self.N['꼬리가격'] >= self.N['생활가격'] : 
-                    self.N['꼬리수량'] = 0
-                else :
-                    self.N['생활수량'] -= self.N['꼬리수량']
-
-            else :
-                self.N['생활수량'] = self.N['보유수량']
+            self.N['꼬리수량'] = self.N['꼬리총수'] * 2 if self.N['꼬리총수'] else int(self.N['보유수량'] * 0.02)
+            if  self.N['꼬리수량'] > self.N['보유수량'] : 
                 self.N['꼬리수량'] = 0
                 self.N['꼬리가격'] = 0.0
+            
+            if  self.N['꼬리가격'] >= self.N['몸통가격'] : 
+                self.N['꼬리수량'] = 0
+            else :
+                self.N['몸통수량'] -= self.N['꼬리수량']
+        else :
+            self.N['몸통수량'] = self.N['보유수량']
+            self.N['꼬리수량'] = 0
+            self.N['꼬리가격'] = 0.0
 
-            mbp = max(self.R['매수예가'],self.S['매수예가'])
-            if self.N['생활가격'] <= mbp  : self.N['생활가격'] = mbp + 0.01
-
+        mbp = max(self.R['매수예가'],self.S['매수예가'])
+        # 몸통가격(N sell)은 R,S 매수가 보다는 높아야 한다.
+        if  self.N['몸통가격'] <= mbp  : 
+            self.N['몸통가격'] = mbp + 0.01
 
     def tomorrow_step(self) :
         self.tomorrow_buy_V()
@@ -471,11 +465,11 @@ class RSN :
         if  self.M['현재날수'] < self.M['강매시작'] :
             self.M['매도예가'] = min(self.M['매도예가'],my.round_up(self.M['당일종가']*self.M['종가상승']))
             
-            self.M['매도예가'] = max(self.M['매도예가'],self.N['생활가격'],my.round_up(self.V['평균단가']*self.M['강매가치']))
+            self.M['매도예가'] = max(self.M['매도예가'],self.N['몸통가격'],my.round_up(self.V['평균단가']*self.M['강매가치']))
            
         else :
             self.M['매도예가'] = my.round_up( self.V['평균단가'] * self.M['강매가치'] )
-            self.N['생활가격'] = min(self.M['매도예가'],self.N['생활가격'])
+            self.N['몸통가격'] = min(self.M['매도예가'],self.N['몸통가격'])
 
         for tac in (self.V,self.R,self.S,self.N) : 
             if tac['매수예가'] >= self.M['매도예가'] : tac['매수예가'] = self.M['매도예가'] - 0.01
@@ -770,8 +764,8 @@ class RSN :
         self.S['일매수금'] = int(self.S['현재잔액'] / self.M['분할횟수'])
         self.R['잔액이동'] = self.S['잔액이동'] = self.V['잔액이동'] = self.N['잔액이동'] = False
         # 꼬리자르기 전략 ( N tactic )
-        self.N['생활가격'] = 0.0
-        self.N['생활수량'] = 0
+        self.N['몸통가격'] = 0.0
+        self.N['몸통수량'] = 0
         self.N['꼬리가격'] = 0.0
         self.N['꼬리수량'] = 0
         # -------------------------------------------------------------------------------------------
@@ -867,10 +861,10 @@ class RSN :
             self.D['N_생활평대비'] = self.next_percent(self.N['평균단가'],self.N['매수예가']) 
             self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.N['매수예가'])
             
-            self.D['N_생활매도량'] = self.N['생활수량']
-            self.D['N_생활매도가'] = f"{self.N['생활가격']:.2f}"
-            self.D['N_생활도평비'] = self.next_percent(self.N['평균단가'],self.N['생활가격'])
-            self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.N['생활가격'])
+            self.D['N_생활매도량'] = self.N['몸통수량']
+            self.D['N_생활매도가'] = f"{self.N['몸통가격']:.2f}"
+            self.D['N_생활도평비'] = self.next_percent(self.N['평균단가'],self.N['몸통가격'])
+            self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.N['몸통가격'])
 
             self.D['N_꼬리매도량'] = self.N['꼬리수량']
             self.D['N_꼬리매도가'] = f"{self.N['꼬리가격']:.2f}"
