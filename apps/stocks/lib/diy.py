@@ -217,7 +217,7 @@ class DIY :
         self.M['꼬리총수'] = 0
         self.M['꼬리총매'] = 0
 
-        진입단가 = round(self.M['전일종가'] * self.M['첫날가치'], 2) if self.M['연속하락'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
+        진입단가 = round(self.M['전일종가'] * self.M['연속가치'], 2) if self.M['연속하락'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
         if  self.M['당일종가'] <=  진입단가  :
             
             self.M['기록시즌'] += 1
@@ -376,7 +376,7 @@ class DIY :
         self.M['진입일자'] = ST['A0202']
         self.M['진입가치'] = ST['A0203']
         self.M['보류가치'] = ST['A0204']
-        self.M['첫날가치'] = ST['A0205']
+        self.M['연속가치'] = ST['A0205']
         self.M['자체진입'] = ST['A0206']
         self.M['탈출일수'] = ST['A0303']
         self.M['탈출종가'] = ST['A0304']
@@ -457,7 +457,7 @@ class DIY :
         if  self.M['첫날기록'] or not self.M['보유수량'] : 
 
             self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['진입가치'],2)
-            if self.M['연속하락'] >= self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['첫날가치'],2 ) 
+            if self.M['연속하락'] >= self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['연속가치'],2 ) 
             
             self.D['N_생활매수량'] = int( self.M['매금단계'][1] / self.D['N_생활매수가'] )
             self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])

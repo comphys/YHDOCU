@@ -387,7 +387,7 @@ class RSN :
 
         if  self.N['꼬리총수'] : 
             # 꼬리매수
-            self.N['매수예가'] = round(self.N['꼬리총매']/self.N['꼬리총수'],2)
+            self.N['매수예가'] = round(self.N['꼬리총매']/self.N['꼬리총수']*0.95,2)
         
         self.N['예정수량'] = int( self.N['매금단계'][self.N['매수차수']] / self.N['매수예가'] ) 
 
