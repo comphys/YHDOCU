@@ -37,7 +37,7 @@ class DIV :
         self.M['평가금액'] = self.M['당일종가'] * self.M['보유수량'] 
         self.M['수익현황'] = self.M['평가금액'] - self.M['총매수금']
         self.M['현수익률'] = self.M['수익현황'] / self.M['총매수금']  * 100  if self.M['총매수금'] else 0.00  
-        self.M['현재손률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
+        self.M['실수익률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
         
         if  self.M['매도수량'] :
             self.M['매도금액']  = self.M['매도수량'] * self.M['당일종가']
@@ -56,18 +56,12 @@ class DIV :
                 self.M['매수차수'] = self.M['최대차수'] - 1   
 
             else  :
-
-                # 전체 매도시 현수익률은 시즌자금대비 수익률을 나나낸다.
-                self.M['수익현황'] =  self.M['현재잔액'] - self.M['시즌자금']
-                self.M['현수익률'] = round( self.M['수익현황']/self.M['시즌자금'] * 100, 2 ) 
                 self.M['총매수금'] = 0.00
                 self.M['평균단가'] = 0.00
-
-                self.M['진행상황'] = '익절매도' if self.M['수익현황'] >= 0 else '손절매도'
                 self.M['매수차수'] = 0
                 self.M['첫날기록'] = True
                 
-                self.vCount(self.M['수익현황'])
+                self.vCount()
                 self.tax()
                 self.rebalance() 
                 if self.D['임의진입'] == 'on' : self.quit = True
@@ -87,11 +81,15 @@ class DIV :
             self.M['최장일수'] = self.M['현재날수'] 
             self.M['최장일자'] = self.M['현재일자']
         
-    def vCount(self,profit) :
+    def vCount(self) :
         
         if not self.stat : return
-        if  profit >= 0 : self.D['익절횟수'] += 1
-        else : self.D['손절횟수'] += 1
+        if  self.M['실수익률'] >= 0 : 
+            self.D['익절횟수'] += 1
+            self.M['진행상황'] = '익절매도'
+        else : 
+            self.D['손절횟수'] += 1
+            self.M['진행상황'] = '손절매도'
 
     def commission(self,opt) :
         
@@ -173,9 +171,8 @@ class DIV :
      
         if  self.M['꼬리총수'] :
             self.M['매수예가'] = round(self.M['꼬리총매']/self.M['꼬리총수']*self.M['꼬리수가'],2)
-            self.M['예정수량'] =   int(self.M['현재잔액']/self.M['매수예가']) 
-
-        self.M['예정수량'] = int(  self.M['매금단계'][self.M['매수차수']] / self.M['매수예가'] ) 
+        
+        self.M['예정수량'] = int(self.M['매금단계'][self.M['매수차수']] / self.M['매수예가']) 
 
     def tomorrow_sell(self) :
         
