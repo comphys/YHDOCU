@@ -39,7 +39,9 @@
 						<div class='write-input-left' style="text-align:center;width:100px;font-weight:bold;">투자금액</div>
 						<input type='text' class="i-number" name="일반자금" style="width:120px;;text-align:center;" value="{{D['일반자금']}}">
 					</div>
-
+					<div style="display:inline-block;">
+						<input role="switch" type="checkbox" name="chk_iec" {{ 'checked' if D['임의진입'] =='on' else '' }}>&nbsp;임의진입 
+					</div>
 					<div style="display:inline-block;">
 						<input role="switch" type="checkbox" name="chk_fee" {{ 'checked' if D['수료적용'] =='on' else '' }}>&nbsp;수수료 
 					</div>
@@ -92,17 +94,18 @@
 					<th style='text-align:right;width:70px'>변동</th>
 
 					<th style='text-align:right;width:80px'>진행상황</th>
-					<th style='text-align:right;width:120px;'>현재잔액</th>
-					<th style='text-align:right;width:80px'>매수량</th>
-					<th style='text-align:right;width:80px'>매도량</th>
-					<th style='text-align:right;width:120px'>매수금액</th>
+					<th style='text-align:right;width:110px;'>현재잔액</th>
+					<th style='text-align:right;width:70px'>매수량</th>
+					<th style='text-align:right;width:70px'>매도량</th>
+					<th style='text-align:right;width:110px'>매수금액</th>
 					<th style='text-align:right;width:80px;'>보유수량</th>
 					<th style='text-align:right;width:100px'>평균단가</th>
 					
-					<th style='text-align:right;width:120px'>총매수금</th>
-					<th style='text-align:right;width:120px'>평가금액</th>
-					<th style='text-align:right;width:110px'>수익현황</th>
-					<th style='text-align:right;width:100px'>현수익률</th>
+					<th style='text-align:right;width:110px'>총매수금</th>
+					<th style='text-align:right;width:110px'>평가금액</th>
+					<th style='text-align:right;width:100px'>수익현황</th>
+					<th style='text-align:right;width:90px'>현수익률</th>
+					<th style='text-align:right;width:90px'>실수익률</th>
 					<th style='text-align:right;'>가치합계</th>
 				</tr>
 			</table>
@@ -123,18 +126,19 @@
 			<col style="width:70px;border-right:3px solid #424242;"> <!-- 종가변동 -->
 			
 			<col style="width:80px"> <!-- 진행상황 -->
-			<col style="width:120px;border-right:3px solid #424242;"> <!--현재잔액 -->
+			<col style="width:110px;border-right:3px solid #424242;"> <!--현재잔액 -->
 
-			<col style="width:80px;"> <!-- 매수량 -->
-			<col style="width:80px;"> <!-- 매도량 -->
-			<col style="width:120px;"> <!-- 매수금액 -->
+			<col style="width:70px;"> <!-- 매수량 -->
+			<col style="width:70px;"> <!-- 매도량 -->
+			<col style="width:110px;"> <!-- 매수금액 -->
 			<col style="width:80px;"> <!-- 보유수량 -->
 			<col style="width:100px;border-right:3px solid #424242"> <!-- 평균단가 -->
 
-			<col style="width:120px;"> <!-- 총매수금 -->
-			<col style="width:120px;"> <!-- 평가금액 -->
-			<col style="width:110px;"> <!-- 수익현황 -->
-			<col style="width:100px;border-right:3px solid #424242"> <!-- 현수익률 -->
+			<col style="width:110px;"> <!-- 총매수금 -->
+			<col style="width:110px;"> <!-- 평가금액 -->
+			<col style="width:100px;"> <!-- 수익현황 -->
+			<col style="width:90px;"> <!-- 현수익률 -->
+			<col style="width:90px;border-right:3px solid #424242"> <!-- 현재손률 -->
 			<col> <!-- 가치합계 -->
 		</colgroup>
 
@@ -155,7 +159,7 @@
 				<td style='text-align:right;font-weight:bold;'>{{TR['종가변동']|safe}}</td>
 
 				<td style='text-align:right;color:gray;'>{{TR['진행상황']|safe}}</td>
-				<td style='text-align:right;font-weight:bold;'>{{TR['일반잔액']}}</td>
+				<td style='text-align:right;font-weight:bold;color:#CEF6CE'>{{TR['일반잔액']}}</td>
 
 				<td style='text-align:right'>{{TR['매수수량']|safe}}</td>
 				<td style='text-align:right'>{{TR['매도수량']|safe}}</td>
@@ -164,10 +168,11 @@
 				<td style='text-align:right;color:#F6CECE;'>{{TR['평균단가']|safe}}</td>
 
 				<td style='text-align:right;color:#E6F8E0'>{{TR['총매수금']|safe}}</td>
-				<td style='text-align:right'>{{TR['평가금액']|safe}}</td>
+				<td style='text-align:right;font-weight:bold;'>{{TR['평가금액']|safe}}</td>
 				<td style='text-align:right;'>{{TR['수익현황']|safe}}</td>	
 				<td style='text-align:right;'>{{TR['현수익률']|safe}}</td>
-				<td style='text-align:right;color:#CEF6CE'>{{TR['가치합계']|safe}}</td>
+				<td style='text-align:right;'>{{TR['실수익률']|safe}}</td>
+				<td style='text-align:right;font-weight:bold;color:#CEF6CE'>{{TR['가치합계']|safe}}</td>
 			</tr>
 			{%- endfor %}
 
@@ -184,14 +189,14 @@
 	<table class="table" style="text-align:right;width:324px;margin-top:10px">
 		<tr style="font-style:italic;border-bottom:1px solid gray;color:gray"><td style="text-align:left;">Tactic</td><td>price</td><td>qty</td><td>ppl</td><td>ppa&nbsp;</td></tr>
 
-		{% if D['N_생활매수량'] %}
-		<tr><td style="text-align:left;">D <span style="color:gray">buy</span></td><td>{{D['N_생활매수가']}}</td><td>{{D['N_생활매수량']}}</td>
-			<td style="color:gray">{{D['N_생활종대비']}}</td><td style="color:gray">{{D['N_생활평대비']}}</td>
+		{% if D['N_몸통매수량'] %}
+		<tr><td style="text-align:left;">D <span style="color:gray">buy</span></td><td>{{D['N_몸통매수가']}}</td><td>{{D['N_몸통매수량']}}</td>
+			<td style="color:gray">{{D['N_몸통종대비']}}</td><td style="color:gray">{{D['N_몸통평대비']}}</td>
 		</tr>
 		{% endif %}
-		{% if D['N_생활매도량'] %}
-		<tr style="border-top:1px solid gray"><td style="text-align:left;">D <span style="color:gray">sell</span></td><td>{{D['N_생활매도가']}}</td><td>{{D['N_생활매도량']}}</td>
-			<td style="color:gray">{{D['N_생활도종비']}}</td><td style="color:gray">{{D['N_생활도평비']}}</td>
+		{% if D['N_몸통매도량'] %}
+		<tr style="border-top:1px solid gray"><td style="text-align:left;">D <span style="color:gray">sell</span></td><td>{{D['N_몸통매도가']}}</td><td>{{D['N_몸통매도량']}}</td>
+			<td style="color:gray">{{D['N_몸통도종비']}}</td><td style="color:gray">{{D['N_몸통도평비']}}</td>
 		</tr>
 		{% endif %}
 		{% if D['N_꼬리매도량'] %}

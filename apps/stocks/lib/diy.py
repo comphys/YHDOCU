@@ -456,34 +456,34 @@ class DIY :
         
         if  self.M['첫날기록'] or not self.M['보유수량'] : 
 
-            self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['진입가치'],2)
-            if self.M['연속하락'] >= self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['연속가치'],2 ) 
+            self.D['N_몸통매수가'] = round(self.M['당일종가'] * self.M['진입가치'],2)
+            if self.M['연속하락'] >= self.M['진입일자']-1 : self.D['N_몸통매수가'] = round(self.M['당일종가'] * self.M['연속가치'],2 ) 
             
-            self.D['N_생활매수량'] = int( self.M['매금단계'][1] / self.D['N_생활매수가'] )
-            self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
-            self.D['N_생활매도량'] = 0
-            self.D['N_생활매도가'] = 0
-            self.D['N_생활도평비'] = 0
-            self.D['N_생활도종비'] = 0
-            self.D['N_생활평대비'] = 0
-            self.D['N_생활배분금'] = self.M['매금단계'][1]
+            self.D['N_몸통매수량'] = int( self.M['매금단계'][1] / self.D['N_몸통매수가'] )
+            self.D['N_몸통종대비'] = self.next_percent(self.M['당일종가'],self.D['N_몸통매수가'])
+            self.D['N_몸통매도량'] = 0
+            self.D['N_몸통매도가'] = 0
+            self.D['N_몸통도평비'] = 0
+            self.D['N_몸통도종비'] = 0
+            self.D['N_몸통평대비'] = 0
+            self.D['N_몸통배분금'] = self.M['매금단계'][1]
             self.D['N_꼬리매도량'] = 0
             self.D['N_꼬리매도가'] = 0
             self.D['N_꼬리도평비'] = 0.0
             self.D['N_꼬리도종비'] = 0.0
             
         else : 
-            self.D['N_생활매수량'] = self.M['예정수량']
-            self.D['N_생활매수가'] = self.M['매수예가']
-            self.D['N_생활평대비'] = self.next_percent(self.M['평균단가'],self.D['N_생활매수가']) 
-            self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
-            self.D['N_생활매수가'] = self.D['N_생활매수가']
-            self.D['N_생활배분금'] = self.D['배분금액']
+            self.D['N_몸통매수량'] = self.M['예정수량']
+            self.D['N_몸통매수가'] = self.M['매수예가']
+            self.D['N_몸통평대비'] = self.next_percent(self.M['평균단가'],self.D['N_몸통매수가']) 
+            self.D['N_몸통종대비'] = self.next_percent(self.M['당일종가'],self.D['N_몸통매수가'])
+            self.D['N_몸통매수가'] = self.D['N_몸통매수가']
+            self.D['N_몸통배분금'] = self.D['배분금액']
             
-            self.D['N_생활매도량'] = self.M['몸통수량']
-            self.D['N_생활매도가'] = self.M['몸통가격']
-            self.D['N_생활도평비'] = self.next_percent(self.M['평균단가'],self.M['몸통가격'])
-            self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.M['몸통가격'])
+            self.D['N_몸통매도량'] = self.M['몸통수량']
+            self.D['N_몸통매도가'] = self.M['몸통가격']
+            self.D['N_몸통도평비'] = self.next_percent(self.M['평균단가'],self.M['몸통가격'])
+            self.D['N_몸통도종비'] = self.next_percent(self.M['당일종가'],self.M['몸통가격'])
 
             self.D['N_꼬리매도량'] = self.M['꼬리수량']
             self.D['N_꼬리매도가'] = self.M['꼬리가격']
@@ -660,15 +660,15 @@ class DIY :
         NS['다음요일'] = self.D['다음요일']
         NS['현재종가'] = self.D['현재종가']
         NS['현재연속'] = self.D['현재연속']
-        NS['예정수량'] = self.D['N_생활매수량']
-        NS['예정매가'] = self.D['N_생활매수가']
-        NS['매평대비'] = self.D['N_생활평대비']
-        NS['매종대비'] = self.D['N_생활종대비']
-        NS['예정도수'] = self.D['N_생활매도량']
-        NS['예정도가'] = self.D['N_생활매도가']
-        NS['도평대비'] = self.D['N_생활도평비']
-        NS['도종대비'] = self.D['N_생활도종비']
-        NS['배분금액'] = self.D['N_생활배분금']
+        NS['예정수량'] = self.D['N_몸통매수량']
+        NS['예정매가'] = self.D['N_몸통매수가']
+        NS['매평대비'] = self.D['N_몸통평대비']
+        NS['매종대비'] = self.D['N_몸통종대비']
+        NS['예정도수'] = self.D['N_몸통매도량']
+        NS['예정도가'] = self.D['N_몸통매도가']
+        NS['도평대비'] = self.D['N_몸통도평비']
+        NS['도종대비'] = self.D['N_몸통도종비']
+        NS['배분금액'] = self.D['N_몸통배분금']
         # 꼬리매매
         NS['꼬리도수'] = self.D['N_꼬리매도량']
         NS['꼬리도가'] = self.D['N_꼬리매도가']

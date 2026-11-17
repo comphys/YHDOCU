@@ -14,6 +14,7 @@ class CDS :
         self.DB    = SYS.DB
         self.chart = False
         self.stat  = False
+        self.quit  = False
 
         self.B = {}
         self.M = {}
@@ -68,7 +69,8 @@ class CDS :
                 
                 self.vCount(self.M['수익현황'])
                 self.tax()
-                self.rebalance() 
+                self.rebalance()
+                if self.D['임의진입'] == 'on' : self.quit = True
 
         self.realMDD()
 
@@ -219,12 +221,13 @@ class CDS :
         self.M['꼬리총수'] = 0
         self.M['꼬리총매'] = 0
 
-        진입단가 = round(self.M['전일종가'] * self.M['연속가치'], 2) if self.M['연속하락'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
-        if  self.M['당일종가'] <=  진입단가  :
+        ePrice = round(self.M['전일종가'] * self.M['연속가치'], 2) if self.M['연속하락'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
+        if  self.D['임의진입'] == 'on' : ePrice = round(self.M['전일종가'] * self.M['연속가치'], 2)
+        if  self.M['당일종가'] <=  ePrice  :
             
             self.M['기록시즌'] += 1
             self.M['현재날수'] = 1
-            self.M['매수수량']  = int(self.M['현재잔액']/진입단가 * 0.15)
+            self.M['매수수량']  = int(self.M['현재잔액']/ePrice * 0.15)
             self.M['수익현황']  = self.M['현수익률'] = 0.0
             self.M['보유수량']  = self.M['매수수량']
             self.M['평균단가']  = self.M['당일종가'] 
@@ -285,6 +288,7 @@ class CDS :
             self.chart_data()
             self.tomorrow_step()
             self.increase_count(printOut)
+            if self.quit : break
         
    
     def set_value(self,key,val) :

@@ -14,6 +14,7 @@ class DIV :
         self.DB    = SYS.DB
         self.chart = False
         self.stat  = False
+        self.quit  = False
 
         self.B = {}
         self.M = {}
@@ -50,7 +51,7 @@ class DIV :
                 self.M['총매수금'] = self.M['평균단가'] * self.M['보유수량']
                 self.M['수익현황'] = self.M['평가금액'] - self.M['총매수금']
                 self.M['현수익률'] = self.M['수익현황'] / self.M['총매수금']  * 100
-                self.M['현재손률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
+                self.M['실수익률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
                 self.M['진행상황'] = '꼬리매도' 
                 self.M['매수차수'] = self.M['최대차수'] - 1   
 
@@ -69,6 +70,7 @@ class DIV :
                 self.vCount(self.M['수익현황'])
                 self.tax()
                 self.rebalance() 
+                if self.D['임의진입'] == 'on' : self.quit = True
 
         self.realMDD()
 
@@ -77,8 +79,8 @@ class DIV :
         
         if not self.stat : return
 
-        if  self.M['현재손률'] < self.D['진최하락'] : 
-            self.D['진최하락'] = self.M['현재손률']
+        if  self.M['실수익률'] < self.D['진최하락'] : 
+            self.D['진최하락'] = self.M['실수익률']
             self.D['최하일자'] = self.M['현재일자']
 
         if  self.M['현재날수'] > self.M['최장일수'] : 
@@ -157,6 +159,7 @@ class DIV :
             if  self.M['꼬리총수'] : 
                 self.M['꼬리총수'] = 0
                 self.M['꼬리총매'] = 0.0
+                self.M['진행상황'] = '꼬리매수' 
 
 
     def tomorrow_buy(self) :
@@ -215,12 +218,14 @@ class DIV :
         self.M['꼬리총수'] = 0
         self.M['꼬리총매'] = 0
 
-        진입단가 = round(self.M['전일종가'] * self.M['연속가치'], 2) if self.M['연속하락'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
-        if  self.M['당일종가'] <=  진입단가  :
+        ePrice = round(self.M['전일종가'] * self.M['연속가치'], 2) if self.M['연속하락'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
+        if  self.D['임의진입'] == 'on' : ePrice = round(self.M['전일종가'] * self.M['연속가치'], 2)
+
+        if  self.M['당일종가'] <=  ePrice  :
             
             self.M['기록시즌'] += 1
             self.M['현재날수'] = 1
-            self.M['매수수량']  = int( self.M['매금단계'][0]/진입단가 )
+            self.M['매수수량']  = int( self.M['매금단계'][0]/ePrice)
             self.M['수익현황']  = self.M['현수익률'] = 0.0
             self.M['보유수량']  = self.M['매수수량']
             self.M['평균단가']  = self.M['당일종가'] 
@@ -237,7 +242,7 @@ class DIV :
 
             if self.stat and self.D['진시일자'] > self.M['현재일자'] : self.D['진시일자'] = self.M['현재일자']
 
-            self.M['현재손률'] = 0.0 
+            self.M['실수익률'] = 0.0 
             return True
 
         else : 
@@ -281,6 +286,7 @@ class DIV :
             self.chart_data()
             self.tomorrow_step()
             self.increase_count(printOut)
+            if self.quit : break
         
    
     def set_value(self,key,val) :
@@ -431,7 +437,7 @@ class DIV :
             self.D['손익저점'] = 100
             self.D['저점날자'] = ''
             self.D['진시일자'] = self.D['종료일자']
-            self.M['현재손률'] = 0.0
+            self.M['실수익률'] = 0.0
             self.D['진최하락'] = 0
             self.D['최하일자'] = ''
 
@@ -455,34 +461,34 @@ class DIV :
         
         if  self.M['첫날기록'] or not self.M['보유수량'] : 
 
-            self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['진입가치'],2)
-            if self.M['연속하락'] >= self.M['진입일자']-1 : self.D['N_생활매수가'] = round(self.M['당일종가'] * self.M['연속가치'],2 ) 
+            self.D['N_몸통매수가'] = round(self.M['당일종가'] * self.M['진입가치'],2)
+            if self.M['연속하락'] >= self.M['진입일자']-1 : self.D['N_몸통매수가'] = round(self.M['당일종가'] * self.M['연속가치'],2 ) 
             
-            self.D['N_생활매수량'] = int( self.M['매금단계'][1] / self.D['N_생활매수가'] )
-            self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
-            self.D['N_생활매도량'] = 0
-            self.D['N_생활매도가'] = 0
-            self.D['N_생활도평비'] = 0
-            self.D['N_생활도종비'] = 0
-            self.D['N_생활평대비'] = 0
-            self.D['N_생활배분금'] = self.M['매금단계'][1]
+            self.D['N_몸통매수량'] = int( self.M['매금단계'][1] / self.D['N_몸통매수가'] )
+            self.D['N_몸통종대비'] = self.next_percent(self.M['당일종가'],self.D['N_몸통매수가'])
+            self.D['N_몸통매도량'] = 0
+            self.D['N_몸통매도가'] = 0
+            self.D['N_몸통도평비'] = 0
+            self.D['N_몸통도종비'] = 0
+            self.D['N_몸통평대비'] = 0
+            self.D['N_몸통배분금'] = self.M['매금단계'][1]
             self.D['N_꼬리매도량'] = 0
             self.D['N_꼬리매도가'] = 0
             self.D['N_꼬리도평비'] = 0.0
             self.D['N_꼬리도종비'] = 0.0
             
         else : 
-            self.D['N_생활매수량'] = self.M['예정수량']
-            self.D['N_생활매수가'] = self.M['매수예가']
-            self.D['N_생활평대비'] = self.next_percent(self.M['평균단가'],self.D['N_생활매수가']) 
-            self.D['N_생활종대비'] = self.next_percent(self.M['당일종가'],self.D['N_생활매수가'])
-            self.D['N_생활매수가'] = self.D['N_생활매수가']
-            self.D['N_생활배분금'] = self.D['배분금액']
+            self.D['N_몸통매수량'] = self.M['예정수량']
+            self.D['N_몸통매수가'] = self.M['매수예가']
+            self.D['N_몸통평대비'] = self.next_percent(self.M['평균단가'],self.D['N_몸통매수가']) 
+            self.D['N_몸통종대비'] = self.next_percent(self.M['당일종가'],self.D['N_몸통매수가'])
+            self.D['N_몸통매수가'] = self.D['N_몸통매수가']
+            self.D['N_몸통배분금'] = self.D['배분금액']
             
-            self.D['N_생활매도량'] = self.M['몸통수량']
-            self.D['N_생활매도가'] = self.M['몸통가격']
-            self.D['N_생활도평비'] = self.next_percent(self.M['평균단가'],self.M['몸통가격'])
-            self.D['N_생활도종비'] = self.next_percent(self.M['당일종가'],self.M['몸통가격'])
+            self.D['N_몸통매도량'] = self.M['몸통수량']
+            self.D['N_몸통매도가'] = self.M['몸통가격']
+            self.D['N_몸통도평비'] = self.next_percent(self.M['평균단가'],self.M['몸통가격'])
+            self.D['N_몸통도종비'] = self.next_percent(self.M['당일종가'],self.M['몸통가격'])
 
             self.D['N_꼬리매도량'] = self.M['꼬리수량']
             self.D['N_꼬리매도가'] = self.M['꼬리가격']
@@ -530,7 +536,7 @@ class DIV :
         tx['현수익률'] = f"<span style='color:{clr}'>{round(self.M['현수익률'],4):,.2f}</span>"
         
         tx['가치합계'] = f"{가치합계:,.2f}"
-        tx['현재손률'] = f"{self.M['현재손률']:.2f}" if self.M['현재손률'] else ''
+        tx['실수익률'] = f"{self.M['실수익률']:.2f}" if self.M['실수익률'] else '0.00'
             
         self.D['TR'].append(tx)
         
@@ -659,15 +665,15 @@ class DIV :
         NS['다음요일'] = self.D['다음요일']
         NS['현재종가'] = self.D['현재종가']
         NS['현재연속'] = self.D['현재연속']
-        NS['예정수량'] = self.D['N_생활매수량']
-        NS['예정매가'] = self.D['N_생활매수가']
-        NS['매평대비'] = self.D['N_생활평대비']
-        NS['매종대비'] = self.D['N_생활종대비']
-        NS['예정도수'] = self.D['N_생활매도량']
-        NS['예정도가'] = self.D['N_생활매도가']
-        NS['도평대비'] = self.D['N_생활도평비']
-        NS['도종대비'] = self.D['N_생활도종비']
-        NS['배분금액'] = self.D['N_생활배분금']
+        NS['예정수량'] = self.D['N_몸통매수량']
+        NS['예정매가'] = self.D['N_몸통매수가']
+        NS['매평대비'] = self.D['N_몸통평대비']
+        NS['매종대비'] = self.D['N_몸통종대비']
+        NS['예정도수'] = self.D['N_몸통매도량']
+        NS['예정도가'] = self.D['N_몸통매도가']
+        NS['도평대비'] = self.D['N_몸통도평비']
+        NS['도종대비'] = self.D['N_몸통도종비']
+        NS['배분금액'] = self.D['N_몸통배분금']
         # 꼬리매매
         NS['꼬리도수'] = self.D['N_꼬리매도량']
         NS['꼬리도가'] = self.D['N_꼬리매도가']
@@ -716,12 +722,11 @@ class DIV :
         D['add20']  = '수익실현' if self.M['매도금액'] else '일반진행' # 초기금액
         D['add21']  = f"{self.M['수수료등']:.2f}" # 수수료등
 
-        D['add22'] = self.M['예정수량']
-        D['add23'] = f"{self.M['매수예가']:.2f}"
-        D['add24'] = self.M['보유수량']
-        D['add25'] = f"{self.M['몸통가격']:.2f}"
-
+        D['add22'] = self.M['꼬리총수']
+        D['add23'] = f"{self.M['꼬리총매']:.2f}"
+        D['add24'] = f"{self.M['실수익률']:.2f}"
+        꼬리평균 = round(self.M['꼬리총매']/self.M['꼬리총수'],2) if self.M['꼬리총수'] else '0.00'
+        D['add25'] = f"{꼬리평균:.4f}"
 
         return D
         
-

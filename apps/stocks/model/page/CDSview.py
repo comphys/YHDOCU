@@ -11,6 +11,7 @@ class M_CDSview(Model) :
         self.D['일반자금'] = '100000.00'
         self.D['수료적용'] = 'off'
         self.D['세금적용'] = 'off'
+        self.D['임의진입'] = 'off'
 
         # 기간 설정(최근 2년간)
         self.D['종료일자'] = self.DB.last_date("h_stockHistory_board")
@@ -26,7 +27,8 @@ class M_CDSview(Model) :
 
         D['수료적용'] = self.D['post'].get('chk_fee','off')
         D['세금적용'] = self.D['post'].get('chk_tax','off')
-        
+        D['임의진입'] = self.D['post'].get('chk_iec','off')
+
         VB = self.SYS.load_app_lib('cds')
         VB.D |= D
 
