@@ -384,7 +384,6 @@ class RSN :
             self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >=(self.M['진입일자']-1) else round(self.M['당일종가'] * self.M['진입가치'],2)    
 
         if  self.N['꼬리총수'] : 
-            # 꼬리매수
             self.N['매수예가'] = round(self.N['꼬리총매']/self.N['꼬리총수']*0.95,2)
         
         self.N['예정수량'] = int( self.N['매금단계'][self.N['매수차수']] / self.N['매수예가'] ) 

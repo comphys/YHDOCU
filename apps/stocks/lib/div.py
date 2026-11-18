@@ -219,7 +219,6 @@ class DIV :
         if  self.D['임의진입'] == 'on' : ePrice = round(self.M['전일종가'] * self.M['연속가치'], 2)
 
         if  self.M['당일종가'] <=  ePrice  :
-            
             self.M['기록시즌'] += 1
             self.M['현재날수'] = 1
             self.M['매수수량']  = int( self.M['매금단계'][0]/ePrice)
