@@ -107,4 +107,20 @@ class Ajax(Model) :
         # 파라미터 업데이트
 
         return "___OK____"
-    
+
+
+    def get_current_price(self) :
+        opt = self.D['post'].get('opt',None)
+        self.info(opt)
+        MR = self.SYS.load_app_lib('meritz')
+        rst = MR.get_current_price()
+        if rst :
+            if opt == 'krwusd':
+                    rst['환율'] = float(rst['환율'])
+                    return self.SYS.json(rst)
+            else : 
+                if rst :
+                    rst['현재가'] = f"{float(rst['현재가격']):.2f}"
+                    return self.SYS.json(rst)
+        else : return self.SYS.json("error::token_issue")
+        

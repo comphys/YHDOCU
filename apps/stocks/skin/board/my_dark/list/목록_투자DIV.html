@@ -41,7 +41,9 @@
 				</tr>
 				{% endif %}
 			</table>
-
+			
+			<div id="real-nyse-time" style="text-align:center;padding-top:80px;font-size:16px;font-weight:bold;color:lightgray">&nbsp;</div>
+			<div id="real-time-stock-price" style="text-align:center;padding-top:10px;font-weight:bold;color:gray">&nbsp;</div>
 
 			{% if D['가상증액'] %}
 			<div style="margin-top:10px;width:100%;text-align:center;">
@@ -63,6 +65,11 @@
 		{%- endif %}
 	</div>
 	<div class="pull-right" style="color:#222121;">
+
+		<span onclick="start_stock_live('play')"><i class="fa fa-play" style='color:gray;font-size:18px;cursor: pointer;'></i></span>&nbsp;
+		<span onclick="start_stock_live('stop')"><i class="fa fa-pause" style='color:gray;font-size:18px;cursor: pointer;'></i></span>&nbsp;
+		<span onclick="show_balance_info()"><i class="fa fa-krw" style='color:gray;font-size:18px;cursor: pointer;'></i></span>&nbsp;&nbsp;
+
 		<div id ='daily-check'>{{D['주문확인']}}</div>&nbsp;&nbsp;
 		<form method='post' name='category_search' action="{{D['_bse']}}board/list/{{D['bid']}}" style='display:inline;'>
 			{%- for cats in D['CAT_LIST'] %}
@@ -169,6 +176,11 @@
 	<canvas id="monthlyProfitChart" style="width:1128px;height:350px;background-color:#24272d"></canvas>
 </div>
 
+<div id="show-balance-info" style="display:none;position:absolute;left:1168px;top:200px;width:344px;height:208px;padding:20px;opacity:0.7;z-index:100;background-color:black;">
+Curret krw/usd value : <span id='info-krwusd'></span><br>
+The account balance in krw : <br>
+</div>
+
 <script>
 // 챠트 그리기(메인챠트) -----------------------------------------------------------------------------------------
 const ctx_main = $id('myChart_main');
@@ -180,12 +192,13 @@ let close_origin    = {{D['close_price']|safe}} 		    // soxl close price origin
 let n_avg_origin    = {{D['Ntactic_avg']|safe}}	            // soxl average in N tactic
 let t_buy           = {{D['타겟매가']|safe}}	    
 let t_sel           = {{D['타겟도가']|safe}}
-
 let ChartStart      = {{D['chart_start']}};	
 
 let labels_main     =  labels_origin.slice(ChartStart) 
 let chart_len       =  labels_main.length
 let close_price     =  close_origin.slice(ChartStart)	
+let last_closeP     = close_price.at(-1)
+
 let n_avg_value     =  n_avg_origin.slice(ChartStart)  
 let target_buy      =  []
 let target_sel      =  [] 
@@ -300,6 +313,59 @@ function update_log(day) {
 		else {h_dialog.notice(data);}		
 		
 	});
+}
+
+// 현재 주가 보여주기 -------------------------------------------------------------------------------------------------------
+let timeID  = null;
+let stockID = null;
+
+function loadStockPrice() {
+	const posturl = uri('linkajax') + 'logDIV/get_current_price'
+	$.post(posturl, {opt:'cprice'},null,'json').done(
+		function(data){
+			if(data=='error::token_issue') {
+				clearInterval(stockID)
+				$("#real-time-stock-price").html("<span style='font-size:20px'>token error</span>");
+			}
+			else {
+				let ov = parseFloat(last_closeP)
+				let nv = parseFloat(data['현재가'])
+				let df = ((nv/ov - 1)*100).toFixed(2)
+				let pm = (df>=0)? '+' : ''
+				let dc = (df>0)? 'list-bull' : 'list-bear'
+				let cp = "<span style='font-size:30px'>"+data['현재가']+"</span> " 
+				let pr = "<span class='"+dc+"' style='font-size:16px'>"+pm+df+"% </span>&nbsp; "
+				$("#real-time-stock-price").html(cp + pr );
+			}
+		});
+}
+
+function updateNewYorkTime() {
+	const now = new Date()
+	const options = {timeZone: 'America/New_York',month: '2-digit',day: '2-digit',hour: '2-digit',minute: '2-digit',second:'2-digit',hour12: true };
+	const nyTime = new Intl.DateTimeFormat('en-US', options).format(now);
+	$("#real-nyse-time").html('NY time : '+nyTime);
+}
+
+function start_stock_live(opt) {
+	if (opt == 'play') {
+		if (timeID == null) { updateNewYorkTime(); timeID = setInterval(updateNewYorkTime,1000); }
+		if (stockID== null) { loadStockPrice();   stockID = setInterval(loadStockPrice,5000);} 
+	} else { 
+		clearInterval(timeID); timeID  = null; 
+		clearInterval(stockID);  stockID = null; 
+		$("#real-nyse-time").html('');
+		$("#real-time-stock-price").html('');
+	}	
+}
+
+function show_balance_info() {
+	$("#show-balance-info").toggle();
+	const posturl = uri('linkajax') + 'logDIV/get_current_price'
+	$.post(posturl, {opt:'krwusd'},null,'json').done(
+		function(data){
+			$("#info-krwusd").text(parseFloat(data['환율']).toFixed(2))
+		});
 }
 </script>
 

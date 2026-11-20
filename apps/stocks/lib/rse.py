@@ -1,4 +1,5 @@
 import system.core.my_utils as my
+from collections import deque
 # import numpy
 
 class RSE :
@@ -430,6 +431,11 @@ class RSE :
         price = (self.M['시즌자금']-bal)/qty 
         return price
 
+    def escape_price(self,rate) :
+        
+        recent_low = min(self.M['최근칠일'])
+        return round(recent_low*rate,2)
+
     def tomorrow_sel_V(self) :
 
         if  self.M['첫날기록'] : return
@@ -437,24 +443,22 @@ class RSE :
 
         if  self.M['기본진행'] :
 
-            if  self.V['진행상황'] not in ('매수제한','매수중단') : 
+            if  self.M['현재날수'] < 14 : 
                 self.V['매도예가'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
             else : 
-                self.V['매도예가'] = my.round_up(self.V['평균단가'] * self.M['둘매가치']) 
-
-            if  self.S['진행시작'] : 
-                self.V['매도예가'] = min(self.V['매도예가'],my.round_up(self.S['평균단가'] * self.S['매도보정']))
+                self.V['매도예가'] = self.escape_price(1.12)
                 
         # [전략진행]---------------------------------------------------------------------------------------------
 
         else :
            
-            if  self.M['현재날수'] < self.M['매도대기'] :
+            if  self.M['현재날수'] < 14 :
                 self.V['매도예가'] = my.round_up(self.V['평균단가'] * self.M['전략가치'])
+                self.info(self.M['현재일자'])
             else :
-                self.V['매도예가'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
+                self.V['매도예가'] = self.escape_price(1.20)
                 
-            if  self.S['진행시작'] : self.V['매도예가'] = min(self.V['매도예가'],my.round_up(self.S['평균단가'] * self.S['회복탈출']))
+            # if  self.S['진행시작'] : self.V['매도예가'] = min(self.V['매도예가'],my.round_up(self.S['평균단가'] * self.S['회복탈출']))
 
     def tomorrow_sel_R(self) :
 
@@ -503,21 +507,21 @@ class RSE :
         self.N['몸통가격'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
         self.N['몸통수량'] = self.N['보유수량']
 
-        if  self.N['꼬리총수'] or self.N['매수차수'] == self.M['최대차수'] :
-            self.N['꼬리가격'] = my.round_up(self.M['당일종가']*1.05)
-            self.N['꼬리수량'] = self.N['꼬리총수'] * 2 if self.N['꼬리총수'] else int(self.N['보유수량'] * 0.1)
+        # if  self.N['꼬리총수'] or self.N['매수차수'] == self.M['최대차수'] :
+        #     self.N['꼬리가격'] = my.round_up(self.M['당일종가']*1.05)
+        #     self.N['꼬리수량'] = self.N['꼬리총수'] * 2 if self.N['꼬리총수'] else int(self.N['보유수량'] * 0.1)
 
-            if  self.N['꼬리수량'] > self.N['보유수량'] : 
-                self.N['꼬리수량'] = 0
-                self.N['꼬리가격'] = 0.0
+        #     if  self.N['꼬리수량'] > self.N['보유수량'] : 
+        #         self.N['꼬리수량'] = 0
+        #         self.N['꼬리가격'] = 0.0
             
-            if  self.N['꼬리가격'] >= self.N['몸통가격'] : 
-                self.N['꼬리수량'] = 0
-            else :
-                self.N['몸통수량'] -= self.N['꼬리수량']
-        else :
-            self.N['꼬리수량'] = 0
-            self.N['꼬리가격'] = 0.0
+        #     if  self.N['꼬리가격'] >= self.N['몸통가격'] : 
+        #         self.N['꼬리수량'] = 0
+        #     else :
+        #         self.N['몸통수량'] -= self.N['꼬리수량']
+        # else :
+        #     self.N['꼬리수량'] = 0
+        #     self.N['꼬리가격'] = 0.0
 
         if  (mbp:= max(self.R['매수예가'],self.S['매수예가'])) > self.N['몸통가격'] : self.N['몸통가격'] = mbp + 0.01
 
@@ -530,13 +534,14 @@ class RSE :
         self.tomorrow_sel_N()
         self.tomorrow_sel_V()
         # [최종 매도가 조율 및 강매진행]-------------------------------------------------------------------------------------------------------------
-       
-        if  self.M['현재날수'] < self.M['강매시작'] :
-            self.V['매도예가'] = min(self.V['매도예가'],my.round_up(self.M['당일종가']*self.M['종가상승']))
-            self.V['매도예가'] = max(self.V['매도예가'],self.N['몸통가격'],my.round_up(self.V['평균단가']*self.M['강매가치']))
-        else :
-            self.V['매도예가'] = my.round_up( self.V['평균단가'] * self.M['강매가치'] )
-            self.N['몸통가격'] = min(self.V['매도예가'],self.N['몸통가격'])
+
+        if  self.N['몸통가격'] > self.V['매도예가'] : self.N['몸통가격'] = self.V['매도예가']       
+        # if  self.M['현재날수'] < self.M['강매시작'] :
+        #     self.V['매도예가'] = min(self.V['매도예가'],my.round_up(self.M['당일종가']*self.M['종가상승']))
+        #     self.V['매도예가'] = max(self.V['매도예가'],self.N['몸통가격'],my.round_up(self.V['평균단가']*self.M['강매가치']))
+        # else :
+        #     self.V['매도예가'] = my.round_up( self.V['평균단가'] * self.M['강매가치'] )
+        #     self.N['몸통가격'] = min(self.V['매도예가'],self.N['몸통가격'])
 
         for tac in (self.V,self.R,self.S,self.N) : 
             if tac['매수예가'] >= self.V['매도예가'] : tac['매수예가'] = self.V['매도예가'] - 0.01
@@ -611,6 +616,7 @@ class RSE :
 
             self.M['현재일자'] = BD['add0']
             self.M['당일종가'] = float(BD['add3'])
+            self.M['최근칠일'].append(self.M['당일종가'])
             self.M['전일종가'] = float(self.B[idx-1]['add3']) 
             self.M['종가변동'] = float(BD['add8']) 
             self.M['연속상승'] = int(BD['add9'])
@@ -838,6 +844,7 @@ class RSE :
         self.R['몸통수량'] = self.S['몸통수량'] = self.N['몸통수량'] = 0
         self.R['꼬리가격'] = self.S['꼬리가격'] = self.N['꼬리가격'] = 0.0
         self.R['꼬리수량'] = self.S['꼬리수량'] = self.N['꼬리수량'] = 0
+        self.M['최근칠일'] = deque(maxlen=7)
         # -------------------------------------------------------------------------------------------
         if  self.chart : # 챠트작성
             
