@@ -25,7 +25,6 @@ class Board(Control) :
             self.bAccess = True if (self.D['USER']['level']>=self.D['BCONFIG']['acc_body'])  or is_owner  else False
             self.wAccess = True if (self.D['USER']['level']>=self.D['BCONFIG']['acc_write']) or is_owner  else False
 
-            self.D['lst_sday'] = my.last_stock_day(self.DB)
             self.D['lst_ohlc'] = self.DB.last_date('h_stockHistory_board')
 
             self.skin = 'board/'+self.D['BCONFIG']['skin']

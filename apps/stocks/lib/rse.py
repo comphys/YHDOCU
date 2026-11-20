@@ -1,5 +1,5 @@
 import system.core.my_utils as my
-import numpy
+# import numpy
 
 class RSE :
 
@@ -418,24 +418,43 @@ class RSE :
 
         if  self.N['꼬리총수'] : 
             self.N['매수예가'] = round(self.N['꼬리총매']/self.N['꼬리총수']*0.9,2)
-        self.info(f"{self.M['현재일자']} : {self.N['매수예가']}")
+ 
         self.N['예정수량'] = int( self.N['매금단계'][self.N['매수차수']] / self.N['매수예가'] ) 
 
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # tomorrow_sell : 다음 날의 매도예가를 계산한다 
     # -------------------------------------------------------------------------------------------------------------------------------------------
-    def tomorrow_sel_V(self) :
-
-        if  self.M['첫날기록'] : return
+    def check_even_price(self) :
         qty = self.R['보유수량'] + self.S['보유수량'] + self.N['보유수량'] 
         bal = self.R['현재잔액'] + self.S['현재잔액'] + self.N['현재잔액']
         price = (self.M['시즌자금']-bal)/qty 
+        return price
 
-        if   self.M['현재날수'] <= 12 : self.V['매도예가'] = my.round_up(price*1.01)
-        elif self.M['현재날수'] <= 20 : self.V['매도예가'] = my.round_up(price*0.90)
-        else : self.V['매도예가'] = my.round_up(price*0.80)
+    def tomorrow_sel_V(self) :
 
-        if self.N['몸통가격'] > self.V['매도예가'] : self.N['몸통가격'] = self.V['매도예가']
+        if  self.M['첫날기록'] : return
+        # [기본진행]---------------------------------------------------------------------------------------------
+
+        if  self.M['기본진행'] :
+
+            if  self.V['진행상황'] not in ('매수제한','매수중단') : 
+                self.V['매도예가'] = my.round_up(self.V['평균단가'] * self.M['첫매가치'])
+            else : 
+                self.V['매도예가'] = my.round_up(self.V['평균단가'] * self.M['둘매가치']) 
+
+            if  self.S['진행시작'] : 
+                self.V['매도예가'] = min(self.V['매도예가'],my.round_up(self.S['평균단가'] * self.S['매도보정']))
+                
+        # [전략진행]---------------------------------------------------------------------------------------------
+
+        else :
+           
+            if  self.M['현재날수'] < self.M['매도대기'] :
+                self.V['매도예가'] = my.round_up(self.V['평균단가'] * self.M['전략가치'])
+            else :
+                self.V['매도예가'] = my.round_up(self.V['평균단가'] * self.M['둘매가치'])
+                
+            if  self.S['진행시작'] : self.V['매도예가'] = min(self.V['매도예가'],my.round_up(self.S['평균단가'] * self.S['회복탈출']))
 
     def tomorrow_sel_R(self) :
 
@@ -443,8 +462,8 @@ class RSE :
         self.R['몸통수량'] = self.R['보유수량']
 
         # if  self.R['진행시작'] :
-        #     self.R['꼬리가격'] = my.round_up(self.M['당일종가']*1.05)
-        #     self.R['꼬리수량'] = self.R['꼬리기본']
+        #     self.R['꼬리가격'] = my.round_up(self.R['평균단가']*1.0)
+        #     self.R['꼬리수량'] = my.ceil(self.R['보유수량']/2)
 
         #     if  self.R['꼬리수량'] > self.R['보유수량'] / 2 :
         #         self.R['꼬리수량'] = 0
@@ -463,8 +482,8 @@ class RSE :
         self.S['몸통수량'] = self.S['보유수량']
         
         # if  self.S['진행시작']  :
-        #     self.S['꼬리가격'] = my.round_up(self.M['당일종가']*1.05)
-        #     self.S['꼬리수량'] = self.S['꼬리기본']
+        #     self.S['꼬리가격'] = my.round_up(self.S['평균단가']*0.95)
+        #     self.S['꼬리수량'] = my.ceil(self.R['보유수량']/4)
 
         #     if  self.S['꼬리수량'] > self.S['보유수량'] / 2 :
         #         self.S['꼬리수량'] = 0
@@ -510,17 +529,20 @@ class RSE :
         # 현재잔액 상태를 파악하기 위해서, buy 검토가 sell 검토보다 빨라야 함, R,S의 매수가격은 V 매수가격보다 작아야 하므로 V부터 검토하여야 함
         self.tomorrow_sel_N()
         self.tomorrow_sel_V()
-        self.tomorrow_sel_R()
-        self.tomorrow_sel_S()
-        
         # [최종 매도가 조율 및 강매진행]-------------------------------------------------------------------------------------------------------------
        
-        # self.V['매도예가'] = max(self.V['매도예가'],self.N['몸통가격'],my.round_up(self.V['평균단가']*self.M['강매가치']))
+        if  self.M['현재날수'] < self.M['강매시작'] :
+            self.V['매도예가'] = min(self.V['매도예가'],my.round_up(self.M['당일종가']*self.M['종가상승']))
+            self.V['매도예가'] = max(self.V['매도예가'],self.N['몸통가격'],my.round_up(self.V['평균단가']*self.M['강매가치']))
+        else :
+            self.V['매도예가'] = my.round_up( self.V['평균단가'] * self.M['강매가치'] )
+            self.N['몸통가격'] = min(self.V['매도예가'],self.N['몸통가격'])
 
         for tac in (self.V,self.R,self.S,self.N) : 
             if tac['매수예가'] >= self.V['매도예가'] : tac['매수예가'] = self.V['매도예가'] - 0.01
 
-
+        self.tomorrow_sel_R()
+        self.tomorrow_sel_S()
     # -------------------------------------------------------------------------------------------------------------------------------------------
     # new_day : 첫날 매수에 대한 처리를 한다 
     # -------------------------------------------------------------------------------------------------------------------------------------------     
@@ -1143,8 +1165,8 @@ class RSE :
                 over_p = cnt100/totcnt*100
                 self.D['over100st'] = f"{cnt100} / {totcnt} ( {over_p:.1f}% )"
 
-                self.D['평균가치'] = f"{numpy.mean(self.D['chart_val']):.2f}"
-                self.D['표준편차'] = f"{numpy.std(self.D['chart_val']):.2f}"
+                # self.D['평균가치'] = f"{numpy.mean(self.D['chart_val']):.2f}"
+                # self.D['표준편차'] = f"{numpy.std(self.D['chart_val']):.2f}"
 
 
 # ------------------------------------------------------------------------------------

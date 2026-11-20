@@ -125,7 +125,6 @@ else :
     A.do_my_order('RSN',orders)
     if A.exe_type :
         A.DB.parameter_update('TX070',today_nyk[0:10])
-        requests.post(A.my_host+'/check/check_rsn',headers=A.my_headers,json={'rsn_check':today_nyk[0:10]})
 
     # DIY
     A.API.change_account('02')
@@ -133,15 +132,17 @@ else :
     A.do_my_order('DIY',orders)
     if A.exe_type :
         A.DB.parameter_update('A0710',today_nyk[0:10])
-        requests.post(A.my_host+'/check/check_diy',headers=A.my_headers,json={'diy_check':today_nyk[0:10]})
 
-    # POC
-    A.API.change_account('03')
-    # orders = A.diy_order_data('logDIY2')
-    # 임시적용 중
-    orders = [{'종목코드': 'SOXL', '주문일자': A.ord_date, '매매구분': '1', '주문수량': '41', '주문가격': '72.31'}]
-    A.do_my_order('POC',orders)
-
+    # DIV 타계좌로부터 전환을 시도한다. 
+    # 시작일자 : 2026.11.19.
+    # 전환방법 : 주문가보다 현재가가 높을 경우 당일 주문금액만큼 매도(DIY, RSN) 후 잔액 이체(2일소요)
+    # 전환방법 : 주문가보다 현재가가 낮을 경우 담날 해당수량만큼 출고(DIY, RSN)
+    # 자동전환 : 전환완료 후 자동주문으로 계좌 전환
+    # A.API.change_account('03')
+    # orders = A.diy_order_data('logDIV')
+    # A.do_my_order('DIV',orders)
+    # if A.exe_type :
+    # A.DB.parameter_update('V0710',today_nyk[0:10])
 
     # LTH
     A.API.change_account('lth')

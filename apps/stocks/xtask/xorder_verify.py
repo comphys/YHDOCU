@@ -104,12 +104,14 @@ else :
     A.send_message(rst2[1])
     time.sleep(1)
 
-    A.API.change_account('03')
-    rst3 = A.verify_diy_order('POC','logDIY2')
-    A.send_message(rst3[1])
-    time.sleep(1)
+    # 현재 계좌 전환 중 from 2026-11-19.
+    # A.API.change_account('03')
+    # rst3 = A.verify_diy_order('DIV','logDIV')
+    # A.send_message(rst3[1])
+    # time.sleep(1)
 
-    A.API.change_account('lth')
-    rst4 = A.verify_diy_order('LTH','logLTH')
-    A.send_message(rst4[1])
-    time.sleep(1)
+    # 현재 수동 주문 중
+    # A.API.change_account('lth')
+    # rst4 = A.verify_diy_order('LTH','logLTH')
+    # A.send_message(rst4[1])
+    # time.sleep(1)

@@ -28,11 +28,12 @@ class 목록_투자DIV(SKIN) :
   
 
     def chart(self) :
-        
+
         last_lday = self.D['LIST'][0]['add0']
         last_ohlc = self.D['lst_ohlc']
-
-        self.D['업데이트안됨'] = False if last_lday == last_ohlc or self.D['Page'] > '1' else True
+        # 최근 업데이트 날자(last_cday) 는 파라미터 테이블에서 가져온다. 각 보드별 별도 설정을 고려하자. 
+        last_cday = self.DB.parameter('V0721') 
+        self.D['업데이트안됨'] = False if last_cday == last_ohlc else True
   
         self.DB.clear()
         self.DB.tbl = self.D['tbl']
@@ -71,9 +72,8 @@ class 목록_투자DIV(SKIN) :
             ini_data   = self.DB.oneline(f"SELECT add18,add19 FROM {self.D['tbl']} ORDER BY add0 DESC LIMIT 1")
             ini_date = ini_data[0]
             ini_capital = f"{float(ini_data[1]):,.2f}"
-
-            DIY = self.SYS.load_app_lib('diy')
-            NS  = DIY.get_nextStrategy(ini_date,last_date,ini_capital)
+            DIV = self.SYS.load_app_lib('div')
+            NS  = DIV.get_nextStrategy(ini_date,last_date,ini_capital)
 
             self.D['초기금액'] = ini_capital 
             self.D['초기일자'] = ini_date 
@@ -97,9 +97,9 @@ class 목록_투자DIV(SKIN) :
             self.D['타겟도가'] = NS['예정도가'] if NS['예정도수'] else 'null'  
             
             # 기타 정보 가져오기
-            self.D['다음날자'], self.D['다음요일'] = my.next_stock_day(last_lday,self.DB)
+            self.D['다음날자'], self.D['다음요일'] = my.next_stock_day(last_cday,self.DB)
             self.D['확인날자'] = last_date
-            self.D['주문확인'] = self.DB.parameter('A0710')
+            self.D['주문확인'] = self.DB.parameter('V0710')
       
             # 통계 자료 가져오기
             # add5(현재잔액), add14(현재수익), add19(초기금액), add20(카테고리)

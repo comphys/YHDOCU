@@ -10,7 +10,7 @@ class Ajax(Model) :
         # Ajax 호출
         if (self.D.get('post',None)) : day = self.D['post'].get('day',theday)
 
-        board = 'h_logDIY2_board'
+        board = 'h_logLTH_board'
         cday = self.DB.last_date(board)
         lday = self.DB.last_date('h_stockHistory_board')
         if not day and cday >= lday : return 
@@ -22,7 +22,7 @@ class Ajax(Model) :
         ini_date = ini_data[0]
         ini_capt = f"{my.sv(ini_data[1]):,.2f}"
         season   = ini_data[2]
-        
+   
         DIY.do_tacticLog(ini_date,lday,ini_capt)
         LD = DIY.get_simulLog()
         

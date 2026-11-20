@@ -97,7 +97,8 @@ class 목록_투자DIY(SKIN) :
             self.D['타겟도가'] = NS['예정도가'] if NS['예정도수'] else 'null'  
             
             # 기타 정보 가져오기
-            self.D['다음날자'], self.D['다음요일'] = my.next_stock_day(last_lday,self.DB)
+            last_check = self.DB.parameter('A0721')
+            self.D['다음날자'], self.D['다음요일'] = my.next_stock_day(last_check,self.DB)
             self.D['확인날자'] = last_date
             self.D['주문확인'] = self.DB.parameter('A0710')
       

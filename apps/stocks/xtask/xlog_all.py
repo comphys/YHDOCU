@@ -14,7 +14,7 @@ class myClass(Control) :
         OHLC = self.load_app_lib('ohlc')
         OHLC.stocks_update('soxl',day)
         time.sleep(1)
-        for log in ['rsnLog','logDIY','logDIY2','logLTH','log315_ljk'] :
+        for log in ['rsnLog','logDIY','logDIV','logLTH','log315_ljk'] :
             log = self.load_bajax(log,'update_log')
             log()
         self.send_message(day+" Updated")
@@ -51,5 +51,5 @@ if Auto :
     else :
         LOG.log_update(today)
 else :
-     LOG.log_update_each('2026-11-12','rsnLog')
+     LOG.log_update_each('2026-11-19','logLTH')
      print("The job was done...")

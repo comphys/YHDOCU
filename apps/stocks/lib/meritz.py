@@ -108,7 +108,7 @@ class MERITZ :
     # 현재의 실시간 가격 정보를 리턴한다 (메리츠 api의 특이점 이용, 주간장, 애프터장 모두 해당이다. 3번 계좌의 1주는 이를 위해 항상 남겨두자.)
     def get_current_price(self) :
         oldc = self.account
-        self.change_account('03')
+        self.change_account('01')
         if  (rst:=self.rst_api('get','/accounts/v1/me/overseas/holdings',{})) :
             self.change_account(oldc)
             return {'종목':rst[0]['ovrs_stck_symb_iscd'],'현재가격':rst[0]['psnt_prc'],'환율':rst[0]['exrt']}

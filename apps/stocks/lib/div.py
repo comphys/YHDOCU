@@ -391,6 +391,7 @@ class DIV :
         
         if '수료적용' not in self.D : self.D['수료적용']  = ST['V0001'] 
         if '세금적용' not in self.D : self.D['세금적용']  = ST['V0002']
+        if '임의진입' not in self.D : self.D['임의진입']  = 'off'
 
         self.M['현재잔액']  = my.sv(self.D['일반자금'])
         self.M['투자자금']  = self.M['현재잔액']
@@ -675,7 +676,6 @@ class DIV :
         NS['꼬리도가'] = self.D['N_꼬리매도가']
         NS['꼬평대비'] = self.D['N_꼬리도평비']
         NS['꼬종대비'] = self.D['N_꼬리도종비']
-    
         return NS
     
     def do_tacticLog(self,start,end,ini_money) :
@@ -721,7 +721,7 @@ class DIV :
         D['add22'] = self.M['꼬리총수']
         D['add23'] = f"{self.M['꼬리총매']:.2f}"
         D['add24'] = f"{self.M['실수익률']:.2f}"
-        꼬리평균 = round(self.M['꼬리총매']/self.M['꼬리총수'],2) if self.M['꼬리총수'] else '0.00'
+        꼬리평균 = round(self.M['꼬리총매']/self.M['꼬리총수'],2) if self.M['꼬리총수'] else 0.00
         D['add25'] = f"{꼬리평균:.4f}"
 
         return D
