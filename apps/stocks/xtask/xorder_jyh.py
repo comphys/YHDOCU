@@ -120,18 +120,18 @@ else :
     A.ord_date = nextStock[0].replace('-','')
     
     # RSN
-    A.API.change_account('01')
-    orders = A.rsn_order_data('rsnLog')
-    A.do_my_order('RSN',orders)
-    if A.exe_type :
-        A.DB.parameter_update('TX070',today_nyk[0:10])
+    # A.API.change_account('01')
+    # orders = A.rsn_order_data('rsnLog')
+    # A.do_my_order('RSN',orders)
+    # if A.exe_type :
+    #     A.DB.parameter_update('TX070',today_nyk[0:10])
 
     # DIY
-    A.API.change_account('02')
-    orders = A.diy_order_data('logDIY')
-    A.do_my_order('DIY',orders)
-    if A.exe_type :
-        A.DB.parameter_update('A0710',today_nyk[0:10])
+    # A.API.change_account('02')
+    # orders = A.diy_order_data('logDIY')
+    # A.do_my_order('DIY',orders)
+    # if A.exe_type :
+    #     A.DB.parameter_update('A0710',today_nyk[0:10])
 
     # DIV 타계좌로부터 전환을 시도한다. 
     # 시작일자 : 2026.11.19.

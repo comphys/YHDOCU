@@ -454,7 +454,6 @@ class RSE :
            
             if  self.M['현재날수'] < 14 :
                 self.V['매도예가'] = my.round_up(self.V['평균단가'] * self.M['전략가치'])
-                self.info(self.M['현재일자'])
             else :
                 self.V['매도예가'] = self.escape_price(1.20)
                 

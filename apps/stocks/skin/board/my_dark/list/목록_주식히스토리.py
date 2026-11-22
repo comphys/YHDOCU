@@ -104,6 +104,7 @@ class 목록_주식히스토리(SKIN) :
         self.head()
         self.data_preprocess()
         self.chart()
+        self.D['lst_sday'] = my.last_stock_day(self.DB)
         self.D['업데이트안됨'] = False if self.D['lst_sday'] == self.D['lst_ohlc'] else True
 
         try :     self.D['code'] = session['CSH']['csh_add1']

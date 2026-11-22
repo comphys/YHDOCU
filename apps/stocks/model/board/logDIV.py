@@ -111,7 +111,6 @@ class Ajax(Model) :
 
     def get_current_price(self) :
         opt = self.D['post'].get('opt',None)
-        self.info(opt)
         MR = self.SYS.load_app_lib('meritz')
         rst = MR.get_current_price()
         if rst :
