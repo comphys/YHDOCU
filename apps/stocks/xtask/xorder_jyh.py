@@ -53,6 +53,18 @@ class myClass(Control) :
         if int(NS['꼬리도수'])  : OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'1','주문수량':str(NS['꼬리도수']),'주문가격':str(NS['꼬리도가'])})
         del NS
         return OD
+
+    def isq_order_data(self) :
+        ini_date = '2026-11-03'
+        ini_capital = "50,431,20"
+        DIY= self.load_app_lib('isq')
+        NS = DIY.get_nextStrategy(ini_date,self.lst_date,ini_capital)
+
+        OD = []
+        if int(NS['예정수량'])  : OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'2','주문수량':str(NS['예정수량']),'주문가격':str(NS['예정매가'])})
+        if int(NS['꼬리도수'])  : OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'1','주문수량':str(NS['꼬리도수']),'주문가격':str(NS['꼬리도가'])})
+        del NS
+        return OD
     
     def do_my_order(self,key,orders) :
 
@@ -120,9 +132,9 @@ else :
     A.ord_date = nextStock[0].replace('-','')
     
     # RSN
-    # A.API.change_account('01')
-    # orders = A.rsn_order_data('rsnLog')
-    # A.do_my_order('RSN',orders)
+    A.API.change_account('01')
+    orders = A.isq_order_data('rsnLog')
+    A.do_my_order('RSN',orders)
     # if A.exe_type :
     #     A.DB.parameter_update('TX070',today_nyk[0:10])
 
@@ -150,3 +162,5 @@ else :
     # 임시적용 중
     orders = [{'종목코드': 'SOXL', '주문일자': A.ord_date, '매매구분': '1', '주문수량': '131', '주문가격': '72.32'}]
     A.do_my_order('LTH',orders)
+
+

@@ -38,7 +38,19 @@ class myClass(Control) :
         if int(NS['꼬리도수']) : OD.append({'종목코드':'SOXL','주문일자':next_date,'매매구분':'1','주문수량':str(NS['꼬리도수']),'주문가격':str(NS['꼬리도가'])})
         
         return OD
-    
+
+    def isq_order_data(self) :
+        ini_date = '2026-11-03'
+        ini_capital = "50,431,20"
+        DIY= self.load_app_lib('isq')
+        NS = DIY.get_nextStrategy(ini_date,self.lst_date,ini_capital)
+
+        OD = []
+        if int(NS['예정수량'])  : OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'2','주문수량':str(NS['예정수량']),'주문가격':str(NS['예정매가'])})
+        if int(NS['꼬리도수'])  : OD.append({'종목코드':'SOXL','주문일자':self.ord_date,'매매구분':'1','주문수량':str(NS['꼬리도수']),'주문가격':str(NS['꼬리도가'])})
+        del NS
+        return OD
+
     def verify_rsn_order(self) :
         order = self.rsn_order_data()
         acted = self.API.get_orders_today('2','0')  
@@ -68,6 +80,21 @@ class myClass(Control) :
         
         return (True,f"{t} 주문상태 정상")       
 
+    def verify_isq_order(self,t='RSN') :
+        order = self.diy_order_data()
+        acted = self.API.get_orders_today('2','0') 
+
+        if len(order) != len(acted) : return (False,f"{t} 주문건수 오류")
+        cnt = 0
+        for o in order :
+            for a in acted :
+                if a['주문상태'] != '0' : return (False,f"{t} 주문상태 오류") 
+                if a['호가유형'] != '5' : return (False,f"{t} 호가유형 오류")
+                if o.items() <= a.items() :  cnt += 1
+        if cnt != len(order) : return (False,f"{t} 주문내용 상이")
+        
+        return (True,f"{t} 주문상태 정상") 
+
 
 # ------------------------------------------------------------------------------------------------------------------
 A = myClass()
@@ -94,15 +121,20 @@ if  skip :
 
 else :
 
+    # A.API.change_account('01')
+    # rst1 = A.verify_rsn_order()
+    # A.send_message(rst1[1]) 
+    # time.sleep(1)
+
     A.API.change_account('01')
-    rst1 = A.verify_rsn_order()
+    rst1 = A.verify_isq_order()
     A.send_message(rst1[1]) 
     time.sleep(1)
 
-    A.API.change_account('02')
-    rst2 = A.verify_diy_order('DIY','logDIY')
-    A.send_message(rst2[1])
-    time.sleep(1)
+    # A.API.change_account('02')
+    # rst2 = A.verify_diy_order('DIY','logDIY')
+    # A.send_message(rst2[1])
+    # time.sleep(1)
 
     # 현재 계좌 전환 중 from 2026-11-19.
     # A.API.change_account('03')
