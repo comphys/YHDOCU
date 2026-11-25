@@ -131,7 +131,7 @@ class ISQ :
         
         self.M['꼬리가격'] = my.round_up(self.M['당일종가']*1.05)
 
-        self.M['꼬리수량'] = int(self.M['꼬리총수']*2)  if self.M['꼬리총수'] else int(self.M['보유수량'] * 0.04)
+        self.M['꼬리수량'] = int(self.M['꼬리총수']*2)  if self.M['꼬리총수'] else int(self.M['보유수량'] * 0.032)
 
         if  self.M['꼬리수량'] >  self.M['보유수량'] : 
             self.M['꼬리수량'] = 0
@@ -308,7 +308,7 @@ class ISQ :
         self.M['보류가치'] = ST['C0204']
         self.M['연속가치'] = ST['C0205']
         self.M['자체진입'] = ST['C0206']
-        self.M['초기수량'] = 1641
+        self.M['초기수량'] = 1653
         self.M['초기잔액'] = 0.0
         self.M['종료가격'] = 500.00
         #----------------------------------------------------------

@@ -40,7 +40,7 @@ class M_diy_stat(Model) :
         D['한정기간'] = self.D['post']['한정기간']
         
         opt = 'lmt_days' if D['기간한정'] == 'on' else ''
-        DIY = self.SYS.load_app_lib('diy')
+        DIY = self.SYS.load_app_lib('div')
         DIY.D |= D
 
         DIY.do_viewStat(opt)

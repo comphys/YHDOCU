@@ -384,7 +384,7 @@ class RSN :
             self.N['매수예가'] = round( self.M['당일종가'] - 0.01, 2 ) if self.M['연속하락'] >=(self.M['진입일자']-1) else round(self.M['당일종가'] * self.M['진입가치'],2)    
 
         if  self.N['꼬리총수'] : 
-            self.N['매수예가'] = round(self.N['꼬리총매']/self.N['꼬리총수']*0.95,2)
+            self.N['매수예가'] = round(self.N['꼬리총매']/self.N['꼬리총수']*0.90,2)
         
         self.N['예정수량'] = int( self.N['매금단계'][self.N['매수차수']] / self.N['매수예가'] ) 
 
@@ -426,12 +426,11 @@ class RSN :
         self.N['몸통가격'] = my.round_up(self.N['평균단가']*self.M['각매가치'][self.N['매수차수']-1]) 
         self.N['몸통수량'] = self.N['보유수량']
 
-        if  self.M['현재날수'] - self.N['생활날수'] > self.M['생활대기']  : 
-            if     self.M['연속상승'] >= 2 : self.N['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.02) 
-            elif   self.M['연속상승'] == 1 : self.N['꼬리가격'] = my.round_up(self.M['당일종가'] * 1.05) 
-            else : self.N['꼬리가격'] = my.round_up(self.M['당일종가']*1.1)
+        # if  self.M['현재날수'] - self.N['생활날수'] > self.M['생활대기']  : 
+        if  self.N['꼬리총수'] or self.N['매수차수'] == self.M['최대차수']  :
+            self.N['꼬리가격'] = my.round_up(self.M['당일종가']*1.05)
 
-            self.N['꼬리수량'] = self.N['꼬리총수'] * 2 if self.N['꼬리총수'] else int(self.N['보유수량'] * 0.02)
+            self.N['꼬리수량'] = self.N['꼬리총수'] * 2 if self.N['꼬리총수'] else int(self.N['보유수량'] * 0.10)
             if  self.N['꼬리수량'] > self.N['보유수량'] : 
                 self.N['꼬리수량'] = 0
                 self.N['꼬리가격'] = 0.0

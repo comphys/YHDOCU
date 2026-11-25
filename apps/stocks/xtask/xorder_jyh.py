@@ -55,7 +55,7 @@ class myClass(Control) :
         return OD
 
     def isq_order_data(self) :
-        ini_date = '2026-11-03'
+        ini_date = '2026-11-20'
         ini_capital = "50,431,20"
         DIY= self.load_app_lib('isq')
         NS = DIY.get_nextStrategy(ini_date,self.lst_date,ini_capital)
@@ -133,7 +133,7 @@ else :
     
     # RSN
     A.API.change_account('01')
-    orders = A.isq_order_data('rsnLog')
+    orders = A.isq_order_data()
     A.do_my_order('RSN',orders)
     # if A.exe_type :
     #     A.DB.parameter_update('TX070',today_nyk[0:10])

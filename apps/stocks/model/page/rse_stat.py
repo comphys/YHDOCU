@@ -2,7 +2,7 @@ from system.core.load import Model
 import system.core.my_utils as my
 import csv
 
-class M_rsn_stat(Model) :
+class M_rse_stat(Model) :
 
     def view(self) :
         
@@ -51,17 +51,17 @@ class M_rsn_stat(Model) :
         D['한정기간'] = self.D['post']['한정기간']
 
         opt = 'lmt_days' if D['기간한정'] == 'on' else ''
-        RST = self.SYS.load_app_lib('rsn')
-        RST.D |= D
+        RSE = self.SYS.load_app_lib('rse')
+        RSE.D |= D
 
-        RST.do_viewStat(opt)
+        RSE.do_viewStat(opt)
 
         if D['파일출력'] == 'on' :
             fieldnames = ['시작일자','종료일자','경과일자','최종수익','종수익률','최장일수','최장일자','최대손절','최손날자','진최하락','최하일자','게임횟수','게임승수','게임패수','게임승률','게임익평','게임손평']
-            with open("rsn_stat.csv","w",newline="",encoding="euc-kr") as f :
+            with open("rse_stat.csv","w",newline="",encoding="euc-kr") as f :
                 writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
                 writer.writeheader()
-                writer.writerows(RST.D['SR'])
+                writer.writerows(RSE.D['SR'])
         
-        return self.SYS.echo(RST.D)
+        return self.SYS.echo(RSE.D)
         
