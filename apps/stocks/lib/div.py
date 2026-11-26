@@ -183,6 +183,11 @@ class DIV :
         
 
         if self.M['꼬리총수'] or self.M['매수차수'] == self.M['최대차수'] :
+            
+            # 실수익률의 90% 에서 탈출을 시도한다. 
+            # ePrice = ((self.M['시즌자금'] * 0.90) - self.M['현재잔액'])/self.M['보유수량']
+            # self.M['몸통가격'] = my.round_up(ePrice)
+            
             self.M['꼬리가격'] = my.round_up(self.M['당일종가']*self.M['꼬리도가'])
             self.M['꼬리수량'] = int(self.M['꼬리총수']*self.M['꼬리배수'])  if self.M['꼬리총수'] else int(self.M['보유수량'] * self.M['꼬리절단'])
 
