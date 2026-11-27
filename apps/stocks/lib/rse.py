@@ -318,7 +318,7 @@ class RSE :
     # S tactic    
     def tomorrow_buy_S(self) :
         
-        if  self.S['진행시작'] or self.M['현재날수'] == 1 : self.S['예정수량'] = 0; self.S['매수예가'] = 0; return
+        if  self.S['진행시작']  : self.S['예정수량'] = 0; self.S['매수예가'] = 0; return
         
         else : 
 
@@ -327,8 +327,8 @@ class RSE :
                 self.S['예정수량'] = my.ceil(self.S['기초수량'] * (self.M['현재날수']*self.M['비중조절'] + 1))
             
             elif self.M['현재날수'] >= self.M['전략대기']  :
-
-                self.S['매수예가'] = self.take_chance(self.S)   # 순서주의 ( 매수예가 부터 계산해야함 )
+                매수예가 = round( self.M['당일종가'] *0.98, 2 ) if self.M['연속하락'] >= 2 else round(self.M['당일종가'] * self.R['기회진입'],2)  
+                self.S['매수예가'] = min(매수예가,self.take_chance(self.S))   # 순서주의 ( 매수예가 부터 계산해야함 )
                 self.S['예정수량'] = self.chance_qty(self.S) 
             
             else :
@@ -412,7 +412,12 @@ class RSE :
             if tac['매수예가'] >= self.V['매도예가'] : tac['매수예가'] = self.V['매도예가'] - 0.10
 
     def tomorrow_sel_RS(self,tac) :
-
+        
+        if  not tac['보유수량'] : 
+            tac['몸통가격'] = 0.0
+            tac['몸통수량'] = 0
+            return
+        
         tac['몸통가격'] = self.V['매도예가']
         tac['몸통수량'] = self.R['보유수량']
 

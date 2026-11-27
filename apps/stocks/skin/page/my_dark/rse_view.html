@@ -290,19 +290,19 @@
 		<tr style="border-top:1px solid gray"><td style="text-align:left;">R sell</td><td>{{D['R_몸통매도가']}}</td><td>{{D['R_몸통매도량']}}</td><td>{{D['R_몸통도종비']}}</td><td>{{D['R_몸통도평비']}}</td></tr>
 		{% endif %}
 		{% if D['R_꼬리매도량'] %}
-		<tr><td style="text-align:left;">R sell</td><td>{{D['R_꼬리매도가']}}</td><td>{{D['R_꼬리매도량']}}</td><td>{{D['R_꼬리도종비']}}</td><td>{{D['R_꼬리도평비']}}</td></tr>
+		<tr><td style="text-align:left;">r sell</td><td>{{D['R_꼬리매도가']}}</td><td>{{D['R_꼬리매도량']}}</td><td>{{D['R_꼬리도종비']}}</td><td>{{D['R_꼬리도평비']}}</td></tr>
 		{% endif %}
 		{% if D['S_몸통매도량'] %}
 		<tr><td style="text-align:left;">S sell</td><td>{{D['S_몸통매도가']}}</td><td>{{D['S_몸통매도량']}}</td><td>{{D['S_몸통도종비']}}</td><td>{{D['S_몸통도평비']}}</td></tr>
 		{% endif %}
 		{% if D['S_꼬리매도량'] %}
-		<tr><td style="text-align:left;">S sell</td><td>{{D['S_꼬리매도가']}}</td><td>{{D['S_꼬리매도량']}}</td><td>{{D['S_꼬리도종비']}}</td><td>{{D['S_꼬리도평비']}}</td></tr>
+		<tr><td style="text-align:left;">s sell</td><td>{{D['S_꼬리매도가']}}</td><td>{{D['S_꼬리매도량']}}</td><td>{{D['S_꼬리도종비']}}</td><td>{{D['S_꼬리도평비']}}</td></tr>
 		{% endif %}
 		{% if D['N_몸통매도량'] %}
 		<tr><td style="text-align:left;">N sell</td><td>{{D['N_몸통매도가']}}</td><td>{{D['N_몸통매도량']}}</td><td>{{D['N_몸통도종비']}}</td><td>{{D['N_몸통도평비']}}</td></tr>
 		{% endif %}
 		{% if D['N_꼬리매도량'] %}
-		<tr><td style="text-align:left;">N sell</td><td>{{D['N_꼬리매도가']}}</td><td>{{D['N_꼬리매도량']}}</td><td>{{D['N_꼬리도종비']}}</td><td>{{D['N_꼬리도평비']}}</td></tr>
+		<tr><td style="text-align:left;">n sell</td><td>{{D['N_꼬리매도가']}}</td><td>{{D['N_꼬리매도량']}}</td><td>{{D['N_꼬리도종비']}}</td><td>{{D['N_꼬리도평비']}}</td></tr>
 		{% endif %}
 	</table>
 </div>
@@ -671,19 +671,19 @@ function show_chart(season,sel,profit=null,rate=null) {
 		var p_profit  = s_profits.next().next().next().text();
 		var p_rate    = s_profits.next().next().next().next().text();
 		p_date = '20'+p_date;
+		$("#div-seasonChart-notice").html(p_date+" : $<b> "+p_profit+"</b> ( "+p_rate+"% )");
 	} else {
 		var p_date    = sel;
 		var p_profit  = profit;
 		var p_rate    = rate;
-
-		pickTr = $(".begin-date:contains('"+p_date.slice(2)+"')"); 
-		offSet = $(pickTr).offset();
-		offTop = (offSet)? offSet.top : 0;
-		$(document).scrollTop(offTop-800);
-	
+		if(p_date) {
+			pickTr = $(".begin-date:contains('"+p_date.slice(2)+"')"); 
+			offSet = $(pickTr).offset();
+			offTop = (offSet)? offSet.top : 0;
+			$(document).scrollTop(offTop-800);
+			$("#div-seasonChart-notice").html(p_date+" : $<b> "+p_profit+"</b> ( "+p_rate+"% )");
+		}
 	}
-	$("#div-seasonChart-notice").html(p_date+" : $<b> "+p_profit+"</b> ( "+p_rate+"% )");
-	
 }
 
 // 본챠트 그리기
@@ -891,11 +891,15 @@ function slice_chart(opt) {
 		show_spanChart(pick_date)
 	});
 
+
 	$(".begin-date").contextmenu(function(e){
 		e.preventDefault();
-		pick_date = '20'+ $(this).text();
-		show_spanChart(pick_date,2)
+		let clsName = $(this).next().next().next().next().next().find('span').attr('class');
+		let season  = clsName.slice(4);
+		show_chart(season,'','','')
 	});
+
+
 
 	$(".positioning_date").click(function(){
 		pick_date = $(this).text()
