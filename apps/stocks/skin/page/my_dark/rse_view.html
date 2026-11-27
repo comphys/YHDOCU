@@ -267,9 +267,10 @@
 </div>
 {% endif %}
 
+{% if D['R_총보유량'] or D['R_매수량'] %}
 <div id="Next-Strategy" style="display:visible;opacity:0.9;position:fixed;left:1150px;top:112px;height:350px;background-color: #393f4a;border:2px solid black;padding:20px" onclick="$(this).hide()">
 	<ul style="margin-left:10px;margin-bottom:10px">
-		<li> {{D['R_총보유량']}} <span style="color:gray">sotcks </span> {{D['NT-AVG']}} <span style="color:gray">total average</span></li>
+		<li> {{D['R_총보유량']}} <span style="color:gray">stocks </span> {{D['NT-AVG']}} <span style="color:gray">total average</span></li>
 		<li> {{D['R_총평가금']}} / {{D['R_총매입금']}} ( {{D['R_평가익률']}}% )</li>
 	</ul>
 	<span style="font-style: italic"> <span style="color:gray">Next Strategy</span></span>
@@ -306,6 +307,7 @@
 		{% endif %}
 	</table>
 </div>
+{% endif %}
 
 <div id="statistics-profits" class="scrollbar"
      style="display:none;position:fixed;left:1040px;top:112px;width:480px;height:350px;padding:0px;background-color:black;overflow-y:scroll;border:1px solid black;z-index:500" 
