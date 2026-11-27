@@ -30,25 +30,36 @@ class N315 :
         self.M['평가금액'] = self.M['당일종가'] * self.M['보유수량'] 
         self.M['수익현황'] = self.M['평가금액'] - self.M['총매수금']
         self.M['현수익률'] = self.M['수익현황'] / self.M['총매수금']  * 100  if self.M['총매수금'] else 0.00  
+        self.M['실수익률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
         
         if  self.M['매도수량'] :
             self.M['매도금액']  =  self.M['매도수량'] * self.M['당일종가']
+            self.M['보유수량'] -=  self.M['매도수량']
+            self.M['현재잔액'] +=  self.M['매도금액']
+            self.M['평가금액']  =  self.M['당일종가'] * self.M['보유수량'] 
             self.M['수익현황']  =  self.M['매도금액'] - self.M['총매수금']
-            self.M['보유수량'] -=  self.M['매도수량'];  self.M['현재잔액'] += self.M['매도금액'] 
-            self.M['현수익률'] = round( self.M['수익현황'] / self.M['총매수금'] * 100, 2 )   
-            self.commission(2) 
-            
-            self.M['평가금액'] = 0.00
-            self.M['총매수금'] = 0.00
-            self.M['평균단가'] = 0.00
+            self.commission(2)
 
-            self.M['진행상황'] = '익절매도' if self.M['수익현황'] >= 0 else '손절매도'
-            self.M['매수차수'] = 0
-            self.M['첫날기록'] = True
+            if  self.M['보유수량'] :
+                self.M['총매수금'] = self.M['평균단가'] * self.M['보유수량']
+                self.M['수익현황'] = self.M['평가금액'] - self.M['총매수금']
+                self.M['현수익률'] = round( self.M['수익현황'] / self.M['총매수금'] * 100, 2 ) 
+                self.M['실수익률'] = round(((self.M['현재잔액']+self.M['평가금액'])/self.M['시즌자금'] -1 )*100,2)
+                self.M['진행상황'] = '꼬리매도'
+                self.M['매수차수'] = self.M['최대차수'] - 1  
+
+            else : 
             
-            self.vCount(self.M['수익현황'])
-            self.tax()
-            self.rebalance() 
+                self.M['총매수금'] = 0.00
+                self.M['총매수금'] = 0.00
+                self.M['평균단가'] = 0.00
+                self.M['매수차수'] = 0
+                self.M['첫날기록'] = True
+                self.M['진행상황'] = '익절매도' if self.M['현재잔액'] >= self.M['시즌자금'] else '손절매도'
+
+                self.vCount()
+                self.tax()
+                self.rebalance() 
             
 
         self.realMDD()
@@ -63,11 +74,15 @@ class N315 :
         if  self.M['실최하락'] < self.M['진최하락'] : self.M['진최하락'] = self.M['실최하락']; self.M['최하일자'] = self.M['현재일자']
         if  self.M['현재날수'] > self.M['최장일수'] : self.M['최장일수'] = self.M['현재날수']; self.M['최장일자'] = self.M['현재일자']
         
-    def vCount(self,profit) :
+    def vCount(self) :
         
-        if not self.stat : return
-        if  profit >= 0 : self.D['익절횟수'] += 1
-        else : self.D['손절횟수'] += 1
+        if  not self.stat : return
+        if  self.M['실수익률'] >= 0 : 
+            self.D['익절횟수'] += 1
+            self.M['진행상황']  = '익절매도'
+        else : 
+            self.D['손절횟수'] += 1
+            self.M['진행상황']  = '손절매도'
 
     def commission(self,opt) :
         
@@ -145,14 +160,15 @@ class N315 :
     def new_day(self) :
 
         self.set_value(['매도수량','매도금액','매수수량','매수금액','수익현황','현수익률','평균단가','매수예가','예정수량','매도예가','매수차수'],0)
+        self.M['시즌자금'] = self.M['현재잔액']
         
-        진입단가 = round(self.M['전일종가']-0.01, 2) if self.M['당일연속'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
+        ePrice = round(self.M['전일종가']-0.01, 2) if self.M['당일연속'] >= self.M['진입일자'] else round(self.M['전일종가'] * self.M['진입가치'],2)
         
-        if  self.M['당일종가'] <=  진입단가  :
+        if  self.M['당일종가'] <= ePrice  :
             
             self.M['기록시즌'] += 1
             self.M['현재날수'] = 1
-            self.M['매수수량']  = int( self.M['매금단계'][0]/진입단가 )
+            self.M['매수수량']  = int( self.M['매금단계'][0]/ePrice)
             self.M['수익현황']  = self.M['현수익률'] = 0.0
             self.M['보유수량']  = self.M['매수수량']
             self.M['평균단가']  = self.M['당일종가'] 
